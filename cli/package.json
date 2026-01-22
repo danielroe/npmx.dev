@@ -22,17 +22,17 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "citty": "^0.1.6",
-    "consola": "^3.2.3",
+    "citty": "^0.2.0",
+    "consola": "^3.4.2",
     "defu": "^6.1.4",
-    "h3": "^1.14.0",
+    "h3": "^1.15.5",
     "listhen": "^1.9.0",
-    "ofetch": "^1.4.1"
+    "ofetch": "^1.5.1"
   },
   "devDependencies": {
     "@types/node": "^25.0.10",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.0",
-    "unbuild": "^3.5.0"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "unbuild": "^3.6.1"
   }
 }
