@@ -237,7 +237,7 @@ defineOgImageComponent('Default', {
             />
 
             <div class="search-box relative flex items-center">
-              <span class="absolute left-4 text-fg-subtle font-mono text-sm pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted">
+              <span class="absolute left-4 text-fg-subtle font-mono text-base pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted">
                 /
               </span>
               <input
@@ -248,7 +248,7 @@ defineOgImageComponent('Default', {
                 name="q"
                 placeholder="search packages..."
                 autocomplete="off"
-                class="w-full max-w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-300 focus:(border-border-hover outline-none) appearance-none"
+                class="w-full max-w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-4 py-3 font-mono text-base text-fg placeholder:text-fg-subtle transition-all duration-300 focus:(border-border-hover outline-none) appearance-none"
                 @focus="isSearchFocused = true"
                 @blur="isSearchFocused = false"
               >

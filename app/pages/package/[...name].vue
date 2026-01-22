@@ -470,16 +470,26 @@ defineOgImageComponent('Package', {
           </div>
         </div>
         <div class="relative group">
-          <!-- Syntax highlighted install command -->
-          <pre class="code-block"><code><span class="line"><ClientOnly><span class="text-syntax-fn">{{ selectedPMLabel }}</span><span class="text-syntax-str"> {{ selectedPMAction }}</span><span
-            v-if="selectedPM !== 'deno'"
-            class="text-syntax-str"
-          > {{ pkg.name }}</span><span
-            v-else
-            class="text-syntax-str"
-          >{{ pkg.name }}</span><template #fallback><span class="text-syntax-fn">npm</span><span class="text-syntax-str"> install</span><span class="text-syntax-str"> {{ pkg.name }}</span></template></ClientOnly></span></code></pre>
+          <!-- Terminal-style install command -->
+          <div class="bg-[#0d0d0d] border border-border rounded-lg overflow-hidden">
+            <div class="flex gap-1.5 px-4 pt-3">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
+              <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
+              <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
+            </div>
+            <div class="flex items-center gap-2 px-4 pt-3 pb-4">
+              <span class="text-fg-subtle font-mono text-sm select-none">$</span>
+              <code class="font-mono text-sm"><ClientOnly><span class="text-fg">{{ selectedPMLabel }}</span> <span class="text-fg-muted">{{ selectedPMAction }}</span><span
+                v-if="selectedPM !== 'deno'"
+                class="text-fg-muted"
+              > {{ pkg.name }}</span><span
+                v-else
+                class="text-fg-muted"
+              >{{ pkg.name }}</span><template #fallback><span class="text-fg">npm</span> <span class="text-fg-muted">install {{ pkg.name }}</span></template></ClientOnly></code>
+            </div>
+          </div>
           <button
-            class="absolute top-3 right-3 px-2 py-1 font-mono text-xs text-fg-muted bg-bg-elevated border border-border rounded transition-all duration-200 hover:(text-fg border-border-hover) active:scale-95"
+            class="absolute top-3 right-3 px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-all duration-200 hover:(text-fg border-border-hover) active:scale-95"
             @click="copyInstallCommand"
           >
             <ClientOnly>
