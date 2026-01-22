@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
+const router = useRouter()
 
 const isHomepage = computed(() => route.path === '/')
 
@@ -7,6 +8,44 @@ useHead({
   titleTemplate: (titleChunk) => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
   },
+})
+
+// Global keyboard shortcut: "/" focuses search or navigates to search page
+function handleGlobalKeydown(e: KeyboardEvent) {
+  // Ignore if user is typing in an input, textarea, or contenteditable
+  const target = e.target as HTMLElement
+  if (
+    target.tagName === 'INPUT'
+    || target.tagName === 'TEXTAREA'
+    || target.isContentEditable
+  ) {
+    return
+  }
+
+  if (e.key === '/') {
+    e.preventDefault()
+
+    // Try to find and focus search input on current page
+    const searchInput = document.querySelector<HTMLInputElement>(
+      'input[type="search"], input[name="q"]',
+    )
+
+    if (searchInput) {
+      searchInput.focus()
+    }
+    else {
+      // Navigate to search page
+      router.push('/search')
+    }
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleGlobalKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleGlobalKeydown)
 })
 </script>
 
@@ -40,9 +79,10 @@ useHead({
           <li class="flex">
             <NuxtLink
               to="/search"
-              class="link-subtle font-mono text-sm inline-flex items-center"
+              class="link-subtle font-mono text-sm inline-flex items-center gap-2"
             >
               search
+              <kbd class="hidden sm:inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded">/</kbd>
             </NuxtLink>
           </li>
           <li class="flex">
