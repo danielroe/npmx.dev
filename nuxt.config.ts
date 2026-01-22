@@ -54,7 +54,7 @@ export default defineNuxtConfig({
 
   nitro: {
     externals: {
-      inline: ['isomorphic-dompurify', '@exodus/bytes'],
+      inline: ['isomorphic-dompurify', '@exodus/bytes', 'html-encoding-sniffer'],
     },
   },
 
