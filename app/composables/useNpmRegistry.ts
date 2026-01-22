@@ -70,9 +70,8 @@ export function usePackage(name: MaybeRefOrGetter<string>) {
   const registry = useNpmRegistry()
 
   return useAsyncData(
-    `package:${toValue(name)}`,
+    () => `package:${toValue(name)}`,
     () => registry.fetchPackage(toValue(name)),
-    { watch: [() => toValue(name)] },
   )
 }
 
@@ -83,9 +82,8 @@ export function usePackageDownloads(
   const registry = useNpmRegistry()
 
   return useAsyncData(
-    `downloads:${toValue(name)}:${toValue(period)}`,
+    () => `downloads:${toValue(name)}:${toValue(period)}`,
     () => registry.fetchDownloads(toValue(name), toValue(period)),
-    { watch: [() => toValue(name), () => toValue(period)] },
   )
 }
 
@@ -110,8 +108,6 @@ export function useNpmSearch(
       }
       return lastSearch = await registry.searchPackages(q, toValue(options))
     },
-    {
-      default: () => lastSearch || emptySearchResponse,
-    },
+    { default: () => lastSearch || emptySearchResponse },
   )
 }
