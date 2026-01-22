@@ -1,31 +1,190 @@
 <script setup lang="ts">
+import { debounce } from 'perfect-debounce'
+
 const route = useRoute()
 const router = useRouter()
 
-const query = computed({
-  get: () => (route.query.q as string) ?? '',
-  set: (value: string) => {
-    router.push({ query: { ...route.query, q: value || undefined } })
-  },
+// Local input value (updates immediately as user types)
+const inputValue = ref((route.query.q as string) ?? '')
+
+// Debounced URL update
+const updateUrlQuery = debounce((value: string) => {
+  router.replace({ query: { q: value || undefined } })
+}, 250)
+
+// Watch input and debounce URL updates
+watch(inputValue, (value) => {
+  updateUrlQuery(value)
 })
 
-const page = computed(() => {
+// The actual search query (from URL, used for API calls)
+const query = computed(() => (route.query.q as string) ?? '')
+
+// Sync input with URL when navigating (e.g., back button)
+watch(() => route.query.q, (urlQuery) => {
+  const value = (urlQuery as string) ?? ''
+  if (inputValue.value !== value) {
+    inputValue.value = value
+  }
+})
+
+// For glow effect
+const isSearchFocused = ref(false)
+const searchInputRef = ref<HTMLInputElement>()
+
+// Track if page just loaded (for hiding "Searching..." during view transition)
+const hasInteracted = ref(false)
+onMounted(() => {
+  // Small delay to let view transition complete
+  setTimeout(() => {
+    hasInteracted.value = true
+  }, 300)
+})
+
+// Infinite scroll state
+const pageSize = 20
+const loadedPages = ref(1)
+const isLoadingMore = ref(false)
+const loadMoreTrigger = ref<HTMLElement>()
+
+// Get initial page from URL (for hard reload persistence)
+const initialPage = computed(() => {
   const p = Number.parseInt(route.query.page as string, 10)
   return Number.isNaN(p) ? 1 : Math.max(1, p)
 })
 
-const pageSize = 20
+// Track if we need to scroll to restored position
+const needsScrollRestore = ref(false)
 
+// Initialize loaded pages from URL on mount
+onMounted(() => {
+  if (initialPage.value > 1) {
+    loadedPages.value = initialPage.value
+    needsScrollRestore.value = true
+  }
+  // Focus search input
+  searchInputRef.value?.focus()
+})
+
+// Search options for API - fetch all pages up to current
 const searchOptions = computed(() => ({
-  size: pageSize,
-  from: (page.value - 1) * pageSize,
+  size: pageSize * loadedPages.value,
+  from: 0,
 }))
 
 const { data: results, status } = useNpmSearch(query, searchOptions)
 
+// Keep track of previous results to show while loading
+const previousQuery = ref('')
+const cachedResults = ref(results.value)
+
+// Update cached results smartly
+watch([results, query], ([newResults, newQuery]) => {
+  if (newResults) {
+    cachedResults.value = newResults
+    previousQuery.value = newQuery
+  }
+})
+
+// Reference to the results list for scroll restoration
+const resultsListRef = ref<HTMLOListElement>()
+
+// Scroll to restored position once results are loaded
+watch([results, status, () => needsScrollRestore.value], ([newResults, newStatus, shouldScroll]) => {
+  if (shouldScroll && newStatus === 'success' && newResults && newResults.objects.length > 0) {
+    needsScrollRestore.value = false
+    // Scroll to the first item of the target page
+    nextTick(() => {
+      const targetItemIndex = (initialPage.value - 1) * pageSize
+      const listItems = resultsListRef.value?.children
+      if (listItems && listItems[targetItemIndex]) {
+        listItems[targetItemIndex].scrollIntoView({
+          behavior: 'instant',
+          block: 'start',
+        })
+      }
+    })
+  }
+})
+
+// Determine if we should show previous results while loading
+// (when new query is a continuation of the old one)
+const isQueryContinuation = computed(() => {
+  const current = query.value.toLowerCase()
+  const previous = previousQuery.value.toLowerCase()
+  return previous && current.startsWith(previous)
+})
+
+// Show cached results while loading if it's a continuation query
+const visibleResults = computed(() => {
+  if (status.value === 'pending' && isQueryContinuation.value && cachedResults.value) {
+    return cachedResults.value
+  }
+  return results.value
+})
+
+// Should we show the loading spinner?
+const showSearching = computed(() => {
+  // Don't show during initial page load (view transition)
+  if (!hasInteracted.value) return false
+  // Don't show if we're displaying cached results
+  if (status.value === 'pending' && isQueryContinuation.value && cachedResults.value) return false
+  // Show if pending on first page
+  return status.value === 'pending' && loadedPages.value === 1
+})
+
 const totalPages = computed(() => {
-  if (!results.value) return 0
-  return Math.ceil(results.value.total / pageSize)
+  if (!visibleResults.value) return 0
+  return Math.ceil(visibleResults.value.total / pageSize)
+})
+
+const hasMore = computed(() => {
+  return loadedPages.value < totalPages.value
+})
+
+// Load more when trigger becomes visible
+function loadMore() {
+  if (isLoadingMore.value || !hasMore.value) return
+
+  isLoadingMore.value = true
+  loadedPages.value++
+
+  // Update URL with current page count for reload persistence
+  router.replace({
+    query: {
+      ...route.query,
+      page: loadedPages.value > 1 ? loadedPages.value : undefined,
+    },
+  })
+
+  // Reset loading state after data updates
+  nextTick(() => {
+    isLoadingMore.value = false
+  })
+}
+
+// Intersection observer for infinite scroll
+onMounted(() => {
+  if (!loadMoreTrigger.value) return
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting && hasMore.value && status.value !== 'pending') {
+        loadMore()
+      }
+    },
+    { rootMargin: '200px' },
+  )
+
+  observer.observe(loadMoreTrigger.value)
+
+  onUnmounted(() => observer.disconnect())
+})
+
+// Reset pages when query changes
+watch(query, () => {
+  loadedPages.value = 1
+  hasInteracted.value = true
 })
 
 function formatNumber(num: number): string {
@@ -40,10 +199,6 @@ function formatDate(dateStr: string): string {
   })
 }
 
-function goToPage(newPage: number) {
-  router.push({ query: { ...route.query, page: newPage > 1 ? newPage : undefined } })
-}
-
 useSeoMeta({
   title: () => query.value ? `Search: ${query.value} - npmx` : 'Search Packages - npmx',
 })
@@ -53,7 +208,7 @@ useSeoMeta({
   <main class="container py-8 sm:py-12">
     <header class="mb-8">
       <h1 class="font-mono text-2xl sm:text-3xl font-medium mb-6">
-        <span class="text-fg-subtle">$</span> search
+        search
       </h1>
 
       <search>
@@ -67,18 +222,39 @@ useSeoMeta({
             class="sr-only"
           >Search npm packages</label>
 
-          <div class="relative flex items-center">
-            <span class="absolute left-4 text-fg-subtle font-mono text-sm">npm search</span>
-            <input
-              id="search-input"
-              v-model="query"
-              type="search"
-              name="q"
-              placeholder="package name..."
-              autocomplete="off"
-              autofocus
-              class="w-full bg-bg-subtle border border-border rounded-lg pl-28 pr-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-200 focus:(border-border-hover outline-none)"
-            >
+          <div
+            class="relative group"
+            :class="{ 'is-focused': isSearchFocused }"
+          >
+            <!-- Subtle glow effect -->
+            <div
+              class="absolute -inset-px rounded-lg bg-gradient-to-r from-fg/0 via-fg/5 to-fg/0 opacity-0 transition-opacity duration-500 blur-sm group-[.is-focused]:opacity-100"
+            />
+
+            <div class="search-box relative flex items-center">
+              <span class="absolute left-4 text-fg-subtle font-mono text-sm pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted">
+                /
+              </span>
+              <input
+                id="search-input"
+                ref="searchInputRef"
+                v-model="inputValue"
+                type="search"
+                name="q"
+                placeholder="search packages..."
+                autocomplete="off"
+                class="w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-300 focus:(border-border-hover outline-none)"
+                @focus="isSearchFocused = true"
+                @blur="isSearchFocused = false"
+              >
+              <!-- Hidden submit button for accessibility (form must have submit button per WCAG) -->
+              <button
+                type="submit"
+                class="sr-only"
+              >
+                Search
+              </button>
+            </div>
           </div>
         </form>
       </search>
@@ -88,8 +264,9 @@ useSeoMeta({
       v-if="query"
       aria-label="Search results"
     >
+      <!-- Initial loading (only after user interaction, not during view transition) -->
       <div
-        v-if="status === 'pending'"
+        v-if="showSearching"
         aria-busy="true"
         class="flex items-center gap-3 text-fg-muted font-mono text-sm py-8"
       >
@@ -97,13 +274,17 @@ useSeoMeta({
         Searching...
       </div>
 
-      <div v-else-if="results">
+      <div v-else-if="visibleResults">
         <p
-          v-if="results.total > 0"
+          v-if="visibleResults.total > 0"
           role="status"
           class="text-fg-muted text-sm mb-6 font-mono"
         >
-          Found <span class="text-fg">{{ formatNumber(results.total) }}</span> packages
+          Found <span class="text-fg">{{ formatNumber(visibleResults.total) }}</span> packages
+          <span
+            v-if="status === 'pending'"
+            class="text-fg-subtle"
+          >(updating...)</span>
         </p>
 
         <p
@@ -115,14 +296,15 @@ useSeoMeta({
         </p>
 
         <ol
-          v-if="results.objects.length > 0"
+          v-if="visibleResults.objects.length > 0"
+          ref="resultsListRef"
           class="space-y-3 list-none m-0 p-0"
         >
           <li
-            v-for="(result, index) in results.objects"
+            v-for="(result, index) in visibleResults.objects"
             :key="result.package.name"
-            class="animate-slide-up"
-            :style="{ animationDelay: `${index * 0.03}s` }"
+            class="animate-fade-in animate-fill-both"
+            :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
           >
             <article class="group card-interactive">
               <NuxtLink
@@ -145,7 +327,7 @@ useSeoMeta({
                   v-if="result.package.description"
                   class="text-fg-muted text-sm line-clamp-2 mb-3"
                 >
-                  {{ result.package.description }}
+                  <MarkdownText :text="result.package.description" />
                 </p>
 
                 <footer class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
@@ -197,42 +379,25 @@ useSeoMeta({
           </li>
         </ol>
 
-        <nav
-          v-if="totalPages > 1"
-          aria-label="Pagination"
-          class="mt-12 flex items-center justify-center"
+        <!-- Infinite scroll trigger -->
+        <div
+          ref="loadMoreTrigger"
+          class="py-8 flex items-center justify-center"
         >
-          <ul class="flex items-center gap-2 list-none m-0 p-0">
-            <li>
-              <button
-                :disabled="page <= 1"
-                :aria-disabled="page <= 1"
-                class="btn-ghost"
-                @click="goToPage(page - 1)"
-              >
-                <span class="mr-1">&larr;</span> prev
-              </button>
-            </li>
-            <li
-              aria-current="page"
-              class="px-4 py-2 font-mono text-sm text-fg-muted"
-            >
-              <span class="text-fg">{{ page }}</span>
-              <span class="mx-1">/</span>
-              <span>{{ totalPages }}</span>
-            </li>
-            <li>
-              <button
-                :disabled="page >= totalPages"
-                :aria-disabled="page >= totalPages"
-                class="btn-ghost"
-                @click="goToPage(page + 1)"
-              >
-                next <span class="ml-1">&rarr;</span>
-              </button>
-            </li>
-          </ul>
-        </nav>
+          <div
+            v-if="isLoadingMore || (status === 'pending' && loadedPages > 1)"
+            class="flex items-center gap-3 text-fg-muted font-mono text-sm"
+          >
+            <span class="w-4 h-4 border-2 border-fg-subtle border-t-fg rounded-full animate-spin" />
+            Loading more...
+          </div>
+          <p
+            v-else-if="!hasMore && visibleResults.objects.length > 0"
+            class="text-fg-subtle font-mono text-sm"
+          >
+            End of results
+          </p>
+        </div>
       </div>
     </section>
 

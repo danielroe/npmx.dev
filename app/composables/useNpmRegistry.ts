@@ -89,6 +89,8 @@ export function usePackageDownloads(
   )
 }
 
+const emptySearchResponse = { objects: [], total: 0, time: new Date().toISOString() } satisfies NpmSearchResponse
+
 export function useNpmSearch(
   query: MaybeRefOrGetter<string>,
   options: MaybeRefOrGetter<{
@@ -97,16 +99,19 @@ export function useNpmSearch(
   }> = {},
 ) {
   const registry = useNpmRegistry()
+  let lastSearch: NpmSearchResponse | undefined = undefined
 
   return useAsyncData(
-    `search:${toValue(query)}:${JSON.stringify(toValue(options))}`,
-    () => {
+    () => `search:${toValue(query)}:${JSON.stringify(toValue(options))}`,
+    async () => {
       const q = toValue(query)
       if (!q.trim()) {
-        return Promise.resolve({ objects: [], total: 0, time: new Date().toISOString() } as NpmSearchResponse)
+        return Promise.resolve(emptySearchResponse)
       }
-      return registry.searchPackages(q, toValue(options))
+      return lastSearch = await registry.searchPackages(q, toValue(options))
     },
-    { watch: [() => toValue(query), () => toValue(options)] },
+    {
+      default: () => lastSearch || emptySearchResponse,
+    },
   )
 }

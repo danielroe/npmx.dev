@@ -30,8 +30,9 @@
     "@nuxt/image": "^2.0.0",
     "@nuxt/scripts": "^0.13.2",
     "@nuxtjs/html-validator": "^2.1.0",
-    "nuxt": "^4.2.2",
+    "nuxt": "https://pkg.pr.new/nuxt@8d4f9ba",
     "nuxt-og-image": "^5.1.13",
+    "perfect-debounce": "^2.1.0",
     "shiki": "^3.21.0",
     "unplugin-vue-router": "^0.19.2",
     "vue": "3.5.26"

@@ -3,13 +3,34 @@ import type { PackumentVersion } from '#shared/types'
 
 const route = useRoute('package-name')
 
-const packageName = computed(() => {
-  const segments = route.params.name
-  if (Array.isArray(segments)) {
-    return segments.join('/')
+// Parse package name and optional version from URL
+// Patterns:
+//   /package/nuxt → packageName: "nuxt", requestedVersion: null
+//   /package/nuxt/v/4.2.0 → packageName: "nuxt", requestedVersion: "4.2.0"
+//   /package/@nuxt/kit → packageName: "@nuxt/kit", requestedVersion: null
+//   /package/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", requestedVersion: "1.0.0"
+const parsedRoute = computed(() => {
+  const segments = Array.isArray(route.params.name)
+    ? route.params.name
+    : [route.params.name ?? '']
+
+  // Find the /v/ separator for version
+  const vIndex = segments.indexOf('v')
+  if (vIndex !== -1 && vIndex < segments.length - 1) {
+    return {
+      packageName: segments.slice(0, vIndex).join('/'),
+      requestedVersion: segments.slice(vIndex + 1).join('/'),
+    }
   }
-  return segments ?? ''
+
+  return {
+    packageName: segments.join('/'),
+    requestedVersion: null as string | null,
+  }
 })
+
+const packageName = computed(() => parsedRoute.value.packageName)
+const requestedVersion = computed(() => parsedRoute.value.requestedVersion)
 
 const { data: pkg, status, error } = usePackage(packageName)
 
@@ -20,6 +41,21 @@ const { data: readmeData } = useLazyFetch(() => `/api/registry/readme/${packageN
   default: () => ({ html: '' }),
 })
 
+// Get the version to display (requested or latest)
+const displayVersion = computed(() => {
+  if (!pkg.value) return null
+
+  const reqVer = requestedVersion.value
+  if (reqVer && pkg.value.versions[reqVer]) {
+    return pkg.value.versions[reqVer]
+  }
+
+  const latestTag = pkg.value['dist-tags']?.latest
+  if (!latestTag) return null
+  return pkg.value.versions[latestTag] ?? null
+})
+
+// Keep latestVersion for comparison (to show "(latest)" badge)
 const latestVersion = computed(() => {
   if (!pkg.value) return null
   const latestTag = pkg.value['dist-tags']?.latest
@@ -39,14 +75,21 @@ const sortedVersions = computed(() => {
     .slice(0, 20)
 })
 
+// Sort dependencies alphabetically
+const sortedDependencies = computed(() => {
+  if (!displayVersion.value?.dependencies) return []
+  return Object.entries(displayVersion.value.dependencies)
+    .sort(([a], [b]) => a.localeCompare(b))
+})
+
 const repositoryUrl = computed(() => {
-  const repo = latestVersion.value?.repository
+  const repo = displayVersion.value?.repository
   if (!repo?.url) return null
   return normalizeGitUrl(repo.url)
 })
 
 const homepageUrl = computed(() => {
-  return latestVersion.value?.homepage ?? null
+  return displayVersion.value?.homepage ?? null
 })
 
 function normalizeGitUrl(url: string): string {
@@ -131,14 +174,20 @@ async function copyInstallCommand() {
 
 // Expandable description
 const descriptionExpanded = ref(false)
-const descriptionRef = ref<HTMLParagraphElement>()
+const descriptionRef = ref<HTMLDivElement>()
 const descriptionOverflows = ref(false)
+
+// Expandable dependencies
+const depsExpanded = ref(false)
 
 // Check if description overflows on mount/update
 function checkDescriptionOverflow() {
   if (descriptionRef.value) {
-    // Compare scrollHeight to the fixed container height (3 lines ~= 72px)
-    descriptionOverflows.value = descriptionRef.value.scrollHeight > 72
+    const paragraph = descriptionRef.value.querySelector('p')
+    if (paragraph) {
+      // Compare scrollHeight to the fixed container height (3 lines ~= 72px)
+      descriptionOverflows.value = paragraph.scrollHeight > 72
+    }
   }
 }
 
@@ -173,14 +222,16 @@ useSeoMeta({
               {{ pkg.name }}
             </h1>
             <!-- Fixed height description container to prevent CLS -->
-            <div class="relative max-w-2xl min-h-[4.5rem]">
+            <div
+              ref="descriptionRef"
+              class="relative max-w-2xl min-h-[4.5rem]"
+            >
               <p
                 v-if="pkg.description"
-                ref="descriptionRef"
                 class="text-fg-muted text-base m-0 overflow-hidden"
                 :class="descriptionExpanded ? '' : 'max-h-[4.5rem]'"
               >
-                {{ pkg.description }}
+                <MarkdownText :text="pkg.description" />
               </p>
               <p
                 v-else
@@ -206,10 +257,14 @@ useSeoMeta({
 
           <!-- Version badge -->
           <span
-            v-if="latestVersion"
+            v-if="displayVersion"
             class="shrink-0 px-3 py-1 font-mono text-sm bg-bg-muted border border-border rounded-md"
           >
-            v{{ latestVersion.version }}
+            v{{ displayVersion.version }}
+            <span
+              v-if="requestedVersion && latestVersion && displayVersion.version !== latestVersion.version"
+              class="text-fg-subtle"
+            >(not latest)</span>
           </span>
         </div>
 
@@ -240,26 +295,26 @@ useSeoMeta({
           </div>
 
           <div
-            v-if="latestVersion?.dist?.unpackedSize"
+            v-if="displayVersion?.dist?.unpackedSize"
             class="space-y-1"
           >
             <dt class="text-xs text-fg-subtle uppercase tracking-wider">
               Size
             </dt>
             <dd class="font-mono text-sm text-fg">
-              {{ formatBytes(latestVersion.dist.unpackedSize) }}
+              {{ formatBytes(displayVersion.dist.unpackedSize) }}
             </dd>
           </div>
 
           <div
-            v-if="getDependencyCount(latestVersion) > 0"
+            v-if="getDependencyCount(displayVersion) > 0"
             class="space-y-1"
           >
             <dt class="text-xs text-fg-subtle uppercase tracking-wider">
               Deps
             </dt>
             <dd class="font-mono text-sm text-fg">
-              {{ getDependencyCount(latestVersion) }}
+              {{ getDependencyCount(displayVersion) }}
             </dd>
           </div>
 
@@ -302,9 +357,9 @@ useSeoMeta({
                 homepage
               </a>
             </li>
-            <li v-if="latestVersion?.bugs?.url">
+            <li v-if="displayVersion?.bugs?.url">
               <a
-                :href="latestVersion.bugs.url"
+                :href="displayVersion.bugs.url"
                 rel="noopener noreferrer"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
@@ -405,7 +460,7 @@ useSeoMeta({
             >
               Readme
             </h2>
-            <!-- eslint-disable-next-line vue/no-v-html -- HTML is sanitized server-side -->
+            <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
             <div
               v-if="readmeData?.html"
               class="readme-content prose prose-invert max-w-none"
@@ -462,7 +517,7 @@ useSeoMeta({
 
           <!-- Keywords -->
           <section
-            v-if="latestVersion?.keywords?.length"
+            v-if="displayVersion?.keywords?.length"
             aria-labelledby="keywords-heading"
           >
             <h2
@@ -473,7 +528,7 @@ useSeoMeta({
             </h2>
             <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
               <li
-                v-for="keyword in latestVersion.keywords.slice(0, 15)"
+                v-for="keyword in displayVersion.keywords.slice(0, 15)"
                 :key="keyword"
               >
                 <NuxtLink
@@ -526,18 +581,18 @@ useSeoMeta({
 
           <!-- Dependencies -->
           <section
-            v-if="latestVersion?.dependencies && Object.keys(latestVersion.dependencies).length > 0"
+            v-if="sortedDependencies.length > 0"
             aria-labelledby="dependencies-heading"
           >
             <h2
               id="dependencies-heading"
               class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
             >
-              Dependencies ({{ Object.keys(latestVersion.dependencies).length }})
+              Dependencies ({{ sortedDependencies.length }})
             </h2>
             <ul class="space-y-1 list-none m-0 p-0">
               <li
-                v-for="(version, dep) in Object.fromEntries(Object.entries(latestVersion.dependencies).slice(0, 10))"
+                v-for="[dep, version] in sortedDependencies.slice(0, depsExpanded ? undefined : 10)"
                 :key="dep"
                 class="flex items-center justify-between py-1 text-sm"
               >
@@ -550,6 +605,14 @@ useSeoMeta({
                 <span class="font-mono text-xs text-fg-subtle shrink-0">{{ version }}</span>
               </li>
             </ul>
+            <button
+              v-if="sortedDependencies.length > 10 && !depsExpanded"
+              type="button"
+              class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200"
+              @click="depsExpanded = true"
+            >
+              show all {{ sortedDependencies.length }} deps
+            </button>
           </section>
         </aside>
       </div>

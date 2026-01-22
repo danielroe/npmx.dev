@@ -30,11 +30,18 @@ export default defineNuxtConfig({
     description: 'A fast, accessible npm package browser for power users',
   },
 
+  routeRules: {
+    '/': { prerender: true },
+    '/**': { isr: 60 },
+    '/search': { isr: false, cache: false },
+  },
+
   future: {
     compatibilityVersion: 4,
   },
 
   experimental: {
+    viewTransition: true,
     typedPages: true,
   },
 

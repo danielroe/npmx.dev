@@ -1,4 +1,8 @@
 <script setup lang="ts">
+const route = useRoute()
+
+const isHomepage = computed(() => route.path === '/')
+
 useHead({
   titleTemplate: (titleChunk) => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
@@ -19,12 +23,18 @@ useHead({
         class="container h-14 flex items-center justify-between"
       >
         <NuxtLink
+          v-show="!isHomepage"
           to="/"
           aria-label="npmx home"
-          class="font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+          class="header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
         >
-          <span class="opacity-50">./</span>npmx
+          <span class="text-fg-subtle"><span style="letter-spacing: -0.2em;">.</span>/</span>npmx
         </NuxtLink>
+        <!-- Spacer when logo is hidden on homepage -->
+        <span
+          v-show="isHomepage"
+          class="w-1"
+        />
 
         <ul class="flex items-center gap-6">
           <li class="flex">
@@ -412,5 +422,36 @@ button {
   display: inline-block;
   margin: 0 0.25rem 0.25rem 0;
   border-radius: 4px;
+}
+
+/* Inline code in package descriptions */
+p > span > code,
+.line-clamp-2 code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  background: #1a1a1a;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  border: 1px solid #262626;
+}
+
+/* View transition for search box (includes / and input) */
+.search-box {
+  view-transition-name: search-box;
+}
+
+/* View transition for logo (hero -> header) */
+.hero-logo,
+.header-logo {
+  view-transition-name: site-logo;
+}
+
+/* Customize the view transition animations */
+::view-transition-old(search-box),
+::view-transition-new(search-box),
+::view-transition-old(site-logo),
+::view-transition-new(site-logo) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 </style>
