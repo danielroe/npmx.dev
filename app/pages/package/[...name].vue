@@ -204,6 +204,13 @@ useSeoMeta({
   title: () => pkg.value?.name ? `${pkg.value.name} - npmx` : 'Package - npmx',
   description: () => pkg.value?.description ?? '',
 })
+
+defineOgImageComponent('Package', {
+  name: () => pkg.value?.name ?? 'Package',
+  version: () => displayVersion.value?.version ?? '',
+  downloads: () => downloads.value ? formatNumber(downloads.value.downloads) : '',
+  license: () => pkg.value?.license ?? '',
+})
 </script>
 
 <template>

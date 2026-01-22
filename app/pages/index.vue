@@ -14,6 +14,8 @@ useSeoMeta({
   title: 'npmx - Better npm Package Browser',
   description: 'A fast, accessible npm package browser for power users. Search, browse, and manage npm packages with a modern interface.',
 })
+
+defineOgImageComponent('Default')
 </script>
 
 <template>

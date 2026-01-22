@@ -77,16 +77,25 @@ export default defineNuxtConfig({
       {
         name: 'Inter',
         weights: ['400', '500', '600'],
+        global: true,
       },
       {
         name: 'JetBrains Mono',
         weights: ['400', '500'],
+        global: true,
       },
     ],
   },
 
   htmlValidator: {
     failOnError: true,
+  },
+
+  ogImage: {
+    defaults: {
+      component: 'Default',
+
+    },
   },
 
   pwa: {

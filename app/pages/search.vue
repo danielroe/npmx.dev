@@ -202,6 +202,11 @@ function formatDate(dateStr: string): string {
 useSeoMeta({
   title: () => query.value ? `Search: ${query.value} - npmx` : 'Search Packages - npmx',
 })
+
+defineOgImageComponent('Default', {
+  title: 'npmx',
+  description: () => query.value ? `Search results for "${query.value}"` : 'Search npm packages',
+})
 </script>
 
 <template>
