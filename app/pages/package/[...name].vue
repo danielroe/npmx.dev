@@ -552,14 +552,14 @@ defineOgImageComponent('Package', {
                 v-for="maintainer in pkg.maintainers.slice(0, 5)"
                 :key="maintainer.name ?? maintainer.email"
               >
-                <a
+                <NuxtLink
                   v-if="maintainer.name"
-                  :href="`https://www.npmjs.com/~${maintainer.name}`"
+                  :to="{ name: '~username', params: { username: maintainer.name } }"
                   rel="noopener noreferrer"
                   class="link-subtle font-mono text-sm"
                 >
                   @{{ maintainer.name }}
-                </a>
+                </NuxtLink>
                 <span
                   v-else
                   class="font-mono text-sm text-fg-muted"
