@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { joinURL } from 'ufo'
 import type { PackumentVersion, NpmVersionDist } from '#shared/types'
 
 const route = useRoute('package-name')
@@ -83,7 +84,12 @@ const hasDependencies = computed(() => {
 const repositoryUrl = computed(() => {
   const repo = displayVersion.value?.repository
   if (!repo?.url) return null
-  return normalizeGitUrl(repo.url)
+  let url = normalizeGitUrl(repo.url)
+  // append `repository.directory` for monorepo packages
+  if (repo.directory) {
+    url = joinURL(`${url}/tree/HEAD`, repo.directory)
+  }
+  return url
 })
 
 const homepageUrl = computed(() => {
