@@ -353,11 +353,15 @@ export function createConnectorApp(expectedToken: string) {
         await Promise.all(runningOps)
       }
 
+      // Check if any operation had an auth failure
+      const authFailure = results.some(r => r.result.authFailure)
+
       return {
         success: true,
         data: {
           results,
           otpRequired,
+          authFailure,
         },
       } as ApiResponse
     }),

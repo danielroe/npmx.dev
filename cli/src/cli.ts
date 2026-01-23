@@ -3,7 +3,8 @@ import { defineCommand, runMain } from 'citty'
 import { listen } from 'listhen'
 import { toNodeListener } from 'h3'
 import { createConnectorApp, generateToken, CONNECTOR_VERSION } from './server'
-import { initLogger, showToken, logInfo } from './logger'
+import { getNpmUser } from './npm-client'
+import { initLogger, showToken, logInfo, showAuthRequired } from './logger'
 
 const DEFAULT_PORT = 31415
 
@@ -22,9 +23,21 @@ const main = defineCommand({
   },
   async run({ args }) {
     const port = Number.parseInt(args.port as string, 10) || DEFAULT_PORT
-    const token = generateToken()
 
     initLogger()
+
+    // Check npm authentication before starting
+    logInfo('Checking npm authentication...')
+    const npmUser = await getNpmUser()
+
+    if (!npmUser) {
+      showAuthRequired()
+      process.exit(1)
+    }
+
+    logInfo(`Authenticated as: ${npmUser}`)
+
+    const token = generateToken()
     showToken(token, port)
 
     const app = createConnectorApp(token)

@@ -36,6 +36,8 @@ export interface OperationResult {
   exitCode: number
   /** True if the operation failed due to missing/invalid OTP */
   requiresOtp?: boolean
+  /** True if the operation failed due to authentication failure (not logged in or token expired) */
+  authFailure?: boolean
 }
 
 export interface PendingOperation {

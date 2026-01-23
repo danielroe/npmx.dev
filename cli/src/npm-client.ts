@@ -10,6 +10,8 @@ export interface NpmExecResult {
   exitCode: number
   /** True if the operation failed due to missing/invalid OTP */
   requiresOtp?: boolean
+  /** True if the operation failed due to authentication failure (not logged in or token expired) */
+  authFailure?: boolean
 }
 
 function detectOtpRequired(stderr: string): boolean {
@@ -18,10 +20,27 @@ function detectOtpRequired(stderr: string): boolean {
     'one-time password',
     'This operation requires a one-time password',
     '--otp=<code>',
-    'OTP',
   ]
   const lowerStderr = stderr.toLowerCase()
   return otpPatterns.some(pattern => lowerStderr.includes(pattern.toLowerCase()))
+}
+
+function detectAuthFailure(stderr: string): boolean {
+  const authPatterns = [
+    'ENEEDAUTH',
+    'You must be logged in',
+    'authentication error',
+    'Unable to authenticate',
+    'code E401',
+    'code E403',
+    '401 Unauthorized',
+    '403 Forbidden',
+    'not logged in',
+    'npm login',
+    'npm adduser',
+  ]
+  const lowerStderr = stderr.toLowerCase()
+  return authPatterns.some(pattern => lowerStderr.includes(pattern.toLowerCase()))
 }
 
 function filterNpmWarnings(stderr: string): string {
@@ -70,10 +89,14 @@ export async function execNpm(
     const err = error as { stdout?: string, stderr?: string, code?: number }
     const stderr = err.stderr?.trim() ?? String(error)
     const requiresOtp = detectOtpRequired(stderr)
+    const authFailure = detectAuthFailure(stderr)
 
     if (!options.silent) {
       if (requiresOtp) {
         logError('OTP required')
+      }
+      else if (authFailure) {
+        logError('Authentication required - please run "npm login" and restart the connector')
       }
       else {
         logError(filterNpmWarnings(stderr).split('\n')[0] || 'Command failed')
@@ -84,9 +107,12 @@ export async function execNpm(
       stdout: err.stdout?.trim() ?? '',
       stderr: requiresOtp
         ? 'This operation requires a one-time password (OTP).'
-        : filterNpmWarnings(stderr),
+        : authFailure
+          ? 'Authentication failed. Please run "npm login" and restart the connector.'
+          : filterNpmWarnings(stderr),
       exitCode: err.code ?? 1,
       requiresOtp,
+      authFailure,
     }
   }
 }
