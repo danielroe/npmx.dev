@@ -12,7 +12,7 @@
       >./</span> npmx
     </h1>
     <h1 class="text-3xl font-medium tracking-tight">
-      a better npm package browser
+      a better browser for the npm registry
     </h1>
 
     <p class="absolute bottom-12 text-lg text-[#404040]">

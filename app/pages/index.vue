@@ -11,8 +11,8 @@ function handleSearch() {
 }
 
 useSeoMeta({
-  title: 'npmx - Better npm Package Browser',
-  description: 'A fast, accessible npm package browser for power users. Search, browse, and manage npm packages with a modern interface.',
+  title: 'npmx - Package Browser for the npm Registry',
+  description: 'A better browser for the npm registry. Search, browse, and explore packages with a modern interface.',
 })
 
 defineOgImageComponent('Default')
@@ -31,7 +31,7 @@ defineOgImageComponent('Default')
         class="text-fg-muted text-lg sm:text-xl max-w-md mb-12 animate-slide-up animate-fill-both"
         style="animation-delay: 0.1s"
       >
-        a better npm package browser
+        a better browser for the npm registry
       </p>
 
       <!-- Search form with micro-interactions -->

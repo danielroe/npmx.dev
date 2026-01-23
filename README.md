@@ -12,7 +12,7 @@
 
 ## Vision
 
-The aim of [npmx.dev](https://npmx.dev) is to provide a better npm package browsing experience - fast, accessible, and designed for power users.
+The aim of [npmx.dev](https://npmx.dev) is to provide a better browser for the npm registry - fast, accessible, and designed for power users.
 
 - **Speed first** - Insanely fast searching, filtering, and navigation.
 - **URL compatible** - Replace `npmjs.com` with `xnpmjs.com` or `npmx.dev` in any URL and it just works.
