@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },
     '/**': { isr: 60 },
+    '/package/**': { isr: false },
     '/search': { isr: false, cache: false },
     '/_v/script.js': { proxy: 'https://npmx.dev/_vercel/insights/script.js' },
     '/_v/view': { proxy: 'https://npmx.dev/_vercel/insights/view' },
