@@ -16,24 +16,6 @@ interface VersionDisplay {
   hasProvenance: boolean
 }
 
-/** A dist-tag row */
-interface TagRow {
-  id: string
-  tag: string
-  primaryVersion: VersionDisplay
-  /** Versions in this tag's channel (same major + same prerelease type) */
-  allVersions: VersionDisplay[]
-  loading: boolean
-  expanded: boolean
-}
-
-/** Unclaimed major version group */
-interface MajorGroup {
-  major: number
-  versions: VersionDisplay[]
-  expanded: boolean
-}
-
 // Check if a version has provenance/attestations
 function hasProvenance(version: PackumentVersion | undefined): boolean {
   if (!version?.dist) return false
@@ -77,11 +59,6 @@ function getPrereleaseChannel(version: string): string {
   return match ? match[1]!.toLowerCase() : ''
 }
 
-// Cached full version list
-const allVersionsCache = ref<PackageVersionInfo[] | null>(null)
-const loadingVersions = ref(false)
-const hasLoadedAll = ref(false)
-
 // Version to tag lookup
 const versionToTag = computed(() => {
   const map = new Map<string, string>()
@@ -94,16 +71,9 @@ const versionToTag = computed(() => {
   return map
 })
 
-// Dist-tag rows (stable structure)
-const tagRows = ref<TagRow[]>([])
-
-// Unclaimed versions section
-const otherVersionsExpanded = ref(false)
-const otherMajorGroups = ref<MajorGroup[]>([])
-
-// Initialize tag rows from props
-watchEffect(() => {
-  const rows: TagRow[] = Object.entries(props.distTags)
+// Initial tag rows derived from props (SSR-safe)
+const initialTagRows = computed(() => {
+  return Object.entries(props.distTags)
     .map(([tag, version]) => {
       const versionData = props.versions[version]
       return {
@@ -114,16 +84,25 @@ watchEffect(() => {
           time: props.time[version],
           tag,
           hasProvenance: hasProvenance(versionData),
-        },
-        allVersions: [],
-        loading: false,
-        expanded: false,
+        } as VersionDisplay,
       }
     })
     .sort((a, b) => compareVersions(b.primaryVersion.version, a.primaryVersion.version))
-
-  tagRows.value = rows
 })
+
+// Client-side state for expansion and loaded versions
+const expandedTags = ref<Set<string>>(new Set())
+const tagVersions = ref<Map<string, VersionDisplay[]>>(new Map())
+const loadingTags = ref<Set<string>>(new Set())
+
+const otherVersionsExpanded = ref(false)
+const otherMajorGroups = ref<Array<{ major: number, versions: VersionDisplay[], expanded: boolean }>>([])
+const otherVersionsLoading = ref(false)
+
+// Cached full version list
+const allVersionsCache = ref<PackageVersionInfo[] | null>(null)
+const loadingVersions = ref(false)
+const hasLoadedAll = ref(false)
 
 // npm registry packument type (simplified)
 interface NpmPackument {
@@ -162,11 +141,12 @@ async function loadAllVersions(): Promise<PackageVersionInfo[]> {
       .map(version => ({
         version,
         time: data.time[version],
-        hasProvenance: false, // We don't have this info from the basic packument
+        hasProvenance: false,
       }))
       .sort((a, b) => compareVersions(b.version, a.version))
 
     allVersionsCache.value = versions
+    hasLoadedAll.value = true
     return versions
   }
   finally {
@@ -174,14 +154,14 @@ async function loadAllVersions(): Promise<PackageVersionInfo[]> {
   }
 }
 
-// Process loaded versions - populate tag rows and find unclaimed versions
+// Process loaded versions
 function processLoadedVersions(allVersions: PackageVersionInfo[]) {
   const distTags = props.distTags
 
   // For each tag, find versions in its channel (same major + same prerelease channel)
   const claimedVersions = new Set<string>()
 
-  for (const row of tagRows.value) {
+  for (const row of initialTagRows.value) {
     const tagVersion = distTags[row.tag]
     if (!tagVersion) continue
 
@@ -202,7 +182,7 @@ function processLoadedVersions(allVersions: PackageVersionInfo[]) {
         hasProvenance: v.hasProvenance,
       }))
 
-    row.allVersions = channelVersions
+    tagVersions.value.set(row.tag, channelVersions)
 
     for (const v of channelVersions) {
       claimedVersions.add(v.version)
@@ -239,22 +219,19 @@ function processLoadedVersions(allVersions: PackageVersionInfo[]) {
     versions: byMajor.get(major)!,
     expanded: false,
   }))
-
-  hasLoadedAll.value = true
 }
 
 // Expand a tag row
-async function expandTagRow(index: number) {
-  const row = tagRows.value[index]
-  if (!row) return
-
-  if (row.expanded) {
-    row.expanded = false
+async function expandTagRow(tag: string) {
+  if (expandedTags.value.has(tag)) {
+    expandedTags.value.delete(tag)
+    expandedTags.value = new Set(expandedTags.value)
     return
   }
 
   if (!hasLoadedAll.value) {
-    row.loading = true
+    loadingTags.value.add(tag)
+    loadingTags.value = new Set(loadingTags.value)
     try {
       const allVersions = await loadAllVersions()
       processLoadedVersions(allVersions)
@@ -263,11 +240,13 @@ async function expandTagRow(index: number) {
       console.error('Failed to load versions:', error)
     }
     finally {
-      row.loading = false
+      loadingTags.value.delete(tag)
+      loadingTags.value = new Set(loadingTags.value)
     }
   }
 
-  row.expanded = true
+  expandedTags.value.add(tag)
+  expandedTags.value = new Set(expandedTags.value)
 }
 
 // Expand "Other versions" section
@@ -278,12 +257,16 @@ async function expandOtherVersions() {
   }
 
   if (!hasLoadedAll.value) {
+    otherVersionsLoading.value = true
     try {
       const allVersions = await loadAllVersions()
       processLoadedVersions(allVersions)
     }
     catch (error) {
       console.error('Failed to load versions:', error)
+    }
+    finally {
+      otherVersionsLoading.value = false
     }
   }
 
@@ -298,6 +281,11 @@ function toggleMajorGroup(index: number) {
   }
 }
 
+// Get versions for a tag (from loaded data or empty)
+function getTagVersions(tag: string): VersionDisplay[] {
+  return tagVersions.value.get(tag) ?? []
+}
+
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -309,7 +297,7 @@ function formatDate(dateStr: string): string {
 
 <template>
   <section
-    v-if="tagRows.length > 0"
+    v-if="initialTagRows.length > 0"
     aria-labelledby="versions-heading"
   >
     <h2
@@ -322,27 +310,27 @@ function formatDate(dateStr: string): string {
     <div class="space-y-0.5">
       <!-- Dist-tag rows -->
       <div
-        v-for="(row, index) in tagRows"
+        v-for="row in initialTagRows"
         :key="row.id"
       >
         <div class="flex items-center gap-2">
           <!-- Expand button (only if there are more versions to show) -->
           <button
-            v-if="row.allVersions.length > 1 || !hasLoadedAll"
+            v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
             class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
-            :aria-expanded="row.expanded"
-            :aria-label="row.expanded ? `Collapse ${row.tag}` : `Expand ${row.tag}`"
-            @click="expandTagRow(index)"
+            :aria-expanded="expandedTags.has(row.tag)"
+            :aria-label="expandedTags.has(row.tag) ? `Collapse ${row.tag}` : `Expand ${row.tag}`"
+            @click="expandTagRow(row.tag)"
           >
             <span
-              v-if="row.loading"
+              v-if="loadingTags.has(row.tag)"
               class="i-carbon-rotate w-3 h-3 animate-spin"
             />
             <span
               v-else
               class="w-3 h-3 transition-transform duration-200"
-              :class="row.expanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
+              :class="expandedTags.has(row.tag) ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
             />
           </button>
           <span
@@ -383,11 +371,11 @@ function formatDate(dateStr: string): string {
 
         <!-- Expanded versions -->
         <div
-          v-if="row.expanded && row.allVersions.length > 1"
+          v-if="expandedTags.has(row.tag) && getTagVersions(row.tag).length > 1"
           class="ml-4 pl-2 border-l border-border space-y-0.5"
         >
           <div
-            v-for="v in row.allVersions.slice(1)"
+            v-for="v in getTagVersions(row.tag).slice(1)"
             :key="v.version"
             class="flex items-center justify-between py-1 text-sm gap-2"
           >
@@ -434,7 +422,7 @@ function formatDate(dateStr: string): string {
         >
           <span class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors">
             <span
-              v-if="loadingVersions && !hasLoadedAll"
+              v-if="otherVersionsLoading"
               class="i-carbon-rotate w-3 h-3 animate-spin"
             />
             <span

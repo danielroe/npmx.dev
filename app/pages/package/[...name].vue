@@ -45,16 +45,11 @@ const { data: pkg, status, error } = usePackage(packageName)
 const { data: downloads } = usePackageDownloads(packageName, 'last-week')
 
 // Fetch README for specific version if requested, otherwise latest
-const readmeUrl = computed(() => {
+const { data: readmeData } = useLazyFetch(() => {
   const base = `/api/registry/readme/${packageName.value}`
   const version = requestedVersion.value
   return version ? `${base}/v/${version}` : base
-})
-
-const { data: readmeData } = useLazyFetch(readmeUrl, {
-  key: () => `readme:${packageName.value}:${requestedVersion.value ?? 'latest'}`,
-  default: () => ({ html: '' }),
-})
+}, { default: () => ({ html: '' }) })
 
 // Get the version to display (requested or latest)
 const displayVersion = computed(() => {

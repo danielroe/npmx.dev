@@ -49,7 +49,6 @@ export default defineNuxtConfig({
   },
 
   experimental: {
-    extractAsyncDataHandlers: true,
     viewTransition: true,
     typedPages: true,
     defaults: {
