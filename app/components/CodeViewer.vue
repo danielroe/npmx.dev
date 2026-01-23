@@ -110,20 +110,25 @@ watch(
 
 .code-content :deep(code) {
   display: block;
+  padding: 0 1rem;
   background: transparent !important;
 }
 
 .code-content :deep(.line) {
   display: block;
-  padding: 0 1rem;
-  /* Ensure consistent line height matching line numbers */
-  line-height: 1.5rem;
-  min-height: 1.5rem;
+  /* Ensure consistent height matching line numbers */
+  line-height: 24px;
+  min-height: 24px;
+  max-height: 24px;
+  white-space: pre;
+  overflow: hidden;
   transition: background-color 0.1s;
 }
 
 /* Highlighted lines in code content */
 .code-content :deep(.line.highlighted) {
   background: rgb(234 179 8 / 0.2); /* yellow-500/20 */
+  margin: 0 -1rem;
+  padding: 0 1rem;
 }
 </style>
