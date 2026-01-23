@@ -8,6 +8,7 @@ defineProps<{
   headingLevel?: 'h2' | 'h3'
   /** Whether to show the publisher username */
   showPublisher?: boolean
+  prefetch?: boolean
 }>()
 
 function formatDate(dateStr: string): string {
@@ -23,6 +24,7 @@ function formatDate(dateStr: string): string {
   <article class="group card-interactive">
     <NuxtLink
       :to="`/package/${result.package.name}`"
+      :prefetch-on="prefetch ? 'visibility' : 'interaction'"
       class="block focus:outline-none decoration-none"
     >
       <header class="flex items-start justify-between gap-4 mb-2">

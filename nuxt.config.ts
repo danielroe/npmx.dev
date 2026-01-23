@@ -52,14 +52,6 @@ export default defineNuxtConfig({
     viteEnvironmentApi: true,
     viewTransition: true,
     typedPages: true,
-    defaults: {
-      nuxtLink: {
-        prefetchOn: {
-          interaction: true,
-          visibility: false,
-        },
-      },
-    },
   },
 
   compatibilityDate: '2024-04-03',
