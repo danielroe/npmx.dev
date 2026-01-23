@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
   ],
 
-  devtools: { enabled: !true },
+  devtools: { enabled: true },
 
   app: {
     head: {
