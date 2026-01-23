@@ -76,24 +76,6 @@ export function showOutro(message: string): void {
 }
 
 /**
- * Show authentication required error in a box
- */
-export function showAuthRequired(): void {
-  p.note(
-    [
-      pc.red('Not logged in to npm'),
-      '',
-      'Please run the following command to log in:',
-      '',
-      `  ${pc.cyan('npm login')}`,
-      '',
-      'Then restart the connector.',
-    ].join('\n'),
-    'Authentication required',
-  )
-}
-
-/**
  * Create a spinner for async operations
  */
 export function createSpinner() {

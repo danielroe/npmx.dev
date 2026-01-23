@@ -1,12 +1,30 @@
 #!/usr/bin/env node
+import { spawn } from 'node:child_process'
 import { defineCommand, runMain } from 'citty'
 import { listen } from 'listhen'
 import { toNodeListener } from 'h3'
 import { createConnectorApp, generateToken, CONNECTOR_VERSION } from './server.ts'
 import { getNpmUser } from './npm-client.ts'
-import { initLogger, showToken, logInfo, showAuthRequired } from './logger.ts'
+import { initLogger, showToken, logInfo, logWarning } from './logger.ts'
 
 const DEFAULT_PORT = 31415
+
+async function runNpmLogin(): Promise<boolean> {
+  return new Promise((resolve) => {
+    const child = spawn('npm', ['login'], {
+      stdio: 'inherit',
+      shell: true,
+    })
+
+    child.on('close', (code) => {
+      resolve(code === 0)
+    })
+
+    child.on('error', () => {
+      resolve(false)
+    })
+  })
+}
 
 const main = defineCommand({
   meta: {
@@ -28,11 +46,27 @@ const main = defineCommand({
 
     // Check npm authentication before starting
     logInfo('Checking npm authentication...')
-    const npmUser = await getNpmUser()
+    let npmUser = await getNpmUser()
 
     if (!npmUser) {
-      showAuthRequired()
-      process.exit(1)
+      logWarning('Not logged in to npm. Starting npm login...')
+      console.log() // Add spacing before npm login prompt
+
+      const loginSuccess = await runNpmLogin()
+
+      console.log() // Add spacing after npm login
+
+      if (!loginSuccess) {
+        logWarning('npm login failed or was cancelled.')
+        process.exit(1)
+      }
+
+      // Check again after login
+      npmUser = await getNpmUser()
+      if (!npmUser) {
+        logWarning('Still not authenticated after login attempt.')
+        process.exit(1)
+      }
     }
 
     logInfo(`Authenticated as: ${npmUser}`)
