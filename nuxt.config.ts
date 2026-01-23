@@ -74,6 +74,11 @@ export default defineNuxtConfig({
         '@shikijs/core',
       ],
     },
+    storage: {
+      cache: {
+        driver: 'vercel-runtime-cache',
+      },
+    },
   },
 
   eslint: {
