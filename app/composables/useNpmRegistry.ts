@@ -68,37 +68,37 @@ function encodePackageName(name: string): string {
   return encodeURIComponent(name)
 }
 
-/** Maximum number of versions to include in the client payload */
-const MAX_VERSIONS = 20
+/** Number of recent versions to include in initial payload */
+const RECENT_VERSIONS_COUNT = 5
 
 /**
  * Transform a full Packument into a slimmed version for client-side use.
  * Reduces payload size by:
  * - Removing readme (fetched separately)
- * - Limiting versions to recent MAX_VERSIONS
+ * - Including only: 5 most recent versions + one version per dist-tag
  * - Stripping unnecessary fields from version objects
  */
 function transformPackument(pkg: Packument): SlimPackument {
-  // Sort versions by publish time (newest first)
-  const sortedVersionKeys = Object.keys(pkg.versions)
-    .filter(v => pkg.time[v]) // Only versions with timestamps
+  // Get versions pointed to by dist-tags
+  const distTagVersions = new Set(Object.values(pkg['dist-tags'] ?? {}))
+
+  // Get 5 most recent versions by publish time
+  const recentVersions = Object.keys(pkg.versions)
+    .filter(v => pkg.time[v])
     .sort((a, b) => {
       const timeA = pkg.time[a]
       const timeB = pkg.time[b]
       if (!timeA || !timeB) return 0
       return new Date(timeB).getTime() - new Date(timeA).getTime()
     })
-    .slice(0, MAX_VERSIONS)
+    .slice(0, RECENT_VERSIONS_COUNT)
 
-  // Always include the latest dist-tag version even if not in top MAX_VERSIONS
-  const latestTag = pkg['dist-tags']?.latest
-  if (latestTag && !sortedVersionKeys.includes(latestTag)) {
-    sortedVersionKeys.push(latestTag)
-  }
+  // Combine: recent versions + dist-tag versions (deduplicated)
+  const includedVersions = new Set([...recentVersions, ...distTagVersions])
 
   // Build filtered versions object
   const filteredVersions: Record<string, PackumentVersion> = {}
-  for (const v of sortedVersionKeys) {
+  for (const v of includedVersions) {
     const version = pkg.versions[v]
     if (version) {
       // Strip readme and scripts from each version to reduce size
@@ -107,11 +107,11 @@ function transformPackument(pkg: Packument): SlimPackument {
     }
   }
 
-  // Build filtered time object (only for included versions)
+  // Build filtered time object (only for included versions + metadata)
   const filteredTime: Record<string, string> = {}
   if (pkg.time.modified) filteredTime.modified = pkg.time.modified
   if (pkg.time.created) filteredTime.created = pkg.time.created
-  for (const v of sortedVersionKeys) {
+  for (const v of includedVersions) {
     if (pkg.time[v]) filteredTime[v] = pkg.time[v]
   }
 
@@ -138,8 +138,7 @@ export function usePackage(name: MaybeRefOrGetter<string>) {
 
   return useLazyAsyncData(
     () => `package:${toValue(name)}`,
-    () => registry.fetchPackage(toValue(name)),
-    { transform: transformPackument },
+    () => registry.fetchPackage(toValue(name)).then(r => transformPackument(r)),
   )
 }
 

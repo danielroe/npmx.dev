@@ -44,8 +44,15 @@ const { data: pkg, status, error } = usePackage(packageName)
 
 const { data: downloads } = usePackageDownloads(packageName, 'last-week')
 
-const { data: readmeData } = useLazyFetch(() => `/api/registry/readme/${packageName.value}`, {
-  key: `readme:${packageName.value}`,
+// Fetch README for specific version if requested, otherwise latest
+const readmeUrl = computed(() => {
+  const base = `/api/registry/readme/${packageName.value}`
+  const version = requestedVersion.value
+  return version ? `${base}/v/${version}` : base
+})
+
+const { data: readmeData } = useLazyFetch(readmeUrl, {
+  key: () => `readme:${packageName.value}:${requestedVersion.value ?? 'latest'}`,
   default: () => ({ html: '' }),
 })
 
@@ -69,18 +76,6 @@ const latestVersion = computed(() => {
   const latestTag = pkg.value['dist-tags']?.latest
   if (!latestTag) return null
   return pkg.value.versions[latestTag] ?? null
-})
-
-const sortedVersions = computed(() => {
-  if (!pkg.value?.versions) return []
-  return Object.keys(pkg.value.versions)
-    .sort((a, b) => {
-      const timeA = pkg.value?.time[a]
-      const timeB = pkg.value?.time[b]
-      if (!timeA || !timeB) return 0
-      return new Date(timeB).getTime() - new Date(timeA).getTime()
-    })
-    .slice(0, 20)
 })
 
 const hasDependencies = computed(() => {
@@ -636,51 +631,14 @@ defineOgImageComponent('Package', {
             </dl>
           </section>
 
-          <!-- Versions -->
-          <section
-            v-if="sortedVersions.length"
-            aria-labelledby="versions-heading"
-          >
-            <h2
-              id="versions-heading"
-              class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
-            >
-              Versions
-            </h2>
-            <div class="space-y-1">
-              <div
-                v-for="version in sortedVersions.slice(0, 10)"
-                :key="version"
-                class="flex items-center justify-between py-1.5 text-sm gap-2"
-              >
-                <NuxtLink
-                  :to="`/package/${pkg.name}/v/${version}`"
-                  class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 min-w-0"
-                >
-                  {{ version }}
-                  <span
-                    v-if="pkg['dist-tags']?.latest === version"
-                    class="ml-1 text-xs text-fg-subtle"
-                  >(latest)</span>
-                </NuxtLink>
-                <div class="flex items-center gap-2 shrink-0">
-                  <time
-                    v-if="pkg.time[version]"
-                    :datetime="pkg.time[version]"
-                    class="text-xs text-fg-subtle"
-                  >
-                    {{ formatDate(pkg.time[version]) }}
-                  </time>
-                  <ProvenanceBadge
-                    v-if="pkg.versions[version] && hasProvenance(pkg.versions[version])"
-                    :package-name="pkg.name"
-                    :version="version"
-                    compact
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
+          <!-- Versions (grouped by release channel) -->
+          <PackageVersions
+            v-if="pkg.versions && Object.keys(pkg.versions).length > 0"
+            :package-name="pkg.name"
+            :versions="pkg.versions"
+            :dist-tags="pkg['dist-tags'] ?? {}"
+            :time="pkg.time"
+          />
 
           <!-- Dependencies -->
           <PackageDependencies

@@ -13,8 +13,8 @@ export type { Packument, PackumentVersion, Manifest, ManifestVersion, PackageJSO
  * Slimmed down Packument for client-side use.
  * Strips unnecessary fields to reduce payload size.
  * - readme removed (fetched separately)
- * - versions limited to recent 20
- * - time limited to recent 20 versions
+ * - versions limited to dist-tag versions only
+ * - time limited to dist-tag versions
  */
 export interface SlimPackument {
   '_id': string
@@ -22,7 +22,7 @@ export interface SlimPackument {
   'name': string
   'description'?: string
   'dist-tags': { latest?: string } & Record<string, string>
-  /** Only includes time for recent versions + modified/created */
+  /** Only includes time for dist-tag versions + modified/created */
   'time': { modified?: string, created?: string } & Record<string, string>
   'maintainers'?: NpmPerson[]
   'author'?: NpmPerson
@@ -31,8 +31,17 @@ export interface SlimPackument {
   'keywords'?: string[]
   'repository'?: { type?: string, url?: string, directory?: string }
   'bugs'?: { url?: string, email?: string }
-  /** Only includes recent 20 versions */
+  /** Only includes dist-tag versions */
   'versions': Record<string, import('@npm/types').PackumentVersion>
+}
+
+/**
+ * Lightweight version info for the version list
+ */
+export interface PackageVersionInfo {
+  version: string
+  time?: string
+  hasProvenance: boolean
 }
 
 /**
