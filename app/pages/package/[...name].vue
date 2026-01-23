@@ -600,6 +600,42 @@ defineOgImageComponent('Package', {
             </ul>
           </section>
 
+          <section
+            v-if="displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)"
+            aria-labelledby="compatibility-heading"
+          >
+            <h2
+              id="compatibility-heading"
+              class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
+            >
+              Compatibility
+            </h2>
+            <dl class="space-y-2">
+              <div
+                v-if="displayVersion.engines.node"
+                class="flex items-center justify-between py-1"
+              >
+                <dt class="text-fg-muted text-sm">
+                  node
+                </dt>
+                <dd class="font-mono text-sm text-fg">
+                  {{ displayVersion.engines.node }}
+                </dd>
+              </div>
+              <div
+                v-if="displayVersion.engines.npm"
+                class="flex items-center justify-between py-1"
+              >
+                <dt class="text-fg-muted text-sm">
+                  npm
+                </dt>
+                <dd class="font-mono text-sm text-fg">
+                  {{ displayVersion.engines.npm }}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
           <!-- Versions -->
           <section
             v-if="sortedVersions.length"
