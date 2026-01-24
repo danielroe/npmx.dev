@@ -48,7 +48,7 @@
     "@iconify-json/carbon": "^1.2.18",
     "@iconify-json/solar": "^1.2.5",
     "@npm/types": "^2.1.0",
-    "@nuxt/test-utils": "3.23.0",
+    "@nuxt/test-utils": "https://pkg.pr.new/@nuxt/test-utils@1499a48",
     "@playwright/test": "1.57.0",
     "@types/sanitize-html": "^2.16.0",
     "@types/semver": "^7.7.1",
