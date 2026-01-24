@@ -16,6 +16,9 @@ const props = defineProps<{
   time: Record<string, string>
 }>()
 
+/** Maximum number of dist-tag rows to show before collapsing into "Other versions" */
+const MAX_VISIBLE_TAGS = 10
+
 /** A version with its metadata */
 interface VersionDisplay {
   version: string
@@ -42,9 +45,9 @@ function versionRoute(version: string): RouteLocationRaw {
 // Version to tags lookup (supports multiple tags per version)
 const versionToTags = computed(() => buildVersionToTagsMap(props.distTags))
 
-// Initial tag rows derived from props (SSR-safe)
+// All tag rows derived from props (SSR-safe)
 // Deduplicates so each version appears only once, with all its tags
-const initialTagRows = computed(() => {
+const allTagRows = computed(() => {
   // Group tags by version with their metadata
   const versionMap = new Map<
     string,
@@ -86,6 +89,12 @@ const initialTagRows = computed(() => {
     }))
     .sort((a, b) => compareVersions(b.primaryVersion.version, a.primaryVersion.version))
 })
+
+// Visible tag rows (limited to MAX_VISIBLE_TAGS)
+const visibleTagRows = computed(() => allTagRows.value.slice(0, MAX_VISIBLE_TAGS))
+
+// Hidden tag rows (overflow beyond MAX_VISIBLE_TAGS) - shown in "Other versions"
+const hiddenTagRows = computed(() => allTagRows.value.slice(MAX_VISIBLE_TAGS))
 
 // Client-side state for expansion and loaded versions
 const expandedTags = ref<Set<string>>(new Set())
@@ -159,7 +168,7 @@ function processLoadedVersions(allVersions: PackageVersionInfo[]) {
   // For each tag, find versions in its channel (same major + same prerelease channel)
   const claimedVersions = new Set<string>()
 
-  for (const row of initialTagRows.value) {
+  for (const row of allTagRows.value) {
     const tagVersion = distTags[row.tag]
     if (!tagVersion) continue
 
@@ -292,14 +301,14 @@ function formatDate(dateStr: string): string {
 </script>
 
 <template>
-  <section v-if="initialTagRows.length > 0" aria-labelledby="versions-heading">
+  <section v-if="allTagRows.length > 0" aria-labelledby="versions-heading" class="overflow-hidden">
     <h2 id="versions-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
       Versions
     </h2>
 
-    <div class="space-y-0.5">
-      <!-- Dist-tag rows -->
-      <div v-for="row in initialTagRows" :key="row.id">
+    <div class="space-y-0.5 min-w-0">
+      <!-- Dist-tag rows (limited to MAX_VISIBLE_TAGS) -->
+      <div v-for="row in visibleTagRows" :key="row.id">
         <div class="flex items-center gap-2">
           <!-- Expand button (only if there are more versions to show) -->
           <button
@@ -327,6 +336,7 @@ function formatDate(dateStr: string): string {
               <NuxtLink
                 :to="versionRoute(row.primaryVersion.version)"
                 class="font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 truncate"
+                :title="row.primaryVersion.version"
               >
                 {{ row.primaryVersion.version }}
               </NuxtLink>
@@ -346,11 +356,12 @@ function formatDate(dateStr: string): string {
                 />
               </div>
             </div>
-            <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5">
+            <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5 flex-wrap">
               <span
                 v-for="tag in row.tags"
                 :key="tag"
-                class="text-[9px] font-semibold text-fg-subtle uppercase tracking-wide"
+                class="text-[9px] font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[150px]"
+                :title="tag"
               >
                 {{ tag }}
               </span>
@@ -368,6 +379,7 @@ function formatDate(dateStr: string): string {
               <NuxtLink
                 :to="versionRoute(v.version)"
                 class="font-mono text-xs text-fg-subtle hover:text-fg-muted transition-colors duration-200 truncate"
+                :title="v.version"
               >
                 {{ v.version }}
               </NuxtLink>
@@ -390,7 +402,8 @@ function formatDate(dateStr: string): string {
               <span
                 v-for="tag in filterExcludedTags(v.tags, row.tags)"
                 :key="tag"
-                class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide"
+                class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[120px]"
+                :title="tag"
               >
                 {{ tag }}
               </span>
@@ -417,11 +430,49 @@ function formatDate(dateStr: string): string {
               :class="otherVersionsExpanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
             />
           </span>
-          <span class="text-xs text-fg-muted py-1.5"> Other versions </span>
+          <span class="text-xs text-fg-muted py-1.5">
+            Other versions
+            <span v-if="hiddenTagRows.length > 0" class="text-fg-subtle">
+              ({{ hiddenTagRows.length }} more tagged)
+            </span>
+          </span>
         </button>
 
         <!-- Expanded other versions -->
         <div v-if="otherVersionsExpanded" class="ml-4 pl-2 border-l border-border space-y-0.5">
+          <!-- Hidden tag rows (overflow from visible tags) -->
+          <div v-for="row in hiddenTagRows" :key="row.id" class="py-1">
+            <div class="flex items-center justify-between gap-2">
+              <NuxtLink
+                :to="versionRoute(row.primaryVersion.version)"
+                class="font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 truncate"
+                :title="row.primaryVersion.version"
+              >
+                {{ row.primaryVersion.version }}
+              </NuxtLink>
+              <div class="flex items-center gap-2 shrink-0">
+                <time
+                  v-if="row.primaryVersion.time"
+                  :datetime="row.primaryVersion.time"
+                  class="text-[10px] text-fg-subtle"
+                >
+                  {{ formatDate(row.primaryVersion.time) }}
+                </time>
+              </div>
+            </div>
+            <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5 flex-wrap">
+              <span
+                v-for="tag in row.tags"
+                :key="tag"
+                class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[120px]"
+                :title="tag"
+              >
+                {{ tag }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Major version groups (untagged versions) -->
           <template v-if="otherMajorGroups.length > 0">
             <div v-for="(group, groupIndex) in otherMajorGroups" :key="group.major">
               <!-- Major group header -->
@@ -430,6 +481,7 @@ function formatDate(dateStr: string): string {
                 type="button"
                 class="w-full text-left py-1"
                 :aria-expanded="group.expanded"
+                :title="group.versions[0]?.version"
                 @click="toggleMajorGroup(groupIndex)"
               >
                 <div class="flex items-center gap-2">
@@ -437,15 +489,19 @@ function formatDate(dateStr: string): string {
                     class="w-3 h-3 transition-transform duration-200 text-fg-subtle"
                     :class="group.expanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
                   />
-                  <span class="font-mono text-xs text-fg-muted">
+                  <span class="font-mono text-xs text-fg-muted truncate">
                     {{ group.versions[0]?.version }}
                   </span>
                 </div>
-                <div v-if="group.versions[0]?.tags?.length" class="flex items-center gap-1 ml-5">
+                <div
+                  v-if="group.versions[0]?.tags?.length"
+                  class="flex items-center gap-1 ml-5 flex-wrap"
+                >
                   <span
                     v-for="tag in group.versions[0].tags"
                     :key="tag"
-                    class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide"
+                    class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[120px]"
+                    :title="tag"
                   >
                     {{ tag }}
                   </span>
@@ -458,7 +514,8 @@ function formatDate(dateStr: string): string {
                   <NuxtLink
                     v-if="group.versions[0]"
                     :to="versionRoute(group.versions[0].version)"
-                    class="font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200"
+                    class="font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 truncate"
+                    :title="group.versions[0].version"
                   >
                     {{ group.versions[0].version }}
                   </NuxtLink>
@@ -481,6 +538,7 @@ function formatDate(dateStr: string): string {
                     <NuxtLink
                       :to="versionRoute(v.version)"
                       class="font-mono text-xs text-fg-subtle hover:text-fg-muted transition-colors duration-200 truncate"
+                      :title="v.version"
                     >
                       {{ v.version }}
                     </NuxtLink>
@@ -509,7 +567,10 @@ function formatDate(dateStr: string): string {
               </div>
             </div>
           </template>
-          <div v-else-if="hasLoadedAll" class="py-1 text-xs text-fg-subtle">
+          <div
+            v-else-if="hasLoadedAll && hiddenTagRows.length === 0"
+            class="py-1 text-xs text-fg-subtle"
+          >
             All versions are covered by tags above
           </div>
         </div>

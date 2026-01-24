@@ -34,8 +34,12 @@ function formatDate(dateStr: string): string {
         >
           {{ result.package.name }}
         </component>
-        <div class="flex items-center gap-1.5 shrink-0">
-          <span v-if="result.package.version" class="font-mono text-xs text-fg-subtle">
+        <div class="flex items-center gap-1.5 shrink-0 max-w-32">
+          <span
+            v-if="result.package.version"
+            class="font-mono text-xs text-fg-subtle truncate"
+            :title="result.package.version"
+          >
             v{{ result.package.version }}
           </span>
           <ProvenanceBadge

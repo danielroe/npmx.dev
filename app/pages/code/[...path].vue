@@ -301,19 +301,21 @@ useSeoMeta({
     <header class="border-b border-border bg-bg sticky top-0 z-10">
       <div class="container py-4">
         <!-- Package info and navigation -->
-        <div class="flex items-center gap-2 mb-3 flex-wrap">
+        <div class="flex items-center gap-2 mb-3 flex-wrap min-w-0">
           <NuxtLink
             :to="packageRoute(version)"
-            class="font-mono text-lg font-medium hover:text-fg transition-colors"
+            class="font-mono text-lg font-medium hover:text-fg transition-colors min-w-0 truncate max-w-[60vw] sm:max-w-none"
+            :title="packageName"
           >
             <span v-if="orgName" class="text-fg-muted">@{{ orgName }}/</span
             >{{ orgName ? packageName.replace(`@${orgName}/`, '') : packageName }}
           </NuxtLink>
           <!-- Version selector -->
-          <div v-if="version && availableVersions.length > 0" class="relative">
+          <div v-if="version && availableVersions.length > 0" class="relative shrink-0">
             <select
               :value="version"
-              class="appearance-none pl-2 pr-6 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded cursor-pointer hover:border-border-hover transition-colors"
+              :title="`v${version}`"
+              class="appearance-none pl-2 pr-6 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded cursor-pointer hover:border-border-hover transition-colors max-w-32 sm:max-w-48 truncate"
               @change="switchVersion(($event.target as HTMLSelectElement).value)"
             >
               <option v-for="v in availableVersions" :key="v.version" :value="v.version">
@@ -326,12 +328,13 @@ useSeoMeta({
           </div>
           <span
             v-else-if="version"
-            class="px-2 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded"
+            class="px-2 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded truncate max-w-32 sm:max-w-48"
+            :title="`v${version}`"
           >
             v{{ version }}
           </span>
-          <span class="text-fg-subtle">/</span>
-          <span class="font-mono text-sm text-fg-muted">code</span>
+          <span class="text-fg-subtle shrink-0">/</span>
+          <span class="font-mono text-sm text-fg-muted shrink-0">code</span>
         </div>
 
         <!-- Breadcrumb navigation -->

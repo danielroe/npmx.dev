@@ -32,17 +32,6 @@ const sortedPeerDependencies = computed(() => {
       return a.name.localeCompare(b.name)
     })
 })
-
-// Check if a version string is "long" (multiple alternatives)
-function isLongVersion(version: string): boolean {
-  return version.length > 20 || version.includes('||')
-}
-
-// Truncate long version strings for display
-function truncateVersion(version: string, maxLength = 20): string {
-  if (version.length <= maxLength) return version
-  return `${version.slice(0, maxLength)}…`
-}
 </script>
 
 <template>
@@ -77,11 +66,10 @@ function truncateVersion(version: string, maxLength = 20): string {
             {{ dep }}
           </NuxtLink>
           <span
-            class="font-mono text-xs text-fg-subtle max-w-[50%] text-right"
-            :class="isLongVersion(version) ? 'truncate' : 'shrink-0'"
-            :title="isLongVersion(version) ? version : undefined"
+            class="font-mono text-xs text-fg-subtle max-w-[50%] text-right truncate"
+            :title="version"
           >
-            {{ isLongVersion(version) ? truncateVersion(version) : version }}
+            {{ version }}
           </span>
         </li>
       </ul>
@@ -125,11 +113,10 @@ function truncateVersion(version: string, maxLength = 20): string {
             </span>
           </div>
           <span
-            class="font-mono text-xs text-fg-subtle max-w-[40%] text-right"
-            :class="isLongVersion(peer.version) ? 'truncate' : 'shrink-0'"
-            :title="isLongVersion(peer.version) ? peer.version : undefined"
+            class="font-mono text-xs text-fg-subtle max-w-[40%] text-right truncate"
+            :title="peer.version"
           >
-            {{ isLongVersion(peer.version) ? truncateVersion(peer.version) : peer.version }}
+            {{ peer.version }}
           </span>
         </li>
       </ul>

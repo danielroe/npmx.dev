@@ -249,16 +249,19 @@ defineOgImageComponent('Package', {
 </script>
 
 <template>
-  <main class="container py-8 sm:py-12">
+  <main class="container py-8 sm:py-12 overflow-hidden">
     <PackageSkeleton v-if="status === 'pending'" />
 
-    <article v-else-if="status === 'success' && pkg" class="animate-fade-in">
+    <article v-else-if="status === 'success' && pkg" class="animate-fade-in min-w-0">
       <!-- Package header -->
       <header class="mb-8 pb-8 border-b border-border">
         <div class="mb-4">
           <!-- Package name and version -->
-          <div class="flex items-center gap-3 mb-2 flex-wrap">
-            <h1 class="font-mono text-2xl sm:text-3xl font-medium">
+          <div class="flex items-start gap-3 mb-2 flex-wrap min-w-0">
+            <h1
+              class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+              :title="pkg.name"
+            >
               <NuxtLink
                 v-if="orgName"
                 :to="{ name: 'org', params: { org: orgName } }"
@@ -276,27 +279,27 @@ defineOgImageComponent('Package', {
               "
               :target="hasProvenance(displayVersion) ? '_blank' : undefined"
               :rel="hasProvenance(displayVersion) ? 'noopener noreferrer' : undefined"
-              class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 font-mono text-sm bg-bg-muted border border-border rounded-md transition-colors duration-200"
+              class="inline-flex items-center gap-1.5 px-3 py-1 font-mono text-sm bg-bg-muted border border-border rounded-md transition-colors duration-200 max-w-full shrink-0"
               :class="
                 hasProvenance(displayVersion)
                   ? 'hover:border-border-hover cursor-pointer'
                   : 'cursor-default'
               "
-              :title="hasProvenance(displayVersion) ? 'Verified provenance' : undefined"
+              :title="`v${displayVersion.version}`"
             >
-              v{{ displayVersion.version }}
+              <span class="truncate max-w-32 sm:max-w-48"> v{{ displayVersion.version }} </span>
               <span
                 v-if="
                   requestedVersion &&
                   latestVersion &&
                   displayVersion.version !== latestVersion.version
                 "
-                class="text-fg-subtle"
+                class="text-fg-subtle shrink-0"
                 >(not latest)</span
               >
               <span
                 v-if="hasProvenance(displayVersion)"
-                class="i-solar-shield-check-outline w-4 h-4 text-fg-muted"
+                class="i-solar-shield-check-outline w-4 h-4 text-fg-muted shrink-0"
                 aria-label="Verified provenance"
               />
             </a>
@@ -562,7 +565,7 @@ defineOgImageComponent('Package', {
         </div>
 
         <!-- Sidebar -->
-        <aside class="order-1 lg:order-2 space-y-8">
+        <aside class="order-1 lg:order-2 space-y-8 min-w-0 overflow-hidden">
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
@@ -603,16 +606,19 @@ defineOgImageComponent('Package', {
             <dl class="space-y-2">
               <div
                 v-if="displayVersion.engines.node"
-                class="flex items-center justify-between py-1"
+                class="flex items-center justify-between gap-4 py-1"
               >
-                <dt class="text-fg-muted text-sm">node</dt>
-                <dd class="font-mono text-sm text-fg">
+                <dt class="text-fg-muted text-sm shrink-0">node</dt>
+                <dd class="font-mono text-sm text-fg truncate" :title="displayVersion.engines.node">
                   {{ displayVersion.engines.node }}
                 </dd>
               </div>
-              <div v-if="displayVersion.engines.npm" class="flex items-center justify-between py-1">
-                <dt class="text-fg-muted text-sm">npm</dt>
-                <dd class="font-mono text-sm text-fg">
+              <div
+                v-if="displayVersion.engines.npm"
+                class="flex items-center justify-between gap-4 py-1"
+              >
+                <dt class="text-fg-muted text-sm shrink-0">npm</dt>
+                <dd class="font-mono text-sm text-fg truncate" :title="displayVersion.engines.npm">
                   {{ displayVersion.engines.npm }}
                 </dd>
               </div>
