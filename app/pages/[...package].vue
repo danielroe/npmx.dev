@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 import type { PackumentVersion, NpmVersionDist } from '#shared/types'
+import type { JsrPackageInfo } from '#shared/types/jsr'
 
 definePageMeta({
   name: 'package',
@@ -58,6 +59,13 @@ const { data: readmeData } = useLazyFetch<{ html: string }>(
   },
   { default: () => ({ html: '' }) },
 )
+
+// Check if package exists on JSR (only for scoped packages)
+const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${packageName.value}`, {
+  default: () => ({ exists: false }),
+  // Only fetch for scoped packages (JSR requirement)
+  immediate: computed(() => packageName.value.startsWith('@')).value,
+})
 
 // Get the version to display (requested or latest)
 const displayVersion = computed(() => {
@@ -413,6 +421,18 @@ defineOgImageComponent('Package', {
               >
                 <span class="i-carbon-cube w-4 h-4" />
                 npm
+              </a>
+            </li>
+            <li v-if="jsrInfo?.exists && jsrInfo.url">
+              <a
+                :href="jsrInfo.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                title="Also available on JSR"
+              >
+                <span class="i-simple-icons-jsr w-4 h-4" />
+                jsr
               </a>
             </li>
             <li>
