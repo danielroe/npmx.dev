@@ -1,0 +1,148 @@
+/**
+ * Utilities for handling npm package versions and dist-tags
+ */
+
+/** Parsed semver version components */
+export interface ParsedVersion {
+  major: number
+  minor: number
+  patch: number
+  prerelease: string
+}
+
+/**
+ * Parse a semver version string into its components
+ * @param version - The version string (e.g., "1.2.3" or "1.0.0-beta.1")
+ * @returns Parsed version object with major, minor, patch, and prerelease
+ */
+export function parseVersion(version: string): ParsedVersion {
+  const match = version.match(/^(\d+)\.(\d+)\.(\d+)(?:-(.+))?/)
+  if (!match) return { major: 0, minor: 0, patch: 0, prerelease: '' }
+  return {
+    major: Number(match[1]),
+    minor: Number(match[2]),
+    patch: Number(match[3]),
+    prerelease: match[4] ?? '',
+  }
+}
+
+/**
+ * Compare two semver versions for sorting
+ * Returns positive if a > b, negative if a < b, 0 if equal
+ * @param a - First version string
+ * @param b - Second version string
+ * @returns Comparison result for sorting
+ */
+export function compareVersions(a: string, b: string): number {
+  const va = parseVersion(a)
+  const vb = parseVersion(b)
+
+  if (va.major !== vb.major) return va.major - vb.major
+  if (va.minor !== vb.minor) return va.minor - vb.minor
+  if (va.patch !== vb.patch) return va.patch - vb.patch
+
+  // Stable versions (no prerelease) are greater than prereleases
+  if (va.prerelease && vb.prerelease) return va.prerelease.localeCompare(vb.prerelease)
+  if (va.prerelease) return -1
+  if (vb.prerelease) return 1
+
+  return 0
+}
+
+/**
+ * Extract the prerelease channel from a version string
+ * @param version - The version string (e.g., "1.0.0-beta.1")
+ * @returns The channel name (e.g., "beta") or empty string for stable versions
+ */
+export function getPrereleaseChannel(version: string): string {
+  const parsed = parseVersion(version)
+  if (!parsed.prerelease) return ''
+  const match = parsed.prerelease.match(/^([a-z]+)/i)
+  return match ? match[1]!.toLowerCase() : ''
+}
+
+/**
+ * Sort tags with 'latest' first, then alphabetically
+ * @param tags - Array of tag names
+ * @returns New sorted array
+ */
+export function sortTags(tags: string[]): string[] {
+  return [...tags].sort((a, b) => {
+    if (a === 'latest') return -1
+    if (b === 'latest') return 1
+    return a.localeCompare(b)
+  })
+}
+
+/**
+ * Build a map from version strings to their associated dist-tags
+ * Handles the case where multiple tags point to the same version
+ * @param distTags - Object mapping tag names to version strings
+ * @returns Map from version to sorted array of tags
+ */
+export function buildVersionToTagsMap(distTags: Record<string, string>): Map<string, string[]> {
+  const map = new Map<string, string[]>()
+
+  for (const [tag, version] of Object.entries(distTags)) {
+    const existing = map.get(version)
+    if (existing) {
+      existing.push(tag)
+    } else {
+      map.set(version, [tag])
+    }
+  }
+
+  // Sort tags within each version
+  for (const tags of map.values()) {
+    tags.sort((a, b) => {
+      if (a === 'latest') return -1
+      if (b === 'latest') return 1
+      return a.localeCompare(b)
+    })
+  }
+
+  return map
+}
+
+/** A tagged version row for display */
+export interface TaggedVersionRow {
+  /** Unique identifier for the row */
+  id: string
+  /** Primary tag (first in sorted order, used for expand/collapse) */
+  primaryTag: string
+  /** All tags for this version */
+  tags: string[]
+  /** The version string */
+  version: string
+}
+
+/**
+ * Build deduplicated rows for tagged versions
+ * Each unique version appears once with all its tags
+ * @param distTags - Object mapping tag names to version strings
+ * @returns Array of rows sorted by version (descending)
+ */
+export function buildTaggedVersionRows(distTags: Record<string, string>): TaggedVersionRow[] {
+  const versionToTags = buildVersionToTagsMap(distTags)
+
+  return Array.from(versionToTags.entries())
+    .map(([version, tags]) => ({
+      id: `version:${version}`,
+      primaryTag: tags[0]!,
+      tags,
+      version,
+    }))
+    .sort((a, b) => compareVersions(b.version, a.version))
+}
+
+/**
+ * Filter tags to exclude those already shown in a parent context
+ * Useful when showing nested versions that shouldn't repeat parent tags
+ * @param tags - Tags to filter
+ * @param excludeTags - Tags to exclude
+ * @returns Filtered array of tags
+ */
+export function filterExcludedTags(tags: string[], excludeTags: string[]): string[] {
+  const excludeSet = new Set(excludeTags)
+  return tags.filter(tag => !excludeSet.has(tag))
+}

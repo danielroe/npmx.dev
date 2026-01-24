@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { PackumentVersion, PackageVersionInfo } from '#shared/types'
 import type { RouteLocationRaw } from 'vue-router'
+import {
+  buildVersionToTagsMap,
+  compareVersions,
+  filterExcludedTags,
+  getPrereleaseChannel,
+  parseVersion,
+} from '~/utils/versions'
 
 const props = defineProps<{
   packageName: string
@@ -13,7 +20,7 @@ const props = defineProps<{
 interface VersionDisplay {
   version: string
   time?: string
-  tag?: string
+  tags?: string[]
   hasProvenance: boolean
 }
 
@@ -24,39 +31,6 @@ function hasProvenance(version: PackumentVersion | undefined): boolean {
   return !!dist.attestations
 }
 
-// Parse semver
-function parseVersion(version: string): {
-  major: number
-  minor: number
-  patch: number
-  prerelease: string
-} {
-  const match = version.match(/^(\d+)\.(\d+)\.(\d+)(?:-(.+))?/)
-  if (!match) return { major: 0, minor: 0, patch: 0, prerelease: '' }
-  return {
-    major: Number(match[1]),
-    minor: Number(match[2]),
-    patch: Number(match[3]),
-    prerelease: match[4] ?? '',
-  }
-}
-
-// Compare versions (descending - higher version = smaller result for sort)
-function compareVersions(a: string, b: string): number {
-  const va = parseVersion(a)
-  const vb = parseVersion(b)
-
-  if (va.major !== vb.major) return va.major - vb.major
-  if (va.minor !== vb.minor) return va.minor - vb.minor
-  if (va.patch !== vb.patch) return va.patch - vb.patch
-
-  if (va.prerelease && vb.prerelease) return va.prerelease.localeCompare(vb.prerelease)
-  if (va.prerelease) return -1
-  if (vb.prerelease) return 1
-
-  return 0
-}
-
 // Build route object for package version link
 function versionRoute(version: string): RouteLocationRaw {
   return {
@@ -65,42 +39,51 @@ function versionRoute(version: string): RouteLocationRaw {
   }
 }
 
-// Get prerelease channel or empty string for stable
-function getPrereleaseChannel(version: string): string {
-  const parsed = parseVersion(version)
-  if (!parsed.prerelease) return ''
-  const match = parsed.prerelease.match(/^([a-z]+)/i)
-  return match ? match[1]!.toLowerCase() : ''
-}
-
-// Version to tag lookup
-const versionToTag = computed(() => {
-  const map = new Map<string, string>()
-  for (const [tag, version] of Object.entries(props.distTags)) {
-    const existing = map.get(version)
-    if (!existing || tag === 'latest' || (tag.length < existing.length && existing !== 'latest')) {
-      map.set(version, tag)
-    }
-  }
-  return map
-})
+// Version to tags lookup (supports multiple tags per version)
+const versionToTags = computed(() => buildVersionToTagsMap(props.distTags))
 
 // Initial tag rows derived from props (SSR-safe)
+// Deduplicates so each version appears only once, with all its tags
 const initialTagRows = computed(() => {
-  return Object.entries(props.distTags)
-    .map(([tag, version]) => {
-      const versionData = props.versions[version]
-      return {
-        id: `tag:${tag}`,
-        tag,
-        primaryVersion: {
-          version,
-          time: props.time[version],
-          tag,
-          hasProvenance: hasProvenance(versionData),
-        } as VersionDisplay,
-      }
+  // Group tags by version with their metadata
+  const versionMap = new Map<
+    string,
+    { tags: string[]; versionData: PackumentVersion | undefined }
+  >()
+  for (const [tag, version] of Object.entries(props.distTags)) {
+    const existing = versionMap.get(version)
+    if (existing) {
+      existing.tags.push(tag)
+    } else {
+      versionMap.set(version, {
+        tags: [tag],
+        versionData: props.versions[version],
+      })
+    }
+  }
+
+  // Sort tags within each version: 'latest' first, then alphabetically
+  for (const entry of versionMap.values()) {
+    entry.tags.sort((a, b) => {
+      if (a === 'latest') return -1
+      if (b === 'latest') return 1
+      return a.localeCompare(b)
     })
+  }
+
+  // Convert to rows, using the first (most important) tag as the primary
+  return Array.from(versionMap.entries())
+    .map(([version, { tags, versionData }]) => ({
+      id: `version:${version}`,
+      tag: tags[0]!, // Primary tag for expand/collapse logic
+      tags, // All tags for this version
+      primaryVersion: {
+        version,
+        time: props.time[version],
+        tags,
+        hasProvenance: hasProvenance(versionData),
+      } as VersionDisplay,
+    }))
     .sort((a, b) => compareVersions(b.primaryVersion.version, a.primaryVersion.version))
 })
 
@@ -193,7 +176,7 @@ function processLoadedVersions(allVersions: PackageVersionInfo[]) {
       .map(v => ({
         version: v.version,
         time: v.time,
-        tag: versionToTag.value.get(v.version),
+        tags: versionToTags.value.get(v.version),
         hasProvenance: v.hasProvenance,
       }))
 
@@ -217,7 +200,7 @@ function processLoadedVersions(allVersions: PackageVersionInfo[]) {
     byMajor.get(major)!.push({
       version: v.version,
       time: v.time,
-      tag: versionToTag.value.get(v.version),
+      tags: versionToTags.value.get(v.version),
       hasProvenance: v.hasProvenance,
     })
   }
@@ -339,34 +322,38 @@ function formatDate(dateStr: string): string {
           <span v-else class="w-4" />
 
           <!-- Version info -->
-          <div class="flex-1 flex items-center justify-between py-1.5 text-sm gap-2 min-w-0">
-            <div class="flex items-center gap-2 min-w-0">
+          <div class="flex-1 py-1.5 min-w-0">
+            <div class="flex items-center justify-between gap-2">
               <NuxtLink
                 :to="versionRoute(row.primaryVersion.version)"
-                class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate"
+                class="font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 truncate"
               >
                 {{ row.primaryVersion.version }}
               </NuxtLink>
-              <span
-                class="px-1.5 py-0.5 text-[10px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
-              >
-                {{ row.tag }}
-              </span>
+              <div class="flex items-center gap-2 shrink-0">
+                <time
+                  v-if="row.primaryVersion.time"
+                  :datetime="row.primaryVersion.time"
+                  class="text-xs text-fg-subtle"
+                >
+                  {{ formatDate(row.primaryVersion.time) }}
+                </time>
+                <ProvenanceBadge
+                  v-if="row.primaryVersion.hasProvenance"
+                  :package-name="packageName"
+                  :version="row.primaryVersion.version"
+                  compact
+                />
+              </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <time
-                v-if="row.primaryVersion.time"
-                :datetime="row.primaryVersion.time"
-                class="text-xs text-fg-subtle"
+            <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5">
+              <span
+                v-for="tag in row.tags"
+                :key="tag"
+                class="text-[9px] font-semibold text-fg-subtle uppercase tracking-wide"
               >
-                {{ formatDate(row.primaryVersion.time) }}
-              </time>
-              <ProvenanceBadge
-                v-if="row.primaryVersion.hasProvenance"
-                :package-name="packageName"
-                :version="row.primaryVersion.version"
-                compact
-              />
+                {{ tag }}
+              </span>
             </div>
           </div>
         </div>
@@ -376,35 +363,37 @@ function formatDate(dateStr: string): string {
           v-if="expandedTags.has(row.tag) && getTagVersions(row.tag).length > 1"
           class="ml-4 pl-2 border-l border-border space-y-0.5"
         >
-          <div
-            v-for="v in getTagVersions(row.tag).slice(1)"
-            :key="v.version"
-            class="flex items-center justify-between py-1 text-sm gap-2"
-          >
-            <div class="flex items-center gap-2 min-w-0">
+          <div v-for="v in getTagVersions(row.tag).slice(1)" :key="v.version" class="py-1">
+            <div class="flex items-center justify-between gap-2">
               <NuxtLink
                 :to="versionRoute(v.version)"
                 class="font-mono text-xs text-fg-subtle hover:text-fg-muted transition-colors duration-200 truncate"
               >
                 {{ v.version }}
               </NuxtLink>
-              <span
-                v-if="v.tag && v.tag !== row.tag"
-                class="px-1 py-0.5 text-[9px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
-              >
-                {{ v.tag }}
-              </span>
+              <div class="flex items-center gap-2 shrink-0">
+                <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
+                  {{ formatDate(v.time) }}
+                </time>
+                <ProvenanceBadge
+                  v-if="v.hasProvenance"
+                  :package-name="packageName"
+                  :version="v.version"
+                  compact
+                />
+              </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
-              <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
-                {{ formatDate(v.time) }}
-              </time>
-              <ProvenanceBadge
-                v-if="v.hasProvenance"
-                :package-name="packageName"
-                :version="v.version"
-                compact
-              />
+            <div
+              v-if="v.tags?.length && filterExcludedTags(v.tags, row.tags).length"
+              class="flex items-center gap-1 mt-0.5"
+            >
+              <span
+                v-for="tag in filterExcludedTags(v.tags, row.tags)"
+                :key="tag"
+                class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide"
+              >
+                {{ tag }}
+              </span>
             </div>
           </div>
         </div>
@@ -439,73 +428,82 @@ function formatDate(dateStr: string): string {
               <button
                 v-if="group.versions.length > 1"
                 type="button"
-                class="flex items-center gap-2 w-full text-left py-1"
+                class="w-full text-left py-1"
                 :aria-expanded="group.expanded"
                 @click="toggleMajorGroup(groupIndex)"
               >
-                <span
-                  class="w-3 h-3 transition-transform duration-200 text-fg-subtle"
-                  :class="group.expanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
-                />
-                <span class="font-mono text-xs text-fg-muted">
-                  {{ group.versions[0]?.version }}
-                </span>
-                <span
-                  v-if="group.versions[0]?.tag"
-                  class="px-1 py-0.5 text-[9px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
-                >
-                  {{ group.versions[0].tag }}
-                </span>
+                <div class="flex items-center gap-2">
+                  <span
+                    class="w-3 h-3 transition-transform duration-200 text-fg-subtle"
+                    :class="group.expanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
+                  />
+                  <span class="font-mono text-xs text-fg-muted">
+                    {{ group.versions[0]?.version }}
+                  </span>
+                </div>
+                <div v-if="group.versions[0]?.tags?.length" class="flex items-center gap-1 ml-5">
+                  <span
+                    v-for="tag in group.versions[0].tags"
+                    :key="tag"
+                    class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
               </button>
               <!-- Single version (no expand needed) -->
-              <div v-else class="flex items-center gap-2 py-1">
-                <span class="w-3" />
-                <NuxtLink
-                  v-if="group.versions[0]"
-                  :to="versionRoute(group.versions[0].version)"
-                  class="font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200"
-                >
-                  {{ group.versions[0].version }}
-                </NuxtLink>
-                <span
-                  v-if="group.versions[0]?.tag"
-                  class="px-1 py-0.5 text-[9px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
-                >
-                  {{ group.versions[0].tag }}
-                </span>
+              <div v-else class="py-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-3" />
+                  <NuxtLink
+                    v-if="group.versions[0]"
+                    :to="versionRoute(group.versions[0].version)"
+                    class="font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200"
+                  >
+                    {{ group.versions[0].version }}
+                  </NuxtLink>
+                </div>
+                <div v-if="group.versions[0]?.tags?.length" class="flex items-center gap-1 ml-5">
+                  <span
+                    v-for="tag in group.versions[0].tags"
+                    :key="tag"
+                    class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide"
+                  >
+                    {{ tag }}
+                  </span>
+                </div>
               </div>
 
               <!-- Major group versions -->
               <div v-if="group.expanded && group.versions.length > 1" class="ml-5 space-y-0.5">
-                <div
-                  v-for="v in group.versions.slice(1)"
-                  :key="v.version"
-                  class="flex items-center justify-between py-1 text-sm gap-2"
-                >
-                  <div class="flex items-center gap-2 min-w-0">
+                <div v-for="v in group.versions.slice(1)" :key="v.version" class="py-1">
+                  <div class="flex items-center justify-between gap-2">
                     <NuxtLink
                       :to="versionRoute(v.version)"
                       class="font-mono text-xs text-fg-subtle hover:text-fg-muted transition-colors duration-200 truncate"
                     >
                       {{ v.version }}
                     </NuxtLink>
-                    <span
-                      v-if="v.tag"
-                      class="px-1 py-0.5 text-[9px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
-                    >
-                      {{ v.tag }}
-                    </span>
+                    <div class="flex items-center gap-2 shrink-0">
+                      <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
+                        {{ formatDate(v.time) }}
+                      </time>
+                      <ProvenanceBadge
+                        v-if="v.hasProvenance"
+                        :package-name="packageName"
+                        :version="v.version"
+                        compact
+                      />
+                    </div>
                   </div>
-                  <div class="flex items-center gap-2 shrink-0">
-                    <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
-                      {{ formatDate(v.time) }}
-                    </time>
-                    <ProvenanceBadge
-                      v-if="v.hasProvenance"
-                      :package-name="packageName"
-                      :version="v.version"
-                      compact
-                    />
+                  <div v-if="v.tags?.length" class="flex items-center gap-1 mt-0.5">
+                    <span
+                      v-for="tag in v.tags"
+                      :key="tag"
+                      class="text-[8px] font-semibold text-fg-subtle uppercase tracking-wide"
+                    >
+                      {{ tag }}
+                    </span>
                   </div>
                 </div>
               </div>
