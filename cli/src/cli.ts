@@ -50,6 +50,7 @@ const main = defineCommand({
 
     if (!npmUser) {
       logWarning('Not logged in to npm. Starting npm login...')
+      logWarning('This allows npmx to access your npm cli and any authenticated contexts.')
       // oxlint-disable-next-line no-console -- deliberate spacing
       console.log()
 
