@@ -151,19 +151,7 @@ function hasProvenance(version: PackumentVersion | null): boolean {
   return !!dist.attestations
 }
 
-// Package manager install commands
-const packageManagers = [
-  { id: 'npm', label: 'npm', action: 'install' },
-  { id: 'pnpm', label: 'pnpm', action: 'add' },
-  { id: 'yarn', label: 'yarn', action: 'add' },
-  { id: 'bun', label: 'bun', action: 'add' },
-  { id: 'deno', label: 'deno', action: 'add' },
-  { id: 'jsr', label: 'jsr', action: 'add' },
-] as const
-
-type PackageManagerId = (typeof packageManagers)[number]['id']
-
-// Persist preference in localStorage
+// Persist package manager preference in localStorage
 const selectedPM = ref<PackageManagerId>('npm')
 
 onMounted(() => {
@@ -177,41 +165,24 @@ watch(selectedPM, value => {
   localStorage.setItem('npmx-pm', value)
 })
 
-const currentPM = computed(
-  () => packageManagers.find(p => p.id === selectedPM.value) || packageManagers[0],
-)
-const selectedPMLabel = computed(() => currentPM.value.label)
-const selectedPMAction = computed(() => currentPM.value.action)
-
-// Get the package specifier for the current package manager
-const packageSpecifier = computed(() => {
-  if (!pkg.value) return ''
-  const pm = currentPM.value
-
-  if (pm.id === 'deno') {
-    // deno add npm:package
-    return `npm:${pkg.value.name}`
-  }
-
-  if (pm.id === 'jsr') {
-    if (jsrInfo.value?.exists && jsrInfo.value.scope && jsrInfo.value.name) {
-      // Native JSR package: @scope/name
-      return `@${jsrInfo.value.scope}/${jsrInfo.value.name}`
-    }
-    // npm compatibility: npm:package
-    return `npm:${pkg.value.name}`
-  }
-
-  // Standard package managers
-  return pkg.value.name
+const installCommandParts = computed(() => {
+  if (!pkg.value) return []
+  return getInstallCommandParts({
+    packageName: pkg.value.name,
+    packageManager: selectedPM.value,
+    version: requestedVersion.value,
+    jsrInfo: jsrInfo.value,
+  })
 })
 
 const installCommand = computed(() => {
   if (!pkg.value) return ''
-  const pm = currentPM.value
-  const spec = packageSpecifier.value
-  const version = requestedVersion.value ? `@${requestedVersion.value}` : ''
-  return `${pm.label} ${pm.action} ${spec}${version}`
+  return getInstallCommand({
+    packageName: pkg.value.name,
+    packageManager: selectedPM.value,
+    version: requestedVersion.value,
+    jsrInfo: jsrInfo.value,
+  })
 })
 
 // Copy install command
@@ -555,14 +526,14 @@ defineOgImageComponent('Package', {
               <span class="text-fg-subtle font-mono text-sm select-none">$</span>
               <code class="font-mono text-sm"
                 ><ClientOnly
-                  ><span class="text-fg">{{ selectedPMLabel }}</span
-                  >&nbsp;<span class="text-fg-muted">{{ selectedPMAction }}</span
-                  >&nbsp;<span class="text-fg-muted">{{ packageSpecifier }}</span
-                  ><span v-if="requestedVersion" class="text-fg-muted">@{{ requestedVersion }}</span
+                  ><span
+                    v-for="(part, i) in installCommandParts"
+                    :key="i"
+                    :class="i === 0 ? 'text-fg' : 'text-fg-muted'"
+                    >{{ i > 0 ? ' ' : '' }}{{ part }}</span
                   ><template #fallback
-                    ><span class="text-fg">npm</span>&nbsp;<span class="text-fg-muted"
-                      >install&nbsp;{{ pkg.name }}</span
-                    ></template
+                    ><span class="text-fg">npm</span
+                    ><span class="text-fg-muted"> install {{ pkg.name }}</span></template
                   ></ClientOnly
                 ></code
               >
