@@ -22,6 +22,9 @@ export default defineConfig({
             nuxt: {
               rootDir: fileURLToPath(new URL('.', import.meta.url)),
               overrides: {
+                experimental: {
+                  viteEnvironmentApi: false,
+                },
                 ogImage: { enabled: false },
               },
             },
