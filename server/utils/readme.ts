@@ -21,7 +21,7 @@ const ALLOWED_TAGS = [
 const ALLOWED_ATTR: Record<string, string[]> = {
   a: ['href', 'title', 'target', 'rel'],
   img: ['src', 'alt', 'title', 'width', 'height'],
-  source: ['src', 'type', 'media'],
+  source: ['src', 'srcset', 'type', 'media'],
   th: ['colspan', 'rowspan', 'align'],
   td: ['colspan', 'rowspan', 'align'],
   h3: ['id', 'data-level'],
