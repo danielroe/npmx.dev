@@ -70,7 +70,7 @@ export function createConnectorApp(expectedToken: string) {
     onRequest(event) {
       // CORS headers for browser connections
       setResponseHeaders(event, {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': 'https://npmx.dev, http://localhost:3000',
         'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       })
