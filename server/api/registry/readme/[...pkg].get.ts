@@ -98,7 +98,8 @@ export default defineCachedEventHandler(
     }
   },
   {
-    maxAge: 60 * 10,
+    maxAge: 60 * 60, // 1 hour
+    swr: true,
     getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       return `readme:${pkg}`

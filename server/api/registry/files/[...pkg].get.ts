@@ -47,7 +47,8 @@ export default defineCachedEventHandler(
     }
   },
   {
-    maxAge: 60 * 60, // Cache for 1 hour (files don't change for a given version)
+    // Files for a specific version never change - cache permanently
+    maxAge: 60 * 60 * 24 * 365, // 1 year
     getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       return `files:${pkg}`

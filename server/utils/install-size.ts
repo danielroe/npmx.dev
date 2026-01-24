@@ -50,6 +50,7 @@ const fetchPackument = defineCachedFunction(
   },
   {
     maxAge: 60 * 60, // 1 hour
+    swr: true,
     name: 'packument',
     getKey: (name: string) => name,
   },
@@ -263,6 +264,7 @@ export const calculateInstallSize = defineCachedFunction(
   {
     // Cache for 1 hour - dependency resolutions can change with new releases
     maxAge: 60 * 60,
+    swr: true,
     name: 'install-size',
     getKey: (name: string, version: string) => `${name}@${version}`,
   },

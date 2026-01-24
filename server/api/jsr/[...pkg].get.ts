@@ -20,6 +20,7 @@ export default defineCachedEventHandler<Promise<JsrPackageInfo>>(
   },
   {
     maxAge: 60 * 60, // 1 hour
+    swr: true,
     name: 'api-jsr-package',
     getKey: event => getRouterParam(event, 'pkg') ?? '',
   },

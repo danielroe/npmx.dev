@@ -66,7 +66,8 @@ export default defineCachedEventHandler(
     }
   },
   {
-    maxAge: 60 * 60, // Cache for 1 hour
+    maxAge: 60 * 60, // 1 hour
+    swr: true,
     getKey: event => getRouterParam(event, 'pkg') ?? '',
   },
 )

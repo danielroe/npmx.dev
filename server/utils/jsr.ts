@@ -58,8 +58,8 @@ export const fetchJsrPackageInfo = defineCachedFunction(
     }
   },
   {
-    // Cache for 1 hour - JSR info doesn't change often
-    maxAge: 60 * 60,
+    maxAge: 60 * 60 * 24, // 1 day
+    swr: true,
     name: 'jsr-package-info',
     getKey: (name: string) => name,
   },
