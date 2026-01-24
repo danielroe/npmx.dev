@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { JsDelivrFileNode, PackageFileTree } from '../../shared/types'
-import { convertToFileTree } from '../../server/utils/file-tree'
+import { convertToFileTree, fetchFileTree, getPackageFileTree } from '../../server/utils/file-tree'
 
 const getChildren = (node?: PackageFileTree): PackageFileTree[] => node?.children ?? []
 
@@ -71,5 +71,103 @@ describe('convertToFileTree', () => {
     const tree = convertToFileTree([])
     const empty: PackageFileTree[] = []
     expect(tree).toEqual(empty)
+  })
+})
+
+describe('fetchFileTree', () => {
+  it('returns parsed json when response is ok', async () => {
+    const body = {
+      type: 'npm',
+      name: 'pkg',
+      version: '1.0.0',
+      default: 'index.js',
+      files: [],
+    }
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => body,
+    })
+
+    vi.stubGlobal('fetch', fetchMock)
+
+    try {
+      const result = await fetchFileTree('pkg', '1.0.0')
+      expect(result).toEqual(body)
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('throws a 404 error when package is not found', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+    })
+
+    const createErrorMock = vi.fn((opts: { statusCode: number; message: string }) => opts)
+
+    vi.stubGlobal('fetch', fetchMock)
+    vi.stubGlobal('createError', createErrorMock)
+
+    try {
+      await expect(fetchFileTree('pkg', '1.0.0')).rejects.toMatchObject({ statusCode: 404 })
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+
+  it('throws a 502 error for non-404 failures', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+    })
+
+    const createErrorMock = vi.fn((opts: { statusCode: number; message: string }) => opts)
+
+    vi.stubGlobal('fetch', fetchMock)
+    vi.stubGlobal('createError', createErrorMock)
+
+    try {
+      await expect(fetchFileTree('pkg', '1.0.0')).rejects.toMatchObject({ statusCode: 502 })
+    } finally {
+      vi.unstubAllGlobals()
+    }
+  })
+})
+
+describe('getPackageFileTree', () => {
+  it('returns metadata and a converted tree', async () => {
+    const body = {
+      type: 'npm',
+      name: 'pkg',
+      version: '1.0.0',
+      default: 'index.js',
+      files: [
+        {
+          type: 'directory',
+          name: 'src',
+          files: [{ type: 'file', name: 'index.js', size: 5 }],
+        },
+      ],
+    }
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => body,
+    })
+
+    vi.stubGlobal('fetch', fetchMock)
+
+    try {
+      const result = await getPackageFileTree('pkg', '1.0.0')
+      expect(result.package).toBe('pkg')
+      expect(result.version).toBe('1.0.0')
+      expect(result.default).toBe('index.js')
+      expect(result.tree[0]?.path).toBe('src')
+      expect(result.tree[0]?.children?.[0]?.path).toBe('src/index.js')
+    } finally {
+      vi.unstubAllGlobals()
+    }
   })
 })
