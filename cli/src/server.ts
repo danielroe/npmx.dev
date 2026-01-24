@@ -1,7 +1,4 @@
 import crypto from 'node:crypto'
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
 import { H3, HTTPError, handleCors, type H3Event } from 'h3'
 import type { CorsOptions } from 'h3'
 
@@ -26,19 +23,9 @@ import {
 } from './npm-client.ts'
 
 // Read version from package.json
-const __dirname = dirname(fileURLToPath(import.meta.url))
-function getConnectorVersion(): string {
-  try {
-    const pkgPath = join(__dirname, '..', 'package.json')
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
-    return pkg.version || '0.0.0'
-  } catch {
-    // Fallback if package.json can't be read (e.g., in bundled builds)
-    return '0.0.0'
-  }
-}
+import pkg from '../package.json' with { type: 'json' }
 
-export const CONNECTOR_VERSION = getConnectorVersion()
+export const CONNECTOR_VERSION = pkg.version
 
 function generateToken(): string {
   return crypto.randomBytes(16).toString('hex')
