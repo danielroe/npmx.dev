@@ -67,6 +67,9 @@ importers:
       vue:
         specifier: 3.5.27
         version: 3.5.27(typescript@5.9.3)
+      vue-data-ui:
+        specifier: ^3.13.0
+        version: 3.13.0(vue@3.5.27(typescript@5.9.3))
     devDependencies:
       '@iconify-json/carbon':
         specifier: ^1.2.18
@@ -7089,6 +7092,15 @@ packages:
 
   vue-component-type-helpers@2.2.12:
     resolution: {integrity: sha512-YbGqHZ5/eW4SnkPNR44mKVc6ZKQoRs/Rux1sxC6rdwXb4qpbOSYfDr9DsTHolOTGmIKgM9j141mZbBeg05R1pw==}
+
+  vue-data-ui@3.13.0:
+    resolution: {integrity: sha512-N9IlA9knxsKEgyqZoWBA1pw3oIPJ+yBUYfndoygranAYmtW8YON7mQ9AzfYL12xEVPosLsM+EbRqEozgi4OQ3Q==}
+    peerDependencies:
+      jspdf: '>=3.0.1'
+      vue: '>=3.3.0'
+    peerDependenciesMeta:
+      jspdf:
+        optional: true
 
   vue-devtools-stub@0.1.0:
     resolution: {integrity: sha512-RutnB7X8c5hjq39NceArgXg28WZtZpGc3+J16ljMiYnFhKvd8hITxSWQSQ5bvldxMDU6gG5mkxl1MTQLXckVSQ==}
@@ -15254,6 +15266,10 @@ snapshots:
       ufo: 1.6.3
 
   vue-component-type-helpers@2.2.12: {}
+
+  vue-data-ui@3.13.0(vue@3.5.27(typescript@5.9.3)):
+    dependencies:
+      vue: 3.5.27(typescript@5.9.3)
 
   vue-devtools-stub@0.1.0: {}
 

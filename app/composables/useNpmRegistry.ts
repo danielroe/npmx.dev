@@ -137,6 +137,45 @@ export function usePackageDownloads(
   )
 }
 
+type NpmDownloadsRangeResponse = {
+  start: string
+  end: string
+  package: string
+  downloads: Array<{ day: string, downloads: number }>
+}
+
+async function fetchNpmDownloadsRange(
+  packageName: string,
+  start: string,
+  end: string,
+): Promise<NpmDownloadsRangeResponse> {
+  const encodedName = encodePackageName(packageName)
+  return await $fetch<NpmDownloadsRangeResponse>(`${NPM_API}/downloads/range/${start}:${end}/${encodedName}`)
+}
+
+export function usePackageWeeklyDownloadEvolution(
+  name: MaybeRefOrGetter<string>,
+  options: MaybeRefOrGetter<{
+    weeks?: number
+    endDate?: string
+  }> = {},
+) {
+  return useLazyAsyncData(
+    () => `downloads-weekly-evolution:${toValue(name)}:${JSON.stringify(toValue(options))}`,
+    async () => {
+      const packageName = toValue(name)
+      const { weeks = 12, endDate } = toValue(options) ?? {}
+      const end = endDate ? new Date(`${endDate}T00:00:00.000Z`) : new Date()
+      const start = addDays(end, -(weeks * 7) + 1)
+      const startIso = toIsoDateString(start)
+      const endIso = toIsoDateString(end)
+      const range = await fetchNpmDownloadsRange(packageName, startIso, endIso)
+      const sortedDaily = [...range.downloads].sort((a, b) => a.day.localeCompare(b.day))
+      return buildWeeklyEvolutionFromDaily(sortedDaily)
+    },
+  )
+}
+
 const emptySearchResponse = { objects: [], total: 0, time: new Date().toISOString() } satisfies NpmSearchResponse
 
 export function useNpmSearch(
