@@ -4,8 +4,7 @@ import { spawn } from 'node:child_process'
 import * as p from '@clack/prompts'
 import pc from 'picocolors'
 import { defineCommand, runMain } from 'citty'
-import { listen } from 'listhen'
-import { toNodeListener } from 'h3'
+import { serve } from 'srvx'
 import { createConnectorApp, generateToken, CONNECTOR_VERSION } from './server.ts'
 import { getNpmUser } from './npm-client.ts'
 import { initLogger, showToken, logInfo, logWarning, logError } from './logger.ts'
@@ -95,11 +94,13 @@ const main = defineCommand({
 
     const app = createConnectorApp(token)
 
-    await listen(toNodeListener(app), {
+    const server = serve({
       port,
       hostname: '127.0.0.1',
-      showURL: false,
+      fetch: app.fetch,
     })
+
+    await server.ready()
 
     logInfo('Waiting for connection... (Press Ctrl+C to stop)')
   },
