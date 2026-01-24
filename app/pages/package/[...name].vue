@@ -495,8 +495,8 @@ defineOgImageComponent('Package', {
               <span class="text-fg-subtle font-mono text-sm select-none">$</span>
               <code class="font-mono text-sm"
                 ><ClientOnly
-                  ><span class="text-fg">{{ selectedPMLabel }}</span>
-                  <span class="text-fg-muted">{{ selectedPMAction }}</span
+                  ><span class="text-fg">{{ selectedPMLabel }}</span
+                  >&nbsp;<span class="text-fg-muted">{{ selectedPMAction }}</span
                   ><span v-if="selectedPM !== 'deno'" class="text-fg-muted"
                     >&nbsp;{{ pkg.name }}</span
                   ><span v-else class="text-fg-muted">{{ pkg.name }}</span
