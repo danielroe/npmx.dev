@@ -105,7 +105,7 @@ watch(open, isOpen => {
 
               <div class="p-3 bg-[#0d0d0d] border border-border rounded-lg font-mono text-sm">
                 <span class="text-fg-subtle">$</span>
-                <span class="text-fg ml-2">npx npmx-connector</span>
+                <span class="text-fg ml-2">npx&nbsp;npmx-connector</span>
               </div>
 
               <p class="text-sm text-fg-muted">Then paste the token shown in your terminal:</p>
