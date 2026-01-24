@@ -2,6 +2,7 @@
 import process from 'node:process'
 import { spawn } from 'node:child_process'
 import * as p from '@clack/prompts'
+import pc from 'picocolors'
 import { defineCommand, runMain } from 'citty'
 import { listen } from 'listhen'
 import { toNodeListener } from 'h3'
@@ -47,10 +48,12 @@ const main = defineCommand({
     initLogger()
 
     // Warning message and accept prompt
-    logWarning('This allows npmx to access your npm cli and any authenticated contexts.')
+    logWarning(
+      `This allows ${pc.underline('npmx.dev')} to access your npm cli and any authenticated contexts.`,
+    )
     const accept = await p.confirm({
       message: 'Do you accept?',
-      initialValue: false,
+      initialValue: true,
     })
 
     if (!accept || p.isCancel(accept)) {
