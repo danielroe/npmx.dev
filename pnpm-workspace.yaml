@@ -8,7 +8,7 @@ ignoredBuiltDependencies:
   - unrs-resolver
 
 onlyBuiltDependencies:
-  - sharp@0.33.5 || 0.34.5
+  - sharp@0.34.5
   - simple-git-hooks@2.13.1
 
 ignoreWorkspaceRootCheck: true
