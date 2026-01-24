@@ -1,5 +1,5 @@
 export default defineCachedEventHandler(
-  async (event) => {
+  async event => {
     const pkg = getRouterParam(event, 'pkg')
     if (!pkg) {
       throw createError({ statusCode: 400, message: 'Package name is required' })
@@ -9,8 +9,7 @@ export default defineCachedEventHandler(
 
     try {
       return await fetchNpmPackage(packageName)
-    }
-    catch (error) {
+    } catch (error) {
       if (error && typeof error === 'object' && 'statusCode' in error) {
         throw error
       }

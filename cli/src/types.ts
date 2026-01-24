@@ -9,26 +9,26 @@ export interface ConnectorSession {
   npmUser: string | null
 }
 
-export type OperationType
-  = | 'org:add-user'
-    | 'org:rm-user'
-    | 'org:set-role'
-    | 'team:create'
-    | 'team:destroy'
-    | 'team:add-user'
-    | 'team:rm-user'
-    | 'access:grant'
-    | 'access:revoke'
-    | 'owner:add'
-    | 'owner:rm'
+export type OperationType =
+  | 'org:add-user'
+  | 'org:rm-user'
+  | 'org:set-role'
+  | 'team:create'
+  | 'team:destroy'
+  | 'team:add-user'
+  | 'team:rm-user'
+  | 'access:grant'
+  | 'access:revoke'
+  | 'owner:add'
+  | 'owner:rm'
 
-export type OperationStatus
-  = | 'pending'
-    | 'approved'
-    | 'running'
-    | 'completed'
-    | 'failed'
-    | 'cancelled'
+export type OperationStatus =
+  | 'pending'
+  | 'approved'
+  | 'running'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
 
 export interface OperationResult {
   stdout: string

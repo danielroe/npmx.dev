@@ -3,7 +3,7 @@ import type { NewOperation } from '~/composables/useConnector'
 
 const props = defineProps<{
   packageName: string
-  maintainers?: Array<{ name?: string, email?: string }>
+  maintainers?: Array<{ name?: string; email?: string }>
 }>()
 
 const {
@@ -38,7 +38,7 @@ const isLoadingAccess = ref(false)
 const maintainerAccess = computed(() => {
   if (!props.maintainers) return []
 
-  return props.maintainers.map((maintainer) => {
+  return props.maintainers.map(maintainer => {
     const name = maintainer.name
     if (!name) return { ...maintainer, accessVia: [] as string[] }
 
@@ -97,8 +97,7 @@ async function loadAccessInfo() {
       }
       await Promise.all(teamPromises)
     }
-  }
-  finally {
+  } finally {
     isLoadingAccess.value = false
   }
 }
@@ -122,8 +121,7 @@ async function handleAddOwner() {
     await addOperation(operation)
     newOwnerUsername.value = ''
     showAddOwner.value = false
-  }
-  finally {
+  } finally {
     isAdding.value = false
   }
 }
@@ -143,11 +141,15 @@ async function handleRemoveOwner(username: string) {
 }
 
 // Load access info when connected and for scoped packages
-watch([isConnected, () => props.packageName], ([connected]) => {
-  if (connected && orgName.value) {
-    loadAccessInfo()
-  }
-}, { immediate: true })
+watch(
+  [isConnected, () => props.packageName],
+  ([connected]) => {
+    if (connected && orgName.value) {
+      loadAccessInfo()
+    }
+  },
+  { immediate: true },
+)
 
 // Refresh data when operations complete
 watch(lastExecutionTime, () => {
@@ -158,20 +160,11 @@ watch(lastExecutionTime, () => {
 </script>
 
 <template>
-  <section
-    v-if="maintainers?.length"
-    aria-labelledby="maintainers-heading"
-  >
-    <h2
-      id="maintainers-heading"
-      class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
-    >
+  <section v-if="maintainers?.length" aria-labelledby="maintainers-heading">
+    <h2 id="maintainers-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
       Maintainers
     </h2>
-    <ul
-      class="space-y-2 list-none m-0 p-0"
-      aria-label="Package maintainers"
-    >
+    <ul class="space-y-2 list-none m-0 p-0" aria-label="Package maintainers">
       <li
         v-for="maintainer in maintainerAccess.slice(0, canManageOwners ? undefined : 5)"
         :key="maintainer.name ?? maintainer.email"
@@ -185,10 +178,7 @@ watch(lastExecutionTime, () => {
           >
             @{{ maintainer.name }}
           </NuxtLink>
-          <span
-            v-else
-            class="font-mono text-sm text-fg-muted"
-          >{{ maintainer.email }}</span>
+          <span v-else class="font-mono text-sm text-fg-muted">{{ maintainer.email }}</span>
 
           <!-- Access source badges -->
           <span
@@ -200,7 +190,8 @@ watch(lastExecutionTime, () => {
           <span
             v-if="canManageOwners && maintainer.name === npmUser"
             class="text-xs text-fg-subtle shrink-0"
-          >(you)</span>
+            >(you)</span
+          >
         </div>
 
         <!-- Remove button (only when can manage and not self) -->
@@ -211,28 +202,16 @@ watch(lastExecutionTime, () => {
           :aria-label="`Remove ${maintainer.name} as owner`"
           @click="handleRemoveOwner(maintainer.name)"
         >
-          <span
-            class="i-carbon-close block w-3.5 h-3.5"
-            aria-hidden="true"
-          />
+          <span class="i-carbon-close block w-3.5 h-3.5" aria-hidden="true" />
         </button>
       </li>
     </ul>
 
     <!-- Add owner form (only when can manage) -->
-    <div
-      v-if="canManageOwners"
-      class="mt-3"
-    >
+    <div v-if="canManageOwners" class="mt-3">
       <div v-if="showAddOwner">
-        <form
-          class="flex items-center gap-2"
-          @submit.prevent="handleAddOwner"
-        >
-          <label
-            for="add-owner-username"
-            class="sr-only"
-          >Username to add as owner</label>
+        <form class="flex items-center gap-2" @submit.prevent="handleAddOwner">
+          <label for="add-owner-username" class="sr-only">Username to add as owner</label>
           <input
             id="add-owner-username"
             v-model="newOwnerUsername"
@@ -242,7 +221,7 @@ watch(lastExecutionTime, () => {
             autocomplete="off"
             spellcheck="false"
             class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-          >
+          />
           <button
             type="submit"
             :disabled="!newOwnerUsername.trim() || isAdding"
@@ -256,10 +235,7 @@ watch(lastExecutionTime, () => {
             aria-label="Cancel adding owner"
             @click="showAddOwner = false"
           >
-            <span
-              class="i-carbon-close block w-4 h-4"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
           </button>
         </form>
       </div>

@@ -10,13 +10,13 @@ import { initLogger, showToken, logInfo, logWarning } from './logger.ts'
 const DEFAULT_PORT = 31415
 
 async function runNpmLogin(): Promise<boolean> {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const child = spawn('npm', ['login'], {
       stdio: 'inherit',
       shell: true,
     })
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       resolve(code === 0)
     })
 
@@ -50,11 +50,13 @@ const main = defineCommand({
 
     if (!npmUser) {
       logWarning('Not logged in to npm. Starting npm login...')
-      console.log() // Add spacing before npm login prompt
+      // oxlint-disable-next-line no-console -- deliberate spacing
+      console.log()
 
       const loginSuccess = await runNpmLogin()
 
-      console.log() // Add spacing after npm login
+      // oxlint-disable-next-line no-console -- deliberate spacing
+      console.log()
 
       if (!loginSuccess) {
         logWarning('npm login failed or was cancelled.')

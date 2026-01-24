@@ -13,8 +13,7 @@ const peerDepsExpanded = ref(false)
 // Sort dependencies alphabetically
 const sortedDependencies = computed(() => {
   if (!props.dependencies) return []
-  return Object.entries(props.dependencies)
-    .sort(([a], [b]) => a.localeCompare(b))
+  return Object.entries(props.dependencies).sort(([a], [b]) => a.localeCompare(b))
 })
 
 // Sort peer dependencies alphabetically, with required first then optional
@@ -49,15 +48,9 @@ function truncateVersion(version: string, maxLength = 20): string {
 <template>
   <div class="space-y-8">
     <!-- Dependencies -->
-    <section
-      v-if="sortedDependencies.length > 0"
-      aria-labelledby="dependencies-heading"
-    >
+    <section v-if="sortedDependencies.length > 0" aria-labelledby="dependencies-heading">
       <div class="flex items-center justify-between mb-3">
-        <h2
-          id="dependencies-heading"
-          class="text-xs text-fg-subtle uppercase tracking-wider"
-        >
+        <h2 id="dependencies-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
           Dependencies ({{ sortedDependencies.length }})
         </h2>
         <a
@@ -68,15 +61,10 @@ function truncateVersion(version: string, maxLength = 20): string {
           aria-label="View dependency graph"
           title="View dependency graph"
         >
-          <span class="text-xs uppercase tracking-wider">
-            Graph
-          </span>
+          <span class="text-xs uppercase tracking-wider"> Graph </span>
         </a>
       </div>
-      <ul
-        class="space-y-1 list-none m-0 p-0"
-        aria-label="Package dependencies"
-      >
+      <ul class="space-y-1 list-none m-0 p-0" aria-label="Package dependencies">
         <li
           v-for="[dep, version] in sortedDependencies.slice(0, depsExpanded ? undefined : 10)"
           :key="dep"
@@ -108,20 +96,14 @@ function truncateVersion(version: string, maxLength = 20): string {
     </section>
 
     <!-- Peer Dependencies -->
-    <section
-      v-if="sortedPeerDependencies.length > 0"
-      aria-labelledby="peer-dependencies-heading"
-    >
+    <section v-if="sortedPeerDependencies.length > 0" aria-labelledby="peer-dependencies-heading">
       <h2
         id="peer-dependencies-heading"
         class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
       >
         Peer Dependencies ({{ sortedPeerDependencies.length }})
       </h2>
-      <ul
-        class="space-y-1 list-none m-0 p-0"
-        aria-label="Package peer dependencies"
-      >
+      <ul class="space-y-1 list-none m-0 p-0" aria-label="Package peer dependencies">
         <li
           v-for="peer in sortedPeerDependencies.slice(0, peerDepsExpanded ? undefined : 10)"
           :key="peer.name"

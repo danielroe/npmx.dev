@@ -27,20 +27,20 @@ The aim of [npmx.dev](https://npmx.dev) is to provide a better browser for the n
 - **Provenance indicators** - verified build indicators for packages with npm provenance
 - **Admin features** - org/team management, package access controls via local connector (coming soon)
 
-### URL Compatibility
+### URL compatibility
 
 npmx.dev supports npm permalink patterns:
 
-| Pattern | Example |
-|---------|---------|
-| `/package/<name>` | [`/package/nuxt`](https://npmx.dev/package/nuxt) |
-| `/package/@scope/name` | [`/package/@nuxt/kit`](https://npmx.dev/package/@nuxt/kit) |
+| Pattern                       | Example                                                        |
+| ----------------------------- | -------------------------------------------------------------- |
+| `/package/<name>`             | [`/package/nuxt`](https://npmx.dev/package/nuxt)               |
+| `/package/@scope/name`        | [`/package/@nuxt/kit`](https://npmx.dev/package/@nuxt/kit)     |
 | `/package/<name>/v/<version>` | [`/package/vue/v/3.4.0`](https://npmx.dev/package/vue/v/3.4.0) |
-| `/search?q=<query>` | [`/search?q=vue`](https://npmx.dev/search?q=vue) |
-| `/~<username>` | [`/~sindresorhus`](https://npmx.dev/~sindresorhus) |
-| `/org/<name>` | [`/org/nuxt`](https://npmx.dev/org/nuxt) |
+| `/search?q=<query>`           | [`/search?q=vue`](https://npmx.dev/search?q=vue)               |
+| `/~<username>`                | [`/~sindresorhus`](https://npmx.dev/~sindresorhus)             |
+| `/org/<name>`                 | [`/org/nuxt`](https://npmx.dev/org/nuxt)                       |
 
-## Tech Stack
+## Tech stack
 
 - [Nuxt 4](https://nuxt.com/)
 - [Nitro](https://nuxt.com/docs/guide/concepts/server-engine)
@@ -49,6 +49,8 @@ npmx.dev supports npm permalink patterns:
 - [npm Registry API](https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md)
 
 ## Try it out locally
+
+I'd welcome contributions &ndash; please do feel free to poke around and improve things. Here's how you can get going locally.
 
 ### Setup
 
@@ -83,7 +85,7 @@ pnpm test:browser
 pnpm test:types
 ```
 
-### Local Connector (CLI)
+### Local connector (CLI)
 
 The `cli/` workspace contains a local connector that enables authenticated npm operations from the web UI. It runs on your machine and uses your existing npm credentials.
 
@@ -97,6 +99,14 @@ node cli/dist/cli.mjs
 ```
 
 The connector will check your npm authentication, generate a connection token, and listen for requests from npmx.dev.
+
+## Related projects
+
+- [JSR](https://jsr.io/) - The open-source package registry for modern JavaScript and TypeScript
+- [npm-userscript](https://github.com/bluwy/npm-userscript) - Browser userscript with various improvements and fixes for npmjs.com
+- [npm-alt](https://npm.willow.sh/) - An alternative npm package browser
+
+If you're building something cool, let me know! 🙏
 
 ## License
 

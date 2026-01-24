@@ -5,7 +5,7 @@ const router = useRouter()
 const isHomepage = computed(() => route.path === '/')
 
 useHead({
-  titleTemplate: (titleChunk) => {
+  titleTemplate: titleChunk => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
   },
 })
@@ -14,11 +14,7 @@ useHead({
 function handleGlobalKeydown(e: KeyboardEvent) {
   // Ignore if user is typing in an input, textarea, or contenteditable
   const target = e.target as HTMLElement
-  if (
-    target.tagName === 'INPUT'
-    || target.tagName === 'TEXTAREA'
-    || target.isContentEditable
-  ) {
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
     return
   }
 
@@ -32,8 +28,7 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 
     if (searchInput) {
       searchInput.focus()
-    }
-    else {
+    } else {
       // Navigate to search page
       router.push('/search')
     }
@@ -51,17 +46,11 @@ onUnmounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col bg-bg text-fg">
-    <a
-      href="#main-content"
-      class="skip-link font-mono"
-    >Skip to main content</a>
+    <a href="#main-content" class="skip-link font-mono">Skip to main content</a>
 
     <AppHeader :show-logo="!isHomepage" />
 
-    <div
-      id="main-content"
-      class="flex-1"
-    >
+    <div id="main-content" class="flex-1">
       <NuxtPage />
     </div>
 
@@ -71,7 +60,9 @@ onUnmounted(() => {
 
 <style>
 /* Base reset and defaults */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -94,7 +85,9 @@ a {
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-color: #404040;
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-decoration-color 0.2s ease;
 }
 
 a:hover {
@@ -190,12 +183,26 @@ button {
 }
 
 /* Visual styling based on original README heading level */
-.readme-content [data-level="1"] { font-size: 1.5rem; }
-.readme-content [data-level="2"] { font-size: 1.25rem; padding-bottom: 0.5rem; border-bottom: 1px solid #262626; }
-.readme-content [data-level="3"] { font-size: 1.125rem; }
-.readme-content [data-level="4"] { font-size: 1rem; }
-.readme-content [data-level="5"] { font-size: 0.925rem; }
-.readme-content [data-level="6"] { font-size: 0.875rem; }
+.readme-content [data-level='1'] {
+  font-size: 1.5rem;
+}
+.readme-content [data-level='2'] {
+  font-size: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #262626;
+}
+.readme-content [data-level='3'] {
+  font-size: 1.125rem;
+}
+.readme-content [data-level='4'] {
+  font-size: 1rem;
+}
+.readme-content [data-level='5'] {
+  font-size: 0.925rem;
+}
+.readme-content [data-level='6'] {
+  font-size: 0.875rem;
+}
 
 .readme-content p {
   margin-bottom: 1rem;
@@ -310,52 +317,52 @@ button {
 }
 
 /* Note - blue */
-.readme-content blockquote[data-callout="note"] {
+.readme-content blockquote[data-callout='note'] {
   border-left-color: #3b82f6;
   background: rgba(59, 130, 246, 0.05);
 }
-.readme-content blockquote[data-callout="note"]::before {
-  content: "Note";
+.readme-content blockquote[data-callout='note']::before {
+  content: 'Note';
   color: #3b82f6;
 }
 
 /* Tip - green */
-.readme-content blockquote[data-callout="tip"] {
+.readme-content blockquote[data-callout='tip'] {
   border-left-color: #22c55e;
   background: rgba(34, 197, 94, 0.05);
 }
-.readme-content blockquote[data-callout="tip"]::before {
-  content: "Tip";
+.readme-content blockquote[data-callout='tip']::before {
+  content: 'Tip';
   color: #22c55e;
 }
 
 /* Important - purple */
-.readme-content blockquote[data-callout="important"] {
+.readme-content blockquote[data-callout='important'] {
   border-left-color: #a855f7;
   background: rgba(168, 85, 247, 0.05);
 }
-.readme-content blockquote[data-callout="important"]::before {
-  content: "Important";
+.readme-content blockquote[data-callout='important']::before {
+  content: 'Important';
   color: #a855f7;
 }
 
 /* Warning - yellow/orange */
-.readme-content blockquote[data-callout="warning"] {
+.readme-content blockquote[data-callout='warning'] {
   border-left-color: #eab308;
   background: rgba(234, 179, 8, 0.05);
 }
-.readme-content blockquote[data-callout="warning"]::before {
-  content: "Warning";
+.readme-content blockquote[data-callout='warning']::before {
+  content: 'Warning';
   color: #eab308;
 }
 
 /* Caution - red */
-.readme-content blockquote[data-callout="caution"] {
+.readme-content blockquote[data-callout='caution'] {
   border-left-color: #ef4444;
   background: rgba(239, 68, 68, 0.05);
 }
-.readme-content blockquote[data-callout="caution"]::before {
-  content: "Caution";
+.readme-content blockquote[data-callout='caution']::before {
+  content: 'Caution';
   color: #ef4444;
 }
 
@@ -424,15 +431,15 @@ p > span > code,
 }
 
 /* Safari search input fixes */
-input[type="search"] {
+input[type='search'] {
   -webkit-appearance: none;
   appearance: none;
 }
 
-input[type="search"]::-webkit-search-decoration,
-input[type="search"]::-webkit-search-cancel-button,
-input[type="search"]::-webkit-search-results-button,
-input[type="search"]::-webkit-search-results-decoration {
+input[type='search']::-webkit-search-decoration,
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-results-button,
+input[type='search']::-webkit-search-results-decoration {
   -webkit-appearance: none;
   appearance: none;
 }

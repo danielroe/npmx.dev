@@ -231,8 +231,13 @@ function linkifyImports(html: string, options?: LinkifyOptions): string {
 
 // Languages that support import/export statements
 const IMPORT_LANGUAGES = new Set([
-  'javascript', 'typescript', 'jsx', 'tsx',
-  'vue', 'svelte', 'astro',
+  'javascript',
+  'typescript',
+  'jsx',
+  'tsx',
+  'vue',
+  'svelte',
+  'astro',
 ])
 
 export interface HighlightOptions {
@@ -246,7 +251,11 @@ export interface HighlightOptions {
  * Highlight code using Shiki with line-by-line output for line highlighting.
  * Each line is wrapped in a span.line for individual line highlighting.
  */
-export async function highlightCode(code: string, language: string, options?: HighlightOptions): Promise<string> {
+export async function highlightCode(
+  code: string,
+  language: string,
+  options?: HighlightOptions,
+): Promise<string> {
   const shiki = await getShikiHighlighter()
   const loadedLangs = shiki.getLoadedLanguages()
 
@@ -279,30 +288,31 @@ export async function highlightCode(code: string, language: string, options?: Hi
       if (codeMatch?.[1]) {
         const codeContent = codeMatch[1]
         const lines = codeContent.split('\n')
-        const wrappedLines = lines.map((line: string, i: number) => {
-          if (i === lines.length - 1 && line === '') return null
-          return `<span class="line">${line}</span>`
-        }).filter((line: string | null): line is string => line !== null).join('')
+        const wrappedLines = lines
+          .map((line: string, i: number) => {
+            if (i === lines.length - 1 && line === '') return null
+            return `<span class="line">${line}</span>`
+          })
+          .filter((line: string | null): line is string => line !== null)
+          .join('')
 
         return html.replace(codeMatch[1], wrappedLines)
       }
 
       return html
-    }
-    catch {
+    } catch {
       // Fall back to plain
     }
   }
 
   // Plain code for unknown languages - also wrap lines
   const lines = code.split('\n')
-  const wrappedLines = lines.map((line) => {
-    const escaped = line
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-    return `<span class="line">${escaped}</span>`
-  }).join('') // No newlines - display:block handles it
+  const wrappedLines = lines
+    .map(line => {
+      const escaped = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      return `<span class="line">${escaped}</span>`
+    })
+    .join('') // No newlines - display:block handles it
 
   return `<pre class="shiki github-dark"><code>${wrappedLines}</code></pre>`
 }

@@ -1,10 +1,18 @@
-import type { JsDelivrPackageResponse, JsDelivrFileNode, PackageFileTree, PackageFileTreeResponse } from '#shared/types'
+import type {
+  JsDelivrPackageResponse,
+  JsDelivrFileNode,
+  PackageFileTree,
+  PackageFileTreeResponse,
+} from '#shared/types'
 
 /**
  * Fetch the file tree from jsDelivr API.
  * Returns a nested tree structure of all files in the package.
  */
-export async function fetchFileTree(packageName: string, version: string): Promise<JsDelivrPackageResponse> {
+export async function fetchFileTree(
+  packageName: string,
+  version: string,
+): Promise<JsDelivrPackageResponse> {
   const url = `https://data.jsdelivr.com/v1/packages/npm/${packageName}@${version}`
   const response = await fetch(url)
 
@@ -21,7 +29,10 @@ export async function fetchFileTree(packageName: string, version: string): Promi
 /**
  * Convert jsDelivr nested structure to our PackageFileTree format
  */
-export function convertToFileTree(nodes: JsDelivrFileNode[], parentPath: string = ''): PackageFileTree[] {
+export function convertToFileTree(
+  nodes: JsDelivrFileNode[],
+  parentPath: string = '',
+): PackageFileTree[] {
   const result: PackageFileTree[] = []
 
   for (const node of nodes) {
@@ -34,8 +45,7 @@ export function convertToFileTree(nodes: JsDelivrFileNode[], parentPath: string 
         type: 'directory',
         children: node.files ? convertToFileTree(node.files, path) : [],
       })
-    }
-    else {
+    } else {
       result.push({
         name: node.name,
         path,
@@ -60,7 +70,10 @@ export function convertToFileTree(nodes: JsDelivrFileNode[], parentPath: string 
  * Fetch and convert file tree for a package version.
  * Returns the full response including tree and metadata.
  */
-export async function getPackageFileTree(packageName: string, version: string): Promise<PackageFileTreeResponse> {
+export async function getPackageFileTree(
+  packageName: string,
+  version: string,
+): Promise<PackageFileTreeResponse> {
   const jsDelivrData = await fetchFileTree(packageName, version)
   const tree = convertToFileTree(jsDelivrData.files)
 

@@ -33,7 +33,8 @@ useSeoMeta({
 
 defineOgImageComponent('Default', {
   title: () => `@${orgName.value}`,
-  description: () => scopedPackages.value.length ? `${scopedPackages.value.length} packages` : 'npm organization',
+  description: () =>
+    scopedPackages.value.length ? `${scopedPackages.value.length} packages` : 'npm organization',
 })
 </script>
 
@@ -47,16 +48,13 @@ defineOgImageComponent('Default', {
           class="w-16 h-16 rounded-lg bg-bg-muted border border-border flex items-center justify-center"
           aria-hidden="true"
         >
-          <span class="text-2xl text-fg-subtle font-mono">{{ orgName.charAt(0).toUpperCase() }}</span>
+          <span class="text-2xl text-fg-subtle font-mono">{{
+            orgName.charAt(0).toUpperCase()
+          }}</span>
         </div>
         <div>
-          <h1 class="font-mono text-2xl sm:text-3xl font-medium">
-            @{{ orgName }}
-          </h1>
-          <p
-            v-if="status === 'success'"
-            class="text-fg-muted text-sm mt-1"
-          >
+          <h1 class="font-mono text-2xl sm:text-3xl font-medium">@{{ orgName }}</h1>
+          <p v-if="status === 'success'" class="text-fg-muted text-sm mt-1">
             {{ formatNumber(packageCount) }} public package{{ packageCount === 1 ? '' : 's' }}
           </p>
         </div>
@@ -78,19 +76,17 @@ defineOgImageComponent('Default', {
 
     <!-- Admin panels (when connected) -->
     <ClientOnly>
-      <section
-        v-if="isConnected"
-        class="mb-8"
-        aria-label="Organization management"
-      >
+      <section v-if="isConnected" class="mb-8" aria-label="Organization management">
         <!-- Tab buttons -->
         <div class="flex items-center gap-1 mb-4">
           <button
             type="button"
             class="px-4 py-2 font-mono text-sm rounded-t-lg transition-colors duration-200"
-            :class="activeTab === 'members'
-              ? 'bg-bg-subtle text-fg border border-border border-b-0'
-              : 'text-fg-muted hover:text-fg'"
+            :class="
+              activeTab === 'members'
+                ? 'bg-bg-subtle text-fg border border-border border-b-0'
+                : 'text-fg-muted hover:text-fg'
+            "
             @click="activeTab = 'members'"
           >
             Members
@@ -98,9 +94,11 @@ defineOgImageComponent('Default', {
           <button
             type="button"
             class="px-4 py-2 font-mono text-sm rounded-t-lg transition-colors duration-200"
-            :class="activeTab === 'teams'
-              ? 'bg-bg-subtle text-fg border border-border border-b-0'
-              : 'text-fg-muted hover:text-fg'"
+            :class="
+              activeTab === 'teams'
+                ? 'bg-bg-subtle text-fg border border-border border-b-0'
+                : 'text-fg-muted hover:text-fg'
+            "
             @click="activeTab = 'teams'"
           >
             Teams
@@ -108,45 +106,24 @@ defineOgImageComponent('Default', {
         </div>
 
         <!-- Tab content -->
-        <OrgMembersPanel
-          v-if="activeTab === 'members'"
-          :org-name="orgName"
-        />
-        <OrgTeamsPanel
-          v-else
-          :org-name="orgName"
-        />
+        <OrgMembersPanel v-if="activeTab === 'members'" :org-name="orgName" />
+        <OrgTeamsPanel v-else :org-name="orgName" />
       </section>
     </ClientOnly>
 
     <!-- Loading state -->
-    <LoadingSpinner
-      v-if="status === 'pending'"
-      text="Loading packages..."
-    />
+    <LoadingSpinner v-if="status === 'pending'" text="Loading packages..." />
 
     <!-- Error state -->
-    <div
-      v-else-if="status === 'error'"
-      role="alert"
-      class="py-12 text-center"
-    >
+    <div v-else-if="status === 'error'" role="alert" class="py-12 text-center">
       <p class="text-fg-muted mb-4">
         {{ error?.message ?? 'Failed to load organization packages' }}
       </p>
-      <NuxtLink
-        to="/"
-        class="btn"
-      >
-        Go back home
-      </NuxtLink>
+      <NuxtLink to="/" class="btn"> Go back home </NuxtLink>
     </div>
 
     <!-- Empty state -->
-    <div
-      v-else-if="packageCount === 0"
-      class="py-12 text-center"
-    >
+    <div v-else-if="packageCount === 0" class="py-12 text-center">
       <p class="text-fg-muted font-mono">
         No public packages found for <span class="text-fg">@{{ orgName }}</span>
       </p>
@@ -156,13 +133,8 @@ defineOgImageComponent('Default', {
     </div>
 
     <!-- Package list -->
-    <section
-      v-else-if="scopedPackages.length > 0"
-      aria-label="Organization packages"
-    >
-      <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
-        Packages
-      </h2>
+    <section v-else-if="scopedPackages.length > 0" aria-label="Organization packages">
+      <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">Packages</h2>
 
       <PackageList :results="scopedPackages" />
     </section>

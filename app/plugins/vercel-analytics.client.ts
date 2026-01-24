@@ -7,7 +7,7 @@ export default defineNuxtPlugin({
     }
 
     window.va = function (...params: unknown[]) {
-      (window.vaq = window.vaq || []).push(params)
+      ;(window.vaq = window.vaq || []).push(params)
     }
 
     useScript({

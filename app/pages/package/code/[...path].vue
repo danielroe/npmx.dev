@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import type { PackageFileTree, PackageFileTreeResponse, PackageFileContentResponse } from '#shared/types'
+import type {
+  PackageFileTree,
+  PackageFileTreeResponse,
+  PackageFileContentResponse,
+} from '#shared/types'
 
 const route = useRoute('package-code-path')
 const router = useRouter()
@@ -10,9 +14,7 @@ const router = useRouter()
 //   /package/code/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
 //   /package/code/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
 const parsedRoute = computed(() => {
-  const segments = Array.isArray(route.params.path)
-    ? route.params.path
-    : [route.params.path ?? '']
+  const segments = Array.isArray(route.params.path) ? route.params.path : [route.params.path ?? '']
 
   // Find the /v/ separator for version
   const vIndex = segments.indexOf('v')
@@ -49,8 +51,7 @@ const availableVersions = computed(() => {
 
   // Get dist-tag versions first (latest, next, beta, etc.)
   const taggedVersions = new Set(Object.values(distTags))
-  const taggedList = Object.entries(distTags)
-    .map(([tag, ver]) => ({ version: ver, tag }))
+  const taggedList = Object.entries(distTags).map(([tag, ver]) => ({ version: ver, tag }))
 
   // Get other versions (not in dist-tags), sorted by semver descending
   const otherVersions = allVersions
@@ -144,9 +145,12 @@ onMounted(() => {
 })
 
 // Also sync when route changes (e.g., navigating to a different file)
-watch(() => route.hash, (hash) => {
-  currentHash.value = hash
-})
+watch(
+  () => route.hash,
+  hash => {
+    currentHash.value = hash
+  },
+)
 
 // Line number handling from hash
 const selectedLines = computed(() => {
@@ -184,7 +188,7 @@ watch(fileContent, () => {
 // Build breadcrumb path segments
 const breadcrumbs = computed(() => {
   const parts = filePath.value?.split('/').filter(Boolean) ?? []
-  const result: { name: string, path: string }[] = []
+  const result: { name: string; path: string }[] = []
 
   for (let i = 0; i < parts.length; i++) {
     const part = parts[i]
@@ -228,8 +232,7 @@ function handleLineClick(lineNum: number, event: MouseEvent) {
     const start = Math.min(selectedLines.value.start, lineNum)
     const end = Math.max(selectedLines.value.end, lineNum)
     newHash = `#L${start}-L${end}`
-  }
-  else {
+  } else {
     // Single click: select line
     newHash = `#L${lineNum}`
   }
@@ -274,30 +277,23 @@ useSeoMeta({
             :to="`/package/${packageName}${version ? `/v/${version}` : ''}`"
             class="font-mono text-lg font-medium hover:text-fg transition-colors"
           >
-            <span
-              v-if="orgName"
-              class="text-fg-muted"
-            >@{{ orgName }}/</span>{{ orgName ? packageName.replace(`@${orgName}/`, '') : packageName }}
+            <span v-if="orgName" class="text-fg-muted">@{{ orgName }}/</span
+            >{{ orgName ? packageName.replace(`@${orgName}/`, '') : packageName }}
           </NuxtLink>
           <!-- Version selector -->
-          <div
-            v-if="version && availableVersions.length > 0"
-            class="relative"
-          >
+          <div v-if="version && availableVersions.length > 0" class="relative">
             <select
               :value="version"
               class="appearance-none pl-2 pr-6 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded cursor-pointer hover:border-border-hover transition-colors"
               @change="switchVersion(($event.target as HTMLSelectElement).value)"
             >
-              <option
-                v-for="v in availableVersions"
-                :key="v.version"
-                :value="v.version"
-              >
+              <option v-for="v in availableVersions" :key="v.version" :value="v.version">
                 v{{ v.version }}{{ v.tag ? ` (${v.tag})` : '' }}
               </option>
             </select>
-            <span class="i-carbon-chevron-down w-3 h-3 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-fg-muted" />
+            <span
+              class="i-carbon-chevron-down w-3 h-3 absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-fg-muted"
+            />
           </div>
           <span
             v-else-if="version"
@@ -321,10 +317,7 @@ useSeoMeta({
           >
             root
           </NuxtLink>
-          <template
-            v-for="(crumb, i) in breadcrumbs"
-            :key="crumb.path"
-          >
+          <template v-for="(crumb, i) in breadcrumbs" :key="crumb.path">
             <span class="text-fg-subtle">/</span>
             <NuxtLink
               v-if="i < breadcrumbs.length - 1"
@@ -333,66 +326,38 @@ useSeoMeta({
             >
               {{ crumb.name }}
             </NuxtLink>
-            <span
-              v-else
-              class="text-fg"
-            >{{ crumb.name }}</span>
+            <span v-else class="text-fg">{{ crumb.name }}</span>
           </template>
         </nav>
       </div>
     </header>
 
     <!-- Error: no version -->
-    <div
-      v-if="!version"
-      class="container py-20 text-center"
-    >
-      <p class="text-fg-muted mb-4">
-        Version is required to browse code
-      </p>
-      <NuxtLink
-        :to="`/package/${packageName}`"
-        class="btn"
-      >
-        Go to package
-      </NuxtLink>
+    <div v-if="!version" class="container py-20 text-center">
+      <p class="text-fg-muted mb-4">Version is required to browse code</p>
+      <NuxtLink :to="`/package/${packageName}`" class="btn"> Go to package </NuxtLink>
     </div>
 
     <!-- Loading state -->
-    <div
-      v-else-if="treeStatus === 'pending'"
-      class="container py-20 text-center"
-    >
+    <div v-else-if="treeStatus === 'pending'" class="container py-20 text-center">
       <div class="i-svg-spinners-ring-resize w-8 h-8 mx-auto text-fg-muted" />
-      <p class="mt-4 text-fg-muted">
-        Loading file tree...
-      </p>
+      <p class="mt-4 text-fg-muted">Loading file tree...</p>
     </div>
 
     <!-- Error state -->
-    <div
-      v-else-if="treeStatus === 'error'"
-      class="container py-20 text-center"
-      role="alert"
-    >
-      <p class="text-fg-muted mb-4">
-        Failed to load files for this package version
-      </p>
-      <NuxtLink
-        :to="`/package/${packageName}${version ? `/v/${version}` : ''}`"
-        class="btn"
-      >
+    <div v-else-if="treeStatus === 'error'" class="container py-20 text-center" role="alert">
+      <p class="text-fg-muted mb-4">Failed to load files for this package version</p>
+      <NuxtLink :to="`/package/${packageName}${version ? `/v/${version}` : ''}`" class="btn">
         Back to package
       </NuxtLink>
     </div>
 
     <!-- Main content: file tree + file viewer -->
-    <div
-      v-else-if="fileTree"
-      class="flex-1 flex min-h-0"
-    >
+    <div v-else-if="fileTree" class="flex-1 flex min-h-0">
       <!-- File tree sidebar -->
-      <aside class="w-64 lg:w-72 border-r border-border overflow-y-auto shrink-0 hidden md:block bg-bg-subtle">
+      <aside
+        class="w-64 lg:w-72 border-r border-border overflow-y-auto shrink-0 hidden md:block bg-bg-subtle"
+      >
         <CodeFileTree
           :tree="fileTree.tree"
           :current-path="filePath ?? ''"
@@ -404,13 +369,14 @@ useSeoMeta({
       <div class="flex-1 overflow-auto min-w-0">
         <!-- File viewer -->
         <template v-if="isViewingFile && fileContent">
-          <div class="sticky top-0 bg-bg border-b border-border px-4 py-2 flex items-center justify-between">
+          <div
+            class="sticky top-0 bg-bg border-b border-border px-4 py-2 flex items-center justify-between"
+          >
             <div class="flex items-center gap-3 text-sm">
               <span class="text-fg-muted">{{ fileContent.lines }} lines</span>
-              <span
-                v-if="currentNode?.size"
-                class="text-fg-subtle"
-              >{{ formatBytes(currentNode.size) }}</span>
+              <span v-if="currentNode?.size" class="text-fg-subtle">{{
+                formatBytes(currentNode.size)
+              }}</span>
             </div>
             <div class="flex items-center gap-2">
               <button
@@ -440,16 +406,12 @@ useSeoMeta({
         </template>
 
         <!-- File too large warning -->
-        <div
-          v-else-if="isViewingFile && isFileTooLarge"
-          class="py-20 text-center"
-        >
+        <div v-else-if="isViewingFile && isFileTooLarge" class="py-20 text-center">
           <div class="i-carbon-document w-12 h-12 mx-auto text-fg-subtle mb-4" />
-          <p class="text-fg-muted mb-2">
-            File too large to preview
-          </p>
+          <p class="text-fg-muted mb-2">File too large to preview</p>
           <p class="text-fg-subtle text-sm mb-4">
-            {{ formatBytes(currentNode?.size ?? 0) }} exceeds the 500KB limit for syntax highlighting
+            {{ formatBytes(currentNode?.size ?? 0) }} exceeds the 500KB limit for syntax
+            highlighting
           </p>
           <a
             :href="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
@@ -471,11 +433,7 @@ useSeoMeta({
         >
           <!-- Fake line numbers column -->
           <div class="shrink-0 bg-bg-subtle border-r border-border w-14 py-0">
-            <div
-              v-for="n in 20"
-              :key="n"
-              class="px-3 h-6 flex items-center justify-end"
-            >
+            <div v-for="n in 20" :key="n" class="px-3 h-6 flex items-center justify-end">
               <span class="skeleton w-4 h-3 rounded-sm" />
             </div>
           </div>
@@ -505,18 +463,10 @@ useSeoMeta({
         </div>
 
         <!-- Error loading file -->
-        <div
-          v-else-if="filePath && fileStatus === 'error'"
-          class="py-20 text-center"
-          role="alert"
-        >
+        <div v-else-if="filePath && fileStatus === 'error'" class="py-20 text-center" role="alert">
           <div class="i-carbon-warning-alt w-8 h-8 mx-auto text-fg-subtle mb-4" />
-          <p class="text-fg-muted mb-2">
-            Failed to load file
-          </p>
-          <p class="text-fg-subtle text-sm mb-4">
-            The file may be too large or unavailable
-          </p>
+          <p class="text-fg-muted mb-2">Failed to load file</p>
+          <p class="text-fg-subtle text-sm mb-4">The file may be too large or unavailable</p>
           <a
             :href="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
             target="_blank"

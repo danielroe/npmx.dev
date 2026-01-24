@@ -19,11 +19,7 @@ defineProps<{
       class="animate-fade-in animate-fill-both"
       :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
     >
-      <PackageCard
-        :result="result"
-        :heading-level="headingLevel"
-        :show-publisher="showPublisher"
-      />
+      <PackageCard :result="result" :heading-level="headingLevel" :show-publisher="showPublisher" />
     </li>
   </ol>
 </template>

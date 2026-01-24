@@ -1,7 +1,8 @@
 <script setup lang="ts">
 const open = defineModel<boolean>('open', { default: false })
 
-const { isConnected, isConnecting, npmUser, error, hasOperations, connect, disconnect } = useConnector()
+const { isConnected, isConnecting, npmUser, error, hasOperations, connect, disconnect } =
+  useConnector()
 
 const tokenInput = ref('')
 const portInput = ref('31415')
@@ -20,7 +21,7 @@ function handleDisconnect() {
 }
 
 // Reset form when modal opens
-watch(open, (isOpen) => {
+watch(open, isOpen => {
   if (isOpen) {
     tokenInput.value = ''
   }
@@ -35,10 +36,7 @@ watch(open, (isOpen) => {
       enter-from-class="opacity-0"
       leave-to-class="opacity-0"
     >
-      <div
-        v-if="open"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4"
-      >
+      <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center p-4">
         <!-- Backdrop -->
         <button
           type="button"
@@ -57,10 +55,7 @@ watch(open, (isOpen) => {
         >
           <div class="p-6">
             <div class="flex items-center justify-between mb-6">
-              <h2
-                id="connector-modal-title"
-                class="font-mono text-lg font-medium"
-              >
+              <h2 id="connector-modal-title" class="font-mono text-lg font-medium">
                 Local Connector
               </h2>
               <button
@@ -69,31 +64,17 @@ watch(open, (isOpen) => {
                 aria-label="Close"
                 @click="open = false"
               >
-                <span
-                  class="i-carbon-close block w-5 h-5"
-                  aria-hidden="true"
-                />
+                <span class="i-carbon-close block w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
             <!-- Connected state -->
-            <div
-              v-if="isConnected"
-              class="space-y-4"
-            >
+            <div v-if="isConnected" class="space-y-4">
               <div class="flex items-center gap-3 p-4 bg-bg-subtle border border-border rounded-lg">
-                <span
-                  class="w-3 h-3 rounded-full bg-green-500"
-                  aria-hidden="true"
-                />
+                <span class="w-3 h-3 rounded-full bg-green-500" aria-hidden="true" />
                 <div>
-                  <p class="font-mono text-sm text-fg">
-                    Connected
-                  </p>
-                  <p
-                    v-if="npmUser"
-                    class="font-mono text-xs text-fg-muted"
-                  >
+                  <p class="font-mono text-sm text-fg">Connected</p>
+                  <p v-if="npmUser" class="font-mono text-xs text-fg-muted">
                     Logged in as @{{ npmUser }}
                   </p>
                 </div>
@@ -102,11 +83,9 @@ watch(open, (isOpen) => {
               <!-- Operations Queue -->
               <OperationsQueue />
 
-              <div
-                v-if="!hasOperations"
-                class="text-sm text-fg-muted"
-              >
-                You can now manage packages, organizations, and teams through the npmx.dev interface.
+              <div v-if="!hasOperations" class="text-sm text-fg-muted">
+                You can now manage packages, organizations, and teams through the npmx.dev
+                interface.
               </div>
 
               <button
@@ -119,11 +98,7 @@ watch(open, (isOpen) => {
             </div>
 
             <!-- Disconnected state -->
-            <form
-              v-else
-              class="space-y-4"
-              @submit.prevent="handleConnect"
-            >
+            <form v-else class="space-y-4" @submit.prevent="handleConnect">
               <p class="text-sm text-fg-muted">
                 Run the connector on your machine to enable admin features:
               </p>
@@ -133,9 +108,7 @@ watch(open, (isOpen) => {
                 <span class="text-fg ml-2">npx npmx-connector</span>
               </div>
 
-              <p class="text-sm text-fg-muted">
-                Then paste the token shown in your terminal:
-              </p>
+              <p class="text-sm text-fg-muted">Then paste the token shown in your terminal:</p>
 
               <div class="space-y-3">
                 <div>
@@ -154,11 +127,13 @@ watch(open, (isOpen) => {
                     autocomplete="off"
                     spellcheck="false"
                     class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-                  >
+                  />
                 </div>
 
                 <details class="text-sm">
-                  <summary class="text-fg-subtle cursor-pointer hover:text-fg-muted transition-colors duration-200">
+                  <summary
+                    class="text-fg-subtle cursor-pointer hover:text-fg-muted transition-colors duration-200"
+                  >
                     Advanced options
                   </summary>
                   <div class="mt-3">
@@ -176,7 +151,7 @@ watch(open, (isOpen) => {
                       inputmode="numeric"
                       autocomplete="off"
                       class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-                    >
+                    />
                   </div>
                 </details>
               </div>

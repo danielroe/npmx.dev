@@ -11,9 +11,7 @@ const route = useRoute('package-name')
 //   /package/@nuxt/kit → packageName: "@nuxt/kit", requestedVersion: null
 //   /package/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", requestedVersion: "1.0.0"
 const parsedRoute = computed(() => {
-  const segments = Array.isArray(route.params.name)
-    ? route.params.name
-    : [route.params.name ?? '']
+  const segments = Array.isArray(route.params.name) ? route.params.name : [route.params.name ?? '']
 
   // Find the /v/ separator for version
   const vIndex = segments.indexOf('v')
@@ -47,11 +45,14 @@ const { data: downloads } = usePackageDownloads(packageName, 'last-week')
 const { data: weeklyDownloads } = usePackageWeeklyDownloadEvolution(packageName, { weeks: 52 })
 
 // Fetch README for specific version if requested, otherwise latest
-const { data: readmeData } = useLazyFetch<{ html: string }>(() => {
-  const base = `/api/registry/readme/${packageName.value}`
-  const version = requestedVersion.value
-  return version ? `${base}/v/${version}` : base
-}, { default: () => ({ html: '' }) })
+const { data: readmeData } = useLazyFetch<{ html: string }>(
+  () => {
+    const base = `/api/registry/readme/${packageName.value}`
+    const version = requestedVersion.value
+    return version ? `${base}/v/${version}` : base
+  },
+  { default: () => ({ html: '' }) },
+)
 
 // Get the version to display (requested or latest)
 const displayVersion = computed(() => {
@@ -146,7 +147,7 @@ const packageManagers = [
   { id: 'deno', label: 'deno', action: 'add npm:' },
 ] as const
 
-type PackageManagerId = typeof packageManagers[number]['id']
+type PackageManagerId = (typeof packageManagers)[number]['id']
 
 // Persist preference in localStorage
 const selectedPM = ref<PackageManagerId>('npm')
@@ -158,11 +159,13 @@ onMounted(() => {
   }
 })
 
-watch(selectedPM, (value) => {
+watch(selectedPM, value => {
   localStorage.setItem('npmx-pm', value)
 })
 
-const currentPM = computed(() => packageManagers.find(p => p.id === selectedPM.value) || packageManagers[0])
+const currentPM = computed(
+  () => packageManagers.find(p => p.id === selectedPM.value) || packageManagers[0],
+)
 const selectedPMLabel = computed(() => currentPM.value.label)
 const selectedPMAction = computed(() => currentPM.value.action)
 
@@ -186,7 +189,7 @@ async function copyInstallCommand() {
   if (!installCommand.value) return
   await navigator.clipboard.writeText(installCommand.value)
   copied.value = true
-  setTimeout(() => copied.value = false, 2000)
+  setTimeout(() => (copied.value = false), 2000)
 }
 
 // Expandable description
@@ -205,24 +208,27 @@ function checkDescriptionOverflow() {
   }
 }
 
-watch(() => pkg.value?.description, () => {
-  descriptionExpanded.value = false
-  nextTick(checkDescriptionOverflow)
-})
+watch(
+  () => pkg.value?.description,
+  () => {
+    descriptionExpanded.value = false
+    nextTick(checkDescriptionOverflow)
+  },
+)
 
 onMounted(() => {
   nextTick(checkDescriptionOverflow)
 })
 
 useSeoMeta({
-  title: () => pkg.value?.name ? `${pkg.value.name} - npmx` : 'Package - npmx',
+  title: () => (pkg.value?.name ? `${pkg.value.name} - npmx` : 'Package - npmx'),
   description: () => pkg.value?.description ?? '',
 })
 
 defineOgImageComponent('Package', {
   name: () => pkg.value?.name ?? 'Package',
   version: () => displayVersion.value?.version ?? '',
-  downloads: () => downloads.value ? formatNumber(downloads.value.downloads) : '',
+  downloads: () => (downloads.value ? formatNumber(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
 })
 </script>
@@ -231,10 +237,7 @@ defineOgImageComponent('Package', {
   <main class="container py-8 sm:py-12">
     <PackageSkeleton v-if="status === 'pending'" />
 
-    <article
-      v-else-if="status === 'success' && pkg"
-      class="animate-fade-in"
-    >
+    <article v-else-if="status === 'success' && pkg" class="animate-fade-in">
       <!-- Package header -->
       <header class="mb-8 pb-8 border-b border-border">
         <div class="mb-4">
@@ -245,22 +248,37 @@ defineOgImageComponent('Package', {
                 v-if="orgName"
                 :to="`/org/${orgName}`"
                 class="text-fg-muted hover:text-fg transition-colors duration-200"
-              >@{{ orgName }}</NuxtLink><span v-if="orgName">/</span>{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                >@{{ orgName }}</NuxtLink
+              ><span v-if="orgName">/</span
+              >{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
             </h1>
             <a
               v-if="displayVersion"
-              :href="hasProvenance(displayVersion) ? `https://www.npmjs.com/package/${pkg.name}/v/${displayVersion.version}#provenance` : undefined"
+              :href="
+                hasProvenance(displayVersion)
+                  ? `https://www.npmjs.com/package/${pkg.name}/v/${displayVersion.version}#provenance`
+                  : undefined
+              "
               :target="hasProvenance(displayVersion) ? '_blank' : undefined"
               :rel="hasProvenance(displayVersion) ? 'noopener noreferrer' : undefined"
               class="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 font-mono text-sm bg-bg-muted border border-border rounded-md transition-colors duration-200"
-              :class="hasProvenance(displayVersion) ? 'hover:border-border-hover cursor-pointer' : 'cursor-default'"
+              :class="
+                hasProvenance(displayVersion)
+                  ? 'hover:border-border-hover cursor-pointer'
+                  : 'cursor-default'
+              "
               :title="hasProvenance(displayVersion) ? 'Verified provenance' : undefined"
             >
               v{{ displayVersion.version }}
               <span
-                v-if="requestedVersion && latestVersion && displayVersion.version !== latestVersion.version"
+                v-if="
+                  requestedVersion &&
+                  latestVersion &&
+                  displayVersion.version !== latestVersion.version
+                "
                 class="text-fg-subtle"
-              >(not latest)</span>
+                >(not latest)</span
+              >
               <span
                 v-if="hasProvenance(displayVersion)"
                 class="i-solar-shield-check-outline w-4 h-4 text-fg-muted"
@@ -269,10 +287,7 @@ defineOgImageComponent('Package', {
             </a>
           </div>
           <!-- Fixed height description container to prevent CLS -->
-          <div
-            ref="descriptionRef"
-            class="relative max-w-2xl min-h-[4.5rem]"
-          >
+          <div ref="descriptionRef" class="relative max-w-2xl min-h-[4.5rem]">
             <p
               v-if="pkg.description"
               class="text-fg-muted text-base m-0 overflow-hidden"
@@ -280,12 +295,7 @@ defineOgImageComponent('Package', {
             >
               <MarkdownText :text="pkg.description" />
             </p>
-            <p
-              v-else
-              class="text-fg-subtle text-base m-0 italic"
-            >
-              No description provided
-            </p>
+            <p v-else class="text-fg-subtle text-base m-0 italic">No description provided</p>
             <!-- Fade overlay with show more button - only when collapsed and overflowing -->
             <div
               v-if="pkg.description && descriptionOverflows && !descriptionExpanded"
@@ -304,61 +314,36 @@ defineOgImageComponent('Package', {
 
         <!-- Stats grid -->
         <dl class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-6">
-          <div
-            v-if="pkg.license"
-            class="space-y-1"
-          >
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-              License
-            </dt>
+          <div v-if="pkg.license" class="space-y-1">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">License</dt>
             <dd class="font-mono text-sm text-fg">
               {{ pkg.license }}
             </dd>
           </div>
 
-          <div
-            v-if="downloads"
-            class="space-y-1"
-          >
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-              Weekly
-            </dt>
+          <div v-if="downloads" class="space-y-1">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">Weekly</dt>
             <dd class="font-mono text-sm text-fg">
               {{ formatNumber(downloads.downloads) }}
             </dd>
           </div>
 
-          <div
-            v-if="displayVersion?.dist?.unpackedSize"
-            class="space-y-1"
-          >
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-              Size
-            </dt>
+          <div v-if="displayVersion?.dist?.unpackedSize" class="space-y-1">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">Size</dt>
             <dd class="font-mono text-sm text-fg">
               {{ formatBytes(displayVersion.dist.unpackedSize) }}
             </dd>
           </div>
 
-          <div
-            v-if="getDependencyCount(displayVersion) > 0"
-            class="space-y-1"
-          >
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-              Deps
-            </dt>
+          <div v-if="getDependencyCount(displayVersion) > 0" class="space-y-1">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">Deps</dt>
             <dd class="font-mono text-sm text-fg">
               {{ getDependencyCount(displayVersion) }}
             </dd>
           </div>
 
-          <div
-            v-if="pkg.time?.modified"
-            class="space-y-1 col-span-2"
-          >
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-              Updated
-            </dt>
+          <div v-if="pkg.time?.modified" class="space-y-1 col-span-2">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">Updated</dt>
             <dd class="font-mono text-sm text-fg">
               <time :datetime="pkg.time.modified">{{ formatDate(pkg.time.modified) }}</time>
             </dd>
@@ -366,10 +351,7 @@ defineOgImageComponent('Package', {
         </dl>
 
         <!-- Links -->
-        <nav
-          aria-label="Package links"
-          class="mt-6"
-        >
+        <nav aria-label="Package links" class="mt-6">
           <ul class="flex flex-wrap items-center gap-4 list-none m-0 p-0">
             <li v-if="repositoryUrl">
               <a
@@ -462,15 +444,9 @@ defineOgImageComponent('Package', {
       </header>
 
       <!-- Install command with package manager selector -->
-      <section
-        aria-labelledby="install-heading"
-        class="mb-8"
-      >
+      <section aria-labelledby="install-heading" class="mb-8">
         <div class="flex items-center justify-between mb-3">
-          <h2
-            id="install-heading"
-            class="text-xs text-fg-subtle uppercase tracking-wider"
-          >
+          <h2 id="install-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
             Install
           </h2>
           <!-- Package manager tabs -->
@@ -486,9 +462,11 @@ defineOgImageComponent('Package', {
                 role="tab"
                 :aria-selected="selectedPM === pm.id"
                 class="px-2 py-1 font-mono text-xs rounded transition-all duration-150"
-                :class="selectedPM === pm.id
-                  ? 'bg-bg-elevated text-fg'
-                  : 'text-fg-subtle hover:text-fg-muted'"
+                :class="
+                  selectedPM === pm.id
+                    ? 'bg-bg-elevated text-fg'
+                    : 'text-fg-subtle hover:text-fg-muted'
+                "
                 @click="selectedPM = pm.id"
               >
                 {{ pm.label }}
@@ -516,16 +494,21 @@ defineOgImageComponent('Package', {
             </div>
             <div class="flex items-center gap-2 px-4 pt-3 pb-4">
               <span class="text-fg-subtle font-mono text-sm select-none">$</span>
-              <code class="font-mono text-sm"><ClientOnly><span class="text-fg">{{ selectedPMLabel }}</span> <span class="text-fg-muted">{{ selectedPMAction }}</span><span
-                v-if="selectedPM !== 'deno'"
-                class="text-fg-muted"
-              >&nbsp;{{ pkg.name }}</span><span
-                v-else
-                class="text-fg-muted"
-              >{{ pkg.name }}</span><span
-                v-if="requestedVersion"
-                class="text-fg-muted"
-              >@{{ requestedVersion }}</span><template #fallback><span class="text-fg">npm</span>&nbsp;<span class="text-fg-muted">install {{ pkg.name }}</span></template></ClientOnly></code>
+              <code class="font-mono text-sm"
+                ><ClientOnly
+                  ><span class="text-fg">{{ selectedPMLabel }}</span>
+                  <span class="text-fg-muted">{{ selectedPMAction }}</span
+                  ><span v-if="selectedPM !== 'deno'" class="text-fg-muted"
+                    >&nbsp;{{ pkg.name }}</span
+                  ><span v-else class="text-fg-muted">{{ pkg.name }}</span
+                  ><span v-if="requestedVersion" class="text-fg-muted">@{{ requestedVersion }}</span
+                  ><template #fallback
+                    ><span class="text-fg">npm</span>&nbsp;<span class="text-fg-muted"
+                      >install {{ pkg.name }}</span
+                    ></template
+                  ></ClientOnly
+                ></code
+              >
             </div>
           </div>
           <button
@@ -542,10 +525,7 @@ defineOgImageComponent('Package', {
         <!-- Main content (README) -->
         <div class="lg:col-span-2 order-2 lg:order-1 min-w-0">
           <section aria-labelledby="readme-heading">
-            <h2
-              id="readme-heading"
-              class="text-xs text-fg-subtle uppercase tracking-wider mb-4"
-            >
+            <h2 id="readme-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
               Readme
             </h2>
             <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
@@ -554,17 +534,11 @@ defineOgImageComponent('Package', {
               class="readme-content prose prose-invert max-w-none"
               v-html="readmeData.html"
             />
-            <p
-              v-else
-              class="text-fg-subtle italic"
-            >
+            <p v-else class="text-fg-subtle italic">
               No README available.
-              <a
-                v-if="repositoryUrl"
-                :href="repositoryUrl"
-                rel="noopener noreferrer"
-                class="link"
-              >View on GitHub</a>
+              <a v-if="repositoryUrl" :href="repositoryUrl" rel="noopener noreferrer" class="link"
+                >View on GitHub</a
+              >
             </p>
           </section>
         </div>
@@ -572,10 +546,7 @@ defineOgImageComponent('Package', {
         <!-- Sidebar -->
         <aside class="order-1 lg:order-2 space-y-8">
           <!-- Maintainers (with admin actions when connected) -->
-          <PackageMaintainers
-            :package-name="pkg.name"
-            :maintainers="pkg.maintainers"
-          />
+          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
@@ -583,25 +554,13 @@ defineOgImageComponent('Package', {
           </ClientOnly>
 
           <!-- Keywords -->
-          <section
-            v-if="displayVersion?.keywords?.length"
-            aria-labelledby="keywords-heading"
-          >
-            <h2
-              id="keywords-heading"
-              class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
-            >
+          <section v-if="displayVersion?.keywords?.length" aria-labelledby="keywords-heading">
+            <h2 id="keywords-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
               Keywords
             </h2>
             <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
-              <li
-                v-for="keyword in displayVersion.keywords.slice(0, 15)"
-                :key="keyword"
-              >
-                <NuxtLink
-                  :to="`/search?q=keywords:${encodeURIComponent(keyword)}`"
-                  class="tag"
-                >
+              <li v-for="keyword in displayVersion.keywords.slice(0, 15)" :key="keyword">
+                <NuxtLink :to="`/search?q=keywords:${encodeURIComponent(keyword)}`" class="tag">
                   {{ keyword }}
                 </NuxtLink>
               </li>
@@ -614,7 +573,9 @@ defineOgImageComponent('Package', {
           />
 
           <section
-            v-if="displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)"
+            v-if="
+              displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)
+            "
             aria-labelledby="compatibility-heading"
           >
             <h2
@@ -628,20 +589,13 @@ defineOgImageComponent('Package', {
                 v-if="displayVersion.engines.node"
                 class="flex items-center justify-between py-1"
               >
-                <dt class="text-fg-muted text-sm">
-                  node
-                </dt>
+                <dt class="text-fg-muted text-sm">node</dt>
                 <dd class="font-mono text-sm text-fg">
                   {{ displayVersion.engines.node }}
                 </dd>
               </div>
-              <div
-                v-if="displayVersion.engines.npm"
-                class="flex items-center justify-between py-1"
-              >
-                <dt class="text-fg-muted text-sm">
-                  npm
-                </dt>
+              <div v-if="displayVersion.engines.npm" class="flex items-center justify-between py-1">
+                <dt class="text-fg-muted text-sm">npm</dt>
                 <dd class="font-mono text-sm text-fg">
                   {{ displayVersion.engines.npm }}
                 </dd>
@@ -671,23 +625,12 @@ defineOgImageComponent('Package', {
     </article>
 
     <!-- Error state -->
-    <div
-      v-else-if="status === 'error'"
-      role="alert"
-      class="py-20 text-center"
-    >
-      <h1 class="font-mono text-2xl font-medium mb-4">
-        Package Not Found
-      </h1>
+    <div v-else-if="status === 'error'" role="alert" class="py-20 text-center">
+      <h1 class="font-mono text-2xl font-medium mb-4">Package Not Found</h1>
       <p class="text-fg-muted mb-8">
         {{ error?.message ?? 'The package could not be found.' }}
       </p>
-      <NuxtLink
-        to="/"
-        class="btn"
-      >
-        Go back home
-      </NuxtLink>
+      <NuxtLink to="/" class="btn"> Go back home </NuxtLink>
     </div>
   </main>
 </template>

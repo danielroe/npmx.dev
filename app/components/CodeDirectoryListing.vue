@@ -47,18 +47,12 @@ function formatBytes(bytes: number): string {
 <template>
   <div class="directory-listing">
     <!-- Empty state -->
-    <div
-      v-if="currentContents.length === 0"
-      class="py-20 text-center text-fg-muted"
-    >
+    <div v-if="currentContents.length === 0" class="py-20 text-center text-fg-muted">
       <p>No files in this directory</p>
     </div>
 
     <!-- File list -->
-    <table
-      v-else
-      class="w-full"
-    >
+    <table v-else class="w-full">
       <thead class="sr-only">
         <tr>
           <th>Name</th>
@@ -99,11 +93,7 @@ function formatBytes(bytes: number): string {
                 v-if="node.type === 'directory'"
                 class="i-carbon-folder w-4 h-4 text-yellow-600"
               />
-              <span
-                v-else
-                class="w-4 h-4"
-                :class="getFileIcon(node.name)"
-              />
+              <span v-else class="w-4 h-4" :class="getFileIcon(node.name)" />
               <span>{{ node.name }}</span>
             </NuxtLink>
           </td>

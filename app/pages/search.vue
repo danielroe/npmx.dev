@@ -14,7 +14,7 @@ const updateUrlQuery = debounce((value: string) => {
 }, 250)
 
 // Watch input and debounce URL updates
-watch(inputValue, (value) => {
+watch(inputValue, value => {
   updateUrlQuery(value)
 })
 
@@ -22,12 +22,15 @@ watch(inputValue, (value) => {
 const query = computed(() => (route.query.q as string) ?? '')
 
 // Sync input with URL when navigating (e.g., back button)
-watch(() => route.query.q, (urlQuery) => {
-  const value = (urlQuery as string) ?? ''
-  if (inputValue.value !== value) {
-    inputValue.value = value
-  }
-})
+watch(
+  () => route.query.q,
+  urlQuery => {
+    const value = (urlQuery as string) ?? ''
+    if (inputValue.value !== value) {
+      inputValue.value = value
+    }
+  },
+)
 
 // For glow effect
 const isSearchFocused = ref(false)
@@ -89,22 +92,25 @@ watch([results, query], ([newResults, newQuery]) => {
 const resultsListRef = ref<HTMLOListElement>()
 
 // Scroll to restored position once results are loaded
-watch([results, status, () => needsScrollRestore.value], ([newResults, newStatus, shouldScroll]) => {
-  if (shouldScroll && newStatus === 'success' && newResults && newResults.objects.length > 0) {
-    needsScrollRestore.value = false
-    // Scroll to the first item of the target page
-    nextTick(() => {
-      const targetItemIndex = (initialPage.value - 1) * pageSize
-      const listItems = resultsListRef.value?.children
-      if (listItems && listItems[targetItemIndex]) {
-        listItems[targetItemIndex].scrollIntoView({
-          behavior: 'instant',
-          block: 'start',
-        })
-      }
-    })
-  }
-})
+watch(
+  [results, status, () => needsScrollRestore.value],
+  ([newResults, newStatus, shouldScroll]) => {
+    if (shouldScroll && newStatus === 'success' && newResults && newResults.objects.length > 0) {
+      needsScrollRestore.value = false
+      // Scroll to the first item of the target page
+      nextTick(() => {
+        const targetItemIndex = (initialPage.value - 1) * pageSize
+        const listItems = resultsListRef.value?.children
+        if (listItems && listItems[targetItemIndex]) {
+          listItems[targetItemIndex].scrollIntoView({
+            behavior: 'instant',
+            block: 'start',
+          })
+        }
+      })
+    }
+  },
+)
 
 // Determine if we should show previous results while loading
 // (when new query is a continuation of the old one)
@@ -167,7 +173,7 @@ onMounted(() => {
   if (!loadMoreTrigger.value) return
 
   const observer = new IntersectionObserver(
-    (entries) => {
+    entries => {
       if (entries[0]?.isIntersecting && hasMore.value && status.value !== 'pending') {
         loadMore()
       }
@@ -187,44 +193,34 @@ watch(query, () => {
 })
 
 useSeoMeta({
-  title: () => query.value ? `Search: ${query.value} - npmx` : 'Search Packages - npmx',
+  title: () => (query.value ? `Search: ${query.value} - npmx` : 'Search Packages - npmx'),
 })
 
 defineOgImageComponent('Default', {
   title: 'npmx',
-  description: () => query.value ? `Search results for "${query.value}"` : 'Search npm packages',
+  description: () => (query.value ? `Search results for "${query.value}"` : 'Search npm packages'),
 })
 </script>
 
 <template>
   <main class="container py-8 sm:py-12 overflow-x-hidden">
     <header class="mb-8">
-      <h1 class="font-mono text-2xl sm:text-3xl font-medium mb-6">
-        search
-      </h1>
+      <h1 class="font-mono text-2xl sm:text-3xl font-medium mb-6">search</h1>
 
       <search>
-        <form
-          role="search"
-          class="relative"
-          @submit.prevent
-        >
-          <label
-            for="search-input"
-            class="sr-only"
-          >Search npm packages</label>
+        <form role="search" class="relative" @submit.prevent>
+          <label for="search-input" class="sr-only">Search npm packages</label>
 
-          <div
-            class="relative group"
-            :class="{ 'is-focused': isSearchFocused }"
-          >
+          <div class="relative group" :class="{ 'is-focused': isSearchFocused }">
             <!-- Subtle glow effect -->
             <div
               class="absolute -inset-px rounded-lg bg-gradient-to-r from-fg/0 via-fg/5 to-fg/0 opacity-0 transition-opacity duration-500 blur-sm group-[.is-focused]:opacity-100"
             />
 
             <div class="search-box relative flex items-center">
-              <span class="absolute left-4 text-fg-subtle font-mono text-base pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted">
+              <span
+                class="absolute left-4 text-fg-subtle font-mono text-base pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted"
+              >
                 /
               </span>
               <input
@@ -238,29 +234,18 @@ defineOgImageComponent('Default', {
                 class="w-full max-w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-4 py-3 font-mono text-base text-fg placeholder:text-fg-subtle transition-all duration-300 focus:(border-border-hover outline-none) appearance-none"
                 @focus="isSearchFocused = true"
                 @blur="isSearchFocused = false"
-              >
+              />
               <!-- Hidden submit button for accessibility (form must have submit button per WCAG) -->
-              <button
-                type="submit"
-                class="sr-only"
-              >
-                Search
-              </button>
+              <button type="submit" class="sr-only">Search</button>
             </div>
           </div>
         </form>
       </search>
     </header>
 
-    <section
-      v-if="query"
-      aria-label="Search results"
-    >
+    <section v-if="query" aria-label="Search results">
       <!-- Initial loading (only after user interaction, not during view transition) -->
-      <LoadingSpinner
-        v-if="showSearching"
-        text="Searching..."
-      />
+      <LoadingSpinner v-if="showSearching" text="Searching..." />
 
       <div v-else-if="visibleResults">
         <p
@@ -269,10 +254,7 @@ defineOgImageComponent('Default', {
           class="text-fg-muted text-sm mb-6 font-mono"
         >
           Found <span class="text-fg">{{ formatNumber(visibleResults.total) }}</span> packages
-          <span
-            v-if="status === 'pending'"
-            class="text-fg-subtle"
-          >(updating...)</span>
+          <span v-if="status === 'pending'" class="text-fg-subtle">(updating...)</span>
         </p>
 
         <p
@@ -280,7 +262,8 @@ defineOgImageComponent('Default', {
           role="status"
           class="text-fg-muted py-12 text-center font-mono"
         >
-          No packages found for "<span class="text-fg">{{ query }}</span>"
+          No packages found for "<span class="text-fg">{{ query }}</span
+          >"
         </p>
 
         <ol
@@ -294,19 +277,12 @@ defineOgImageComponent('Default', {
             class="animate-fade-in animate-fill-both"
             :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
           >
-            <PackageCard
-              :result="result"
-              heading-level="h2"
-              show-publisher
-            />
+            <PackageCard :result="result" heading-level="h2" show-publisher />
           </li>
         </ol>
 
         <!-- Infinite scroll trigger -->
-        <div
-          ref="loadMoreTrigger"
-          class="py-8 flex items-center justify-center"
-        >
+        <div ref="loadMoreTrigger" class="py-8 flex items-center justify-center">
           <div
             v-if="isLoadingMore || (status === 'pending' && loadedPages > 1)"
             class="flex items-center gap-3 text-fg-muted font-mono text-sm"
@@ -324,13 +300,8 @@ defineOgImageComponent('Default', {
       </div>
     </section>
 
-    <section
-      v-else
-      class="py-20 text-center"
-    >
-      <p class="text-fg-subtle font-mono text-sm">
-        Start typing to search packages
-      </p>
+    <section v-else class="py-20 text-center">
+      <p class="text-fg-subtle font-mono text-sm">Start typing to search packages</p>
     </section>
   </main>
 </template>

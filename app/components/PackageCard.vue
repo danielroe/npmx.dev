@@ -35,10 +35,7 @@ function formatDate(dateStr: string): string {
           {{ result.package.name }}
         </component>
         <div class="flex items-center gap-1.5 shrink-0">
-          <span
-            v-if="result.package.version"
-            class="font-mono text-xs text-fg-subtle"
-          >
+          <span v-if="result.package.version" class="font-mono text-xs text-fg-subtle">
             v{{ result.package.version }}
           </span>
           <ProvenanceBadge
@@ -51,36 +48,21 @@ function formatDate(dateStr: string): string {
         </div>
       </header>
 
-      <p
-        v-if="result.package.description"
-        class="text-fg-muted text-sm line-clamp-2 mb-3"
-      >
+      <p v-if="result.package.description" class="text-fg-muted text-sm line-clamp-2 mb-3">
         <MarkdownText :text="result.package.description" />
       </p>
 
       <footer class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
-        <dl
-          v-if="showPublisher || result.package.date"
-          class="flex items-center gap-4 m-0"
-        >
+        <dl v-if="showPublisher || result.package.date" class="flex items-center gap-4 m-0">
           <div
             v-if="showPublisher && result.package.publisher?.username"
             class="flex items-center gap-1.5"
           >
-            <dt class="sr-only">
-              Publisher
-            </dt>
-            <dd class="font-mono">
-              @{{ result.package.publisher.username }}
-            </dd>
+            <dt class="sr-only">Publisher</dt>
+            <dd class="font-mono">@{{ result.package.publisher.username }}</dd>
           </div>
-          <div
-            v-if="result.package.date"
-            class="flex items-center gap-1.5"
-          >
-            <dt class="sr-only">
-              Updated
-            </dt>
+          <div v-if="result.package.date" class="flex items-center gap-1.5">
+            <dt class="sr-only">Updated</dt>
             <dd>
               <time :datetime="result.package.date">{{ formatDate(result.package.date) }}</time>
             </dd>
@@ -94,10 +76,7 @@ function formatDate(dateStr: string): string {
       aria-label="Keywords"
       class="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border list-none m-0 p-0"
     >
-      <li
-        v-for="keyword in result.package.keywords.slice(0, 5)"
-        :key="keyword"
-      >
+      <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword">
         <NuxtLink
           :to="`/search?q=keywords:${encodeURIComponent(keyword)}`"
           class="tag decoration-none"

@@ -5,8 +5,13 @@ const MAX_FILE_SIZE = 500 * 1024
 
 // Languages that benefit from import linking
 const IMPORT_LANGUAGES = new Set([
-  'javascript', 'typescript', 'jsx', 'tsx',
-  'vue', 'svelte', 'astro',
+  'javascript',
+  'typescript',
+  'jsx',
+  'tsx',
+  'vue',
+  'svelte',
+  'astro',
 ])
 
 interface PackageJson {
@@ -24,9 +29,8 @@ async function fetchPackageJson(packageName: string, version: string): Promise<P
     const url = `https://cdn.jsdelivr.net/npm/${packageName}@${version}/package.json`
     const response = await fetch(url)
     if (!response.ok) return null
-    return await response.json() as PackageJson
-  }
-  catch {
+    return (await response.json()) as PackageJson
+  } catch {
     return null
   }
 }
@@ -34,7 +38,11 @@ async function fetchPackageJson(packageName: string, version: string): Promise<P
 /**
  * Fetch file content from jsDelivr CDN.
  */
-async function fetchFileContent(packageName: string, version: string, filePath: string): Promise<string> {
+async function fetchFileContent(
+  packageName: string,
+  version: string,
+  filePath: string,
+): Promise<string> {
   const url = `https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`
   const response = await fetch(url)
 
@@ -75,10 +83,13 @@ async function fetchFileContent(packageName: string, version: string, filePath: 
  * - /api/registry/file/@scope/packageName/v/1.2.3/path/to/file.ts
  */
 export default defineCachedEventHandler(
-  async (event) => {
+  async event => {
     const segments = getRouterParam(event, 'pkg')?.split('/') ?? []
     if (segments.length === 0) {
-      throw createError({ statusCode: 400, message: 'Package name, version, and file path are required' })
+      throw createError({
+        statusCode: 400,
+        message: 'Package name, version, and file path are required',
+      })
     }
 
     // Parse: [pkg, 'v', version, ...filePath] or [@scope, pkg, 'v', version, ...filePath]
@@ -97,7 +108,10 @@ export default defineCachedEventHandler(
     const filePath = versionAndPath.slice(1).join('/')
 
     if (!packageName || !version || !filePath) {
-      throw createError({ statusCode: 400, message: 'Package name, version, and file path are required' })
+      throw createError({
+        statusCode: 400,
+        message: 'Package name, version, and file path are required',
+      })
     }
 
     try {
@@ -152,8 +166,7 @@ export default defineCachedEventHandler(
         html,
         lines: content.split('\n').length,
       }
-    }
-    catch (error) {
+    } catch (error) {
       if (error && typeof error === 'object' && 'statusCode' in error) {
         throw error
       }
@@ -162,7 +175,7 @@ export default defineCachedEventHandler(
   },
   {
     maxAge: 60 * 60, // Cache for 1 hour (files don't change for a given version)
-    getKey: (event) => {
+    getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       return `file:v${CACHE_VERSION}:${pkg}`
     },

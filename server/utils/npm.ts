@@ -57,8 +57,10 @@ export const fetchNpmDownloads = defineCachedFunction(
  */
 function constraintIncludesPrerelease(constraint: string): boolean {
   // Look for prerelease identifiers in the constraint
-  return /-(alpha|beta|rc|next|canary|dev|preview|pre|experimental)/i.test(constraint)
-    || /-\d/.test(constraint) // e.g., -0, -1
+  return (
+    /-(alpha|beta|rc|next|canary|dev|preview|pre|experimental)/i.test(constraint) ||
+    /-\d/.test(constraint)
+  ) // e.g., -0, -1
 }
 
 /**
@@ -82,8 +84,7 @@ export async function resolveVersionConstraint(
     }
 
     return maxSatisfying(versions, constraint)
-  }
-  catch {
+  } catch {
     return null
   }
 }

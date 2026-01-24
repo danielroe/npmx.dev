@@ -31,9 +31,7 @@ const filteredSuggestions = computed(() => {
     return props.suggestions.slice(0, 10) // Show first 10 when empty
   }
   const query = inputValue.value.toLowerCase().replace(/^@/, '')
-  return props.suggestions
-    .filter(s => s.toLowerCase().includes(query))
-    .slice(0, 10)
+  return props.suggestions.filter(s => s.toLowerCase().includes(query)).slice(0, 10)
 })
 
 // Check if current input matches a suggestion exactly
@@ -82,9 +80,7 @@ function handleSubmit() {
   const username = inputValue.value.trim().replace(/^@/, '')
   if (!username) return
 
-  const inSuggestions = props.suggestions.some(
-    s => s.toLowerCase() === username.toLowerCase(),
-  )
+  const inSuggestions = props.suggestions.some(s => s.toLowerCase() === username.toLowerCase())
   emit('select', username, inSuggestions)
   inputValue.value = ''
   isOpen.value = false
@@ -117,8 +113,7 @@ function handleKeydown(event: KeyboardEvent) {
       const selectedSuggestion = filteredSuggestions.value[highlightedIndex.value]
       if (highlightedIndex.value >= 0 && selectedSuggestion) {
         selectSuggestion(selectedSuggestion)
-      }
-      else {
+      } else {
         handleSubmit()
       }
       break
@@ -131,7 +126,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 // Scroll highlighted item into view
-watch(highlightedIndex, (index) => {
+watch(highlightedIndex, index => {
   if (index >= 0 && listRef.value) {
     const item = listRef.value.children[index] as HTMLElement
     item?.scrollIntoView({ block: 'nearest' })
@@ -147,11 +142,7 @@ onMounted(() => {
 
 <template>
   <div class="relative">
-    <label
-      v-if="label"
-      :for="inputId"
-      class="sr-only"
-    >{{ label }}</label>
+    <label v-if="label" :for="inputId" class="sr-only">{{ label }}</label>
     <input
       :id="inputId"
       ref="inputRef"
@@ -166,13 +157,15 @@ onMounted(() => {
       :aria-expanded="isOpen && (filteredSuggestions.length > 0 || showNewUserHint)"
       aria-haspopup="listbox"
       :aria-controls="listboxId"
-      :aria-activedescendant="highlightedIndex >= 0 ? `${listboxId}-option-${highlightedIndex}` : undefined"
+      :aria-activedescendant="
+        highlightedIndex >= 0 ? `${listboxId}-option-${highlightedIndex}` : undefined
+      "
       class="w-full px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 disabled:opacity-50 disabled:cursor-not-allowed"
       @input="handleInput"
       @focus="handleFocus"
       @blur="handleBlur"
       @keydown="handleKeydown"
-    >
+    />
 
     <!-- Dropdown -->
     <Transition
@@ -199,7 +192,11 @@ onMounted(() => {
           role="option"
           :aria-selected="highlightedIndex === index"
           class="px-2 py-1 font-mono text-sm cursor-pointer transition-colors duration-100"
-          :class="highlightedIndex === index ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:bg-bg-subtle hover:text-fg'"
+          :class="
+            highlightedIndex === index
+              ? 'bg-bg-muted text-fg'
+              : 'text-fg-muted hover:bg-bg-subtle hover:text-fg'
+          "
           @mouseenter="highlightedIndex = index"
           @click="selectSuggestion(username)"
         >

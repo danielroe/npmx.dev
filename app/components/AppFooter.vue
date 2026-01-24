@@ -2,9 +2,7 @@
   <footer class="border-t border-border mt-auto">
     <div class="container py-8 flex flex-col gap-4 text-fg-subtle text-sm">
       <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="font-mono m-0">
-          a better browser for the npm registry
-        </p>
+        <p class="font-mono m-0">a better browser for the npm registry</p>
         <div class="flex items-center gap-6">
           <a
             href="https://github.com/danielroe/npmx.dev"
@@ -14,11 +12,7 @@
             source
           </a>
           <span class="text-border">|</span>
-          <a
-            href="https://roe.dev"
-            rel="noopener noreferrer"
-            class="link-subtle font-mono text-xs"
-          >
+          <a href="https://roe.dev" rel="noopener noreferrer" class="link-subtle font-mono text-xs">
             @danielroe
           </a>
         </div>

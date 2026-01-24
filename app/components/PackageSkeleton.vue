@@ -1,9 +1,5 @@
 <template>
-  <article
-    aria-busy="true"
-    aria-label="Loading package details"
-    class="animate-fade-in"
-  >
+  <article aria-busy="true" aria-label="Loading package details" class="animate-fade-in">
     <!-- Package header - matches header in [...name].vue -->
     <header class="mb-8 pb-8 border-b border-border">
       <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
@@ -30,9 +26,7 @@
       <dl class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-6">
         <!-- License -->
         <div class="space-y-1">
-          <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-            License
-          </dt>
+          <dt class="text-xs text-fg-subtle uppercase tracking-wider">License</dt>
           <dd class="font-mono text-sm">
             <span class="skeleton inline-block h-5 w-12" />
           </dd>
@@ -40,9 +34,7 @@
 
         <!-- Weekly -->
         <div class="space-y-1">
-          <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-            Weekly
-          </dt>
+          <dt class="text-xs text-fg-subtle uppercase tracking-wider">Weekly</dt>
           <dd class="font-mono text-sm">
             <span class="skeleton inline-block h-5 w-20" />
           </dd>
@@ -50,9 +42,7 @@
 
         <!-- Size -->
         <div class="space-y-1">
-          <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-            Size
-          </dt>
+          <dt class="text-xs text-fg-subtle uppercase tracking-wider">Size</dt>
           <dd class="font-mono text-sm">
             <span class="skeleton inline-block h-5 w-16" />
           </dd>
@@ -60,9 +50,7 @@
 
         <!-- Deps -->
         <div class="space-y-1">
-          <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-            Deps
-          </dt>
+          <dt class="text-xs text-fg-subtle uppercase tracking-wider">Deps</dt>
           <dd class="font-mono text-sm">
             <span class="skeleton inline-block h-5 w-8" />
           </dd>
@@ -70,9 +58,7 @@
 
         <!-- Updated -->
         <div class="space-y-1 col-span-2">
-          <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-            Updated
-          </dt>
+          <dt class="text-xs text-fg-subtle uppercase tracking-wider">Updated</dt>
           <dd class="font-mono text-sm">
             <span class="skeleton inline-block h-5 w-28" />
           </dd>
@@ -80,10 +66,7 @@
       </dl>
 
       <!-- Links: mt-6, flex flex-wrap items-center gap-4 -->
-      <nav
-        aria-label="Package links"
-        class="mt-6"
-      >
+      <nav aria-label="Package links" class="mt-6">
         <ul class="flex flex-wrap items-center gap-4 list-none m-0 p-0">
           <li>
             <span class="skeleton inline-block h-5 w-14" />
@@ -102,10 +85,7 @@
     </header>
 
     <!-- Install section: mb-8 -->
-    <section
-      aria-labelledby="install-heading-skeleton"
-      class="mb-8"
-    >
+    <section aria-labelledby="install-heading-skeleton" class="mb-8">
       <h2
         id="install-heading-skeleton"
         class="text-xs text-fg-subtle uppercase tracking-wider mb-3"

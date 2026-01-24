@@ -12,7 +12,8 @@ function handleSearch() {
 
 useSeoMeta({
   title: 'npmx - Package Browser for the npm Registry',
-  description: 'A better browser for the npm registry. Search, browse, and explore packages with a modern interface.',
+  description:
+    'A better browser for the npm registry. Search, browse, and explore packages with a modern interface.',
 })
 
 defineOgImageComponent('Default')
@@ -21,10 +22,14 @@ defineOgImageComponent('Default')
 <template>
   <main class="container">
     <!-- Hero section with dramatic vertical centering -->
-    <header class="min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center text-center py-20">
+    <header
+      class="min-h-[calc(100vh-12rem)] flex flex-col items-center justify-center text-center py-20"
+    >
       <!-- Animated title -->
-      <h1 class="font-mono text-5xl sm:text-7xl md:text-8xl font-medium tracking-tight mb-4 animate-fade-in animate-fill-both">
-        <span class="text-fg-subtle"><span style="letter-spacing: -0.2em;">.</span>/</span>npmx
+      <h1
+        class="font-mono text-5xl sm:text-7xl md:text-8xl font-medium tracking-tight mb-4 animate-fade-in animate-fill-both"
+      >
+        <span class="text-fg-subtle"><span style="letter-spacing: -0.2em">.</span>/</span>npmx
       </h1>
 
       <p
@@ -39,28 +44,20 @@ defineOgImageComponent('Default')
         class="w-full max-w-xl animate-slide-up animate-fill-both"
         style="animation-delay: 0.2s"
       >
-        <form
-          role="search"
-          class="relative"
-          @submit.prevent="handleSearch"
-        >
-          <label
-            for="home-search"
-            class="sr-only"
-          >Search npm packages</label>
+        <form role="search" class="relative" @submit.prevent="handleSearch">
+          <label for="home-search" class="sr-only">Search npm packages</label>
 
           <!-- Search input with glow effect on focus -->
-          <div
-            class="relative group"
-            :class="{ 'is-focused': isSearchFocused }"
-          >
+          <div class="relative group" :class="{ 'is-focused': isSearchFocused }">
             <!-- Subtle glow effect -->
             <div
               class="absolute -inset-px rounded-lg bg-gradient-to-r from-fg/0 via-fg/5 to-fg/0 opacity-0 transition-opacity duration-500 blur-sm group-[.is-focused]:opacity-100"
             />
 
             <div class="search-box relative flex items-center">
-              <span class="absolute left-4 text-fg-subtle font-mono text-sm pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted z-1">
+              <span
+                class="absolute left-4 text-fg-subtle font-mono text-sm pointer-events-none transition-colors duration-200 group-focus-within:text-fg-muted z-1"
+              >
                 /
               </span>
 
@@ -75,7 +72,7 @@ defineOgImageComponent('Default')
                 @input="handleSearch"
                 @focus="isSearchFocused = true"
                 @blur="isSearchFocused = false"
-              >
+              />
 
               <button
                 type="submit"
@@ -104,7 +101,9 @@ defineOgImageComponent('Default')
             :to="`/package/${pkg}`"
             class="link-subtle font-mono text-sm inline-flex items-center gap-2 group"
           >
-            <span class="w-1 h-1 rounded-full bg-fg-subtle group-hover:bg-fg transition-colors duration-200" />
+            <span
+              class="w-1 h-1 rounded-full bg-fg-subtle group-hover:bg-fg transition-colors duration-200"
+            />
             {{ pkg }}
           </NuxtLink>
         </li>

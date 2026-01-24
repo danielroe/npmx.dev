@@ -2,7 +2,7 @@
 const props = defineProps<{
   html: string
   lines: number
-  selectedLines: { start: number, end: number } | null
+  selectedLines: { start: number; end: number } | null
 }>()
 
 const emit = defineEmits<{
@@ -37,8 +37,7 @@ function updateLineHighlighting() {
     const lineNum = index + 1
     if (isLineSelected(lineNum)) {
       line.classList.add('highlighted')
-    }
-    else {
+    } else {
       line.classList.remove('highlighted')
     }
   })
@@ -82,11 +81,7 @@ watch(
     <!-- Code content -->
     <div class="code-content flex-1 overflow-x-auto min-w-0">
       <!-- eslint-disable vue/no-v-html -- HTML is generated server-side by Shiki -->
-      <div
-        ref="codeRef"
-        class="code-lines"
-        v-html="html"
-      />
+      <div ref="codeRef" class="code-lines" v-html="html" />
       <!-- eslint-enable vue/no-v-html -->
     </div>
   </div>

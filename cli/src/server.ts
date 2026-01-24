@@ -2,13 +2,18 @@ import crypto from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
-import { createApp, createRouter, eventHandler, readBody, getQuery, createError, getHeader, setResponseHeaders, getRouterParam } from 'h3'
-import type {
-  ConnectorState,
-  PendingOperation,
-  OperationType,
-  ApiResponse,
-} from './types.ts'
+import {
+  createApp,
+  createRouter,
+  eventHandler,
+  readBody,
+  getQuery,
+  createError,
+  getHeader,
+  setResponseHeaders,
+  getRouterParam,
+} from 'h3'
+import type { ConnectorState, PendingOperation, OperationType, ApiResponse } from './types.ts'
 import {
   getNpmUser,
   orgAddUser,
@@ -35,8 +40,7 @@ function getConnectorVersion(): string {
     const pkgPath = join(__dirname, '..', 'package.json')
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'))
     return pkg.version || '0.0.0'
-  }
-  catch {
+  } catch {
     // Fallback if package.json can't be read (e.g., in bundled builds)
     return '0.0.0'
   }
@@ -90,7 +94,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/connect',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const body = await readBody(event)
       if (body?.token !== expectedToken) {
         throw createError({ statusCode: 401, message: 'Invalid token' })
@@ -112,7 +116,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.get(
     '/state',
-    eventHandler((event) => {
+    eventHandler(event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -130,7 +134,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/operations',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -165,7 +169,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/operations/batch',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -203,7 +207,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/approve',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -232,7 +236,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/approve-all',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -252,7 +256,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/retry',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -283,7 +287,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.post(
     '/execute',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -294,7 +298,7 @@ export function createConnectorApp(expectedToken: string) {
       const otp = body?.otp as string | undefined
 
       const approvedOps = state.operations.filter(op => op.status === 'approved')
-      const results: Array<{ id: string, result: NpmExecResult }> = []
+      const results: Array<{ id: string; result: NpmExecResult }> = []
       let otpRequired = false
       const completedIds = new Set<string>()
       const failedIds = new Set<string>()
@@ -303,7 +307,7 @@ export function createConnectorApp(expectedToken: string) {
       // Each wave contains operations whose dependencies are satisfied
       while (true) {
         // Find operations ready to run (no pending dependencies)
-        const readyOps = approvedOps.filter((op) => {
+        const readyOps = approvedOps.filter(op => {
           // Already processed
           if (completedIds.has(op.id) || failedIds.has(op.id)) return false
           // No dependency - ready
@@ -329,7 +333,7 @@ export function createConnectorApp(expectedToken: string) {
         if (otpRequired && !otp) break
 
         // Execute ready operations in parallel
-        const runningOps = readyOps.map(async (op) => {
+        const runningOps = readyOps.map(async op => {
           op.status = 'running'
           const result = await executeOperation(op, otp)
           op.result = result
@@ -337,8 +341,7 @@ export function createConnectorApp(expectedToken: string) {
 
           if (result.exitCode === 0) {
             completedIds.add(op.id)
-          }
-          else {
+          } else {
             failedIds.add(op.id)
           }
 
@@ -369,7 +372,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.delete(
     '/operations',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -396,7 +399,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.delete(
     '/operations/all',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -416,7 +419,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.get(
     '/org/:org/users',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -441,8 +444,7 @@ export function createConnectorApp(expectedToken: string) {
           success: true,
           data: users,
         } as ApiResponse
-      }
-      catch {
+      } catch {
         return {
           success: false,
           error: 'Failed to parse org users',
@@ -453,7 +455,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.get(
     '/org/:org/teams',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -478,8 +480,7 @@ export function createConnectorApp(expectedToken: string) {
           success: true,
           data: teams,
         } as ApiResponse
-      }
-      catch {
+      } catch {
         return {
           success: false,
           error: 'Failed to parse teams',
@@ -490,7 +491,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.get(
     '/team/:scopeTeam/users',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -518,8 +519,7 @@ export function createConnectorApp(expectedToken: string) {
           success: true,
           data: users,
         } as ApiResponse
-      }
-      catch {
+      } catch {
         return {
           success: false,
           error: 'Failed to parse team users',
@@ -530,7 +530,7 @@ export function createConnectorApp(expectedToken: string) {
 
   router.get(
     '/package/:pkg/collaborators',
-    eventHandler(async (event) => {
+    eventHandler(async event => {
       const auth = getHeader(event, 'authorization')
       if (!validateToken(auth)) {
         throw createError({ statusCode: 401, message: 'Unauthorized' })
@@ -553,13 +553,15 @@ export function createConnectorApp(expectedToken: string) {
       }
 
       try {
-        const collaborators = JSON.parse(result.stdout) as Record<string, 'read-only' | 'read-write'>
+        const collaborators = JSON.parse(result.stdout) as Record<
+          string,
+          'read-only' | 'read-write'
+        >
         return {
           success: true,
           data: collaborators,
         } as ApiResponse
-      }
-      catch {
+      } catch {
         return {
           success: false,
           error: 'Failed to parse collaborators',
@@ -572,10 +574,7 @@ export function createConnectorApp(expectedToken: string) {
   return app
 }
 
-async function executeOperation(
-  op: PendingOperation,
-  otp?: string,
-): Promise<NpmExecResult> {
+async function executeOperation(op: PendingOperation, otp?: string): Promise<NpmExecResult> {
   const { type, params } = op
 
   switch (type) {

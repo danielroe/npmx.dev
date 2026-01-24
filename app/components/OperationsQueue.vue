@@ -26,7 +26,9 @@ const otpInput = ref('')
 
 /** Check if any active operation needs OTP */
 const hasOtpFailures = computed(() =>
-  activeOperations.value.some((op: PendingOperation) => op.status === 'failed' && op.result?.requiresOtp),
+  activeOperations.value.some(
+    (op: PendingOperation) => op.status === 'failed' && op.result?.requiresOtp,
+  ),
 )
 
 async function handleApproveAll() {
@@ -37,8 +39,7 @@ async function handleExecute(otp?: string) {
   isExecuting.value = true
   try {
     await executeOperations(otp)
-  }
-  finally {
+  } finally {
     isExecuting.value = false
   }
 }
@@ -69,33 +70,44 @@ async function handleClearAll() {
 
 function getStatusColor(status: string): string {
   switch (status) {
-    case 'pending': return 'bg-yellow-500'
-    case 'approved': return 'bg-blue-500'
-    case 'running': return 'bg-purple-500'
-    case 'completed': return 'bg-green-500'
-    case 'failed': return 'bg-red-500'
-    default: return 'bg-fg-subtle'
+    case 'pending':
+      return 'bg-yellow-500'
+    case 'approved':
+      return 'bg-blue-500'
+    case 'running':
+      return 'bg-purple-500'
+    case 'completed':
+      return 'bg-green-500'
+    case 'failed':
+      return 'bg-red-500'
+    default:
+      return 'bg-fg-subtle'
   }
 }
 
 function getStatusIcon(status: string): string {
   switch (status) {
-    case 'pending': return 'i-carbon-time'
-    case 'approved': return 'i-carbon-checkmark'
-    case 'running': return 'i-carbon-rotate'
-    case 'completed': return 'i-carbon-checkmark-filled'
-    case 'failed': return 'i-carbon-close-filled'
-    default: return 'i-carbon-help'
+    case 'pending':
+      return 'i-carbon-time'
+    case 'approved':
+      return 'i-carbon-checkmark'
+    case 'running':
+      return 'i-carbon-rotate'
+    case 'completed':
+      return 'i-carbon-checkmark-filled'
+    case 'failed':
+      return 'i-carbon-close-filled'
+    default:
+      return 'i-carbon-help'
   }
 }
 
 // Auto-refresh while executing
 let refreshInterval: ReturnType<typeof setInterval> | null = null
-watch(isExecuting, (executing) => {
+watch(isExecuting, executing => {
   if (executing) {
     refreshInterval = setInterval(() => refreshState(), 1000)
-  }
-  else if (refreshInterval) {
+  } else if (refreshInterval) {
     clearInterval(refreshInterval)
     refreshInterval = null
   }
@@ -109,18 +121,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    v-if="isConnected"
-    class="space-y-4"
-  >
+  <div v-if="isConnected" class="space-y-4">
     <!-- Header -->
     <div class="flex items-center justify-between">
       <h3 class="font-mono text-sm font-medium text-fg">
         Operations Queue
-        <span
-          v-if="hasActiveOperations"
-          class="text-fg-muted"
-        >({{ activeOperations.length }})</span>
+        <span v-if="hasActiveOperations" class="text-fg-muted"
+          >({{ activeOperations.length }})</span
+        >
       </h3>
       <div class="flex items-center gap-2">
         <button
@@ -138,33 +146,19 @@ onUnmounted(() => {
           aria-label="Refresh operations"
           @click="refreshState"
         >
-          <span
-            class="i-carbon-renew block w-4 h-4"
-            aria-hidden="true"
-          />
+          <span class="i-carbon-renew block w-4 h-4" aria-hidden="true" />
         </button>
       </div>
     </div>
 
     <!-- Empty state -->
-    <div
-      v-if="!hasActiveOperations && !hasCompletedOperations"
-      class="py-8 text-center"
-    >
-      <p class="font-mono text-sm text-fg-subtle">
-        No operations queued
-      </p>
-      <p class="font-mono text-xs text-fg-subtle mt-1">
-        Add operations from package or org pages
-      </p>
+    <div v-if="!hasActiveOperations && !hasCompletedOperations" class="py-8 text-center">
+      <p class="font-mono text-sm text-fg-subtle">No operations queued</p>
+      <p class="font-mono text-xs text-fg-subtle mt-1">Add operations from package or org pages</p>
     </div>
 
     <!-- Active operations list -->
-    <ul
-      v-if="hasActiveOperations"
-      class="space-y-2"
-      aria-label="Active operations"
-    >
+    <ul v-if="hasActiveOperations" class="space-y-2" aria-label="Active operations">
       <li
         v-for="op in activeOperations"
         :key="op.id"
@@ -202,14 +196,12 @@ onUnmounted(() => {
             v-else-if="op.result && (op.status === 'completed' || op.status === 'failed')"
             class="mt-2 p-2 bg-[#0d0d0d] border border-border rounded text-xs font-mono"
           >
-            <pre
-              v-if="op.result.stdout"
-              class="text-fg-muted whitespace-pre-wrap"
-            >{{ op.result.stdout }}</pre>
-            <pre
-              v-if="op.result.stderr"
-              class="text-red-400 whitespace-pre-wrap"
-            >{{ op.result.stderr }}</pre>
+            <pre v-if="op.result.stdout" class="text-fg-muted whitespace-pre-wrap">{{
+              op.result.stdout
+            }}</pre>
+            <pre v-if="op.result.stderr" class="text-red-400 whitespace-pre-wrap">{{
+              op.result.stderr
+            }}</pre>
           </div>
         </div>
 
@@ -222,10 +214,7 @@ onUnmounted(() => {
             aria-label="Approve operation"
             @click="approveOperation(op.id)"
           >
-            <span
-              class="i-carbon-checkmark block w-4 h-4"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-checkmark block w-4 h-4" aria-hidden="true" />
           </button>
           <button
             v-if="op.status !== 'running'"
@@ -234,10 +223,7 @@ onUnmounted(() => {
             aria-label="Remove operation"
             @click="removeOperation(op.id)"
           >
-            <span
-              class="i-carbon-close block w-4 h-4"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </li>
@@ -250,22 +236,11 @@ onUnmounted(() => {
       role="alert"
     >
       <div class="flex items-center gap-2 mb-2">
-        <span
-          class="i-carbon-locked block w-4 h-4 text-amber-400 shrink-0"
-          aria-hidden="true"
-        />
-        <span class="font-mono text-sm text-amber-400">
-          Enter OTP to continue
-        </span>
+        <span class="i-carbon-locked block w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+        <span class="font-mono text-sm text-amber-400"> Enter OTP to continue </span>
       </div>
-      <form
-        class="flex items-center gap-2"
-        @submit.prevent="handleRetryWithOtp"
-      >
-        <label
-          for="otp-input"
-          class="sr-only"
-        >One-time password</label>
+      <form class="flex items-center gap-2" @submit.prevent="handleRetryWithOtp">
+        <label for="otp-input" class="sr-only">One-time password</label>
         <input
           id="otp-input"
           v-model="otpInput"
@@ -277,7 +252,7 @@ onUnmounted(() => {
           autocomplete="one-time-code"
           spellcheck="false"
           class="flex-1 px-3 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-        >
+        />
         <button
           type="submit"
           :disabled="!otpInput.trim() || isExecuting"
@@ -289,10 +264,7 @@ onUnmounted(() => {
     </div>
 
     <!-- Action buttons -->
-    <div
-      v-if="hasActiveOperations"
-      class="flex items-center gap-2 pt-2"
-    >
+    <div v-if="hasActiveOperations" class="flex items-center gap-2 pt-2">
       <button
         v-if="hasPendingOperations"
         type="button"
@@ -313,21 +285,17 @@ onUnmounted(() => {
     </div>
 
     <!-- Completed operations log (collapsed by default) -->
-    <details
-      v-if="hasCompletedOperations"
-      class="mt-4 border-t border-border pt-4"
-    >
-      <summary class="flex items-center gap-2 font-mono text-xs text-fg-muted cursor-pointer hover:text-fg transition-colors duration-200 select-none">
+    <details v-if="hasCompletedOperations" class="mt-4 border-t border-border pt-4">
+      <summary
+        class="flex items-center gap-2 font-mono text-xs text-fg-muted cursor-pointer hover:text-fg transition-colors duration-200 select-none"
+      >
         <span
           class="i-carbon-chevron-right block w-3 h-3 transition-transform duration-200 [[open]>&]:rotate-90"
           aria-hidden="true"
         />
         Log ({{ completedOperations.length }})
       </summary>
-      <ul
-        class="mt-2 space-y-1"
-        aria-label="Completed operations log"
-      >
+      <ul class="mt-2 space-y-1" aria-label="Completed operations log">
         <li
           v-for="op in completedOperations"
           :key="op.id"
@@ -335,7 +303,11 @@ onUnmounted(() => {
           :class="op.status === 'completed' ? 'text-fg-muted' : 'text-red-400/80'"
         >
           <span
-            :class="op.status === 'completed' ? 'i-carbon-checkmark-filled text-green-500' : 'i-carbon-close-filled text-red-500'"
+            :class="
+              op.status === 'completed'
+                ? 'i-carbon-checkmark-filled text-green-500'
+                : 'i-carbon-close-filled text-red-500'
+            "
             class="w-3.5 h-3.5 shrink-0 mt-0.5"
             aria-hidden="true"
           />
@@ -345,7 +317,8 @@ onUnmounted(() => {
             <pre
               v-if="op.status === 'failed' && op.result?.stderr"
               class="mt-1 text-red-400/70 whitespace-pre-wrap text-[11px]"
-            >{{ op.result.stderr }}</pre>
+              >{{ op.result.stderr }}</pre
+            >
           </div>
           <button
             type="button"
@@ -353,10 +326,7 @@ onUnmounted(() => {
             aria-label="Remove from log"
             @click="removeOperation(op.id)"
           >
-            <span
-              class="i-carbon-close block w-3 h-3"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-close block w-3 h-3" aria-hidden="true" />
           </button>
         </li>
       </ul>

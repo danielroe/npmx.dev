@@ -9,10 +9,14 @@ const statusCode = computed(() => props.error.statusCode || 500)
 const statusMessage = computed(() => {
   if (props.error.statusMessage) return props.error.statusMessage
   switch (statusCode.value) {
-    case 404: return 'Page not found'
-    case 500: return 'Internal server error'
-    case 503: return 'Service unavailable'
-    default: return 'Something went wrong'
+    case 404:
+      return 'Page not found'
+    case 500:
+      return 'Internal server error'
+    case 503:
+      return 'Service unavailable'
+    default:
+      return 'Something went wrong'
   }
 })
 

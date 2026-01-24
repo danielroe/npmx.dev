@@ -36,20 +36,22 @@ const isGranting = ref(false)
 
 // Computed collaborator list with type detection
 const collaboratorList = computed(() => {
-  return Object.entries(collaborators.value).map(([name, perm]) => {
-    // Check if this looks like a team (org:team format) or user
-    const isTeam = name.includes(':')
-    return {
-      name,
-      permission: perm,
-      isTeam,
-      displayName: isTeam ? name.split(':')[1] : name,
-    }
-  }).sort((a, b) => {
-    // Teams first, then users
-    if (a.isTeam !== b.isTeam) return a.isTeam ? -1 : 1
-    return a.name.localeCompare(b.name)
-  })
+  return Object.entries(collaborators.value)
+    .map(([name, perm]) => {
+      // Check if this looks like a team (org:team format) or user
+      const isTeam = name.includes(':')
+      return {
+        name,
+        permission: perm,
+        isTeam,
+        displayName: isTeam ? name.split(':')[1] : name,
+      }
+    })
+    .sort((a, b) => {
+      // Teams first, then users
+      if (a.isTeam !== b.isTeam) return a.isTeam ? -1 : 1
+      return a.name.localeCompare(b.name)
+    })
 })
 
 // Load collaborators
@@ -63,12 +65,10 @@ async function loadCollaborators() {
     const result = await listPackageCollaborators(props.packageName)
     if (result) {
       collaborators.value = result
-    }
-    else {
+    } else {
       error.value = connectorError.value || 'Failed to load collaborators'
     }
-  }
-  finally {
+  } finally {
     isLoadingCollaborators.value = false
   }
 }
@@ -85,8 +85,7 @@ async function loadTeams() {
       // Teams come as "org:team" format, extract just the team name
       teams.value = result.map((t: string) => t.replace(`${orgName.value}:`, ''))
     }
-  }
-  finally {
+  } finally {
     isLoadingTeams.value = false
   }
 }
@@ -112,8 +111,7 @@ async function handleGrantAccess() {
     await addOperation(operation)
     selectedTeam.value = ''
     showGrantAccess.value = false
-  }
-  finally {
+  } finally {
     isGranting.value = false
   }
 }
@@ -138,20 +136,27 @@ async function handleRevokeAccess(collaboratorName: string) {
 }
 
 // Load on mount when connected
-watch(isConnected, (connected) => {
-  if (connected && orgName.value) {
-    loadCollaborators()
-    loadTeams()
-  }
-}, { immediate: true })
+watch(
+  isConnected,
+  connected => {
+    if (connected && orgName.value) {
+      loadCollaborators()
+      loadTeams()
+    }
+  },
+  { immediate: true },
+)
 
 // Reload when package changes
-watch(() => props.packageName, () => {
-  if (isConnected.value && orgName.value) {
-    loadCollaborators()
-    loadTeams()
-  }
-})
+watch(
+  () => props.packageName,
+  () => {
+    if (isConnected.value && orgName.value) {
+      loadCollaborators()
+      loadTeams()
+    }
+  },
+)
 
 // Refresh data when operations complete
 watch(lastExecutionTime, () => {
@@ -163,15 +168,9 @@ watch(lastExecutionTime, () => {
 </script>
 
 <template>
-  <section
-    v-if="isConnected && orgName"
-    aria-labelledby="access-heading"
-  >
+  <section v-if="isConnected && orgName" aria-labelledby="access-heading">
     <div class="flex items-center justify-between mb-3">
-      <h2
-        id="access-heading"
-        class="text-xs text-fg-subtle uppercase tracking-wider"
-      >
+      <h2 id="access-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
         Team Access
       </h2>
       <button
@@ -190,10 +189,7 @@ watch(lastExecutionTime, () => {
     </div>
 
     <!-- Loading state -->
-    <div
-      v-if="isLoadingCollaborators && collaboratorList.length === 0"
-      class="py-4 text-center"
-    >
+    <div v-if="isLoadingCollaborators && collaboratorList.length === 0" class="py-4 text-center">
       <span
         class="i-carbon-rotate block w-4 h-4 text-fg-muted animate-spin mx-auto"
         aria-hidden="true"
@@ -201,20 +197,12 @@ watch(lastExecutionTime, () => {
     </div>
 
     <!-- Error state -->
-    <div
-      v-else-if="error"
-      class="text-xs text-red-400 mb-2"
-      role="alert"
-    >
+    <div v-else-if="error" class="text-xs text-red-400 mb-2" role="alert">
       {{ error }}
     </div>
 
     <!-- Collaborators list -->
-    <ul
-      v-if="collaboratorList.length > 0"
-      class="space-y-1 mb-3"
-      aria-label="Team access list"
-    >
+    <ul v-if="collaboratorList.length > 0" class="space-y-1 mb-3" aria-label="Team access list">
       <li
         v-for="collab in collaboratorList"
         :key="collab.name"
@@ -236,9 +224,11 @@ watch(lastExecutionTime, () => {
           </span>
           <span
             class="px-1 py-0.5 font-mono text-xs rounded shrink-0"
-            :class="collab.permission === 'read-write'
-              ? 'bg-green-500/20 text-green-400'
-              : 'bg-fg-subtle/20 text-fg-muted'"
+            :class="
+              collab.permission === 'read-write'
+                ? 'bg-green-500/20 text-green-400'
+                : 'bg-fg-subtle/20 text-fg-muted'
+            "
           >
             {{ collab.permission === 'read-write' ? 'rw' : 'ro' }}
           </span>
@@ -251,38 +241,21 @@ watch(lastExecutionTime, () => {
           :aria-label="`Revoke ${collab.displayName} access`"
           @click="handleRevokeAccess(collab.name)"
         >
-          <span
-            class="i-carbon-close block w-3.5 h-3.5"
-            aria-hidden="true"
-          />
+          <span class="i-carbon-close block w-3.5 h-3.5" aria-hidden="true" />
         </button>
-        <span
-          v-else
-          class="text-xs text-fg-subtle"
-        >
-          owner
-        </span>
+        <span v-else class="text-xs text-fg-subtle"> owner </span>
       </li>
     </ul>
 
-    <p
-      v-else-if="!isLoadingCollaborators && !error"
-      class="text-xs text-fg-subtle mb-3"
-    >
+    <p v-else-if="!isLoadingCollaborators && !error" class="text-xs text-fg-subtle mb-3">
       No team access configured
     </p>
 
     <!-- Grant access form -->
     <div v-if="showGrantAccess">
-      <form
-        class="space-y-2"
-        @submit.prevent="handleGrantAccess"
-      >
+      <form class="space-y-2" @submit.prevent="handleGrantAccess">
         <div class="flex items-center gap-2">
-          <label
-            for="grant-team-select"
-            class="sr-only"
-          >Select team</label>
+          <label for="grant-team-select" class="sr-only">Select team</label>
           <select
             id="grant-team-select"
             v-model="selectedTeam"
@@ -290,38 +263,24 @@ watch(lastExecutionTime, () => {
             class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
             :disabled="isLoadingTeams"
           >
-            <option
-              value=""
-              disabled
-            >
+            <option value="" disabled>
               {{ isLoadingTeams ? 'Loading teams…' : 'Select team' }}
             </option>
-            <option
-              v-for="team in teams"
-              :key="team"
-              :value="team"
-            >
+            <option v-for="team in teams" :key="team" :value="team">
               {{ orgName }}:{{ team }}
             </option>
           </select>
         </div>
         <div class="flex items-center gap-2">
-          <label
-            for="grant-permission-select"
-            class="sr-only"
-          >Permission level</label>
+          <label for="grant-permission-select" class="sr-only">Permission level</label>
           <select
             id="grant-permission-select"
             v-model="permission"
             name="grant-permission"
             class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
           >
-            <option value="read-only">
-              read-only
-            </option>
-            <option value="read-write">
-              read-write
-            </option>
+            <option value="read-only">read-only</option>
+            <option value="read-write">read-write</option>
           </select>
           <button
             type="submit"
@@ -336,10 +295,7 @@ watch(lastExecutionTime, () => {
             aria-label="Cancel granting access"
             @click="showGrantAccess = false"
           >
-            <span
-              class="i-carbon-close block w-4 h-4"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </form>

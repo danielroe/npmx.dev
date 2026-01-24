@@ -5,23 +5,47 @@ import { hasProtocol } from 'ufo'
 // only allow h3-h6 since we shift README headings down by 2 levels
 // (page h1 = package name, h2 = "Readme" section, so README h1 → h3)
 const ALLOWED_TAGS = [
-  'h3', 'h4', 'h5', 'h6',
-  'p', 'br', 'hr',
-  'ul', 'ol', 'li',
-  'blockquote', 'pre', 'code',
-  'a', 'strong', 'em', 'del', 's',
-  'table', 'thead', 'tbody', 'tr', 'th', 'td',
-  'img', 'picture', 'source',
-  'details', 'summary',
-  'div', 'span',
-  'sup', 'sub',
-  'kbd', 'mark',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'p',
+  'br',
+  'hr',
+  'ul',
+  'ol',
+  'li',
+  'blockquote',
+  'pre',
+  'code',
+  'a',
+  'strong',
+  'em',
+  'del',
+  's',
+  'table',
+  'thead',
+  'tbody',
+  'tr',
+  'th',
+  'td',
+  'img',
+  'picture',
+  'source',
+  'details',
+  'summary',
+  'div',
+  'span',
+  'sup',
+  'sub',
+  'kbd',
+  'mark',
 ]
 
 const ALLOWED_ATTR: Record<string, string[]> = {
   a: ['href', 'title', 'target', 'rel'],
   img: ['src', 'alt', 'title', 'width', 'height'],
-  source: ['src', 'type', 'media'],
+  source: ['src', 'srcset', 'type', 'media'],
   th: ['colspan', 'rowspan', 'align'],
   td: ['colspan', 'rowspan', 'align'],
   h3: ['id', 'data-level'],
@@ -91,17 +115,13 @@ export async function renderReadmeHtml(content: string, packageName: string): Pr
           lang: language,
           theme: 'github-dark',
         })
-      }
-      catch {
+      } catch {
         // Fall back to plain code block
       }
     }
 
     // Plain code block for unknown languages
-    const escaped = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     return `<pre><code class="language-${language}">${escaped}</code></pre>\n`
   }
 

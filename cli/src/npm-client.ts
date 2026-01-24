@@ -53,7 +53,7 @@ function filterNpmWarnings(stderr: string): string {
 
 export async function execNpm(
   args: string[],
-  options: { otp?: string, silent?: boolean } = {},
+  options: { otp?: string; silent?: boolean } = {},
 ): Promise<NpmExecResult> {
   const cmd = ['npm', ...args]
 
@@ -63,9 +63,7 @@ export async function execNpm(
 
   // Log the command being run (hide OTP value for security)
   if (!options.silent) {
-    const displayCmd = options.otp
-      ? ['npm', ...args, '--otp', '******'].join(' ')
-      : cmd.join(' ')
+    const displayCmd = options.otp ? ['npm', ...args, '--otp', '******'].join(' ') : cmd.join(' ')
     logCommand(displayCmd)
   }
 
@@ -84,9 +82,8 @@ export async function execNpm(
       stderr: filterNpmWarnings(stderr),
       exitCode: 0,
     }
-  }
-  catch (error) {
-    const err = error as { stdout?: string, stderr?: string, code?: number }
+  } catch (error) {
+    const err = error as { stdout?: string; stderr?: string; code?: number }
     const stderr = err.stderr?.trim() ?? String(error)
     const requiresOtp = detectOtpRequired(stderr)
     const authFailure = detectAuthFailure(stderr)
@@ -94,11 +91,9 @@ export async function execNpm(
     if (!options.silent) {
       if (requiresOtp) {
         logError('OTP required')
-      }
-      else if (authFailure) {
+      } else if (authFailure) {
         logError('Authentication required - please run "npm login" and restart the connector')
-      }
-      else {
+      } else {
         logError(filterNpmWarnings(stderr).split('\n')[0] || 'Command failed')
       }
     }
@@ -142,17 +137,11 @@ export async function orgRemoveUser(
   return execNpm(['org', 'rm', org, user], { otp })
 }
 
-export async function teamCreate(
-  scopeTeam: string,
-  otp?: string,
-): Promise<NpmExecResult> {
+export async function teamCreate(scopeTeam: string, otp?: string): Promise<NpmExecResult> {
   return execNpm(['team', 'create', scopeTeam], { otp })
 }
 
-export async function teamDestroy(
-  scopeTeam: string,
-  otp?: string,
-): Promise<NpmExecResult> {
+export async function teamDestroy(scopeTeam: string, otp?: string): Promise<NpmExecResult> {
   return execNpm(['team', 'destroy', scopeTeam], { otp })
 }
 
@@ -189,19 +178,11 @@ export async function accessRevoke(
   return execNpm(['access', 'revoke', scopeTeam, pkg], { otp })
 }
 
-export async function ownerAdd(
-  user: string,
-  pkg: string,
-  otp?: string,
-): Promise<NpmExecResult> {
+export async function ownerAdd(user: string, pkg: string, otp?: string): Promise<NpmExecResult> {
   return execNpm(['owner', 'add', user, pkg], { otp })
 }
 
-export async function ownerRemove(
-  user: string,
-  pkg: string,
-  otp?: string,
-): Promise<NpmExecResult> {
+export async function ownerRemove(user: string, pkg: string, otp?: string): Promise<NpmExecResult> {
   return execNpm(['owner', 'rm', user, pkg], { otp })
 }
 

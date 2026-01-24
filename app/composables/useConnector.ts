@@ -54,7 +54,7 @@ const DEFAULT_PORT = 31415
 
 export const useConnector = createSharedComposable(function useConnector() {
   // Persisted connection config
-  const config = useState<{ token: string, port: number } | null>('connector-config', () => null)
+  const config = useState<{ token: string; port: number } | null>('connector-config', () => null)
 
   // Connection state
   const state = useState<ConnectorState>('connector-state', () => ({
@@ -93,8 +93,7 @@ export const useConnector = createSharedComposable(function useConnector() {
         if (config.value) {
           reconnect()
         }
-      }
-      catch {
+      } catch {
         localStorage.removeItem(STORAGE_KEY)
       }
     }
@@ -122,26 +121,25 @@ export const useConnector = createSharedComposable(function useConnector() {
         // Fetch full state after connecting
         await refreshState()
         return true
-      }
-      else {
+      } else {
         state.value.error = response.error ?? 'Connection failed'
         return false
       }
-    }
-    catch (err) {
+    } catch (err) {
       const message = err instanceof Error ? err.message : 'Connection failed'
-      if (message.includes('fetch') || message.includes('network') || message.includes('ECONNREFUSED')) {
+      if (
+        message.includes('fetch') ||
+        message.includes('network') ||
+        message.includes('ECONNREFUSED')
+      ) {
         state.value.error = 'Could not reach connector. Is it running?'
-      }
-      else if (message.includes('401') || message.includes('Unauthorized')) {
+      } else if (message.includes('401') || message.includes('Unauthorized')) {
         state.value.error = 'Invalid token'
-      }
-      else {
+      } else {
         state.value.error = message
       }
       return false
-    }
-    finally {
+    } finally {
       state.value.connecting = false
     }
   }
@@ -180,8 +178,7 @@ export const useConnector = createSharedComposable(function useConnector() {
         state.value.operations = response.data.operations
         state.value.connected = true
       }
-    }
-    catch {
+    } catch {
       // Connection lost
       state.value.connected = false
       state.value.error = 'Connection lost'
@@ -190,7 +187,7 @@ export const useConnector = createSharedComposable(function useConnector() {
 
   async function connectorFetch<T>(
     path: string,
-    options: { method?: 'GET' | 'POST' | 'DELETE', body?: Record<string, unknown> } = {},
+    options: { method?: 'GET' | 'POST' | 'DELETE'; body?: Record<string, unknown> } = {},
   ): Promise<T | null> {
     if (!config.value) return null
 
@@ -204,8 +201,7 @@ export const useConnector = createSharedComposable(function useConnector() {
         timeout: 30000,
       })
       return response as T
-    }
-    catch (err) {
+    } catch (err) {
       state.value.error = err instanceof Error ? err.message : 'Request failed'
       return null
     }
@@ -292,8 +288,12 @@ export const useConnector = createSharedComposable(function useConnector() {
     return 0
   }
 
-  async function executeOperations(otp?: string): Promise<{ success: boolean, otpRequired?: boolean }> {
-    const response = await connectorFetch<ApiResponse<{ results: unknown[], otpRequired?: boolean }>>('/execute', {
+  async function executeOperations(
+    otp?: string,
+  ): Promise<{ success: boolean; otpRequired?: boolean }> {
+    const response = await connectorFetch<
+      ApiResponse<{ results: unknown[]; otpRequired?: boolean }>
+    >('/execute', {
       method: 'POST',
       body: otp ? { otp } : undefined,
     })
@@ -311,24 +311,36 @@ export const useConnector = createSharedComposable(function useConnector() {
 
   // Data fetching functions
 
-  async function listOrgUsers(org: string): Promise<Record<string, 'developer' | 'admin' | 'owner'> | null> {
-    const response = await connectorFetch<ApiResponse<Record<string, 'developer' | 'admin' | 'owner'>>>(`/org/${encodeURIComponent(org)}/users`)
-    return response?.success ? response.data ?? null : null
+  async function listOrgUsers(
+    org: string,
+  ): Promise<Record<string, 'developer' | 'admin' | 'owner'> | null> {
+    const response = await connectorFetch<
+      ApiResponse<Record<string, 'developer' | 'admin' | 'owner'>>
+    >(`/org/${encodeURIComponent(org)}/users`)
+    return response?.success ? (response.data ?? null) : null
   }
 
   async function listOrgTeams(org: string): Promise<string[] | null> {
-    const response = await connectorFetch<ApiResponse<string[]>>(`/org/${encodeURIComponent(org)}/teams`)
-    return response?.success ? response.data ?? null : null
+    const response = await connectorFetch<ApiResponse<string[]>>(
+      `/org/${encodeURIComponent(org)}/teams`,
+    )
+    return response?.success ? (response.data ?? null) : null
   }
 
   async function listTeamUsers(scopeTeam: string): Promise<string[] | null> {
-    const response = await connectorFetch<ApiResponse<string[]>>(`/team/${encodeURIComponent(scopeTeam)}/users`)
-    return response?.success ? response.data ?? null : null
+    const response = await connectorFetch<ApiResponse<string[]>>(
+      `/team/${encodeURIComponent(scopeTeam)}/users`,
+    )
+    return response?.success ? (response.data ?? null) : null
   }
 
-  async function listPackageCollaborators(pkg: string): Promise<Record<string, 'read-only' | 'read-write'> | null> {
-    const response = await connectorFetch<ApiResponse<Record<string, 'read-only' | 'read-write'>>>(`/package/${encodeURIComponent(pkg)}/collaborators`)
-    return response?.success ? response.data ?? null : null
+  async function listPackageCollaborators(
+    pkg: string,
+  ): Promise<Record<string, 'read-only' | 'read-write'> | null> {
+    const response = await connectorFetch<ApiResponse<Record<string, 'read-only' | 'read-write'>>>(
+      `/package/${encodeURIComponent(pkg)}/collaborators`,
+    )
+    return response?.success ? (response.data ?? null) : null
   }
 
   // Computed helpers for operations
@@ -340,18 +352,18 @@ export const useConnector = createSharedComposable(function useConnector() {
   )
   /** Operations that are done (completed, or failed without needing OTP retry) */
   const completedOperations = computed(() =>
-    state.value.operations.filter(op =>
-      op.status === 'completed'
-      || (op.status === 'failed' && !op.result?.requiresOtp),
+    state.value.operations.filter(
+      op => op.status === 'completed' || (op.status === 'failed' && !op.result?.requiresOtp),
     ),
   )
   /** Operations that are still active (pending, approved, running, or failed needing OTP retry) */
   const activeOperations = computed(() =>
-    state.value.operations.filter(op =>
-      op.status === 'pending'
-      || op.status === 'approved'
-      || op.status === 'running'
-      || (op.status === 'failed' && op.result?.requiresOtp),
+    state.value.operations.filter(
+      op =>
+        op.status === 'pending' ||
+        op.status === 'approved' ||
+        op.status === 'running' ||
+        (op.status === 'failed' && op.result?.requiresOtp),
     ),
   )
   const hasOperations = computed(() => state.value.operations.length > 0)

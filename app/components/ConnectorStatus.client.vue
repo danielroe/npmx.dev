@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { isConnected, isConnecting, npmUser, error, activeOperations, hasPendingOperations } = useConnector()
+const { isConnected, isConnecting, npmUser, error, activeOperations, hasPendingOperations } =
+  useConnector()
 
 const showModal = ref(false)
 const showTooltip = ref(false)
@@ -73,8 +74,6 @@ const ariaLabel = computed(() => {
       </div>
     </Transition>
 
-    <ConnectorModal
-      v-model:open="showModal"
-    />
+    <ConnectorModal v-model:open="showModal" />
   </div>
 </template>

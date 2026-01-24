@@ -10,7 +10,7 @@ export default defineNuxtModule({
       return
     }
 
-    nuxt.hook('nitro:config', (nitroConfig) => {
+    nuxt.hook('nitro:config', nitroConfig => {
       nitroConfig.storage = nitroConfig.storage || {}
       nitroConfig.storage.cache = {
         driver: 'vercel-runtime-cache',

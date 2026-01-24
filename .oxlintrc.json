@@ -1,0 +1,26 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["unicorn", "typescript", "oxc", "vue", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "rules": {
+    "no-console": "warn",
+    "no-await-in-loop": "off",
+    "unicorn/no-array-sort": "off"
+  },
+  "ignorePatterns": [
+    ".output/**",
+    ".data/**",
+    ".nuxt/**",
+    ".nitro/**",
+    ".cache/**",
+    "dist/**",
+    "node_modules/**",
+    "coverage/**",
+    "playwright-report/**",
+    "test-results/**"
+  ]
+}

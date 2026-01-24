@@ -2,7 +2,10 @@
  * Fetch README from jsdelivr CDN for a specific package version.
  * Falls back through common README filenames.
  */
-async function fetchReadmeFromJsdelivr(packageName: string, version?: string): Promise<string | null> {
+async function fetchReadmeFromJsdelivr(
+  packageName: string,
+  version?: string,
+): Promise<string | null> {
   const filenames = ['README.md', 'readme.md', 'Readme.md', 'README', 'readme']
   const versionSuffix = version ? `@${version}` : ''
 
@@ -13,8 +16,7 @@ async function fetchReadmeFromJsdelivr(packageName: string, version?: string): P
       if (response.ok) {
         return await response.text()
       }
-    }
-    catch {
+    } catch {
       // Try next filename
     }
   }
@@ -32,7 +34,7 @@ async function fetchReadmeFromJsdelivr(packageName: string, version?: string): P
  * - /api/registry/readme/@scope/packageName/v/1.2.3 - scoped package, specific version
  */
 export default defineCachedEventHandler(
-  async (event) => {
+  async event => {
     const segments = getRouterParam(event, 'pkg')?.split('/') ?? []
     if (segments.length === 0) {
       throw createError({ statusCode: 400, message: 'Package name is required' })
@@ -47,8 +49,7 @@ export default defineCachedEventHandler(
     if (vIndex !== -1 && vIndex < segments.length - 1) {
       packageName = segments.slice(0, vIndex).join('/')
       version = segments.slice(vIndex + 1).join('/')
-    }
-    else {
+    } else {
       packageName = segments.join('/')
     }
 
@@ -67,15 +68,14 @@ export default defineCachedEventHandler(
         if (versionData) {
           readmeContent = versionData.readme
         }
-      }
-      else {
+      } else {
         // Use the packument-level readme (from latest version)
         readmeContent = packageData.readme
       }
 
       // If no README in packument, try fetching from jsdelivr (package tarball)
       if (!readmeContent || readmeContent === 'ERROR: No README data found!') {
-        readmeContent = await fetchReadmeFromJsdelivr(packageName, version) ?? undefined
+        readmeContent = (await fetchReadmeFromJsdelivr(packageName, version)) ?? undefined
       }
 
       if (!readmeContent) {
@@ -84,8 +84,7 @@ export default defineCachedEventHandler(
 
       const html = await renderReadmeHtml(readmeContent, packageName)
       return { html }
-    }
-    catch (error) {
+    } catch (error) {
       if (error && typeof error === 'object' && 'statusCode' in error) {
         throw error
       }
@@ -94,7 +93,7 @@ export default defineCachedEventHandler(
   },
   {
     maxAge: 60 * 10,
-    getKey: (event) => {
+    getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       return `readme:${pkg}`
     },

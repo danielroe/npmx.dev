@@ -22,19 +22,22 @@ function isNodeActive(node: PackageFileTree): boolean {
 const expandedDirs = ref<Set<string>>(new Set())
 
 // Auto-expand directories in the current path
-watch(() => props.currentPath, (path) => {
-  if (!path) return
-  const parts = path.split('/')
-  for (let i = 1; i <= parts.length; i++) {
-    expandedDirs.value.add(parts.slice(0, i).join('/'))
-  }
-}, { immediate: true })
+watch(
+  () => props.currentPath,
+  path => {
+    if (!path) return
+    const parts = path.split('/')
+    for (let i = 1; i <= parts.length; i++) {
+      expandedDirs.value.add(parts.slice(0, i).join('/'))
+    }
+  },
+  { immediate: true },
+)
 
 function toggleDir(path: string) {
   if (expandedDirs.value.has(path)) {
     expandedDirs.value.delete(path)
-  }
-  else {
+  } else {
     expandedDirs.value.add(path)
   }
 }
@@ -45,14 +48,8 @@ function isExpanded(path: string): boolean {
 </script>
 
 <template>
-  <ul
-    class="list-none m-0 p-0"
-    :class="depth === 0 ? 'py-2' : ''"
-  >
-    <li
-      v-for="node in tree"
-      :key="node.path"
-    >
+  <ul class="list-none m-0 p-0" :class="depth === 0 ? 'py-2' : ''">
+    <li v-for="node in tree" :key="node.path">
       <!-- Directory -->
       <template v-if="node.type === 'directory'">
         <button
@@ -63,13 +60,15 @@ function isExpanded(path: string): boolean {
         >
           <span
             class="w-4 h-4 shrink-0 transition-transform"
-            :class="[
-              isExpanded(node.path) ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right',
-            ]"
+            :class="[isExpanded(node.path) ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right']"
           />
           <span
             class="w-4 h-4 shrink-0"
-            :class="isExpanded(node.path) ? 'i-carbon-folder-open text-yellow-500' : 'i-carbon-folder text-yellow-600'"
+            :class="
+              isExpanded(node.path)
+                ? 'i-carbon-folder-open text-yellow-500'
+                : 'i-carbon-folder text-yellow-600'
+            "
           />
           <span class="truncate">{{ node.name }}</span>
         </button>
@@ -90,10 +89,7 @@ function isExpanded(path: string): boolean {
           :class="currentPath === node.path ? 'bg-bg-muted text-fg' : 'text-fg-muted'"
           :style="{ paddingLeft: `${depth * 12 + 32}px` }"
         >
-          <span
-            class="w-4 h-4 shrink-0"
-            :class="getFileIcon(node.name)"
-          />
+          <span class="w-4 h-4 shrink-0" :class="getFileIcon(node.name)" />
           <span class="truncate">{{ node.name }}</span>
         </NuxtLink>
       </template>

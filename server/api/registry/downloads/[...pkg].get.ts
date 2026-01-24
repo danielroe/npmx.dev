@@ -1,5 +1,5 @@
 export default defineCachedEventHandler(
-  async (event) => {
+  async event => {
     const pkg = getRouterParam(event, 'pkg')
     if (!pkg) {
       throw createError({ statusCode: 400, message: 'Package name is required' })
@@ -17,14 +17,13 @@ export default defineCachedEventHandler(
 
     try {
       return await fetchNpmDownloads(packageName, period)
-    }
-    catch {
+    } catch {
       throw createError({ statusCode: 502, message: 'Failed to fetch download counts' })
     }
   },
   {
     maxAge: 60 * 60,
-    getKey: (event) => {
+    getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       const query = getQuery(event)
       return `${pkg}:${query.period ?? 'last-week'}`

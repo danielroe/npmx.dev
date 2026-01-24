@@ -7,7 +7,13 @@
  */
 
 // Re-export official npm types for packument/manifest
-export type { Packument, PackumentVersion, Manifest, ManifestVersion, PackageJSON } from '@npm/types'
+export type {
+  Packument,
+  PackumentVersion,
+  Manifest,
+  ManifestVersion,
+  PackageJSON,
+} from '@npm/types'
 
 /**
  * Slimmed down Packument for client-side use.
@@ -23,14 +29,14 @@ export interface SlimPackument {
   'description'?: string
   'dist-tags': { latest?: string } & Record<string, string>
   /** Only includes time for dist-tag versions + modified/created */
-  'time': { modified?: string, created?: string } & Record<string, string>
+  'time': { modified?: string; created?: string } & Record<string, string>
   'maintainers'?: NpmPerson[]
   'author'?: NpmPerson
   'license'?: string
   'homepage'?: string
   'keywords'?: string[]
-  'repository'?: { type?: string, url?: string, directory?: string }
-  'bugs'?: { url?: string, email?: string }
+  'repository'?: { type?: string; url?: string; directory?: string }
+  'bugs'?: { url?: string; email?: string }
   /** Only includes dist-tag versions */
   'versions': Record<string, import('@npm/types').PackumentVersion>
 }

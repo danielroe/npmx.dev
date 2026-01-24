@@ -8,7 +8,7 @@ import type { PackageFileTreeResponse } from '#shared/types'
  * - /api/registry/files/@scope/packageName/v/1.2.3 - scoped package
  */
 export default defineCachedEventHandler(
-  async (event) => {
+  async event => {
     const segments = getRouterParam(event, 'pkg')?.split('/') ?? []
     if (segments.length === 0) {
       throw createError({ statusCode: 400, message: 'Package name and version are required' })
@@ -38,8 +38,7 @@ export default defineCachedEventHandler(
         default: jsDelivrData.default ?? undefined,
         tree,
       } satisfies PackageFileTreeResponse
-    }
-    catch (error) {
+    } catch (error) {
       if (error && typeof error === 'object' && 'statusCode' in error) {
         throw error
       }
@@ -48,7 +47,7 @@ export default defineCachedEventHandler(
   },
   {
     maxAge: 60 * 60, // Cache for 1 hour (files don't change for a given version)
-    getKey: (event) => {
+    getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       return `files:${pkg}`
     },

@@ -24,7 +24,12 @@ function hasProvenance(version: PackumentVersion | undefined): boolean {
 }
 
 // Parse semver
-function parseVersion(version: string): { major: number, minor: number, patch: number, prerelease: string } {
+function parseVersion(version: string): {
+  major: number
+  minor: number
+  patch: number
+  prerelease: string
+} {
   const match = version.match(/^(\d+)\.(\d+)\.(\d+)(?:-(.+))?/)
   if (!match) return { major: 0, minor: 0, patch: 0, prerelease: '' }
   return {
@@ -96,7 +101,9 @@ const tagVersions = ref<Map<string, VersionDisplay[]>>(new Map())
 const loadingTags = ref<Set<string>>(new Set())
 
 const otherVersionsExpanded = ref(false)
-const otherMajorGroups = ref<Array<{ major: number, versions: VersionDisplay[], expanded: boolean }>>([])
+const otherMajorGroups = ref<
+  Array<{ major: number; versions: VersionDisplay[]; expanded: boolean }>
+>([])
 const otherVersionsLoading = ref(false)
 
 // Cached full version list
@@ -115,8 +122,8 @@ async function loadAllVersions(): Promise<PackageVersionInfo[]> {
   if (allVersionsCache.value) return allVersionsCache.value
 
   if (loadingVersions.value) {
-    await new Promise<void>((resolve) => {
-      const unwatch = watch(allVersionsCache, (val) => {
+    await new Promise<void>(resolve => {
+      const unwatch = watch(allVersionsCache, val => {
         if (val) {
           unwatch()
           resolve()
@@ -148,8 +155,7 @@ async function loadAllVersions(): Promise<PackageVersionInfo[]> {
     allVersionsCache.value = versions
     hasLoadedAll.value = true
     return versions
-  }
-  finally {
+  } finally {
     loadingVersions.value = false
   }
 }
@@ -169,7 +175,7 @@ function processLoadedVersions(allVersions: PackageVersionInfo[]) {
     const tagChannel = getPrereleaseChannel(tagVersion)
 
     const channelVersions = allVersions
-      .filter((v) => {
+      .filter(v => {
         const vParsed = parseVersion(v.version)
         const vChannel = getPrereleaseChannel(v.version)
         return vParsed.major === tagParsed.major && vChannel === tagChannel
@@ -235,11 +241,10 @@ async function expandTagRow(tag: string) {
     try {
       const allVersions = await loadAllVersions()
       processLoadedVersions(allVersions)
-    }
-    catch (error) {
+    } catch (error) {
+      // oxlint-disable-next-line no-console -- error logging
       console.error('Failed to load versions:', error)
-    }
-    finally {
+    } finally {
       loadingTags.value.delete(tag)
       loadingTags.value = new Set(loadingTags.value)
     }
@@ -261,11 +266,10 @@ async function expandOtherVersions() {
     try {
       const allVersions = await loadAllVersions()
       processLoadedVersions(allVersions)
-    }
-    catch (error) {
+    } catch (error) {
+      // oxlint-disable-next-line no-console -- error logging
       console.error('Failed to load versions:', error)
-    }
-    finally {
+    } finally {
       otherVersionsLoading.value = false
     }
   }
@@ -296,23 +300,14 @@ function formatDate(dateStr: string): string {
 </script>
 
 <template>
-  <section
-    v-if="initialTagRows.length > 0"
-    aria-labelledby="versions-heading"
-  >
-    <h2
-      id="versions-heading"
-      class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
-    >
+  <section v-if="initialTagRows.length > 0" aria-labelledby="versions-heading">
+    <h2 id="versions-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
       Versions
     </h2>
 
     <div class="space-y-0.5">
       <!-- Dist-tag rows -->
-      <div
-        v-for="row in initialTagRows"
-        :key="row.id"
-      >
+      <div v-for="row in initialTagRows" :key="row.id">
         <div class="flex items-center gap-2">
           <!-- Expand button (only if there are more versions to show) -->
           <button
@@ -323,20 +318,16 @@ function formatDate(dateStr: string): string {
             :aria-label="expandedTags.has(row.tag) ? `Collapse ${row.tag}` : `Expand ${row.tag}`"
             @click="expandTagRow(row.tag)"
           >
-            <span
-              v-if="loadingTags.has(row.tag)"
-              class="i-carbon-rotate w-3 h-3 animate-spin"
-            />
+            <span v-if="loadingTags.has(row.tag)" class="i-carbon-rotate w-3 h-3 animate-spin" />
             <span
               v-else
               class="w-3 h-3 transition-transform duration-200"
-              :class="expandedTags.has(row.tag) ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
+              :class="
+                expandedTags.has(row.tag) ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'
+              "
             />
           </button>
-          <span
-            v-else
-            class="w-4"
-          />
+          <span v-else class="w-4" />
 
           <!-- Version info -->
           <div class="flex-1 flex items-center justify-between py-1.5 text-sm gap-2 min-w-0">
@@ -347,7 +338,9 @@ function formatDate(dateStr: string): string {
               >
                 {{ row.primaryVersion.version }}
               </NuxtLink>
-              <span class="px-1.5 py-0.5 text-[10px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0">
+              <span
+                class="px-1.5 py-0.5 text-[10px] font-semibold text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
+              >
                 {{ row.tag }}
               </span>
             </div>
@@ -394,11 +387,7 @@ function formatDate(dateStr: string): string {
               </span>
             </div>
             <div class="flex items-center gap-2 shrink-0">
-              <time
-                v-if="v.time"
-                :datetime="v.time"
-                class="text-[10px] text-fg-subtle"
-              >
+              <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
                 {{ formatDate(v.time) }}
               </time>
               <ProvenanceBadge
@@ -420,32 +409,23 @@ function formatDate(dateStr: string): string {
           :aria-expanded="otherVersionsExpanded"
           @click="expandOtherVersions"
         >
-          <span class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors">
-            <span
-              v-if="otherVersionsLoading"
-              class="i-carbon-rotate w-3 h-3 animate-spin"
-            />
+          <span
+            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
+          >
+            <span v-if="otherVersionsLoading" class="i-carbon-rotate w-3 h-3 animate-spin" />
             <span
               v-else
               class="w-3 h-3 transition-transform duration-200"
               :class="otherVersionsExpanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
             />
           </span>
-          <span class="text-xs text-fg-muted py-1.5">
-            Other versions
-          </span>
+          <span class="text-xs text-fg-muted py-1.5"> Other versions </span>
         </button>
 
         <!-- Expanded other versions -->
-        <div
-          v-if="otherVersionsExpanded"
-          class="ml-4 pl-2 border-l border-border space-y-0.5"
-        >
+        <div v-if="otherVersionsExpanded" class="ml-4 pl-2 border-l border-border space-y-0.5">
           <template v-if="otherMajorGroups.length > 0">
-            <div
-              v-for="(group, groupIndex) in otherMajorGroups"
-              :key="group.major"
-            >
+            <div v-for="(group, groupIndex) in otherMajorGroups" :key="group.major">
               <!-- Major group header -->
               <button
                 v-if="group.versions.length > 1"
@@ -469,10 +449,7 @@ function formatDate(dateStr: string): string {
                 </span>
               </button>
               <!-- Single version (no expand needed) -->
-              <div
-                v-else
-                class="flex items-center gap-2 py-1"
-              >
+              <div v-else class="flex items-center gap-2 py-1">
                 <span class="w-3" />
                 <NuxtLink
                   :to="`/package/${packageName}/v/${group.versions[0]?.version}`"
@@ -489,10 +466,7 @@ function formatDate(dateStr: string): string {
               </div>
 
               <!-- Major group versions -->
-              <div
-                v-if="group.expanded && group.versions.length > 1"
-                class="ml-5 space-y-0.5"
-              >
+              <div v-if="group.expanded && group.versions.length > 1" class="ml-5 space-y-0.5">
                 <div
                   v-for="v in group.versions.slice(1)"
                   :key="v.version"
@@ -513,11 +487,7 @@ function formatDate(dateStr: string): string {
                     </span>
                   </div>
                   <div class="flex items-center gap-2 shrink-0">
-                    <time
-                      v-if="v.time"
-                      :datetime="v.time"
-                      class="text-[10px] text-fg-subtle"
-                    >
+                    <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
                       {{ formatDate(v.time) }}
                     </time>
                     <ProvenanceBadge
@@ -531,10 +501,7 @@ function formatDate(dateStr: string): string {
               </div>
             </div>
           </template>
-          <div
-            v-else-if="hasLoadedAll"
-            class="py-1 text-xs text-fg-subtle"
-          >
+          <div v-else-if="hasLoadedAll" class="py-1 text-xs text-fg-subtle">
             All versions are covered by tags above
           </div>
         </div>

@@ -57,8 +57,7 @@ const filteredTeams = computed(() => {
   result = [...result].sort((a, b) => {
     if (sortBy.value === 'name') {
       return sortOrder.value === 'asc' ? a.localeCompare(b) : b.localeCompare(a)
-    }
-    else {
+    } else {
       const aCount = teamUsers.value[a]?.length ?? 0
       const bCount = teamUsers.value[b]?.length ?? 0
       return sortOrder.value === 'asc' ? aCount - bCount : bCount - aCount
@@ -85,16 +84,14 @@ async function loadTeams() {
     if (teamsResult) {
       // Teams come as "org:team" format, extract just the team name
       teams.value = teamsResult.map((t: string) => t.replace(`${props.orgName}:`, ''))
-    }
-    else {
+    } else {
       error.value = connectorError.value || 'Failed to load teams'
     }
 
     if (membersResult) {
       orgMembers.value = membersResult
     }
-  }
-  finally {
+  } finally {
     isLoadingTeams.value = false
   }
 }
@@ -111,8 +108,7 @@ async function loadTeamUsers(teamName: string) {
     if (result) {
       teamUsers.value[teamName] = result
     }
-  }
-  finally {
+  } finally {
     isLoadingUsers.value[teamName] = false
   }
 }
@@ -121,8 +117,7 @@ async function loadTeamUsers(teamName: string) {
 async function toggleTeam(teamName: string) {
   if (expandedTeams.value.has(teamName)) {
     expandedTeams.value.delete(teamName)
-  }
-  else {
+  } else {
     expandedTeams.value.add(teamName)
     // Load users if not already loaded
     if (!teamUsers.value[teamName]) {
@@ -151,8 +146,7 @@ async function handleCreateTeam() {
     await addOperation(operation)
     newTeamName.value = ''
     showCreateTeam.value = false
-  }
-  finally {
+  } finally {
     isCreatingTeam.value = false
   }
 }
@@ -212,8 +206,7 @@ async function handleAddUser(teamName: string) {
 
     newUserUsername.value = ''
     showAddUserFor.value = null
-  }
-  finally {
+  } finally {
     isAddingUser.value = false
   }
 }
@@ -235,19 +228,22 @@ async function handleRemoveUser(teamName: string, username: string) {
 function toggleSort(field: 'name' | 'members') {
   if (sortBy.value === field) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-  }
-  else {
+  } else {
     sortBy.value = field
     sortOrder.value = 'asc'
   }
 }
 
 // Load on mount when connected
-watch(isConnected, (connected) => {
-  if (connected) {
-    loadTeams()
-  }
-}, { immediate: true })
+watch(
+  isConnected,
+  connected => {
+    if (connected) {
+      loadTeams()
+    }
+  },
+  { immediate: true },
+)
 
 // Refresh data when operations complete
 watch(lastExecutionTime, () => {
@@ -265,19 +261,10 @@ watch(lastExecutionTime, () => {
   >
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-border">
-      <h2
-        id="teams-heading"
-        class="font-mono text-sm font-medium flex items-center gap-2"
-      >
-        <span
-          class="i-carbon-group w-4 h-4 text-fg-muted"
-          aria-hidden="true"
-        />
+      <h2 id="teams-heading" class="font-mono text-sm font-medium flex items-center gap-2">
+        <span class="i-carbon-group w-4 h-4 text-fg-muted" aria-hidden="true" />
         Teams
-        <span
-          v-if="teams.length > 0"
-          class="text-fg-muted"
-        >({{ teams.length }})</span>
+        <span v-if="teams.length > 0" class="text-fg-muted">({{ teams.length }})</span>
       </h2>
       <button
         type="button"
@@ -301,10 +288,7 @@ watch(lastExecutionTime, () => {
           class="absolute left-2 top-1/2 -translate-y-1/2 i-carbon-search w-3.5 h-3.5 text-fg-subtle"
           aria-hidden="true"
         />
-        <label
-          for="teams-search"
-          class="sr-only"
-        >Filter teams</label>
+        <label for="teams-search" class="sr-only">Filter teams</label>
         <input
           id="teams-search"
           v-model="searchQuery"
@@ -313,13 +297,9 @@ watch(lastExecutionTime, () => {
           placeholder="Filter teams…"
           autocomplete="off"
           class="w-full pl-7 pr-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-        >
+        />
       </div>
-      <div
-        class="flex items-center gap-1 text-xs"
-        role="group"
-        aria-label="Sort by"
-      >
+      <div class="flex items-center gap-1 text-xs" role="group" aria-label="Sort by">
         <button
           type="button"
           class="px-2 py-1 font-mono rounded transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
@@ -344,25 +324,16 @@ watch(lastExecutionTime, () => {
     </div>
 
     <!-- Loading state -->
-    <div
-      v-if="isLoadingTeams && teams.length === 0"
-      class="p-8 text-center"
-    >
+    <div v-if="isLoadingTeams && teams.length === 0" class="p-8 text-center">
       <span
         class="i-carbon-rotate block w-5 h-5 text-fg-muted animate-spin mx-auto"
         aria-hidden="true"
       />
-      <p class="font-mono text-sm text-fg-muted mt-2">
-        Loading teams…
-      </p>
+      <p class="font-mono text-sm text-fg-muted mt-2">Loading teams…</p>
     </div>
 
     <!-- Error state -->
-    <div
-      v-else-if="error"
-      class="p-4 text-center"
-      role="alert"
-    >
+    <div v-else-if="error" class="p-4 text-center" role="alert">
       <p class="font-mono text-sm text-red-400">
         {{ error }}
       </p>
@@ -376,28 +347,17 @@ watch(lastExecutionTime, () => {
     </div>
 
     <!-- Empty state -->
-    <div
-      v-else-if="teams.length === 0"
-      class="p-8 text-center"
-    >
-      <p class="font-mono text-sm text-fg-muted">
-        No teams found
-      </p>
+    <div v-else-if="teams.length === 0" class="p-8 text-center">
+      <p class="font-mono text-sm text-fg-muted">No teams found</p>
     </div>
 
     <!-- Teams list -->
-    <ul
-      v-else
-      class="divide-y divide-border"
-      aria-label="Organization teams"
-    >
-      <li
-        v-for="teamName in filteredTeams"
-        :key="teamName"
-        class="bg-bg"
-      >
+    <ul v-else class="divide-y divide-border" aria-label="Organization teams">
+      <li v-for="teamName in filteredTeams" :key="teamName" class="bg-bg">
         <!-- Team header -->
-        <div class="flex items-center justify-between p-3 hover:bg-bg-subtle transition-colors duration-200">
+        <div
+          class="flex items-center justify-between p-3 hover:bg-bg-subtle transition-colors duration-200"
+        >
           <button
             type="button"
             class="flex-1 flex items-center gap-2 text-left rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
@@ -414,11 +374,10 @@ watch(lastExecutionTime, () => {
               aria-hidden="true"
             />
             <span class="font-mono text-sm text-fg">{{ teamName }}</span>
-            <span
-              v-if="teamUsers[teamName]"
-              class="font-mono text-xs text-fg-subtle"
-            >
-              ({{ teamUsers[teamName].length }} member{{ teamUsers[teamName].length === 1 ? '' : 's' }})
+            <span v-if="teamUsers[teamName]" class="font-mono text-xs text-fg-subtle">
+              ({{ teamUsers[teamName].length }} member{{
+                teamUsers[teamName].length === 1 ? '' : 's'
+              }})
             </span>
             <span
               v-if="isLoadingUsers[teamName]"
@@ -432,10 +391,7 @@ watch(lastExecutionTime, () => {
             :aria-label="`Delete team ${teamName}`"
             @click.stop="handleDestroyTeam(teamName)"
           >
-            <span
-              class="i-carbon-trash-can block w-4 h-4"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-trash-can block w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -468,33 +424,20 @@ watch(lastExecutionTime, () => {
                 :aria-label="`Remove ${user} from team`"
                 @click="handleRemoveUser(teamName, user)"
               >
-                <span
-                  class="i-carbon-close block w-3.5 h-3.5"
-                  aria-hidden="true"
-                />
+                <span class="i-carbon-close block w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </li>
           </ul>
-          <p
-            v-else-if="!isLoadingUsers[teamName]"
-            class="font-mono text-xs text-fg-subtle py-1"
-          >
+          <p v-else-if="!isLoadingUsers[teamName]" class="font-mono text-xs text-fg-subtle py-1">
             No members
           </p>
 
           <!-- Add user form -->
-          <div
-            v-if="showAddUserFor === teamName"
-            class="mt-2"
-          >
-            <form
-              class="flex items-center gap-2"
-              @submit.prevent="handleAddUser(teamName)"
-            >
-              <label
-                :for="`add-user-${teamName}`"
-                class="sr-only"
-              >Username to add to {{ teamName }}</label>
+          <div v-if="showAddUserFor === teamName" class="mt-2">
+            <form class="flex items-center gap-2" @submit.prevent="handleAddUser(teamName)">
+              <label :for="`add-user-${teamName}`" class="sr-only"
+                >Username to add to {{ teamName }}</label
+              >
               <input
                 :id="`add-user-${teamName}`"
                 v-model="newUserUsername"
@@ -504,7 +447,7 @@ watch(lastExecutionTime, () => {
                 autocomplete="off"
                 spellcheck="false"
                 class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-              >
+              />
               <button
                 type="submit"
                 :disabled="!newUserUsername.trim() || isAddingUser"
@@ -518,10 +461,7 @@ watch(lastExecutionTime, () => {
                 aria-label="Cancel adding user"
                 @click="showAddUserFor = null"
               >
-                <span
-                  class="i-carbon-close block w-4 h-4"
-                  aria-hidden="true"
-                />
+                <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
               </button>
             </form>
           </div>
@@ -538,30 +478,21 @@ watch(lastExecutionTime, () => {
     </ul>
 
     <!-- No results -->
-    <div
-      v-if="teams.length > 0 && filteredTeams.length === 0"
-      class="p-4 text-center"
-    >
-      <p class="font-mono text-sm text-fg-muted">
-        No teams match "{{ searchQuery }}"
-      </p>
+    <div v-if="teams.length > 0 && filteredTeams.length === 0" class="p-4 text-center">
+      <p class="font-mono text-sm text-fg-muted">No teams match "{{ searchQuery }}"</p>
     </div>
 
     <!-- Create team -->
     <div class="p-3 border-t border-border">
       <div v-if="showCreateTeam">
-        <form
-          class="flex items-center gap-2"
-          @submit.prevent="handleCreateTeam"
-        >
+        <form class="flex items-center gap-2" @submit.prevent="handleCreateTeam">
           <div class="flex-1 flex items-center">
-            <span class="px-2 py-1.5 font-mono text-sm text-fg-subtle bg-bg border border-r-0 border-border rounded-l">
+            <span
+              class="px-2 py-1.5 font-mono text-sm text-fg-subtle bg-bg border border-r-0 border-border rounded-l"
+            >
               {{ orgName }}:
             </span>
-            <label
-              for="new-team-name"
-              class="sr-only"
-            >Team name</label>
+            <label for="new-team-name" class="sr-only">Team name</label>
             <input
               id="new-team-name"
               v-model="newTeamName"
@@ -571,7 +502,7 @@ watch(lastExecutionTime, () => {
               autocomplete="off"
               spellcheck="false"
               class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded-r text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-            >
+            />
           </div>
           <button
             type="submit"
@@ -586,10 +517,7 @@ watch(lastExecutionTime, () => {
             aria-label="Cancel creating team"
             @click="showCreateTeam = false"
           >
-            <span
-              class="i-carbon-close block w-4 h-4"
-              aria-hidden="true"
-            />
+            <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
           </button>
         </form>
       </div>

@@ -16,8 +16,7 @@ export function flattenFileTree(tree: PackageFileTree[]): FileSet {
     for (const node of nodes) {
       if (node.type === 'file') {
         files.add(node.path)
-      }
-      else if (node.children) {
+      } else if (node.children) {
         traverse(node.children)
       }
     }
@@ -40,8 +39,7 @@ function normalizePath(path: string): string {
     }
     if (part === '..') {
       result.pop()
-    }
-    else {
+    } else {
       result.push(part)
     }
   }
@@ -77,72 +75,32 @@ function getExtensionPriority(sourceFile: string): string[][] {
 
   // TypeScript files
   if (ext === 'ts' || ext === 'tsx') {
-    return [
-      [],
-      ['.ts', '.tsx'],
-      ['.d.ts'],
-      ['.js', '.jsx'],
-      ['.json'],
-    ]
+    return [[], ['.ts', '.tsx'], ['.d.ts'], ['.js', '.jsx'], ['.json']]
   }
 
   if (ext === 'mts') {
-    return [
-      [],
-      ['.mts'],
-      ['.d.mts', '.d.ts'],
-      ['.mjs', '.js'],
-      ['.json'],
-    ]
+    return [[], ['.mts'], ['.d.mts', '.d.ts'], ['.mjs', '.js'], ['.json']]
   }
 
   if (ext === 'cts') {
-    return [
-      [],
-      ['.cts'],
-      ['.d.cts', '.d.ts'],
-      ['.cjs', '.js'],
-      ['.json'],
-    ]
+    return [[], ['.cts'], ['.d.cts', '.d.ts'], ['.cjs', '.js'], ['.json']]
   }
 
   // JavaScript files
   if (ext === 'js' || ext === 'jsx') {
-    return [
-      [],
-      ['.js', '.jsx'],
-      ['.ts', '.tsx'],
-      ['.json'],
-    ]
+    return [[], ['.js', '.jsx'], ['.ts', '.tsx'], ['.json']]
   }
 
   if (ext === 'mjs') {
-    return [
-      [],
-      ['.mjs'],
-      ['.js'],
-      ['.mts', '.ts'],
-      ['.json'],
-    ]
+    return [[], ['.mjs'], ['.js'], ['.mts', '.ts'], ['.json']]
   }
 
   if (ext === 'cjs') {
-    return [
-      [],
-      ['.cjs'],
-      ['.js'],
-      ['.cts', '.ts'],
-      ['.json'],
-    ]
+    return [[], ['.cjs'], ['.js'], ['.cts', '.ts'], ['.json']]
   }
 
   // Default for other files (vue, svelte, etc.)
-  return [
-    [],
-    ['.ts', '.js'],
-    ['.d.ts'],
-    ['.json'],
-  ]
+  return [[], ['.ts', '.js'], ['.d.ts'], ['.json']]
 }
 
 /**
@@ -220,8 +178,7 @@ export function resolveRelativeImport(
       if (files.has(basePath)) {
         return { path: basePath }
       }
-    }
-    else {
+    } else {
       // Try with extensions
       for (const ext of extensions) {
         const pathWithExt = basePath + ext

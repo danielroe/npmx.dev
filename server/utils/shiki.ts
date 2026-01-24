@@ -6,9 +6,7 @@ let highlighter: HighlighterCore | null = null
 export async function getShikiHighlighter(): Promise<HighlighterCore> {
   if (!highlighter) {
     highlighter = await createHighlighterCore({
-      themes: [
-        import('@shikijs/themes/github-dark'),
-      ],
+      themes: [import('@shikijs/themes/github-dark')],
       langs: [
         // Core web languages
         import('@shikijs/langs/javascript'),
@@ -61,16 +59,12 @@ export async function highlightCodeBlock(code: string, language: string): Promis
         lang: language,
         theme: 'github-dark',
       })
-    }
-    catch {
+    } catch {
       // Fall back to plain
     }
   }
 
   // Plain code block for unknown languages
-  const escaped = code
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
+  const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   return `<pre><code class="language-${language}">${escaped}</code></pre>\n`
 }

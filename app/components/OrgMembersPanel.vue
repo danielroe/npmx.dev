@@ -92,8 +92,7 @@ const filteredMembers = computed(() => {
   result = [...result].sort((a, b) => {
     if (sortBy.value === 'name') {
       return sortOrder.value === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-    }
-    else {
+    } else {
       const diff = rolePriority[a.role] - rolePriority[b.role]
       return sortOrder.value === 'asc' ? diff : -diff
     }
@@ -111,6 +110,12 @@ const roleCounts = computed(() => {
   return counts
 })
 
+// Refresh all data
+function refreshData() {
+  loadMembers()
+  loadTeamMemberships()
+}
+
 // Load members
 async function loadMembers() {
   if (!isConnected.value) return
@@ -122,12 +127,10 @@ async function loadMembers() {
     const result = await listOrgUsers(props.orgName)
     if (result) {
       members.value = result
-    }
-    else {
+    } else {
       error.value = connectorError.value || 'Failed to load members'
     }
-  }
-  finally {
+  } finally {
     isLoading.value = false
   }
 }
@@ -151,8 +154,7 @@ async function loadTeamMemberships() {
       })
       await Promise.all(teamPromises)
     }
-  }
-  finally {
+  } finally {
     isLoadingTeams.value = false
   }
 }
@@ -198,8 +200,7 @@ async function handleAddMember() {
     newUsername.value = ''
     newTeam.value = ''
     showAddMember.value = false
-  }
-  finally {
+  } finally {
     isAddingMember.value = false
   }
 }
@@ -239,8 +240,7 @@ async function handleChangeRole(username: string, newRoleValue: 'developer' | 'a
 function toggleSort(field: 'name' | 'role') {
   if (sortBy.value === field) {
     sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
-  }
-  else {
+  } else {
     sortBy.value = field
     sortOrder.value = 'asc'
   }
@@ -249,9 +249,12 @@ function toggleSort(field: 'name' | 'role') {
 // Role badge color
 function getRoleBadgeClass(role: string): string {
   switch (role) {
-    case 'owner': return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
-    case 'admin': return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
-    default: return 'bg-fg-subtle/20 text-fg-muted border-border'
+    case 'owner':
+      return 'bg-purple-500/20 text-purple-400 border-purple-500/30'
+    case 'admin':
+      return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+    default:
+      return 'bg-fg-subtle/20 text-fg-muted border-border'
   }
 }
 
@@ -261,12 +264,16 @@ function handleTeamClick(teamName: string) {
 }
 
 // Load on mount when connected
-watch(isConnected, (connected) => {
-  if (connected) {
-    loadMembers()
-    loadTeamMemberships()
-  }
-}, { immediate: true })
+watch(
+  isConnected,
+  connected => {
+    if (connected) {
+      loadMembers()
+      loadTeamMemberships()
+    }
+  },
+  { immediate: true },
+)
 
 // Refresh data when operations complete
 watch(lastExecutionTime, () => {
@@ -285,26 +292,17 @@ watch(lastExecutionTime, () => {
   >
     <!-- Header -->
     <div class="flex items-center justify-between p-4 border-b border-border">
-      <h2
-        id="members-heading"
-        class="font-mono text-sm font-medium flex items-center gap-2"
-      >
-        <span
-          class="i-carbon-user-multiple w-4 h-4 text-fg-muted"
-          aria-hidden="true"
-        />
+      <h2 id="members-heading" class="font-mono text-sm font-medium flex items-center gap-2">
+        <span class="i-carbon-user-multiple w-4 h-4 text-fg-muted" aria-hidden="true" />
         Members
-        <span
-          v-if="memberList.length > 0"
-          class="text-fg-muted"
-        >({{ memberList.length }})</span>
+        <span v-if="memberList.length > 0" class="text-fg-muted">({{ memberList.length }})</span>
       </h2>
       <button
         type="button"
         class="p-1.5 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         aria-label="Refresh members"
         :disabled="isLoading"
-        @click="loadMembers(); loadTeamMemberships()"
+        @click="refreshData"
       >
         <span
           class="i-carbon-renew block w-4 h-4"
@@ -321,10 +319,7 @@ watch(lastExecutionTime, () => {
           class="absolute left-2 top-1/2 -translate-y-1/2 i-carbon-search w-3.5 h-3.5 text-fg-subtle"
           aria-hidden="true"
         />
-        <label
-          for="members-search"
-          class="sr-only"
-        >Filter members</label>
+        <label for="members-search" class="sr-only">Filter members</label>
         <input
           id="members-search"
           v-model="searchQuery"
@@ -333,13 +328,9 @@ watch(lastExecutionTime, () => {
           placeholder="Filter members…"
           autocomplete="off"
           class="w-full pl-7 pr-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-        >
+        />
       </div>
-      <div
-        class="flex items-center gap-1"
-        role="group"
-        aria-label="Filter by role"
-      >
+      <div class="flex items-center gap-1" role="group" aria-label="Filter by role">
         <button
           v-for="role in ['all', 'owner', 'admin', 'developer'] as const"
           :key="role"
@@ -350,41 +341,25 @@ watch(lastExecutionTime, () => {
           @click="filterRole = role"
         >
           {{ role }}
-          <span
-            v-if="role !== 'all'"
-            class="text-fg-subtle"
-          >({{ roleCounts[role] }})</span>
+          <span v-if="role !== 'all'" class="text-fg-subtle">({{ roleCounts[role] }})</span>
         </button>
       </div>
       <!-- Team filter -->
       <div v-if="teamNames.length > 0">
-        <label
-          for="team-filter"
-          class="sr-only"
-        >Filter by team</label>
+        <label for="team-filter" class="sr-only">Filter by team</label>
         <select
           id="team-filter"
           v-model="filterTeam"
           name="team-filter"
           class="px-2 py-1 font-mono text-xs bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         >
-          <option :value="null">
-            all teams
-          </option>
-          <option
-            v-for="team in teamNames"
-            :key="team"
-            :value="team"
-          >
+          <option :value="null">all teams</option>
+          <option v-for="team in teamNames" :key="team" :value="team">
             {{ team }}
           </option>
         </select>
       </div>
-      <div
-        class="flex items-center gap-1 text-xs"
-        role="group"
-        aria-label="Sort by"
-      >
+      <div class="flex items-center gap-1 text-xs" role="group" aria-label="Sort by">
         <button
           type="button"
           class="px-2 py-1 font-mono rounded transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
@@ -409,25 +384,16 @@ watch(lastExecutionTime, () => {
     </div>
 
     <!-- Loading state -->
-    <div
-      v-if="isLoading && memberList.length === 0"
-      class="p-8 text-center"
-    >
+    <div v-if="isLoading && memberList.length === 0" class="p-8 text-center">
       <span
         class="i-carbon-rotate block w-5 h-5 text-fg-muted animate-spin mx-auto"
         aria-hidden="true"
       />
-      <p class="font-mono text-sm text-fg-muted mt-2">
-        Loading members…
-      </p>
+      <p class="font-mono text-sm text-fg-muted mt-2">Loading members…</p>
     </div>
 
     <!-- Error state -->
-    <div
-      v-else-if="error"
-      class="p-4 text-center"
-      role="alert"
-    >
+    <div v-else-if="error" class="p-4 text-center" role="alert">
       <p class="font-mono text-sm text-red-400">
         {{ error }}
       </p>
@@ -441,13 +407,8 @@ watch(lastExecutionTime, () => {
     </div>
 
     <!-- Empty state -->
-    <div
-      v-else-if="memberList.length === 0"
-      class="p-8 text-center"
-    >
-      <p class="font-mono text-sm text-fg-muted">
-        No members found
-      </p>
+    <div v-else-if="memberList.length === 0" class="p-8 text-center">
+      <p class="font-mono text-sm text-fg-muted">No members found</p>
     </div>
 
     <!-- Members list -->
@@ -478,26 +439,24 @@ watch(lastExecutionTime, () => {
           </div>
           <div class="flex items-center gap-1">
             <!-- Role selector -->
-            <label
-              :for="`role-${member.name}`"
-              class="sr-only"
-            >Change role for {{ member.name }}</label>
+            <label :for="`role-${member.name}`" class="sr-only"
+              >Change role for {{ member.name }}</label
+            >
             <select
               :id="`role-${member.name}`"
               :value="member.role"
               :name="`role-${member.name}`"
               class="px-1.5 py-0.5 font-mono text-xs bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 cursor-pointer"
-              @change="handleChangeRole(member.name, ($event.target as HTMLSelectElement).value as 'developer' | 'admin' | 'owner')"
+              @change="
+                handleChangeRole(
+                  member.name,
+                  ($event.target as HTMLSelectElement).value as 'developer' | 'admin' | 'owner',
+                )
+              "
             >
-              <option value="developer">
-                developer
-              </option>
-              <option value="admin">
-                admin
-              </option>
-              <option value="owner">
-                owner
-              </option>
+              <option value="developer">developer</option>
+              <option value="admin">admin</option>
+              <option value="owner">owner</option>
             </select>
             <!-- Remove button -->
             <button
@@ -506,18 +465,12 @@ watch(lastExecutionTime, () => {
               :aria-label="`Remove ${member.name} from org`"
               @click="handleRemoveMember(member.name)"
             >
-              <span
-                class="i-carbon-close block w-4 h-4"
-                aria-hidden="true"
-              />
+              <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
         <!-- Team badges -->
-        <div
-          v-if="member.teams.length > 0"
-          class="flex flex-wrap gap-1 pl-0"
-        >
+        <div v-if="member.teams.length > 0" class="flex flex-wrap gap-1 pl-0">
           <button
             v-for="team in member.teams"
             :key="team"
@@ -533,26 +486,15 @@ watch(lastExecutionTime, () => {
     </ul>
 
     <!-- No results -->
-    <div
-      v-if="memberList.length > 0 && filteredMembers.length === 0"
-      class="p-4 text-center"
-    >
-      <p class="font-mono text-sm text-fg-muted">
-        No members match your filters
-      </p>
+    <div v-if="memberList.length > 0 && filteredMembers.length === 0" class="p-4 text-center">
+      <p class="font-mono text-sm text-fg-muted">No members match your filters</p>
     </div>
 
     <!-- Add member -->
     <div class="p-3 border-t border-border">
       <div v-if="showAddMember">
-        <form
-          class="space-y-2"
-          @submit.prevent="handleAddMember"
-        >
-          <label
-            for="new-member-username"
-            class="sr-only"
-          >Username</label>
+        <form class="space-y-2" @submit.prevent="handleAddMember">
+          <label for="new-member-username" class="sr-only">Username</label>
           <input
             id="new-member-username"
             v-model="newUsername"
@@ -562,47 +504,29 @@ watch(lastExecutionTime, () => {
             autocomplete="off"
             spellcheck="false"
             class="w-full px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-          >
+          />
           <div class="flex items-center gap-2">
-            <label
-              for="new-member-role"
-              class="sr-only"
-            >Role</label>
+            <label for="new-member-role" class="sr-only">Role</label>
             <select
               id="new-member-role"
               v-model="newRole"
               name="new-member-role"
               class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
             >
-              <option value="developer">
-                developer
-              </option>
-              <option value="admin">
-                admin
-              </option>
-              <option value="owner">
-                owner
-              </option>
+              <option value="developer">developer</option>
+              <option value="admin">admin</option>
+              <option value="owner">owner</option>
             </select>
             <!-- Team selection -->
-            <label
-              for="new-member-team"
-              class="sr-only"
-            >Team</label>
+            <label for="new-member-team" class="sr-only">Team</label>
             <select
               id="new-member-team"
               v-model="newTeam"
               name="new-member-team"
               class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
             >
-              <option value="">
-                no team
-              </option>
-              <option
-                v-for="team in teamNames"
-                :key="team"
-                :value="team"
-              >
+              <option value="">no team</option>
+              <option v-for="team in teamNames" :key="team" :value="team">
                 {{ team }}
               </option>
             </select>
@@ -619,10 +543,7 @@ watch(lastExecutionTime, () => {
               aria-label="Cancel adding member"
               @click="showAddMember = false"
             >
-              <span
-                class="i-carbon-close block w-4 h-4"
-                aria-hidden="true"
-              />
+              <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </form>

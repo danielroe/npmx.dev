@@ -1,13 +1,16 @@
 <script setup lang="ts">
-withDefaults(defineProps<{
-  name: string
-  version: string
-  downloads?: string
-  license?: string
-}>(), {
-  downloads: '',
-  license: '',
-})
+withDefaults(
+  defineProps<{
+    name: string
+    version: string
+    downloads?: string
+    license?: string
+  }>(),
+  {
+    downloads: '',
+    license: '',
+  },
+)
 </script>
 
 <template>
@@ -25,8 +28,6 @@ withDefaults(defineProps<{
       <span v-if="license">{{ license }}</span>
     </div>
 
-    <p class="absolute bottom-12 text-lg text-[#404040]">
-      npmx.dev
-    </p>
+    <p class="absolute bottom-12 text-lg text-[#404040]">npmx.dev</p>
   </div>
 </template>

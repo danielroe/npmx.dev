@@ -8,7 +8,6 @@ export default defineNuxtConfig({
       }
     },
     '@unocss/nuxt',
-    '@nuxt/eslint',
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
     '@nuxt/fonts',
@@ -66,12 +65,6 @@ export default defineNuxtConfig({
         '@shikijs/engine-javascript',
         '@shikijs/core',
       ],
-    },
-  },
-
-  eslint: {
-    config: {
-      stylistic: true,
     },
   },
 
