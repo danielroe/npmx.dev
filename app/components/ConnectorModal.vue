@@ -165,6 +165,17 @@ watch(open, isOpen => {
                 {{ error }}
               </div>
 
+              <!-- Warning message -->
+              <div
+                role="alert"
+                class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md"
+              >
+                <p class="font-mono text-sm text-fg font-bold">WARNING</p>
+                <p class="text-sm text-fg-muted">
+                  This allows npmx to access your npm cli and any authenticated contexts.
+                </p>
+              </div>
+
               <button
                 type="submit"
                 :disabled="!tokenInput.trim() || isConnecting"
