@@ -111,7 +111,7 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: ['@vueuse/core', 'vue-data-ui/vue-ui-sparkline'],
+      include: ['@vueuse/core', 'vue-data-ui/vue-ui-sparkline', 'virtua/vue'],
     },
   },
 })
