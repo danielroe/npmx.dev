@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { DocsResponse } from '#shared/types'
+import { assertValidPackageName } from '#shared/utils/npm'
 
 definePageMeta({
   name: 'docs',
@@ -28,6 +29,11 @@ const parsedRoute = computed(() => {
 const packageName = computed(() => parsedRoute.value.packageName)
 const requestedVersion = computed(() => parsedRoute.value.version)
 
+// Validate package name on server-side for early error detection
+if (import.meta.server && packageName.value) {
+  assertValidPackageName(packageName.value)
+}
+
 const { data: pkg } = usePackage(packageName)
 
 const latestVersion = computed(() => pkg.value?.['dist-tags']?.latest ?? null)
@@ -51,19 +57,21 @@ const docsUrl = computed(() => {
 
 const shouldFetch = computed(() => !!docsUrl.value)
 
-const { data: docsData, status: docsStatus } = useLazyFetch<DocsResponse>(() => docsUrl.value!, {
-  watch: [docsUrl],
-  immediate: shouldFetch.value,
-  default: () => ({
-    package: packageName.value,
-    version: resolvedVersion.value ?? '',
-    html: '',
-    toc: null,
-    breadcrumbs: null,
-    status: 'missing',
-    message: 'Docs are not available for this version.',
-  }),
-})
+const { data: docsData, status: docsStatus } = useLazyFetch<DocsResponse>(
+  () => docsUrl.value ?? '',
+  {
+    watch: [docsUrl],
+    immediate: shouldFetch.value,
+    default: () => ({
+      package: packageName.value,
+      version: resolvedVersion.value ?? '',
+      html: '',
+      toc: null,
+      status: 'missing',
+      message: 'Docs are not available for this version.',
+    }),
+  },
+)
 
 const pageTitle = computed(() => {
   if (!packageName.value) return 'API Docs - npmx'

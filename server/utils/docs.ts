@@ -9,6 +9,14 @@
 
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
+import type {
+  DenoDocNode,
+  DenoDocResult,
+  DocsGenerationResult,
+  FunctionParam,
+  JsDocTag,
+  TsType,
+} from '#shared/types/deno-doc'
 import { highlightCodeBlock } from './shiki'
 
 const execFileAsync = promisify(execFile)
@@ -52,137 +60,8 @@ const KIND_TITLES: Record<string, string> = {
 }
 
 // =============================================================================
-// Types - Deno Doc Output
+// Internal Types
 // =============================================================================
-
-/** JSDoc tag from deno doc output */
-export interface JsDocTag {
-  kind: string
-  name?: string
-  doc?: string
-  optional?: boolean
-  type?: string
-}
-
-/** TypeScript type representation from deno doc */
-export interface TsType {
-  repr: string
-  kind: string
-  keyword?: string
-  typeRef?: {
-    typeName: string
-    typeParams?: TsType[] | null
-  }
-  array?: TsType
-  union?: TsType[]
-  literal?: {
-    kind: string
-    string?: string
-    number?: number
-    boolean?: boolean
-  }
-}
-
-/** Function parameter from deno doc */
-export interface FunctionParam {
-  kind: string
-  name: string
-  optional?: boolean
-  tsType?: TsType
-}
-
-/** A documentation node from deno doc output */
-export interface DenoDocNode {
-  name: string
-  kind: string
-  isDefault?: boolean
-  location?: {
-    filename: string
-    line: number
-    col: number
-  }
-  declarationKind?: string
-  jsDoc?: {
-    doc?: string
-    tags?: JsDocTag[]
-  }
-  functionDef?: {
-    params?: FunctionParam[]
-    returnType?: TsType
-    isAsync?: boolean
-    isGenerator?: boolean
-    typeParams?: Array<{ name: string }>
-  }
-  classDef?: {
-    isAbstract?: boolean
-    properties?: Array<{
-      name: string
-      tsType?: TsType
-      readonly?: boolean
-      optional?: boolean
-      isStatic?: boolean
-      jsDoc?: { doc?: string }
-    }>
-    methods?: Array<{
-      name: string
-      isStatic?: boolean
-      functionDef?: {
-        params?: FunctionParam[]
-        returnType?: TsType
-      }
-      jsDoc?: { doc?: string }
-    }>
-    constructors?: Array<{
-      params?: FunctionParam[]
-    }>
-    extends?: TsType
-    implements?: TsType[]
-  }
-  interfaceDef?: {
-    properties?: Array<{
-      name: string
-      tsType?: TsType
-      readonly?: boolean
-      optional?: boolean
-      jsDoc?: { doc?: string }
-    }>
-    methods?: Array<{
-      name: string
-      params?: FunctionParam[]
-      returnType?: TsType
-      jsDoc?: { doc?: string }
-    }>
-    extends?: TsType[]
-    typeParams?: Array<{ name: string }>
-  }
-  typeAliasDef?: {
-    tsType?: TsType
-    typeParams?: Array<{ name: string }>
-  }
-  variableDef?: {
-    tsType?: TsType
-    kind?: string
-  }
-  enumDef?: {
-    members?: Array<{ name: string; init?: TsType }>
-  }
-  namespaceDef?: {
-    elements?: DenoDocNode[]
-  }
-}
-
-/** Raw output from deno doc --json */
-interface DenoDocResult {
-  version: number
-  nodes: DenoDocNode[]
-}
-
-/** Result of documentation generation */
-export interface DocsGenerationResult {
-  html: string
-  toc: string | null
-  nodes: DenoDocNode[]
-}
 
 /** Symbol with merged overloads */
 interface MergedSymbol {
@@ -226,60 +105,51 @@ export async function generateDocsWithDeno(
   await verifyDenoInstalled()
 
   const url = buildEsmShUrl(packageName, version)
+  const result = await runDenoDoc(url)
 
-  try {
-    const result = await runDenoDoc(url)
-
-    if (!result.nodes || result.nodes.length === 0) {
-      console.warn(`[docs] No type information found for ${packageName}@${version}`)
-      return null
-    }
-
-    // Process nodes: flatten namespaces and build lookup
-    const flattenedNodes = flattenNamespaces(result.nodes)
-    const symbolLookup = buildSymbolLookup(flattenedNodes)
-
-    // Render HTML and TOC
-    const html = await renderDocNodes(flattenedNodes, symbolLookup)
-    const toc = renderToc(flattenedNodes)
-
-    return { html, toc, nodes: flattenedNodes }
+  if (!result.nodes || result.nodes.length === 0) {
+    return null
   }
-  catch (error) {
-    console.error(`[docs] Failed to generate docs for ${packageName}@${version}:`, error)
-    throw error
-  }
+
+  // Process nodes: flatten namespaces, merge overloads, and build lookup
+  const flattenedNodes = flattenNamespaces(result.nodes)
+  const mergedSymbols = mergeOverloads(flattenedNodes)
+  const symbolLookup = buildSymbolLookup(flattenedNodes)
+
+  // Render HTML and TOC from pre-computed merged symbols
+  const html = await renderDocNodes(mergedSymbols, symbolLookup)
+  const toc = renderToc(mergedSymbols)
+
+  return { html, toc, nodes: flattenedNodes }
 }
 
 // =============================================================================
 // Deno Integration
 // =============================================================================
 
-let denoChecked = false
-let denoAvailable = false
+/** Cached promise for deno availability check - computed once on first access */
+let denoCheckPromise: Promise<boolean> | null = null
+
+/**
+ * Check if deno is installed (cached after first check).
+ */
+async function isDenoInstalled(): Promise<boolean> {
+  if (!denoCheckPromise) {
+    denoCheckPromise = execFileAsync('deno', ['--version'], { timeout: 5000 })
+      .then(() => true)
+      .catch(() => false)
+  }
+  return denoCheckPromise
+}
 
 /**
  * Verify that deno is installed and available.
  * @throws {Error} If deno is not installed
  */
 async function verifyDenoInstalled(): Promise<void> {
-  if (denoChecked) {
-    if (!denoAvailable) {
-      throw new Error('Deno is not installed. Please install Deno to generate API documentation: https://deno.land')
-    }
-    return
-  }
-
-  try {
-    await execFileAsync('deno', ['--version'], { timeout: 5000 })
-    denoAvailable = true
-  }
-  catch {
-    denoAvailable = false
+  const available = await isDenoInstalled()
+  if (!available) {
     throw new Error('Deno is not installed. Please install Deno to generate API documentation: https://deno.land')
-  }
-  finally {
-    denoChecked = true
   }
 }
 
@@ -390,9 +260,11 @@ function mergeOverloads(nodes: DenoDocNode[]): MergedSymbol[] {
   const result: MergedSymbol[] = []
 
   for (const [, groupedNodes] of byKey) {
-    const first = groupedNodes[0]!
+    const first = groupedNodes[0]
+    if (!first) continue // Should never happen, but satisfies TypeScript
+
     // Use JSDoc from the best-documented overload
-    const withDoc = groupedNodes.find(n => n.jsDoc?.doc) || first
+    const withDoc = groupedNodes.find(n => n.jsDoc?.doc) ?? first
 
     result.push({
       name: cleanSymbolName(first.name),
@@ -415,10 +287,8 @@ function groupMergedByKind(symbols: MergedSymbol[]): Record<string, MergedSymbol
   const grouped: Record<string, MergedSymbol[]> = {}
 
   for (const sym of symbols) {
-    if (!grouped[sym.kind]) {
-      grouped[sym.kind] = []
-    }
-    grouped[sym.kind]!.push(sym)
+    const kindGroup = grouped[sym.kind] ??= []
+    kindGroup.push(sym)
   }
 
   return grouped
@@ -431,9 +301,8 @@ function groupMergedByKind(symbols: MergedSymbol[]): Record<string, MergedSymbol
 /**
  * Render all documentation nodes as HTML.
  */
-async function renderDocNodes(nodes: DenoDocNode[], symbolLookup: SymbolLookup): Promise<string> {
-  const merged = mergeOverloads(nodes)
-  const grouped = groupMergedByKind(merged)
+async function renderDocNodes(symbols: MergedSymbol[], symbolLookup: SymbolLookup): Promise<string> {
+  const grouped = groupMergedByKind(symbols)
   const sections: string[] = []
 
   for (const kind of KIND_DISPLAY_ORDER) {
@@ -473,9 +342,11 @@ async function renderKindSection(
  * Render a merged symbol (with all its overloads).
  */
 async function renderMergedSymbol(symbol: MergedSymbol, symbolLookup: SymbolLookup): Promise<string> {
+  const primaryNode = symbol.nodes[0]
+  if (!primaryNode) return '' // Safety check - should never happen
+
   const lines: string[] = []
   const id = createSymbolId(symbol.kind, symbol.name)
-  const primaryNode = symbol.nodes[0]!
   const hasOverloads = symbol.nodes.length > 1
 
   lines.push(`<article class="docs-symbol" id="${id}">`)
@@ -739,9 +610,8 @@ function renderEnumMembers(def: NonNullable<DenoDocNode['enumDef']>): string {
 /**
  * Render table of contents.
  */
-function renderToc(nodes: DenoDocNode[]): string {
-  const merged = mergeOverloads(nodes)
-  const grouped = groupMergedByKind(merged)
+function renderToc(symbols: MergedSymbol[]): string {
+  const grouped = groupMergedByKind(symbols)
   const lines: string[] = []
 
   lines.push(`<nav class="toc text-sm">`)

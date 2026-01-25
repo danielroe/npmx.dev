@@ -1,7 +1,6 @@
 packages:
   - '.'
   - 'cli'
-  - 'prototypes/*'
 
 overrides:
   sharp: 0.34.5
