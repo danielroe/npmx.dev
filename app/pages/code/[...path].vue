@@ -312,7 +312,9 @@ useSeoMeta({
           </NuxtLink>
           <!-- Version selector -->
           <div v-if="version && availableVersions.length > 0" class="relative shrink-0">
+            <label for="version-select" class="sr-only">Select version</label>
             <select
+              id="version-select"
               :value="version"
               :title="`v${version}`"
               class="appearance-none pl-2 pr-6 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded cursor-pointer hover:border-border-hover transition-colors max-w-32 sm:max-w-48 truncate"
@@ -414,6 +416,7 @@ useSeoMeta({
             <div class="flex items-center gap-2">
               <button
                 v-if="selectedLines"
+                type="button"
                 class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors"
                 @click="copyPermalink"
               >

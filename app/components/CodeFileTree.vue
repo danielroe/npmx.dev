@@ -53,6 +53,7 @@ function isExpanded(path: string): boolean {
       <!-- Directory -->
       <template v-if="node.type === 'directory'">
         <button
+          type="button"
           class="w-full flex items-center gap-1.5 py-1.5 px-3 text-left font-mono text-sm transition-colors hover:bg-bg-muted"
           :class="isNodeActive(node) ? 'text-fg' : 'text-fg-muted'"
           :style="{ paddingLeft: `${depth * 12 + 12}px` }"
