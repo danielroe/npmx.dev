@@ -462,8 +462,8 @@ defineOgImageComponent('Package', {
           </div>
 
           <div v-if="pkg.time?.modified" class="space-y-1">
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">Updated</dt>
-            <dd class="font-mono text-sm text-fg">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider text-right">Updated</dt>
+            <dd class="font-mono text-sm text-fg text-right">
               <NuxtTime :datetime="pkg.time.modified" date-style="medium" />
             </dd>
           </div>
