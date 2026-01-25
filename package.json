@@ -53,7 +53,6 @@
   "devDependencies": {
     "@iconify-json/carbon": "1.2.18",
     "@iconify-json/solar": "1.2.5",
-    "@lhci/cli": "0.15.1",
     "@npm/types": "2.1.0",
     "@nuxt/test-utils": "https://pkg.pr.new/@nuxt/test-utils@1499a48",
     "@playwright/test": "1.57.0",
