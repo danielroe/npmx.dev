@@ -33,9 +33,9 @@
     "validate-npm-package-name": "^7.0.2"
   },
   "devDependencies": {
-    "@types/node": "^24.10.9",
-    "@types/validate-npm-package-name": "^4.0.2",
-    "tsdown": "^0.20.1",
-    "typescript": "^5.9.3"
+    "@types/node": "24.10.9",
+    "@types/validate-npm-package-name": "4.0.2",
+    "tsdown": "0.20.1",
+    "typescript": "5.9.3"
   }
 }
