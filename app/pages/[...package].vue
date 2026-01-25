@@ -190,19 +190,7 @@ function hasProvenance(version: PackumentVersion | null): boolean {
   return !!dist.attestations
 }
 
-// Persist package manager preference in localStorage
-const selectedPM = ref<PackageManagerId>('npm')
-
-onMounted(() => {
-  const stored = localStorage.getItem('npmx-pm')
-  if (stored && packageManagers.some(pm => pm.id === stored)) {
-    selectedPM.value = stored as PackageManagerId
-  }
-})
-
-watch(selectedPM, value => {
-  localStorage.setItem('npmx-pm', value)
-})
+const selectedPM = useSelectedPackageManager()
 
 const installCommandParts = computed(() => {
   if (!pkg.value) return []
