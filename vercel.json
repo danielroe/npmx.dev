@@ -10,6 +10,56 @@
         }
       ],
       "destination": "https://discord.gg/NHwgTgAFVV"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "social.npmx.dev"
+        }
+      ],
+      "destination": "https://bsky.app/profile/npmx.dev"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "repo.npmx.dev"
+        }
+      ],
+      "destination": "https://github.com/npmx-dev/npmx.dev"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "issues.npmx.dev"
+        }
+      ],
+      "destination": "https://github.com/npmx-dev/npmx.dev/issues"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "coc.npmx.dev"
+        }
+      ],
+      "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/CODE_OF_CONDUCT.md"
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "contributing.npmx.dev"
+        }
+      ],
+      "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md"
     }
   ]
 }
