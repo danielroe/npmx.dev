@@ -132,6 +132,7 @@ watch(open, isOpen => {
                 <span class="text-fg ml-2">{{ executeNpmxConnectorCommand }}</span>
                 <button
                   type="button"
+                  :aria-label="copied ? 'Copied' : 'Copy command'"
                   class="ml-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                   @click="copyCommand"
                 >
