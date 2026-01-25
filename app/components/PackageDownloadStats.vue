@@ -59,7 +59,7 @@ const config = computed(() => ({
     title: {
       text: lastDatapoint.value,
       fontSize: 12,
-      color: '#666666',
+      color: '#8A8A8A',
       bold: false,
     },
     verticalIndicator: {

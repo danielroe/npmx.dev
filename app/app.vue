@@ -285,7 +285,7 @@ button {
   border-left: 2px solid #262626;
   padding-left: 1rem;
   margin: 1.5rem 0;
-  color: #666666;
+  color: #8a8a8a;
   font-style: italic;
 }
 

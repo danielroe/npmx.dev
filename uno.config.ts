@@ -39,7 +39,7 @@ export default defineConfig({
       fg: {
         DEFAULT: '#fafafa',
         muted: '#a1a1a1',
-        subtle: '#666666',
+        subtle: '#8A8A8A',
       },
       border: {
         DEFAULT: '#262626',
