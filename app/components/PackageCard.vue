@@ -9,15 +9,24 @@ defineProps<{
   /** Whether to show the publisher username */
   showPublisher?: boolean
   prefetch?: boolean
+  selected?: boolean
+  index?: number
+}>()
+
+const emit = defineEmits<{
+  focus: [index: number]
 }>()
 </script>
 
 <template>
-  <article class="group card-interactive">
+  <article class="group card-interactive" :class="{ 'bg-bg-muted border-border-hover': selected }">
     <NuxtLink
       :to="{ name: 'package', params: { package: result.package.name.split('/') } }"
       :prefetch-on="prefetch ? 'visibility' : 'interaction'"
       class="block focus:outline-none decoration-none"
+      :data-result-index="index"
+      @focus="emit('focus', index)"
+      @mouseenter="emit('focus', index)"
     >
       <header class="flex items-start justify-between gap-4 mb-2">
         <component

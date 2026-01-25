@@ -12,13 +12,12 @@ useHead({
 
 // Global keyboard shortcut: "/" focuses search or navigates to search page
 function handleGlobalKeydown(e: KeyboardEvent) {
-  // Ignore if user is typing in an input, textarea, or contenteditable
   const target = e.target as HTMLElement
-  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-    return
-  }
 
-  if (e.key === '/') {
+  const isEditableTarget =
+    target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
+
+  if (e.key === '/' && !target.isContentEditable) {
     e.preventDefault()
 
     // Try to find and focus search input on current page
@@ -28,10 +27,15 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 
     if (searchInput) {
       searchInput.focus()
-    } else {
-      // Navigate to search page
-      router.push('/search')
+      return
     }
+
+    router.push('/search')
+    return
+  }
+
+  if (isEditableTarget) {
+    return
   }
 }
 
