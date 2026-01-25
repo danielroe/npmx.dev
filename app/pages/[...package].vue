@@ -529,7 +529,7 @@ defineOgImageComponent('Package', {
                 jsr
               </a>
             </li>
-            <li class="flex-grow">
+            <li>
               <a
                 :href="`https://socket.dev/npm/package/${pkg.name}/overview/${displayVersion?.version ?? 'latest'}`"
                 target="_blank"
@@ -538,6 +538,17 @@ defineOgImageComponent('Package', {
               >
                 <span class="i-simple-icons-socket w-4 h-4" aria-hidden="true" />
                 socket.dev
+              </a>
+            </li>
+            <li class="flex-grow">
+              <a
+                :href="`https://node-modules.dev/grid/depth#install=${pkg.name}${displayVersion?.version ? `@${displayVersion.version}` : ''}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-solar-eye-scan-outline w-4 h-4" aria-hidden="true" />
+                inspect
               </a>
             </li>
 
