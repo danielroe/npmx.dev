@@ -227,7 +227,32 @@ describe('featureName', () => {
 > [!TIP]
 > If you need access to the Nuxt context in your unit or component test, place your test in the `test/nuxt/` directory and run with `pnpm test:nuxt`
 
-### E2e tests
+### Component accessibility tests
+
+All new components should have a basic accessibility test in `test/nuxt/components.spec.ts`. These tests use [axe-core](https://github.com/dequelabs/axe-core) to catch common accessibility violations.
+
+```typescript
+import MyComponent from '~/components/MyComponent.vue'
+
+describe('MyComponent', () => {
+  it('should have no accessibility violations', async () => {
+    const component = await mountSuspended(MyComponent, {
+      props: {
+        /* required props */
+      },
+    })
+    const results = await runAxe(component)
+    expect(results.violations).toEqual([])
+  })
+})
+```
+
+The `runAxe` helper handles DOM isolation and disables page-level rules that don't apply to isolated component testing.
+
+> [!IMPORTANT]
+> Just because axe-core doesn't find any obvious issues, it does not mean a component is accessible. Please do additional checks and use best practices.
+
+### End to end tests
 
 Write end-to-end tests using Playwright:
 
