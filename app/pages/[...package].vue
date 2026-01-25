@@ -333,6 +333,13 @@ defineOgImageComponent('Package', {
                 aria-label="Verified provenance"
               />
             </a>
+
+            <!-- Package metrics (module format, types) -->
+            <PackageMetricsBadges
+              v-if="displayVersion"
+              :package-name="pkg.name"
+              :version="displayVersion.version"
+            />
           </div>
           <!-- Fixed height description container to prevent CLS -->
           <div ref="descriptionRef" class="relative max-w-2xl min-h-[4.5rem]">
