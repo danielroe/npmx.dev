@@ -92,4 +92,6 @@ jobs:
         run: pnpm build
 
       - name: ♿ Accessibility audit (Lighthouse)
-        run: pnpm lhci
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

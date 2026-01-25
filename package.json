@@ -23,8 +23,7 @@
     "test:browser:update": "playwright test --update-snapshots",
     "test:nuxt": "vitest --project nuxt",
     "test:types": "nuxt prepare && vue-tsc -b --noEmit && pnpm --filter npmx-connector test:types",
-    "test:unit": "vitest --project unit",
-    "lhci": "lhci autorun"
+    "test:unit": "vitest --project unit"
   },
   "dependencies": {
     "@iconify-json/simple-icons": "^1.2.67",
