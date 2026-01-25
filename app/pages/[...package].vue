@@ -522,7 +522,7 @@ defineOgImageComponent('Package', {
               </a>
             </li>
 
-            <li v-if="forks">
+            <li v-if="forks && forksLink">
               <a
                 :href="forksLink"
                 target="_blank"
