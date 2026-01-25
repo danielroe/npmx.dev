@@ -75,6 +75,17 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/*
+ * Enable CSS scroll-state container queries for the document
+ * This allows the footer to query the scroll state using pure CSS
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@container#scroll-state_container_descriptors
+ */
+@supports (container-type: scroll-state) {
+  html {
+    container-type: scroll-state;
+  }
+}
+
 body {
   margin: 0;
   background-color: #0a0a0a;
