@@ -290,14 +290,6 @@ function toggleMajorGroup(index: number) {
 function getTagVersions(tag: string): VersionDisplay[] {
   return tagVersions.value.get(tag) ?? []
 }
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
-}
 </script>
 
 <template>
@@ -341,13 +333,14 @@ function formatDate(dateStr: string): string {
                 {{ row.primaryVersion.version }}
               </NuxtLink>
               <div class="flex items-center gap-2 shrink-0">
-                <time
+                <NuxtTime
                   v-if="row.primaryVersion.time"
                   :datetime="row.primaryVersion.time"
+                  year="numeric"
+                  month="short"
+                  day="numeric"
                   class="text-xs text-fg-subtle"
-                >
-                  {{ formatDate(row.primaryVersion.time) }}
-                </time>
+                />
                 <ProvenanceBadge
                   v-if="row.primaryVersion.hasProvenance"
                   :package-name="packageName"
@@ -384,9 +377,14 @@ function formatDate(dateStr: string): string {
                 {{ v.version }}
               </NuxtLink>
               <div class="flex items-center gap-2 shrink-0">
-                <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
-                  {{ formatDate(v.time) }}
-                </time>
+                <NuxtTime
+                  v-if="v.time"
+                  :datetime="v.time"
+                  class="text-[10px] text-fg-subtle"
+                  year="numeric"
+                  month="short"
+                  day="numeric"
+                />
                 <ProvenanceBadge
                   v-if="v.hasProvenance"
                   :package-name="packageName"
@@ -451,13 +449,14 @@ function formatDate(dateStr: string): string {
                 {{ row.primaryVersion.version }}
               </NuxtLink>
               <div class="flex items-center gap-2 shrink-0">
-                <time
+                <NuxtTime
                   v-if="row.primaryVersion.time"
                   :datetime="row.primaryVersion.time"
                   class="text-[10px] text-fg-subtle"
-                >
-                  {{ formatDate(row.primaryVersion.time) }}
-                </time>
+                  year="numeric"
+                  month="short"
+                  day="numeric"
+                />
               </div>
             </div>
             <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5 flex-wrap">
@@ -543,9 +542,14 @@ function formatDate(dateStr: string): string {
                       {{ v.version }}
                     </NuxtLink>
                     <div class="flex items-center gap-2 shrink-0">
-                      <time v-if="v.time" :datetime="v.time" class="text-[10px] text-fg-subtle">
-                        {{ formatDate(v.time) }}
-                      </time>
+                      <NuxtTime
+                        v-if="v.time"
+                        :datetime="v.time"
+                        class="text-[10px] text-fg-subtle"
+                        year="numeric"
+                        month="short"
+                        day="numeric"
+                      />
                       <ProvenanceBadge
                         v-if="v.hasProvenance"
                         :package-name="packageName"
