@@ -246,8 +246,13 @@ export function createConnectorApp(expectedToken: string) {
     }
 
     // OTP can be passed directly in the request body for this execution
-    const body = (await event.req.json()) as { otp?: string } | null
-    const otp = body?.otp
+    let otp: string | undefined
+    try {
+      const body = (await event.req.json()) as { otp?: string } | null
+      otp = body?.otp
+    } catch {
+      // Empty body is fine - no OTP provided
+    }
 
     const approvedOps = state.operations.filter(op => op.status === 'approved')
     const results: Array<{ id: string; result: NpmExecResult }> = []

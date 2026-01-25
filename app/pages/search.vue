@@ -294,9 +294,9 @@ defineOgImageComponent('Default', {
                   v-model="inputValue"
                   type="search"
                   name="q"
-                  placeholder="search packages..."
+                  placeholder="search packages…"
                   autocomplete="off"
-                  class="w-full max-w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-4 py-3 font-mono text-base text-fg placeholder:text-fg-subtle transition-all duration-300 focus:(border-border-hover outline-none) appearance-none"
+                  class="w-full max-w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-4 py-3 font-mono text-base text-fg placeholder:text-fg-subtle transition-colors duration-300 focus:(border-border-hover outline-none) appearance-none"
                   @focus="isSearchFocused = true"
                   @blur="isSearchFocused = false"
                 />
@@ -313,7 +313,7 @@ defineOgImageComponent('Default', {
     <div class="container pt-20 pb-6">
       <section v-if="query" aria-label="Search results">
         <!-- Initial loading (only after user interaction, not during view transition) -->
-        <LoadingSpinner v-if="showSearching" text="Searching..." />
+        <LoadingSpinner v-if="showSearching" text="Searching…" />
 
         <div v-else-if="visibleResults">
           <!-- Claim prompt - shown at top when valid name but no exact match -->
@@ -343,7 +343,7 @@ defineOgImageComponent('Default', {
             class="text-fg-muted text-sm mb-6 font-mono"
           >
             Found <span class="text-fg">{{ formatNumber(visibleResults.total) }}</span> packages
-            <span v-if="status === 'pending'" class="text-fg-subtle">(updating...)</span>
+            <span v-if="status === 'pending'" class="text-fg-subtle">(updating…)</span>
           </p>
 
           <!-- No results found -->

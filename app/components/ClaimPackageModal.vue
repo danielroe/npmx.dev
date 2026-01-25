@@ -169,7 +169,7 @@ const connectorModalOpen = ref(false)
 
             <!-- Loading state -->
             <div v-if="isChecking" class="py-8 text-center">
-              <LoadingSpinner text="Checking availability..." />
+              <LoadingSpinner text="Checking availability…" />
             </div>
 
             <!-- Success state -->
@@ -194,14 +194,14 @@ const connectorModalOpen = ref(false)
               <div class="flex gap-3">
                 <NuxtLink
                   :to="`/package/${packageName}`"
-                  class="flex-1 px-4 py-2 font-mono text-sm text-center text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90"
+                  class="flex-1 px-4 py-2 font-mono text-sm text-center text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                   @click="open = false"
                 >
                   View Package
                 </NuxtLink>
                 <button
                   type="button"
-                  class="flex-1 px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover"
+                  class="flex-1 px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                   @click="open = false"
                 >
                   Close
@@ -301,7 +301,7 @@ const connectorModalOpen = ref(false)
                       <div class="min-w-0">
                         <NuxtLink
                           :to="`/package/${pkg.name}`"
-                          class="font-mono text-sm text-fg hover:underline"
+                          class="font-mono text-sm text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                           target="_blank"
                         >
                           {{ pkg.name }}
@@ -350,7 +350,7 @@ const connectorModalOpen = ref(false)
                   </div>
                   <button
                     type="button"
-                    class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90"
+                    class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                     @click="connectorModalOpen = true"
                   >
                     Connect to Connector
@@ -378,10 +378,10 @@ const connectorModalOpen = ref(false)
                   <button
                     type="button"
                     :disabled="isPublishing"
-                    class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                     @click="handleClaim"
                   >
-                    {{ isPublishing ? 'Publishing...' : 'Claim Package Name' }}
+                    {{ isPublishing ? 'Publishing…' : 'Claim Package Name' }}
                   </button>
                 </div>
               </div>
@@ -390,7 +390,7 @@ const connectorModalOpen = ref(false)
               <button
                 v-if="!checkResult.available || !checkResult.valid"
                 type="button"
-                class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover"
+                class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                 @click="open = false"
               >
                 Close
@@ -407,7 +407,7 @@ const connectorModalOpen = ref(false)
               </div>
               <button
                 type="button"
-                class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover"
+                class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                 @click="checkAvailability"
               >
                 Retry
