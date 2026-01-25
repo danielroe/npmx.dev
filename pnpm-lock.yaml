@@ -219,16 +219,6 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
-  prototypes/deno-doc:
-    dependencies:
-      '@deno/doc':
-        specifier: npm:@jsr/deno__doc@^0.189.1
-        version: '@jsr/deno__doc@0.189.1'
-    devDependencies:
-      '@types/node':
-        specifier: ^22.0.0
-        version: 22.19.7
-
 packages:
 
   '@acemir/cssom@0.9.31':
@@ -1523,36 +1513,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@jsr/deno__cache-dir@0.25.0':
-    resolution: {integrity: sha512-J5/kPR8sc+dsRyE8rnLPhqay7B4XgBmkv7QaeIV41sGibszQjIb8b599LssN1YWBbqPLakPRMVobg5u6LheWfg==, tarball: https://npm.jsr.io/~/11/@jsr/deno__cache-dir/0.25.0.tgz}
-
-  '@jsr/deno__doc@0.189.1':
-    resolution: {integrity: sha512-GtlJz3nGX1zF+XBG5pEPYdRbo5feyP3eM1+zsEqFqjfvT/nfRdjyGNogEs4yd+DW8cD7tQceRd2vypDhG1X7kA==, tarball: https://npm.jsr.io/~/11/@jsr/deno__doc/0.189.1.tgz}
-
-  '@jsr/deno__graph@0.100.1':
-    resolution: {integrity: sha512-mPemftpdwtz8fo+RNKujjXKpDQRcj5E0nOcxeNiDGLRzqQk/Q69IcGM4ruZGX+0xhTNNSLc8Uu3W4ynIDfTR6g==, tarball: https://npm.jsr.io/~/11/@jsr/deno__graph/0.100.1.tgz}
-
-  '@jsr/deno__graph@0.86.9':
-    resolution: {integrity: sha512-+qrrma5/bL+hcG20mfaEeC8SLopqoyd1RjcKFMRu++3SAXyrTKuvuIjBJCn/NyN7X+kV+QrJG67BCHX38Rzw+g==, tarball: https://npm.jsr.io/~/11/@jsr/deno__graph/0.86.9.tgz}
-
-  '@jsr/std__bytes@1.0.6':
-    resolution: {integrity: sha512-St6yKggjFGhxS52IFLJWvkchRFbAKg2Xh8UxA4S1EGz7GJ2Ui+ssDDldj/w2c8vCxvl6qgR0HaYbKeFJNqujmA==, tarball: https://npm.jsr.io/~/11/@jsr/std__bytes/1.0.6.tgz}
-
-  '@jsr/std__fmt@1.0.9':
-    resolution: {integrity: sha512-YFJJMozmORj2K91c5J9opWeh0VUwrd+Mwb7Pr0FkVCAKVLu2UhT4LyvJqWiyUT+eF+MdfqQ9F7RtQj4bXn9Smw==, tarball: https://npm.jsr.io/~/11/@jsr/std__fmt/1.0.9.tgz}
-
-  '@jsr/std__fs@1.0.22':
-    resolution: {integrity: sha512-PvDtgT25IqhFEX2LjQI0aTz/Wg61jCtJ8l19fE9MUSvSmtw57Kzr6sM7GcCsSrsZEdQ7wjLfXvvhy8irta4Zww==, tarball: https://npm.jsr.io/~/11/@jsr/std__fs/1.0.22.tgz}
-
-  '@jsr/std__internal@1.0.12':
-    resolution: {integrity: sha512-6xReMW9p+paJgqoFRpOE2nogJFvzPfaLHLIlyADYjKMUcwDyjKZxryIbgcU+gxiTygn8yCjld1HoI0ET4/iZeA==, tarball: https://npm.jsr.io/~/11/@jsr/std__internal/1.0.12.tgz}
-
-  '@jsr/std__io@0.225.2':
-    resolution: {integrity: sha512-QNImMbao6pKXvV4xpFkY2zviZi1r+1KpYzgMqaa2gHDPZhXQqlia/Og+VqMxxfAr8Pw6BF3tw/hSw3LrWWTRmA==, tarball: https://npm.jsr.io/~/11/@jsr/std__io/0.225.2.tgz}
-
-  '@jsr/std__path@1.1.4':
-    resolution: {integrity: sha512-SK4u9H6NVTfolhPdlvdYXfNFefy1W04AEHWJydryYbk+xqzNiVmr5o7TLJLJFqwHXuwMRhwrn+mcYeUfS0YFaA==, tarball: https://npm.jsr.io/~/11/@jsr/std__path/1.1.4.tgz}
 
   '@kwsites/file-exists@1.1.1':
     resolution: {integrity: sha512-m9/5YGR18lIwxSFDwfE3oA7bWuq9kdau6ugN4H2rJeyhFQZcG9AgSHkQtSD15a8WvTgfz9aikZMrKPHvbpqFiw==}
@@ -3017,9 +2977,6 @@ packages:
 
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
-
-  '@types/node@22.19.7':
-    resolution: {integrity: sha512-MciR4AKGHWl7xwxkBa6xUGxQJ4VBOmPTF7sL+iGzuahOFaO0jHCsuEfS80pan1ef4gWId1oWOweIhrDEYLuaOw==}
 
   '@types/node@24.10.9':
     resolution: {integrity: sha512-ne4A0IpG3+2ETuREInjPNhUGis1SFjv1d5asp8MzEAGtOZeTeHVDOYqOgqfhvseqg/iXty2hjBf1zAOb7RNiNw==}
@@ -6837,9 +6794,6 @@ packages:
   unctx@2.5.0:
     resolution: {integrity: sha512-p+Rz9x0R7X+CYDkT+Xg8/GhpcShTlU8n+cf9OtOEf7zEQsNcCZO1dPKNRDqvUTaq+P32PMMkxWHwfrxkqfqAYg==}
 
-  undici-types@6.21.0:
-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
@@ -8795,42 +8749,6 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@jsr/deno__cache-dir@0.25.0':
-    dependencies:
-      '@jsr/deno__graph': 0.86.9
-      '@jsr/std__fmt': 1.0.9
-      '@jsr/std__fs': 1.0.22
-      '@jsr/std__io': 0.225.2
-      '@jsr/std__path': 1.1.4
-
-  '@jsr/deno__doc@0.189.1':
-    dependencies:
-      '@jsr/deno__cache-dir': 0.25.0
-      '@jsr/deno__graph': 0.100.1
-
-  '@jsr/deno__graph@0.100.1': {}
-
-  '@jsr/deno__graph@0.86.9': {}
-
-  '@jsr/std__bytes@1.0.6': {}
-
-  '@jsr/std__fmt@1.0.9': {}
-
-  '@jsr/std__fs@1.0.22':
-    dependencies:
-      '@jsr/std__internal': 1.0.12
-      '@jsr/std__path': 1.1.4
-
-  '@jsr/std__internal@1.0.12': {}
-
-  '@jsr/std__io@0.225.2':
-    dependencies:
-      '@jsr/std__bytes': 1.0.6
-
-  '@jsr/std__path@1.1.4':
-    dependencies:
-      '@jsr/std__internal': 1.0.12
-
   '@kwsites/file-exists@1.1.1':
     dependencies:
       debug: 4.4.3
@@ -10276,10 +10194,6 @@ snapshots:
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
-
-  '@types/node@22.19.7':
-    dependencies:
-      undici-types: 6.21.0
 
   '@types/node@24.10.9':
     dependencies:
@@ -12736,7 +12650,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.19.7
+      '@types/node': 24.10.9
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -14935,8 +14849,6 @@ snapshots:
       estree-walker: 3.0.3
       magic-string: 0.30.21
       unplugin: 2.3.11
-
-  undici-types@6.21.0: {}
 
   undici-types@7.16.0: {}
 
