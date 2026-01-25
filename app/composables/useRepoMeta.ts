@@ -139,25 +139,17 @@ export function useRepoMeta(repositoryUrl: MaybeRefOrGetter<string | null | unde
     return parseRepoFromUrl(url)
   })
 
-  const requestKey = computed(() => {
-    const ref = repoRef.value
-    if (!ref) return 'repo-meta:none'
-    return `repo-meta:${ref.provider}:${ref.owner}/${ref.repo}`
-  })
-
   const { data, pending, error, refresh } = useLazyAsyncData<RepoMeta | null>(
-    () => requestKey.value,
+    () =>
+      repoRef.value
+        ? `repo-meta:${repoRef.value.provider}:${repoRef.value.owner}/${repoRef.value.repo}`
+        : 'repo-meta:none',
     async () => {
       const ref = repoRef.value
       if (!ref) return null
       return await fetchRepoMeta(ref)
     },
-    { default: () => null },
   )
-
-  watch(repoRef, ref => {
-    if (ref) refresh()
-  })
 
   const meta = computed<RepoMeta | null>(() => data.value ?? null)
 
