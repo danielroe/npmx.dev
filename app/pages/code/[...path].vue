@@ -89,7 +89,6 @@ function switchVersion(newVersion: string) {
 const { data: fileTree, status: treeStatus } = useFetch<PackageFileTreeResponse>(
   () => `/api/registry/files/${packageName.value}/v/${version.value}`,
   {
-    watch: [packageName, version],
     immediate: !!version.value,
   },
 )
@@ -134,10 +133,7 @@ const fileContentUrl = computed(() => {
 
 const { data: fileContent, status: fileStatus } = useFetch<PackageFileContentResponse>(
   () => fileContentUrl.value!,
-  {
-    watch: [fileContentUrl],
-    immediate: !!fileContentUrl.value,
-  },
+  { immediate: !!fileContentUrl.value },
 )
 
 // Track hash manually since we update it via history API to avoid scroll
