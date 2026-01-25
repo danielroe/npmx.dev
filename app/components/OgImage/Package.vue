@@ -22,7 +22,7 @@ withDefaults(
       {{ name }}
     </h1>
 
-    <div class="flex items-center gap-6 mt-6 text-xl text-[#666666]">
+    <div class="flex items-center gap-6 mt-6 text-xl text-fg-subtle">
       <span>v{{ version }}</span>
       <span v-if="downloads">{{ downloads }}/wk</span>
       <span v-if="license">{{ license }}</span>

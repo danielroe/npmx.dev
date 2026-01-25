@@ -20,6 +20,9 @@ importers:
       '@iconify-json/vscode-icons':
         specifier: ^1.2.40
         version: 1.2.40
+      '@nuxt/a11y':
+        specifier: 1.0.0-alpha.1
+        version: 1.0.0-alpha.1(magicast@0.5.1)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       '@nuxt/fonts':
         specifier: ^0.13.0
         version: 0.13.0(db0@0.3.4)(ioredis@5.9.2)(magicast@0.5.1)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
@@ -65,6 +68,9 @@ importers:
       unplugin-vue-router:
         specifier: ^0.19.2
         version: 0.19.2(@vue/compiler-sfc@3.5.27)(vue-router@4.6.4(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))
+      valibot:
+        specifier: ^1.2.0
+        version: 1.2.0(typescript@5.9.3)
       validate-npm-package-name:
         specifier: ^7.0.2
         version: 7.0.2
@@ -79,13 +85,13 @@ importers:
         version: 3.13.2(vue@3.5.27(typescript@5.9.3))
     devDependencies:
       '@iconify-json/carbon':
-        specifier: ^1.2.18
+        specifier: 1.2.18
         version: 1.2.18
       '@iconify-json/solar':
-        specifier: ^1.2.5
+        specifier: 1.2.5
         version: 1.2.5
       '@npm/types':
-        specifier: ^2.1.0
+        specifier: 2.1.0
         version: 2.1.0
       '@nuxt/test-utils':
         specifier: https://pkg.pr.new/@nuxt/test-utils@1499a48
@@ -94,25 +100,25 @@ importers:
         specifier: 1.57.0
         version: 1.57.0
       '@types/sanitize-html':
-        specifier: ^2.16.0
+        specifier: 2.16.0
         version: 2.16.0
       '@types/semver':
-        specifier: ^7.7.1
+        specifier: 7.7.1
         version: 7.7.1
       '@types/validate-npm-package-name':
-        specifier: ^4.0.2
+        specifier: 4.0.2
         version: 4.0.2
       '@unocss/nuxt':
-        specifier: ^66.6.0
+        specifier: 66.6.0
         version: 66.6.0(magicast@0.5.1)(postcss@8.5.6)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(esbuild@0.27.2))
       '@unocss/preset-wind4':
-        specifier: ^66.6.0
+        specifier: 66.6.0
         version: 66.6.0
       '@vite-pwa/assets-generator':
-        specifier: ^1.0.2
+        specifier: 1.0.2
         version: 1.0.2
       '@vite-pwa/nuxt':
-        specifier: ^1.1.0
+        specifier: 1.1.0
         version: 1.1.0(@vite-pwa/assets-generator@1.0.2)(magicast@0.5.1)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)
       '@vitest/browser-playwright':
         specifier: ^4.0.18
@@ -123,6 +129,9 @@ importers:
       '@vue/test-utils':
         specifier: 2.4.6
         version: 2.4.6
+      axe-core:
+        specifier: ^4.11.1
+        version: 4.11.1
       happy-dom:
         specifier: 20.3.5
         version: 20.3.5
@@ -130,28 +139,28 @@ importers:
         specifier: 16.2.7
         version: 16.2.7
       marked:
-        specifier: ^17.0.1
+        specifier: 17.0.1
         version: 17.0.1
       oxfmt:
-        specifier: ^0.26.0
+        specifier: 0.26.0
         version: 0.26.0
       oxlint:
         specifier: ^1.41.0
         version: 1.41.0
       playwright-core:
-        specifier: ^1.57.0
+        specifier: 1.57.0
         version: 1.57.0
       simple-git-hooks:
         specifier: 2.13.1
         version: 2.13.1
       std-env:
-        specifier: ^3.10.0
+        specifier: 3.10.0
         version: 3.10.0
       typescript:
         specifier: 5.9.3
         version: 5.9.3
       unocss:
-        specifier: ^66.6.0
+        specifier: 66.6.0
         version: 66.6.0(@unocss/webpack@66.6.0(webpack@5.104.1(esbuild@0.27.2)))(postcss@8.5.6)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
         specifier: ^4.0.18
@@ -191,16 +200,16 @@ importers:
         version: 7.0.2
     devDependencies:
       '@types/node':
-        specifier: ^24.10.9
+        specifier: 24.10.9
         version: 24.10.9
       '@types/validate-npm-package-name':
-        specifier: ^4.0.2
+        specifier: 4.0.2
         version: 4.0.2
       tsdown:
-        specifier: ^0.20.1
+        specifier: 0.20.1
         version: 0.20.1(typescript@5.9.3)(vue-tsc@3.2.2(typescript@5.9.3))
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
 
 packages:
@@ -1457,6 +1466,9 @@ packages:
   '@npm/types@2.1.0':
     resolution: {integrity: sha512-humQVe2BrWR7Yum5hGDYBnIPnnZJvKSOH/I4QN1ZL2bdb4c4zQHaHupEJ3cOkSJ07G3YfN793ptbNh196BWLgA==}
     engines: {node: '>=18.6.0'}
+
+  '@nuxt/a11y@1.0.0-alpha.1':
+    resolution: {integrity: sha512-TwON9I0uI4erv9IJ6cD4nx9QcaxfXnAg7CwcQyjMKfDHCfI3xitezg4CZhQOHl0FGqHYGRf9Y9kSwh6fahCJrQ==}
 
   '@nuxt/cli@3.32.0':
     resolution: {integrity: sha512-n2f3SRjPlhthPvo2qWjLRRiTrUtB6WFwg0BGsvtqcqZVeQpNEU371zuKWBaFrWgqDZHV1r/aD9jrVCo+C8Pmrw==}
@@ -3182,6 +3194,10 @@ packages:
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
+
+  axe-core@4.11.1:
+    resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
+    engines: {node: '>=4'}
 
   b4a@1.7.3:
     resolution: {integrity: sha512-5Q2mfq2WfGuFp3uS//0s6baOJLMoVduPYVeNmDYxu5OUA1/cBfvr2RIS7vi62LdNj/urk1hfmj867I3qt6uZ7Q==}
@@ -8227,6 +8243,16 @@ snapshots:
 
   '@npm/types@2.1.0': {}
 
+  '@nuxt/a11y@1.0.0-alpha.1(magicast@0.5.1)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
+    dependencies:
+      '@nuxt/devtools-kit': 3.1.1(magicast@0.5.1)(vite@8.0.0-beta.10(@types/node@25.0.10)(esbuild@0.27.2)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
+      '@nuxt/kit': 4.3.0(magicast@0.5.1)
+      axe-core: 4.11.1
+      sirv: 3.0.2
+    transitivePeerDependencies:
+      - magicast
+      - vite
+
   '@nuxt/cli@3.32.0(cac@6.7.14)(magicast@0.5.1)':
     dependencies:
       '@bomb.sh/tab': 0.0.11(cac@6.7.14)(citty@0.1.6)
@@ -10214,6 +10240,8 @@ snapshots:
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.1.0
+
+  axe-core@4.11.1: {}
 
   b4a@1.7.3: {}
 

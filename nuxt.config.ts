@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
+    '@nuxt/a11y',
     '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
@@ -33,7 +34,7 @@ export default defineNuxtConfig({
   site: {
     url: 'https://npmx.dev',
     name: 'npmx',
-    description: 'A fast, accessible npm package browser for power users',
+    description: 'A fast, modern browser for the npm registry',
   },
 
   routeRules: {
@@ -102,7 +103,7 @@ export default defineNuxtConfig({
     manifest: {
       name: 'npmx',
       short_name: 'npmx',
-      description: 'A fast, accessible npm package browser for power users',
+      description: 'A fast, modern browser for the npm registry',
       theme_color: '#0a0a0a',
       background_color: '#0a0a0a',
     },
@@ -110,7 +111,13 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: ['@vueuse/core', 'vue-data-ui/vue-ui-sparkline'],
+      include: [
+        '@vueuse/core',
+        'vue-data-ui/vue-ui-sparkline',
+        'virtua/vue',
+        'semver',
+        'validate-npm-package-name',
+      ],
     },
   },
 })
