@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseRepositoryInfo } from '../../server/utils/readme'
+import { parseRepositoryInfo } from '#shared/utils/git-providers'
 
 describe('parseRepositoryInfo', () => {
   it('returns undefined for undefined input', () => {
@@ -11,7 +11,10 @@ describe('parseRepositoryInfo', () => {
       type: 'git',
       url: 'git+https://github.com/vercel/ai.git',
     })
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      provider: 'github',
+      owner: 'vercel',
+      repo: 'ai',
       rawBaseUrl: 'https://raw.githubusercontent.com/vercel/ai/HEAD',
       directory: undefined,
     })
@@ -23,7 +26,10 @@ describe('parseRepositoryInfo', () => {
       url: 'git+https://github.com/withastro/astro.git',
       directory: 'packages/astro',
     })
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      provider: 'github',
+      owner: 'withastro',
+      repo: 'astro',
       rawBaseUrl: 'https://raw.githubusercontent.com/withastro/astro/HEAD',
       directory: 'packages/astro',
     })
@@ -31,7 +37,7 @@ describe('parseRepositoryInfo', () => {
 
   it('parses shorthand GitHub string', () => {
     const result = parseRepositoryInfo('github:nuxt/nuxt')
-    // This format doesn't match the regex, returns undefined
+    // This shorthand format is not supported
     expect(result).toBeUndefined()
   })
 
@@ -39,17 +45,21 @@ describe('parseRepositoryInfo', () => {
     const result = parseRepositoryInfo({
       url: 'https://github.com/nuxt/nuxt',
     })
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      provider: 'github',
+      owner: 'nuxt',
+      repo: 'nuxt',
       rawBaseUrl: 'https://raw.githubusercontent.com/nuxt/nuxt/HEAD',
-      directory: undefined,
     })
   })
 
   it('parses string URL directly', () => {
     const result = parseRepositoryInfo('https://github.com/owner/repo.git')
-    expect(result).toEqual({
+    expect(result).toMatchObject({
+      provider: 'github',
+      owner: 'owner',
+      repo: 'repo',
       rawBaseUrl: 'https://raw.githubusercontent.com/owner/repo/HEAD',
-      directory: undefined,
     })
   })
 
@@ -61,15 +71,98 @@ describe('parseRepositoryInfo', () => {
     expect(result?.directory).toBe('packages/foo')
   })
 
-  it('returns undefined for non-GitHub URLs', () => {
-    const result = parseRepositoryInfo({
-      url: 'https://gitlab.com/owner/repo.git',
-    })
-    expect(result).toBeUndefined()
-  })
-
   it('returns undefined for empty URL', () => {
     const result = parseRepositoryInfo({ url: '' })
     expect(result).toBeUndefined()
+  })
+
+  // Multi-provider tests
+  describe('GitLab support', () => {
+    it('parses GitLab URL', () => {
+      const result = parseRepositoryInfo({
+        url: 'https://gitlab.com/owner/repo.git',
+      })
+      expect(result).toMatchObject({
+        provider: 'gitlab',
+        owner: 'owner',
+        repo: 'repo',
+        host: 'gitlab.com',
+        rawBaseUrl: 'https://gitlab.com/owner/repo/-/raw/HEAD',
+      })
+    })
+
+    it('parses GitLab URL with nested groups', () => {
+      const result = parseRepositoryInfo({
+        url: 'git+https://gitlab.com/hyper-expanse/open-source/semantic-release-gitlab.git',
+      })
+      expect(result).toMatchObject({
+        provider: 'gitlab',
+        owner: 'hyper-expanse/open-source',
+        repo: 'semantic-release-gitlab',
+        host: 'gitlab.com',
+      })
+    })
+
+    it('parses self-hosted GitLab (GNOME)', () => {
+      const result = parseRepositoryInfo({
+        url: 'https://gitlab.gnome.org/ewlsh/packages.gi.ts.git',
+      })
+      expect(result).toMatchObject({
+        provider: 'gitlab',
+        host: 'gitlab.gnome.org',
+      })
+    })
+  })
+
+  describe('Codeberg support', () => {
+    it('parses Codeberg URL', () => {
+      const result = parseRepositoryInfo({
+        url: 'https://codeberg.org/jgarber/CashCash',
+      })
+      expect(result).toMatchObject({
+        provider: 'codeberg',
+        owner: 'jgarber',
+        repo: 'CashCash',
+      })
+    })
+  })
+
+  describe('Bitbucket support', () => {
+    it('parses Bitbucket URL', () => {
+      const result = parseRepositoryInfo({
+        url: 'git+https://bitbucket.org/atlassian/atlassian-frontend-mirror.git',
+      })
+      expect(result).toMatchObject({
+        provider: 'bitbucket',
+        owner: 'atlassian',
+        repo: 'atlassian-frontend-mirror',
+      })
+    })
+  })
+
+  describe('Gitee support', () => {
+    it('parses Gitee URL', () => {
+      const result = parseRepositoryInfo({
+        url: 'git+https://gitee.com/oschina/mcp-gitee.git',
+      })
+      expect(result).toMatchObject({
+        provider: 'gitee',
+        owner: 'oschina',
+        repo: 'mcp-gitee',
+      })
+    })
+  })
+
+  describe('Sourcehut support', () => {
+    it('parses Sourcehut URL', () => {
+      const result = parseRepositoryInfo({
+        url: 'https://git.sr.ht/~ayoayco/astro-resume.git',
+      })
+      expect(result).toMatchObject({
+        provider: 'sourcehut',
+        owner: '~ayoayco',
+        repo: 'astro-resume',
+      })
+    })
   })
 })

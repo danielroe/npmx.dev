@@ -1,5 +1,9 @@
-type ProviderId = 'github' // Could be extended to support other providers (gitlab, codeforge, tangled...)
-export type RepoRef = { provider: ProviderId; owner: string; repo: string }
+import {
+  parseRepoUrl,
+  GITLAB_HOSTS,
+  type ProviderId,
+  type RepoRef,
+} from '#shared/utils/git-providers'
 
 export type RepoMetaLinks = {
   repo: string
@@ -29,22 +33,44 @@ type UnghRepoResponse = {
   } | null
 }
 
-function normalizeInputToUrl(input: string): string | null {
-  const raw = input.trim()
-  if (!raw) return null
+/** GitLab API response for project details */
+type GitLabProjectResponse = {
+  id: number
+  description?: string | null
+  default_branch?: string
+  star_count?: number
+  forks_count?: number
+}
 
-  const normalized = raw.replace(/^git\+/, '')
+/** Gitea/Forgejo API response for repository details */
+type GiteaRepoResponse = {
+  id: number
+  description?: string
+  default_branch?: string
+  stars_count?: number
+  forks_count?: number
+  watchers_count?: number
+}
 
-  if (!/^https?:\/\//i.test(normalized)) {
-    const scp = normalized.match(/^(?:git@)?([^:/]+):(.+)$/i)
-    if (scp?.[1] && scp?.[2]) {
-      const host = scp[1]
-      const path = scp[2].replace(/^\/*/, '')
-      return `https://${host}/${path}`
-    }
-  }
+/** Bitbucket API response for repository details */
+type BitbucketRepoResponse = {
+  name: string
+  full_name: string
+  description?: string
+  mainbranch?: { name: string }
+  // Bitbucket doesn't expose star/fork counts in public API
+}
 
-  return normalized
+/** Gitee API response for repository details */
+type GiteeRepoResponse = {
+  id: number
+  name: string
+  full_name: string
+  description?: string
+  default_branch?: string
+  stargazers_count?: number
+  forks_count?: number
+  watchers_count?: number
 }
 
 type ProviderAdapter = {
@@ -106,23 +132,352 @@ const githubAdapter: ProviderAdapter = {
   },
 }
 
-const providers: readonly ProviderAdapter[] = [githubAdapter] as const
+const gitlabAdapter: ProviderAdapter = {
+  id: 'gitlab',
 
-function parseRepoFromUrl(input: string): RepoRef | null {
-  const normalized = normalizeInputToUrl(input)
-  if (!normalized) return null
+  parse(url) {
+    const host = url.hostname.toLowerCase()
+    const isGitLab = GITLAB_HOSTS.some(h => host === h || host === `www.${h}`)
+    if (!isGitLab) return null
 
-  try {
-    const url = new URL(normalized)
-    for (const provider of providers) {
-      const ref = provider.parse(url)
-      if (ref) return ref
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return null
+
+    // GitLab supports nested groups, so we join all parts except the last as owner
+    const repo = decodeURIComponent(parts[parts.length - 1] ?? '')
+      .trim()
+      .replace(/\.git$/i, '')
+    const owner = parts
+      .slice(0, -1)
+      .map(p => decodeURIComponent(p).trim())
+      .join('/')
+
+    if (!owner || !repo) return null
+
+    return { provider: 'gitlab', owner, repo, host }
+  },
+
+  links(ref) {
+    const baseHost = ref.host ?? 'gitlab.com'
+    const base = `https://${baseHost}/${ref.owner}/${ref.repo}`
+    return {
+      repo: base,
+      stars: `${base}/-/starrers`,
+      forks: `${base}/-/forks`,
     }
-    return null
-  } catch {
-    return null
-  }
+  },
+
+  async fetchMeta(ref, links) {
+    const baseHost = ref.host ?? 'gitlab.com'
+    const projectPath = encodeURIComponent(`${ref.owner}/${ref.repo}`)
+    const res = await $fetch<GitLabProjectResponse>(
+      `https://${baseHost}/api/v4/projects/${projectPath}`,
+      { headers: { 'User-Agent': 'npmx' } },
+    ).catch(() => null)
+
+    if (!res) return null
+
+    return {
+      provider: 'gitlab',
+      url: links.repo,
+      stars: res.star_count ?? 0,
+      forks: res.forks_count ?? 0,
+      description: res.description ?? null,
+      defaultBranch: res.default_branch,
+      links,
+    }
+  },
 }
+
+const bitbucketAdapter: ProviderAdapter = {
+  id: 'bitbucket',
+
+  parse(url) {
+    const host = url.hostname.toLowerCase()
+    if (host !== 'bitbucket.org' && host !== 'www.bitbucket.org') return null
+
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return null
+
+    const owner = decodeURIComponent(parts[0] ?? '').trim()
+    const repo = decodeURIComponent(parts[1] ?? '')
+      .trim()
+      .replace(/\.git$/i, '')
+
+    if (!owner || !repo) return null
+
+    return { provider: 'bitbucket', owner, repo }
+  },
+
+  links(ref) {
+    const base = `https://bitbucket.org/${ref.owner}/${ref.repo}`
+    return {
+      repo: base,
+      stars: base, // Bitbucket doesn't have public stars
+      forks: `${base}/forks`,
+    }
+  },
+
+  async fetchMeta(ref, links) {
+    const res = await $fetch<BitbucketRepoResponse>(
+      `https://api.bitbucket.org/2.0/repositories/${ref.owner}/${ref.repo}`,
+      { headers: { 'User-Agent': 'npmx' } },
+    ).catch(() => null)
+
+    if (!res) return null
+
+    // Bitbucket doesn't expose star/fork counts in their public API
+    return {
+      provider: 'bitbucket',
+      url: links.repo,
+      stars: 0,
+      forks: 0,
+      description: res.description ?? null,
+      defaultBranch: res.mainbranch?.name,
+      links,
+    }
+  },
+}
+
+const codebergAdapter: ProviderAdapter = {
+  id: 'codeberg',
+
+  parse(url) {
+    const host = url.hostname.toLowerCase()
+    if (host !== 'codeberg.org' && host !== 'www.codeberg.org') return null
+
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return null
+
+    const owner = decodeURIComponent(parts[0] ?? '').trim()
+    const repo = decodeURIComponent(parts[1] ?? '')
+      .trim()
+      .replace(/\.git$/i, '')
+
+    if (!owner || !repo) return null
+
+    return { provider: 'codeberg', owner, repo, host: 'codeberg.org' }
+  },
+
+  links(ref) {
+    const base = `https://codeberg.org/${ref.owner}/${ref.repo}`
+    return {
+      repo: base,
+      stars: base, // Codeberg doesn't have a separate stargazers page
+      forks: `${base}/forks`,
+      watchers: base,
+    }
+  },
+
+  async fetchMeta(ref, links) {
+    const res = await $fetch<GiteaRepoResponse>(
+      `https://codeberg.org/api/v1/repos/${ref.owner}/${ref.repo}`,
+      { headers: { 'User-Agent': 'npmx' } },
+    ).catch(() => null)
+
+    if (!res) return null
+
+    return {
+      provider: 'codeberg',
+      url: links.repo,
+      stars: res.stars_count ?? 0,
+      forks: res.forks_count ?? 0,
+      watchers: res.watchers_count ?? 0,
+      description: res.description ?? null,
+      defaultBranch: res.default_branch,
+      links,
+    }
+  },
+}
+
+const giteeAdapter: ProviderAdapter = {
+  id: 'gitee',
+
+  parse(url) {
+    const host = url.hostname.toLowerCase()
+    if (host !== 'gitee.com' && host !== 'www.gitee.com') return null
+
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return null
+
+    const owner = decodeURIComponent(parts[0] ?? '').trim()
+    const repo = decodeURIComponent(parts[1] ?? '')
+      .trim()
+      .replace(/\.git$/i, '')
+
+    if (!owner || !repo) return null
+
+    return { provider: 'gitee', owner, repo }
+  },
+
+  links(ref) {
+    const base = `https://gitee.com/${ref.owner}/${ref.repo}`
+    return {
+      repo: base,
+      stars: `${base}/stargazers`,
+      forks: `${base}/members`,
+      watchers: `${base}/watchers`,
+    }
+  },
+
+  async fetchMeta(ref, links) {
+    const res = await $fetch<GiteeRepoResponse>(
+      `https://gitee.com/api/v5/repos/${ref.owner}/${ref.repo}`,
+      { headers: { 'User-Agent': 'npmx' } },
+    ).catch(() => null)
+
+    if (!res) return null
+
+    return {
+      provider: 'gitee',
+      url: links.repo,
+      stars: res.stargazers_count ?? 0,
+      forks: res.forks_count ?? 0,
+      watchers: res.watchers_count ?? 0,
+      description: res.description ?? null,
+      defaultBranch: res.default_branch,
+      links,
+    }
+  },
+}
+
+/**
+ * Generic Gitea adapter for self-hosted instances.
+ * Matches common Gitea/Forgejo hosting patterns.
+ */
+const giteaAdapter: ProviderAdapter = {
+  id: 'gitea',
+
+  parse(url) {
+    const host = url.hostname.toLowerCase()
+
+    // Match common Gitea/Forgejo hosting patterns
+    const giteaPatterns = [
+      /^git\./i, // git.example.com
+      /^gitea\./i, // gitea.example.com
+      /^forgejo\./i, // forgejo.example.com
+      /^code\./i, // code.example.com
+      /^src\./i, // src.example.com
+      /gitea\.io$/i, // *.gitea.io
+    ]
+
+    // Skip if it matches other known providers
+    const skipHosts = [
+      'github.com',
+      'gitlab.com',
+      'codeberg.org',
+      'bitbucket.org',
+      'gitee.com',
+      'sr.ht',
+      'git.sr.ht',
+      ...GITLAB_HOSTS,
+    ]
+    if (skipHosts.some(h => host === h || host.endsWith(`.${h}`))) return null
+
+    // Check if matches Gitea patterns
+    if (!giteaPatterns.some(p => p.test(host))) return null
+
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return null
+
+    const owner = decodeURIComponent(parts[0] ?? '').trim()
+    const repo = decodeURIComponent(parts[1] ?? '')
+      .trim()
+      .replace(/\.git$/i, '')
+
+    if (!owner || !repo) return null
+
+    return { provider: 'gitea', owner, repo, host }
+  },
+
+  links(ref) {
+    const base = `https://${ref.host}/${ref.owner}/${ref.repo}`
+    return {
+      repo: base,
+      stars: base,
+      forks: `${base}/forks`,
+      watchers: base,
+    }
+  },
+
+  async fetchMeta(ref, links) {
+    if (!ref.host) return null
+
+    const res = await $fetch<GiteaRepoResponse>(
+      `https://${ref.host}/api/v1/repos/${ref.owner}/${ref.repo}`,
+      { headers: { 'User-Agent': 'npmx' } },
+    ).catch(() => null)
+
+    if (!res) return null
+
+    return {
+      provider: 'gitea',
+      url: links.repo,
+      stars: res.stars_count ?? 0,
+      forks: res.forks_count ?? 0,
+      watchers: res.watchers_count ?? 0,
+      description: res.description ?? null,
+      defaultBranch: res.default_branch,
+      links,
+    }
+  },
+}
+
+const sourcehutAdapter: ProviderAdapter = {
+  id: 'sourcehut',
+
+  parse(url) {
+    const host = url.hostname.toLowerCase()
+    if (host !== 'sr.ht' && host !== 'git.sr.ht') return null
+
+    const parts = url.pathname.split('/').filter(Boolean)
+    if (parts.length < 2) return null
+
+    // Sourcehut uses ~username/repo format
+    const owner = decodeURIComponent(parts[0] ?? '').trim()
+    const repo = decodeURIComponent(parts[1] ?? '')
+      .trim()
+      .replace(/\.git$/i, '')
+
+    if (!owner || !repo) return null
+
+    return { provider: 'sourcehut', owner, repo }
+  },
+
+  links(ref) {
+    const base = `https://git.sr.ht/${ref.owner}/${ref.repo}`
+    return {
+      repo: base,
+      stars: base, // Sourcehut doesn't have stars
+      forks: base,
+    }
+  },
+
+  async fetchMeta(_ref, links) {
+    // Sourcehut doesn't have a public API for repo stats
+    // Just return basic info without fetching
+    return {
+      provider: 'sourcehut',
+      url: links.repo,
+      stars: 0,
+      forks: 0,
+      links,
+    }
+  },
+}
+
+// Order matters: more specific adapters should come before generic ones
+const providers: readonly ProviderAdapter[] = [
+  githubAdapter,
+  gitlabAdapter,
+  bitbucketAdapter,
+  codebergAdapter,
+  giteeAdapter,
+  sourcehutAdapter,
+  giteaAdapter, // Generic Gitea adapter last as fallback for self-hosted instances
+] as const
+
+const parseRepoFromUrl = parseRepoUrl
 
 async function fetchRepoMeta(ref: RepoRef): Promise<RepoMeta | null> {
   const adapter = providers.find(provider => provider.id === ref.provider)

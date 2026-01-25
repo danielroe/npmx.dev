@@ -154,7 +154,23 @@ const repositoryUrl = computed(() => {
   return url
 })
 
-const { meta: repoMeta, stars, forks, forksLink } = useRepoMeta(repositoryUrl)
+const { meta: repoMeta, repoRef, stars, forks, forksLink } = useRepoMeta(repositoryUrl)
+
+const PROVIDER_ICONS: Record<string, string> = {
+  github: 'i-carbon-logo-github',
+  gitlab: 'i-simple-icons-gitlab',
+  bitbucket: 'i-simple-icons-bitbucket',
+  codeberg: 'i-simple-icons-codeberg',
+  gitea: 'i-simple-icons-gitea',
+  gitee: 'i-simple-icons-gitee',
+  sourcehut: 'i-simple-icons-sourcehut',
+}
+
+const repoProviderIcon = computed(() => {
+  const provider = repoRef.value?.provider
+  if (!provider) return 'i-carbon-logo-github'
+  return PROVIDER_ICONS[provider] ?? 'i-carbon-code'
+})
 
 const homepageUrl = computed(() => {
   return displayVersion.value?.homepage ?? null
@@ -494,8 +510,8 @@ defineOgImageComponent('Package', {
                 rel="noopener noreferrer"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
-                <span class="i-carbon-logo-github w-4 h-4" aria-hidden="true" />
-                <span v-if="repoMeta">
+                <span class="w-4 h-4" :class="repoProviderIcon" aria-hidden="true" />
+                <span v-if="repoMeta && stars">
                   {{ formatCompactNumber(stars, { decimals: 1 }) }}
                   {{ stars === 1 ? 'star' : 'stars' }}
                 </span>
