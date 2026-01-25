@@ -146,7 +146,7 @@ export function useRepoMeta(repositoryUrl: MaybeRefOrGetter<string | null | unde
   })
 
   const { data, pending, error, refresh } = useLazyAsyncData<RepoMeta | null>(
-    requestKey,
+    () => requestKey.value,
     async () => {
       const ref = repoRef.value
       if (!ref) return null
@@ -155,13 +155,9 @@ export function useRepoMeta(repositoryUrl: MaybeRefOrGetter<string | null | unde
     { default: () => null },
   )
 
-  watch(
-    repoRef,
-    ref => {
-      if (ref) refresh()
-    },
-    { immediate: true },
-  )
+  watch(repoRef, ref => {
+    if (ref) refresh()
+  })
 
   const meta = computed<RepoMeta | null>(() => data.value ?? null)
 

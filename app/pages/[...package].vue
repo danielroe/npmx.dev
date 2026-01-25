@@ -154,7 +154,7 @@ const repositoryUrl = computed(() => {
   return url
 })
 
-const { stars, forks, forksLink } = useRepoMeta(repositoryUrl)
+const { meta: repoMeta, stars, forks, forksLink } = useRepoMeta(repositoryUrl)
 
 const homepageUrl = computed(() => {
   return displayVersion.value?.homepage ?? null
@@ -485,7 +485,9 @@ defineOgImageComponent('Package', {
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon-logo-github w-4 h-4" aria-hidden="true" />
-                <span v-if="stars"> {{ formatCompactNumber(stars, { decimals: 1 }) }} stars </span>
+                <span v-if="repoMeta">
+                  {{ formatCompactNumber(stars, { decimals: 1 }) }} stars
+                </span>
                 <span v-else>repo</span>
               </a>
             </li>
