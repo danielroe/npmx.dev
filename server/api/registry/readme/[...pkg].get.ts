@@ -96,7 +96,7 @@ export default defineCachedEventHandler(
     swr: true,
     getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
-      return `readme:v3:${pkg.replace(/\/+$/, '').trim()}`
+      return `readme:v4:${pkg.replace(/\/+$/, '').trim()}`
     },
   },
 )

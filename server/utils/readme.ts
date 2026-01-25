@@ -239,12 +239,27 @@ export async function renderReadmeHtml(
   const collectedLinks: PlaygroundLink[] = []
   const seenUrls = new Set<string>()
 
-  // Shift heading levels down by 2 for semantic correctness
+  // Track heading hierarchy to ensure sequential order for accessibility
   // Page h1 = package name, h2 = "Readme" section heading
-  // So README h1 → h3, h2 → h4, etc. (capped at h6)
-  // But keep visual styling via data-level attribute
+  // So README starts at h3, and we ensure no levels are skipped
+  // Visual styling preserved via data-level attribute (original depth)
+  let lastSemanticLevel = 2 // Start after h2 (the "Readme" section heading)
   renderer.heading = function ({ tokens, depth }: Tokens.Heading) {
-    const semanticLevel = Math.min(depth + 2, 6)
+    // Calculate the target semantic level based on document structure
+    // Start at h3 (since page h1 + section h2 already exist)
+    // But ensure we never skip levels - can only go down by 1 or stay same/go up
+    let semanticLevel: number
+    if (depth === 1) {
+      // README h1 always becomes h3
+      semanticLevel = 3
+    } else {
+      // For deeper levels, ensure sequential order
+      // Don't allow jumping more than 1 level deeper than previous
+      const maxAllowed = Math.min(lastSemanticLevel + 1, 6)
+      semanticLevel = Math.min(depth + 2, maxAllowed)
+    }
+
+    lastSemanticLevel = semanticLevel
     const text = this.parser.parseInline(tokens)
     return `<h${semanticLevel} data-level="${depth}">${text}</h${semanticLevel}>\n`
   }

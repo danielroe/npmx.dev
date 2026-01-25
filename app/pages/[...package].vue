@@ -415,7 +415,7 @@ defineOgImageComponent('Package', {
                 :href="`https://npm.chart.dev/${pkg.name}`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-fg-subtle hover:text-fg transition-colors duration-200"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
                 title="View download trends"
               >
                 <span class="i-carbon-chart-line w-3.5 h-3.5 inline-block" aria-hidden="true" />
@@ -433,7 +433,7 @@ defineOgImageComponent('Package', {
                 :href="`https://npmgraph.js.org/?q=${pkg.name}`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-fg-subtle hover:text-fg transition-colors duration-200"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
                 title="View dependency graph"
               >
                 <span class="i-carbon-network-3 w-3.5 h-3.5 inline-block" aria-hidden="true" />
@@ -445,7 +445,7 @@ defineOgImageComponent('Package', {
                 :href="`https://node-modules.dev/grid/depth#install=${pkg.name}${displayVersion?.version ? `@${displayVersion.version}` : ''}`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-fg-subtle hover:text-fg transition-colors duration-200"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
                 title="Inspect dependency tree on node-modules.dev"
               >
                 <span

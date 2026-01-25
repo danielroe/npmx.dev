@@ -17,7 +17,7 @@
           </a>
         </div>
       </div>
-      <p class="text-xs text-fg-subtle/60 text-center sm:text-left m-0">
+      <p class="text-xs text-fg-muted text-center sm:text-left m-0">
         npm is a registered trademark of npm, Inc. This site is not affiliated with npm, Inc.
       </p>
     </div>
