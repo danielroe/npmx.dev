@@ -50,7 +50,7 @@ onUnmounted(() => {
 
     <AppHeader :show-logo="!isHomepage" />
 
-    <div id="main-content" class="flex-1">
+    <div id="main-content" class="flex-1 pb-20 sm:pb-24">
       <NuxtPage />
     </div>
 
