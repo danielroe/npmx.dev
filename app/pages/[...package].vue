@@ -192,19 +192,7 @@ function hasProvenance(version: PackumentVersion | null): boolean {
   return !!dist.attestations
 }
 
-// Persist package manager preference in localStorage
-const selectedPM = ref<PackageManagerId>('npm')
-
-onMounted(() => {
-  const stored = localStorage.getItem('npmx-pm')
-  if (stored && packageManagers.some(pm => pm.id === stored)) {
-    selectedPM.value = stored as PackageManagerId
-  }
-})
-
-watch(selectedPM, value => {
-  localStorage.setItem('npmx-pm', value)
-})
+const selectedPM = useSelectedPackageManager()
 
 const installCommandParts = computed(() => {
   if (!pkg.value) return []
@@ -296,7 +284,7 @@ defineOgImageComponent('Package', {
         <div class="mb-4">
           <div class="flex flex-row justify-between">
             <!-- Package name and version -->
-            <div class="flex items-start gap-3 mb-2 flex-wrap min-w-0">
+            <div class="flex items-start gap-2 mb-1.5 sm:gap-3 sm:mb-2 flex-wrap min-w-0">
               <h1
                 class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
                 :title="pkg.name"
@@ -326,7 +314,9 @@ defineOgImageComponent('Package', {
                 "
                 :title="`v${displayVersion.version}`"
               >
-                <span class="truncate max-w-32 sm:max-w-48"> v{{ displayVersion.version }} </span>
+                <span class="truncate max-w-24 sm:max-w-32 md:max-w-48">
+                  v{{ displayVersion.version }}
+                </span>
                 <span
                   v-if="
                     requestedVersion &&
@@ -396,7 +386,7 @@ defineOgImageComponent('Package', {
         </div>
 
         <!-- Stats grid -->
-        <dl class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-6">
+        <dl class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mt-4 sm:mt-6">
           <div v-if="pkg.license" class="space-y-1">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider">License</dt>
             <dd class="font-mono text-sm text-fg">
@@ -439,7 +429,7 @@ defineOgImageComponent('Package', {
             </dd>
           </div>
 
-          <div class="space-y-1 col-span-2">
+          <div class="space-y-1 sm:col-span-2">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
               Install Size
               <span
@@ -486,7 +476,7 @@ defineOgImageComponent('Package', {
 
         <!-- Links -->
         <nav aria-label="Package links" class="mt-6">
-          <ul class="flex flex-wrap items-center gap-4 list-none m-0 p-0">
+          <ul class="flex flex-wrap items-center gap-3 sm:gap-4 list-none m-0 p-0">
             <li v-if="repositoryUrl">
               <a
                 :href="repositoryUrl"
@@ -625,12 +615,12 @@ defineOgImageComponent('Package', {
         <div class="relative group">
           <!-- Terminal-style install command -->
           <div class="bg-[#0d0d0d] border border-border rounded-lg overflow-hidden">
-            <div class="flex gap-1.5 px-4 pt-3">
+            <div class="flex gap-1.5 px-3 pt-2 sm:px-4 sm:pt-3">
               <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
               <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
               <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
             </div>
-            <div class="flex items-center gap-2 px-4 pt-3 pb-4">
+            <div class="flex items-center gap-2 px-3 pt-2 pb-3 sm:px-4 sm:pt-3 sm:pb-4">
               <span class="text-fg-subtle font-mono text-sm select-none">$</span>
               <code class="font-mono text-sm"
                 ><ClientOnly
@@ -680,7 +670,7 @@ defineOgImageComponent('Package', {
         </div>
 
         <!-- Sidebar -->
-        <aside class="order-1 lg:order-2 space-y-8 min-w-0 overflow-hidden">
+        <aside class="order-1 lg:order-2 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
