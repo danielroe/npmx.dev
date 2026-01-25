@@ -81,12 +81,26 @@ const sortedOptionalDependencies = computed(() => {
           >
             {{ dep }}
           </NuxtLink>
-          <span
-            class="font-mono text-xs text-right truncate"
-            :class="getVersionClass(outdatedDeps[dep])"
-            :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep]) : version"
-          >
-            {{ version }}
+          <span class="flex items-center gap-1">
+            <span
+              v-if="outdatedDeps[dep]"
+              class="shrink-0"
+              :class="getVersionClass(outdatedDeps[dep])"
+              :title="getOutdatedTooltip(outdatedDeps[dep])"
+              aria-hidden="true"
+            >
+              <span class="i-carbon-warning-alt w-3 h-3" />
+            </span>
+            <span
+              class="font-mono text-xs text-right truncate"
+              :class="getVersionClass(outdatedDeps[dep])"
+              :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep]) : version"
+            >
+              {{ version }}
+            </span>
+            <span v-if="outdatedDeps[dep]" class="sr-only">
+              ({{ getOutdatedTooltip(outdatedDeps[dep]) }})
+            </span>
           </span>
         </li>
       </ul>
