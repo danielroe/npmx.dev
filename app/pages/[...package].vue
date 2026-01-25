@@ -759,5 +759,8 @@ defineOgImageComponent('Package', {
       </p>
       <NuxtLink to="/" class="btn"> Go back home </NuxtLink>
     </div>
+
+    <!-- Scroll to top button (mobile only) -->
+    <ScrollToTop />
   </main>
 </template>
