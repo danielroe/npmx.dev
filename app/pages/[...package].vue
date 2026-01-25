@@ -705,7 +705,7 @@ defineOgImageComponent('Package', {
         </div>
 
         <!-- Sidebar -->
-        <aside class="order-1 lg:order-2 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
+        <div class="order-1 lg:order-2 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
@@ -789,7 +789,7 @@ defineOgImageComponent('Package', {
             :peer-dependencies-meta="displayVersion?.peerDependenciesMeta"
             :optional-dependencies="displayVersion?.optionalDependencies"
           />
-        </aside>
+        </div>
       </div>
     </article>
 
