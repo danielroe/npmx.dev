@@ -422,6 +422,20 @@ defineOgImageComponent('Package', {
                 <span class="i-carbon-network-3 w-3.5 h-3.5 inline-block" aria-hidden="true" />
                 <span class="sr-only">View dependency graph</span>
               </a>
+
+              <a
+                v-if="getDependencyCount(displayVersion) > 0"
+                :href="`https://node-modules.dev/grid/depth#install=${pkg.name}${displayVersion?.version ? `@${displayVersion.version}` : ''}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200"
+                title="Inspect dependency tree on node-modules.dev"
+              >
+                <span
+                  class="i-solar-eye-scan-outline w-3.5 h-3.5 inline-block"
+                  aria-hidden="true"
+                />
+              </a>
             </dd>
           </div>
 
