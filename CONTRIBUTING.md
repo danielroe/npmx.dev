@@ -92,6 +92,17 @@ tests/                  # Playwright E2E tests
 > [!TIP]
 > For more about the meaning of these directories, check out the docs on the [Nuxt directory structure](https://nuxt.com/docs/4.x/directory-structure).
 
+### Local connector CLI
+
+The `cli/` workspace contains a local connector that enables authenticated npm operations from the web UI. It runs on your machine and uses your existing npm credentials.
+
+```bash
+# run the connector from the root of the repository
+pnpm npmx-connector
+```
+
+The connector will check your npm authentication, generate a connection token, and listen for requests from npmx.dev.
+
 ## Code style
 
 ### Typescript
