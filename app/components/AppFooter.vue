@@ -48,6 +48,9 @@ function onResize() {
   updateFooterPadding()
 }
 
+useEventListener('scroll', onScroll, { passive: true })
+useEventListener('resize', onResize, { passive: true })
+
 onMounted(() => {
   // Feature detect CSS scroll-state container queries (Chrome 133+)
   // @see https://developer.mozilla.org/en-US/docs/Web/CSS/@container#scroll-state_container_descriptors
@@ -60,14 +63,6 @@ onMounted(() => {
     // Only apply dynamic classes after mount to avoid hydration mismatch
     isMounted.value = true
   })
-
-  window.addEventListener('scroll', onScroll, { passive: true })
-  window.addEventListener('resize', onResize, { passive: true })
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', onScroll)
-  window.removeEventListener('resize', onResize)
 })
 </script>
 

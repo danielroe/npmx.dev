@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     'nuxt-og-image',
     '@nuxt/test-utils',
     '@vite-pwa/nuxt',
+    '@vueuse/nuxt',
   ],
 
   devtools: { enabled: true },
