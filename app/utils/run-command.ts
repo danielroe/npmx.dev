@@ -43,7 +43,7 @@ export function getExecutableInfo(
 
   // Prefer command matching package name if it exists, otherwise use first
   const baseName = packageName.startsWith('@') ? packageName.split('/')[1] : packageName
-  const primaryCommand = commands.includes(baseName) ? baseName : commands[0]
+  const primaryCommand = baseName && commands.includes(baseName) ? baseName : commands[0]!
 
   return {
     primaryCommand,
