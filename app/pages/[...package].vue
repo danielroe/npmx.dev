@@ -670,13 +670,16 @@ defineOgImageComponent('Package', {
                   params: { path: [...pkg.name.split('/'), 'v', displayVersion.version] },
                 }"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                aria-keyshortcuts="."
               >
                 <span class="i-carbon-code w-4 h-4" aria-hidden="true" />
                 code
                 <kbd
                   class="hidden sm:inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
-                  >.</kbd
+                  aria-hidden="true"
                 >
+                  .
+                </kbd>
               </NuxtLink>
             </li>
           </ul>
