@@ -876,6 +876,13 @@ defineOgImageComponent('Package', {
             :time="pkg.time"
           />
 
+          <!-- Install Scripts Warning -->
+          <PackageInstallScripts
+            v-if="displayVersion?.installScripts"
+            :package-name="pkg.name"
+            :install-scripts="displayVersion.installScripts"
+          />
+
           <!-- Dependencies -->
           <PackageDependencies
             v-if="hasDependencies"

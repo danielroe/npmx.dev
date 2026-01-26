@@ -11,6 +11,7 @@ import type {
 import type { ReleaseType } from 'semver'
 import { maxSatisfying, prerelease, major, minor, diff, gt } from 'semver'
 import { compareVersions, isExactVersion } from '~/utils/versions'
+import { extractInstallScriptsInfo } from '~/utils/install-scripts'
 
 const NPM_REGISTRY = 'https://registry.npmjs.org'
 const NPM_API = 'https://api.npmjs.org'
@@ -113,14 +114,21 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
     includedVersions.add(requestedVersion)
   }
 
-  // Build filtered versions object
+  // Build filtered versions object with install scripts info per version
   const filteredVersions: Record<string, PackumentVersion> = {}
   for (const v of includedVersions) {
     const version = pkg.versions[v]
     if (version) {
-      // Strip readme and scripts from each version to reduce size
-      const { readme: _readme, scripts: _scripts, ...slimVersion } = version
-      filteredVersions[v] = slimVersion as PackumentVersion
+      // Strip readme from each version, extract install scripts info
+      const { readme: _readme, scripts, ...slimVersion } = version
+
+      // Extract install scripts info (which scripts exist + npx deps)
+      const installScripts = scripts ? extractInstallScriptsInfo(scripts) : null
+
+      filteredVersions[v] = {
+        ...slimVersion,
+        installScripts: installScripts ?? undefined,
+      } as PackumentVersion
     }
   }
 
@@ -491,6 +499,20 @@ async function checkDependencyOutdated(
   const packument = await fetchCachedPackument(packageName)
   if (!packument) return null
 
+  const latestTag = packument['dist-tags']?.latest
+  if (!latestTag) return null
+
+  // Handle "latest" constraint specially - return info with current version
+  if (constraint === 'latest') {
+    return {
+      resolved: latestTag,
+      latest: latestTag,
+      majorsBehind: 0,
+      minorsBehind: 0,
+      diffType: null,
+    }
+  }
+
   let versions = Object.keys(packument.versions)
   const includesPrerelease = constraintIncludesPrerelease(constraint)
 
@@ -501,8 +523,7 @@ async function checkDependencyOutdated(
   const resolved = maxSatisfying(versions, constraint)
   if (!resolved) return null
 
-  const latestTag = packument['dist-tags']?.latest
-  if (!latestTag || resolved === latestTag) return null
+  if (resolved === latestTag) return null
 
   // If resolved version is newer than latest, not outdated
   // (e.g., using ^2.0.0-rc when latest is 1.x)
@@ -585,4 +606,21 @@ export function getOutdatedTooltip(info: OutdatedDependencyInfo): string {
     return `${info.minorsBehind} minor version${s} behind (latest: ${info.latest})`
   }
   return `Patch update available (latest: ${info.latest})`
+}
+
+/**
+ * Get CSS class for a dependency version based on outdated status
+ */
+export function getVersionClass(info: OutdatedDependencyInfo | undefined): string {
+  if (!info) return 'text-fg-subtle'
+  // Green for up-to-date (e.g. "latest" constraint)
+  if (info.majorsBehind === 0 && info.minorsBehind === 0 && info.resolved === info.latest) {
+    return 'text-green-500 cursor-help'
+  }
+  // Red for major versions behind
+  if (info.majorsBehind > 0) return 'text-red-500 cursor-help'
+  // Orange for minor versions behind
+  if (info.minorsBehind > 0) return 'text-orange-500 cursor-help'
+  // Yellow for patch versions behind
+  return 'text-yellow-500 cursor-help'
 }
