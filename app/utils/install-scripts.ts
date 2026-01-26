@@ -12,10 +12,10 @@ const INSTALL_SCRIPTS = new Set(['preinstall', 'install', 'postinstall'])
 
 // Pattern to match npx commands with various flags
 // Captures the package name (with optional scope and version)
-const NPX_PATTERN = /\bnpx\s+(?:--?\w+(?:=\S+)?\s+)*(@?[\w-]+(?:\/[\w-]+)?(?:@[\w.^~<>=|-]+)?)/g
+const NPX_PATTERN = /\bnpx\s+(?:--?\w+(?:=\S+)?\s+)*(@?[\w.-]+(?:\/[\w.-]+)?(?:@[\w.^~<>=|-]+)?)/g
 
 // Pattern to extract package name and version from captured group
-const PACKAGE_VERSION_PATTERN = /^(@[\w-]+\/[\w-]+|[\w-]+)(?:@(.+))?$/
+const PACKAGE_VERSION_PATTERN = /^(@[\w.-]+\/[\w.-]+|[\w.-]+)(?:@(.+))?$/
 
 /**
  * Extract packages from npx calls in install scripts.

@@ -59,4 +59,19 @@ describe('extractInstallScriptsInfo', () => {
       npxDependencies: {},
     })
   })
+
+  it('extracts npx packages with dots in names', () => {
+    const scripts = {
+      postinstall: 'npx vue.js@3.0.0 && npx @scope/pkg.name generate',
+    }
+    const result = extractInstallScriptsInfo(scripts)
+    expect(result).toEqual({
+      scripts: ['postinstall'],
+      content: { postinstall: 'npx vue.js@3.0.0 && npx @scope/pkg.name generate' },
+      npxDependencies: {
+        'vue.js': '3.0.0',
+        '@scope/pkg.name': 'latest',
+      },
+    })
+  })
 })
