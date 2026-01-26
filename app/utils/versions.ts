@@ -1,4 +1,4 @@
-import { valid } from 'semver'
+import { compare, valid } from 'semver'
 
 /**
  * Utilities for handling npm package versions and dist-tags
@@ -47,19 +47,7 @@ export function parseVersion(version: string): ParsedVersion {
  * @returns Comparison result for sorting
  */
 export function compareVersions(a: string, b: string): number {
-  const va = parseVersion(a)
-  const vb = parseVersion(b)
-
-  if (va.major !== vb.major) return va.major - vb.major
-  if (va.minor !== vb.minor) return va.minor - vb.minor
-  if (va.patch !== vb.patch) return va.patch - vb.patch
-
-  // Stable versions (no prerelease) are greater than prereleases
-  if (va.prerelease && vb.prerelease) return va.prerelease.localeCompare(vb.prerelease)
-  if (va.prerelease) return -1
-  if (vb.prerelease) return 1
-
-  return 0
+  return compare(a, b)
 }
 
 /**
