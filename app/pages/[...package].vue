@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { joinURL } from 'ufo'
-import type { PackumentVersion, NpmVersionDist, ReadmeResponse } from '#shared/types'
+import type { NpmVersionDist, PackumentVersion, ReadmeResponse } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
+import { onKeyStroke } from '@vueuse/core'
+import { joinURL } from 'ufo'
 
 definePageMeta({
   name: 'package',
@@ -10,6 +11,8 @@ definePageMeta({
 })
 
 const route = useRoute('package')
+
+const router = useRouter()
 
 // Parse package name and optional version from URL
 // Patterns:
@@ -281,6 +284,12 @@ useHead({
 useSeoMeta({
   title: () => (pkg.value?.name ? `${pkg.value.name} - npmx` : 'Package - npmx'),
   description: () => pkg.value?.description ?? '',
+})
+
+onKeyStroke('.', () => {
+  if (pkg.value && displayVersion.value) {
+    router.push(`/code/${pkg.value.name}/v/${displayVersion.value.version}`)
+  }
 })
 
 defineOgImageComponent('Package', {
@@ -592,6 +601,10 @@ defineOgImageComponent('Package', {
               >
                 <span class="i-carbon-code w-4 h-4" aria-hidden="true" />
                 code
+                <kbd
+                  class="hidden sm:inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  >.</kbd
+                >
               </NuxtLink>
             </li>
           </ul>
