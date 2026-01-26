@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
+    '@nuxt/a11y',
     '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
@@ -21,6 +22,14 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
+      link: [
+        {
+          rel: 'search',
+          type: 'application/opensearchdescription+xml',
+          title: 'npm',
+          href: '/opensearch.xml',
+        },
+      ],
     },
   },
 
@@ -38,6 +47,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/': { prerender: true },
+    '/opensearch.xml': { isr: true },
     '/**': { isr: 60 },
     '/package/**': { isr: 60 },
     '/search': { isr: false, cache: false },
@@ -110,7 +120,13 @@ export default defineNuxtConfig({
 
   vite: {
     optimizeDeps: {
-      include: ['@vueuse/core', 'vue-data-ui/vue-ui-sparkline'],
+      include: [
+        '@vueuse/core',
+        'vue-data-ui/vue-ui-sparkline',
+        'virtua/vue',
+        'semver',
+        'validate-npm-package-name',
+      ],
     },
   },
 })

@@ -74,13 +74,14 @@ const sortedOptionalDependencies = computed(() => {
             >
               <span class="i-carbon-warning-alt w-3 h-3 block" />
             </span>
-            <span
+            <NuxtLink
+              :to="{ name: 'package', params: { package: [...dep.split('/'), 'v', version] } }"
               class="font-mono text-xs text-right truncate"
               :class="getVersionClass(outdatedDeps[dep])"
               :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep]) : version"
             >
               {{ version }}
-            </span>
+            </NuxtLink>
             <span v-if="outdatedDeps[dep]" class="sr-only">
               ({{ getOutdatedTooltip(outdatedDeps[dep]) }})
             </span>
@@ -126,12 +127,16 @@ const sortedOptionalDependencies = computed(() => {
               optional
             </span>
           </div>
-          <span
+          <NuxtLink
+            :to="{
+              name: 'package',
+              params: { package: [...peer.name.split('/'), 'v', peer.version] },
+            }"
             class="font-mono text-xs text-fg-subtle max-w-[40%] text-right truncate"
             :title="peer.version"
           >
             {{ peer.version }}
-          </span>
+          </NuxtLink>
         </li>
       </ul>
       <button
@@ -170,12 +175,13 @@ const sortedOptionalDependencies = computed(() => {
           >
             {{ dep }}
           </NuxtLink>
-          <span
+          <NuxtLink
+            :to="{ name: 'package', params: { package: [...dep.split('/'), 'v', version] } }"
             class="font-mono text-xs text-fg-subtle max-w-[50%] text-right truncate"
             :title="version"
           >
             {{ version }}
-          </span>
+          </NuxtLink>
         </li>
       </ul>
       <button

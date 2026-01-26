@@ -36,6 +36,7 @@ onUnmounted(() => {
 <template>
   <!-- Toggle button (mobile only) -->
   <button
+    type="button"
     class="md:hidden fixed bottom-4 right-4 z-40 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors"
     aria-label="Toggle file tree"
     @click="isOpen = !isOpen"
@@ -73,6 +74,7 @@ onUnmounted(() => {
       >
         <span class="font-mono text-sm text-fg-muted">Files</span>
         <button
+          type="button"
           class="text-fg-muted hover:text-fg transition-colors"
           aria-label="Close file tree"
           @click="isOpen = false"

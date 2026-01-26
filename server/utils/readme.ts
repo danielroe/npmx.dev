@@ -1,7 +1,8 @@
 import { marked, type Tokens } from 'marked'
 import sanitizeHtml from 'sanitize-html'
-import { hasProtocol, withoutTrailingSlash } from 'ufo'
-import type { ReadmeResponse } from '#shared/types/readme.js'
+import { hasProtocol } from 'ufo'
+import type { ReadmeResponse } from '#shared/types/readme'
+import { convertBlobToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
 
 /**
  * Playground provider configuration
@@ -94,13 +95,6 @@ function matchPlaygroundProvider(url: string): PlaygroundProvider | null {
   return null
 }
 
-export interface RepositoryInfo {
-  /** GitHub raw base URL (e.g., https://raw.githubusercontent.com/owner/repo/HEAD) */
-  rawBaseUrl?: string
-  /** Subdirectory within repo where package lives (e.g., packages/ai) */
-  directory?: string
-}
-
 // only allow h3-h6 since we shift README headings down by 2 levels
 // (page h1 = package name, h2 = "Readme" section, so README h1 → h3)
 const ALLOWED_TAGS = [
@@ -163,42 +157,8 @@ const ALLOWED_ATTR: Record<string, string[]> = {
 // Format: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
 
 /**
- * Parse repository field from package.json into GitHub raw URL base.
- * Supports both full objects and shorthand strings.
- */
-export function parseRepositoryInfo(
-  repository?: { type?: string; url?: string; directory?: string } | string,
-): RepositoryInfo | undefined {
-  if (!repository) return undefined
-
-  let url: string | undefined
-  let directory: string | undefined
-
-  if (typeof repository === 'string') {
-    url = repository
-  } else {
-    url = repository.url
-    directory = repository.directory
-  }
-
-  if (!url) return undefined
-
-  // Parse GitHub URL: git+https://github.com/owner/repo.git or https://github.com/owner/repo
-  const githubMatch = url.match(/github\.com[/:]([^/]+)\/([^/.]+)(?:\.git)?/)
-  if (!githubMatch?.[1] || !githubMatch[2]) return undefined
-
-  const owner = githubMatch[1]
-  const repo = githubMatch[2]
-
-  return {
-    rawBaseUrl: `https://raw.githubusercontent.com/${owner}/${repo}/HEAD`,
-    directory: directory ? withoutTrailingSlash(directory) : undefined,
-  }
-}
-
-/**
  * Resolve a relative URL to an absolute URL.
- * If repository info is available, resolve to GitHub raw URLs.
+ * If repository info is available, resolve to provider's raw file URLs.
  * Otherwise, fall back to jsdelivr CDN.
  */
 function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
@@ -206,11 +166,23 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
   if (url.startsWith('#')) {
     return url
   }
-  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//')) {
-    return url
+  if (hasProtocol(url, { acceptRelative: true })) {
+    try {
+      const parsed = new URL(url, 'https://example.com')
+      if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+        return url
+      }
+    } catch {
+      // Invalid URL, fall through to resolve as relative
+    }
+    // return protocol-relative URLs (//example.com) as-is
+    if (url.startsWith('//')) {
+      return url
+    }
+    // for non-HTTP protocols (javascript:, data:, etc.), don't return, treat as relative
   }
 
-  // Prefer GitHub raw URLs when repository info is available
+  // Use provider's raw URL base when repository info is available
   // This handles assets that exist in the repo but not in the npm tarball
   if (repoInfo?.rawBaseUrl) {
     // Normalize the relative path (remove leading ./)
@@ -242,14 +214,13 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
   return `https://cdn.jsdelivr.net/npm/${packageName}/${url.replace(/^\.\//, '')}`
 }
 
-// Convert GitHub blob URLs to raw URLs for images
+// Convert blob/src URLs to raw URLs for images across all providers
 // e.g. https://github.com/nuxt/nuxt/blob/main/.github/assets/banner.svg
 //   → https://github.com/nuxt/nuxt/raw/main/.github/assets/banner.svg
 function resolveImageUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
   const resolved = resolveUrl(url, packageName, repoInfo)
-  // GitHub blob → raw
-  if (resolved.includes('github.com') && resolved.includes('/blob/')) {
-    return resolved.replace('/blob/', '/raw/')
+  if (repoInfo?.provider) {
+    return convertBlobToRawUrl(resolved, repoInfo.provider)
   }
   return resolved
 }
@@ -268,12 +239,27 @@ export async function renderReadmeHtml(
   const collectedLinks: PlaygroundLink[] = []
   const seenUrls = new Set<string>()
 
-  // Shift heading levels down by 2 for semantic correctness
+  // Track heading hierarchy to ensure sequential order for accessibility
   // Page h1 = package name, h2 = "Readme" section heading
-  // So README h1 → h3, h2 → h4, etc. (capped at h6)
-  // But keep visual styling via data-level attribute
+  // So README starts at h3, and we ensure no levels are skipped
+  // Visual styling preserved via data-level attribute (original depth)
+  let lastSemanticLevel = 2 // Start after h2 (the "Readme" section heading)
   renderer.heading = function ({ tokens, depth }: Tokens.Heading) {
-    const semanticLevel = Math.min(depth + 2, 6)
+    // Calculate the target semantic level based on document structure
+    // Start at h3 (since page h1 + section h2 already exist)
+    // But ensure we never skip levels - can only go down by 1 or stay same/go up
+    let semanticLevel: number
+    if (depth === 1) {
+      // README h1 always becomes h3
+      semanticLevel = 3
+    } else {
+      // For deeper levels, ensure sequential order
+      // Don't allow jumping more than 1 level deeper than previous
+      const maxAllowed = Math.min(lastSemanticLevel + 1, 6)
+      semanticLevel = Math.min(depth + 2, maxAllowed)
+    }
+
+    lastSemanticLevel = semanticLevel
     const text = this.parser.parseInline(tokens)
     return `<h${semanticLevel} data-level="${depth}">${text}</h${semanticLevel}>\n`
   }

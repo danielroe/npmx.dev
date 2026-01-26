@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { joinURL } from 'ufo'
-import type { PackumentVersion, NpmVersionDist, ReadmeResponse } from '#shared/types'
+import type { NpmVersionDist, PackumentVersion, ReadmeResponse } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
+import { onKeyStroke } from '@vueuse/core'
+import { joinURL } from 'ufo'
+import { areUrlsEquivalent } from '#shared/utils/url'
 
 definePageMeta({
   name: 'package',
@@ -11,12 +13,16 @@ definePageMeta({
 
 const route = useRoute('package')
 
+const router = useRouter()
+
 // Parse package name and optional version from URL
 // Patterns:
 //   /nuxt → packageName: "nuxt", requestedVersion: null
 //   /nuxt/v/4.2.0 → packageName: "nuxt", requestedVersion: "4.2.0"
 //   /@nuxt/kit → packageName: "@nuxt/kit", requestedVersion: null
 //   /@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", requestedVersion: "1.0.0"
+//   /axios@1.13.3 → packageName: "axios", requestedVersion: "1.13.3"
+//   /@nuxt/kit@1.0.0 → packageName: "@nuxt/kit", requestedVersion: "1.0.0"
 const parsedRoute = computed(() => {
   const segments = route.params.package || []
 
@@ -29,8 +35,19 @@ const parsedRoute = computed(() => {
     }
   }
 
+  // Parse @ versioned package
+  const fullPath = segments.join('/')
+  const versionMatch = fullPath.match(/^(@[^/]+\/[^/]+|[^/]+)@([^/]+)$/)
+  if (versionMatch) {
+    const [, packageName, requestedVersion] = versionMatch as [string, string, string]
+    return {
+      packageName,
+      requestedVersion,
+    }
+  }
+
   return {
-    packageName: segments.join('/'),
+    packageName: fullPath,
     requestedVersion: null as string | null,
   }
 })
@@ -50,7 +67,7 @@ const orgName = computed(() => {
   return match ? match[1] : null
 })
 
-const { data: pkg, status, error } = usePackage(packageName, requestedVersion)
+const { data: pkg, status, error, resolvedVersion } = usePackage(packageName, requestedVersion)
 
 const { data: downloads } = usePackageDownloads(packageName, 'last-week')
 const { data: weeklyDownloads } = usePackageWeeklyDownloadEvolution(packageName, { weeks: 52 })
@@ -109,15 +126,16 @@ const sizeTooltip = computed(() => {
   return chunks.filter(Boolean).join('\n')
 })
 
-// Get the version to display (requested or latest)
+// Get the version to display (resolved version or latest)
 const displayVersion = computed(() => {
   if (!pkg.value) return null
 
-  const reqVer = requestedVersion.value
-  if (reqVer && pkg.value.versions[reqVer]) {
-    return pkg.value.versions[reqVer]
+  // Use resolved version if available
+  if (resolvedVersion.value) {
+    return pkg.value.versions[resolvedVersion.value] ?? null
   }
 
+  // Fallback to latest
   const latestTag = pkg.value['dist-tags']?.latest
   if (!latestTag) return null
   return pkg.value.versions[latestTag] ?? null
@@ -129,6 +147,20 @@ const latestVersion = computed(() => {
   const latestTag = pkg.value['dist-tags']?.latest
   if (!latestTag) return null
   return pkg.value.versions[latestTag] ?? null
+})
+
+const deprecationNotice = computed(() => {
+  if (!displayVersion.value?.deprecated) return null
+
+  const isLatestDeprecated = !!latestVersion.value?.deprecated
+
+  // If latest is deprecated, show "package deprecated"
+  if (isLatestDeprecated) {
+    return { type: 'package' as const, message: displayVersion.value.deprecated }
+  }
+
+  // Otherwise show "version deprecated"
+  return { type: 'version' as const, message: displayVersion.value.deprecated }
 })
 
 const hasDependencies = computed(() => {
@@ -154,8 +186,35 @@ const repositoryUrl = computed(() => {
   return url
 })
 
+const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
+
+const PROVIDER_ICONS: Record<string, string> = {
+  github: 'i-carbon-logo-github',
+  gitlab: 'i-simple-icons-gitlab',
+  bitbucket: 'i-simple-icons-bitbucket',
+  codeberg: 'i-simple-icons-codeberg',
+  gitea: 'i-simple-icons-gitea',
+  gitee: 'i-simple-icons-gitee',
+  sourcehut: 'i-simple-icons-sourcehut',
+  tangled: 'i-custom-tangled',
+}
+
+const repoProviderIcon = computed(() => {
+  const provider = repoRef.value?.provider
+  if (!provider) return 'i-carbon-logo-github'
+  return PROVIDER_ICONS[provider] ?? 'i-carbon-code'
+})
+
 const homepageUrl = computed(() => {
-  return displayVersion.value?.homepage ?? null
+  const homepage = displayVersion.value?.homepage
+  if (!homepage) return null
+
+  // Don't show homepage if it's the same as the repository URL
+  if (repositoryUrl.value && areUrlsEquivalent(homepage, repositoryUrl.value)) {
+    return null
+  }
+
+  return homepage
 })
 
 function normalizeGitUrl(url: string): string {
@@ -190,19 +249,7 @@ function hasProvenance(version: PackumentVersion | null): boolean {
   return !!dist.attestations
 }
 
-// Persist package manager preference in localStorage
-const selectedPM = ref<PackageManagerId>('npm')
-
-onMounted(() => {
-  const stored = localStorage.getItem('npmx-pm')
-  if (stored && packageManagers.some(pm => pm.id === stored)) {
-    selectedPM.value = stored as PackageManagerId
-  }
-})
-
-watch(selectedPM, value => {
-  localStorage.setItem('npmx-pm', value)
-})
+const selectedPM = useSelectedPackageManager()
 
 const installCommandParts = computed(() => {
   if (!pkg.value) return []
@@ -276,6 +323,17 @@ useSeoMeta({
   description: () => pkg.value?.description ?? '',
 })
 
+onKeyStroke('.', () => {
+  if (pkg.value && displayVersion.value) {
+    router.push({
+      name: 'code',
+      params: {
+        path: [pkg.value.name, 'v', displayVersion.value.version],
+      },
+    })
+  }
+})
+
 defineOgImageComponent('Package', {
   name: () => pkg.value?.name ?? 'Package',
   version: () => displayVersion.value?.version ?? '',
@@ -285,7 +343,7 @@ defineOgImageComponent('Package', {
 </script>
 
 <template>
-  <main class="container py-8 sm:py-12 overflow-hidden">
+  <main class="container py-8 sm:py-12 overflow-hidden w-full">
     <PackageSkeleton v-if="status === 'pending'" />
 
     <article v-else-if="status === 'success' && pkg" class="animate-fade-in min-w-0">
@@ -293,7 +351,7 @@ defineOgImageComponent('Package', {
       <header class="mb-8 pb-8 border-b border-border">
         <div class="mb-4">
           <!-- Package name and version -->
-          <div class="flex items-start gap-3 mb-2 flex-wrap min-w-0">
+          <div class="flex items-baseline gap-2 mb-1.5 sm:gap-3 sm:mb-2 flex-wrap min-w-0">
             <h1
               class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
               :title="pkg.name"
@@ -306,39 +364,47 @@ defineOgImageComponent('Package', {
               ><span v-if="orgName">/</span
               >{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
             </h1>
-            <a
+            <span
               v-if="displayVersion"
-              :href="
-                hasProvenance(displayVersion)
-                  ? `https://www.npmjs.com/package/${pkg.name}/v/${displayVersion.version}#provenance`
-                  : undefined
-              "
-              :target="hasProvenance(displayVersion) ? '_blank' : undefined"
-              :rel="hasProvenance(displayVersion) ? 'noopener noreferrer' : undefined"
-              class="inline-flex items-center gap-1.5 px-3 py-1 font-mono text-sm bg-bg-muted border border-border rounded-md transition-colors duration-200 max-w-full shrink-0"
-              :class="
-                hasProvenance(displayVersion)
-                  ? 'hover:border-border-hover cursor-pointer'
-                  : 'cursor-default'
-              "
-              :title="`v${displayVersion.version}`"
+              class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
             >
-              <span class="truncate max-w-32 sm:max-w-48"> v{{ displayVersion.version }} </span>
+              <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
+              <template v-if="resolvedVersion !== requestedVersion">
+                <span class="font-mono text-fg-muted text-sm">{{ requestedVersion }}</span>
+                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+              </template>
+
+              <NuxtLink
+                v-if="resolvedVersion !== requestedVersion"
+                :to="`/${pkg.name}/v/${displayVersion.version}`"
+                title="View permalink for this version"
+                >{{ displayVersion.version }}</NuxtLink
+              >
+              <span v-else>v{{ displayVersion.version }}</span>
+
+              <a
+                v-if="hasProvenance(displayVersion)"
+                :href="`https://www.npmjs.com/package/${pkg.name}/v/${displayVersion.version}#provenance`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 text-fg-muted hover:text-fg transition-colors duration-200"
+                title="Verified provenance"
+              >
+                <span
+                  class="i-solar-shield-check-outline w-3.5 h-3.5 shrink-0"
+                  aria-hidden="true"
+                />
+              </a>
               <span
                 v-if="
                   requestedVersion &&
                   latestVersion &&
                   displayVersion.version !== latestVersion.version
                 "
-                class="text-fg-subtle shrink-0"
+                class="text-fg-subtle text-sm shrink-0"
                 >(not latest)</span
               >
-              <span
-                v-if="hasProvenance(displayVersion)"
-                class="i-solar-shield-check-outline w-4 h-4 text-fg-muted shrink-0"
-                aria-label="Verified provenance"
-              />
-            </a>
+            </span>
 
             <!-- Package metrics (module format, types) -->
             <ClientOnly>
@@ -346,15 +412,29 @@ defineOgImageComponent('Package', {
                 v-if="displayVersion"
                 :package-name="pkg.name"
                 :version="displayVersion.version"
+                class="self-center ml-1 sm:ml-2"
               />
               <template #fallback>
-                <ul class="flex items-center gap-1.5">
+                <ul class="flex items-center gap-1.5 self-center ml-1 sm:ml-2">
                   <li class="skeleton w-8 h-5 rounded" />
                   <li class="skeleton w-12 h-5 rounded" />
                 </ul>
               </template>
             </ClientOnly>
+
+            <a
+              :href="`https://www.npmjs.com/package/${pkg.name}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="link-subtle font-mono text-sm inline-flex items-center gap-1.5 ml-auto shrink-0 self-center"
+              title="View on npm"
+            >
+              <span class="i-carbon-logo-npm w-4 h-4" aria-hidden="true" />
+              <span class="hidden sm:inline">npm</span>
+              <span class="sr-only sm:hidden">View on npm</span>
+            </a>
           </div>
+
           <!-- Fixed height description container to prevent CLS -->
           <div ref="descriptionRef" class="relative max-w-2xl min-h-[4.5rem]">
             <p
@@ -381,8 +461,25 @@ defineOgImageComponent('Package', {
           </div>
         </div>
 
+        <div
+          v-if="deprecationNotice"
+          class="border border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-400"
+        >
+          <h2 class="font-medium mb-2">
+            {{
+              deprecationNotice.type === 'package'
+                ? 'This package has been deprecated.'
+                : 'This version has been deprecated.'
+            }}
+          </h2>
+          <p v-if="deprecationNotice.message" class="text-base m-0">
+            <MarkdownText :text="deprecationNotice.message" />
+          </p>
+          <p v-else class="text-base m-0 italic">No reason provided</p>
+        </div>
+
         <!-- Stats grid -->
-        <dl class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mt-6">
+        <dl class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mt-4 sm:mt-6">
           <div v-if="pkg.license" class="space-y-1">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider">License</dt>
             <dd class="font-mono text-sm text-fg">
@@ -398,7 +495,7 @@ defineOgImageComponent('Package', {
                 :href="`https://npm.chart.dev/${pkg.name}`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-fg-subtle hover:text-fg transition-colors duration-200"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
                 title="View download trends"
               >
                 <span class="i-carbon-chart-line w-3.5 h-3.5 inline-block" aria-hidden="true" />
@@ -416,16 +513,31 @@ defineOgImageComponent('Package', {
                 :href="`https://npmgraph.js.org/?q=${pkg.name}`"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-fg-subtle hover:text-fg transition-colors duration-200"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
                 title="View dependency graph"
               >
                 <span class="i-carbon-network-3 w-3.5 h-3.5 inline-block" aria-hidden="true" />
                 <span class="sr-only">View dependency graph</span>
               </a>
+
+              <a
+                v-if="getDependencyCount(displayVersion) > 0"
+                :href="`https://node-modules.dev/grid/depth#install=${pkg.name}${displayVersion?.version ? `@${displayVersion.version}` : ''}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
+                title="Inspect dependency tree on node-modules.dev"
+              >
+                <span
+                  class="i-solar-eye-scan-outline w-3.5 h-3.5 inline-block"
+                  aria-hidden="true"
+                />
+                <span class="sr-only">Inspect dependency tree</span>
+              </a>
             </dd>
           </div>
 
-          <div class="space-y-1 col-span-2">
+          <div class="space-y-1 sm:col-span-2">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
               Install Size
               <span
@@ -472,7 +584,7 @@ defineOgImageComponent('Package', {
 
         <!-- Links -->
         <nav aria-label="Package links" class="mt-6">
-          <ul class="flex flex-wrap items-center gap-4 list-none m-0 p-0">
+          <ul class="flex flex-wrap items-center gap-3 sm:gap-4 list-none m-0 p-0">
             <li v-if="repositoryUrl">
               <a
                 :href="repositoryUrl"
@@ -480,8 +592,22 @@ defineOgImageComponent('Package', {
                 rel="noopener noreferrer"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
-                <span class="i-carbon-logo-github w-4 h-4" aria-hidden="true" />
-                repo
+                <span class="w-4 h-4" :class="repoProviderIcon" aria-hidden="true" />
+                <span v-if="repoRef">
+                  {{ repoRef.owner }}<span class="opacity-50">/</span>{{ repoRef.repo }}
+                </span>
+                <span v-else>repo</span>
+              </a>
+            </li>
+            <li v-if="repositoryUrl && repoMeta && starsLink">
+              <a
+                :href="starsLink"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="w-4 h-4 i-carbon-star" aria-hidden="true" />
+                {{ formatCompactNumber(stars, { decimals: 1 }) }}
               </a>
             </li>
             <li v-if="homepageUrl">
@@ -506,17 +632,22 @@ defineOgImageComponent('Package', {
                 issues
               </a>
             </li>
-            <li>
+
+            <li v-if="forks && forksLink">
               <a
-                :href="`https://www.npmjs.com/package/${pkg.name}`"
+                :href="forksLink"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
-                <span class="i-carbon-cube w-4 h-4" aria-hidden="true" />
-                npm
+                <span class="i-carbon-fork w-4 h-4" aria-hidden="true" />
+                <span>
+                  {{ formatCompactNumber(forks, { decimals: 1 }) }}
+                  {{ forks === 1 ? 'fork' : 'forks' }}
+                </span>
               </a>
             </li>
+
             <li v-if="jsrInfo?.exists && jsrInfo.url">
               <a
                 :href="jsrInfo.url"
@@ -529,7 +660,7 @@ defineOgImageComponent('Package', {
                 jsr
               </a>
             </li>
-            <li class="flex-grow">
+            <li class="sm:flex-grow">
               <a
                 :href="`https://socket.dev/npm/package/${pkg.name}/overview/${displayVersion?.version ?? 'latest'}`"
                 target="_blank"
@@ -548,9 +679,15 @@ defineOgImageComponent('Package', {
                   params: { path: [...pkg.name.split('/'), 'v', displayVersion.version] },
                 }"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                aria-keyshortcuts="."
               >
-                <span class="i-carbon-code w-4 h-4" aria-hidden="true" />
                 code
+                <kbd
+                  class="hidden sm:inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  aria-hidden="true"
+                >
+                  .
+                </kbd>
               </NuxtLink>
             </li>
           </ul>
@@ -566,7 +703,7 @@ defineOgImageComponent('Package', {
 
       <!-- Install command with package manager selector -->
       <section aria-labelledby="install-heading" class="mb-8">
-        <div class="flex items-center justify-between mb-3">
+        <div class="flex flex-wrap items-center justify-between mb-3">
           <h2 id="install-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
             Install
           </h2>
@@ -608,12 +745,12 @@ defineOgImageComponent('Package', {
         <div class="relative group">
           <!-- Terminal-style install command -->
           <div class="bg-[#0d0d0d] border border-border rounded-lg overflow-hidden">
-            <div class="flex gap-1.5 px-4 pt-3">
+            <div class="flex gap-1.5 px-3 pt-2 sm:px-4 sm:pt-3">
               <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
               <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
               <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
             </div>
-            <div class="flex items-center gap-2 px-4 pt-3 pb-4">
+            <div class="flex items-center gap-2 px-3 pt-2 pb-3 sm:px-4 sm:pt-3 sm:pb-4">
               <span class="text-fg-subtle font-mono text-sm select-none">$</span>
               <code class="font-mono text-sm"
                 ><ClientOnly
@@ -631,6 +768,7 @@ defineOgImageComponent('Package', {
             </div>
           </div>
           <button
+            type="button"
             class="absolute top-3 right-3 px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
             @click="copyInstallCommand"
           >
@@ -663,7 +801,7 @@ defineOgImageComponent('Package', {
         </div>
 
         <!-- Sidebar -->
-        <aside class="order-1 lg:order-2 space-y-8 min-w-0 overflow-hidden">
+        <div class="order-1 lg:order-2 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
@@ -754,7 +892,7 @@ defineOgImageComponent('Package', {
             :peer-dependencies-meta="displayVersion?.peerDependenciesMeta"
             :optional-dependencies="displayVersion?.optionalDependencies"
           />
-        </aside>
+        </div>
       </div>
     </article>
 

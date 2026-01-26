@@ -62,6 +62,7 @@ export interface PackageVersionInfo {
   version: string
   time?: string
   hasProvenance: boolean
+  deprecated?: string
 }
 
 /**
