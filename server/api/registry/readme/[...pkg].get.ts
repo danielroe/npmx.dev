@@ -15,6 +15,7 @@ async function fetchReadmeFromJsdelivr(
   version?: string,
 ): Promise<string | null> {
   const filenames = [
+    `README.${navigator.language}.md`,
     'README.md',
     'readme.md',
     'Readme.md',
