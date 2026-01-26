@@ -556,7 +556,7 @@ async function checkDependencyOutdated(
 export function useOutdatedDependencies(
   dependencies: MaybeRefOrGetter<Record<string, string> | undefined>,
 ) {
-  const outdated = ref<Record<string, OutdatedDependencyInfo>>({})
+  const outdated = shallowRef<Record<string, OutdatedDependencyInfo>>({})
 
   async function fetchOutdatedInfo(deps: Record<string, string> | undefined) {
     if (!deps || Object.keys(deps).length === 0) {
