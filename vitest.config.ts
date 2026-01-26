@@ -3,10 +3,17 @@ import { defineConfig } from 'vitest/config'
 import { defineVitestProject } from '@nuxt/test-utils/config'
 import { playwright } from '@vitest/browser-playwright'
 
+const rootDir = fileURLToPath(new URL('.', import.meta.url))
+
 export default defineConfig({
   test: {
     projects: [
       {
+        resolve: {
+          alias: {
+            '#shared': `${rootDir}/shared`,
+          },
+        },
         test: {
           name: 'unit',
           include: ['test/unit/*.{test,spec}.ts'],

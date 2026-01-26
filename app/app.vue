@@ -51,15 +51,17 @@ if (import.meta.client) {
 
     <AppHeader :show-logo="!isHomepage" />
 
-    <div id="main-content" class="flex-1">
+    <div id="main-content" class="flex-1 flex flex-col">
       <NuxtPage />
     </div>
 
     <AppFooter />
+
+    <ScrollToTop />
   </div>
 </template>
 
-<style>
+<style lang="postcss">
 /* Base reset and defaults */
 *,
 *::before,
@@ -73,11 +75,23 @@ html {
   text-rendering: optimizeLegibility;
 }
 
+/*
+ * Enable CSS scroll-state container queries for the document
+ * This allows the footer to query the scroll state using pure CSS
+ * @see https://developer.mozilla.org/en-US/docs/Web/CSS/@container#scroll-state_container_descriptors
+ */
+@supports (container-type: scroll-state) {
+  html {
+    container-type: scroll-state;
+  }
+}
+
 body {
   margin: 0;
   background-color: #0a0a0a;
   color: #fafafa;
   line-height: 1.6;
+  padding-bottom: var(--footer-height, 0);
 }
 
 /* Default link styling for accessibility on dark background */
@@ -285,7 +299,7 @@ button {
   border-left: 2px solid #262626;
   padding-left: 1rem;
   margin: 1.5rem 0;
-  color: #666666;
+  color: #8a8a8a;
   font-style: italic;
 }
 

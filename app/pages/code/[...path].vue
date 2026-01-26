@@ -89,7 +89,6 @@ function switchVersion(newVersion: string) {
 const { data: fileTree, status: treeStatus } = useFetch<PackageFileTreeResponse>(
   () => `/api/registry/files/${packageName.value}/v/${version.value}`,
   {
-    watch: [packageName, version],
     immediate: !!version.value,
   },
 )
@@ -134,10 +133,7 @@ const fileContentUrl = computed(() => {
 
 const { data: fileContent, status: fileStatus } = useFetch<PackageFileContentResponse>(
   () => fileContentUrl.value!,
-  {
-    watch: [fileContentUrl],
-    immediate: !!fileContentUrl.value,
-  },
+  { immediate: !!fileContentUrl.value },
 )
 
 // Track hash manually since we update it via history API to avoid scroll
@@ -296,9 +292,9 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="min-h-screen flex flex-col">
+  <main class="flex-1 flex flex-col">
     <!-- Header -->
-    <header class="border-b border-border bg-bg sticky top-0 z-10">
+    <header class="border-b border-border bg-bg sticky top-14 z-20">
       <div class="container py-4">
         <!-- Package info and navigation -->
         <div class="flex items-center gap-2 mb-3 flex-wrap min-w-0">
@@ -312,7 +308,9 @@ useSeoMeta({
           </NuxtLink>
           <!-- Version selector -->
           <div v-if="version && availableVersions.length > 0" class="relative shrink-0">
+            <label for="version-select" class="sr-only">Select version</label>
             <select
+              id="version-select"
               :value="version"
               :title="`v${version}`"
               class="appearance-none pl-2 pr-6 py-0.5 font-mono text-sm bg-bg-muted border border-border rounded cursor-pointer hover:border-border-hover transition-colors max-w-32 sm:max-w-48 truncate"
@@ -384,10 +382,10 @@ useSeoMeta({
     </div>
 
     <!-- Main content: file tree + file viewer -->
-    <div v-else-if="fileTree" class="flex-1 flex min-h-0">
-      <!-- File tree sidebar -->
+    <div v-else-if="fileTree" class="flex flex-1">
+      <!-- File tree sidebar - sticky with internal scroll -->
       <aside
-        class="w-64 lg:w-72 border-r border-border overflow-y-auto shrink-0 hidden md:block bg-bg-subtle"
+        class="w-64 lg:w-72 border-r border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
       >
         <CodeFileTree
           :tree="fileTree.tree"
@@ -396,8 +394,10 @@ useSeoMeta({
         />
       </aside>
 
-      <!-- File content / Directory listing -->
-      <div class="flex-1 overflow-auto min-w-0">
+      <!-- File content / Directory listing - sticky with internal scroll on desktop -->
+      <div
+        class="flex-1 min-w-0 md:sticky md:top-28 md:self-start md:h-[calc(100vh-7rem)] md:overflow-y-auto"
+      >
         <!-- File viewer -->
         <template v-if="isViewingFile && fileContent">
           <div
@@ -412,6 +412,7 @@ useSeoMeta({
             <div class="flex items-center gap-2">
               <button
                 v-if="selectedLines"
+                type="button"
                 class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors"
                 @click="copyPermalink"
               >
