@@ -1,0 +1,116 @@
+<script setup lang="ts">
+import { onKeyStroke, onClickOutside } from '@vueuse/core'
+
+const { settings } = useSettings()
+
+const isOpen = ref(false)
+const menuRef = useTemplateRef('menuRef')
+const triggerRef = useTemplateRef('triggerRef')
+
+function toggle() {
+  isOpen.value = !isOpen.value
+}
+
+function close() {
+  isOpen.value = false
+}
+
+// Close on click outside
+onClickOutside(menuRef, close, { ignore: [triggerRef] })
+
+// Close on Escape
+onKeyStroke('Escape', () => {
+  if (isOpen.value) {
+    close()
+    triggerRef.value?.focus()
+  }
+})
+
+// Open with comma key (global shortcut)
+onKeyStroke(',', e => {
+  // Don't trigger if user is typing in an input
+  const target = e.target as HTMLElement
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+    return
+  }
+  e.preventDefault()
+  toggle()
+})
+</script>
+
+<template>
+  <div class="relative flex items-center">
+    <button
+      ref="triggerRef"
+      type="button"
+      class="link-subtle font-mono text-sm inline-flex items-center justify-center gap-2"
+      :aria-expanded="isOpen"
+      aria-haspopup="menu"
+      aria-label="Settings"
+      aria-keyshortcuts=","
+      @click="toggle"
+    >
+      <span class="i-carbon-settings w-4 h-4 sm:hidden" aria-hidden="true" />
+      <span class="hidden sm:inline">settings</span>
+      <kbd
+        class="hidden sm:inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+        aria-hidden="true"
+      >
+        ,
+      </kbd>
+    </button>
+
+    <!-- Settings popover -->
+    <Transition
+      enter-active-class="transition-opacity transition-transform duration-100 ease-out motion-reduce:transition-none"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition-opacity transition-transform duration-75 ease-in motion-reduce:transition-none"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
+    >
+      <div
+        v-if="isOpen"
+        ref="menuRef"
+        role="menu"
+        class="absolute right-0 top-full mt-2 w-64 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 overflow-hidden"
+      >
+        <div class="px-3 py-2 border-b border-border">
+          <h2 class="text-xs text-fg-subtle uppercase tracking-wider">Settings</h2>
+        </div>
+
+        <div class="p-2 space-y-1">
+          <!-- Relative dates toggle -->
+          <div
+            class="flex items-center justify-between gap-3 px-2 py-2 rounded-md hover:bg-bg-muted transition-[background-color] duration-150 cursor-pointer"
+            @click="settings.relativeDates = !settings.relativeDates"
+          >
+            <label
+              :id="`settings-relative-dates-label`"
+              class="text-sm text-fg cursor-pointer select-none"
+            >
+              Relative dates
+            </label>
+            <button
+              type="button"
+              role="switch"
+              :aria-checked="settings.relativeDates"
+              aria-labelledby="settings-relative-dates-label"
+              class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+              :class="settings.relativeDates ? 'bg-fg' : 'bg-bg-subtle'"
+              @click.stop="settings.relativeDates = !settings.relativeDates"
+            >
+              <span
+                aria-hidden="true"
+                class="pointer-events-none inline-block h-4 w-4 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
+                :class="
+                  settings.relativeDates ? 'translate-x-4 bg-bg' : 'translate-x-0 bg-fg-muted'
+                "
+              />
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </div>
+</template>

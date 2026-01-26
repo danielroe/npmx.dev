@@ -76,7 +76,7 @@ const emit = defineEmits<{
             <div v-if="result.package.date" class="flex items-center gap-1.5">
               <dt class="sr-only">Updated</dt>
               <dd>
-                <NuxtTime
+                <DateTime
                   :datetime="result.package.date"
                   year="numeric"
                   month="short"

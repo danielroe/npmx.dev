@@ -26,7 +26,7 @@ withDefaults(
       <span v-else class="w-1" />
 
       <ul class="flex items-center gap-4 sm:gap-6 list-none m-0 p-0">
-        <li class="flex">
+        <li class="flex items-center">
           <NuxtLink
             to="/search"
             class="link-subtle font-mono text-sm inline-flex items-center gap-2"
@@ -41,17 +41,23 @@ withDefaults(
             </kbd>
           </NuxtLink>
         </li>
-        <li v-if="showConnector" class="flex">
+        <li class="flex items-center">
+          <ClientOnly>
+            <SettingsMenu />
+          </ClientOnly>
+        </li>
+        <li v-if="showConnector" class="flex items-center">
           <ConnectorStatus />
         </li>
-        <li v-else class="flex">
+        <li v-else class="flex items-center">
           <a
             href="https://github.com/npmx-dev/npmx.dev"
             rel="noopener noreferrer"
             class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+            aria-label="GitHub"
           >
-            <span class="i-carbon-logo-github w-4 h-4" />
-            <span class="hidden sm:inline">github</span>
+            <span class="i-carbon-logo-github w-4 h-4" aria-hidden="true" />
+            <span class="hidden sm:inline" aria-hidden="true">github</span>
           </a>
         </li>
       </ul>

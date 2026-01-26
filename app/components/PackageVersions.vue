@@ -343,10 +343,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                 {{ row.primaryVersion.version }}
               </NuxtLink>
               <div class="flex items-center gap-2 shrink-0">
-                <NuxtTime
+                <DateTime
                   v-if="row.primaryVersion.time"
                   :datetime="row.primaryVersion.time"
-                  :title="row.primaryVersion.time"
                   year="numeric"
                   month="short"
                   day="numeric"
@@ -393,10 +392,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                 {{ v.version }}
               </NuxtLink>
               <div class="flex items-center gap-2 shrink-0">
-                <NuxtTime
+                <DateTime
                   v-if="v.time"
                   :datetime="v.time"
-                  :title="v.time"
                   class="text-[10px] text-fg-subtle"
                   year="numeric"
                   month="short"
@@ -475,10 +473,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                 {{ row.primaryVersion.version }}
               </NuxtLink>
               <div class="flex items-center gap-2 shrink-0">
-                <NuxtTime
+                <DateTime
                   v-if="row.primaryVersion.time"
                   :datetime="row.primaryVersion.time"
-                  :title="row.primaryVersion.time"
                   class="text-[10px] text-fg-subtle"
                   year="numeric"
                   month="short"
@@ -586,10 +583,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       {{ v.version }}
                     </NuxtLink>
                     <div class="flex items-center gap-2 shrink-0">
-                      <NuxtTime
+                      <DateTime
                         v-if="v.time"
                         :datetime="v.time"
-                        :title="v.time"
                         class="text-[10px] text-fg-subtle"
                         year="numeric"
                         month="short"
