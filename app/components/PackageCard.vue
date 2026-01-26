@@ -31,7 +31,7 @@ const emit = defineEmits<{
         <NuxtLink
           :to="{ name: 'package', params: { package: result.package.name.split('/') } }"
           :prefetch-on="prefetch ? 'visibility' : 'interaction'"
-          class="focus:outline-none decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
+          class="focus-visible:outline-none decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
           :data-result-index="index"
           @focus="index != null && emit('focus', index)"
           @mouseenter="index != null && emit('focus', index)"
@@ -41,7 +41,7 @@ const emit = defineEmits<{
       </component>
     </div>
     <div class="flex justify-between items-start gap-4 sm:gap-8">
-      <div>
+      <div class="min-w-0">
         <p
           v-if="result.package.description"
           class="text-fg-muted text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3"
@@ -113,7 +113,7 @@ const emit = defineEmits<{
       <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword">
         <NuxtLink
           :to="{ name: 'search', query: { q: `keywords:${keyword}` } }"
-          class="tag decoration-none"
+          class="tag decoration-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:outline-none"
         >
           {{ keyword }}
         </NuxtLink>
