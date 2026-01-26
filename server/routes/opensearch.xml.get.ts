@@ -1,6 +1,9 @@
-export default defineEventHandler(async event => {
+export default defineEventHandler(event => {
   const url = getRequestURL(event)
   const origin = url.origin
+
+  setHeader(event, 'Content-Type', 'application/opensearchdescription+xml')
+
   return `
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
