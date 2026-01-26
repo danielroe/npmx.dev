@@ -135,11 +135,9 @@ const deprecationNotice = computed(() => {
   if (!displayVersion.value?.deprecated) return null
 
   const isLatestDeprecated = !!latestVersion.value?.deprecated
-  const isViewingLatest =
-    !requestedVersion.value || displayVersion.value?.version === latestVersion.value?.version
 
-  // Show "package deprecated" if viewing latest OR if the whole package (latest) is deprecated
-  if (isViewingLatest || isLatestDeprecated) {
+  // If latest is deprecated, show "package deprecated"
+  if (isLatestDeprecated) {
     return { type: 'package' as const, message: displayVersion.value.deprecated }
   }
 
