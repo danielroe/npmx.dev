@@ -382,7 +382,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
         const packuments = await Promise.all(batch.map(name => fetchMinimalPackument(name)))
 
         for (const pkg of packuments) {
-          if (pkg) {
+          if (pkg && pkg['dist-tags']) {
             results.push(packumentToSearchResult(pkg))
           }
         }
