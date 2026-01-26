@@ -34,6 +34,15 @@ function parseMarkdown(text: string): string {
   // Strikethrough: ~~text~~
   html = html.replace(/~~(.+?)~~/g, '<del>$1</del>')
 
+  // Links: [text](url) - only allow http, https, mailto
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
+    const decodedUrl = url.replace(/&amp;/g, '&')
+    if (/^(https?:|mailto:)/i.test(decodedUrl)) {
+      return `<a href="${decodedUrl}" rel="nofollow noreferrer noopener" target="_blank">${text}</a>`
+    }
+    return `${text} (${url})`
+  })
+
   return html
 }
 
