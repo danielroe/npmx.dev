@@ -20,69 +20,82 @@ const emit = defineEmits<{
 
 <template>
   <article
-    class="group card-interactive scroll-mt-48 scroll-mb-6"
+    class="group card-interactive scroll-mt-48 scroll-mb-6 relative focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-bg focus-within:ring-offset-2 focus-within:ring-fg/50"
     :class="{ 'bg-bg-muted border-border-hover': selected }"
   >
-    <NuxtLink
-      :to="{ name: 'package', params: { package: result.package.name.split('/') } }"
-      :prefetch-on="prefetch ? 'visibility' : 'interaction'"
-      class="block focus:outline-none decoration-none scroll-mt-48 scroll-mb-6"
-      :data-result-index="index"
-      @focus="index != null && emit('focus', index)"
-      @mouseenter="index != null && emit('focus', index)"
-    >
-      <header class="flex items-start justify-between gap-4 mb-2">
-        <component
-          :is="headingLevel ?? 'h3'"
-          class="font-mono text-base font-medium text-fg group-hover:text-fg transition-colors duration-200 min-w-0 break-all"
-        >
-          {{ result.package.name }}
-        </component>
-        <div class="flex items-center gap-1.5 shrink-0 max-w-32">
-          <span
-            v-if="result.package.version"
-            class="font-mono text-xs text-fg-subtle truncate"
-            :title="result.package.version"
+    <div class="flex justify-between items-end gap-8">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <component
+            :is="headingLevel ?? 'h3'"
+            class="font-mono text-base font-medium text-fg group-hover:text-fg transition-colors duration-200 min-w-0 break-all"
           >
+            <NuxtLink
+              :to="{ name: 'package', params: { package: result.package.name.split('/') } }"
+              :prefetch-on="prefetch ? 'visibility' : 'interaction'"
+              class="focus:outline-none decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
+              :data-result-index="index"
+              @focus="index != null && emit('focus', index)"
+              @mouseenter="index != null && emit('focus', index)"
+            >
+              {{ result.package.name }}
+            </NuxtLink>
+          </component>
+        </div>
+        <p v-if="result.package.description" class="text-fg-muted text-sm line-clamp-2 mb-3">
+          <MarkdownText :text="result.package.description" />
+        </p>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
+          <dl v-if="showPublisher || result.package.date" class="flex items-center gap-4 m-0">
+            <div
+              v-if="showPublisher && result.package.publisher?.username"
+              class="flex items-center gap-1.5"
+            >
+              <dt class="sr-only">Publisher</dt>
+              <dd class="font-mono">@{{ result.package.publisher.username }}</dd>
+            </div>
+            <div v-if="result.package.date" class="flex items-center gap-1.5">
+              <dt class="sr-only">Updated</dt>
+              <dd>
+                <NuxtTime
+                  :datetime="result.package.date"
+                  year="numeric"
+                  month="short"
+                  day="numeric"
+                />
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2 shrink-0">
+        <div class="text-fg-subtle flex items-start gap-2 justify-end">
+          <span v-if="result.package.version" class="font-mono text-xs truncate">
             v{{ result.package.version }}
           </span>
-          <ProvenanceBadge
-            v-if="result.package.publisher?.trustedPublisher"
-            :provider="result.package.publisher.trustedPublisher.id"
-            :package-name="result.package.name"
-            :version="result.package.version"
-            compact
-          />
-        </div>
-      </header>
-
-      <p v-if="result.package.description" class="text-fg-muted text-sm line-clamp-2 mb-3">
-        <MarkdownText :text="result.package.description" />
-      </p>
-
-      <footer class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
-        <dl v-if="showPublisher || result.package.date" class="flex items-center gap-4 m-0">
           <div
-            v-if="showPublisher && result.package.publisher?.username"
-            class="flex items-center gap-1.5"
+            v-if="result.package.publisher?.trustedPublisher"
+            class="flex items-center gap-1.5 shrink-0 max-w-32"
           >
-            <dt class="sr-only">Publisher</dt>
-            <dd class="font-mono">@{{ result.package.publisher.username }}</dd>
+            <ProvenanceBadge
+              :provider="result.package.publisher.trustedPublisher.id"
+              :package-name="result.package.name"
+              :version="result.package.version"
+              compact
+            />
           </div>
-          <div v-if="result.package.date" class="flex items-center gap-1.5">
-            <dt class="sr-only">Updated</dt>
-            <dd>
-              <NuxtTime
-                :datetime="result.package.date"
-                year="numeric"
-                month="short"
-                day="numeric"
-              />
-            </dd>
-          </div>
-        </dl>
-      </footer>
-    </NuxtLink>
+        </div>
+        <div
+          v-if="result.downloads?.weekly"
+          class="text-fg-subtle gap-2 flex items-center justify-end"
+        >
+          <span class="i-carbon-chart-line w-3.5 h-3.5 inline-block" aria-hidden="true" />
+          <span class="font-mono text-xs">
+            {{ formatNumber(result.downloads.weekly) }} / week
+          </span>
+        </div>
+      </div>
+    </div>
 
     <ul
       v-if="result.package.keywords?.length"
