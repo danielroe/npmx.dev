@@ -6,6 +6,6 @@
  * @param teamName - The team name
  * @returns The scope:team string in @scope:team format
  */
-export function buildScopeTeam(orgName: string, teamName: string): string {
+export function buildScopeTeam(orgName: string, teamName: string): `@{string}:{string}` {
   return `@${orgName.replace(/^@/, '')}:${teamName}`
 }
