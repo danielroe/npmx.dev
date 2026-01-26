@@ -379,16 +379,18 @@ export async function fetchAllPackageVersions(packageName: string): Promise<Pack
 
   const promise = (async () => {
     const encodedName = encodePackageName(packageName)
-    const data = await $fetch<{ versions: Record<string, unknown>; time: Record<string, string> }>(
-      `${NPM_REGISTRY}/${encodedName}`,
-    )
+    const data = await $fetch<{
+      versions: Record<string, { deprecated?: string }>
+      time: Record<string, string>
+    }>(`${NPM_REGISTRY}/${encodedName}`)
 
-    return Object.keys(data.versions)
-      .filter(v => data.time[v])
-      .map(version => ({
+    return Object.entries(data.versions)
+      .filter(([v]) => data.time[v])
+      .map(([version, versionData]) => ({
         version,
         time: data.time[version],
         hasProvenance: false, // Would need to check dist.attestations for each version
+        deprecated: versionData.deprecated,
       }))
       .sort((a, b) => compareVersions(b.version, a.version))
   })()
