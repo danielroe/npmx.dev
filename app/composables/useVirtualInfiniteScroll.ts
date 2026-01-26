@@ -13,7 +13,7 @@ export interface WindowVirtualizerHandle {
 
 export interface UseVirtualInfiniteScrollOptions {
   /** Reference to the WindowVirtualizer component */
-  listRef: Ref<WindowVirtualizerHandle | undefined>
+  listRef: Ref<WindowVirtualizerHandle | null>
   /** Current item count */
   itemCount: Ref<number>
   /** Whether there are more items to load */
