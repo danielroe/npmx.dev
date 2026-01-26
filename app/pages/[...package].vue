@@ -131,6 +131,20 @@ const latestVersion = computed(() => {
   return pkg.value.versions[latestTag] ?? null
 })
 
+const deprecationNotice = computed(() => {
+  if (!displayVersion.value?.deprecated) return null
+
+  const isLatestDeprecated = !!latestVersion.value?.deprecated
+
+  // If latest is deprecated, show "package deprecated"
+  if (isLatestDeprecated) {
+    return { type: 'package' as const, message: displayVersion.value.deprecated }
+  }
+
+  // Otherwise show "version deprecated"
+  return { type: 'version' as const, message: displayVersion.value.deprecated }
+})
+
 const hasDependencies = computed(() => {
   if (!displayVersion.value) return false
   const deps = displayVersion.value.dependencies
@@ -396,6 +410,23 @@ defineOgImageComponent('Package', {
               </button>
             </div>
           </div>
+        </div>
+
+        <div
+          v-if="deprecationNotice"
+          class="border border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-400"
+        >
+          <h2 class="font-medium mb-2">
+            {{
+              deprecationNotice.type === 'package'
+                ? 'This package has been deprecated.'
+                : 'This version has been deprecated.'
+            }}
+          </h2>
+          <p v-if="deprecationNotice.message" class="text-base m-0">
+            <MarkdownText :text="deprecationNotice.message" />
+          </p>
+          <p v-else class="text-base m-0 italic">No reason provided</p>
         </div>
 
         <!-- Stats grid -->
