@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const props = defineProps<{
   text: string
+  /** When true, renders link text without the anchor tag (useful when inside another link) */
+  plain?: boolean
 }>()
 
 // Escape HTML to prevent XSS
@@ -36,6 +38,10 @@ function parseMarkdown(text: string): string {
 
   // Links: [text](url) - only allow https, mailto
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
+    // In plain mode, just render the link text without the anchor
+    if (props.plain) {
+      return text
+    }
     const decodedUrl = url.replace(/&amp;/g, '&')
     try {
       const parsed = new URL(decodedUrl)
