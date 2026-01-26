@@ -6,6 +6,20 @@ import {
   ERROR_NPM_FETCH_FAILED,
 } from '#shared/utils/constants'
 
+/** Standard README filenames to try when fetching from jsdelivr (case-sensitive CDN) */
+const standardReadmeFilenames = [
+  'README.md',
+  'readme.md',
+  'Readme.md',
+  'README',
+  'readme',
+  'README.markdown',
+  'readme.markdown',
+]
+
+/** Matches standard README filenames (case-insensitive, for checking registry metadata) */
+const standardReadmePattern = /^readme(\.md|\.markdown)?$/i
+
 /**
  * Fetch README from jsdelivr CDN for a specific package version.
  * Falls back through common README filenames.
@@ -59,40 +73,40 @@ export default defineCachedEventHandler(
       const packageData = await fetchNpmPackage(packageName)
 
       let readmeContent: string | undefined
+      let readmeFilename: string | undefined
 
       // If a specific version is requested, get README from that version
       if (version) {
         const versionData = packageData.versions[version]
         if (versionData) {
           readmeContent = versionData.readme
+          readmeFilename = versionData.readmeFilename
         }
       } else {
         // Use the packument-level readme (from latest version)
         readmeContent = packageData.readme
+        readmeFilename = packageData.readmeFilename
       }
 
-      const standardReadmeFilenames = [
-        'README.md',
-        'readme.md',
-        'Readme.md',
-        'README',
-        'readme',
-        'README.markdown',
-        'readme.markdown',
-      ]
+      const hasValidNpmReadme = readmeContent && readmeContent !== NPM_MISSING_README_SENTINEL
 
-      // If no README in packument or if README is not in the standard filenames, try fetching from jsdelivr (package tarball)
-      if (
-        !readmeContent ||
-        readmeContent === NPM_MISSING_README_SENTINEL ||
-        !isStandardReadme(packageData.readmeFilename, standardReadmeFilenames)
-      ) {
-        readmeContent =
-          (await fetchReadmeFromJsdelivr(packageName, standardReadmeFilenames, version)) ??
-          undefined
+      // If no README in packument, or if readmeFilename is non-standard (e.g., README.zh-TW.md),
+      // try fetching a standard README from jsdelivr (package tarball).
+      // Note: When readmeFilename is missing, we defensively fetch from jsdelivr to ensure
+      // we get a standard English README if one exists.
+      if (!hasValidNpmReadme || !isStandardReadme(readmeFilename)) {
+        const jsdelivrReadme = await fetchReadmeFromJsdelivr(
+          packageName,
+          standardReadmeFilenames,
+          version,
+        )
+        // Only replace npm content if jsdelivr returned something
+        if (jsdelivrReadme) {
+          readmeContent = jsdelivrReadme
+        }
       }
 
-      if (!readmeContent) {
+      if (!readmeContent || readmeContent === NPM_MISSING_README_SENTINEL) {
         return { html: '', playgroundLinks: [] }
       }
 
@@ -117,12 +131,6 @@ export default defineCachedEventHandler(
   },
 )
 
-function isStandardReadme(
-  filename: string | undefined,
-  standardReadmeFilenames: string[],
-): boolean {
-  if (!filename) {
-    return false
-  }
-  return standardReadmeFilenames.includes(filename)
+function isStandardReadme(filename: string | undefined): boolean {
+  return !!filename && standardReadmePattern.test(filename)
 }
