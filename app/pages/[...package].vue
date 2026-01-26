@@ -316,7 +316,12 @@ useSeoMeta({
 
 onKeyStroke('.', () => {
   if (pkg.value && displayVersion.value) {
-    router.push(`/code/${pkg.value.name}/v/${displayVersion.value.version}`)
+    router.push({
+      name: 'code',
+      params: {
+        path: [pkg.value.name, 'v', displayVersion.value.version],
+      },
+    })
   }
 })
 
