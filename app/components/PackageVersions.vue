@@ -309,7 +309,10 @@ function getTagVersions(tag: string): VersionDisplay[] {
             :aria-label="expandedTags.has(row.tag) ? `Collapse ${row.tag}` : `Expand ${row.tag}`"
             @click="expandTagRow(row.tag)"
           >
-            <span v-if="loadingTags.has(row.tag)" class="i-carbon-rotate w-3 h-3 animate-spin" />
+            <span
+              v-if="loadingTags.has(row.tag)"
+              class="i-carbon-rotate-180 w-3 h-3 animate-spin"
+            />
             <span
               v-else
               class="w-3 h-3 transition-transform duration-200"
