@@ -58,7 +58,7 @@ import ProvenanceBadge from '~/components/ProvenanceBadge.vue'
 import MarkdownText from '~/components/MarkdownText.vue'
 import PackageSkeleton from '~/components/PackageSkeleton.vue'
 import PackageCard from '~/components/PackageCard.vue'
-import PackageDownloadStats from '~/components/PackageDownloadStats.vue'
+import PackageDownloadAnalytics from '~/components/PackageDownloadAnalytics.vue'
 import PackagePlaygrounds from '~/components/PackagePlaygrounds.vue'
 import PackageDependencies from '~/components/PackageDependencies.vue'
 import PackageVersions from '~/components/PackageVersions.vue'
@@ -268,21 +268,21 @@ describe('component accessibility audits', () => {
     })
   })
 
-  describe('PackageDownloadStats', () => {
+  describe('PackageDownloadAnalytics', () => {
     it('should have no accessibility violations without data', async () => {
-      const component = await mountSuspended(PackageDownloadStats)
+      const component = await mountSuspended(PackageDownloadAnalytics)
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
 
     it('should have no accessibility violations with download data', async () => {
-      const downloads = [
+      const weeklyDownloads = [
         { downloads: 1000, weekStart: '2024-01-01', weekEnd: '2024-01-07' },
         { downloads: 1200, weekStart: '2024-01-08', weekEnd: '2024-01-14' },
         { downloads: 1500, weekStart: '2024-01-15', weekEnd: '2024-01-21' },
-      ]
-      const component = await mountSuspended(PackageDownloadStats, {
-        props: { downloads },
+      ] as WeeklyDownloadPoint[]
+      const component = await mountSuspended(PackageDownloadAnalytics, {
+        props: { weeklyDownloads, inModal: true, packageName: 'Nuxt', createdIso: null },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
