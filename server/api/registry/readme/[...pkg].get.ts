@@ -12,21 +12,12 @@ import {
  */
 async function fetchReadmeFromJsdelivr(
   packageName: string,
+  readmeFilenames: string[],
   version?: string,
 ): Promise<string | null> {
-  const filenames = [
-    `README.${navigator.language}.md`,
-    'README.md',
-    'readme.md',
-    'Readme.md',
-    'README',
-    'readme',
-    'README.markdown',
-    'readme.markdown',
-  ]
   const versionSuffix = version ? `@${version}` : ''
 
-  for (const filename of filenames) {
+  for (const filename of readmeFilenames) {
     try {
       const url = `https://cdn.jsdelivr.net/npm/${packageName}${versionSuffix}/${filename}`
       const response = await fetch(url)
@@ -80,13 +71,29 @@ export default defineCachedEventHandler(
         readmeContent = packageData.readme
       }
 
+      const standardReadmeFilenames = [
+        'README.md',
+        'readme.md',
+        'Readme.md',
+        'README',
+        'readme',
+        'README.markdown',
+        'readme.markdown',
+      ]
+
       // If no README in packument, try fetching from jsdelivr (package tarball)
       if (
         !readmeContent ||
         readmeContent === NPM_MISSING_README_SENTINEL ||
-        !readmeFilenameMatchesLocale(packageData.readmeFilename)
+        !isPreferredReadme(packageData.readmeFilename, standardReadmeFilenames)
       ) {
-        readmeContent = (await fetchReadmeFromJsdelivr(packageName, version)) ?? undefined
+        const locale = navigator.language
+        readmeContent =
+          (await fetchReadmeFromJsdelivr(
+            packageName,
+            [`README.${locale}.md`, ...standardReadmeFilenames],
+            version,
+          )) ?? undefined
       }
 
       if (!readmeContent) {
@@ -114,20 +121,12 @@ export default defineCachedEventHandler(
   },
 )
 
-function readmeFilenameMatchesLocale(filename: string | undefined): boolean {
+function isPreferredReadme(
+  filename: string | undefined,
+  standardReadmeFilenames: string[],
+): boolean {
   if (!filename) {
     return false
   }
-
-  const filenames = [
-    'README.md',
-    'readme.md',
-    'Readme.md',
-    'README',
-    'readme',
-    'README.markdown',
-    'readme.markdown',
-  ]
-
-  return filenames.includes(filename) || filename.includes(navigator.language)
+  return standardReadmeFilenames.includes(filename) || filename.includes(navigator.language)
 }
