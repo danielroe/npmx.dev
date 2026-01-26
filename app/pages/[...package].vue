@@ -292,7 +292,7 @@ defineOgImageComponent('Package', {
 </script>
 
 <template>
-  <main class="container py-8 sm:py-12 overflow-hidden">
+  <main class="container py-8 sm:py-12 overflow-hidden w-full">
     <PackageSkeleton v-if="status === 'pending'" />
 
     <article v-else-if="status === 'success' && pkg" class="animate-fade-in min-w-0">
