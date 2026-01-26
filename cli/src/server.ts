@@ -3,8 +3,10 @@ import { H3, HTTPError, handleCors, type H3Event } from 'h3-next'
 import type { CorsOptions } from 'h3-next'
 
 import type { ConnectorState, PendingOperation, OperationType, ApiResponse } from './types.ts'
+import { logDebug, logError } from './logger.ts'
 import {
   getNpmUser,
+  getNpmAvatar,
   orgAddUser,
   orgRemoveUser,
   orgListUsers,
@@ -20,6 +22,7 @@ import {
   ownerAdd,
   ownerRemove,
   packageInit,
+  validateScopeTeam,
   type NpmExecResult,
 } from './npm-client.ts'
 
@@ -48,6 +51,7 @@ export function createConnectorApp(expectedToken: string) {
       token: expectedToken,
       connectedAt: 0,
       npmUser: null,
+      avatar: null,
     },
     operations: [],
   }
@@ -74,14 +78,16 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 401, message: 'Invalid token' })
     }
 
-    const npmUser = await getNpmUser()
+    const [npmUser, avatar] = await Promise.all([getNpmUser(), getNpmAvatar()])
     state.session.connectedAt = Date.now()
     state.session.npmUser = npmUser
+    state.session.avatar = avatar
 
     return {
       success: true,
       data: {
         npmUser,
+        avatar,
         connectedAt: state.session.connectedAt,
       },
     } as ApiResponse
@@ -97,6 +103,7 @@ export function createConnectorApp(expectedToken: string) {
       success: true,
       data: {
         npmUser: state.session.npmUser,
+        avatar: state.session.avatar,
         operations: state.operations,
       },
     } as ApiResponse
@@ -446,6 +453,17 @@ export function createConnectorApp(expectedToken: string) {
 
     // Decode the team name (handles encoded colons like nuxt%3Adevelopers)
     const scopeTeam = decodeURIComponent(scopeTeamRaw)
+
+    try {
+      validateScopeTeam(scopeTeam)
+    } catch (err) {
+      logError('scope:team validation failed')
+      logDebug(err, { scopeTeamRaw, scopeTeam })
+      throw new HTTPError({
+        statusCode: 400,
+        message: `Invalid scope:team format: ${scopeTeam}. Expected @scope:team`,
+      })
+    }
 
     const result = await teamListUsers(scopeTeam)
     if (result.exitCode !== 0) {
