@@ -44,9 +44,9 @@ function parseMarkdown(text: string): string {
     }
     const decodedUrl = url.replace(/&amp;/g, '&')
     try {
-      const parsed = new URL(decodedUrl)
-      if (['https:', 'mailto:'].includes(parsed.protocol)) {
-        const safeUrl = parsed.toString().replace(/"/g, '&quot;')
+      const { protocol, href } = new URL(decodedUrl)
+      if (['https:', 'mailto:'].includes(protocol)) {
+        const safeUrl = href.replace(/"/g, '&quot;')
         return `<a href="${safeUrl}" rel="nofollow noreferrer noopener" target="_blank">${text}</a>`
       }
     } catch {}
