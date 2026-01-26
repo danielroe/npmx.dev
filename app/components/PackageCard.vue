@@ -80,7 +80,6 @@ const emit = defineEmits<{
               <dd>
                 <NuxtTime
                   :datetime="result.package.date"
-                  :title="result.package.date"
                   year="numeric"
                   month="short"
                   day="numeric"
