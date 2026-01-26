@@ -81,19 +81,15 @@ export default defineCachedEventHandler(
         'readme.markdown',
       ]
 
-      // If no README in packument, try fetching from jsdelivr (package tarball)
+      // If no README in packument or if README is not in the standard filenames, try fetching from jsdelivr (package tarball)
       if (
         !readmeContent ||
         readmeContent === NPM_MISSING_README_SENTINEL ||
-        !isPreferredReadme(packageData.readmeFilename, standardReadmeFilenames)
+        !isStandardReadme(packageData.readmeFilename, standardReadmeFilenames)
       ) {
-        const locale = navigator.language
         readmeContent =
-          (await fetchReadmeFromJsdelivr(
-            packageName,
-            [`README.${locale}.md`, ...standardReadmeFilenames],
-            version,
-          )) ?? undefined
+          (await fetchReadmeFromJsdelivr(packageName, standardReadmeFilenames, version)) ??
+          undefined
       }
 
       if (!readmeContent) {
@@ -121,12 +117,12 @@ export default defineCachedEventHandler(
   },
 )
 
-function isPreferredReadme(
+function isStandardReadme(
   filename: string | undefined,
   standardReadmeFilenames: string[],
 ): boolean {
   if (!filename) {
     return false
   }
-  return standardReadmeFilenames.includes(filename) || filename.includes(navigator.language)
+  return standardReadmeFilenames.includes(filename)
 }
