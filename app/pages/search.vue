@@ -377,6 +377,11 @@ defineOgImageComponent('Default', {
                 />
                 <!-- Hidden submit button for accessibility (form must have submit button per WCAG) -->
                 <button type="submit" class="sr-only">Search</button>
+                <span
+                  v-show="inputValue"
+                  @click="inputValue = ''"
+                  class="i-solar-close-circle-linear w-3.5 h-3.5 cursor-pointer -ml-5"
+                />
               </div>
             </div>
           </form>
