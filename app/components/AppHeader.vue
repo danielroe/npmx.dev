@@ -54,6 +54,9 @@ withDefaults(
             <span class="hidden sm:inline">github</span>
           </a>
         </li>
+        <li class="flex">
+          <AuthButton />
+        </li>
       </ul>
     </nav>
   </header>

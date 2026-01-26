@@ -15,9 +15,13 @@ export default defineNuxtConfig({
     'nuxt-og-image',
     '@nuxt/test-utils',
     '@vite-pwa/nuxt',
+    'nuxt-auth-utils',
   ],
 
   devtools: { enabled: true },
+  devServer: {
+    host: '127.0.0.1',
+  },
 
   app: {
     head: {
@@ -128,5 +132,9 @@ export default defineNuxtConfig({
         'validate-npm-package-name',
       ],
     },
+  },
+
+  auth: {
+    atproto: true,
   },
 })
