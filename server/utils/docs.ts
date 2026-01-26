@@ -1,8 +1,11 @@
 /**
  * API Documentation Generator
  *
- * Generates TypeScript API documentation for npm packages using `deno doc`.
+ * Generates TypeScript API documentation for npm packages.
  * Uses esm.sh to resolve package types, which handles @types/* packages automatically.
+ *
+ * In production, uses a Deno microservice to generate docs.
+ * In development, falls back to local deno subprocess if available.
  *
  * @module server/utils/docs
  */
@@ -25,8 +28,17 @@ const execFileAsync = promisify(execFile)
 // Configuration
 // =============================================================================
 
+/** URL of the docs generation microservice */
+const DOCS_API_URL = process.env.DOCS_API_URL || 'https://docs-api.npmx.dev/api/generate'
+
+/** Optional API secret for authenticating with the microservice */
+const DOCS_API_SECRET = process.env.DOCS_API_SECRET
+
 /** Timeout for deno doc command in milliseconds (2 minutes) */
 const DENO_DOC_TIMEOUT_MS = 2 * 60 * 1000
+
+/** Timeout for remote API requests in milliseconds (2 minutes) */
+const REMOTE_API_TIMEOUT_MS = 2 * 60 * 1000
 
 /** Maximum buffer size for deno doc output (50MB for large packages like React) */
 const DENO_DOC_MAX_BUFFER = 50 * 1024 * 1024
@@ -104,11 +116,8 @@ export async function generateDocsWithDeno(
   packageName: string,
   version: string,
 ): Promise<DocsGenerationResult | null> {
-  // Verify deno is available
-  await verifyDenoInstalled()
-
-  const url = buildEsmShUrl(packageName, version)
-  const result = await runDenoDoc(url)
+  // Get doc nodes from remote API (production) or local deno (development)
+  const result = await getDocNodes(packageName, version)
 
   if (!result.nodes || result.nodes.length === 0) {
     return null
@@ -146,14 +155,28 @@ async function isDenoInstalled(): Promise<boolean> {
 }
 
 /**
- * Verify that deno is installed and available.
- * @throws {Error} If deno is not installed
+ * Get documentation nodes for a package.
+ *
+ * In production, calls the remote docs-api microservice.
+ * In development, uses local deno subprocess if available, otherwise falls back to remote.
  */
-async function verifyDenoInstalled(): Promise<void> {
-  const available = await isDenoInstalled()
-  if (!available) {
-    throw new Error('Deno is not installed. Please install Deno to generate API documentation: https://deno.land')
+async function getDocNodes(packageName: string, version: string): Promise<DenoDocResult> {
+  const isDev = import.meta.dev
+
+  if (isDev) {
+    // In development, prefer local deno if available
+    const hasLocalDeno = await isDenoInstalled()
+    if (hasLocalDeno) {
+      const url = buildEsmShUrl(packageName, version)
+      return runLocalDenoDoc(url)
+    }
+    // Fall back to remote if deno not installed locally
+    // eslint-disable-next-line no-console
+    console.warn('Deno not installed locally, falling back to remote docs API')
   }
+
+  // Production or dev fallback: use remote microservice
+  return runRemoteDenoDoc(packageName, version)
 }
 
 /**
@@ -164,29 +187,84 @@ function buildEsmShUrl(packageName: string, version: string): string {
 }
 
 /**
- * Run deno doc and parse the JSON output.
+ * Call the remote docs-api microservice to generate documentation.
  */
-async function runDenoDoc(specifier: string): Promise<DenoDocResult> {
+async function runRemoteDenoDoc(packageName: string, version: string): Promise<DenoDocResult> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  }
+
+  // Add authorization header if secret is configured
+  if (DOCS_API_SECRET) {
+    headers['Authorization'] = `Bearer ${DOCS_API_SECRET}`
+  }
+
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), REMOTE_API_TIMEOUT_MS)
+
   try {
-    const { stdout } = await execFileAsync(
-      'deno',
-      ['doc', '--json', specifier],
-      {
-        maxBuffer: DENO_DOC_MAX_BUFFER,
-        timeout: DENO_DOC_TIMEOUT_MS,
-      },
-    )
+    const response = await fetch(DOCS_API_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ package: packageName, version }),
+      signal: controller.signal,
+    })
+
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      const errorBody = await response.json().catch(() => ({}))
+      const errorMessage = (errorBody as { message?: string }).message || response.statusText
+
+      if (response.status === 404) {
+        // Package types not found - return empty result
+        return { version: 1, nodes: [] }
+      }
+
+      throw new Error(`Docs API error (${response.status}): ${errorMessage}`)
+    }
+
+    const data = (await response.json()) as { nodes: DenoDocNode[] }
+    return { version: 1, nodes: data.nodes }
+  } catch (error) {
+    clearTimeout(timeoutId)
+
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        throw new Error(
+          `Docs API timed out after ${REMOTE_API_TIMEOUT_MS / 1000}s - package may be too large`,
+          { cause: error },
+        )
+      }
+      throw new Error(`Docs API request failed: ${error.message}`, { cause: error })
+    }
+    throw new Error('Docs API request failed with unknown error', { cause: error })
+  }
+}
+
+/**
+ * Run local deno doc subprocess and parse the JSON output.
+ * Used in development when deno is installed locally.
+ */
+async function runLocalDenoDoc(specifier: string): Promise<DenoDocResult> {
+  try {
+    const { stdout } = await execFileAsync('deno', ['doc', '--json', specifier], {
+      maxBuffer: DENO_DOC_MAX_BUFFER,
+      timeout: DENO_DOC_TIMEOUT_MS,
+    })
 
     return JSON.parse(stdout) as DenoDocResult
-  }
-  catch (error) {
+  } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('ETIMEDOUT') || error.message.includes('timed out')) {
-        throw new Error(`Deno doc timed out after ${DENO_DOC_TIMEOUT_MS / 1000}s - package may be too large`)
+        throw new Error(
+          `Deno doc timed out after ${DENO_DOC_TIMEOUT_MS / 1000}s - package may be too large`,
+          { cause: error },
+        )
       }
-      throw new Error(`Deno doc failed: ${error.message}`)
+      throw new Error(`Deno doc failed: ${error.message}`, { cause: error })
     }
-    throw new Error('Deno doc failed with unknown error')
+    throw new Error('Deno doc failed with unknown error', { cause: error })
   }
 }
 
@@ -254,8 +332,7 @@ function mergeOverloads(nodes: DenoDocNode[]): MergedSymbol[] {
     const existing = byKey.get(key)
     if (existing) {
       existing.push(node)
-    }
-    else {
+    } else {
       byKey.set(key, [node])
     }
   }
@@ -290,7 +367,7 @@ function groupMergedByKind(symbols: MergedSymbol[]): Record<string, MergedSymbol
   const grouped: Record<string, MergedSymbol[]> = {}
 
   for (const sym of symbols) {
-    const kindGroup = grouped[sym.kind] ??= []
+    const kindGroup = (grouped[sym.kind] ??= [])
     kindGroup.push(sym)
   }
 
@@ -304,7 +381,10 @@ function groupMergedByKind(symbols: MergedSymbol[]): Record<string, MergedSymbol
 /**
  * Render all documentation nodes as HTML.
  */
-async function renderDocNodes(symbols: MergedSymbol[], symbolLookup: SymbolLookup): Promise<string> {
+async function renderDocNodes(
+  symbols: MergedSymbol[],
+  symbolLookup: SymbolLookup,
+): Promise<string> {
   const grouped = groupMergedByKind(symbols)
   const sections: string[] = []
 
@@ -344,7 +424,10 @@ async function renderKindSection(
 /**
  * Render a merged symbol (with all its overloads).
  */
-async function renderMergedSymbol(symbol: MergedSymbol, symbolLookup: SymbolLookup): Promise<string> {
+async function renderMergedSymbol(
+  symbol: MergedSymbol,
+  symbolLookup: SymbolLookup,
+): Promise<string> {
   const primaryNode = symbol.nodes[0]
   if (!primaryNode) return '' // Safety check - should never happen
 
@@ -356,7 +439,9 @@ async function renderMergedSymbol(symbol: MergedSymbol, symbolLookup: SymbolLook
 
   // Header
   lines.push(`<header class="docs-symbol-header">`)
-  lines.push(`<a href="#${id}" class="docs-anchor" aria-label="Link to ${escapeHtml(symbol.name)}">#</a>`)
+  lines.push(
+    `<a href="#${id}" class="docs-anchor" aria-label="Link to ${escapeHtml(symbol.name)}">#</a>`,
+  )
   lines.push(`<h3 class="docs-symbol-name">${escapeHtml(symbol.name)}</h3>`)
   lines.push(`<span class="docs-badge docs-badge--${symbol.kind}">${symbol.kind}</span>`)
   if (primaryNode.functionDef?.isAsync) {
@@ -398,11 +483,9 @@ async function renderMergedSymbol(symbol: MergedSymbol, symbolLookup: SymbolLook
   // Type-specific members
   if (symbol.kind === 'class' && primaryNode.classDef) {
     lines.push(renderClassMembers(primaryNode.classDef))
-  }
-  else if (symbol.kind === 'interface' && primaryNode.interfaceDef) {
+  } else if (symbol.kind === 'interface' && primaryNode.interfaceDef) {
     lines.push(renderInterfaceMembers(primaryNode.interfaceDef))
-  }
-  else if (symbol.kind === 'enum' && primaryNode.enumDef) {
+  } else if (symbol.kind === 'enum' && primaryNode.enumDef) {
     lines.push(renderEnumMembers(primaryNode.enumDef))
   }
 
@@ -439,7 +522,9 @@ async function renderJsDocTags(tags: JsDocTag[], symbolLookup: SymbolLookup): Pr
     lines.push(`<h4>Parameters</h4>`)
     lines.push(`<dl>`)
     for (const param of params) {
-      lines.push(`<dt><code>${escapeHtml(param.name || '')}${param.optional ? '?' : ''}</code></dt>`)
+      lines.push(
+        `<dt><code>${escapeHtml(param.name || '')}${param.optional ? '?' : ''}</code></dt>`,
+      )
       if (param.doc) {
         lines.push(`<dd>${parseJsDocLinks(param.doc, symbolLookup)}</dd>`)
       }
@@ -517,7 +602,9 @@ function renderClassMembers(def: NonNullable<DenoDocNode['classDef']>): string {
       const modStr = modifiers.length > 0 ? `${modifiers.join(' ')} ` : ''
       const type = formatType(prop.tsType)
       const opt = prop.optional ? '?' : ''
-      lines.push(`<dt><code>${escapeHtml(modStr)}${escapeHtml(prop.name)}${opt}: ${escapeHtml(type)}</code></dt>`)
+      lines.push(
+        `<dt><code>${escapeHtml(modStr)}${escapeHtml(prop.name)}${opt}: ${escapeHtml(type)}</code></dt>`,
+      )
       if (prop.jsDoc?.doc) {
         lines.push(`<dd>${escapeHtml(prop.jsDoc.doc.split('\n')[0] ?? '')}</dd>`)
       }
@@ -534,7 +621,9 @@ function renderClassMembers(def: NonNullable<DenoDocNode['classDef']>): string {
       const params = method.functionDef?.params?.map(p => formatParam(p)).join(', ') || ''
       const ret = formatType(method.functionDef?.returnType) || 'void'
       const staticStr = method.isStatic ? 'static ' : ''
-      lines.push(`<dt><code>${escapeHtml(staticStr)}${escapeHtml(method.name)}(${escapeHtml(params)}): ${escapeHtml(ret)}</code></dt>`)
+      lines.push(
+        `<dt><code>${escapeHtml(staticStr)}${escapeHtml(method.name)}(${escapeHtml(params)}): ${escapeHtml(ret)}</code></dt>`,
+      )
       if (method.jsDoc?.doc) {
         lines.push(`<dd>${escapeHtml(method.jsDoc.doc.split('\n')[0] ?? '')}</dd>`)
       }
@@ -561,7 +650,9 @@ function renderInterfaceMembers(def: NonNullable<DenoDocNode['interfaceDef']>): 
       const type = formatType(prop.tsType)
       const opt = prop.optional ? '?' : ''
       const ro = prop.readonly ? 'readonly ' : ''
-      lines.push(`<dt><code>${escapeHtml(ro)}${escapeHtml(prop.name)}${opt}: ${escapeHtml(type)}</code></dt>`)
+      lines.push(
+        `<dt><code>${escapeHtml(ro)}${escapeHtml(prop.name)}${opt}: ${escapeHtml(type)}</code></dt>`,
+      )
       if (prop.jsDoc?.doc) {
         lines.push(`<dd>${escapeHtml(prop.jsDoc.doc.split('\n')[0] ?? '')}</dd>`)
       }
@@ -577,7 +668,9 @@ function renderInterfaceMembers(def: NonNullable<DenoDocNode['interfaceDef']>): 
     for (const method of methods) {
       const params = method.params?.map(p => formatParam(p)).join(', ') || ''
       const ret = formatType(method.returnType) || 'void'
-      lines.push(`<dt><code>${escapeHtml(method.name)}(${escapeHtml(params)}): ${escapeHtml(ret)}</code></dt>`)
+      lines.push(
+        `<dt><code>${escapeHtml(method.name)}(${escapeHtml(params)}): ${escapeHtml(ret)}</code></dt>`,
+      )
       if (method.jsDoc?.doc) {
         lines.push(`<dd>${escapeHtml(method.jsDoc.doc.split('\n')[0] ?? '')}</dd>`)
       }
@@ -626,13 +719,17 @@ function renderToc(symbols: MergedSymbol[]): string {
 
     const title = KIND_TITLES[kind] || kind
     lines.push(`<li>`)
-    lines.push(`<a href="#section-${kind}" class="font-semibold text-fg-muted hover:text-fg block mb-1">${title} <span class="text-fg-subtle font-normal">(${kindSymbols.length})</span></a>`)
+    lines.push(
+      `<a href="#section-${kind}" class="font-semibold text-fg-muted hover:text-fg block mb-1">${title} <span class="text-fg-subtle font-normal">(${kindSymbols.length})</span></a>`,
+    )
 
     const showSymbols = kindSymbols.slice(0, MAX_TOC_ITEMS_PER_KIND)
     lines.push(`<ul class="pl-3 space-y-0.5 border-l border-border/50">`)
     for (const symbol of showSymbols) {
       const id = createSymbolId(symbol.kind, symbol.name)
-      lines.push(`<li><a href="#${id}" class="text-fg-subtle hover:text-fg font-mono text-xs block py-0.5 truncate">${escapeHtml(symbol.name)}</a></li>`)
+      lines.push(
+        `<li><a href="#${id}" class="text-fg-subtle hover:text-fg font-mono text-xs block py-0.5 truncate">${escapeHtml(symbol.name)}</a></li>`,
+      )
     }
     if (kindSymbols.length > MAX_TOC_ITEMS_PER_KIND) {
       const remaining = kindSymbols.length - MAX_TOC_ITEMS_PER_KIND
