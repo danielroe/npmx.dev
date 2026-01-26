@@ -48,7 +48,7 @@ const emit = defineEmits<{
         >
           <MarkdownText :text="result.package.description" />
         </p>
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-fg-subtle">
+        <div class="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-xs text-fg-subtle">
           <dl v-if="showPublisher || result.package.date" class="flex items-center gap-4 m-0">
             <div
               v-if="showPublisher && result.package.publisher?.username"
@@ -73,7 +73,11 @@ const emit = defineEmits<{
       </div>
       <div class="flex flex-col gap-2 shrink-0">
         <div class="text-fg-subtle flex items-start gap-2 justify-end">
-          <span v-if="result.package.version" class="font-mono text-xs truncate">
+          <span
+            v-if="result.package.version"
+            class="font-mono text-xs truncate max-w-20 sm:max-w-32"
+            :title="result.package.version"
+          >
             v{{ result.package.version }}
           </span>
           <div
