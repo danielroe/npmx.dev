@@ -4,6 +4,7 @@ import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { onKeyStroke } from '@vueuse/core'
 import { joinURL } from 'ufo'
+import { areUrlsEquivalent } from '#shared/utils/url'
 
 definePageMeta({
   name: 'package',
@@ -205,7 +206,15 @@ const repoProviderIcon = computed(() => {
 })
 
 const homepageUrl = computed(() => {
-  return displayVersion.value?.homepage ?? null
+  const homepage = displayVersion.value?.homepage
+  if (!homepage) return null
+
+  // Don't show homepage if it's the same as the repository URL
+  if (repositoryUrl.value && areUrlsEquivalent(homepage, repositoryUrl.value)) {
+    return null
+  }
+
+  return homepage
 })
 
 function normalizeGitUrl(url: string): string {
