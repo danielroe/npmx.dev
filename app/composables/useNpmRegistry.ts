@@ -307,7 +307,8 @@ async function fetchOrgPackageNames(orgName: string): Promise<string[]> {
 interface MinimalPackument {
   'name': string
   'description'?: string
-  'dist-tags': Record<string, string>
+  // `dist-tags` can be missing in some later unpublished packages
+  'dist-tags'?: Record<string, string>
   'time': Record<string, string>
   'maintainers'?: NpmPerson[]
 }
@@ -333,7 +334,10 @@ async function fetchMinimalPackument(name: string): Promise<MinimalPackument | n
  * Convert packument to search result format for display
  */
 function packumentToSearchResult(pkg: MinimalPackument): NpmSearchResult {
-  const latestVersion = pkg['dist-tags'].latest || Object.values(pkg['dist-tags'])[0] || ''
+  let latestVersion = ''
+  if (pkg['dist-tags']) {
+    latestVersion = pkg['dist-tags'].latest || Object.values(pkg['dist-tags'])[0] || ''
+  }
   const modified = pkg.time.modified || pkg.time[latestVersion] || ''
 
   return {
@@ -382,6 +386,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
         const packuments = await Promise.all(batch.map(name => fetchMinimalPackument(name)))
 
         for (const pkg of packuments) {
+          // Filter out any unpublished packages (non-existant dist-tags)
           if (pkg && pkg['dist-tags']) {
             results.push(packumentToSearchResult(pkg))
           }
