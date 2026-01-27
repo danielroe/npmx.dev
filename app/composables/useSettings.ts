@@ -80,3 +80,27 @@ export function useAccentColor() {
     setAccentColor,
   }
 }
+
+/**
+ * Applies accent color before hydration to prevent flash of default color.
+ * Call this from app.vue to ensure accent color is applied on every page.
+ */
+export function initAccentOnPrehydrate() {
+  // Callback is stringified by Nuxt - external variables won't be available.
+  // Colors must be hardcoded since ACCENT_COLORS can't be referenced.
+  onPrehydrate(() => {
+    const colors: Record<AccentColorId, string> = {
+      rose: '#e9aeba',
+      amber: '#fbbf24',
+      emerald: '#34d399',
+      sky: '#38bdf8',
+      violet: '#a78bfa',
+      coral: '#fb7185',
+    }
+    const settings = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
+    const color = settings.accentColorId ? colors[settings.accentColorId as AccentColorId] : null
+    if (color) {
+      document.documentElement.style.setProperty('--accent-color', color)
+    }
+  })
+}

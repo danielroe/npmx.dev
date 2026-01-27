@@ -1,7 +1,3 @@
-import { ACCENT_COLORS } from './shared/utils/constants'
-
-const accentInitScript = `(function(){var s=JSON.parse(localStorage.getItem('npmx-settings'));if(s&&s.accentColorId){document.documentElement.style.setProperty('--accent-color',${JSON.stringify(ACCENT_COLORS)}[s.accentColorId])}})()`
-
 export default defineNuxtConfig({
   modules: [
     function (_, nuxt) {
@@ -48,11 +44,6 @@ export default defineNuxtConfig({
           type: 'application/opensearchdescription+xml',
           title: 'npm',
           href: '/opensearch.xml',
-        },
-      ],
-      script: [
-        {
-          innerHTML: accentInitScript,
         },
       ],
     },
