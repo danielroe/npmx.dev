@@ -131,9 +131,9 @@
       "optional": "可选"
     },
     "peer_dependencies": {
-      "title": "伴生依赖（{count}个）",
-      "list_label": "包 peer 依赖",
-      "show_all": "显示全部{count}个伴生依赖"
+      "title": "对等依赖（{count}个）",
+      "list_label": "包对等依赖",
+      "show_all": "显示全部{count}个对等依赖"
     },
     "optional_dependencies": {
       "title": "可选依赖（{count}个）",
@@ -143,7 +143,7 @@
     "maintainers": {
       "title": "维护者",
       "list_label": "包维护者",
-      "you": "（你）",
+      "you": "（您）",
       "via": "来自 {teams}",
       "remove_owner": "移除 {name} 为拥有者",
       "username_to_add": "要添加为拥有者的用户名",
@@ -266,9 +266,9 @@
       "close": "关闭",
       "connected": "已连接",
       "logged_in_as": "登录为 {'@'}{user}",
-      "connected_hint": "现在你可以通过 Web UI 管理包和组织。",
+      "connected_hint": "现在您可以通过 Web UI 管理包和组织。",
       "disconnect": "断开连接",
-      "run_hint": "在你的机器上运行连接器以启用管理功能。",
+      "run_hint": "在您的机器上运行连接器以启用管理功能。",
       "copy_command": "复制命令",
       "copied": "已复制",
       "paste_token": "然后将令牌粘贴如下连接：",
@@ -277,7 +277,7 @@
       "advanced": "高级选项",
       "port_label": "端口",
       "warning": "警告",
-      "warning_text": "这允许 npmx 访问你的 npm CLI。仅连接你信任的站点。",
+      "warning_text": "这将允许 npmx 访问您的 npm CLI。请仅连接您信任的站点。",
       "connect": "连接",
       "connecting": "连接中..."
     }
@@ -348,7 +348,7 @@
       "change_role_for": "更改 {name} 的角色",
       "remove_from_org": "从组织中移除 {name}",
       "view_team": "查看 {team} 团队",
-      "no_match": "没有成员匹配你的筛选条件",
+      "no_match": "没有成员匹配您的筛选条件",
       "username_label": "用户名",
       "username_placeholder": "用户名...",
       "role_label": "角色",
@@ -396,11 +396,11 @@
     "orgs_page": {
       "title": "组织",
       "back_to_profile": "返回个人资料",
-      "connect_required": "连接本地 CLI 以查看你的组织。",
+      "connect_required": "连接本地 CLI 以查看您的组织。",
       "connect_hint_prefix": "运行",
       "connect_hint_suffix": "以开始。",
-      "own_orgs_only": "你只能查看自己的组织。",
-      "view_your_orgs": "查看你的组织",
+      "own_orgs_only": "您只能查看自己的组织。",
+      "view_your_orgs": "查看您的组织",
       "loading": "加载组织中...",
       "empty": "未找到组织。",
       "empty_hint": "已根据您限定范围的包名中检测到组织。",
@@ -415,7 +415,7 @@
       "close": "关闭",
       "success": "包已声明！",
       "success_detail": "{name}{'@'}0.0.0 已发布到 npm。",
-      "success_hint": "你现在可以使用 npm publish 发布新版本到这个包。",
+      "success_hint": "您现在可以使用 npm publish 发布新版本到这个包。",
       "view_package": "查看包",
       "invalid_name": "无效的包名：",
       "available": "这个名称可用！",
@@ -423,7 +423,7 @@
       "similar_warning": "存在相似的包 — npm 可能会拒绝这个名称：",
       "related": "相关包：",
       "scope_warning_title": "考虑使用一个限定范围的包",
-      "scope_warning_text": "未限定范围的包名是共享资源。当你计划发布并持续维护一个包时，方可声明此类名称。对于个人或组织项目，请使用限定范围的包名，如 {'@'}{username}/{name}。",
+      "scope_warning_text": "未限定范围的包名是共享资源。当您计划发布并持续维护一个包时，方可声明此类名称。对于个人或组织项目，请使用限定范围的包名，如 {'@'}{username}/{name}。",
       "connect_required": "连接到本地连接器以声明这个包名。",
       "connect_button": "连接到连接器",
       "publish_hint": "这将发布一个最小的占位符包。",
@@ -478,7 +478,7 @@
     "github": "GitHub",
     "packages": "包",
     "packages_dropdown": {
-      "title": "你的包",
+      "title": "您的包",
       "loading": "加载中...",
       "error": "加载包失败",
       "empty": "没有找到包",
@@ -486,7 +486,7 @@
     },
     "orgs": "组织",
     "orgs_dropdown": {
-      "title": "你的组织",
+      "title": "您的组织",
       "loading": "加载中...",
       "error": "加载组织失败",
       "empty": "没有找到组织",
