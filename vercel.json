@@ -1,5 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    {
+      "source": "/:path((?!api|_nuxt|_v|__nuxt|search|code|\\.md$).*)",
+      "has": [{ "type": "header", "key": "accept", "value": "(.*?)text/markdown(.*)" }],
+      "destination": "/:path.md"
+    }
+  ],
   "redirects": [
     {
       "source": "/",
