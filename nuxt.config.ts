@@ -7,6 +7,20 @@ export default defineNuxtConfig({
         nuxt.options.pwa.pwaAssets.disabled = true
       }
     },
+    // Workaround for Nuxt 4.3.0 regression: https://github.com/nuxt/nuxt/issues/34140
+    // shared-imports.d.ts pulls in app composables during type-checking of shared context,
+    // but the shared context doesn't have access to auto-import globals.
+    // TODO: Remove when Nuxt fixes this upstream
+    function (_, nuxt) {
+      nuxt.hook('prepare:types', ({ sharedReferences }) => {
+        const idx = sharedReferences.findIndex(
+          ref => 'path' in ref && ref.path.endsWith('shared-imports.d.ts'),
+        )
+        if (idx !== -1) {
+          sharedReferences.splice(idx, 1)
+        }
+      })
+    },
     '@unocss/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
@@ -16,7 +30,18 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
+    '@nuxtjs/i18n',
+    '@nuxtjs/color-mode',
   ],
+
+  colorMode: {
+    preference: 'system',
+    fallback: 'dark',
+    dataValue: 'theme',
+    storageKey: 'npmx-color-mode',
+  },
+
+  css: ['~/assets/main.css', 'vue-data-ui/style.css'],
 
   devtools: { enabled: true },
 
@@ -68,6 +93,9 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
 
   nitro: {
+    experimental: {
+      wasm: true,
+    },
     externals: {
       inline: [
         'shiki',
@@ -77,6 +105,22 @@ export default defineNuxtConfig({
         '@shikijs/engine-javascript',
         '@shikijs/core',
       ],
+      external: ['@deno/doc'],
+    },
+    rollupConfig: {
+      output: {
+        paths: {
+          '@deno/doc': '@jsr/deno__doc',
+        },
+      },
+    },
+    // Storage configuration for local development
+    // In production (Vercel), this is overridden by modules/cache.ts
+    storage: {
+      'fetch-cache': {
+        driver: 'fsLite',
+        base: './.cache/fetch',
+      },
     },
   },
 
@@ -125,10 +169,24 @@ export default defineNuxtConfig({
       include: [
         '@vueuse/core',
         'vue-data-ui/vue-ui-sparkline',
+        'vue-data-ui/vue-ui-xy',
         'virtua/vue',
         'semver',
         'validate-npm-package-name',
       ],
     },
+  },
+
+  i18n: {
+    defaultLocale: 'en',
+    strategy: 'no_prefix',
+    detectBrowserLanguage: false,
+    langDir: 'locales',
+    locales: [
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'fr', language: 'fr-FR', name: 'Français', file: 'fr.json' },
+      { code: 'zh-CN', language: 'zh-CN', name: '简体中文', file: 'zh-CN.json' },
+      { code: 'it', language: 'it', name: 'Italiano', file: 'it.json' },
+    ],
   },
 })

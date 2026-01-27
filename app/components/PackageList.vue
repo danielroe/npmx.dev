@@ -20,6 +20,8 @@ const props = defineProps<{
   initialPage?: number
   /** Selected result index (for keyboard navigation) */
   selectedIndex?: number
+  /** Search query for highlighting exact matches */
+  searchQuery?: string
 }>()
 
 const emit = defineEmits<{
@@ -111,7 +113,8 @@ defineExpose({
             :show-publisher="showPublisher"
             :selected="index === (selectedIndex ?? -1)"
             :index="index"
-            class="animate-fade-in animate-fill-both"
+            :search-query="searchQuery"
+            class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
             :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
             @focus="emit('select', $event)"
           />
@@ -122,8 +125,10 @@ defineExpose({
     <!-- Loading indicator -->
     <div v-if="isLoading" class="py-4 flex items-center justify-center">
       <div class="flex items-center gap-3 text-fg-muted font-mono text-sm">
-        <span class="w-4 h-4 border-2 border-fg-subtle border-t-fg rounded-full animate-spin" />
-        Loading more...
+        <span
+          class="w-4 h-4 border-2 border-fg-subtle border-t-fg rounded-full motion-safe:animate-spin"
+        />
+        {{ $t('common.loading_more') }}
       </div>
     </div>
 
@@ -132,7 +137,7 @@ defineExpose({
       v-else-if="!hasMore && results.length > 0"
       class="py-4 text-center text-fg-subtle font-mono text-sm"
     >
-      End of results
+      {{ $t('common.end_of_results') }}
     </p>
   </div>
 </template>

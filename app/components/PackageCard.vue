@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   /** The search result object containing package data */
   result: NpmSearchResult
   /** Heading level for the package name (h2 for search, h3 for lists) */
@@ -9,7 +9,17 @@ defineProps<{
   prefetch?: boolean
   selected?: boolean
   index?: number
+  /** Search query for highlighting exact matches */
+  searchQuery?: string
 }>()
+
+/** Check if this package is an exact match for the search query */
+const isExactMatch = computed(() => {
+  if (!props.searchQuery) return false
+  const query = props.searchQuery.trim().toLowerCase()
+  const name = props.result.package.name.toLowerCase()
+  return query === name
+})
 
 const emit = defineEmits<{
   focus: [index: number]
@@ -19,8 +29,17 @@ const emit = defineEmits<{
 <template>
   <article
     class="group card-interactive scroll-mt-48 scroll-mb-6 relative focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-bg focus-within:ring-offset-2 focus-within:ring-fg/50"
-    :class="{ 'bg-bg-muted border-border-hover': selected }"
+    :class="{
+      'bg-bg-muted border-border-hover': selected,
+      'border-accent/30 bg-accent/5': isExactMatch,
+    }"
   >
+    <!-- Glow effect for exact matches -->
+    <div
+      v-if="isExactMatch"
+      class="absolute -inset-px rounded-lg bg-gradient-to-r from-accent/0 via-accent/20 to-accent/0 opacity-100 blur-sm -z-1 pointer-events-none motion-reduce:opacity-50"
+      aria-hidden="true"
+    />
     <div class="mb-2 flex items-baseline justify-between gap-2">
       <component
         :is="headingLevel ?? 'h3'"
@@ -29,13 +48,17 @@ const emit = defineEmits<{
         <NuxtLink
           :to="{ name: 'package', params: { package: result.package.name.split('/') } }"
           :prefetch-on="prefetch ? 'visibility' : 'interaction'"
-          class="focus-visible:outline-none decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
+          class="decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
           :data-result-index="index"
           @focus="index != null && emit('focus', index)"
           @mouseenter="index != null && emit('focus', index)"
+          >{{ result.package.name }}</NuxtLink
         >
-          {{ result.package.name }}
-        </NuxtLink>
+        <span
+          v-if="isExactMatch"
+          class="text-xs px-1.5 py-0.5 ml-2 rounded bg-bg-elevated border border-border-hover text-fg"
+          >{{ $t('search.exact_match') }}</span
+        >
       </component>
       <!-- Mobile: version next to package name -->
       <div class="sm:hidden text-fg-subtle flex items-center gap-1.5 shrink-0">
@@ -70,11 +93,11 @@ const emit = defineEmits<{
               v-if="showPublisher && result.package.publisher?.username"
               class="flex items-center gap-1.5"
             >
-              <dt class="sr-only">Publisher</dt>
+              <dt class="sr-only">{{ $t('package.card.publisher') }}</dt>
               <dd class="font-mono">@{{ result.package.publisher.username }}</dd>
             </div>
             <div v-if="result.package.date" class="flex items-center gap-1.5">
-              <dt class="sr-only">Updated</dt>
+              <dt class="sr-only">{{ $t('package.card.updated') }}</dt>
               <dd>
                 <DateTime
                   :datetime="result.package.date"
@@ -84,6 +107,10 @@ const emit = defineEmits<{
                 />
               </dd>
             </div>
+            <div v-if="result.package.license" class="flex items-center gap-1.5">
+              <dt class="sr-only">{{ $t('package.card.license') }}</dt>
+              <dd>{{ result.package.license }}</dd>
+            </div>
           </dl>
         </div>
         <!-- Mobile: downloads on separate row -->
@@ -92,7 +119,7 @@ const emit = defineEmits<{
           class="sm:hidden flex items-center gap-4 mt-2 text-xs text-fg-subtle m-0"
         >
           <div class="flex items-center gap-1.5">
-            <dt class="sr-only">Weekly downloads</dt>
+            <dt class="sr-only">{{ $t('package.card.weekly_downloads') }}</dt>
             <dd class="flex items-center gap-1.5">
               <span class="i-carbon-chart-line w-3.5 h-3.5 inline-block" aria-hidden="true" />
               <span class="font-mono">{{ formatNumber(result.downloads.weekly) }}/w</span>
@@ -129,7 +156,7 @@ const emit = defineEmits<{
         >
           <span class="i-carbon-chart-line w-3.5 h-3.5 inline-block" aria-hidden="true" />
           <span class="font-mono text-xs">
-            {{ formatNumber(result.downloads.weekly) }} / week
+            {{ formatNumber(result.downloads.weekly) }} {{ $t('common.per_week') }}
           </span>
         </div>
       </div>
@@ -137,7 +164,7 @@ const emit = defineEmits<{
 
     <ul
       v-if="result.package.keywords?.length"
-      aria-label="Keywords"
+      :aria-label="$t('package.card.keywords')"
       class="relative z-10 flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border list-none m-0 p-0"
     >
       <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword" class="tag">

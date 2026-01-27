@@ -85,35 +85,38 @@ onMounted(() => {
   >
     <div class="container py-2 sm:py-6 flex flex-col gap-1 sm:gap-3 text-fg-subtle text-sm">
       <div class="flex flex-row items-center justify-between gap-2 sm:gap-4">
-        <p class="font-mono m-0 hidden sm:block">a better browser for the npm registry</p>
+        <p class="font-mono m-0 hidden sm:block">{{ $t('tagline') }}</p>
         <!-- On mobile, show disclaimer here instead of tagline -->
-        <p class="text-xs text-fg-muted m-0 sm:hidden">not affiliated with npm, Inc.</p>
+        <p class="text-xs text-fg-muted m-0 sm:hidden">{{ $t('non_affiliation_disclaimer') }}</p>
         <div class="flex items-center gap-4 sm:gap-6">
           <a
             href="https://repo.npmx.dev"
+            target="_blank"
             rel="noopener noreferrer"
             class="link-subtle font-mono text-xs min-h-11 min-w- flex items-center"
           >
-            source
+            {{ $t('footer.source') }}
           </a>
           <a
             href="https://social.npmx.dev"
+            target="_blank"
             rel="noopener noreferrer"
             class="link-subtle font-mono text-xs min-h-11 min-w-11 flex items-center"
           >
-            social
+            {{ $t('footer.social') }}
           </a>
           <a
             href="https://chat.npmx.dev"
+            target="_blank"
             rel="noopener noreferrer"
             class="link-subtle font-mono text-xs min-h-11 min-w-11 flex items-center"
           >
-            chat
+            {{ $t('footer.chat') }}
           </a>
         </div>
       </div>
       <p class="text-xs text-fg-muted text-center sm:text-left m-0 hidden sm:block">
-        npm is a registered trademark of npm, Inc. This site is not affiliated with npm, Inc.
+        {{ $t('trademark_disclaimer') }}
       </p>
     </div>
   </footer>
@@ -137,7 +140,12 @@ onMounted(() => {
     z-index: 40;
     /* Hidden by default (translated off-screen) */
     transform: translateY(100%);
-    transition: transform 0.3s ease-out;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .footer-scroll-state {
+      transition: transform 0.3s ease-out;
+    }
   }
 
   /* Show footer when user can scroll up (meaning they've scrolled down) */
