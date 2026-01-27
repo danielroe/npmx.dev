@@ -120,7 +120,7 @@ const tagVersions = ref<Map<string, VersionDisplay[]>>(new Map())
 const loadingTags = ref<Set<string>>(new Set())
 
 const otherVersionsExpanded = shallowRef(false)
-const otherMajorGroups = shallowRef<
+const otherMajorGroups = ref<
   Array<{ major: number; versions: VersionDisplay[]; expanded: boolean }>
 >([])
 const otherVersionsLoading = shallowRef(false)
