@@ -49,8 +49,17 @@ export async function getShikiHighlighter(): Promise<HighlighterCore> {
   return highlighter
 }
 
-export async function highlightCodeBlock(code: string, language: string): Promise<string> {
-  const shiki = await getShikiHighlighter()
+/**
+ * Synchronously highlight a code block using an already-initialized highlighter.
+ * Use this when you have already awaited getShikiHighlighter() and need to
+ * highlight multiple blocks without async overhead (e.g., in marked renderers).
+ *
+ * @param shiki - The initialized Shiki highlighter instance
+ * @param code - The code to highlight
+ * @param language - The language identifier (e.g., 'typescript', 'bash')
+ * @returns HTML string with syntax highlighting
+ */
+export function highlightCodeSync(shiki: HighlighterCore, code: string, language: string): string {
   const loadedLangs = shiki.getLoadedLanguages()
 
   if (loadedLangs.includes(language as never)) {
@@ -72,6 +81,19 @@ export async function highlightCodeBlock(code: string, language: string): Promis
   // Plain code block for unknown languages
   const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   return `<pre><code class="language-${language}">${escaped}</code></pre>\n`
+}
+
+/**
+ * Highlight a code block with syntax highlighting (async convenience wrapper).
+ * Initializes the highlighter if needed, then delegates to highlightCodeSync.
+ *
+ * @param code - The code to highlight
+ * @param language - The language identifier (e.g., 'typescript', 'bash')
+ * @returns HTML string with syntax highlighting
+ */
+export async function highlightCodeBlock(code: string, language: string): Promise<string> {
+  const shiki = await getShikiHighlighter()
+  return highlightCodeSync(shiki, code, language)
 }
 
 /**
