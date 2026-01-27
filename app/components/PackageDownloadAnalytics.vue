@@ -434,10 +434,17 @@ const config = computed(() => ({
       },
     },
     zoom: {
+      highlightColor: '#2A2A2A',
       minimap: {
         show: true,
         lineColor: '#FAFAFA',
         selectedColorOpacity: 0.1,
+        frameColor: '#3A3A3A',
+      },
+      preview: {
+        fill: '#FAFAFA05',
+        strokeWidth: 1,
+        strokeDasharray: 3,
       },
     },
   },
@@ -573,6 +580,14 @@ const config = computed(() => ({
         </template>
         <template #annotator-action-delete="{ disabled }">
           <span class="i-carbon-trash-can w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+        </template>
+        <template #optionAnnotator="{ isAnnotator }">
+          <span
+            class="i-carbon-edit-off w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            v-if="isAnnotator"
+          />
+          <span class="i-carbon-edit w-6 h-6 text-fg-subtle" style="pointer-events: none" v-else />
         </template>
       </VueUiXy>
       <template #fallback>
