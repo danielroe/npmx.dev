@@ -121,7 +121,10 @@ export default defineConfig({
     ['link-subtle', 'text-fg-muted hover:text-fg transition-colors duration-200 focus-ring'],
 
     // Cards
-    ['card', 'bg-bg-subtle border border-border rounded-lg p-4 sm:p-6 transition-all duration-200'],
+    [
+      'card',
+      'bg-bg-subtle border border-border rounded-lg p-4 sm:p-6 transition-[border-color,background-color] duration-200',
+    ],
     ['card-interactive', 'card hover:(border-border-hover bg-bg-muted) cursor-pointer'],
 
     // Form elements

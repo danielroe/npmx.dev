@@ -116,7 +116,8 @@
       "publisher": "Publisher",
       "updated": "Updated",
       "weekly_downloads": "Weekly downloads",
-      "keywords": "Keywords"
+      "keywords": "Keywords",
+      "license": "License"
     },
     "versions": {
       "title": "Versions",

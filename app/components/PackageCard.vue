@@ -48,21 +48,18 @@ const emit = defineEmits<{
         <NuxtLink
           :to="{ name: 'package', params: { package: result.package.name.split('/') } }"
           :prefetch-on="prefetch ? 'visibility' : 'interaction'"
-          class="focus-visible:outline-none decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
+          class="decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
           :data-result-index="index"
           @focus="index != null && emit('focus', index)"
           @mouseenter="index != null && emit('focus', index)"
+          >{{ result.package.name }}</NuxtLink
         >
-          {{ result.package.name }}
-        </NuxtLink>
+        <span
+          v-if="isExactMatch"
+          class="text-xs px-1.5 py-0.5 ml-2 rounded bg-accent/20 border border-accent/30 text-accent"
+          >{{ $t('search.exact_match') }}</span
+        >
       </component>
-      <!-- Exact match badge -->
-      <span
-        v-if="isExactMatch"
-        class="shrink-0 text-xs px-1.5 py-0.5 rounded bg-accent/20 border border-accent/30 text-accent font-mono"
-      >
-        {{ $t('search.exact_match') }}
-      </span>
       <!-- Mobile: version next to package name -->
       <div class="sm:hidden text-fg-subtle flex items-center gap-1.5 shrink-0">
         <span
@@ -111,7 +108,7 @@ const emit = defineEmits<{
               </dd>
             </div>
             <div v-if="result.package.license" class="flex items-center gap-1.5">
-              <dt class="sr-only">License</dt>
+              <dt class="sr-only">{{ $t('package.card.license') }}</dt>
               <dd>{{ result.package.license }}</dd>
             </div>
           </dl>
