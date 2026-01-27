@@ -37,6 +37,7 @@
     "obug": "^2.1.1",
     "picocolors": "^1.1.1",
     "srvx": "^0.10.1",
+    "valibot": "^1.2.0",
     "validate-npm-package-name": "^7.0.2"
   },
   "devDependencies": {
