@@ -218,28 +218,14 @@ const homepageUrl = computed(() => {
   return homepage
 })
 
-// Docs URL: prefer package's homepage (often their docs site), fall back to our API docs
+// Docs URL: use our generated API docs
 const docsLink = computed(() => {
-  const homepage = displayVersion.value?.homepage
-  if (homepage) {
-    return {
-      href: homepage,
-      isExternal: true,
-    }
-  }
+  if (!displayVersion.value) return null
 
-  // Fall back to our generated API docs
-  if (displayVersion.value) {
-    return {
-      to: {
-        name: 'docs' as const,
-        params: { path: [...pkg.value!.name.split('/'), 'v', displayVersion.value.version] },
-      },
-      isExternal: false,
-    }
+  return {
+    name: 'docs' as const,
+    params: { path: [...pkg.value!.name.split('/'), 'v', displayVersion.value.version] },
   }
-
-  return null
 })
 
 function normalizeGitUrl(url: string): string {
@@ -740,20 +726,20 @@ defineOgImageComponent('Package', {
                 {{ t('package.links.jsr') }}
               </a>
             </li>
-            <li v-if="docsLink">
+            <li v-if="homepageUrl">
               <a
-                v-if="docsLink.isExternal"
-                :href="docsLink.href"
+                :href="homepageUrl"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
-                <span class="i-carbon-document w-4 h-4" aria-hidden="true" />
-                {{ t('package.links.docs') }}
+                <span class="i-carbon-link w-4 h-4" aria-hidden="true" />
+                {{ t('package.links.homepage') }}
               </a>
+            </li>
+            <li v-if="docsLink">
               <NuxtLink
-                v-else
-                :to="docsLink.to"
+                :to="docsLink"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon-document w-4 h-4" aria-hidden="true" />
