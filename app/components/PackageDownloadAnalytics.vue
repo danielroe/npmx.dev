@@ -422,6 +422,8 @@ const config = computed(() => ({
     },
     tooltip: {
       borderColor: '#2A2A2A',
+      backdropFilter: false,
+      backgroundColor: 'transparent',
       customFormat: ({
         absoluteIndex,
         datapoint,
@@ -431,7 +433,7 @@ const config = computed(() => ({
       }) => {
         if (!datapoint) return ''
         const displayValue = formatter({ value: datapoint[0]?.value ?? 0 })
-        return `<div class="flex flex-col font-mono text-xs p-3">
+        return `<div class="flex flex-col font-mono text-xs p-3 bg-[#0A0A0A]/10 backdrop-blur-md">
           <span class="text-fg-subtle">${chartData.value?.dates[absoluteIndex]}</span>
           <span class="text-xl">${displayValue}</span>
         </div>
