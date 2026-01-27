@@ -306,7 +306,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
           <button
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
+            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-muted focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-sm"
             :aria-expanded="expandedTags.has(row.tag)"
             :aria-label="
               expandedTags.has(row.tag)
@@ -318,6 +318,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
             <span
               v-if="loadingTags.has(row.tag)"
               class="i-carbon-rotate-180 w-3 h-3 animate-spin"
+              aria-hidden="true"
             />
             <span
               v-else
@@ -325,6 +326,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
               :class="
                 expandedTags.has(row.tag) ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'
               "
+              aria-hidden="true"
             />
           </button>
           <span v-else class="w-4" />
@@ -441,18 +443,28 @@ function getTagVersions(tag: string): VersionDisplay[] {
       <div class="pt-1">
         <button
           type="button"
-          class="flex items-center gap-2 text-left"
+          class="flex items-center gap-2 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-muted focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-sm"
           :aria-expanded="otherVersionsExpanded"
+          :aria-label="
+            otherVersionsExpanded
+              ? $t('package.versions.collapse_other')
+              : $t('package.versions.expand_other')
+          "
           @click="expandOtherVersions"
         >
           <span
             class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
           >
-            <span v-if="otherVersionsLoading" class="i-carbon-rotate-180 w-3 h-3 animate-spin" />
+            <span
+              v-if="otherVersionsLoading"
+              class="i-carbon-rotate-180 w-3 h-3 animate-spin"
+              aria-hidden="true"
+            />
             <span
               v-else
               class="w-3 h-3 transition-transform duration-200"
               :class="otherVersionsExpanded ? 'i-carbon-chevron-down' : 'i-carbon-chevron-right'"
+              aria-hidden="true"
             />
           </span>
           <span class="text-xs text-fg-muted py-1.5">
@@ -518,12 +530,12 @@ function getTagVersions(tag: string): VersionDisplay[] {
                   <div class="flex items-center gap-2 min-w-0">
                     <button
                       type="button"
-                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0"
+                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-muted focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-sm"
                       :aria-expanded="expandedMajorGroups.has(group.major)"
                       :aria-label="
                         expandedMajorGroups.has(group.major)
-                          ? `Collapse major ${group.major}`
-                          : `Expand major ${group.major}`
+                          ? $t('package.versions.collapse_major', { major: group.major })
+                          : $t('package.versions.expand_major', { major: group.major })
                       "
                       @click="toggleMajorGroup(group.major)"
                     >
@@ -534,6 +546,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                             ? 'i-carbon-chevron-down'
                             : 'i-carbon-chevron-right'
                         "
+                        aria-hidden="true"
                       />
                     </button>
                     <NuxtLink
