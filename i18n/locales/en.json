@@ -377,6 +377,20 @@
       "failed_to_load": "Failed to load user packages",
       "no_match": "No packages match \"{query}\"",
       "filter_placeholder": "Filter {count} packages..."
+    },
+    "orgs_page": {
+      "title": "Organizations",
+      "back_to_profile": "Back to profile",
+      "connect_required": "Connect the local CLI to view your organizations.",
+      "connect_hint_prefix": "Run",
+      "connect_hint_suffix": "to get started.",
+      "own_orgs_only": "You can only view your own organizations.",
+      "view_your_orgs": "View your organizations",
+      "loading": "Loading organizations...",
+      "empty": "No organizations found.",
+      "empty_hint": "Organizations are detected from your scoped packages.",
+      "count": "{count} Organization | {count} Organizations",
+      "packages_count": "{count} package | {count} packages"
     }
   },
   "claim": {
@@ -446,6 +460,22 @@
   },
   "header": {
     "home": "npmx home",
-    "github": "GitHub"
+    "github": "GitHub",
+    "packages": "packages",
+    "packages_dropdown": {
+      "title": "Your Packages",
+      "loading": "Loading...",
+      "error": "Failed to load packages",
+      "empty": "No packages found",
+      "view_all": "View all"
+    },
+    "orgs": "orgs",
+    "orgs_dropdown": {
+      "title": "Your Organizations",
+      "loading": "Loading...",
+      "error": "Failed to load organizations",
+      "empty": "No organizations found",
+      "view_all": "View all"
+    }
   }
 }
