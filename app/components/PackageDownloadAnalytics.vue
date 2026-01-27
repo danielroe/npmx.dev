@@ -534,7 +534,7 @@ const config = computed(() => ({
             <button
               v-if="showResetButton"
               type="button"
-              title="Reset date range"
+              aria-label="Reset date range"
               class="flex items-center justify-center px-2.5 py-1.75 border border-transparent rounded-md text-fg-subtle hover:text-fg transition-colors hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
               @click="
                 () => {
@@ -546,7 +546,7 @@ const config = computed(() => ({
                 }
               "
             >
-              <span class="i-carbon-reset w-5 h-5 inline-block" />
+              <span class="i-carbon-reset w-5 h-5 inline-block" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -556,41 +556,75 @@ const config = computed(() => ({
     <ClientOnly v-if="inModal">
       <VueUiXy :dataset="chartData.dataset" :config="config">
         <template #menuIcon="{ isOpen }">
-          <span class="i-carbon-close w-6 h-6" v-if="isOpen" />
-          <span class="i-carbon-overflow-menu-vertical w-6 h-6" v-else />
+          <span v-if="isOpen" class="i-carbon-close w-6 h-6" aria-hidden="true" />
+          <span v-else class="i-carbon-overflow-menu-vertical w-6 h-6" aria-hidden="true" />
         </template>
         <template #optionCsv>
-          <span class="i-carbon-csv w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+          <span
+            class="i-carbon-csv w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
         <template #optionImg>
-          <span class="i-carbon-png w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+          <span
+            class="i-carbon-png w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
         <template #optionSvg>
-          <span class="i-carbon-svg w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+          <span
+            class="i-carbon-svg w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
 
         <template #annotator-action-close>
-          <span class="i-carbon-close w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+          <span
+            class="i-carbon-close w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
         <template #annotator-action-color="{ color }">
-          <span class="i-carbon-color-palette w-6 h-6" :style="{ color }" />
+          <span class="i-carbon-color-palette w-6 h-6" :style="{ color }" aria-hidden="true" />
         </template>
-        <template #annotator-action-undo="{ disabled }">
-          <span class="i-carbon-undo w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+        <template #annotator-action-undo>
+          <span
+            class="i-carbon-undo w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
-        <template #annotator-action-redo="{ disabled }">
-          <span class="i-carbon-redo w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+        <template #annotator-action-redo>
+          <span
+            class="i-carbon-redo w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
-        <template #annotator-action-delete="{ disabled }">
-          <span class="i-carbon-trash-can w-6 h-6 text-fg-subtle" style="pointer-events: none" />
+        <template #annotator-action-delete>
+          <span
+            class="i-carbon-trash-can w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
         <template #optionAnnotator="{ isAnnotator }">
           <span
+            v-if="isAnnotator"
             class="i-carbon-edit-off w-6 h-6 text-fg-subtle"
             style="pointer-events: none"
-            v-if="isAnnotator"
+            aria-hidden="true"
           />
-          <span class="i-carbon-edit w-6 h-6 text-fg-subtle" style="pointer-events: none" v-else />
+          <span
+            v-else
+            class="i-carbon-edit w-6 h-6 text-fg-subtle"
+            style="pointer-events: none"
+            aria-hidden="true"
+          />
         </template>
       </VueUiXy>
       <template #fallback>
@@ -600,6 +634,8 @@ const config = computed(() => ({
 
     <div
       v-if="pending"
+      role="status"
+      aria-live="polite"
       class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-fg-subtle font-mono bg-bg/70 backdrop-blur px-3 py-2 rounded-md border border-border"
     >
       Loading…

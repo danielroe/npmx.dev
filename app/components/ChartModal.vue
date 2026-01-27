@@ -63,8 +63,10 @@ dialog::backdrop {
   background: rgba(0, 0, 0, 0.6);
 }
 
-dialog[open] {
-  animation: fade-in 200ms ease-out;
+@media (prefers-reduced-motion: no-preference) {
+  dialog[open] {
+    animation: fade-in 200ms ease-out;
+  }
 }
 
 @keyframes fade-in {
