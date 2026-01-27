@@ -76,7 +76,12 @@ function createLoader(): (
     _cacheSetting?: string,
     _checksum?: string,
   ) => {
-    const url = new URL(specifier)
+    let url: URL
+    try {
+      url = new URL(specifier)
+    } catch {
+      return undefined
+    }
 
     // Only handle http/https URLs
     if (url.protocol !== 'http:' && url.protocol !== 'https:') {

@@ -25,7 +25,20 @@ export default defineCachedEventHandler(
       throw createError({ statusCode: 404, message: 'No latest version found' })
     }
 
-    const generated = await generateDocsWithDeno(packageName, version)
+    let generated
+    try {
+      generated = await generateDocsWithDeno(packageName, version)
+    } catch (error) {
+      console.error(`Doc generation failed for ${packageName}@${version}:`, error)
+      return {
+        package: packageName,
+        version,
+        html: '',
+        toc: null,
+        status: 'error',
+        message: 'Failed to generate documentation. Please try again later.',
+      } satisfies DocsResponse
+    }
 
     if (!generated) {
       return {
