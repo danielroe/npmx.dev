@@ -52,8 +52,8 @@ const d = computed(() =>
       </div>
       <div class="w-full overflow-hidden">
         <div class="flex justify-between items-end">
-          <h3>{{ dataset.at(-1)?.value ?? '-' }}</h3>
-          <svg view-box="0 0 {width} 60" :width height="60">
+          <h3 class="font-mono">{{ formatNumber(dataset.at(-1)?.value ?? 0) }}</h3>
+          <svg view-box="0 0 {width} {height}" :width :height>
             <path :d stroke="#6A6A6A" fill="#121212" stroke-width="2" />
           </svg>
         </div>
