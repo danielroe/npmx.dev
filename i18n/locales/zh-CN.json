@@ -23,9 +23,9 @@
     "updating": "（更新中...）",
     "no_results": "未找到与 \"{query}\" 匹配的包",
     "not_taken": "{name} 尚未被占用",
-    "claim_prompt": "在 npm 上获取",
-    "claim_button": "获取 \"{name}\"",
-    "want_to_claim": "想要获取这个包名吗？",
+    "claim_prompt": "在 npm 上声明",
+    "claim_button": "声明 \"{name}\"",
+    "want_to_claim": "想要声明这个包名吗？",
     "start_typing": "输入以搜索软件包"
   },
   "nav": {
@@ -34,7 +34,7 @@
     "settings": "设置"
   },
   "settings": {
-    "relative_dates": "相对日期",
+    "relative_dates": "相对时间",
     "include_types": "在安装时包含 {'@'}types",
     "language": "语言",
     "help_translate": "帮助翻译 npmx"
