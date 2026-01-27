@@ -88,9 +88,8 @@
       "repo": "repo",
       "homepage": "homepage",
       "issues": "issues",
-      "forks": "{count} fork | {count} forks",
+      "forks": "fork | forks",
       "jsr": "jsr",
-      "socket": "socket.dev",
       "code": "code"
     },
     "install": {
