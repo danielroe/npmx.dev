@@ -127,7 +127,7 @@ const config = computed(() => ({
   </div>
 
   <ChartModal v-model:open="showModal">
-    <template #title>Downloads</template>
+    <template #title>{{ $t('package.downloads.modal_title') }}</template>
 
     <PackageDownloadAnalytics
       :weeklyDownloads="weeklyDownloads"
