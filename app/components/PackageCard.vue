@@ -62,7 +62,7 @@ const emit = defineEmits<{
           v-if="result.package.description"
           class="text-fg-muted text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3"
         >
-          <MarkdownText :text="result.package.description" />
+          <MarkdownText :text="result.package.description" plain />
         </p>
         <div class="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-xs text-fg-subtle">
           <dl v-if="showPublisher || result.package.date" class="flex items-center gap-4 m-0">
@@ -76,7 +76,7 @@ const emit = defineEmits<{
             <div v-if="result.package.date" class="flex items-center gap-1.5">
               <dt class="sr-only">Updated</dt>
               <dd>
-                <NuxtTime
+                <DateTime
                   :datetime="result.package.date"
                   year="numeric"
                   month="short"
@@ -140,13 +140,8 @@ const emit = defineEmits<{
       aria-label="Keywords"
       class="relative z-10 flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border list-none m-0 p-0"
     >
-      <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword">
-        <NuxtLink
-          :to="{ name: 'search', query: { q: `keywords:${keyword}` } }"
-          class="tag decoration-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:outline-none"
-        >
-          {{ keyword }}
-        </NuxtLink>
+      <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword" class="tag">
+        {{ keyword }}
       </li>
     </ul>
   </article>

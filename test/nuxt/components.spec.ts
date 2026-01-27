@@ -49,6 +49,7 @@ afterEach(() => {
   mountedContainers.length = 0
 })
 
+import DateTime from '~/components/DateTime.vue'
 import AppHeader from '~/components/AppHeader.vue'
 import AppFooter from '~/components/AppFooter.vue'
 import AppTooltip from '~/components/AppTooltip.vue'
@@ -82,6 +83,59 @@ import OrgTeamsPanel from '~/components/OrgTeamsPanel.vue'
 import CodeMobileTreeDrawer from '~/components/CodeMobileTreeDrawer.vue'
 
 describe('component accessibility audits', () => {
+  describe('DateTime', () => {
+    it('should have no accessibility violations with ISO string datetime', async () => {
+      const component = await mountSuspended(DateTime, {
+        props: { datetime: '2024-01-15T12:00:00.000Z' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with Date object', async () => {
+      const component = await mountSuspended(DateTime, {
+        props: { datetime: new Date('2024-01-15T12:00:00.000Z') },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with custom title', async () => {
+      const component = await mountSuspended(DateTime, {
+        props: {
+          datetime: '2024-01-15T12:00:00.000Z',
+          title: 'Last updated on January 15, 2024',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with dateStyle', async () => {
+      const component = await mountSuspended(DateTime, {
+        props: {
+          datetime: '2024-01-15T12:00:00.000Z',
+          dateStyle: 'medium',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with individual date parts', async () => {
+      const component = await mountSuspended(DateTime, {
+        props: {
+          datetime: '2024-01-15T12:00:00.000Z',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
   describe('AppHeader', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(AppHeader)
