@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "build": "tsdown",
-    "dev": "node --experimental-strip-types src/cli.ts",
+    "dev": "node --experimental-strip-types src/cli.ts --frontend-url http://localhost:3000/",
     "test:types": "tsc --noEmit"
   },
   "dependencies": {

@@ -10,6 +10,7 @@ import { getNpmUser } from './npm-client.ts'
 import { initLogger, showToken, logInfo, logWarning, logError } from './logger.ts'
 
 const DEFAULT_PORT = 31415
+const DEFAULT_FRONTEND_URL = 'https://npmx.dev/'
 
 async function runNpmLogin(): Promise<boolean> {
   return new Promise(resolve => {
@@ -35,10 +36,15 @@ const main = defineCommand({
     description: 'Local connector for npmx.dev',
   },
   args: {
-    port: {
+    'port': {
       type: 'string',
       description: 'Port to listen on',
       default: String(DEFAULT_PORT),
+    },
+    'frontend-url': {
+      type: 'string',
+      description: 'Url for the npmx.dev frontend',
+      default: DEFAULT_FRONTEND_URL,
     },
   },
   async run({ args }) {
@@ -90,7 +96,7 @@ const main = defineCommand({
     logInfo(`Authenticated as: ${npmUser}`)
 
     const token = generateToken()
-    showToken(token, port)
+    showToken(token, port, args.frontendUrl)
 
     const app = createConnectorApp(token)
 
