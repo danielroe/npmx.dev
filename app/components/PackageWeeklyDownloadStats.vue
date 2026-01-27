@@ -6,6 +6,7 @@ const { packageName } = defineProps<{
   packageName: string
 }>()
 
+const { t } = useI18n()
 const showModal = ref(false)
 
 const { data: packument } = usePackage(() => packageName)
