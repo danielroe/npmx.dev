@@ -1,4 +1,41 @@
 // Vue Data UI does not support CSS vars nor OKLCH for now
+
+/**
+ * Converts a hex color to RGB components
+ */
+function hexToRgb(hex: string): [number, number, number] | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  return result
+    ? [parseInt(result[1]!, 16), parseInt(result[2]!, 16), parseInt(result[3]!, 16)]
+    : null
+}
+
+/**
+ * Converts RGB components to hex color
+ */
+function rgbToHex(r: number, g: number, b: number): string {
+  const toHex = (value: number): string =>
+    Math.round(Math.min(Math.max(0, value), 255))
+      .toString(16)
+      .padStart(2, '0')
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+}
+
+/**
+ * Lightens a hex color by mixing it with white.
+ * Used to create light tints of accent colors for better visibility in light mode.
+ * @param hex - The hex color to lighten (e.g., "#ff0000")
+ * @param factor - Lighten factor from 0 to 1 (0.5 = 50% lighter, mixed with white)
+ */
+export function lightenHex(hex: string, factor: number = 0.5): string {
+  const rgb = hexToRgb(hex)
+  if (!rgb) return hex
+
+  // Lighten by mixing with white (255, 255, 255)
+  const lightened = rgb.map(c => Math.round(c + (255 - c) * factor)) as [number, number, number]
+  return rgbToHex(...lightened)
+}
+
 export function oklchToHex(color: string | undefined | null): string | undefined | null {
   if (color == null) return color
 

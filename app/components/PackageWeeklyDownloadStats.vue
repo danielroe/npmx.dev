@@ -46,7 +46,12 @@ const accent = computed(() => {
   return id ? (oklchToHex(accentColorValueById.value[id]!) ?? '#8A8A8A') : '#8A8A8A'
 })
 
-const pulseColor = computed(() => (selectedAccentColor.value ? accent.value : '#8A8A8A'))
+const pulseColor = computed(() => {
+  if (!selectedAccentColor.value) {
+    return isDarkMode.value ? '#BFBFBF' : '#E0E0E0'
+  }
+  return isDarkMode.value ? accent.value : lightenHex(accent.value, 0.5)
+})
 
 const weeklyDownloads = ref<WeeklyDownloadPoint[]>([])
 
@@ -105,7 +110,7 @@ const config = computed(() => {
         color: isDarkMode.value ? '#8a8a8a' : '#696969',
       },
       line: {
-        color: '#696969',
+        color: isDarkMode.value ? '#4a4a4a' : '#525252',
         pulse: {
           show: true,
           loop: true, // runs only once if false
@@ -125,7 +130,7 @@ const config = computed(() => {
       title: {
         text: lastDatapoint.value,
         fontSize: 12,
-        color: '#8a8a8a',
+        color: isDarkMode.value ? '#8a8a8a' : '#696969',
         bold: false,
       },
       verticalIndicator: {
