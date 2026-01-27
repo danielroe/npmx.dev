@@ -11,6 +11,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:docs": "pnpm run --filter npmx-docs dev --port=3001",
     "lint": "vite lint && vite fmt --check",
     "lint:fix": "vite lint --fix && vite fmt",
     "generate": "nuxt generate",
