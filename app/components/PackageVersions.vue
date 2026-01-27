@@ -547,7 +547,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       "
                       :title="
                         group.versions[0]?.deprecated
-                          ? `${group.versions[0]?.version} (deprecated)`
+                          ? t('package.versions.deprecated_title', {
+                              version: group.versions[0]?.version,
+                            })
                           : group.versions[0]?.version
                       "
                     >
