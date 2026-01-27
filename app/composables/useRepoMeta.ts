@@ -559,13 +559,15 @@ const tangledAdapter: ProviderAdapter = {
     }
   },
 
-  async fetchMeta(_cachedFetch, ref, links) {
+  async fetchMeta(cachedFetch, ref, links) {
     // Tangled doesn't have a public JSON API, but we can scrape the star count
     // from the HTML page (it's in the hx-post URL as countHint=N)
     try {
-      const html = await $fetch<string>(`https://tangled.org/${ref.owner}/${ref.repo}`, {
-        headers: { 'User-Agent': 'npmx', 'Accept': 'text/html' },
-      })
+      const html = await cachedFetch<string>(
+        `https://tangled.org/${ref.owner}/${ref.repo}`,
+        { headers: { 'User-Agent': 'npmx', 'Accept': 'text/html' } },
+        REPO_META_TTL,
+      )
       // Extract star count from: hx-post="/star?subject=...&countHint=23"
       const starMatch = html.match(/countHint=(\d+)/)
       const stars = starMatch?.[1] ? parseInt(starMatch[1], 10) : 0
@@ -616,11 +618,17 @@ const radicleAdapter: ProviderAdapter = {
     }
   },
 
-  async fetchMeta(_cachedFetch, ref, links) {
-    const res = await $fetch<RadicleProjectResponse>(
-      `https://seed.radicle.at/api/v1/projects/${ref.repo}`,
-      { headers: { 'User-Agent': 'npmx' } },
-    ).catch(() => null)
+  async fetchMeta(cachedFetch, ref, links) {
+    let res: RadicleProjectResponse | null = null
+    try {
+      res = await cachedFetch<RadicleProjectResponse>(
+        `https://seed.radicle.at/api/v1/projects/${ref.repo}`,
+        { headers: { 'User-Agent': 'npmx' } },
+        REPO_META_TTL,
+      )
+    } catch {
+      return null
+    }
 
     if (!res) return null
 
