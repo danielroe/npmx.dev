@@ -11,6 +11,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
+    "dev:docs": "pnpm run --filter npmx-docs dev --port=3001",
     "lint": "vite lint && vite fmt --check",
     "lint:fix": "vite lint --fix && vite fmt",
     "generate": "nuxt generate",
@@ -31,6 +32,7 @@
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/fonts": "^0.13.0",
     "@nuxt/scripts": "^0.13.2",
+    "@nuxtjs/color-mode": "^4.0.0",
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/i18n": "10.2.1",
     "@shikijs/langs": "^3.21.0",
@@ -39,6 +41,7 @@
     "@vueuse/nuxt": "14.1.0",
     "nuxt": "^4.3.0",
     "nuxt-og-image": "^5.1.13",
+    "ohash": "^2.0.11",
     "perfect-debounce": "^2.1.0",
     "sanitize-html": "^2.17.0",
     "semver": "^7.7.3",

@@ -31,9 +31,17 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
+    '@nuxtjs/color-mode',
   ],
 
-  css: ['vue-data-ui/style.css'],
+  colorMode: {
+    preference: 'system',
+    fallback: 'dark',
+    dataValue: 'theme',
+    storageKey: 'npmx-color-mode',
+  },
+
+  css: ['~/assets/main.css', 'vue-data-ui/style.css'],
 
   devtools: { enabled: true },
 
@@ -94,6 +102,14 @@ export default defineNuxtConfig({
         '@shikijs/engine-javascript',
         '@shikijs/core',
       ],
+    },
+    // Storage configuration for local development
+    // In production (Vercel), this is overridden by modules/cache.ts
+    storage: {
+      'fetch-cache': {
+        driver: 'fsLite',
+        base: './.cache/fetch',
+      },
     },
   },
 
@@ -157,6 +173,7 @@ export default defineNuxtConfig({
     langDir: 'locales',
     locales: [
       { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'fr', language: 'fr-FR', name: 'Français', file: 'fr.json' },
       { code: 'zh-CN', language: 'zh-CN', name: '简体中文', file: 'zh-CN.json' },
       { code: 'it', language: 'it', name: 'Italiano', file: 'it.json' },
     ],
