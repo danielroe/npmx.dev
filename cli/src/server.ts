@@ -1,8 +1,9 @@
 import crypto from 'node:crypto'
 import { H3, HTTPError, handleCors, type H3Event } from 'h3-next'
 import type { CorsOptions } from 'h3-next'
+import * as v from 'valibot'
 
-import type { ConnectorState, PendingOperation, OperationType, ApiResponse } from './types.ts'
+import type { ConnectorState, PendingOperation, ApiResponse } from './types.ts'
 import { logDebug, logError } from './logger.ts'
 import {
   getNpmUser,
@@ -22,9 +23,20 @@ import {
   ownerAdd,
   ownerRemove,
   packageInit,
-  validateScopeTeam,
   type NpmExecResult,
 } from './npm-client.ts'
+import {
+  ConnectBodySchema,
+  ExecuteBodySchema,
+  CreateOperationBodySchema,
+  BatchOperationsBodySchema,
+  OrgNameSchema,
+  ScopeTeamSchema,
+  PackageNameSchema,
+  OperationIdSchema,
+  safeParse,
+  validateOperationParams,
+} from './schemas.ts'
 
 // Read version from package.json
 import pkg from '../package.json' with { type: 'json' }
@@ -73,8 +85,13 @@ export function createConnectorApp(expectedToken: string) {
   }
 
   app.post('/connect', async (event: H3Event) => {
-    const body = (await event.req.json()) as { token?: string }
-    if (body?.token !== expectedToken) {
+    const rawBody = await event.req.json()
+    const parsed = safeParse(ConnectBodySchema, rawBody)
+    if (!parsed.success) {
+      throw new HTTPError({ statusCode: 400, message: parsed.error })
+    }
+
+    if (parsed.data.token !== expectedToken) {
       throw new HTTPError({ statusCode: 401, message: 'Invalid token' })
     }
 
@@ -115,13 +132,21 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 401, message: 'Unauthorized' })
     }
 
-    const body = (await event.req.json()) as {
-      type: OperationType
-      params: Record<string, string>
-      description: string
-      command: string
+    const rawBody = await event.req.json()
+    const parsed = safeParse(CreateOperationBodySchema, rawBody)
+    if (!parsed.success) {
+      throw new HTTPError({ statusCode: 400, message: parsed.error })
     }
-    const { type, params, description, command } = body
+
+    const { type, params, description, command } = parsed.data
+
+    // Validate params based on operation type
+    try {
+      validateOperationParams(type, params)
+    } catch (err) {
+      const message = err instanceof v.ValiError ? err.issues[0]?.message : String(err)
+      throw new HTTPError({ statusCode: 400, message: `Invalid params: ${message}` })
+    }
 
     const operation: PendingOperation = {
       id: generateOperationId(),
@@ -147,15 +172,29 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 401, message: 'Unauthorized' })
     }
 
-    const operations = (await event.req.json()) as Array<{
-      type: OperationType
-      params: Record<string, string>
-      description: string
-      command: string
-    }>
+    const rawBody = await event.req.json()
+    const parsed = safeParse(BatchOperationsBodySchema, rawBody)
+    if (!parsed.success) {
+      throw new HTTPError({ statusCode: 400, message: parsed.error })
+    }
+
+    // Validate each operation's params
+    for (let i = 0; i < parsed.data.length; i++) {
+      const op = parsed.data[i]
+      if (!op) continue
+      try {
+        validateOperationParams(op.type, op.params)
+      } catch (err) {
+        const message = err instanceof v.ValiError ? err.issues[0]?.message : String(err)
+        throw new HTTPError({
+          statusCode: 400,
+          message: `Operation ${i}: Invalid params: ${message}`,
+        })
+      }
+    }
 
     const created: PendingOperation[] = []
-    for (const op of operations) {
+    for (const op of parsed.data) {
       const operation: PendingOperation = {
         id: generateOperationId(),
         type: op.type,
@@ -184,7 +223,12 @@ export function createConnectorApp(expectedToken: string) {
     const url = new URL(event.req.url)
     const id = url.searchParams.get('id')
 
-    const operation = state.operations.find(op => op.id === id)
+    const idValidation = safeParse(OperationIdSchema, id)
+    if (!idValidation.success) {
+      throw new HTTPError({ statusCode: 400, message: idValidation.error })
+    }
+
+    const operation = state.operations.find(op => op.id === idValidation.data)
     if (!operation) {
       throw new HTTPError({ statusCode: 404, message: 'Operation not found' })
     }
@@ -227,7 +271,12 @@ export function createConnectorApp(expectedToken: string) {
     const url = new URL(event.req.url)
     const id = url.searchParams.get('id')
 
-    const operation = state.operations.find(op => op.id === id)
+    const idValidation = safeParse(OperationIdSchema, id)
+    if (!idValidation.success) {
+      throw new HTTPError({ statusCode: 400, message: idValidation.error })
+    }
+
+    const operation = state.operations.find(op => op.id === idValidation.data)
     if (!operation) {
       throw new HTTPError({ statusCode: 404, message: 'Operation not found' })
     }
@@ -255,10 +304,17 @@ export function createConnectorApp(expectedToken: string) {
     // OTP can be passed directly in the request body for this execution
     let otp: string | undefined
     try {
-      const body = (await event.req.json()) as { otp?: string } | null
-      otp = body?.otp
-    } catch {
-      // Empty body is fine - no OTP provided
+      const rawBody = await event.req.json()
+      if (rawBody) {
+        const parsed = safeParse(ExecuteBodySchema, rawBody)
+        if (!parsed.success) {
+          throw new HTTPError({ statusCode: 400, message: parsed.error })
+        }
+        otp = parsed.data.otp
+      }
+    } catch (err) {
+      // Re-throw HTTPError, ignore JSON parse errors (empty body is fine)
+      if (err instanceof HTTPError) throw err
     }
 
     const approvedOps = state.operations.filter(op => op.status === 'approved')
@@ -342,7 +398,12 @@ export function createConnectorApp(expectedToken: string) {
     const url = new URL(event.req.url)
     const id = url.searchParams.get('id')
 
-    const index = state.operations.findIndex(op => op.id === id)
+    const idValidation = safeParse(OperationIdSchema, id)
+    if (!idValidation.success) {
+      throw new HTTPError({ statusCode: 400, message: idValidation.error })
+    }
+
+    const index = state.operations.findIndex(op => op.id === idValidation.data)
     if (index === -1) {
       throw new HTTPError({ statusCode: 404, message: 'Operation not found' })
     }
@@ -380,12 +441,13 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 401, message: 'Unauthorized' })
     }
 
-    const org = event.context.params?.org
-    if (!org) {
-      throw new HTTPError({ statusCode: 400, message: 'Org name required' })
+    const orgRaw = event.context.params?.org
+    const orgValidation = safeParse(OrgNameSchema, orgRaw)
+    if (!orgValidation.success) {
+      throw new HTTPError({ statusCode: 400, message: orgValidation.error })
     }
 
-    const result = await orgListUsers(org)
+    const result = await orgListUsers(orgValidation.data)
     if (result.exitCode !== 0) {
       return {
         success: false,
@@ -413,12 +475,13 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 401, message: 'Unauthorized' })
     }
 
-    const org = event.context.params?.org
-    if (!org) {
-      throw new HTTPError({ statusCode: 400, message: 'Org name required' })
+    const orgRaw = event.context.params?.org
+    const orgValidation = safeParse(OrgNameSchema, orgRaw)
+    if (!orgValidation.success) {
+      throw new HTTPError({ statusCode: 400, message: orgValidation.error })
     }
 
-    const result = await teamListTeams(org)
+    const result = await teamListTeams(orgValidation.data)
     if (result.exitCode !== 0) {
       return {
         success: false,
@@ -454,11 +517,10 @@ export function createConnectorApp(expectedToken: string) {
     // Decode the team name (handles encoded colons like nuxt%3Adevelopers)
     const scopeTeam = decodeURIComponent(scopeTeamRaw)
 
-    try {
-      validateScopeTeam(scopeTeam)
-    } catch (err) {
+    const validationResult = safeParse(ScopeTeamSchema, scopeTeam)
+    if (!validationResult.success) {
       logError('scope:team validation failed')
-      logDebug(err, { scopeTeamRaw, scopeTeam })
+      logDebug(validationResult.error, { scopeTeamRaw, scopeTeam })
       throw new HTTPError({
         statusCode: 400,
         message: `Invalid scope:team format: ${scopeTeam}. Expected @scope:team`,
@@ -493,15 +555,20 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 401, message: 'Unauthorized' })
     }
 
-    const pkg = event.context.params?.pkg
-    if (!pkg) {
+    const pkgRaw = event.context.params?.pkg
+    if (!pkgRaw) {
       throw new HTTPError({ statusCode: 400, message: 'Package name required' })
     }
 
     // Decode the package name (handles scoped packages like @nuxt%2Fkit)
-    const decodedPkg = decodeURIComponent(pkg)
+    const decodedPkg = decodeURIComponent(pkgRaw)
 
-    const result = await accessListCollaborators(decodedPkg)
+    const pkgValidation = safeParse(PackageNameSchema, decodedPkg)
+    if (!pkgValidation.success) {
+      throw new HTTPError({ statusCode: 400, message: pkgValidation.error })
+    }
+
+    const result = await accessListCollaborators(pkgValidation.data)
     if (result.exitCode !== 0) {
       return {
         success: false,
