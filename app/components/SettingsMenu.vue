@@ -90,14 +90,16 @@ onKeyStroke(',', e => {
           >
             <span class="text-sm text-fg select-none">Relative dates</span>
             <span
-              class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none"
-              :class="settings.relativeDates ? 'bg-fg' : 'bg-bg-subtle'"
+              class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none shadow"
+              :class="settings.relativeDates ? 'bg-fg' : 'bg-bg'"
               aria-hidden="true"
             >
               <span
                 class="pointer-events-none inline-block h-4 w-4 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
                 :class="
-                  settings.relativeDates ? 'translate-x-4 bg-bg' : 'translate-x-0 bg-fg-muted'
+                  settings.relativeDates
+                    ? 'translate-x-4 bg-bg-subtle'
+                    : 'translate-x-0 bg-fg-muted'
                 "
               />
             </span>
@@ -106,22 +108,22 @@ onKeyStroke(',', e => {
           <!-- Include @types in install toggle -->
           <button
             type="button"
-            class="w-full flex items-center justify-between gap-3 px-2 py-2 rounded-md hover:bg-bg-muted transition-[background-color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="w-full flex items-center justify-between gap-3 px-2 py-2 rounded-md hover:bg-bg-muted transition-[background-color] duration-150 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inset-shadow"
             role="menuitemcheckbox"
             :aria-checked="settings.includeTypesInInstall"
             @click="settings.includeTypesInInstall = !settings.includeTypesInInstall"
           >
             <span class="text-sm text-fg select-none">Include @types in install</span>
             <span
-              class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none"
-              :class="settings.includeTypesInInstall ? 'bg-fg' : 'bg-bg-subtle'"
+              class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none border border-border shadow"
+              :class="settings.includeTypesInInstall ? 'bg-fg' : 'bg-bg'"
               aria-hidden="true"
             >
               <span
                 class="pointer-events-none inline-block h-4 w-4 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
                 :class="
                   settings.includeTypesInInstall
-                    ? 'translate-x-4 bg-bg'
+                    ? 'translate-x-4 bg-bg-subtle'
                     : 'translate-x-0 bg-fg-muted'
                 "
               />
