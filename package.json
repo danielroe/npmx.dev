@@ -83,20 +83,7 @@
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
     "vue-tsc": "3.2.2"
   },
-  "resolutions": {
-    "vite": "^8.0.0-beta.10"
-  },
   "pnpm": {
-    "overrides": {
-      "sharp": "0.34.5"
-    },
-    "packageExtensions": {
-      "@nuxt/scripts": {
-        "dependencies": {
-          "estree-walker": "^3.0.3"
-        }
-      }
-    },
     "patchedDependencies": {
       "@jsr/deno__doc@0.189.1": "patches/@jsr__deno__doc@0.189.1.patch"
     }
