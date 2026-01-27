@@ -10,6 +10,9 @@ import type {
 } from '#shared/types'
 import type { ReleaseType } from 'semver'
 import { maxSatisfying, prerelease, major, minor, diff, gt, compare } from 'semver'
+import { isExactVersion } from '~/utils/versions'
+import { extractInstallScriptsInfo } from '~/utils/install-scripts'
+import type { CachedFetchFunction } from '~/composables/useCachedFetch'
 
 const NPM_REGISTRY = 'https://registry.npmjs.org'
 const NPM_API = 'https://api.npmjs.org'
@@ -172,6 +175,21 @@ type NpmDownloadsRangeResponse = {
   end: string
   package: string
   downloads: Array<{ day: string; downloads: number }>
+}
+
+/**
+ * Fetch download range data from npm API.
+ * Exported for external use (e.g., in components).
+ */
+export async function fetchNpmDownloadsRange(
+  packageName: string,
+  start: string,
+  end: string,
+): Promise<NpmDownloadsRangeResponse> {
+  const encodedName = encodePackageName(packageName)
+  return await $fetch<NpmDownloadsRangeResponse>(
+    `${NPM_API}/downloads/range/${start}:${end}/${encodedName}`,
+  )
 }
 
 export function usePackageWeeklyDownloadEvolution(
