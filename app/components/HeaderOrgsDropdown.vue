@@ -23,11 +23,11 @@ async function loadOrgs() {
       // Already sorted alphabetically by server, take top 10
       orgs.value = orgList.slice(0, 10)
     } else {
-      error.value = 'Failed to load organizations'
+      error.value = t('header.orgs_dropdown.error')
     }
     hasLoaded.value = true
   } catch {
-    error.value = 'Failed to load organizations'
+    error.value = t('header.orgs_dropdown.error')
   } finally {
     isLoading.value = false
   }

@@ -73,10 +73,10 @@ async function loadOrgs() {
       // Load details for each org in parallel
       await Promise.all(orgs.value.map(org => loadOrgDetails(org)))
     } else {
-      error.value = 'Failed to load organizations'
+      error.value = t('header.orgs_dropdown.error')
     }
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Failed to load organizations'
+    error.value = e instanceof Error ? e.message : t('header.orgs_dropdown.error')
   } finally {
     isLoading.value = false
   }

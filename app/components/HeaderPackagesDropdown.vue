@@ -23,11 +23,11 @@ async function loadPackages() {
       // Sort alphabetically and take top 10
       packages.value = Object.keys(pkgMap).sort().slice(0, 10)
     } else {
-      error.value = 'Failed to load packages'
+      error.value = t('header.packages_dropdown.error')
     }
     hasLoaded.value = true
   } catch {
-    error.value = 'Failed to load packages'
+    error.value = t('header.packages_dropdown.error')
   } finally {
     isLoading.value = false
   }
