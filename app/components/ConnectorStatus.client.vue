@@ -61,6 +61,8 @@ const ariaLabel = computed(() => {
         v-if="isConnected && avatar"
         :src="avatar"
         :alt="`${npmUser}'s avatar`"
+        width="24"
+        height="24"
         class="w-6 h-6 rounded-full"
       />
       <!-- Status dot (when not connected or no avatar) -->

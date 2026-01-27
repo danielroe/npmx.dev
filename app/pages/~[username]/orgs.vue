@@ -129,7 +129,7 @@ useSeoMeta({
           :to="`/~${username}`"
           class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
         >
-          <span class="i-carbon-arrow-left w-4 h-4" />
+          <span class="i-carbon-arrow-left w-4 h-4" aria-hidden="true" />
           Back to profile
         </NuxtLink>
       </nav>
@@ -210,7 +210,7 @@ useSeoMeta({
               <!-- Stats -->
               <div class="flex items-center gap-4 text-sm text-fg-muted">
                 <div class="flex items-center gap-1.5">
-                  <span class="i-carbon-cube w-4 h-4" />
+                  <span class="i-carbon-cube w-4 h-4" aria-hidden="true" />
                   <span v-if="org.packageCount !== null">
                     {{ org.packageCount }} package{{ org.packageCount === 1 ? '' : 's' }}
                   </span>

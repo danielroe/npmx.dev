@@ -65,6 +65,7 @@ function handleKeydown(event: KeyboardEvent) {
       <span
         class="i-carbon-chevron-down w-3 h-3 transition-transform duration-200"
         :class="{ 'rotate-180': isOpen }"
+        aria-hidden="true"
       />
     </NuxtLink>
 
@@ -83,7 +84,7 @@ function handleKeydown(event: KeyboardEvent) {
         </div>
 
         <div v-if="isLoading" class="px-3 py-4 text-center">
-          <span class="text-fg-muted text-sm">Loading...</span>
+          <span class="text-fg-muted text-sm">Loading…</span>
         </div>
 
         <div v-else-if="error" class="px-3 py-4 text-center">
@@ -111,7 +112,7 @@ function handleKeydown(event: KeyboardEvent) {
             class="link-subtle font-mono text-xs inline-flex items-center gap-1"
           >
             View all
-            <span class="i-carbon-arrow-right w-3 h-3" />
+            <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
           </NuxtLink>
         </div>
       </div>
