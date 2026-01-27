@@ -48,7 +48,7 @@ export default defineConfig({
       },
       accent: {
         DEFAULT: 'var(--accent)',
-        muted: 'var(--accent-muted)',
+        fallback: 'var(--accent-muted)',
       },
       // Syntax highlighting colors (inspired by GitHub Dark)
       syntax: {

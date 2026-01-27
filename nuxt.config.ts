@@ -33,6 +33,8 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
   ],
 
+  css: ['vue-data-ui/style.css'],
+
   devtools: { enabled: true },
 
   app: {
@@ -93,6 +95,14 @@ export default defineNuxtConfig({
         '@shikijs/core',
       ],
     },
+    // Storage configuration for local development
+    // In production (Vercel), this is overridden by modules/cache.ts
+    storage: {
+      'fetch-cache': {
+        driver: 'fsLite',
+        base: './.cache/fetch',
+      },
+    },
   },
 
   fonts: {
@@ -140,6 +150,7 @@ export default defineNuxtConfig({
       include: [
         '@vueuse/core',
         'vue-data-ui/vue-ui-sparkline',
+        'vue-data-ui/vue-ui-xy',
         'virtua/vue',
         'semver',
         'validate-npm-package-name',
@@ -152,6 +163,10 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     detectBrowserLanguage: false,
     langDir: 'locales',
-    locales: [{ code: 'en', language: 'en-US', name: 'English', file: 'en.json' }],
+    locales: [
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'fr', language: 'fr-FR', name: 'Français', file: 'fr.json' },
+      { code: 'zh-CN', language: 'zh-CN', name: '简体中文', file: 'zh-CN.json' },
+    ],
   },
 })
