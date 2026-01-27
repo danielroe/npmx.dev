@@ -334,14 +334,9 @@ const fullInstallCommand = computed(() => {
   return `${installCommand.value}; ${pm.label} ${pm.action} ${devFlag} ${pkgSpec}`
 })
 
-// Copy install command
-const copied = ref(false)
-async function copyInstallCommand() {
-  if (!fullInstallCommand.value) return
-  await navigator.clipboard.writeText(fullInstallCommand.value)
-  copied.value = true
-  setTimeout(() => (copied.value = false), 2000)
-}
+// Copy commands
+const { copied: installCopied, copy: copyInstall } = useCopyToClipboard()
+const copyInstallCommand = () => copyInstall(fullInstallCommand.value)
 
 // Executable detection for run command
 const executableInfo = computed(() => {
@@ -404,13 +399,49 @@ const executeCommand = computed(() => {
 })
 
 // Copy execute command (for binary-only packages)
-const executeCopied = ref(false)
-async function copyExecuteCommand() {
-  if (!executeCommand.value) return
-  await navigator.clipboard.writeText(executeCommand.value)
-  executeCopied.value = true
-  setTimeout(() => (executeCopied.value = false), 2000)
-}
+const { copied: executeCopied, copy: copyExecute } = useCopyToClipboard()
+const copyExecuteCommand = () => copyExecute(executeCommand.value)
+
+// Get associated create-* package info (e.g., vite -> create-vite)
+const createPackageInfo = computed(() => {
+  if (!packageAnalysis.value?.createPackage) return null
+  // Don't show if deprecated
+  if (packageAnalysis.value.createPackage.deprecated) return null
+  return packageAnalysis.value.createPackage
+})
+
+// Create command parts for associated create-* package
+const createCommandParts = computed(() => {
+  if (!createPackageInfo.value) return []
+  const pm = packageManagers.find(p => p.id === selectedPM.value)
+  if (!pm) return []
+
+  // Extract short name: create-vite -> vite
+  const createPkgName = createPackageInfo.value.packageName
+  let shortName: string
+  if (createPkgName.startsWith('@')) {
+    // @scope/create-foo -> foo
+    const slashIndex = createPkgName.indexOf('/')
+    const name = createPkgName.slice(slashIndex + 1)
+    shortName = name.startsWith('create-') ? name.slice('create-'.length) : name
+  } else {
+    // create-vite -> vite
+    shortName = createPkgName.startsWith('create-')
+      ? createPkgName.slice('create-'.length)
+      : createPkgName
+  }
+
+  return [...pm.create.split(' '), shortName]
+})
+
+// Full create command string for copying
+const createCommand = computed(() => {
+  return createCommandParts.value.join(' ')
+})
+
+// Copy create command
+const { copied: createCopied, copy: copyCreate } = useCopyToClipboard()
+const copyCreateCommand = () => copyCreate(createCommand.value)
 
 // Primary run command parts
 const runCommandParts = computed(() => {
@@ -430,19 +461,8 @@ function getFullRunCommand(command?: string) {
 }
 
 // Copy run command
-const runCopied = ref(false)
-const runCopiedCommand = ref<string | null>(null)
-async function copyRunCommand(command?: string) {
-  const cmd = getFullRunCommand(command)
-  if (!cmd) return
-  await navigator.clipboard.writeText(cmd)
-  runCopied.value = true
-  runCopiedCommand.value = command || null
-  setTimeout(() => {
-    runCopied.value = false
-    runCopiedCommand.value = null
-  }, 2000)
-}
+const { copied: runCopied, copy: copyRun } = useCopyToClipboard()
+const copyRunCommand = (command?: string) => copyRun(getFullRunCommand(command))
 
 // Expandable description
 const descriptionExpanded = ref(false)
@@ -1015,7 +1035,7 @@ defineOgImageComponent('Package', {
                   @click.stop="copyInstallCommand"
                 >
                   <span aria-live="polite">{{
-                    copied ? t('common.copied') : t('common.copy')
+                    installCopied ? t('common.copied') : t('common.copy')
                   }}</span>
                 </button>
               </div>
@@ -1074,12 +1094,56 @@ defineOgImageComponent('Package', {
                     class="px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/runcmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                     @click.stop="copyRunCommand(executableInfo?.primaryCommand)"
                   >
-                    {{
-                      runCopied && runCopiedCommand === (executableInfo?.primaryCommand || null)
-                        ? t('common.copied')
-                        : t('common.copy')
-                    }}
+                    {{ runCopied ? t('common.copied') : t('common.copy') }}
                   </button>
+                </div>
+              </template>
+
+              <!-- Create command (for packages with associated create-* package) -->
+              <template v-if="createPackageInfo">
+                <!-- Comment line -->
+                <div class="flex items-center gap-2 pt-1">
+                  <span class="text-fg-subtle/50 font-mono text-sm select-none"
+                    ># {{ t('package.create.title') }}</span
+                  >
+                </div>
+
+                <!-- Create command -->
+                <div class="flex items-center gap-2 group/createcmd">
+                  <span class="text-fg-subtle font-mono text-sm select-none">$</span>
+                  <code class="font-mono text-sm"
+                    ><ClientOnly
+                      ><span
+                        v-for="(part, i) in createCommandParts"
+                        :key="i"
+                        :class="i === 0 ? 'text-fg' : 'text-fg-muted'"
+                        >{{ i > 0 ? ' ' : '' }}{{ part }}</span
+                      ><template #fallback
+                        ><span class="text-fg">npm</span
+                        ><span class="text-fg-muted">
+                          create {{ createPackageInfo.packageName.replace('create-', '') }}</span
+                        ></template
+                      ></ClientOnly
+                    ></code
+                  >
+                  <button
+                    type="button"
+                    class="px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/createcmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                    :aria-label="t('package.create.copy_command')"
+                    @click.stop="copyCreateCommand"
+                  >
+                    <span aria-live="polite">{{
+                      createCopied ? t('common.copied') : t('common.copy')
+                    }}</span>
+                  </button>
+                  <NuxtLink
+                    :to="`/${createPackageInfo.packageName}`"
+                    class="text-fg-subtle hover:text-fg-muted text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+                    :title="`View ${createPackageInfo.packageName}`"
+                  >
+                    <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                    <span class="sr-only">View {{ createPackageInfo.packageName }}</span>
+                  </NuxtLink>
                 </div>
               </template>
             </div>
