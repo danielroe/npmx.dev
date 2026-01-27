@@ -338,7 +338,7 @@ async function copyInstallCommand() {
 
 // Expandable description
 const descriptionExpanded = ref(false)
-const descriptionRef = ref<HTMLDivElement>()
+const descriptionRef = useTemplateRef('descriptionRef')
 const descriptionOverflows = ref(false)
 
 // Check if description overflows on mount/update
@@ -651,7 +651,7 @@ defineOgImageComponent('Package', {
 
         <!-- Links -->
         <nav aria-label="Package links" class="mt-6">
-          <ul class="flex flex-wrap items-center gap-3 sm:gap-4 list-none m-0 p-0">
+          <ul class="flex flex-wrap items-stretch gap-3 sm:gap-4 list-none m-0 p-0">
             <li v-if="repositoryUrl">
               <a
                 :href="repositoryUrl"
@@ -727,19 +727,7 @@ defineOgImageComponent('Package', {
                 {{ t('package.links.jsr') }}
               </a>
             </li>
-            <li class="sm:flex-grow">
-              <a
-                :href="`https://socket.dev/npm/package/${pkg.name}/overview/${displayVersion?.version ?? 'latest'}`"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="i-simple-icons-socket w-4 h-4" aria-hidden="true" />
-                {{ t('package.links.socket') }}
-              </a>
-            </li>
-
-            <li v-if="displayVersion">
+            <li v-if="displayVersion" class="sm:ml-auto">
               <NuxtLink
                 :to="{
                   name: 'code',
@@ -748,6 +736,7 @@ defineOgImageComponent('Package', {
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
                 aria-keyshortcuts="."
               >
+                <span class="i-carbon-code w-4 h-4 sm:invisible" aria-hidden="true" />
                 {{ t('package.links.code') }}
                 <kbd
                   class="hidden sm:inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
