@@ -110,7 +110,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <!-- Name (always visible) -->
           <th
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
               'cursor-pointer hover:text-fg transition-colors duration-200': isSortable('name'),
             }"
@@ -123,7 +123,6 @@ function getColumnLabelKey(id: ColumnId): string {
             "
             :tabindex="isSortable('name') ? 0 : undefined"
             role="columnheader"
-            class="focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             @click="toggleSort('name')"
             @keydown.enter="toggleSort('name')"
             @keydown.space.prevent="toggleSort('name')"
@@ -161,7 +160,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('downloads')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
               'cursor-pointer hover:text-fg transition-colors duration-200':
                 isSortable('downloads'),
@@ -175,7 +174,6 @@ function getColumnLabelKey(id: ColumnId): string {
             "
             :tabindex="isSortable('downloads') ? 0 : undefined"
             role="columnheader"
-            class="focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             @click="toggleSort('downloads')"
             @keydown.enter="toggleSort('downloads')"
             @keydown.space.prevent="toggleSort('downloads')"
@@ -197,7 +195,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('updated')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
               'cursor-pointer hover:text-fg transition-colors duration-200': isSortable('updated'),
             }"
@@ -210,7 +208,6 @@ function getColumnLabelKey(id: ColumnId): string {
             "
             :tabindex="isSortable('updated') ? 0 : undefined"
             role="columnheader"
-            class="focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             @click="toggleSort('updated')"
             @keydown.enter="toggleSort('updated')"
             @keydown.space.prevent="toggleSort('updated')"
