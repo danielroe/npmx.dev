@@ -82,3 +82,46 @@ export interface PackageVulnerabilities {
   vulnerabilities: VulnerabilitySummary[]
   counts: SeverityCounts & { total: number }
 }
+
+/** Depth in dependency tree */
+export type DependencyDepth = 'root' | 'direct' | 'transitive'
+
+/**
+ * Vulnerability info for a single package in the tree
+ */
+export interface PackageVulnerabilityInfo {
+  name: string
+  version: string
+  /** Depth in dependency tree: root (0), direct (1), transitive (2+) */
+  depth: DependencyDepth
+  vulnerabilities: VulnerabilitySummary[]
+  counts: {
+    total: number
+    critical: number
+    high: number
+    moderate: number
+    low: number
+  }
+}
+
+/**
+ * Result of vulnerability tree analysis
+ */
+export interface VulnerabilityTreeResult {
+  /** Root package name */
+  package: string
+  /** Root package version */
+  version: string
+  /** All packages with vulnerabilities in the tree */
+  vulnerablePackages: PackageVulnerabilityInfo[]
+  /** Total packages analyzed */
+  totalPackages: number
+  /** Aggregated counts across all packages */
+  totalCounts: {
+    total: number
+    critical: number
+    high: number
+    moderate: number
+    low: number
+  }
+}

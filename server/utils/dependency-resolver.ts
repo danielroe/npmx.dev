@@ -101,9 +101,6 @@ export function resolveVersion(range: string, versions: string[]): string | null
   return maxSatisfying(versions, range)
 }
 
-/** Depth in dependency tree */
-export type DependencyDepth = 'root' | 'direct' | 'transitive'
-
 /** Resolved package info */
 export interface ResolvedPackage {
   name: string
