@@ -674,7 +674,7 @@ defineOgImageComponent('Package', {
           </h2>
           <!-- Package manager tabs -->
           <div
-            class="flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md"
+            class="flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md overflow-x-auto"
             role="tablist"
             :aria-label="$t('package.install.pm_label')"
           >
@@ -905,7 +905,7 @@ defineOgImageComponent('Package', {
   gap: 2rem;
 
   /* Mobile: single column, sidebar above readme */
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'header'
     'install'
