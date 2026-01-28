@@ -458,17 +458,26 @@ const config = computed(() => ({
       },
       callbacks: {
         img: ({ imageUri }: { imageUri: string }) => {
-          loadFile(imageUri, `${packageName}-${selectedGranularity.value}.png`)
+          loadFile(
+            imageUri,
+            `${packageName}-${selectedGranularity.value}_${startDate.value}_${endDate.value}.png`,
+          )
         },
         csv: (csvStr: string) => {
           const blob = new Blob([csvStr.replace('data:text/csv;charset=utf-8,', '')])
           const url = URL.createObjectURL(blob)
-          loadFile(url, `${packageName}-${selectedGranularity.value}.csv`)
+          loadFile(
+            url,
+            `${packageName}-${selectedGranularity.value}_${startDate.value}_${endDate.value}.csv`,
+          )
           URL.revokeObjectURL(url)
         },
         svg: ({ blob }: { blob: Blob }) => {
           const url = URL.createObjectURL(blob)
-          loadFile(url, `${packageName}-${selectedGranularity.value}.svg`)
+          loadFile(
+            url,
+            `${packageName}-${selectedGranularity.value}_${startDate.value}_${endDate.value}.svg`,
+          )
           URL.revokeObjectURL(url)
         },
       },
