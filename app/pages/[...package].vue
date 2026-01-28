@@ -889,10 +889,24 @@ defineOgImageComponent('Package', {
       </section>
 
       <!-- Regular packages: Install command with optional run command -->
-      <section v-else aria-labelledby="install-heading" class="area-install">
+      <section
+        v-else
+        id="install"
+        aria-labelledby="install-heading"
+        class="area-install scroll-mt-20"
+      >
         <div class="flex flex-wrap items-center justify-between mb-3">
-          <h2 id="install-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
-            {{ $t('package.install.title') }}
+          <h2 id="install-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
+            <a
+              href="#install"
+              class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+            >
+              {{ $t('package.install.title') }}
+              <span
+                class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                aria-hidden="true"
+              />
+            </a>
           </h2>
           <!-- Package manager tabs -->
           <div
@@ -1079,9 +1093,22 @@ defineOgImageComponent('Package', {
       </section>
 
       <!-- README -->
-      <section aria-labelledby="readme-heading" class="area-readme min-w-0">
-        <h2 id="readme-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
-          {{ $t('package.readme.title') }}
+      <section
+        id="readme"
+        aria-labelledby="readme-heading"
+        class="area-readme min-w-0 scroll-mt-20"
+      >
+        <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
+          <a
+            href="#readme"
+            class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+          >
+            {{ $t('package.readme.title') }}
+            <span
+              class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-hidden="true"
+            />
+          </a>
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
         <div
@@ -1109,9 +1136,26 @@ defineOgImageComponent('Package', {
           </ClientOnly>
 
           <!-- Keywords -->
-          <section v-if="displayVersion?.keywords?.length" aria-labelledby="keywords-heading">
-            <h2 id="keywords-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
-              {{ $t('package.keywords_title') }}
+          <section
+            id="keywords"
+            v-if="displayVersion?.keywords?.length"
+            aria-labelledby="keywords-heading"
+            class="scroll-mt-20"
+          >
+            <h2
+              id="keywords-heading"
+              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
+            >
+              <a
+                href="#keywords"
+                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+              >
+                {{ $t('package.keywords_title') }}
+                <span
+                  class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  aria-hidden="true"
+                />
+              </a>
             </h2>
             <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
               <li v-for="keyword in displayVersion.keywords.slice(0, 15)" :key="keyword">
@@ -1132,16 +1176,27 @@ defineOgImageComponent('Package', {
           />
 
           <section
+            id="compatibility"
             v-if="
               displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)
             "
             aria-labelledby="compatibility-heading"
+            class="scroll-mt-20"
           >
             <h2
               id="compatibility-heading"
-              class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
+              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
             >
-              {{ $t('package.compatibility') }}
+              <a
+                href="#compatibility"
+                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+              >
+                {{ $t('package.compatibility') }}
+                <span
+                  class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  aria-hidden="true"
+                />
+              </a>
             </h2>
             <dl class="space-y-2">
               <div v-if="displayVersion.engines.node" class="flex justify-between gap-4 py-1">
