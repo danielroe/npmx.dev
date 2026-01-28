@@ -40,7 +40,8 @@
   "nav": {
     "popular_packages": "Popular packages",
     "search": "search",
-    "settings": "settings"
+    "settings": "settings",
+    "back": "Back"
   },
   "settings": {
     "relative_dates": "Relative dates",

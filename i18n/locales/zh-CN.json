@@ -40,7 +40,8 @@
   "nav": {
     "popular_packages": "热门软件包",
     "search": "搜索",
-    "settings": "设置"
+    "settings": "设置",
+    "back": "返回"
   },
   "settings": {
     "relative_dates": "相对时间",

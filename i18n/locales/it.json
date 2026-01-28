@@ -33,7 +33,8 @@
   "nav": {
     "popular_packages": "Pacchetti popolari",
     "search": "cerca",
-    "settings": "impostazioni"
+    "settings": "impostazioni",
+    "back": "Indietro"
   },
   "settings": {
     "relative_dates": "Date relative",
