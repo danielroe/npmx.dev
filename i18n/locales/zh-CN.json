@@ -277,7 +277,6 @@
     "modal": {
       "title": "本地连接器",
       "close_modal": "关闭对话框",
-      "close": "关闭",
       "connected": "已连接",
       "logged_in_as": "登录为 {'@'}{user}",
       "connected_hint": "现在您可以通过 Web UI 管理包和组织。",
@@ -426,7 +425,6 @@
     "modal": {
       "title": "声明包名",
       "close_modal": "关闭对话框",
-      "close": "关闭",
       "success": "包已声明！",
       "success_detail": "{name}{'@'}0.0.0 已发布到 npm。",
       "success_hint": "您现在可以使用 npm publish 发布新版本到这个包。",
@@ -444,7 +442,6 @@
       "preview_json": "预览 package.json",
       "claim_button": "声明包名",
       "publishing": "发布中...",
-      "retry": "重试",
       "checking": "检查可用性中...",
       "failed_to_check": "检查名称可用性失败",
       "failed_to_claim": "声明包名失败"
