@@ -246,7 +246,6 @@ html.light .shiki span {
 /* Code blocks - including Shiki output */
 .readme-content pre,
 .readme-content .shiki {
-  background: oklch(0.145 0 0) !important;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem;
