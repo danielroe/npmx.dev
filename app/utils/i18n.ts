@@ -1,9 +1,7 @@
 import { useI18n as useOriginalI18n } from 'vue-i18n'
 
 export function useI18n() {
-  const i18n = useOriginalI18n()
-
-  const { t, d, n, ...rest } = i18n
+  const { t, d, n, ...rest } = useOriginalI18n()
 
   return {
     ...rest,
