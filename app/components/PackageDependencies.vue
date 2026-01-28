@@ -48,9 +48,23 @@ const sortedOptionalDependencies = computed(() => {
 <template>
   <div class="space-y-8">
     <!-- Dependencies -->
-    <section v-if="sortedDependencies.length > 0" aria-labelledby="dependencies-heading">
-      <h2 id="dependencies-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
+    <section
+      id="dependencies"
+      v-if="sortedDependencies.length > 0"
+      aria-labelledby="dependencies-heading"
+      class="scroll-mt-20"
+    >
+      <h2
+        id="dependencies-heading"
+        class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+      >
         {{ $t('package.dependencies.title', { count: sortedDependencies.length }) }}
+        <a
+          href="#dependencies"
+          class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+        >
+          <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+        </a>
       </h2>
       <ul class="space-y-1 list-none m-0 p-0" :aria-label="$t('package.dependencies.list_label')">
         <li
@@ -99,12 +113,23 @@ const sortedOptionalDependencies = computed(() => {
     </section>
 
     <!-- Peer Dependencies -->
-    <section v-if="sortedPeerDependencies.length > 0" aria-labelledby="peer-dependencies-heading">
+    <section
+      id="peer-dependencies"
+      v-if="sortedPeerDependencies.length > 0"
+      aria-labelledby="peer-dependencies-heading"
+      class="scroll-mt-20"
+    >
       <h2
         id="peer-dependencies-heading"
-        class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
+        class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
       >
         {{ $t('package.peer_dependencies.title', { count: sortedPeerDependencies.length }) }}
+        <a
+          href="#peer-dependencies"
+          class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+        >
+          <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+        </a>
       </h2>
       <ul
         class="space-y-1 list-none m-0 p-0"
@@ -154,16 +179,24 @@ const sortedOptionalDependencies = computed(() => {
 
     <!-- Optional Dependencies -->
     <section
+      id="optional-dependencies"
       v-if="sortedOptionalDependencies.length > 0"
       aria-labelledby="optional-dependencies-heading"
+      class="scroll-mt-20"
     >
       <h2
         id="optional-dependencies-heading"
-        class="text-xs text-fg-subtle uppercase tracking-wider mb-3"
+        class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
       >
         {{
           $t('package.optional_dependencies.title', { count: sortedOptionalDependencies.length })
         }}
+        <a
+          href="#optional-dependencies"
+          class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+        >
+          <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+        </a>
       </h2>
       <ul
         class="space-y-1 list-none m-0 p-0"

@@ -305,9 +305,23 @@ function getTagVersions(tag: string): VersionDisplay[] {
 </script>
 
 <template>
-  <section v-if="allTagRows.length > 0" aria-labelledby="versions-heading" class="overflow-hidden">
-    <h2 id="versions-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
+  <section
+    id="versions"
+    v-if="allTagRows.length > 0"
+    aria-labelledby="versions-heading"
+    class="overflow-hidden scroll-mt-20"
+  >
+    <h2
+      id="versions-heading"
+      class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+    >
       {{ $t('package.versions.title') }}
+      <a
+        href="#versions"
+        class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+      >
+        <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+      </a>
     </h2>
 
     <div class="space-y-0.5 min-w-0">

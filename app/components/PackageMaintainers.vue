@@ -153,9 +153,23 @@ watch(
 </script>
 
 <template>
-  <section v-if="maintainers?.length" aria-labelledby="maintainers-heading">
-    <h2 id="maintainers-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
+  <section
+    id="maintainers"
+    v-if="maintainers?.length"
+    aria-labelledby="maintainers-heading"
+    class="scroll-mt-20"
+  >
+    <h2
+      id="maintainers-heading"
+      class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+    >
       {{ $t('package.maintainers.title') }}
+      <a
+        href="#maintainers"
+        class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+      >
+        <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+      </a>
     </h2>
     <ul class="space-y-2 list-none m-0 p-0" :aria-label="$t('package.maintainers.list_label')">
       <li
