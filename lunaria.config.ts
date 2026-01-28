@@ -12,8 +12,8 @@ export default defineConfig({
   locales,
   files: [
     {
-      include: ['lunaria-json-files/en-US.json'],
-      pattern: 'lunaria-json-files/@lang.json',
+      include: ['lunaria/files/en-US.json'],
+      pattern: 'lunaria/files/@lang.json',
       type: 'dictionary',
     },
   ],
