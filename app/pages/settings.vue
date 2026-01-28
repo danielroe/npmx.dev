@@ -120,8 +120,13 @@ useSeoMeta({
         </a>
       </div>
 
-      <div class="p-3 border-t border-border">
-        <AccentColorPicker />
+      <div class="pt-2 mt-2 border-t border-border">
+        <h2 class="text-xs text-fg-subtle uppercase tracking-wider px-2 py-1">
+          {{ $t('settings.accent_colors') }}
+        </h2>
+        <div class="px-2 py-2">
+          <AccentColorPicker />
+        </div>
       </div>
     </div>
   </main>
