@@ -162,8 +162,7 @@ watch(open, isOpen => {
                     type="password"
                     name="connector-token"
                     :placeholder="$t('connector.modal.token_placeholder')"
-                    autocomplete="off"
-                    spellcheck="false"
+                    v-bind="noCorrect"
                     class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                   />
                 </div>
