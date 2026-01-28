@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { Directions, LocaleObject } from '@nuxtjs/i18n'
+import type { Directions } from '@nuxtjs/i18n'
 import { useEventListener } from '@vueuse/core'
 
 const route = useRoute()
 const router = useRouter()
-const { locale, locales, t } = useI18n()
+const { locale, locales } = useI18n()
 
 // Initialize accent color before hydration to prevent flash
 initAccentOnPrehydrate()
