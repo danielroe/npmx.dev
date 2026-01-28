@@ -191,6 +191,16 @@ function safeMax(a: string, b: string): string {
   return a.localeCompare(b) >= 0 ? a : b
 }
 
+function extractDates(dateLabel: string) {
+  if (typeof dateLabel !== 'string') return []
+
+  const parts = dateLabel.trim().split(/\s+/).filter(Boolean)
+
+  if (parts.length < 2) return []
+
+  return [parts[0], parts[parts.length - 1]]
+}
+
 /**
  * Two-phase state:
  * - selectedGranularity: immediate UI
@@ -512,6 +522,13 @@ const config = computed(() => ({
     },
     zoom: {
       maxWidth: 500,
+      customFormat:
+        displayedGranularity.value !== 'weekly'
+          ? undefined
+          : ({ absoluteIndex, side }: { absoluteIndex: number; side: 'left' | 'right' }) => {
+              const parts = extractDates(chartData.value.dates[absoluteIndex] ?? '')
+              return side === 'left' ? parts[0] : parts.at(-1)
+            },
       highlightColor: isDarkMode.value ? '#2A2A2A' : '#E1E5E8',
       minimap: {
         show: true,
