@@ -838,11 +838,11 @@ defineOgImageComponent('Package', {
         </div>
         <div class="relative group">
           <!-- Terminal-style execute command -->
-          <div class="bg-[#0d0d0d] border border-border rounded-lg overflow-hidden">
+          <div class="bg-bg-subtle border border-border rounded-lg overflow-hidden">
             <div class="flex gap-1.5 px-3 pt-2 sm:px-4 sm:pt-3">
-              <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
-              <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
-              <span class="w-2.5 h-2.5 rounded-full bg-[#333]" />
+              <span class="w-2.5 h-2.5 rounded-full bg-fg-subtle" />
+              <span class="w-2.5 h-2.5 rounded-full bg-fg-subtle" />
+              <span class="w-2.5 h-2.5 rounded-full bg-fg-subtle" />
             </div>
             <div class="px-3 pt-2 pb-3 sm:px-4 sm:pt-3 sm:pb-4 space-y-1">
               <!-- Execute command -->
