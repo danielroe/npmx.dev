@@ -456,7 +456,7 @@ const config = computed(() => ({
           loadFile(url, `${packageName}-${selectedGranularity.value}.csv`)
           URL.revokeObjectURL(url)
         },
-        svg: ({ blob }: { blob: Blob}) => {
+        svg: ({ blob }: { blob: Blob }) => {
           const url = URL.createObjectURL(blob)
           loadFile(url, `${packageName}-${selectedGranularity.value}.svg`)
           URL.revokeObjectURL(url)
