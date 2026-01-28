@@ -9,6 +9,7 @@
   "non_affiliation_disclaimer": "not affiliated with npm, Inc.",
   "trademark_disclaimer": "npm is a registered trademark of npm, Inc. This site is not affiliated with npm, Inc.",
   "footer": {
+    "about": "about",
     "docs": "docs",
     "source": "source",
     "social": "social",
@@ -39,7 +40,8 @@
   "nav": {
     "popular_packages": "Popular packages",
     "search": "search",
-    "settings": "settings"
+    "settings": "settings",
+    "back": "Back"
   },
   "settings": {
     "relative_dates": "Relative dates",
@@ -107,8 +109,8 @@
       "docs": "docs",
       "fund": "fund"
     },
-    "install": {
-      "title": "Install",
+    "get_started": {
+      "title": "Get started",
       "pm_label": "Package manager",
       "copy_command": "Copy install command",
       "view_types": "View {package}"
@@ -216,8 +218,23 @@
     "vulnerabilities": {
       "no_description": "No description available",
       "found": "{count} vulnerability found | {count} vulnerabilities found",
+      "deps_found": "{count} vulnerability found | {count} vulnerabilities found",
+      "deps_affected": "{count} dependency affected | {count} dependencies affected",
+      "tree_found": "{vulns} vulnerability in {packages}/{total} packages | {vulns} vulnerabilities in {packages}/{total} packages",
+      "scanning_tree": "Scanning dependency tree...",
+      "show_all_packages": "show all {count} affected packages",
       "no_summary": "No summary",
       "view_details": "View vulnerability details",
+      "path": "path",
+      "more": "+{count} more",
+      "packages_failed": "{count} package could not be checked | {count} packages could not be checked",
+      "no_known": "No known vulnerabilities in {count} packages",
+      "scan_failed": "Could not scan for vulnerabilities",
+      "depth": {
+        "root": "This package",
+        "direct": "Direct dependency",
+        "transitive": "Transitive dependency (indirect)"
+      },
       "severity": {
         "critical": "critical",
         "high": "high",
@@ -492,6 +509,69 @@
     "jsr": {
       "title": "also available on JSR",
       "label": "jsr"
+    }
+  },
+  "about": {
+    "title": "About",
+    "heading": "about",
+    "meta_description": "npmx is a fast, modern browser for the npm registry. A better UX/DX for exploring npm packages.",
+    "back_home": "back to home",
+    "what_we_are": {
+      "title": "What we are",
+      "better_ux_dx": "better UX/DX",
+      "admin_ui": "admin UI",
+      "description": "npmx is a {betterUxDx} for the npm package registry and tooling. We provide a fast, modern interface for exploring packages, with features like dark mode, keyboard navigation, code browsing, and connections to alternative registries like {jsr}.",
+      "admin_description": "We also aim to provide a better {adminUi} for managing your packages, teams, and organizations — all from the browser, powered by your local npm CLI."
+    },
+    "what_we_are_not": {
+      "title": "What we're not",
+      "not_package_manager": "Not a package manager.",
+      "not_registry": "Not a registry.",
+      "registry_description": "We don't host packages. We're just a better way to browse them.",
+      "package_managers_exist": "{already} {people} {building} {really} {cool} {package} {managers}.",
+      "words": {
+        "already": "There are",
+        "people": "already",
+        "building": "people",
+        "really": "building",
+        "cool": "really",
+        "package": "cool",
+        "managers": "package managers"
+      }
+    },
+    "vision": {
+      "title": "Vision",
+      "speed_first": "Speed first",
+      "speed_first_description": "Layout shift, flakiness, and slowness is The Worst. We want everything to be fast, whether searching, filtering, or navigating.",
+      "url_compatible": "URL compatible",
+      "url_compatible_description": "Replace {npmjs} with {npmx} in any URL and it should work, providing the same information with a better experience.",
+      "simplicity": "Simplicity",
+      "simplicity_description": "No noise, cluttered display, or confusing UI."
+    },
+    "contributors": {
+      "title": "Contributors",
+      "description": "npmx is built by an amazing community of contributors.",
+      "loading": "Loading contributors...",
+      "error": "Failed to load contributors",
+      "view_profile": "View {name}'s GitHub profile"
+    },
+    "get_involved": {
+      "title": "Get involved",
+      "contribute": {
+        "title": "Contribute",
+        "description": "Help us build a better npm experience. Check out our GitHub repo to get started.",
+        "cta": "View on GitHub"
+      },
+      "community": {
+        "title": "Join the community",
+        "description": "Chat with other developers, ask questions, and share ideas on Discord.",
+        "cta": "Join Discord"
+      },
+      "follow": {
+        "title": "Stay updated",
+        "description": "Follow us on Bluesky for the latest news, updates, and tips.",
+        "cta": "Follow on Bluesky"
+      }
     }
   },
   "header": {
