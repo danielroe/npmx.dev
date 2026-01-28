@@ -124,12 +124,13 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
     file: 'el-GR.json',
     name: 'Ελληνικά',
   },
+  */
   {
     code: 'de-DE',
     file: 'de-DE.json',
     name: 'Deutsch',
   },
-  {
+  /*{
     code: 'hu-HU',
     file: 'hu-HU.json',
     name: 'Magyar',
