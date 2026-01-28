@@ -6,11 +6,13 @@ test.describe('Create Command', () => {
       await goto('/vite', { waitUntil: 'domcontentloaded' })
 
       // Create command section should be visible (SSR)
-      const createCommand = page.locator('code', { hasText: /create vite/i })
-      await expect(createCommand).toBeVisible()
+      // Use specific container to avoid matching README code blocks
+      const createCommandSection = page.locator('.group\\/createcmd')
+      await expect(createCommandSection).toBeVisible()
+      await expect(createCommandSection.locator('code')).toContainText(/create vite/i)
 
-      // Link to create-vite should be present
-      await expect(page.locator('a[href="/create-vite"]')).toBeVisible()
+      // Link to create-vite should be present (uses sr-only text, so check attachment not visibility)
+      await expect(page.locator('a[href="/create-vite"]')).toBeAttached()
     })
 
     test('/next - should show create command (shared maintainer, same repo)', async ({
@@ -20,11 +22,13 @@ test.describe('Create Command', () => {
       await goto('/next', { waitUntil: 'domcontentloaded' })
 
       // Create command section should be visible (SSR)
-      const createCommand = page.locator('code', { hasText: /create next-app/i })
-      await expect(createCommand).toBeVisible()
+      // Use specific container to avoid matching README code blocks
+      const createCommandSection = page.locator('.group\\/createcmd')
+      await expect(createCommandSection).toBeVisible()
+      await expect(createCommandSection.locator('code')).toContainText(/create next-app/i)
 
-      // Link to create-next-app should be present
-      await expect(page.locator('a[href="/create-next-app"]')).toBeVisible()
+      // Link to create-next-app should be present (uses sr-only text, so check attachment not visibility)
+      await expect(page.locator('a[href="/create-next-app"]')).toBeAttached()
     })
 
     test('/nuxt - should show create command (same maintainer, same org)', async ({
@@ -34,8 +38,11 @@ test.describe('Create Command', () => {
       await goto('/nuxt', { waitUntil: 'domcontentloaded' })
 
       // Create command section should be visible (SSR)
-      const createCommand = page.locator('code', { hasText: /nuxi init/i })
-      await expect(createCommand).toBeVisible()
+      // nuxt has create-nuxt package, so command is "npm create nuxt"
+      // Use specific container to avoid matching README code blocks
+      const createCommandSection = page.locator('.group\\/createcmd')
+      await expect(createCommandSection).toBeVisible()
+      await expect(createCommandSection.locator('code')).toContainText(/create nuxt/i)
     })
 
     test('/color - should NOT show create command (different maintainers)', async ({
@@ -47,9 +54,9 @@ test.describe('Create Command', () => {
       // Wait for package to load
       await expect(page.locator('h1').filter({ hasText: 'color' })).toBeVisible()
 
-      // Create command should NOT be visible
-      const createCommand = page.locator('code', { hasText: /create color/i })
-      await expect(createCommand).not.toBeVisible()
+      // Create command section should NOT be visible (different maintainers)
+      const createCommandSection = page.locator('.group\\/createcmd')
+      await expect(createCommandSection).not.toBeVisible()
     })
 
     test('/lodash - should NOT show create command (no create-lodash exists)', async ({
@@ -61,9 +68,9 @@ test.describe('Create Command', () => {
       // Wait for package to load
       await expect(page.locator('h1').filter({ hasText: 'lodash' })).toBeVisible()
 
-      // Create command should NOT be visible
-      const createCommand = page.locator('code', { hasText: /create lodash/i })
-      await expect(createCommand).not.toBeVisible()
+      // Create command section should NOT be visible (no create-lodash exists)
+      const createCommandSection = page.locator('.group\\/createcmd')
+      await expect(createCommandSection).not.toBeVisible()
     })
   })
 
@@ -71,9 +78,13 @@ test.describe('Create Command', () => {
     test('hovering create command shows copy button', async ({ page, goto }) => {
       await goto('/vite', { waitUntil: 'hydration' })
 
-      // Find the create command container
+      // Wait for package analysis API to load (create command requires this)
+      // First ensure the package page has loaded
+      await expect(page.locator('h1')).toContainText('vite')
+
+      // Find the create command container (wait longer for API response)
       const createCommandContainer = page.locator('.group\\/createcmd')
-      await expect(createCommandContainer).toBeVisible()
+      await expect(createCommandContainer).toBeVisible({ timeout: 15000 })
 
       // Copy button should initially be hidden (opacity-0)
       const copyButton = createCommandContainer.locator('button')
