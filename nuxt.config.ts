@@ -49,6 +49,9 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'en-US',
+      },
       link: [
         {
           rel: 'search',
