@@ -212,7 +212,7 @@
       "revoke_access": "Revoca {name} accesso",
       "no_access": "Nessun accesso team configurato",
       "select_team_label": "Seleziona team",
-      "caricando_teams": "Caricando i team...",
+      "loading_teams": "Caricando i team...",
       "select_team": "Seleziona team",
       "permission_label": "Livello di permessi",
       "permission": {
