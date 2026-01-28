@@ -247,7 +247,7 @@ export function useNpmSearch(
       }
 
       const params = new URLSearchParams()
-      params.set('text', q)
+      params.set('text', q.toLowerCase())
       const opts = toValue(options)
       if (opts.size) params.set('size', String(opts.size))
       if (opts.from) params.set('from', String(opts.from))
