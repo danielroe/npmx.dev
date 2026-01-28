@@ -93,6 +93,7 @@ onKeyStroke(',', e => {
                   @focus="isSearchFocused = true"
                   @blur="isSearchFocused = false"
                 />
+                <button type="submit" class="sr-only">{{ $t('search.button') }}</button>
               </div>
             </div>
           </form>
