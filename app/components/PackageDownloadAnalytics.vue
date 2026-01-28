@@ -414,6 +414,14 @@ const chartData = computed<{ dataset: VueUiXyDatasetItem[] | null; dates: string
 
 const formatter = ({ value }: { value: number }) => formatCompactNumber(value, { decimals: 1 })
 
+const loadFile = (link: string, filename: string) => {
+  const a = document.createElement('a')
+  a.href = link
+  a.download = filename
+  a.click()
+  a.remove()
+}
+
 const config = computed(() => ({
   theme: isDarkMode.value ? 'dark' : 'default',
   chart: {
@@ -424,6 +432,22 @@ const config = computed(() => ({
         fullscreen: false,
         table: false,
         tooltip: false,
+      },
+      callbacks: {
+        img: ({ imageUri }: { imageUri: string }) => {
+          loadFile(imageUri, `${packageName}-${selectedGranularity.value}.png`)
+        },
+        csv: (csvStr: string) => {
+          const blob = new Blob([csvStr.replace('data:text/csv;charset=utf-8,', '')])
+          const url = URL.createObjectURL(blob)
+          loadFile(url, `${packageName}-${selectedGranularity.value}.csv`)
+          URL.revokeObjectURL(url)
+        },
+        svg: ({ blob }: { blob: Blob}) => {
+          const url = URL.createObjectURL(blob)
+          loadFile(url, `${packageName}-${selectedGranularity.value}.svg`)
+          URL.revokeObjectURL(url)
+        },
       },
     },
     backgroundColor: isDarkMode.value ? '#0A0A0A' : '#FFFFFF',
