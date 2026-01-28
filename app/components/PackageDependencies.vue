@@ -56,15 +56,17 @@ const sortedOptionalDependencies = computed(() => {
     >
       <h2
         id="dependencies-heading"
-        class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+        class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
       >
-        {{ $t('package.dependencies.title', { count: sortedDependencies.length }) }}
         <a
           href="#dependencies"
-          class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
-          :aria-label="$t('package.dependencies.anchor_link')"
+          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
         >
-          <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+          {{ $t('package.dependencies.title', { count: sortedDependencies.length }) }}
+          <span
+            class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            aria-hidden="true"
+          />
         </a>
       </h2>
       <ul class="space-y-1 list-none m-0 p-0" :aria-label="$t('package.dependencies.list_label')">
@@ -122,15 +124,17 @@ const sortedOptionalDependencies = computed(() => {
     >
       <h2
         id="peer-dependencies-heading"
-        class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+        class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
       >
-        {{ $t('package.peer_dependencies.title', { count: sortedPeerDependencies.length }) }}
         <a
           href="#peer-dependencies"
-          class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
-          :aria-label="$t('package.peer_dependencies.anchor_link')"
+          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
         >
-          <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+          {{ $t('package.peer_dependencies.title', { count: sortedPeerDependencies.length }) }}
+          <span
+            class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            aria-hidden="true"
+          />
         </a>
       </h2>
       <ul
@@ -188,16 +192,19 @@ const sortedOptionalDependencies = computed(() => {
     >
       <h2
         id="optional-dependencies-heading"
-        class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+        class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
       >
-        {{
-          $t('package.optional_dependencies.title', { count: sortedOptionalDependencies.length })
-        }}
         <a
           href="#optional-dependencies"
-          class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
         >
-          <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+          {{
+            $t('package.optional_dependencies.title', { count: sortedOptionalDependencies.length })
+          }}
+          <span
+            class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            aria-hidden="true"
+          />
         </a>
       </h2>
       <ul

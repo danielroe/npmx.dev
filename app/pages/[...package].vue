@@ -669,16 +669,16 @@ defineOgImageComponent('Package', {
       <!-- Install command with package manager selector -->
       <section id="install" aria-labelledby="install-heading" class="area-install scroll-mt-20">
         <div class="flex flex-wrap items-center justify-between mb-3">
-          <h2
-            id="install-heading"
-            class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider"
-          >
-            {{ $t('package.install.title') }}
+          <h2 id="install-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
             <a
               href="#install"
-              class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+              class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
             >
-              <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+              {{ $t('package.install.title') }}
+              <span
+                class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                aria-hidden="true"
+              />
             </a>
           </h2>
           <!-- Package manager tabs -->
@@ -783,16 +783,16 @@ defineOgImageComponent('Package', {
         aria-labelledby="readme-heading"
         class="area-readme min-w-0 scroll-mt-20"
       >
-        <h2
-          id="readme-heading"
-          class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-4"
-        >
-          {{ $t('package.readme.title') }}
+        <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
           <a
             href="#readme"
-            class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+            class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
           >
-            <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+            {{ $t('package.readme.title') }}
+            <span
+              class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-hidden="true"
+            />
           </a>
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
@@ -829,14 +829,17 @@ defineOgImageComponent('Package', {
           >
             <h2
               id="keywords-heading"
-              class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
             >
-              {{ $t('package.keywords_title') }}
               <a
                 href="#keywords"
-                class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
               >
-                <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+                {{ $t('package.keywords_title') }}
+                <span
+                  class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  aria-hidden="true"
+                />
               </a>
             </h2>
             <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
@@ -867,14 +870,17 @@ defineOgImageComponent('Package', {
           >
             <h2
               id="compatibility-heading"
-              class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider mb-3"
+              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
             >
-              {{ $t('package.compatibility') }}
               <a
                 href="#compatibility"
-                class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
               >
-                <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+                {{ $t('package.compatibility') }}
+                <span
+                  class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  aria-hidden="true"
+                />
               </a>
             </h2>
             <dl class="space-y-2">

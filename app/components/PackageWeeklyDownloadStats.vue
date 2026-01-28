@@ -146,15 +146,16 @@ const config = computed(() => {
   <div class="space-y-8">
     <section id="downloads" class="scroll-mt-20">
       <div class="flex items-center justify-between mb-3">
-        <h2
-          class="group inline-flex items-center gap-1.5 text-xs text-fg-subtle uppercase tracking-wider"
-        >
-          {{ $t('package.downloads.title') }}
+        <h2 class="group text-xs text-fg-subtle uppercase tracking-wider">
           <a
             href="#downloads"
-            class="opacity-0 group-hover:opacity-100 text-fg-subtle hover:text-fg-muted transition-opacity duration-200 no-underline"
+            class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
           >
-            <span class="i-carbon-link w-3 h-3 block" aria-hidden="true" />
+            {{ $t('package.downloads.title') }}
+            <span
+              class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              aria-hidden="true"
+            />
           </a>
         </h2>
         <button
