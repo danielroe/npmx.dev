@@ -6,6 +6,10 @@ const colorMode = useColorMode()
 const availableLocales = computed(() =>
   locales.value.map(l => (typeof l === 'string' ? { code: l, name: l } : l)),
 )
+
+useSeoMeta({
+  title: 'Settings - npmx',
+})
 </script>
 
 <template>
