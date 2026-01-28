@@ -40,7 +40,8 @@
   "nav": {
     "popular_packages": "Popular packages",
     "search": "search",
-    "settings": "settings"
+    "settings": "settings",
+    "back": "Back"
   },
   "settings": {
     "relative_dates": "Relative dates",
@@ -108,8 +109,8 @@
       "docs": "docs",
       "fund": "fund"
     },
-    "install": {
-      "title": "Install",
+    "get_started": {
+      "title": "Get started",
       "pm_label": "Package manager",
       "copy_command": "Copy install command",
       "view_types": "View {package}"

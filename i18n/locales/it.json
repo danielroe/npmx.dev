@@ -33,7 +33,8 @@
   "nav": {
     "popular_packages": "Pacchetti popolari",
     "search": "cerca",
-    "settings": "impostazioni"
+    "settings": "impostazioni",
+    "back": "Indietro"
   },
   "settings": {
     "relative_dates": "Date relative",
@@ -95,8 +96,8 @@
       "jsr": "jsr",
       "code": "codice"
     },
-    "install": {
-      "title": "Installa",
+    "get_started": {
+      "title": "Inizia",
       "pm_label": "Gestore di pacchetti",
       "copy_command": "Copia comando di installazione",
       "view_types": "Vedi {package}"

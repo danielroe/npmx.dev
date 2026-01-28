@@ -40,7 +40,8 @@
   "nav": {
     "popular_packages": "热门软件包",
     "search": "搜索",
-    "settings": "设置"
+    "settings": "设置",
+    "back": "返回"
   },
   "settings": {
     "relative_dates": "相对时间",
@@ -108,8 +109,8 @@
       "docs": "文档",
       "fund": "资助"
     },
-    "install": {
-      "title": "安装",
+    "get_started": {
+      "title": "开始使用",
       "pm_label": "包管理器",
       "copy_command": "复制安装命令",
       "view_types": "查看 {package}"

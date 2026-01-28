@@ -820,34 +820,22 @@ defineOgImageComponent('Package', {
             role="tablist"
             aria-label="Package manager"
           >
-            <ClientOnly>
-              <button
-                v-for="pm in packageManagers"
-                :key="pm.id"
-                role="tab"
-                :aria-selected="selectedPM === pm.id"
-                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
-                :class="
-                  selectedPM === pm.id
-                    ? 'bg-bg shadow text-fg border-border'
-                    : 'text-fg-subtle hover:text-fg border-transparent'
-                "
-                @click="selectedPM = pm.id"
-              >
-                <span class="inline-block h-3 w-3" :class="pm.icon" aria-hidden="true" />
-                {{ pm.label }}
-              </button>
-              <template #fallback>
-                <span
-                  v-for="pm in packageManagers"
-                  :key="pm.id"
-                  class="px-2 py-1 font-mono text-xs rounded"
-                  :class="pm.id === 'npm' ? 'bg-bg-elevated text-fg' : 'text-fg-subtle'"
-                >
-                  {{ pm.label }}
-                </span>
-              </template>
-            </ClientOnly>
+            <button
+              v-for="pm in packageManagers"
+              :key="pm.id"
+              role="tab"
+              :aria-selected="selectedPM === pm.id"
+              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+              :class="
+                selectedPM === pm.id
+                  ? 'bg-bg shadow text-fg border-border'
+                  : 'text-fg-subtle hover:text-fg border-transparent'
+              "
+              @click="selectedPM = pm.id"
+            >
+              <span class="inline-block h-3 w-3" :class="pm.icon" aria-hidden="true" />
+              {{ pm.label }}
+            </button>
           </div>
         </div>
         <div class="relative group">
@@ -891,17 +879,20 @@ defineOgImageComponent('Package', {
       <!-- Regular packages: Install command with optional run command -->
       <section
         v-else
-        id="install"
-        aria-labelledby="install-heading"
+        id="get-started"
+        aria-labelledby="get-started-heading"
         class="area-install scroll-mt-20"
       >
         <div class="flex flex-wrap items-center justify-between mb-3">
-          <h2 id="install-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
+          <h2
+            id="get-started-heading"
+            class="group text-xs text-fg-subtle uppercase tracking-wider"
+          >
             <a
-              href="#install"
+              href="#get-started"
               class="inline-flex items-center gap-1.5 py-1 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
             >
-              {{ $t('package.install.title') }}
+              {{ $t('package.get_started.title') }}
               <span
                 class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 aria-hidden="true"
@@ -912,36 +903,24 @@ defineOgImageComponent('Package', {
           <div
             class="flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md overflow-x-auto"
             role="tablist"
-            :aria-label="$t('package.install.pm_label')"
+            :aria-label="$t('package.get_started.pm_label')"
           >
-            <ClientOnly>
-              <button
-                v-for="pm in packageManagers"
-                :key="pm.id"
-                role="tab"
-                :aria-selected="selectedPM === pm.id"
-                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
-                :class="
-                  selectedPM === pm.id
-                    ? 'bg-bg shadow text-fg border-border'
-                    : 'text-fg-subtle hover:text-fg  border-transparent'
-                "
-                @click="selectedPM = pm.id"
-              >
-                <span class="inline-block h-3 w-3" :class="pm.icon" aria-hidden="true" />
-                {{ pm.label }}
-              </button>
-              <template #fallback>
-                <span
-                  v-for="pm in packageManagers"
-                  :key="pm.id"
-                  class="px-2 py-1 font-mono text-xs rounded"
-                  :class="pm.id === 'npm' ? 'bg-bg-elevated text-fg' : 'text-fg-subtle'"
-                >
-                  {{ pm.label }}
-                </span>
-              </template>
-            </ClientOnly>
+            <button
+              v-for="pm in packageManagers"
+              :key="pm.id"
+              role="tab"
+              :aria-selected="selectedPM === pm.id"
+              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+              :class="
+                selectedPM === pm.id
+                  ? 'bg-bg shadow text-fg border-border'
+                  : 'text-fg-subtle hover:text-fg border-transparent'
+              "
+              @click="selectedPM = pm.id"
+            >
+              <span class="inline-block h-3 w-3" :class="pm.icon" aria-hidden="true" />
+              {{ pm.label }}
+            </button>
           </div>
         </div>
         <div class="relative group">
@@ -972,7 +951,7 @@ defineOgImageComponent('Package', {
                 <button
                   type="button"
                   class="px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/installcmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-                  :aria-label="$t('package.install.copy_command')"
+                  :aria-label="$t('package.get_started.copy_command')"
                   @click.stop="copyInstallCommand"
                 >
                   <span aria-live="polite">{{
@@ -996,7 +975,7 @@ defineOgImageComponent('Package', {
                   v-if="typesPackageName"
                   :to="`/${typesPackageName}`"
                   class="text-fg-subtle hover:text-fg-muted text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
-                  :title="$t('package.install.view_types', { package: typesPackageName })"
+                  :title="$t('package.get_started.view_types', { package: typesPackageName })"
                 >
                   <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
                   <span class="sr-only">View {{ typesPackageName }}</span>

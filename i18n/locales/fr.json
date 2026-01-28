@@ -40,7 +40,8 @@
   "nav": {
     "popular_packages": "Paquets populaires",
     "search": "recherche",
-    "settings": "paramètres"
+    "settings": "paramètres",
+    "back": "Retour"
   },
   "settings": {
     "relative_dates": "Dates relatives",
@@ -106,8 +107,8 @@
       "code": "code",
       "docs": "docs"
     },
-    "install": {
-      "title": "Installer",
+    "get_started": {
+      "title": "Commencer",
       "pm_label": "Gestionnaire de paquets",
       "copy_command": "Copier la commande d'installation",
       "view_types": "Voir {package}"
