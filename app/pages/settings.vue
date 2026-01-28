@@ -100,9 +100,8 @@ useSeoMeta({
         <div class="px-2 py-1">
           <select
             id="language-select"
-            :value="locale"
+            v-model="settings.language"
             class="w-full bg-bg-muted border border-border rounded-md px-2 py-1.5 text-sm text-fg focus:outline-none focus:ring-2 focus:ring-fg/50 cursor-pointer"
-            @change="setLocale(($event.target as HTMLSelectElement).value as typeof locale)"
           >
             <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">
               {{ loc.name }}

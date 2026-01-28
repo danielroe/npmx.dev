@@ -14,18 +14,26 @@ export interface AppSettings {
   includeTypesInInstall: boolean
   /** Accent color theme */
   accentColorId: AccentColorId | null
+  /** Language code (e.g., "en-US") */
+  language: string
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   relativeDates: false,
   includeTypesInInstall: true,
   accentColorId: null,
+  language: 'en-US',
 }
 
 const STORAGE_KEY = 'npmx-settings'
 
 // Shared settings instance (singleton per app)
 let settingsRef: RemovableRef<AppSettings> | null = null
+
+export function getDefaultLanguage(languages: string[]) {
+  if (import.meta.server) return 'en-US'
+  return matchLanguages(languages, navigator.languages) || 'en-US'
+}
 
 /**
  * Composable for managing application settings with localStorage persistence.
