@@ -28,7 +28,14 @@
     "claim_prompt": "Ottieni il nome di questo pacchetto su npm",
     "claim_button": "Ottieni \"{name}\"",
     "want_to_claim": "Vuoi ottenere il nome di questo pacchetto?",
-    "start_typing": "Inizia a scrivere per cercare i pacchetti"
+    "start_typing": "Inizia a scrivere per cercare i pacchetti",
+    "exact_match": "esatto",
+    "suggestion": {
+      "user": "utente",
+      "org": "organizzazione",
+      "view_user_packages": "Vedi pacchetti di questo utente",
+      "view_org_packages": "Vedi pacchetti di questa organizzazione"
+    }
   },
   "nav": {
     "popular_packages": "Pacchetti popolari",
@@ -39,6 +46,10 @@
   "settings": {
     "relative_dates": "Date relative",
     "include_types": "Includi {'@'}types durante l'installazione",
+    "theme": "Tema",
+    "theme_light": "Chiaro",
+    "theme_dark": "Scuro",
+    "theme_system": "Sistema",
     "language": "Lingua",
     "help_translate": "Aiuta a tradurre npmx",
     "accent_colors": "Colori di accento"
@@ -94,13 +105,23 @@
       "issues": "issues",
       "forks": "fork | forks",
       "jsr": "jsr",
-      "code": "codice"
+      "code": "codice",
+      "docs": "documenti",
+      "fund": "finanzia"
     },
     "get_started": {
       "title": "Inizia",
       "pm_label": "Gestore di pacchetti",
       "copy_command": "Copia comando di installazione",
       "view_types": "Vedi {package}"
+    },
+    "create": {
+      "title": "Crea nuovo progetto",
+      "copy_command": "Copia crea comando"
+    },
+    "run": {
+      "title": "Esegui",
+      "locally": "Esegui localmente"
     },
     "readme": {
       "title": "Readme",
@@ -113,7 +134,8 @@
       "publisher": "Autore",
       "updated": "Aggiornato",
       "weekly_downloads": "Download settimanali",
-      "keywords": "Keywords"
+      "keywords": "Keywords",
+      "license": "Licenza"
     },
     "versions": {
       "title": "Versioni",
