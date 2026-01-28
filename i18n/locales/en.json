@@ -104,7 +104,8 @@
       "forks": "fork | forks",
       "jsr": "jsr",
       "code": "code",
-      "docs": "docs"
+      "docs": "docs",
+      "fund": "fund"
     },
     "install": {
       "title": "Install",

@@ -183,6 +183,15 @@ const docsLink = computed(() => {
   }
 })
 
+const fundingUrl = computed(() => {
+  let funding = displayVersion.value?.funding
+  if (Array.isArray(funding)) funding = funding[0]
+
+  if (!funding) return null
+
+  return typeof funding === 'string' ? funding : funding.url
+})
+
 function normalizeGitUrl(url: string): string {
   return url
     .replace(/^git\+/, '')
@@ -633,6 +642,15 @@ defineOgImageComponent('Package', {
               >
                 <span class="i-carbon-document w-4 h-4" aria-hidden="true" />
                 {{ $t('package.links.docs') }}
+              </NuxtLink>
+            </li>
+            <li v-if="fundingUrl">
+              <NuxtLink
+                :to="fundingUrl"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-carbon-favorite w-4 h-4" aria-hidden="true" />
+                {{ $t('package.links.fund') }}
               </NuxtLink>
             </li>
             <li v-if="displayVersion" class="sm:ml-auto">
