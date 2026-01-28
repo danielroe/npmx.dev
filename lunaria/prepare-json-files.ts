@@ -5,7 +5,7 @@ import * as fs from 'node:fs/promises'
 import { currentLocales } from '../config/i18n.ts'
 import { deepCopy } from '@intlify/shared'
 
-const destFolder = path.resolve('lunaria-json-files')
+const destFolder = path.resolve('lunaria/files')
 const localesFolder = path.resolve('i18n/locales')
 
 export const locales: Locale[] = currentLocales
@@ -26,7 +26,6 @@ async function loadJsonFile(name: string) {
 }
 
 async function mergeLocale(locale: LocaleObject) {
-  console.log(locale)
   if (locale.file || locale.files.length === 1) {
     const json = locale.file || locale.files[0]
     await fs.cp(path.resolve(`${localesFolder}/${json}`), path.resolve(`${destFolder}/${json}`))
