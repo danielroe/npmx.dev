@@ -16,7 +16,6 @@ const {
   createdIso: string | null
 }>()
 
-const { t } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
 const colorMode = useColorMode()
 const resolvedMode = ref<'light' | 'dark'>('light')
