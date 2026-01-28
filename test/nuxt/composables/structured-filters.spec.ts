@@ -1,7 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ref } from 'vue'
 import type { NpmSearchResult } from '#shared/types'
-import { useStructuredFilters } from '../../app/composables/useStructuredFilters'
 
 // Helper to create mock package results
 function createPackage(overrides: {
@@ -27,6 +25,7 @@ function createPackage(overrides: {
     updated: overrides.updated ?? '2024-01-01T00:00:00.000Z',
     flags: { insecure: overrides.insecure ?? 0 },
     score: { final: 0.5, detail: { quality: 0.5, popularity: 0.5, maintenance: 0.5 } },
+    searchScore: 1000,
   }
 }
 
