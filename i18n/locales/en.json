@@ -44,11 +44,21 @@
     "popular_packages": "Popular packages",
     "search": "search",
     "settings": "settings",
-    "back": "Back"
+    "back": "back"
   },
   "settings": {
+    "title": "settings",
+    "tagline": "customize your npmx experience",
+    "meta_description": "Customize your npmx.dev experience with theme, language, and display preferences.",
+    "sections": {
+      "appearance": "Appearance",
+      "display": "Display",
+      "language": "Language"
+    },
     "relative_dates": "Relative dates",
+    "relative_dates_description": "Show \"3 days ago\" instead of full dates",
     "include_types": "Include {'@'}types in install",
+    "include_types_description": "Add {'@'}types package to install commands for untyped packages",
     "theme": "Theme",
     "theme_light": "Light",
     "theme_dark": "Dark",
@@ -56,7 +66,16 @@
     "language": "Language",
     "help_translate": "Help translate npmx",
     "accent_colors": "Accent colors",
-    "clear_accent": "Clear accent color"
+    "clear_accent": "Clear accent color",
+    "translation_progress": "Translation progress"
+  },
+  "i18n": {
+    "missing_keys": "{count} missing translation | {count} missing translations",
+    "copy_keys": "Copy keys",
+    "show_more_keys": "Show {count} more...",
+    "contribute_hint": "Help improve this translation by adding the missing keys.",
+    "edit_on_github": "Edit on GitHub",
+    "view_guide": "Translation guide"
   },
   "common": {
     "loading": "Loading...",
