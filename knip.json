@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "includeEntryExports": true,
   "ignoreExportsUsedInFile": true,
-  "ignoreBinaries": [],
+  "ignoreBinaries": ["simple-git-hooks", "lint-staged"],
   "workspaces": {
     ".": {
       "entry": [
@@ -51,7 +51,7 @@
     },
     "docs": {
       "entry": ["app/app.config.ts"],
-      "ignoreDependencies": ["docus", "better-sqlite3"]
+      "ignoreDependencies": ["docus", "better-sqlite3", "nuxt"]
     }
   }
 }
