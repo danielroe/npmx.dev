@@ -29,15 +29,8 @@ function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') closePopup()
 }
 
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-  window.addEventListener('scroll', closePopup, true)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  window.removeEventListener('scroll', closePopup, true)
-})
+useEventListener(document, 'keydown', handleKeydown)
+useEventListener('scroll', closePopup, true)
 
 function togglePopup(event: MouseEvent) {
   if (isOpen.value) {
