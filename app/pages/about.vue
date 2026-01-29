@@ -212,8 +212,11 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
               rel="noopener noreferrer"
               class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
             >
-              <div class="flex items-center gap-2">
-                <span class="i-carbon-logo-github w-5 h-5 text-fg" aria-hidden="true" />
+              <div class="flex gap-2">
+                <span
+                  class="i-carbon-logo-github shrink-0 mt-1 w-5 h-5 text-fg"
+                  aria-hidden="true"
+                />
                 <span class="font-medium text-fg">{{
                   $t('about.get_involved.contribute.title')
                 }}</span>
@@ -260,8 +263,11 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
               rel="noopener noreferrer"
               class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
             >
-              <div class="flex items-center gap-2">
-                <span class="i-simple-icons-bluesky w-5 h-5 text-fg" aria-hidden="true" />
+              <div class="flex gap-2">
+                <span
+                  class="i-simple-icons-bluesky shrink-0 mt-1 w-5 h-5 text-fg"
+                  aria-hidden="true"
+                />
                 <span class="font-medium text-fg">{{ $t('about.get_involved.follow.title') }}</span>
               </div>
               <p class="text-sm text-fg-muted leading-relaxed">
