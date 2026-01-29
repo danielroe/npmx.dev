@@ -197,7 +197,7 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
     name: 'Čeština',
     pluralRule: (choice: number) => {
       const name = new Intl.PluralRules('cs-CZ').select(choice)
-      return { zero: 0, one: 1, two: 0, few: 2, many: 0, other: 3 }[name]
+      return { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }[name]
     },
   },
   /*{
