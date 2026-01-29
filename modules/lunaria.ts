@@ -16,7 +16,11 @@ export default defineNuxtModule({
       maxAge: 60 * 60 * 24, // 1 day
     })
 
-    nuxt.hook('nitro:build:public-assets', async () => {
+    if (nuxt.options.dev || nuxt.options._prepare) {
+      return
+    }
+
+    nuxt.hook('nitro:build:before', async () => {
       execSync('node --experimental-transform-types ./lunaria/lunaria.ts', {
         cwd: nuxt.options.rootDir,
       })
