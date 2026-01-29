@@ -37,8 +37,6 @@ const props = defineProps<{
   viewMode?: ViewMode
   /** Column configuration for table view */
   columns?: ColumnConfig[]
-  /** Sort option for table header sorting */
-  sortOption?: SortOption
   /** Pagination mode: infinite or paginated */
   paginationMode?: PaginationMode
   /** Current page (1-indexed) for paginated mode */
@@ -60,6 +58,9 @@ const emit = defineEmits<{
 
 // Reference to WindowVirtualizer for infinite scroll detection
 const listRef = useTemplateRef<WindowVirtualizerHandle>('listRef')
+
+/** Sort option for table header sorting */
+const sortOption = defineModel<SortOption>('sortOption')
 
 // View mode and columns
 const viewMode = computed(() => props.viewMode ?? 'cards')
@@ -151,10 +152,9 @@ defineExpose({
       <PackageTable
         :results="displayedResults"
         :columns="columns"
-        :sort-option="sortOption"
+        v-model:sort-option="sortOption"
         :selected-index="selectedIndex"
         :is-loading="isLoading"
-        @update:sort-option="emit('update:sortOption', $event)"
         @select="emit('select', $event)"
         @click-keyword="emit('clickKeyword', $event)"
       />

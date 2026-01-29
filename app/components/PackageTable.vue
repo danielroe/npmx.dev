@@ -6,15 +6,15 @@ import { buildSortOption, parseSortOption, toggleDirection } from '#shared/types
 const props = defineProps<{
   results: NpmSearchResult[]
   columns: ColumnConfig[]
-  sortOption?: SortOption
   selectedIndex?: number
   isLoading?: boolean
 }>()
 
+const sortOption = defineModel<SortOption>('sortOption')
+
 const emit = defineEmits<{
-  'update:sortOption': [option: SortOption]
-  'select': [index: number]
-  'clickKeyword': [keyword: string]
+  select: [index: number]
+  clickKeyword: [keyword: string]
 }>()
 
 function isColumnVisible(id: string): boolean {
@@ -48,14 +48,14 @@ const columnDefaultDirection: Record<string, 'asc' | 'desc'> = {
 }
 
 function isColumnSorted(id: string): boolean {
-  const option = props.sortOption
+  const option = sortOption.value
   if (!option) return false
   const { key } = parseSortOption(option)
   return key === columnToSortKey[id]
 }
 
 function getSortDirection(id: string): 'asc' | 'desc' | null {
-  const option = props.sortOption
+  const option = sortOption.value
   if (!option) return null
   if (!isColumnSorted(id)) return null
   const { direction } = parseSortOption(option)
@@ -73,11 +73,11 @@ function toggleSort(id: string) {
   if (!isSorted) {
     // First click - use default direction
     const defaultDir = columnDefaultDirection[id] ?? 'desc'
-    emit('update:sortOption', buildSortOption(sortKey, defaultDir))
+    sortOption.value = buildSortOption(sortKey, defaultDir)
   } else {
     // Toggle direction
     const currentDir = getSortDirection(id) ?? 'desc'
-    emit('update:sortOption', buildSortOption(sortKey, toggleDirection(currentDir)))
+    sortOption.value = buildSortOption(sortKey, toggleDirection(currentDir))
   }
 }
 

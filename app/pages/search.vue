@@ -874,18 +874,16 @@ defineOgImageComponent('Default', {
           <div v-if="visibleResults.total > 0" class="mb-6">
             <PackageListToolbar
               :filters="filters"
-              :sort-option="sortOption"
-              :view-mode="viewMode"
+              v-model:sort-option="sortOption"
+              v-model:view-mode="viewMode"
               :columns="columns"
-              :pagination-mode="paginationMode"
-              :page-size="preferredPageSize"
+              v-model:pagination-mode="paginationMode"
+              v-model:page-size="preferredPageSize"
               :total-count="visibleResults.total"
               :filtered-count="displayResults.length"
               :available-keywords="availableKeywords"
               :active-filters="activeFilters"
               search-context
-              @update:view-mode="viewMode = $event"
-              @update:sort-option="setSort"
               @toggle-column="toggleColumn"
               @reset-columns="resetColumns"
               @clear-filter="handleClearFilter"
@@ -971,31 +969,26 @@ defineOgImageComponent('Default', {
             show-publisher
             :has-more="hasMore"
             :is-loading="isLoadingMore || (status === 'pending' && loadedPages > 1)"
-            :page-size="pageSize"
+            :page-size="preferredPageSize"
             :initial-page="initialPage"
             :view-mode="viewMode"
             :columns="columns"
-            :sort-option="sortOption"
+            v-model:sort-option="sortOption"
             :pagination-mode="paginationMode"
             :current-page="currentPage"
             @load-more="loadMore"
             @page-change="handlePageChange"
             @select="handlePackageSelect"
-            @update:sort-option="handleSortChange"
             @click-keyword="toggleKeyword"
           />
 
           <!-- Pagination controls -->
           <PaginationControls
             v-if="displayResults.length > 0"
-            :mode="paginationMode"
-            :page-size="preferredPageSize"
-            :current-page="currentPage"
-            :total-items="displayResults.length"
+            v-model:mode="paginationMode"
+            v-model:page-size="preferredPageSize"
+            v-model:current-page="currentPage"
             :view-mode="viewMode"
-            @update:mode="paginationMode = $event"
-            @update:page-size="preferredPageSize = $event"
-            @update:current-page="currentPage = $event"
           />
         </div>
       </section>

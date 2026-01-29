@@ -23,11 +23,7 @@ import {
 
 const props = defineProps<{
   filters: StructuredFilters
-  sortOption: SortOption
-  viewMode: ViewMode
   columns: ColumnConfig[]
-  paginationMode: PaginationMode
-  pageSize: PageSize
   totalCount: number
   filteredCount: number
   availableKeywords?: string[]
@@ -36,12 +32,12 @@ const props = defineProps<{
   searchContext?: boolean
 }>()
 
+const sortOption = defineModel<SortOption>('sortOption', { required: true })
+const viewMode = defineModel<ViewMode>('viewMode', { required: true })
+const paginationMode = defineModel<PaginationMode>('paginationMode', { required: true })
+const pageSize = defineModel<PageSize>('pageSize', { required: true })
+
 const emit = defineEmits<{
-  'update:filters': [filters: StructuredFilters]
-  'update:sortOption': [option: SortOption]
-  'update:viewMode': [mode: ViewMode]
-  'update:paginationMode': [mode: PaginationMode]
-  'update:pageSize': [size: PageSize]
   'toggleColumn': [columnId: ColumnId]
   'resetColumns': []
   'clearFilter': [chip: FilterChip]
@@ -54,15 +50,10 @@ const emit = defineEmits<{
   'toggleKeyword': [keyword: string]
 }>()
 
-const viewMode = computed({
-  get: () => props.viewMode,
-  set: (value: ViewMode) => emit('update:viewMode', value),
-})
-
 const showingFiltered = computed(() => props.filteredCount !== props.totalCount)
 
 // Parse current sort option into key and direction
-const currentSort = computed(() => parseSortOption(props.sortOption))
+const currentSort = computed(() => parseSortOption(sortOption.value))
 
 // Get available sort keys based on context
 const availableSortKeys = computed(() => {
@@ -85,13 +76,13 @@ function handleSortKeyChange(event: Event) {
   const newKey = target.value as SortKey
   const config = SORT_KEYS.find(k => k.key === newKey)
   const direction = config?.defaultDirection ?? 'desc'
-  emit('update:sortOption', buildSortOption(newKey, direction))
+  sortOption.value = buildSortOption(newKey, direction)
 }
 
 // Toggle sort direction
 function handleToggleDirection() {
   const { key, direction } = currentSort.value
-  emit('update:sortOption', buildSortOption(key, toggleDirection(direction)))
+  sortOption.value = buildSortOption(key, toggleDirection(direction))
 }
 
 // Map sort key to i18n key

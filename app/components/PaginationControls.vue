@@ -3,33 +3,28 @@ import type { PageSize, PaginationMode, ViewMode } from '#shared/types/preferenc
 import { PAGE_SIZE_OPTIONS } from '#shared/types/preferences'
 
 const props = defineProps<{
-  mode: PaginationMode
-  pageSize: PageSize
-  currentPage: number
   totalItems: number
   /** When in table view, force pagination mode (no infinite scroll for tables) */
   viewMode?: ViewMode
 }>()
 
+const mode = defineModel<PaginationMode>('mode', { required: true })
+const pageSize = defineModel<PageSize>('pageSize', { required: true })
+const currentPage = defineModel<number>('currentPage', { required: true })
+
 // Whether we should show pagination controls (table view always uses pagination)
-const shouldShowControls = computed(() => props.viewMode === 'table' || props.mode === 'paginated')
+const shouldShowControls = computed(() => props.viewMode === 'table' || mode.value === 'paginated')
 
 // Table view forces pagination mode, otherwise use the provided mode
 const effectiveMode = computed<PaginationMode>(() =>
   shouldShowControls.value ? 'paginated' : 'infinite',
 )
 
-const emit = defineEmits<{
-  'update:mode': [mode: PaginationMode]
-  'update:pageSize': [size: PageSize]
-  'update:currentPage': [page: number]
-}>()
-
 // When 'all' is selected, there's only 1 page with everything
-const isShowingAll = computed(() => props.pageSize === 'all')
-const effectivePageSize = computed(() => (isShowingAll.value ? props.totalItems : props.pageSize))
+const isShowingAll = computed(() => pageSize.value === 'all')
+const effectivePageSize = computed(() => (isShowingAll.value ? props.totalItems : pageSize.value))
 const totalPages = computed(() =>
-  isShowingAll.value ? 1 : Math.ceil(props.totalItems / (props.pageSize as number)),
+  isShowingAll.value ? 1 : Math.ceil(props.totalItems / (pageSize.value as number)),
 )
 
 // Whether to show the mode toggle (hidden in table view since table always uses pagination)
@@ -38,39 +33,39 @@ const showModeToggle = computed(() => props.viewMode !== 'table')
 const startItem = computed(() => {
   if (props.totalItems === 0) return 0
   if (isShowingAll.value) return 1
-  return (props.currentPage - 1) * (props.pageSize as number) + 1
+  return (currentPage.value - 1) * (pageSize.value as number) + 1
 })
 
 const endItem = computed(() => {
   if (isShowingAll.value) return props.totalItems
-  return Math.min(props.currentPage * (props.pageSize as number), props.totalItems)
+  return Math.min(currentPage.value * (pageSize.value as number), props.totalItems)
 })
 
-const canGoPrev = computed(() => props.currentPage > 1)
-const canGoNext = computed(() => props.currentPage < totalPages.value)
+const canGoPrev = computed(() => currentPage.value > 1)
+const canGoNext = computed(() => currentPage.value < totalPages.value)
 
 function goToPage(page: number) {
   if (page >= 1 && page <= totalPages.value) {
-    emit('update:currentPage', page)
+    currentPage.value = page
   }
 }
 
 function goPrev() {
   if (canGoPrev.value) {
-    emit('update:currentPage', props.currentPage - 1)
+    currentPage.value = currentPage.value - 1
   }
 }
 
 function goNext() {
   if (canGoNext.value) {
-    emit('update:currentPage', props.currentPage + 1)
+    currentPage.value = currentPage.value + 1
   }
 }
 
 // Generate visible page numbers with ellipsis
 const visiblePages = computed(() => {
   const total = totalPages.value
-  const current = props.currentPage
+  const current = currentPage.value
   const pages: (number | 'ellipsis')[] = []
 
   if (total <= 7) {
@@ -112,9 +107,9 @@ function handlePageSizeChange(event: Event) {
   const value = target.value
   // Handle 'all' as a special string value, otherwise parse as number
   const newSize = (value === 'all' ? 'all' : Number(value)) as PageSize
-  emit('update:pageSize', newSize)
+  pageSize.value = newSize
   // Reset to page 1 when changing page size
-  emit('update:currentPage', 1)
+  currentPage.value = 1
 }
 </script>
 
@@ -138,7 +133,7 @@ function handlePageSizeChange(event: Event) {
           class="px-2.5 py-1 text-xs font-mono rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
           :class="mode === 'infinite' ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:text-fg'"
           :aria-pressed="mode === 'infinite'"
-          @click="emit('update:mode', 'infinite')"
+          @click="mode = 'infinite'"
         >
           {{ $t('filters.pagination.infinite') }}
         </button>
@@ -147,7 +142,7 @@ function handlePageSizeChange(event: Event) {
           class="px-2.5 py-1 text-xs font-mono rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
           :class="mode === 'paginated' ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:text-fg'"
           :aria-pressed="mode === 'paginated'"
-          @click="emit('update:mode', 'paginated')"
+          @click="mode = 'paginated'"
         >
           {{ $t('filters.pagination.paginated') }}
         </button>

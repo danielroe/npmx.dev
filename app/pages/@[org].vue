@@ -223,17 +223,15 @@ defineOgImageComponent('Default', {
       <!-- Enhanced toolbar with filters -->
       <PackageListToolbar
         :filters="filters"
-        :sort-option="sortOption"
-        :view-mode="viewMode"
+        v-model:sort-option="sortOption"
+        v-model:view-mode="viewMode"
         :columns="columns"
-        :pagination-mode="paginationMode"
-        :page-size="pageSize"
+        v-model:pagination-mode="paginationMode"
+        v-model:page-size="pageSize"
         :total-count="packageCount"
         :filtered-count="filteredCount"
         :available-keywords="availableKeywords"
         :active-filters="activeFilters"
-        @update:view-mode="viewMode = $event"
-        @update:sort-option="setSort"
         @toggle-column="toggleColumn"
         @reset-columns="resetColumns"
         @clear-filter="handleClearFilter"
@@ -257,24 +255,20 @@ defineOgImageComponent('Default', {
           :results="sortedPackages"
           :view-mode="viewMode"
           :columns="columns"
-          :sort-option="sortOption"
+          v-model:sort-option="sortOption"
           :pagination-mode="paginationMode"
           :page-size="pageSize"
           :current-page="currentPage"
-          @update:sort-option="handleSortChange"
           @click-keyword="toggleKeyword"
         />
 
         <!-- Pagination controls -->
         <PaginationControls
-          :mode="paginationMode"
-          :page-size="pageSize"
-          :current-page="currentPage"
+          v-model:mode="paginationMode"
+          v-model:page-size="pageSize"
+          v-model:current-page="currentPage"
           :total-items="sortedPackages.length"
           :view-mode="viewMode"
-          @update:mode="paginationMode = $event"
-          @update:page-size="pageSize = $event"
-          @update:current-page="currentPage = $event"
         />
       </template>
     </section>
