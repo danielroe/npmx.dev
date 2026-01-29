@@ -56,6 +56,8 @@ const resultCount = computed(() => visibleResults.value?.objects.length ?? 0)
 // Track if page just loaded (for hiding "Searching..." during view transition)
 const hasInteracted = ref(false)
 onMounted(() => {
+  // Focus search onMount
+  isSearchFocused.value = true
   // Small delay to let view transition complete
   setTimeout(() => {
     hasInteracted.value = true
@@ -720,7 +722,7 @@ defineOgImageComponent('Default', {
         <h1 class="font-mono text-xl sm:text-2xl font-medium mb-4">{{ $t('nav.search') }}</h1>
 
         <search>
-          <form role="search" method="GET" action="/search" class="relative" @submit.prevent>
+          <form method="GET" action="/search" class="relative" @submit.prevent>
             <label for="search-input" class="sr-only">{{ $t('search.label') }}</label>
 
             <div class="relative group" :class="{ 'is-focused': isSearchFocused }">

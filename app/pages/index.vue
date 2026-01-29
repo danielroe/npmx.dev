@@ -14,7 +14,8 @@ const debouncedNavigate = debounce(() => {
 }, 250)
 
 function handleSearch() {
-  debouncedNavigate()
+  // If input is empty, navigate immediately (no need to debounce)
+  return searchQuery.value.trim() ? debouncedNavigate() : router.push('/search')
 }
 
 useSeoMeta({
@@ -48,13 +49,7 @@ defineOgImageComponent('Default')
         class="w-full max-w-xl motion-safe:animate-slide-up motion-safe:animate-fill-both"
         style="animation-delay: 0.2s"
       >
-        <form
-          role="search"
-          method="GET"
-          action="/search"
-          class="relative"
-          @submit.prevent="handleSearch"
-        >
+        <form method="GET" action="/search" class="relative" @submit.prevent="handleSearch">
           <label for="home-search" class="sr-only">
             {{ $t('search.label') }}
           </label>
