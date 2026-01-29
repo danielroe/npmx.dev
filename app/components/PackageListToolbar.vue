@@ -180,8 +180,9 @@ function getSortKeyLabelKey(key: SortKey): string {
             </div>
           </div>
 
-          <!-- Sort direction toggle -->
+          <!-- Sort direction toggle (hidden in search context) -->
           <button
+            v-if="!searchContext"
             type="button"
             class="p-1.5 rounded border border-border bg-bg-subtle text-fg-muted hover:text-fg hover:border-border-hover transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
             :aria-label="$t('filters.sort.toggle_direction')"
