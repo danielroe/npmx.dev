@@ -1,4 +1,4 @@
-// copied from https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/light.mjs
+// copied from https://github.com/markdown-it/markdown-it-emoji/blob/master/lib/data/full.mjs
 const emojis = {
   '100': '💯',
   '1234': '🔢',
