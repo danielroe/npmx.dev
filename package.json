@@ -21,7 +21,7 @@
     "generate": "nuxt generate",
     "npmx-connector": "pnpm --filter npmx-connector dev",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare && simple-git-hooks",
+    "postinstall": "nuxt prepare && simple-git-hooks && pnpm generate:lexicons",
     "generate:lexicons": "lex build --lexicons lexicons --out shared/types/lexicons --clear",
     "test": "vite test",
     "test:browser": "playwright test",
