@@ -204,6 +204,14 @@
       "title": "Provalo",
       "choose": "sciegli il playground"
     },
+    "metrics": {
+      "esm": "ES Modules supportati",
+      "cjs": "CommonJS supportato",
+      "no_esm": "Nessun supporto per ES Modules",
+      "types_included": "Types inclusi",
+      "types_available": "Types disponibili tramite {package}",
+      "no_types": "No TypeScript types"
+    },
     "license": {
       "view_spdx": "Vedi il testo della licenza su SPDX"
     },
@@ -529,6 +537,31 @@
         "cool": "davvero",
         "package": "fantastici",
         "managers": "gestori di pacchetti"
+      }
+    },
+    "contributors": {
+      "title": "Collaboratori",
+      "description": "npmx è interamente open source, creato da una straordinaria comunità di collaboratori.",
+      "loading": "Caricando collaboratori...",
+      "error": "Caricamento dei collaboratori non riuscito",
+      "view_profile": "Vedi {name} profilo su GitHub"
+    },
+    "get_involved": {
+      "title": "Partecipa",
+      "contribute": {
+        "title": "Contribuisci",
+        "description": "Aiutaci a creare una miglior esperienza NPM.",
+        "cta": "Vedi su GitHub"
+      },
+      "community": {
+        "title": "Unisciti alla comunità",
+        "description": "Chatta, fai domande, e condividi idee.",
+        "cta": "Unisciti a Discord"
+      },
+      "follow": {
+        "title": "Tieniti aggiornato",
+        "description": "Scopri le ultime novità su npmx.",
+        "cta": "Segui su Bluesky"
       }
     }
   },
