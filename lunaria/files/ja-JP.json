@@ -123,9 +123,7 @@
       "vulns": "脆弱性",
       "updated": "最終更新",
       "view_dependency_graph": "依存関係グラフを表示",
-      "inspect_dependency_tree": "依存関係ツリーを検査",
-      "weekly": "週間",
-      "view_download_trends": "ダウンロード傾向を表示"
+      "inspect_dependency_tree": "依存関係ツリーを検査"
     },
     "links": {
       "repo": "リポジトリ",
@@ -134,8 +132,7 @@
       "jsr": "jsr",
       "code": "コード",
       "docs": "ドキュメント",
-      "fund": "資金援助",
-      "forks": "フォーク"
+      "fund": "資金援助"
     },
     "docs": {
       "not_available": "ドキュメントは利用できません",
@@ -568,7 +565,7 @@
         "already": "すでに",
         "people": "素晴らしい",
         "building": "パッケージ",
-        "really": "マネージャー",
+        "really": "マネージャーを",
         "cool": "作っている",
         "package": "人たちが",
         "managers": "存在します"
