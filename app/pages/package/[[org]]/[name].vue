@@ -695,6 +695,14 @@ onKeyStroke(
             >
               {{ $t('package.links.compare') }}
             </LinkBase>
+            <LinkBase
+              v-if="displayVersion && latestVersion && displayVersion.version !== latestVersion.version"
+              variant="button-secondary"
+              :to="`/diff/${pkg.name}/v/${displayVersion.version}...${latestVersion.version}`"
+              classicon="i-carbon-text-align-mixed"
+            >
+              {{ $t('compare.compare_versions') }}
+            </LinkBase>
           </ButtonGroup>
         </div>
       </header>

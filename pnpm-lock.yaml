@@ -56,6 +56,9 @@ importers:
       '@iconify-json/vscode-icons':
         specifier: 1.2.40
         version: 1.2.40
+      '@intlify/core-base':
+        specifier: 11.2.8
+        version: 11.2.8
       '@intlify/shared':
         specifier: 11.2.8
         version: 11.2.8
@@ -140,6 +143,9 @@ importers:
       module-replacements:
         specifier: 2.11.0
         version: 2.11.0
+      motion-v:
+        specifier: 1.10.2
+        version: 1.10.2(@vueuse/core@14.2.0(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))
       nuxt:
         specifier: 4.3.0
         version: 4.3.0(@parcel/watcher@2.5.6)(@types/node@24.10.9)(@upstash/redis@1.36.1)(@vercel/kv@3.0.0)(@vue/compiler-sfc@3.5.27)(better-sqlite3@12.6.2)(cac@6.7.14)(db0@0.3.4(better-sqlite3@12.6.2))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.1)(optionator@0.9.4)(oxlint@1.42.0(oxlint-tsgolint@0.11.4))(rolldown@1.0.0-rc.1)(rollup@4.57.0)(terser@5.46.0)(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(vue-tsc@3.2.4(typescript@5.9.3))(yaml@2.8.2)
@@ -2019,7 +2025,7 @@ packages:
         optional: true
 
   '@nuxt/test-utils@https://pkg.pr.new/@nuxt/test-utils@1499a48':
-    resolution: {tarball: https://pkg.pr.new/@nuxt/test-utils@1499a48}
+    resolution: {integrity: sha512-T7DnXM09HsMWu43qcXpeNW1KsH230b/OYlvpRD49RKocyv/6XjATiQw1zWeNnOVw4fPULIeMlrrL5TX3c1jGWg==, tarball: https://pkg.pr.new/@nuxt/test-utils@1499a48}
     version: 3.23.0
     engines: {node: ^20.11.1 || ^22.0.0 || >=24.0.0}
     peerDependencies:
