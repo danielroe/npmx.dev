@@ -56,6 +56,8 @@ const resultCount = computed(() => visibleResults.value?.objects.length ?? 0)
 // Track if page just loaded (for hiding "Searching..." during view transition)
 const hasInteracted = ref(false)
 onMounted(() => {
+  // Focus search onMount
+  isSearchFocused.value = true
   // Small delay to let view transition complete
   setTimeout(() => {
     hasInteracted.value = true

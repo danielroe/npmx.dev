@@ -30,7 +30,8 @@ const debouncedNavigate = debounce(async () => {
     name: 'search',
     query: query ? { q: query } : undefined,
   })
-  searchQuery.value = ''
+  // allow time for the navigation to occur before resetting searchQuery
+  setTimeout(() => (searchQuery.value = ''), 1000)
 }, 100)
 
 async function handleSearchInput() {
