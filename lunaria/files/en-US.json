@@ -44,11 +44,21 @@
     "popular_packages": "Popular packages",
     "search": "search",
     "settings": "settings",
-    "back": "Back"
+    "back": "back"
   },
   "settings": {
+    "title": "settings",
+    "tagline": "customize your npmx experience",
+    "meta_description": "Customize your npmx.dev experience with theme, language, and display preferences.",
+    "sections": {
+      "appearance": "Appearance",
+      "display": "Display",
+      "language": "Language"
+    },
     "relative_dates": "Relative dates",
+    "relative_dates_description": "Show \"3 days ago\" instead of full dates",
     "include_types": "Include {'@'}types in install",
+    "include_types_description": "Add {'@'}types package to install commands for untyped packages",
     "theme": "Theme",
     "theme_light": "Light",
     "theme_dark": "Dark",
