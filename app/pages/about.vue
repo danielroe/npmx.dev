@@ -56,7 +56,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
             {{ $t('about.what_we_are.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
-            <i18n-t keypath="about.what_we_are.description" tag="span">
+            <i18n-t keypath="about.what_we_are.description" tag="span" scope="global">
               <template #betterUxDx>
                 <strong class="text-fg">{{ $t('about.what_we_are.better_ux_dx') }}</strong>
               </template>
@@ -72,7 +72,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
             </i18n-t>
           </p>
           <p class="text-fg-muted leading-relaxed">
-            <i18n-t keypath="about.what_we_are.admin_description" tag="span">
+            <i18n-t keypath="about.what_we_are.admin_description" tag="span" scope="global">
               <template #adminUi>
                 <strong class="text-fg">{{ $t('about.what_we_are.admin_ui') }}</strong>
               </template>
@@ -92,7 +92,11 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                   $t('about.what_we_are_not.not_package_manager')
                 }}</strong>
                 {{ ' ' }}
-                <i18n-t keypath="about.what_we_are_not.package_managers_exist" tag="span">
+                <i18n-t
+                  keypath="about.what_we_are_not.package_managers_exist"
+                  tag="span"
+                  scope="global"
+                >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
                   <template #people>
                     <a
