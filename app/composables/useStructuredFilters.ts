@@ -80,28 +80,6 @@ export function parseSearchOperators(input: string): ParsedSearchOperators {
 }
 
 /**
- * Format parsed operators back to string representation
- */
-export function formatSearchOperators(parsed: ParsedSearchOperators): string {
-  const parts: string[] = []
-
-  if (parsed.name?.length) {
-    parts.push(`name:${parsed.name.join(',')}`)
-  }
-  if (parsed.description?.length) {
-    parts.push(`desc:${parsed.description.join(',')}`)
-  }
-  if (parsed.keywords?.length) {
-    parts.push(`kw:${parsed.keywords.join(',')}`)
-  }
-  if (parsed.text) {
-    parts.push(parsed.text)
-  }
-
-  return parts.join(' ')
-}
-
-/**
  * Check if parsed operators has any content
  */
 export function hasSearchOperators(parsed: ParsedSearchOperators): boolean {

@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
-  formatSearchOperators,
   hasSearchOperators,
   parseSearchOperators,
-  type ParsedSearchOperators,
 } from '../../app/composables/useStructuredFilters'
 
 describe('parseSearchOperators', () => {
@@ -161,54 +159,6 @@ describe('parseSearchOperators', () => {
   })
 })
 
-describe('formatSearchOperators', () => {
-  it('formats name operator', () => {
-    const parsed: ParsedSearchOperators = { name: ['react'] }
-    expect(formatSearchOperators(parsed)).toBe('name:react')
-  })
-
-  it('formats description operator as desc', () => {
-    const parsed: ParsedSearchOperators = { description: ['framework'] }
-    expect(formatSearchOperators(parsed)).toBe('desc:framework')
-  })
-
-  it('formats keywords operator as kw', () => {
-    const parsed: ParsedSearchOperators = { keywords: ['typescript'] }
-    expect(formatSearchOperators(parsed)).toBe('kw:typescript')
-  })
-
-  it('formats multiple values with commas', () => {
-    const parsed: ParsedSearchOperators = { keywords: ['react', 'hooks', 'state'] }
-    expect(formatSearchOperators(parsed)).toBe('kw:react,hooks,state')
-  })
-
-  it('formats multiple operators with spaces', () => {
-    const parsed: ParsedSearchOperators = {
-      name: ['react'],
-      keywords: ['typescript'],
-    }
-    expect(formatSearchOperators(parsed)).toBe('name:react kw:typescript')
-  })
-
-  it('includes remaining text at end', () => {
-    const parsed: ParsedSearchOperators = {
-      name: ['react'],
-      text: 'some text',
-    }
-    expect(formatSearchOperators(parsed)).toBe('name:react some text')
-  })
-
-  it('returns only text when no operators', () => {
-    const parsed: ParsedSearchOperators = { text: 'search query' }
-    expect(formatSearchOperators(parsed)).toBe('search query')
-  })
-
-  it('returns empty string for empty object', () => {
-    const parsed: ParsedSearchOperators = {}
-    expect(formatSearchOperators(parsed)).toBe('')
-  })
-})
-
 describe('hasSearchOperators', () => {
   it('returns true when name is present', () => {
     expect(hasSearchOperators({ name: ['react'] })).toBe(true)
@@ -236,19 +186,5 @@ describe('hasSearchOperators', () => {
 
   it('returns false for empty arrays', () => {
     expect(hasSearchOperators({ name: [], keywords: [] })).toBe(false)
-  })
-})
-
-describe('parseSearchOperators roundtrip', () => {
-  it.each([
-    'name:react',
-    'kw:typescript,hooks',
-    'name:react kw:typescript',
-    'name:react desc:framework kw:hooks',
-  ])('roundtrips "%s" correctly', input => {
-    const parsed = parseSearchOperators(input)
-    const formatted = formatSearchOperators(parsed)
-    // The formatted output should parse to the same result
-    expect(parseSearchOperators(formatted)).toEqual(parsed)
   })
 })
