@@ -51,7 +51,7 @@ const isExpanded = shallowRef(false)
         @click="isExpanded = !isExpanded"
       >
         <span
-          class="i-carbon-chevron-right w-3 h-3 transition-transform duration-200"
+          class="i-carbon:chevron-right rtl-flip w-3 h-3 transition-transform duration-200"
           :class="{ 'rotate-90': isExpanded }"
           aria-hidden="true"
         />
@@ -67,7 +67,7 @@ const isExpanded = shallowRef(false)
       <ul
         v-show="isExpanded"
         id="npx-packages-details"
-        class="mt-2 space-y-1 list-none m-0 p-0 pl-4"
+        class="mt-2 space-y-1 list-none m-0 p-0 ps-4"
       >
         <li
           v-for="[dep, version] in sortedNpxDeps"
@@ -94,7 +94,7 @@ const isExpanded = shallowRef(false)
               <span class="i-carbon-warning-alt w-3 h-3 block" />
             </span>
             <span
-              class="font-mono text-xs text-right truncate"
+              class="font-mono text-xs text-end truncate"
               :class="getVersionClass(outdatedNpxDeps[dep])"
               :title="
                 outdatedNpxDeps[dep]

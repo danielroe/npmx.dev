@@ -467,7 +467,7 @@ defineOgImageComponent('Package', {
               <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
               <template v-if="resolvedVersion !== requestedVersion">
                 <span class="font-mono text-fg-muted text-sm">{{ requestedVersion }}</span>
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
               </template>
 
               <NuxtLink
@@ -508,10 +508,10 @@ defineOgImageComponent('Package', {
                 v-if="displayVersion"
                 :package-name="pkg.name"
                 :version="displayVersion.version"
-                class="self-baseline ml-1 sm:ml-2"
+                class="self-baseline ms-1 sm:ms-2"
               />
               <template #fallback>
-                <ul class="flex items-center gap-1.5 self-baseline ml-1 sm:ml-2">
+                <ul class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
                   <li class="skeleton w-8 h-5 rounded" />
                   <li class="skeleton w-12 h-5 rounded" />
                 </ul>
@@ -522,7 +522,7 @@ defineOgImageComponent('Package', {
             <nav
               v-if="displayVersion"
               :aria-label="$t('package.navigation')"
-              class="hidden sm:flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ml-auto self-center"
+              class="hidden sm:flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
             >
               <NuxtLink
                 v-if="docsLink"
@@ -574,7 +574,7 @@ defineOgImageComponent('Package', {
             <!-- Fade overlay with show more button - only when collapsed and overflowing -->
             <div
               v-if="pkg.description && descriptionOverflows && !descriptionExpanded"
-              class="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-bg via-bg/90 to-transparent flex items-end justify-end"
+              class="absolute bottom-0 inset-is-0 inset-ie-0 h-10 bg-gradient-to-t from-bg via-bg/90 to-transparent flex items-end justify-end"
             >
               <button
                 type="button"
@@ -989,7 +989,7 @@ defineOgImageComponent('Package', {
                   class="text-fg-subtle hover:text-fg-muted text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                   :title="$t('package.get_started.view_types', { package: typesPackageName })"
                 >
-                  <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                  <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
                   <span class="sr-only">View {{ typesPackageName }}</span>
                 </NuxtLink>
               </div>
@@ -1073,7 +1073,7 @@ defineOgImageComponent('Package', {
                     class="text-fg-subtle hover:text-fg-muted text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                     :title="`View ${createPackageInfo.packageName}`"
                   >
-                    <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                    <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
                     <span class="sr-only">View {{ createPackageInfo.packageName }}</span>
                   </NuxtLink>
                 </div>
@@ -1203,19 +1203,13 @@ defineOgImageComponent('Package', {
             <dl class="space-y-2">
               <div v-if="displayVersion.engines.node" class="flex justify-between gap-4 py-1">
                 <dt class="text-fg-muted text-sm shrink-0">node</dt>
-                <dd
-                  class="font-mono text-sm text-fg text-right"
-                  :title="displayVersion.engines.node"
-                >
+                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.node">
                   {{ displayVersion.engines.node }}
                 </dd>
               </div>
               <div v-if="displayVersion.engines.npm" class="flex justify-between gap-4 py-1">
                 <dt class="text-fg-muted text-sm shrink-0">npm</dt>
-                <dd
-                  class="font-mono text-sm text-fg text-right"
-                  :title="displayVersion.engines.npm"
-                >
+                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.npm">
                   {{ displayVersion.engines.npm }}
                 </dd>
               </div>

@@ -56,7 +56,7 @@ const emit = defineEmits<{
         >
         <span
           v-if="isExactMatch"
-          class="text-xs px-1.5 py-0.5 ml-2 rounded bg-bg-elevated border border-border-hover text-fg"
+          class="text-xs px-1.5 py-0.5 ms-2 rounded bg-bg-elevated border border-border-hover text-fg"
           >{{ $t('search.exact_match') }}</span
         >
       </component>

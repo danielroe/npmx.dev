@@ -122,7 +122,7 @@ const sortedOptionalDependencies = computed(() => {
             </NuxtLink>
             <NuxtLink
               :to="{ name: 'package', params: { package: [...dep.split('/'), 'v', version] } }"
-              class="font-mono text-xs text-right truncate"
+              class="font-mono text-xs text-end truncate"
               :class="getVersionClass(outdatedDeps[dep])"
               :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep]) : version"
             >
@@ -198,7 +198,7 @@ const sortedOptionalDependencies = computed(() => {
               name: 'package',
               params: { package: [...peer.name.split('/'), 'v', peer.version] },
             }"
-            class="font-mono text-xs text-fg-subtle max-w-[40%] text-right truncate"
+            class="font-mono text-xs text-fg-subtle max-w-[40%] text-end truncate"
             :title="peer.version"
           >
             {{ peer.version }}
@@ -259,7 +259,7 @@ const sortedOptionalDependencies = computed(() => {
           </NuxtLink>
           <NuxtLink
             :to="{ name: 'package', params: { package: [...dep.split('/'), 'v', version] } }"
-            class="font-mono text-xs text-fg-subtle max-w-[50%] text-right truncate"
+            class="font-mono text-xs text-fg-subtle max-w-[50%] text-end truncate"
             :title="version"
           >
             {{ version }}

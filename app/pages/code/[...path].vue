@@ -343,7 +343,7 @@ useSeoMeta({
     <div v-else-if="fileTree" class="flex flex-1">
       <!-- File tree sidebar - sticky with internal scroll -->
       <aside
-        class="w-64 lg:w-72 border-r border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
+        class="w-64 lg:w-72 border-ie border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
       >
         <CodeFileTree
           :tree="fileTree.tree"
@@ -423,7 +423,7 @@ useSeoMeta({
           :aria-label="$t('common.loading')"
         >
           <!-- Fake line numbers column -->
-          <div class="shrink-0 bg-bg-subtle border-r border-border w-14 py-0">
+          <div class="shrink-0 bg-bg-subtle border-ie border-border w-14 py-0">
             <div v-for="n in 20" :key="n" class="px-3 h-6 flex items-center justify-end">
               <span class="skeleton w-4 h-3 rounded-sm" />
             </div>

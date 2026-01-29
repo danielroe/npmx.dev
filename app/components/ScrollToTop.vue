@@ -36,7 +36,7 @@ onMounted(() => {
   <button
     v-if="isActive && supportsScrollStateQueries"
     type="button"
-    class="scroll-to-top-css fixed bottom-4 right-4 z-50 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg md:hidden flex items-center justify-center text-fg-muted hover:text-fg transition-colors active:scale-95"
+    class="scroll-to-top-css fixed bottom-4 inset-ie-4 z-50 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg md:hidden flex items-center justify-center text-fg-muted hover:text-fg transition-colors active:scale-95"
     :aria-label="$t('common.scroll_to_top')"
     @click="scrollToTop"
   >
@@ -56,7 +56,7 @@ onMounted(() => {
     <button
       v-if="isActive && isMounted && isVisible"
       type="button"
-      class="fixed bottom-4 right-4 z-50 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg md:hidden flex items-center justify-center text-fg-muted hover:text-fg transition-colors active:scale-95"
+      class="fixed bottom-4 inset-ie-4 z-50 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg md:hidden flex items-center justify-center text-fg-muted hover:text-fg transition-colors active:scale-95"
       :aria-label="$t('common.scroll_to_top')"
       @click="scrollToTop"
     >

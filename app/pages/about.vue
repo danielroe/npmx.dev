@@ -225,7 +225,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                 class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto"
               >
                 {{ $t('about.get_involved.contribute.cta') }}
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
               </span>
             </a>
 
@@ -249,7 +249,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                 class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto"
               >
                 {{ $t('about.get_involved.community.cta') }}
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
               </span>
             </a>
 
@@ -271,7 +271,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                 class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto"
               >
                 {{ $t('about.get_involved.follow.cta') }}
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
+                <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
               </span>
             </a>
           </div>
@@ -283,7 +283,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
           to="/"
           class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-[color] duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         >
-          <span class="i-carbon-arrow-left w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
           {{ $t('about.back_home') }}
         </NuxtLink>
       </footer>

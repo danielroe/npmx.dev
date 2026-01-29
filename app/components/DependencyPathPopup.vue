@@ -89,7 +89,7 @@ function parsePackageString(pkg: string): { name: string; version: string } {
           class="font-mono text-xs"
           :style="{ paddingLeft: `${idx * 12}px` }"
         >
-          <span v-if="idx > 0" class="text-fg-subtle mr-1">└─</span>
+          <span v-if="idx > 0" class="text-fg-subtle me-1">└─</span>
           <NuxtLink
             :to="{
               name: 'package',
@@ -107,7 +107,7 @@ function parsePackageString(pkg: string): { name: string; version: string } {
           >
             {{ pathItem }}
           </NuxtLink>
-          <span v-if="idx === path.length - 1" class="ml-1 text-amber-500">⚠</span>
+          <span v-if="idx === path.length - 1" class="ms-1 text-amber-500">⚠</span>
         </li>
       </ul>
     </div>

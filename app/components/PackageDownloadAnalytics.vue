@@ -762,7 +762,7 @@ const config = computed(() => {
       v-if="pending"
       role="status"
       aria-live="polite"
-      class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-fg-subtle font-mono bg-bg/70 backdrop-blur px-3 py-2 rounded-md border border-border"
+      class="absolute top-1/2 inset-is-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-fg-subtle font-mono bg-bg/70 backdrop-blur px-3 py-2 rounded-md border border-border"
     >
       {{ $t('package.downloads.loading') }}
     </div>

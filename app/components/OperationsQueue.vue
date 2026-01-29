@@ -295,7 +295,7 @@ watch(isExecuting, executing => {
         class="flex items-center gap-2 font-mono text-xs text-fg-muted cursor-pointer hover:text-fg transition-colors duration-200 select-none"
       >
         <span
-          class="i-carbon-chevron-right block w-3 h-3 transition-transform duration-200 [[open]>&]:rotate-90"
+          class="i-carbon:chevron-right rtl-flip block w-3 h-3 transition-transform duration-200 [[open]>&]:rotate-90"
           aria-hidden="true"
         />
         {{ $t('operations.queue.log') }} ({{ completedOperations.length }})

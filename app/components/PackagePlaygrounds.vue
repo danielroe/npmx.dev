@@ -166,7 +166,7 @@ function focusMenuItem(index: number) {
           v-if="isOpen && hasMultipleLinks"
           ref="menuRef"
           role="menu"
-          class="absolute top-full left-0 right-0 mt-1 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 py-1 overflow-visible"
+          class="absolute top-full inset-is-0 inset-ie-0 mt-1 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 py-1 overflow-visible"
           @keydown="handleKeydown"
         >
           <AppTooltip v-for="link in links" :key="link.url" :text="link.providerName" class="block">

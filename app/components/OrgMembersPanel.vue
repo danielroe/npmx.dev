@@ -317,7 +317,7 @@ watch(lastExecutionTime, () => {
     <div class="flex flex-wrap items-center gap-2 p-3 border-b border-border bg-bg">
       <div class="flex-1 min-w-[150px] relative">
         <span
-          class="absolute left-2 top-1/2 -translate-y-1/2 i-carbon-search w-3.5 h-3.5 text-fg-subtle"
+          class="absolute inset-is-2 top-1/2 -translate-y-1/2 i-carbon-search w-3.5 h-3.5 text-fg-subtle"
           aria-hidden="true"
         />
         <label for="members-search" class="sr-only">{{ $t('org.members.filter_label') }}</label>
@@ -328,7 +328,7 @@ watch(lastExecutionTime, () => {
           name="members-search"
           :placeholder="$t('org.members.filter_placeholder')"
           v-bind="noCorrect"
-          class="w-full pl-7 pr-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="w-full ps-7 pe-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         />
       </div>
       <div
@@ -479,7 +479,7 @@ watch(lastExecutionTime, () => {
           </div>
         </div>
         <!-- Team badges -->
-        <div v-if="member.teams.length > 0" class="flex flex-wrap gap-1 pl-0">
+        <div v-if="member.teams.length > 0" class="flex flex-wrap gap-1 ps-0">
           <button
             v-for="team in member.teams"
             :key="team"

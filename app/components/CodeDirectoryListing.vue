@@ -97,7 +97,7 @@ function formatBytes(bytes: number): string {
               <span>{{ node.name }}</span>
             </NuxtLink>
           </td>
-          <td class="py-2 px-4 text-right font-mono text-xs text-fg-subtle">
+          <td class="py-2 px-4 text-end font-mono text-xs text-fg-subtle">
             <span v-if="node.type === 'file' && node.size">
               {{ formatBytes(node.size) }}
             </span>
