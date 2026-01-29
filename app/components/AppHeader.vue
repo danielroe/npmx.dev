@@ -75,7 +75,6 @@ onKeyStroke(',', e => {
         <!-- Search bar (shown on all pages except home and search) -->
         <search v-if="showSearchBar" class="hidden sm:block flex-1 max-w-md">
           <form
-            role="search"
             method="GET"
             action="/search"
             class="relative"

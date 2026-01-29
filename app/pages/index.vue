@@ -50,7 +50,6 @@ defineOgImageComponent('Default')
         style="animation-delay: 0.2s"
       >
         <form
-          role="search"
           method="GET"
           action="/search"
           class="relative"
