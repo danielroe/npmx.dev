@@ -58,7 +58,7 @@
     "relative_dates": "Relative Datumsangaben",
     "relative_dates_description": "Zeige Daten relativ zur aktuellen Zeit an (z.B. 'vor 2 Tagen')",
     "include_types": "{'@'}types bei Installation einschließen",
-    "include_types_description": "TypeScript-Typdefinitionen (@types-Pakete) automatisch bei Installationsbefehlen einschließen",
+    "include_types_description": "TypeScript-Typdefinitionen ({'@'}types-Pakete) automatisch bei Installationsbefehlen einschließen",
     "theme": "Design",
     "theme_light": "Hell",
     "theme_dark": "Dunkel",
