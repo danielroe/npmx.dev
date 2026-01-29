@@ -1184,7 +1184,7 @@ defineOgImageComponent('Package', {
         </div>
       </section>
 
-      <div class="area-vulns">
+      <div class="area-vulns space-y-6">
         <!-- Bad package warning -->
         <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
         <!-- Vulnerability scan -->
