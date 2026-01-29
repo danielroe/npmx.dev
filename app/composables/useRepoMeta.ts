@@ -595,7 +595,7 @@ const tangledAdapter: ProviderAdapter = {
         try {
           //Get counts of records that reference this repo in the atmosphere using constellation
           const allLinks = await cachedFetch<ConstellationAllLinksResponse>(
-            `https://constellation.microcosm.blue/links/all?target=${atUri}`,
+            `${CONSTELLATION_ENDPOINT}/links/all?target=${atUri}`,
             { headers: { 'User-Agent': 'npmx' } },
             REPO_META_TTL,
           )

@@ -124,6 +124,14 @@ export default defineNuxtConfig({
         driver: 'fsLite',
         base: './.cache/fetch',
       },
+      'oauth-atproto-state': {
+        driver: 'fsLite',
+        base: './.cache/atproto-oauth/state',
+      },
+      'oauth-atproto-session': {
+        driver: 'fsLite',
+        base: './.cache/atproto-oauth/session',
+      },
     },
   },
 

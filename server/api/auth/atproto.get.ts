@@ -1,20 +1,14 @@
-import type { H3Event } from 'h3'
 import { Agent } from '@atproto/api'
 import { NodeOAuthClient } from '@atproto/oauth-client-node'
-import type {
-  NodeSavedSession,
-  NodeSavedSessionStore,
-  NodeSavedState,
-  NodeSavedStateStore,
-} from '@atproto/oauth-client-node'
-import { scope, getOauthClientMetadata } from '~~/server/utils/atproto'
-import { createError, getQuery, sendRedirect, getCookie, setCookie, deleteCookie } from 'h3'
+import { createError, getQuery, sendRedirect } from 'h3'
+import { OAuthSessionStore, OAuthStateStore } from '#server/utils/atproto/storage'
+import { SLINGSHOT_ENDPOINT } from '#shared/utils/constants'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
   const clientMetadata = getOauthClientMetadata()
-  const stateStore = new StateStore(event)
-  const sessionStore = new SessionStore(event)
+  const stateStore = new OAuthStateStore(event)
+  const sessionStore = new OAuthSessionStore(event)
   const atclient = new NodeOAuthClient({
     stateStore,
     sessionStore,
@@ -46,7 +40,8 @@ export default defineEventHandler(async event => {
   })
 
   const response = await fetch(
-    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
+    `${SLINGSHOT_ENDPOINT}/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
+    { headers: { 'User-Agent': 'npmx' } },
   )
   const miniDoc = (await response.json()) as { did: string; handle: string; pds: string }
 
@@ -54,47 +49,5 @@ export default defineEventHandler(async event => {
     miniDoc,
   })
 
-  await sessionStore.del()
-
   return sendRedirect(event, '/')
 })
-
-export class StateStore implements NodeSavedStateStore {
-  private readonly stateKey = 'oauth:bluesky:stat'
-
-  constructor(private event: H3Event) {}
-
-  async get(): Promise<NodeSavedState | undefined> {
-    const result = getCookie(this.event, this.stateKey)
-    if (!result) return
-    return JSON.parse(atob(result))
-  }
-
-  async set(key: string, val: NodeSavedState) {
-    setCookie(this.event, this.stateKey, btoa(JSON.stringify(val)))
-  }
-
-  async del() {
-    deleteCookie(this.event, this.stateKey)
-  }
-}
-
-export class SessionStore implements NodeSavedSessionStore {
-  private readonly sessionKey = 'oauth:bluesky:session'
-
-  constructor(private event: H3Event) {}
-
-  async get(): Promise<NodeSavedSession | undefined> {
-    const result = getCookie(this.event, this.sessionKey)
-    if (!result) return
-    return JSON.parse(atob(result))
-  }
-
-  async set(key: string, val: NodeSavedSession) {
-    setCookie(this.event, this.sessionKey, btoa(JSON.stringify(val)))
-  }
-
-  async del() {
-    deleteCookie(this.event, this.sessionKey)
-  }
-}
