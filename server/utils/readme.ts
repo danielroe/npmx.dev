@@ -4,6 +4,7 @@ import { hasProtocol } from 'ufo'
 import type { ReadmeResponse } from '#shared/types/readme'
 import { convertBlobToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
 import { highlightCodeSync } from './shiki'
+import { convertToEmoji } from '~~/shared/utils/emoji'
 
 /**
  * Playground provider configuration
@@ -406,7 +407,7 @@ export async function renderReadmeHtml(
   })
 
   return {
-    html: sanitized,
+    html: convertToEmoji(sanitized),
     playgroundLinks: collectedLinks,
   }
 }

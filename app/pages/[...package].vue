@@ -5,7 +5,6 @@ import { assertValidPackageName } from '#shared/utils/npm'
 import { onKeyStroke } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
-import { convertToEmoji } from '#shared/utils/emoji'
 
 definePageMeta({
   name: 'package',
@@ -31,7 +30,6 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
   },
   { default: () => ({ html: '', playgroundLinks: [] }) },
 )
-const convertedReadmeHtml = computed(() => convertToEmoji(readmeData.value?.html || ''))
 
 // Check if package exists on JSR (only for scoped packages)
 const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${packageName.value}`, {
@@ -1122,9 +1120,9 @@ defineOgImageComponent('Package', {
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
         <div
-          v-if="convertedReadmeHtml"
+          v-if="readmeData?.html"
           class="readme-content prose prose-invert max-w-[70ch]"
-          v-html="convertedReadmeHtml"
+          v-html="readmeData.html"
         />
         <p v-else class="text-fg-subtle italic">
           {{ $t('package.readme.no_readme') }}
