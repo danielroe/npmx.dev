@@ -190,13 +190,13 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
         const name = new Intl.PluralRules('uk-UA').select(choice)
         return { zero: 0, one: 1, two: 0 /!* not used *!/, few: 2, many: 3, other: 4 }[name]
       },
-    },
-    {
-      code: 'cs-CZ',
-      file: 'cs-CZ.json',
-      name: 'Česky',
-    },
-    {
+    },*/
+  {
+    code: 'cs-CZ',
+    file: 'cs-CZ.json',
+    name: 'Čeština',
+  },
+  /*{
       code: 'pl-PL',
       file: 'pl-PL.json',
       name: 'Polski',
