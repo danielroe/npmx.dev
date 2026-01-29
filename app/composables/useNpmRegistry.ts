@@ -263,40 +263,173 @@ const emptySearchResponse = {
   time: new Date().toISOString(),
 } satisfies NpmSearchResponse
 
-/** @public */
+export interface NpmSearchOptions {
+  /** Number of results to fetch */
+  size?: number
+}
+
+/** public */
 export function useNpmSearch(
   query: MaybeRefOrGetter<string>,
-  options: MaybeRefOrGetter<{
-    size?: number
-    from?: number
-  }> = {},
+  options: MaybeRefOrGetter<NpmSearchOptions> = {},
 ) {
   const cachedFetch = useCachedFetch()
+  // Client-side cache
+  const cache = shallowRef<{
+    query: string
+    objects: NpmSearchResult[]
+    total: number
+  } | null>(null)
+
+  const isLoadingMore = ref(false)
+
+  // Standard (non-incremental) search implementation
   let lastSearch: NpmSearchResponse | undefined = undefined
 
-  return useLazyAsyncData(
-    () => `search:${toValue(query)}:${JSON.stringify(toValue(options))}`,
+  const asyncData = useLazyAsyncData(
+    `search:incremental:${toValue(query)}`,
     async () => {
       const q = toValue(query)
       if (!q.trim()) {
-        return Promise.resolve(emptySearchResponse)
+        return emptySearchResponse
       }
+
+      const opts = toValue(options)
+
+      // This only runs for initial load or query changes
+      // Reset cache for new query
+      cache.value = null
 
       const params = new URLSearchParams()
       params.set('text', q)
-      const opts = toValue(options)
-      if (opts.size) params.set('size', String(opts.size))
-      if (opts.from) params.set('from', String(opts.from))
+      // Use requested size for initial fetch
+      params.set('size', String(opts.size ?? 25))
 
-      // Note: Search results have a short TTL (1 minute) since they change frequently
-      return (lastSearch = await cachedFetch<NpmSearchResponse>(
+      const response = await cachedFetch<NpmSearchResponse>(
         `${NPM_REGISTRY}/-/v1/search?${params.toString()}`,
         {},
-        60, // 1 minute TTL for search results
-      ))
+        60,
+      )
+
+      cache.value = {
+        query: q,
+        objects: response.objects,
+        total: response.total,
+      }
+
+      return response
     },
     { default: () => lastSearch || emptySearchResponse },
   )
+
+  // Fetch more results incrementally (only used in incremental mode)
+  async function fetchMore(targetSize: number): Promise<void> {
+    const q = toValue(query).trim()
+    if (!q) {
+      cache.value = null
+      return
+    }
+
+    // If query changed, reset cache (shouldn't happen, but safety check)
+    if (cache.value && cache.value.query !== q) {
+      cache.value = null
+      await asyncData.refresh()
+      return
+    }
+
+    const currentCount = cache.value?.objects.length ?? 0
+    const total = cache.value?.total ?? Infinity
+
+    // Already have enough or no more to fetch
+    if (currentCount >= targetSize || currentCount >= total) {
+      return
+    }
+
+    isLoadingMore.value = true
+
+    try {
+      // Fetch from where we left off - calculate size needed
+      const from = currentCount
+      const size = Math.min(targetSize - currentCount, total - currentCount)
+
+      const params = new URLSearchParams()
+      params.set('text', q)
+      params.set('size', String(size))
+      params.set('from', String(from))
+
+      const response = await cachedFetch<NpmSearchResponse>(
+        `${NPM_REGISTRY}/-/v1/search?${params.toString()}`,
+        {},
+        60,
+      )
+
+      // Update cache
+      if (cache.value && cache.value.query === q) {
+        cache.value = {
+          query: q,
+          objects: [...cache.value.objects, ...response.objects],
+          total: response.total,
+        }
+      } else {
+        cache.value = {
+          query: q,
+          objects: response.objects,
+          total: response.total,
+        }
+      }
+
+      // If we still need more, fetch again recursively
+      if (
+        cache.value.objects.length < targetSize &&
+        cache.value.objects.length < cache.value.total
+      ) {
+        await fetchMore(targetSize)
+      }
+    } finally {
+      isLoadingMore.value = false
+    }
+  }
+
+  // Watch for size increases in incremental mode
+  watch(
+    () => toValue(options).size,
+    async (newSize, oldSize) => {
+      if (!newSize) return
+      if (oldSize && newSize > oldSize && toValue(query).trim()) {
+        await fetchMore(newSize)
+      }
+    },
+  )
+
+  // Computed data that uses cache in incremental mode
+  const data = computed<NpmSearchResponse | null>(() => {
+    if (cache.value) {
+      return {
+        objects: cache.value.objects,
+        total: cache.value.total,
+        time: new Date().toISOString(),
+      }
+    }
+    return asyncData.data.value
+  })
+
+  // Whether there are more results available on the server (incremental mode only)
+  const hasMore = computed(() => {
+    if (!cache.value) return true
+    return cache.value.objects.length < cache.value.total
+  })
+
+  return {
+    ...asyncData,
+    /** Reactive search results (uses cache in incremental mode) */
+    data,
+    /** Whether currently loading more results (incremental mode only) */
+    isLoadingMore,
+    /** Whether there are more results available (incremental mode only) */
+    hasMore,
+    /** Manually fetch more results up to target size (incremental mode only) */
+    fetchMore,
+  }
 }
 
 /**
