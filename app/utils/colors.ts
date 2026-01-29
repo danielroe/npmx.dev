@@ -101,7 +101,9 @@ export function lightenOklch(
 
   const input = oklch.trim()
 
-  const match = input.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/i)
+  const match = input.match(
+    /^oklch\(\s*([+-]?[\d.]+%?)\s+([+-]?[\d.]+)\s+([+-]?[\d.]+)(?:\s*\/\s*([+-]?[\d.]+%?))?\s*\)$/i,
+  )
 
   if (!match) {
     throw new Error('Invalid OKLCH color format')
@@ -150,7 +152,7 @@ export function transparentizeOklch(
   if (!input) return fallback
 
   const match = input.match(
-    /^oklch\(\s*([+\-]?[\d.]+%?)\s+([+\-]?[\d.]+)\s+([+\-]?[\d.]+)(?:\s*\/\s*([+\-]?[\d.]+%?))?\s*\)$/i,
+    /^oklch\(\s*([+-]?[\d.]+%?)\s+([+-]?[\d.]+)\s+([+-]?[\d.]+)(?:\s*\/\s*([+-]?[\d.]+%?))?\s*\)$/i,
   )
 
   if (!match) return fallback
