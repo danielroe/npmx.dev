@@ -17,6 +17,10 @@ export const ERROR_JSR_FETCH_FAILED = 'Failed to fetch package from JSR registry
 export const ERROR_NPM_FETCH_FAILED = 'Failed to fetch package from npm registry.'
 export const ERROR_SUGGESTIONS_FETCH_FAILED = 'Failed to fetch suggestions.'
 
+// microcosm services
+export const CONSTELLATION_ENDPOINT = 'https://constellation.microcosm.blue'
+export const SLINGSHOT_ENDPOINT = 'https://slingshot.microcosm.blue'
+
 // Theming
 export const ACCENT_COLORS = {
   rose: 'oklch(0.797 0.084 11.056)',

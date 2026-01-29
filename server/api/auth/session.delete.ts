@@ -1,4 +1,4 @@
-import { eventHandlerWithOAuthSession } from '#server/utils/atproto'
+import { eventHandlerWithOAuthSession } from '#server/utils/oauth'
 
 export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
   const session = await useSession(event, {

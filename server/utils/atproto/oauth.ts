@@ -2,7 +2,7 @@ import type { OAuthClientMetadataInput } from '@atproto/oauth-client-node'
 import type { EventHandlerRequest, H3Event } from 'h3'
 import type { OAuthSession } from '@atproto/oauth-client-node'
 import { NodeOAuthClient } from '@atproto/oauth-client-node'
-import { SessionStore, StateStore } from '#server/api/auth/atproto.get'
+import { OAuthSessionStore, OAuthStateStore } from '#server/utils/atproto/storage'
 
 // TODO: limit scope as features gets added. atproto just allows login so no scary login screen till we have scopes
 export const scope = 'atproto'
@@ -38,8 +38,8 @@ type EventHandlerWithOAuthSession<T extends EventHandlerRequest, D> = (
 
 async function getOAuthSession(event: H3Event): Promise<OAuthSession | undefined> {
   const clientMetadata = getOauthClientMetadata()
-  const stateStore = new StateStore(event)
-  const sessionStore = new SessionStore(event)
+  const stateStore = new OAuthStateStore(event)
+  const sessionStore = new OAuthSessionStore(event)
 
   const client = new NodeOAuthClient({
     stateStore,
