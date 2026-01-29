@@ -90,11 +90,9 @@
     },
     "stats": {
       "license": "Licence",
-      "weekly": "Hebdo",
       "deps": "Dépendances",
       "install_size": "Taille d'installation",
       "updated": "Mis à jour",
-      "view_download_trends": "Voir les tendances de téléchargement",
       "view_dependency_graph": "Voir le graphe de dépendances",
       "inspect_dependency_tree": "Inspecter l'arbre de dépendances"
     },
@@ -102,7 +100,6 @@
       "repo": "dépôt",
       "homepage": "site web",
       "issues": "issues",
-      "forks": "fork | forks",
       "jsr": "jsr",
       "code": "code",
       "docs": "docs"

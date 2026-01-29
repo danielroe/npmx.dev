@@ -91,11 +91,9 @@
     },
     "stats": {
       "license": "许可证",
-      "weekly": "每周下载量",
       "deps": "依赖项",
       "install_size": "安装大小",
       "updated": "最近更新",
-      "view_download_trends": "查看下载趋势",
       "view_dependency_graph": "查看依赖图",
       "inspect_dependency_tree": "查看依赖树"
     },
@@ -103,7 +101,6 @@
       "repo": "仓库",
       "homepage": "主页",
       "issues": "议题",
-      "forks": "复刻",
       "jsr": "jsr",
       "code": "代码",
       "docs": "文档",
@@ -203,6 +200,14 @@
     "playgrounds": {
       "title": "试一试",
       "choose": "选择 Playground"
+    },
+    "metrics": {
+      "esm": "支持 ES Modules",
+      "cjs": "支持 CommonJS",
+      "no_esm": "不支持 ES Modules",
+      "types_included": "包含类型",
+      "types_available": "通过 {package} 提供的类型",
+      "no_types": "没有 TypeScript 类型"
     },
     "license": {
       "view_spdx": "在 SPDX 上查看许可证文本"
@@ -512,8 +517,8 @@
       "title": "我们是什么",
       "better_ux_dx": "更好的用户体验和开发者体验",
       "admin_ui": "管理界面",
-      "description": "npmx 为 npm 包仓库及其工具提供{betterUxDx}。我们提供快速、现代的界面来探索包，具有深色模式、键盘导航、代码浏览以及与 {jsr} 等替代仓库的连接等功能。",
-      "admin_description": "我们还致力于提供更好的{adminUi}来管理您的包、团队和组织——全部在浏览器中完成，由您本地的 npm CLI 驱动。"
+      "description": "npmx 为 npm 仓库及其工具链提供{betterUxDx}。我们提供快速、现代化的界面来探索 npm 包，支持深色模式、键盘导航、代码浏览以及与 {jsr} 等替代仓库连接等功能。",
+      "admin_description": "我们也致力于提供更好的{adminUi}，用于管理您的 npm 包、团队和组织——一切都在浏览器中完成，并由您本地的 npm CLI 驱动。"
     },
     "what_we_are_not": {
       "title": "我们不是什么",
@@ -523,12 +528,37 @@
       "package_managers_exist": "{already}{people}{building}{really}{cool}{package}{managers}。",
       "words": {
         "already": "已经有",
-        "people": "很多",
-        "building": "人在",
-        "really": "开发",
-        "cool": "非常",
-        "package": "棒的",
-        "managers": "包管理器"
+        "people": "很多人",
+        "building": "在开发",
+        "really": "非常",
+        "cool": "棒的",
+        "package": "包",
+        "managers": "管理器"
+      }
+    },
+    "contributors": {
+      "title": "贡献者",
+      "description": "npmx 是完全开源的，由令人惊叹的社区贡献者们共同构建。",
+      "loading": "正在加载贡献者...",
+      "error": "无法加载贡献者",
+      "view_profile": "查看 {name} 的 GitHub 个人资料"
+    },
+    "get_involved": {
+      "title": "加入我们",
+      "community": {
+        "title": "加入社区",
+        "description": "聊天、提出问题并分享想法。",
+        "cta": "加入 Discord"
+      },
+      "contribute": {
+        "title": "作出贡献",
+        "description": "帮助我们打造更好的 npm 体验。",
+        "cta": "在 GitHub 上查看"
+      },
+      "follow": {
+        "title": "保持更新",
+        "description": "了解 npmx 的最新动态。",
+        "cta": "在 BlueSky 上关注"
       }
     }
   },
