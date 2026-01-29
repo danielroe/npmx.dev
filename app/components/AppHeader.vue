@@ -137,15 +137,6 @@ onKeyStroke(',', e => {
             class="hidden sm:inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
             aria-hidden="true"
           >
-            <span class="i-carbon-logo-github w-4 h-4" />
-            <span class="hidden sm:inline">github</span>
-          </a>
-        </li>
-
-        <li>
-          <AuthButton />
-        </li>
-      </ul>
             ,
           </kbd>
         </NuxtLink>
@@ -153,6 +144,8 @@ onKeyStroke(',', e => {
         <div v-if="showConnector" class="hidden sm:block">
           <ConnectorStatus />
         </div>
+
+        <AuthButton />
       </div>
     </nav>
   </header>

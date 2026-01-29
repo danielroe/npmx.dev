@@ -1,4 +1,4 @@
-import { OAuthClientMetadataInput } from '@atproto/oauth-client-node'
+import type { OAuthClientMetadataInput } from '@atproto/oauth-client-node'
 
 // TODO: limit scope as features gets added
 export const scope = 'atproto transition:generic'
@@ -6,7 +6,7 @@ export const scope = 'atproto transition:generic'
 export function getOauthClientMetadata() {
   const dev = import.meta.dev
 
-  // TODO: CHECK - on dev, match in nuxt.config.ts devServer: { host: "127.0.0.1" }
+  // on dev, match in nuxt.config.ts devServer: { host: "127.0.0.1" }
   const client_uri = dev ? `http://127.0.0.1:3000` : 'https://npmx.dev'
   const redirect_uri = `${client_uri}/api/auth/atproto`
 

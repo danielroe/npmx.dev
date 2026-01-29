@@ -35,10 +35,27 @@ export default defineEventHandler(async event => {
     return sendRedirect(event, redirectUrl.toString())
   }
 
-  const { session } = await atclient.callback(new URLSearchParams(query as Record<string, string>))
-  const agent = new Agent(session)
+  const { session: authSession } = await atclient.callback(
+    new URLSearchParams(query as Record<string, string>),
+  )
+  const agent = new Agent(authSession)
   event.context.agent = agent
-  console.log(agent.did)
+
+  const session = await useSession(event, {
+    password: process.env.NUXT_SESSION_PASSWORD as string,
+  })
+
+  const response = await fetch(
+    `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
+  )
+  const miniDoc = (await response.json()) as { did: string; handle: string; pds: string }
+
+  await session.update({
+    miniDoc,
+  })
+
+  await sessionStore.del()
+
   return sendRedirect(event, '/')
 })
 

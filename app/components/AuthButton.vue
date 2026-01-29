@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const showModal = ref(false)
+const { user } = await useAtproto()
 </script>
 
 <template>
@@ -10,7 +11,7 @@ const showModal = ref(false)
       :aria-label="ariaLabel"
       @click="showModal = true"
     >
-      Login
+      {{ user?.miniDoc?.handle || 'Login' }}
     </button>
 
     <AuthModal v-model:open="showModal" />
