@@ -33,6 +33,7 @@
       ],
       "ignoreDependencies": [
         "@iconify-json/carbon",
+        "@iconify-json/lucide",
         "@iconify-json/simple-icons",
         "@iconify-json/solar",
         "@iconify-json/svg-spinners",
