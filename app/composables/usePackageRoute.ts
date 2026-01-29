@@ -1,4 +1,23 @@
 /**
+ * Generate a route object for navigating to a package page.
+ *
+ * @param pkg - Package name (e.g., "nuxt" or "@nuxt/kit")
+ * @param version - Optional version string
+ * @returns Route object with name and params
+ * @public
+ */
+export function getPackageRoute(pkg: string, version: string | null = null) {
+  return {
+    name: 'package',
+    params: {
+      package: [...pkg.split('/'), version ? 'v' : null, version].filter(
+        (a): a is NonNullable<typeof a> => !!a,
+      ),
+    },
+  } as const
+}
+
+/**
  * Parse package name and optional version from the route URL.
  *
  * Supported patterns:
@@ -13,7 +32,7 @@
 export function usePackageRoute() {
   const route = useRoute('package')
 
-  const parsedRoute = computed(() => {
+  const data = computed(() => {
     const segments = route.params.package || []
 
     // Find the /v/ separator for version
@@ -42,20 +61,8 @@ export function usePackageRoute() {
     }
   })
 
-  const packageName = computed(() => parsedRoute.value.packageName)
-  const requestedVersion = computed(() => parsedRoute.value.requestedVersion)
-
-  // Extract org name from scoped package (e.g., "@nuxt/kit" -> "nuxt")
-  const orgName = computed(() => {
-    const name = packageName.value
-    if (!name.startsWith('@')) return null
-    const match = name.match(/^@([^/]+)\//)
-    return match ? match[1] : null
-  })
-
   return {
-    packageName,
-    requestedVersion,
-    orgName,
+    packageName: computed(() => data.value.packageName),
+    requestedVersion: computed(() => data.value.requestedVersion),
   }
 }

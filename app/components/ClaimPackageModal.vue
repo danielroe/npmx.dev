@@ -192,7 +192,7 @@ const connectorModalOpen = shallowRef(false)
 
               <div class="flex gap-3">
                 <NuxtLink
-                  :to="`/package/${packageName}`"
+                  :to="getPackageRoute(packageName)"
                   class="flex-1 px-4 py-2 font-mono text-sm text-center text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                   @click="open = false"
                 >
@@ -299,7 +299,7 @@ const connectorModalOpen = shallowRef(false)
                       <span v-else class="w-4 h-4 shrink-0" />
                       <div class="min-w-0">
                         <NuxtLink
-                          :to="`/package/${pkg.name}`"
+                          :to="getPackageRoute(pkg.name)"
                           class="font-mono text-sm text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                           target="_blank"
                         >

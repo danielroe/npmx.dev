@@ -111,7 +111,7 @@ defineOgImageComponent('Default')
           :key="pkg"
         >
           <NuxtLink
-            :to="{ name: 'package', params: { package: [pkg] } }"
+            :to="getPackageRoute(pkg)"
             class="link-subtle font-mono text-sm inline-flex items-center gap-2 group"
           >
             <span
