@@ -41,12 +41,14 @@ export default defineEventHandler(async event => {
   const agent = new Agent(authSession)
   event.context.agent = agent
 
+  //TODO prob do server side kv store here too?
   const session = await useSession(event, {
     password: process.env.NUXT_SESSION_PASSWORD as string,
   })
 
   const response = await fetch(
     `https://slingshot.microcosm.blue/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
+    { headers: { 'User-Agent': 'npmx' } },
   )
   const miniDoc = (await response.json()) as { did: string; handle: string; pds: string }
 
@@ -54,47 +56,74 @@ export default defineEventHandler(async event => {
     miniDoc,
   })
 
-  await sessionStore.del()
+  // await sessionStore.del()
 
   return sendRedirect(event, '/')
 })
 
+/**
+ * Storage key prefix for oauth state storage.
+ */
+export const OAUTH_STATE_CACHE_STORAGE_BASE = 'oauth-atproto-state'
+
 export class StateStore implements NodeSavedStateStore {
-  private readonly stateKey = 'oauth:bluesky:stat'
+  private readonly cookieKey = 'oauth:atproto:state'
+  private readonly storage = useStorage(OAUTH_STATE_CACHE_STORAGE_BASE)
 
   constructor(private event: H3Event) {}
 
   async get(): Promise<NodeSavedState | undefined> {
-    const result = getCookie(this.event, this.stateKey)
+    const stateKey = getCookie(this.event, this.cookieKey)
+    if (!stateKey) return
+    const result = await this.storage.getItem<NodeSavedState>(stateKey)
     if (!result) return
-    return JSON.parse(atob(result))
+    return result
   }
 
   async set(key: string, val: NodeSavedState) {
-    setCookie(this.event, this.stateKey, btoa(JSON.stringify(val)))
+    setCookie(this.event, this.cookieKey, key)
+    await this.storage.setItem<NodeSavedState>(key, val)
   }
 
   async del() {
-    deleteCookie(this.event, this.stateKey)
+    let stateKey = getCookie(this.event, this.cookieKey)
+    deleteCookie(this.event, this.cookieKey)
+    if (stateKey) {
+      await this.storage.del(stateKey)
+    }
   }
 }
 
+/**
+ * Storage key prefix for oauth session storage.
+ */
+export const OAUTH_SESSION_CACHE_STORAGE_BASE = 'oauth-atproto-session'
+
 export class SessionStore implements NodeSavedSessionStore {
-  private readonly sessionKey = 'oauth:bluesky:session'
+  //TODO not sure if we will support multi accounts, but if we do in the future will need to change this around
+  private readonly cookieKey = 'oauth:atproto:session'
+  private readonly storage = useStorage(OAUTH_SESSION_CACHE_STORAGE_BASE)
 
   constructor(private event: H3Event) {}
 
   async get(): Promise<NodeSavedSession | undefined> {
-    const result = getCookie(this.event, this.sessionKey)
+    const sessionKey = getCookie(this.event, this.cookieKey)
+    if (!sessionKey) return
+    let result = await this.storage.getItem<NodeSavedSession>(sessionKey)
     if (!result) return
-    return JSON.parse(atob(result))
+    return result
   }
 
   async set(key: string, val: NodeSavedSession) {
-    setCookie(this.event, this.sessionKey, btoa(JSON.stringify(val)))
+    setCookie(this.event, this.cookieKey, key)
+    await this.storage.setItem<NodeSavedSession>(key, val)
   }
 
   async del() {
-    deleteCookie(this.event, this.sessionKey)
+    let sessionKey = getCookie(this.event, this.cookieKey)
+    if (sessionKey) {
+      await this.storage.del(sessionKey)
+    }
+    deleteCookie(this.event, this.cookieKey)
   }
 }
