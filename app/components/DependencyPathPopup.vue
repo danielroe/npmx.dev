@@ -4,8 +4,6 @@ defineProps<{
   path: readonly string[]
 }>()
 
-const { t } = useI18n()
-
 const isOpen = shallowRef(false)
 const popupEl = ref<HTMLElement | null>(null)
 const popupPosition = shallowRef<{ top: number; left: number } | null>(null)
@@ -29,15 +27,8 @@ function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') closePopup()
 }
 
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-  window.addEventListener('scroll', closePopup, true)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  window.removeEventListener('scroll', closePopup, true)
-})
+useEventListener(document, 'keydown', handleKeydown)
+useEventListener('scroll', closePopup, true)
 
 function togglePopup(event: MouseEvent) {
   if (isOpen.value) {
@@ -80,8 +71,8 @@ function parsePackageString(pkg: string): { name: string; version: string } {
       :aria-expanded="isOpen"
       @click.stop="togglePopup"
     >
-      <span class="i-carbon-tree-view w-3 h-3" aria-hidden="true" />
-      <span>{{ t('package.vulnerabilities.path') }}</span>
+      <span class="i-carbon:tree-view w-3 h-3" aria-hidden="true" />
+      <span>{{ $t('package.vulnerabilities.path') }}</span>
     </button>
 
     <!-- Tree popup -->
@@ -98,7 +89,7 @@ function parsePackageString(pkg: string): { name: string; version: string } {
           class="font-mono text-xs"
           :style="{ paddingLeft: `${idx * 12}px` }"
         >
-          <span v-if="idx > 0" class="text-fg-subtle mr-1">└─</span>
+          <span v-if="idx > 0" class="text-fg-subtle me-1">└─</span>
           <NuxtLink
             :to="{
               name: 'package',
@@ -116,7 +107,7 @@ function parsePackageString(pkg: string): { name: string; version: string } {
           >
             {{ pathItem }}
           </NuxtLink>
-          <span v-if="idx === path.length - 1" class="ml-1 text-amber-500">⚠</span>
+          <span v-if="idx === path.length - 1" class="ms-1 text-amber-500">⚠</span>
         </li>
       </ul>
     </div>

@@ -82,7 +82,7 @@ watch(open, isOpen => {
                 :aria-label="$t('common.close')"
                 @click="open = false"
               >
-                <span class="i-carbon-close block w-5 h-5" aria-hidden="true" />
+                <span class="i-carbon:close block w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
@@ -124,19 +124,19 @@ watch(open, isOpen => {
                 class="flex items-center p-3 bg-bg-muted border border-border rounded-lg font-mono text-sm"
               >
                 <span class="text-fg-subtle">$</span>
-                <span class="text-fg-subtle ml-2">{{ executeNpmxConnectorCommand }}</span>
+                <span class="text-fg-subtle ms-2">{{ executeNpmxConnectorCommand }}</span>
                 <button
                   type="button"
                   :aria-label="
                     copied ? $t('connector.modal.copied') : $t('connector.modal.copy_command')
                   "
-                  class="ml-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+                  class="ms-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                   @click="copyCommand"
                 >
-                  <span v-if="!copied" class="i-carbon-copy block w-5 h-5" aria-hidden="true" />
+                  <span v-if="!copied" class="i-carbon:copy block w-5 h-5" aria-hidden="true" />
                   <span
                     v-else
-                    class="i-carbon-checkmark block w-5 h-5 text-green-500"
+                    class="i-carbon:checkmark block w-5 h-5 text-green-500"
                     aria-hidden="true"
                   />
                 </button>
@@ -159,7 +159,7 @@ watch(open, isOpen => {
                     name="connector-token"
                     :placeholder="$t('connector.modal.token_placeholder')"
                     v-bind="noCorrect"
-                    class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                    class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                   />
                 </div>
 
@@ -183,7 +183,7 @@ watch(open, isOpen => {
                       name="connector-port"
                       inputmode="numeric"
                       autocomplete="off"
-                      class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                      class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
                     />
                   </div>
                 </details>
