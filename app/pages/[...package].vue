@@ -64,6 +64,7 @@ const {
 onMounted(() => fetchInstallSize())
 
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
+const { data: moduleReplacement } = useModuleReplacement(packageName)
 
 const { data: pkg, status, error } = await usePackage(packageName, requestedVersion)
 const resolvedVersion = computed(() => pkg.value?.resolvedVersion ?? null)
@@ -820,12 +821,11 @@ defineOgImageComponent('Package', {
         </dl>
       </header>
 
-      <!-- Security vulnerabilities warning -->
-      <PackageVulnerabilities
-        v-if="displayVersion"
-        :package-name="pkg.name"
-        :version="displayVersion.version"
-        class="area-vulns"
+      <!-- Bad package warning -->
+      <PackageReplacement
+        v-if="moduleReplacement"
+        :replacement="moduleReplacement"
+        class="area-replacement"
       />
 
       <!-- Binary-only packages: Show only execute command (no install) -->
@@ -1282,6 +1282,7 @@ defineOgImageComponent('Package', {
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'header'
+    'replacement'
     'install'
     'vulns'
     'sidebar'
@@ -1293,10 +1294,11 @@ defineOgImageComponent('Package', {
   .package-page {
     grid-template-columns: 2fr 1fr;
     grid-template-areas:
-      'header  header'
-      'install install'
-      'vulns   vulns'
-      'readme  sidebar';
+      'header      header'
+      'replacement replacement'
+      'install     install'
+      'vulns       vulns'
+      'readme      sidebar';
   }
 }
 
@@ -1305,15 +1307,20 @@ defineOgImageComponent('Package', {
   .package-page {
     grid-template-columns: 1fr 20rem;
     grid-template-areas:
-      'header  sidebar'
-      'install sidebar'
-      'vulns   sidebar'
-      'readme  sidebar';
+      'header      sidebar'
+      'replacement sidebar'
+      'install     sidebar'
+      'vulns       sidebar'
+      'readme      sidebar';
   }
 }
 
 .area-header {
   grid-area: header;
+  overflow-x: hidden;
+}
+.area-replacement {
+  grid-area: replacement;
   overflow-x: hidden;
 }
 .area-install {
