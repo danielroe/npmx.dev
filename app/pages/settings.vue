@@ -3,6 +3,7 @@ const router = useRouter()
 const { settings } = useSettings()
 const { locale, locales, setLocale } = useI18n()
 const colorMode = useColorMode()
+const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
 
 const availableLocales = computed(() =>
   locales.value.map(l => (typeof l === 'string' ? { code: l, name: l } : l)),
@@ -97,7 +98,7 @@ useSeoMeta({
           <select
             id="theme-select"
             :value="colorMode.preference"
-            class="w-full bg-bg-muted border border-border rounded-md px-2 py-1.5 text-sm text-fg focus:outline-none focus:ring-2 focus:ring-fg/50 cursor-pointer"
+            class="w-full bg-bg-muted border border-border rounded-md px-2 py-1.5 text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 cursor-pointer"
             @change="
               colorMode.preference = ($event.target as HTMLSelectElement).value as
                 | 'light'
@@ -119,11 +120,11 @@ useSeoMeta({
             {{ $t('settings.language') }}
           </label>
         </div>
-        <div class="px-2 py-1">
+        <div class="px-2 py-1 space-y-2">
           <select
             id="language-select"
             :value="locale"
-            class="w-full bg-bg-muted border border-border rounded-md px-2 py-1.5 text-sm text-fg focus:outline-none focus:ring-2 focus:ring-fg/50 cursor-pointer"
+            class="w-full bg-bg-muted border border-border rounded-md px-2 py-1.5 text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 cursor-pointer"
             @change="setLocale(($event.target as HTMLSelectElement).value as typeof locale)"
           >
             <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">
@@ -131,21 +132,29 @@ useSeoMeta({
             </option>
           </select>
         </div>
+
+        <!-- Translation helper for non-source locales -->
+        <div v-if="currentLocaleStatus && !isSourceLocale" class="px-2 py-2">
+          <TranslationHelper :status="currentLocaleStatus" />
+        </div>
+
+        <!-- Simple help link for source locale -->
         <a
+          v-else
           href="https://github.com/npmx-dev/npmx.dev/tree/main/i18n/locales"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center gap-1.5 px-2 py-1.5 text-xs text-fg-muted hover:text-fg transition-colors"
+          class="flex items-center gap-1.5 px-2 py-1.5 text-xs text-fg-muted hover:text-fg rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         >
-          <span class="i-carbon-translate w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-carbon-logo-github w-3.5 h-3.5" aria-hidden="true" />
           {{ $t('settings.help_translate') }}
         </a>
       </div>
 
       <div class="pt-2 mt-2 border-t border-border">
-        <h2 class="text-xs text-fg-subtle uppercase tracking-wider px-2 py-1">
+        <div class="text-xs text-fg-subtle uppercase tracking-wider px-2 py-1">
           {{ $t('settings.accent_colors') }}
-        </h2>
+        </div>
         <div class="px-2 py-2">
           <AccentColorPicker />
         </div>
