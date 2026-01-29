@@ -73,11 +73,14 @@ onMounted(() => {
 
 // Infinite scroll state
 const pageSize = 25
-const loadedPages = ref(1)
+const loadedPages = ref(2)
 const isLoadingMore = ref(false)
 
 // Pagination state for table view
 const currentPage = ref(1)
+watch(currentPage, page => {
+  loadedPages.value = Math.max(loadedPages.value, page + 1)
+})
 
 // Get initial page from URL (for scroll restoration on reload)
 const initialPage = computed(() => {
@@ -109,6 +112,7 @@ watch([results, query], ([newResults, newQuery]) => {
   if (newResults) {
     cachedResults.value = newResults
     previousQuery.value = newQuery
+    isLoadingMore.value = false
   }
 })
 
@@ -246,11 +250,6 @@ function loadMore() {
 
   isLoadingMore.value = true
   loadedPages.value++
-
-  // Reset loading state after data updates
-  nextTick(() => {
-    isLoadingMore.value = false
-  })
 }
 
 // Update URL when page changes from scrolling
@@ -988,6 +987,7 @@ defineOgImageComponent('Default', {
             v-model:mode="paginationMode"
             v-model:page-size="preferredPageSize"
             v-model:current-page="currentPage"
+            :total-items="visibleResults?.total ?? displayResults.length"
             :view-mode="viewMode"
           />
         </div>
