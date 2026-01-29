@@ -55,8 +55,8 @@ watch(
 )
 
 // For glow effect
-const isSearchFocused = ref(false)
 const searchInputRef = useTemplateRef('searchInputRef')
+const { focused: isSearchFocused } = useFocus(searchInputRef)
 
 const selectedIndex = ref(0)
 const packageListRef = useTemplateRef('packageListRef')
@@ -90,8 +90,6 @@ onMounted(() => {
     // Load enough pages to show the initial page
     loadedPages.value = initialPage.value
   }
-  // Focus search input
-  searchInputRef.value?.focus()
 })
 
 // fetch all pages up to current
@@ -763,7 +761,7 @@ defineOgImageComponent('Default', {
     <!-- Sticky search header - positioned below AppHeader (h-14 = 56px) -->
     <header class="sticky top-14 z-40 bg-bg/95 backdrop-blur-sm border-b border-border">
       <div class="container-sm py-4">
-        <h1 class="font-mono text-xl sm:text-2xl font-medium mb-4">search</h1>
+        <h1 class="font-mono text-xl sm:text-2xl font-medium mb-4">{{ $t('nav.search') }}</h1>
 
         <search>
           <form role="search" method="GET" action="/search" class="relative" @submit.prevent>
@@ -790,15 +788,14 @@ defineOgImageComponent('Default', {
                   name="q"
                   :placeholder="$t('search.placeholder')"
                   v-bind="noCorrect"
+                  autofocus
                   class="w-full max-w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-10 py-3 font-mono text-base text-fg placeholder:text-fg-subtle transition-colors duration-300 focus:border-accent focus-visible:outline-none appearance-none"
-                  @focus="isSearchFocused = true"
-                  @blur="isSearchFocused = false"
                   @keydown="handleResultsKeydown"
                 />
                 <button
                   v-show="inputValue"
                   type="button"
-                  class="absolute right-3 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+                  class="absolute right-3 p-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                   :aria-label="$t('search.clear')"
                   @click="inputValue = ''"
                 >
@@ -815,7 +812,7 @@ defineOgImageComponent('Default', {
 
     <!-- Results area with container padding -->
     <div class="container-sm pt-20 pb-6">
-      <section v-if="query" aria-label="Search results" @keydown="handleResultsKeydown">
+      <section v-if="query" :aria-label="$t('search.results')" @keydown="handleResultsKeydown">
         <!-- Initial loading (only after user interaction, not during view transition) -->
         <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 

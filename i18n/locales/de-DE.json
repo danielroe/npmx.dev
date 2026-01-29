@@ -90,11 +90,9 @@
     },
     "stats": {
       "license": "Lizenz",
-      "weekly": "Wöchentlich",
       "deps": "Deps",
       "install_size": "Installationsgröße",
       "updated": "Aktualisiert",
-      "view_download_trends": "Download-Trends anzeigen",
       "view_dependency_graph": "Abhängigkeitsgraph anzeigen",
       "inspect_dependency_tree": "Abhängigkeitsbaum untersuchen"
     },
@@ -102,17 +100,10 @@
       "repo": "Repo",
       "homepage": "Homepage",
       "issues": "Issues",
-      "forks": "Fork | Forks",
       "jsr": "JSR",
       "code": "Code",
       "docs": "Doku",
       "fund": "Spenden"
-    },
-    "install": {
-      "title": "Installieren",
-      "pm_label": "Paketmanager",
-      "copy_command": "Installationsbefehl kopieren",
-      "view_types": "{package} anzeigen"
     },
     "create": {
       "title": "Neues Projekt erstellen",

@@ -30,6 +30,9 @@ jobs:
       - name: 📦 Install browsers
         run: pnpm playwright install
 
+      - name: 🌍 Update lunaria data
+        run: pnpm build:lunaria
+
       - name: 🔠 Fix lint errors
         run: pnpm lint:fix
 
