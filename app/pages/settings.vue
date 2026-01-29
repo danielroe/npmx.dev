@@ -47,7 +47,7 @@ useSeoMeta({
         <span class="text-sm text-fg select-none">{{ $t('settings.relative_dates') }}</span>
         <span
           class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none shadow"
-          :class="settings.relativeDates ? 'bg-fg' : 'bg-bg'"
+          :class="settings.relativeDates ? 'bg-accent' : 'bg-bg'"
           aria-hidden="true"
         >
           <span
@@ -72,7 +72,7 @@ useSeoMeta({
         }}</span>
         <span
           class="relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-[background-color] duration-200 ease-in-out motion-reduce:transition-none border border-border shadow"
-          :class="settings.includeTypesInInstall ? 'bg-fg' : 'bg-bg'"
+          :class="settings.includeTypesInInstall ? 'bg-accent' : 'bg-bg'"
           aria-hidden="true"
         >
           <span
