@@ -3,6 +3,8 @@ import { ref, computed, shallowRef, watch } from 'vue'
 import type { VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
+import { useCssVariables } from '#imports'
+import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '../utils/colors'
 
 const {
   weeklyDownloads,
