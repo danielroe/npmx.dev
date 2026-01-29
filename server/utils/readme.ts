@@ -401,14 +401,6 @@ export async function renderReadmeHtml(
         if (attribs.href && hasProtocol(attribs.href, { acceptRelative: true })) {
           attribs.rel = 'nofollow noreferrer noopener'
           attribs.target = '_blank'
-
-          // Replace npmjs.com|npmjs.org urls with npmx.dev
-          const npmjsMatch = attribs.href.match(
-            /^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)\/(.+)/,
-          )
-          if (npmjsMatch) {
-            attribs.href = `https://npmx.dev/${npmjsMatch[1]}`
-          }
         }
         return { tagName, attribs }
       },

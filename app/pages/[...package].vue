@@ -473,6 +473,28 @@ defineOgImageComponent('Package', {
   downloads: () => (downloads.value ? formatNumber(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
 })
+
+// We're using only @click because it catches touch events and enter hits
+function handleClick(evt: MouseEvent) {
+  const target = evt?.target ? (evt.target as HTMLElement).closest('a') : undefined
+  if (target) {
+    const npmjsMatch = target
+      .getAttribute('href')
+      ?.match(/^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)\/(.+)/)
+    if (npmjsMatch && npmjsMatch?.[1]) {
+      const urlPath = npmjsMatch[1]
+      const hasMatchedRoutes = router.resolve(urlPath)?.matched?.reduce(
+        // omit matching the wildcard route
+        (result: boolean, route) => result || route.path !== '/:package(.*)*',
+        false,
+      )
+      if (hasMatchedRoutes) {
+        evt.preventDefault()
+        window.open(`https://npmx.dev/${urlPath}`, '_blank')
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -1217,6 +1239,7 @@ defineOgImageComponent('Package', {
           v-if="readmeData?.html"
           class="readme-content prose prose-invert max-w-[70ch]"
           v-html="readmeData.html"
+          @click="handleClick"
         />
         <p v-else class="text-fg-subtle italic">
           {{ $t('package.readme.no_readme') }}
