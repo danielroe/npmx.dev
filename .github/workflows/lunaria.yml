@@ -17,7 +17,6 @@ permissions:
 
 jobs:
   lunaria-overview:
-    if: false # temporarily disabled
     name: Generate Lunaria Overview
     runs-on: ubuntu-latest
 
@@ -29,7 +28,6 @@ jobs:
           # Makes the action clone the entire git history
           fetch-depth: 0
 
-      - uses: actions/checkout@v6
       - run: corepack enable
       - uses: actions/setup-node@v6
         with:
