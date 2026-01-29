@@ -348,57 +348,60 @@ useSeoMeta({
           </div>
         </div>
 
-        <!-- File browser header with dropdown filter -->
-        <div class="border-b border-border px-3 py-2 shrink-0 bg-bg-muted">
-          <div class="flex items-center justify-between gap-2">
-            <h2 class="text-xs font-medium flex items-center gap-1.5">
+        <!-- File browser collapsible -->
+        <details class="flex-1 flex flex-col open:flex-1 group" open>
+          <summary
+            class="border-b border-border px-3 py-2 shrink-0 bg-bg-muted cursor-pointer list-none flex items-center justify-between gap-2"
+          >
+            <span class="text-xs font-medium flex items-center gap-1.5">
               <span class="i-carbon-document w-3.5 h-3.5" />
               Changed Files
-            </h2>
+            </span>
+            <span class="flex items-center gap-2">
+              <select
+                v-model="fileFilter"
+                class="text-[10px] px-2 py-1 bg-bg-subtle border border-border rounded font-mono cursor-pointer hover:border-border-hover transition-colors"
+              >
+                <option value="all">All ({{ allChanges.length }})</option>
+                <option value="added">Added ({{ compare.stats.filesAdded }})</option>
+                <option value="removed">Removed ({{ compare.stats.filesRemoved }})</option>
+                <option value="modified">Modified ({{ compare.stats.filesModified }})</option>
+              </select>
+              <span class="i-carbon-chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90" />
+            </span>
+          </summary>
 
-            <!-- Filter dropdown -->
-            <select
-              v-model="fileFilter"
-              class="text-[10px] px-2 py-1 bg-bg-subtle border border-border rounded font-mono cursor-pointer hover:border-border-hover transition-colors"
-            >
-              <option value="all">All ({{ allChanges.length }})</option>
-              <option value="added">Added ({{ compare.stats.filesAdded }})</option>
-              <option value="removed">Removed ({{ compare.stats.filesRemoved }})</option>
-              <option value="modified">Modified ({{ compare.stats.filesModified }})</option>
-            </select>
+          <!-- File list (scrollable) -->
+          <div class="flex-1 overflow-y-auto min-h-0">
+            <div v-if="filteredChanges.length === 0" class="p-8 text-center text-xs text-fg-muted">
+              No {{ fileFilter === 'all' ? '' : fileFilter }} files
+            </div>
+
+            <nav v-else class="divide-y divide-border">
+              <button
+                v-for="file in filteredChanges"
+                :key="file.path"
+                type="button"
+                class="w-full px-3 py-2 flex items-center gap-2 text-sm text-left hover:bg-bg-muted transition-colors group"
+                :class="{
+                  'bg-bg-muted border-l-3 border-l-blue-500': selectedFile?.path === file.path,
+                }"
+                @click="selectedFile = file"
+              >
+                <!-- File icon -->
+                <span :class="[getFileIcon(file.path), 'w-3.5 h-3.5 shrink-0']" />
+
+                <!-- Change type indicator -->
+                <span :class="[getChangeIcon(file.type), 'w-3 h-3 shrink-0']" />
+
+                <!-- File path -->
+                <span class="font-mono text-[10px] truncate min-w-0 group-hover:text-fg">
+                  {{ file.path }}
+                </span>
+              </button>
+            </nav>
           </div>
-        </div>
-
-        <!-- File list (scrollable) -->
-        <div class="flex-1 overflow-y-auto min-h-0">
-          <div v-if="filteredChanges.length === 0" class="p-8 text-center text-xs text-fg-muted">
-            No {{ fileFilter === 'all' ? '' : fileFilter }} files
-          </div>
-
-          <nav v-else class="divide-y divide-border">
-            <button
-              v-for="file in filteredChanges"
-              :key="file.path"
-              type="button"
-              class="w-full px-3 py-2 flex items-center gap-2 text-sm text-left hover:bg-bg-muted transition-colors group"
-              :class="{
-                'bg-bg-muted border-l-3 border-l-blue-500': selectedFile?.path === file.path,
-              }"
-              @click="selectedFile = file"
-            >
-              <!-- File icon -->
-              <span :class="[getFileIcon(file.path), 'w-3.5 h-3.5 shrink-0']" />
-
-              <!-- Change type indicator -->
-              <span :class="[getChangeIcon(file.type), 'w-3 h-3 shrink-0']" />
-
-              <!-- File path -->
-              <span class="font-mono text-[10px] truncate min-w-0 group-hover:text-fg">
-                {{ file.path }}
-              </span>
-            </button>
-          </nav>
-        </div>
+        </details>
       </aside>
 
       <!-- Right side: Diff viewer -->
