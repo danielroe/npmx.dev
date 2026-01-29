@@ -247,7 +247,7 @@ The [config/i18n.ts](./config/i18n.ts) configuration file will be used to regist
 To register a new locale:
 
 - for a single country, your JSON file should include the language and the country in the name (for example, `pl-PL.json`) and register the info at `locales` object
-- for multiple country variants, you need to add the default language JSON file (for example for Spanish, `es.json`) and one of the country variants (for example for Spanish for Spain, `es-ES.json`); register the language at `countryLocaleVariants` object adding the country variants with the JSON count file and register the language at `locales` object using the language JSON file (check how we register `es`, `es-ES` and `es-419` in [config/i18n.ts](./config/i18n.ts))
+- for multiple country variants, you need to add the default language JSON file (for example for Spanish, `es.json`) and one of the country variants (for example for Spanish for Spain, `es-ES.json`); register the language at `countryLocaleVariants` object adding the country variants with the JSON country file and register the language at `locales` object using the language JSON file (check how we register `es`, `es-ES` and `es-419` in [config/i18n.ts](./config/i18n.ts))
 
 The country file should contain will contain only the translations that differ from the language JSON file, Vue I18n will merge the messages for us.
 
