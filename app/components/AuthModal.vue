@@ -37,7 +37,7 @@ async function handleLogin() {
 
         <!-- Modal -->
         <div
-          class="relative w-full bg-bg border border-border rounded-lg shadow-xl max-h-[90vh] overflow-y-auto overscroll-contain"
+          class="relative w-full max-w-lg bg-bg border border-border rounded-lg shadow-xl max-h-[90vh] overflow-y-auto overscroll-contain"
           role="dialog"
           aria-modal="true"
           aria-labelledby="auth-modal-title"
@@ -63,13 +63,13 @@ async function handleLogin() {
                     Logged in as @{{ user.miniDoc.handle }}
                   </p>
                 </div>
-                <button
-                  @click="logout"
-                  class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
-                >
-                  Logout
-                </button>
               </div>
+              <button
+                @click="logout"
+                class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+              >
+                Logout
+              </button>
             </div>
 
             <!-- Disconnected state -->
@@ -103,7 +103,17 @@ async function handleLogin() {
                     What is an Atmosphere account?
                   </summary>
                   <div class="mt-3">
-                    <p>TODO</p>
+                    <p>
+                      <span class="font-bold">npmx.dev</span> is an atmosphere application, meaning
+                      it's built on the
+                      <a
+                        href="https://atproto.com"
+                        target="_blank"
+                        class="text-blue-400 hover:underline"
+                        >AT Protocol</a
+                      >. This means users can own their data and use one account for all atmosphere
+                      accounts.
+                    </p>
                   </div>
                 </details>
               </div>

@@ -7,11 +7,11 @@ const { user } = await useAtproto()
   <div class="relative">
     <button
       type="button"
-      class="relative flex items-center justify-center w-8 h-8 rounded-md transition-colors duration-200 hover:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+      class="relative font-mono text-sm flex items-center justify-center w-fit rounded-md transition-colors duration-200 hover:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
       :aria-label="ariaLabel"
       @click="showModal = true"
     >
-      {{ user?.miniDoc?.handle || 'Login' }}
+      {{ user?.miniDoc?.handle || 'login' }}
     </button>
 
     <AuthModal v-model:open="showModal" />
