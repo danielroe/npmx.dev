@@ -144,13 +144,13 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
       code: 'zh-TW',
       file: 'zh-TW.json',
       name: '繁體中文',
-    },
-    {
-      code: 'ja-JP',
-      file: 'ja-JP.json',
-      name: '日本語',
-    },
-    {
+    },*/
+  {
+    code: 'ja-JP',
+    file: 'ja-JP.json',
+    name: '日本語',
+  },
+  /*{
       code: 'nl-NL',
       file: 'nl-NL.json',
       name: 'Nederlands',
