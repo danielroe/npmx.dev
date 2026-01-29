@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { debounce } from 'perfect-debounce'
+
 withDefaults(
   defineProps<{
     showLogo?: boolean
@@ -22,13 +24,18 @@ const showSearchBar = computed(() => {
   return route.name !== 'search' && route.name !== 'index'
 })
 
-async function handleSearchInput() {
+const debouncedNavigate = debounce(async () => {
   const query = searchQuery.value.trim()
   await router.push({
     name: 'search',
     query: query ? { q: query } : undefined,
   })
-  searchQuery.value = ''
+  // allow time for the navigation to occur before resetting searchQuery
+  setTimeout(() => (searchQuery.value = ''), 1000)
+}, 100)
+
+async function handleSearchInput() {
+  debouncedNavigate()
 }
 
 onKeyStroke(',', e => {
@@ -44,11 +51,8 @@ onKeyStroke(',', e => {
 </script>
 
 <template>
-  <header
-    aria-label="Site header"
-    class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border"
-  >
-    <nav aria-label="Main navigation" class="container h-14 flex items-center">
+  <header class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border">
+    <nav :aria-label="$t('nav.main_navigation')" class="container h-14 flex items-center">
       <!-- Left: Logo -->
       <div class="flex-shrink-0">
         <NuxtLink
@@ -67,13 +71,7 @@ onKeyStroke(',', e => {
       <div class="flex-1 flex items-center justify-center gap-4 sm:gap-6">
         <!-- Search bar (shown on all pages except home and search) -->
         <search v-if="showSearchBar" class="hidden sm:block flex-1 max-w-md">
-          <form
-            role="search"
-            method="GET"
-            action="/search"
-            class="relative"
-            @submit.prevent="handleSearchInput"
-          >
+          <form method="GET" action="/search" class="relative" @submit.prevent="handleSearchInput">
             <label for="header-search" class="sr-only">
               {{ $t('search.label') }}
             </label>
@@ -94,7 +92,6 @@ onKeyStroke(',', e => {
                   :placeholder="$t('search.placeholder')"
                   v-bind="noCorrect"
                   class="w-full bg-bg-subtle border border-border rounded-md pl-7 pr-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-border-color duration-300 motion-reduce:transition-none focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-                  autocomplete="off"
                   @input="handleSearchInput"
                   @focus="isSearchFocused = true"
                   @blur="isSearchFocused = false"

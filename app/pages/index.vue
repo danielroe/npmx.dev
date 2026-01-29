@@ -1,13 +1,21 @@
 <script setup lang="ts">
+import { debounce } from 'perfect-debounce'
+
 const router = useRouter()
 const searchQuery = ref('')
-const isSearchFocused = ref(false)
+const searchInputRef = useTemplateRef('searchInputRef')
+const { focused: isSearchFocused } = useFocus(searchInputRef)
 
-function handleSearch() {
+const debouncedNavigate = debounce(() => {
   router.push({
     path: '/search',
     query: searchQuery.value.trim() ? { q: searchQuery.value.trim() } : undefined,
   })
+}, 250)
+
+function handleSearch() {
+  // If input is empty, navigate immediately (no need to debounce)
+  return searchQuery.value.trim() ? debouncedNavigate() : router.push('/search')
 }
 
 useSeoMeta({
@@ -41,13 +49,7 @@ defineOgImageComponent('Default')
         class="w-full max-w-xl motion-safe:animate-slide-up motion-safe:animate-fill-both"
         style="animation-delay: 0.2s"
       >
-        <form
-          role="search"
-          method="GET"
-          action="/search"
-          class="relative"
-          @submit.prevent="handleSearch"
-        >
+        <form method="GET" action="/search" class="relative" @submit.prevent="handleSearch">
           <label for="home-search" class="sr-only">
             {{ $t('search.label') }}
           </label>
@@ -68,6 +70,7 @@ defineOgImageComponent('Default')
 
               <input
                 id="home-search"
+                ref="searchInputRef"
                 v-model="searchQuery"
                 type="search"
                 name="q"
@@ -75,10 +78,7 @@ defineOgImageComponent('Default')
                 v-bind="noCorrect"
                 autofocus
                 class="w-full bg-bg-subtle border border-border rounded-lg pl-8 pr-24 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-border-color duration-300 focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-                autocomplete="off"
                 @input="handleSearch"
-                @focus="isSearchFocused = true"
-                @blur="isSearchFocused = false"
               />
 
               <button
