@@ -24,6 +24,7 @@
     "found_packages": "Found {count} packages",
     "updating": "(updating...)",
     "no_results": "No packages found for \"{query}\"",
+    "results": "Search results",
     "not_taken": "{name} is not taken",
     "claim_prompt": "Claim this package name on npm",
     "claim_button": "Claim \"{name}\"",
@@ -38,21 +39,44 @@
     }
   },
   "nav": {
+    "main_navigation": "Main",
     "popular_packages": "Popular packages",
     "search": "search",
     "settings": "settings",
-    "back": "Back"
+    "back": "back"
   },
   "settings": {
+    "title": "settings",
+    "tagline": "customize your npmx experience",
+    "meta_description": "Customize your npmx.dev experience with theme, language, and display preferences.",
+    "sections": {
+      "appearance": "Appearance",
+      "display": "Display",
+      "language": "Language"
+    },
     "relative_dates": "Relative dates",
+    "relative_dates_description": "Show \"3 days ago\" instead of full dates",
     "include_types": "Include {'@'}types in install",
+    "include_types_description": "Add {'@'}types package to install commands for untyped packages",
+    "hide_platform_packages": "Hide platform-specific packages in search",
+    "hide_platform_packages_description": "Hide native binary packages like {'@'}esbuild/linux-x64 from results",
     "theme": "Theme",
     "theme_light": "Light",
     "theme_dark": "Dark",
     "theme_system": "System",
     "language": "Language",
     "help_translate": "Help translate npmx",
-    "accent_colors": "Accent colors"
+    "accent_colors": "Accent colors",
+    "clear_accent": "Clear accent color",
+    "translation_progress": "Translation progress"
+  },
+  "i18n": {
+    "missing_keys": "{count} missing translation | {count} missing translations",
+    "copy_keys": "Copy keys",
+    "show_more_keys": "Show {count} more...",
+    "contribute_hint": "Help improve this translation by adding the missing keys.",
+    "edit_on_github": "Edit on GitHub",
+    "view_guide": "Translation guide"
   },
   "common": {
     "loading": "Loading...",
@@ -64,6 +88,8 @@
     "retry": "Retry",
     "copy": "copy",
     "copied": "copied!",
+    "skip_link": "Skip to main content",
+    "close_modal": "Close modal",
     "show_more": "show more",
     "warnings": "Warnings:",
     "go_back_home": "Go back home",
@@ -84,6 +110,7 @@
     "not_latest": "(not latest)",
     "verified_provenance": "Verified provenance",
     "view_permalink": "View permalink for this version",
+    "navigation": "Package navigation",
     "deprecation": {
       "package": "This package has been deprecated.",
       "version": "This version has been deprecated.",
@@ -100,11 +127,10 @@
     },
     "stats": {
       "license": "License",
-      "weekly": "Weekly",
       "deps": "Deps",
       "install_size": "Install Size",
+      "vulns": "Vulns",
       "updated": "Updated",
-      "view_download_trends": "View download trends",
       "view_dependency_graph": "View dependency graph",
       "inspect_dependency_tree": "Inspect dependency tree"
     },
@@ -112,11 +138,14 @@
       "repo": "repo",
       "homepage": "homepage",
       "issues": "issues",
-      "forks": "fork | forks",
       "jsr": "jsr",
       "code": "code",
       "docs": "docs",
       "fund": "fund"
+    },
+    "docs": {
+      "not_available": "Docs not available",
+      "not_available_detail": "We could not generate docs for this version."
     },
     "get_started": {
       "title": "Get started",
@@ -163,7 +192,8 @@
       "title": "Dependencies ({count})",
       "list_label": "Package dependencies",
       "show_all": "show all {count} deps",
-      "optional": "optional"
+      "optional": "optional",
+      "view_vulnerabilities": "View vulnerabilities"
     },
     "peer_dependencies": {
       "title": "Peer Dependencies ({count})",
@@ -185,7 +215,9 @@
       "username_placeholder": "username...",
       "add_button": "add",
       "cancel_add": "Cancel adding owner",
-      "add_owner": "+ Add owner"
+      "add_owner": "+ Add owner",
+      "show_more": "(show {count} more)",
+      "show_less": "(show fewer)"
     },
     "downloads": {
       "title": "Weekly Downloads",
@@ -201,7 +233,9 @@
       "end_date": "End",
       "no_data": "No download data available",
       "loading": "Loading...",
-      "y_axis_label": "{granularity} downloads"
+      "y_axis_label": "{granularity} downloads",
+      "download_file": "Download {fileType}",
+      "toggle_annotator": "Toggle annotator"
     },
     "install_scripts": {
       "title": "Install Scripts",
@@ -550,7 +584,7 @@
     },
     "contributors": {
       "title": "Contributors",
-      "description": "npmx is fully open source, built by an amazing community of contributors.",
+      "description": "npmx is fully open source, built by an amazing community of contributors. Join us and let's build the npm browsing experience we always wanted, together.",
       "loading": "Loading contributors...",
       "error": "Failed to load contributors",
       "view_profile": "View {name}'s GitHub profile"

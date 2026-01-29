@@ -18,19 +18,9 @@ watch(
   },
 )
 
+const isLocked = useScrollLock(document)
 // Prevent body scroll when drawer is open
-watch(isOpen, open => {
-  if (open) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
-  }
-})
-
-// Cleanup on unmount
-onUnmounted(() => {
-  document.body.style.overflow = ''
-})
+watch(isOpen, open => (isLocked.value = open))
 </script>
 
 <template>

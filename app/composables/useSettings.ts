@@ -14,12 +14,15 @@ export interface AppSettings {
   includeTypesInInstall: boolean
   /** Accent color theme */
   accentColorId: AccentColorId | null
+  /** Hide platform-specific packages (e.g., @scope/pkg-linux-x64) from search results */
+  hidePlatformPackages: boolean
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
   relativeDates: false,
   includeTypesInInstall: true,
   accentColorId: null,
+  hidePlatformPackages: true,
 }
 
 const STORAGE_KEY = 'npmx-settings'
@@ -46,6 +49,7 @@ export function useSettings() {
 /**
  * Composable for accessing just the relative dates setting.
  * Useful for components that only need to read this specific setting.
+ * @public
  */
 export function useRelativeDates() {
   const { settings } = useSettings()
@@ -84,6 +88,7 @@ export function useAccentColor() {
 /**
  * Applies accent color before hydration to prevent flash of default color.
  * Call this from app.vue to ensure accent color is applied on every page.
+ * @public
  */
 export function initAccentOnPrehydrate() {
   // Callback is stringified by Nuxt - external variables won't be available.
