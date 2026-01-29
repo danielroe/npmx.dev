@@ -10,8 +10,6 @@ test.describe('Search Pages', () => {
     await expect(firstResult).toBeVisible()
 
     const searchInput = page.locator('input[type="search"]')
-    // manually focus search
-    await searchInput.focus()
 
     // ArrowDown changes visual selection but keeps focus in input
     await page.keyboard.press('ArrowDown')

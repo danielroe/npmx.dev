@@ -110,6 +110,7 @@ onKeyStroke(',', e => {
 
                 <input
                   id="header-search"
+                  autofocus
                   v-model="searchQuery"
                   type="search"
                   name="q"
