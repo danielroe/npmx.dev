@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
-import { useCssVariables } from '#imports'
+import { useCssVariables } from '../composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '../utils/colors'
 
 const { packageName } = defineProps<{
