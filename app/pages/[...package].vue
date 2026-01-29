@@ -475,24 +475,20 @@ defineOgImageComponent('Package', {
 })
 
 // We're using only @click because it catches touch events and enter hits
-function handleClick(evt: MouseEvent) {
-  const target = evt?.target ? (evt.target as HTMLElement).closest('a') : undefined
-  if (target) {
-    const npmjsMatch = target
-      .getAttribute('href')
-      ?.match(/^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)\/(.+)/)
-    if (npmjsMatch && npmjsMatch?.[1]) {
-      const urlPath = npmjsMatch[1]
-      const hasMatchedRoutes = router.resolve(urlPath)?.matched?.reduce(
-        // omit matching the wildcard route
-        (result: boolean, route) => result || route.path !== '/:package(.*)*',
-        false,
-      )
-      if (hasMatchedRoutes) {
-        evt.preventDefault()
-        window.open(`https://npmx.dev/${urlPath}`, '_blank')
-      }
-    }
+function handleClick(event: MouseEvent) {
+  const target = (event?.target as HTMLElement | undefined)?.closest('a')
+  if (!target) return
+
+  const href = target.getAttribute('href')
+  if (!href) return
+
+  const match = href.match(/^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)\/(.+)/)
+  if (!match || !match[1]) return
+
+  const route = router.resolve(match[1])
+  if (route) {
+    event.preventDefault()
+    router.push(route)
   }
 }
 </script>
