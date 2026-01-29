@@ -19,15 +19,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: lts/*
           cache: pnpm
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: 🔠 Lint project
         run: pnpm lint
@@ -36,15 +36,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: lts/*
           cache: pnpm
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: 🌐 Install browser
         run: pnpm playwright install
@@ -64,15 +64,15 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.57.0-noble
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: lts/*
           cache: pnpm
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: 🖥️ Test project (browser)
         run: pnpm test:browser
@@ -81,15 +81,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: lts/*
           cache: pnpm
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: 🏗️ Build project
         run: pnpm build
@@ -103,15 +103,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       - run: corepack enable
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: lts/*
           cache: pnpm
 
       - name: 📦 Install dependencies
-        run: pnpm install
+        run: pnpm install --ignore-scripts
 
       - name: 🔍 Check for unused code
         run: pnpm knip:production
