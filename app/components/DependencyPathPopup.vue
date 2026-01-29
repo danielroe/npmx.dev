@@ -4,8 +4,6 @@ defineProps<{
   path: readonly string[]
 }>()
 
-const { t } = useI18n()
-
 const isOpen = shallowRef(false)
 const popupEl = ref<HTMLElement | null>(null)
 const popupPosition = shallowRef<{ top: number; left: number } | null>(null)
@@ -29,15 +27,8 @@ function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape') closePopup()
 }
 
-onMounted(() => {
-  document.addEventListener('keydown', handleKeydown)
-  window.addEventListener('scroll', closePopup, true)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  window.removeEventListener('scroll', closePopup, true)
-})
+useEventListener(document, 'keydown', handleKeydown)
+useEventListener('scroll', closePopup, true)
 
 function togglePopup(event: MouseEvent) {
   if (isOpen.value) {
@@ -81,7 +72,7 @@ function parsePackageString(pkg: string): { name: string; version: string } {
       @click.stop="togglePopup"
     >
       <span class="i-carbon-tree-view w-3 h-3" aria-hidden="true" />
-      <span>{{ t('package.vulnerabilities.path') }}</span>
+      <span>{{ $t('package.vulnerabilities.path') }}</span>
     </button>
 
     <!-- Tree popup -->

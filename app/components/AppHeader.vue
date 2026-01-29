@@ -45,10 +45,10 @@ onKeyStroke(',', e => {
 
 <template>
   <header
-    aria-label="Site header"
+    :aria-label="$t('header.site_header')"
     class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border"
   >
-    <nav aria-label="Main navigation" class="container h-14 flex items-center">
+    <nav :aria-label="$t('nav.main_navigation')" class="container h-14 flex items-center">
       <!-- Left: Logo -->
       <div class="flex-shrink-0">
         <NuxtLink
@@ -94,7 +94,6 @@ onKeyStroke(',', e => {
                   :placeholder="$t('search.placeholder')"
                   v-bind="noCorrect"
                   class="w-full bg-bg-subtle border border-border rounded-md pl-7 pr-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-border-color duration-300 motion-reduce:transition-none focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-                  autocomplete="off"
                   @input="handleSearchInput"
                   @focus="isSearchFocused = true"
                   @blur="isSearchFocused = false"
