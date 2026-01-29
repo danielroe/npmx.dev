@@ -142,30 +142,38 @@ export function lightenOklch(
 export function transparentizeOklch(
   oklch: string | null | undefined,
   factor: number,
-): string | null | undefined {
-  if (oklch == null) {
-    return oklch
-  }
+  fallback = 'oklch(0 0 0 / 0)',
+): string {
+  if (oklch == null) return fallback
 
   const input = oklch.trim()
+  if (!input) return fallback
 
-  const match = input.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/i)
+  const match = input.match(
+    /^oklch\(\s*([+\-]?[\d.]+%?)\s+([+\-]?[\d.]+)\s+([+\-]?[\d.]+)(?:\s*\/\s*([+\-]?[\d.]+%?))?\s*\)$/i,
+  )
 
-  if (!match) {
-    throw new Error('Invalid OKLCH color format')
-  }
+  if (!match) return fallback
 
   const [, lightnessText, chromaText, hueText, alphaText] = match
 
   if (lightnessText === undefined || chromaText === undefined || hueText === undefined) {
-    throw new Error('Invalid OKLCH color format')
+    return fallback
   }
 
-  const lightness = Number.parseFloat(lightnessText)
-  const chroma = Number.parseFloat(chromaText)
+  const lightness = lightnessText.endsWith('%')
+    ? Math.min(Math.max(Number.parseFloat(lightnessText) / 100, 0), 1)
+    : Math.min(Math.max(Number.parseFloat(lightnessText), 0), 1)
+
+  const chroma = Math.max(0, Number.parseFloat(chromaText))
   const hue = Number.parseFloat(hueText)
 
-  const originalAlpha = alphaText === undefined ? 1 : Number.parseFloat(alphaText)
+  const originalAlpha =
+    alphaText === undefined
+      ? 1
+      : alphaText.endsWith('%')
+        ? Math.min(Math.max(Number.parseFloat(alphaText) / 100, 0), 1)
+        : Math.min(Math.max(Number.parseFloat(alphaText), 0), 1)
 
   const clampedFactor = Math.min(Math.max(factor, 0), 1)
   const alpha = Math.max(0, originalAlpha * (1 - clampedFactor))
