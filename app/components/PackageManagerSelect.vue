@@ -95,7 +95,7 @@ function handleKeydown(event: KeyboardEvent) {
     class="flex items-center gap-1.5 px-2 py-2 font-mono text-xs text-fg-muted bg-bg-subtle border border-border-subtle border-solid rounded-md transition-colors duration-150 hover:(text-fg border-border-hover) active:scale-95 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 hover:text-fg"
     :aria-expanded="isOpen"
     aria-haspopup="listbox"
-    :aria-label="$t('settings.package_manager')"
+    :aria-label="$t('package.get_started.pm_label')"
     :aria-controls="listboxId"
     @click="toggle"
     @keydown="handleKeydown"
@@ -132,7 +132,7 @@ function handleKeydown(event: KeyboardEvent) {
             ? `${listboxId}-${packageManagers[highlightedIndex]?.id}`
             : undefined
         "
-        :aria-label="$t('settings.package_manager')"
+        :aria-label="$t('package.get_started.pm_label')"
         :style="getDropdownStyle()"
         class="fixed bg-bg-subtle border border-border rounded-md shadow-lg z-50"
       >
