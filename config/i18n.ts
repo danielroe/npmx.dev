@@ -183,8 +183,7 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
     file: 'uk-UA.json',
     name: 'Українська',
     pluralRule: (choice: number) => {
-      if (choice === 0)
-        return 0
+      if (choice === 0) return 0
 
       const name = new Intl.PluralRules('uk-UA').select(choice)
       return { zero: 0, one: 1, two: 0, few: 2, many: 3, other: 4 }[name]
