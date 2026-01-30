@@ -798,8 +798,7 @@ function handleClick(event: MouseEvent) {
           <h2 id="run-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
             {{ $t('package.run.title') }}
           </h2>
-          <!-- Package manager tabs -->
-          <PackageManagerTabs />
+          <!-- Package manager dropdown -->
           <PackageManagerSelect />
         </div>
         <div
@@ -833,8 +832,7 @@ function handleClick(event: MouseEvent) {
               />
             </a>
           </h2>
-          <!-- Package manager tabs -->
-          <PackageManagerTabs />
+          <!-- Package manager dropdown -->
           <PackageManagerSelect />
         </div>
         <div
