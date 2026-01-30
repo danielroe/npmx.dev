@@ -24,10 +24,6 @@ useEventListener('scroll', close, true)
 const inputId = useId()
 const listboxId = `${inputId}-listbox`
 
-const pm = computed(() => {
-  return packageManagers.find(p => p.id === selectedPM.value) ?? packageManagers[0]
-})
-
 function toggle() {
   if (isOpen.value) {
     close()
@@ -100,8 +96,20 @@ function handleKeydown(event: KeyboardEvent) {
     @click="toggle"
     @keydown="handleKeydown"
   >
-    <span class="inline-block h-3 w-3" :class="pm.icon" aria-hidden="true" />
-    <span>{{ pm.label }}</span>
+    <template v-for="pmOption in packageManagers" :key="pmOption.id">
+      <span
+        class="inline-block h-3 w-3 pm-select-content"
+        :class="pmOption.icon"
+        :data-pm-select="pmOption.id"
+        aria-hidden="true"
+      />
+      <span
+        class="pm-select-content"
+        :data-pm-select="pmOption.id"
+        :aria-hidden="pmOption.id !== selectedPM"
+        >{{ pmOption.label }}</span
+      >
+    </template>
     <span
       class="i-carbon:chevron-down w-3 h-3"
       :class="[
@@ -162,3 +170,23 @@ function handleKeydown(event: KeyboardEvent) {
     </Transition>
   </Teleport>
 </template>
+
+<style>
+:root[data-pm] .pm-select-content {
+  display: none;
+}
+
+:root[data-pm='npm'] [data-pm-select='npm'],
+:root[data-pm='pnpm'] [data-pm-select='pnpm'],
+:root[data-pm='yarn'] [data-pm-select='yarn'],
+:root[data-pm='bun'] [data-pm-select='bun'],
+:root[data-pm='deno'] [data-pm-select='deno'],
+:root[data-pm='vlt'] [data-pm-select='vlt'] {
+  display: inline-block;
+}
+
+/* Fallback: when no data-pm is set, npm is selected by default */
+:root:not([data-pm]) .pm-select-content:not([data-pm-select='npm']) {
+  display: none;
+}
+</style>
