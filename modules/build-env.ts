@@ -10,7 +10,7 @@ export default defineNuxtModule({
     name: 'npmx:build-env',
   },
   async setup(_options, nuxt) {
-    const { env, commit, shortCommit, branch } = await getEnv()
+    const { env, commit, shortCommit, branch } = await getEnv(nuxt.options.dev)
     const buildInfo: BuildInfo = {
       version,
       time: +Date.now(),

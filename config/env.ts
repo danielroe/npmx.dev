@@ -1,5 +1,4 @@
 import Git from 'simple-git'
-import { isDevelopment } from 'std-env'
 import * as process from 'node:process'
 
 export { version } from '../package.json'
@@ -55,7 +54,7 @@ export async function getGitInfo() {
   return { branch, commit, shortCommit }
 }
 
-export async function getEnv() {
+export async function getEnv(isDevelopment: boolean) {
   const { commit, shortCommit, branch } = await getGitInfo()
   const env = isDevelopment
     ? 'dev'
