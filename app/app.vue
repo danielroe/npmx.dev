@@ -59,6 +59,20 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 
     router.push('/search')
   }
+
+  if (e.key === '?') {
+    e.preventDefault()
+    const kbdElements = document.querySelectorAll('kbd')
+    for (const kbd of kbdElements) {
+      kbd.classList.remove('kbd-highlight')
+      kbd.classList.add('kbd-highlight')
+    }
+    setTimeout(() => {
+      for (const kbd of kbdElements) {
+        kbd.classList.remove('kbd-highlight')
+      }
+    }, 700)
+  }
 }
 
 if (import.meta.client) {
@@ -81,3 +95,24 @@ if (import.meta.client) {
     <ScrollToTop />
   </div>
 </template>
+
+<style>
+@keyframes kbd-highlight {
+  0% {
+    box-shadow: none;
+  }
+  15% {
+    box-shadow: 0 0 4px 2px var(--accent);
+  }
+  60% {
+    box-shadow: 0 0 4px 2px var(--accent);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+kbd.kbd-highlight {
+  animation: kbd-highlight 0.7s ease-out;
+}
+</style>
