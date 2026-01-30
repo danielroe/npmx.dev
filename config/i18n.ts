@@ -198,13 +198,17 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
         const name = new Intl.PluralRules('uk-UA').select(choice)
         return { zero: 0, one: 1, two: 0 /!* not used *!/, few: 2, many: 3, other: 4 }[name]
       },
+    },*/
+  {
+    code: 'cs-CZ',
+    file: 'cs-CZ.json',
+    name: 'Čeština',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('cs-CZ').select(choice)
+      return { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }[name]
     },
-    {
-      code: 'cs-CZ',
-      file: 'cs-CZ.json',
-      name: 'Česky',
-    },
-    {
+  },
+  /*{
       code: 'pl-PL',
       file: 'pl-PL.json',
       name: 'Polski',
