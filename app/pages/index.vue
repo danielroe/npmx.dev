@@ -1,10 +1,8 @@
 <script setup lang="ts">
 const router = useRouter()
 const searchQuery = ref('')
-const searchInputRef = useTemplateRef('searchInputRef')
-const { focused: isSearchFocused } = useFocus(searchInputRef)
 
-function handleSearch() {
+function handleSubmit() {
   router.push({
     name: 'search',
     query: {
@@ -44,13 +42,12 @@ defineOgImageComponent('Default')
         class="w-full max-w-xl motion-safe:animate-slide-up motion-safe:animate-fill-both"
         style="animation-delay: 0.2s"
       >
-        <form method="GET" action="/search" class="relative" @submit.prevent="handleSearch">
+        <form method="GET" action="/search" class="relative" @submit.prevent="handleSubmit">
           <label for="home-search" class="sr-only">
             {{ $t('search.label') }}
           </label>
 
-          <!-- Search input with glow effect on focus -->
-          <div class="relative group" :class="{ 'is-focused': isSearchFocused }">
+          <div class="relative group">
             <!-- Subtle glow effect -->
             <div
               class="absolute -inset-px rounded-lg bg-gradient-to-r from-fg/0 via-fg/5 to-fg/0 opacity-0 transition-opacity duration-500 blur-sm group-[.is-focused]:opacity-100"
