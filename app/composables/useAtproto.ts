@@ -4,6 +4,7 @@ type MiniDoc = {
   pds: string
 }
 
+/** @public */
 export async function useAtproto() {
   const {
     data: user,
