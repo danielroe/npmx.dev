@@ -33,6 +33,8 @@ if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
+let kbdAnimations: Animation[] = []
+
 // Global keyboard shortcut: "/" focuses search or navigates to search page
 function handleGlobalKeydown(e: KeyboardEvent) {
   const target = e.target as HTMLElement
@@ -62,16 +64,25 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 
   if (e.key === '?') {
     e.preventDefault()
+
+    for (const anim of kbdAnimations) {
+      anim.cancel()
+    }
+    kbdAnimations = []
+
     const kbdElements = document.querySelectorAll('kbd')
     for (const kbd of kbdElements) {
-      kbd.classList.remove('kbd-highlight')
-      kbd.classList.add('kbd-highlight')
+      const anim = kbd.animate(
+        [
+          { boxShadow: 'none' },
+          { boxShadow: '0 0 4px 2px var(--accent)', offset: 0.15 },
+          { boxShadow: '0 0 4px 2px var(--accent)', offset: 0.6 },
+          { boxShadow: 'none' },
+        ],
+        { duration: 700, easing: 'ease-out' },
+      )
+      kbdAnimations.push(anim)
     }
-    setTimeout(() => {
-      for (const kbd of kbdElements) {
-        kbd.classList.remove('kbd-highlight')
-      }
-    }, 700)
   }
 }
 
@@ -95,24 +106,3 @@ if (import.meta.client) {
     <ScrollToTop />
   </div>
 </template>
-
-<style>
-@keyframes kbd-highlight {
-  0% {
-    box-shadow: none;
-  }
-  15% {
-    box-shadow: 0 0 4px 2px var(--accent);
-  }
-  60% {
-    box-shadow: 0 0 4px 2px var(--accent);
-  }
-  100% {
-    box-shadow: none;
-  }
-}
-
-kbd.kbd-highlight {
-  animation: kbd-highlight 0.7s ease-out;
-}
-</style>
