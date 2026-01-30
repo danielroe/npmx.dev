@@ -173,7 +173,9 @@
       "username_placeholder": "用户名...",
       "add_button": "添加",
       "cancel_add": "取消添加拥有者",
-      "add_owner": "+ 添加拥有者"
+      "add_owner": "+ 添加拥有者",
+      "show_more": "（显示另外 {count} 个）",
+      "show_less": "（收起）"
     },
     "downloads": {
       "title": "每周下载量",
@@ -238,6 +240,11 @@
         "moderate": "中等",
         "low": "低"
       }
+    },
+    "deprecated": {
+      "label": "已弃用",
+      "tree_found": "{count} 个已弃用的依赖",
+      "show_all": "显示全部 {count} 个已弃用的包"
     },
     "access": {
       "title": "团队权限",

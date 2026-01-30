@@ -173,7 +173,9 @@
       "username_placeholder": "nombre de usuario...",
       "add_button": "agregar",
       "cancel_add": "Cancelar agregar propietario",
-      "add_owner": "+ Agregar propietario"
+      "add_owner": "+ Agregar propietario",
+      "show_more": "(mostrar {count} más)",
+      "show_less": "(mostrar menos)"
     },
     "downloads": {
       "title": "Descargas Semanales",
@@ -230,6 +232,11 @@
         "moderate": "moderada",
         "low": "baja"
       }
+    },
+    "deprecated": {
+      "label": "Obsoleto",
+      "tree_found": "{count} dependencia obsoleta | {count} dependencias obsoletas",
+      "show_all": "mostrar los {count} paquetes obsoletos"
     },
     "access": {
       "title": "Acceso de Equipos",

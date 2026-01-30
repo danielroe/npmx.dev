@@ -10,8 +10,7 @@ const username = computed(() => route.params.username)
 // Infinite scroll state
 const pageSize = 50
 const maxResults = 250 // npm API hard limit
-const loadedPages = ref(1)
-const isLoadingMore = ref(false)
+const currentPage = ref(1)
 
 // Get initial page from URL (for scroll restoration on reload)
 const initialPage = computed(() => {
@@ -60,20 +59,23 @@ watch([filterText, sortOption], ([filter, sort]) => {
 const searchQuery = computed(() => `maintainer:${username.value}`)
 
 // Request size: load all if user has interacted with filter/sort, otherwise paginate
-const requestSize = computed(() => (hasLoadedAll.value ? maxResults : pageSize * loadedPages.value))
+const requestSize = computed(() => (hasLoadedAll.value ? maxResults : pageSize * currentPage.value))
 
 const {
   data: results,
   status,
   error,
+  isLoadingMore,
+  hasMore: apiHasMore,
+  fetchMore,
 } = useNpmSearch(searchQuery, () => ({
   size: requestSize.value,
 }))
 
-// Initialize loaded pages from URL on mount
+// Initialize current page from URL on mount
 onMounted(() => {
   if (initialPage.value > 1) {
-    loadedPages.value = initialPage.value
+    currentPage.value = initialPage.value
   }
 })
 
@@ -127,23 +129,15 @@ const hasMore = computed(() => {
   if (!results.value) return false
   // Don't show "load more" when we've already loaded all
   if (hasLoadedAll.value) return false
-
-  // npm search API returns max 250 results, but we paginate for faster initial load
-  return (
-    results.value.objects.length >= pageSize * loadedPages.value &&
-    loadedPages.value * pageSize < maxResults
-  )
+  // Use API's hasMore, but cap at maxResults
+  if (!apiHasMore.value) return false
+  return results.value.objects.length < maxResults
 })
 
-function loadMore() {
+async function loadMore() {
   if (isLoadingMore.value || !hasMore.value) return
-
-  isLoadingMore.value = true
-  loadedPages.value++
-
-  nextTick(() => {
-    isLoadingMore.value = false
-  })
+  currentPage.value++
+  await fetchMore(requestSize.value)
 }
 
 // Update URL when page changes from scrolling
@@ -153,25 +147,25 @@ function handlePageChange(page: number) {
 
 // Reset state when username changes
 watch(username, () => {
-  loadedPages.value = 1
+  currentPage.value = 1
   filterText.value = ''
   sortOption.value = 'downloads'
   hasLoadedAll.value = false
 })
 
 useSeoMeta({
-  title: () => `@${username.value} - npmx`,
+  title: () => `~${username.value} - npmx`,
   description: () => `npm packages maintained by ${username.value}`,
 })
 
 defineOgImageComponent('Default', {
-  title: () => `@${username.value}`,
+  title: () => `~${username.value}`,
   description: () => (results.value ? `${results.value.total} packages` : 'npm user profile'),
 })
 </script>
 
 <template>
-  <main class="container py-8 sm:py-12 w-full">
+  <main class="container flex-1 py-8 sm:py-12 w-full">
     <!-- Header -->
     <header class="mb-8 pb-8 border-b border-border">
       <div class="flex items-center gap-4 mb-4">
@@ -185,7 +179,7 @@ defineOgImageComponent('Default', {
           }}</span>
         </div>
         <div>
-          <h1 class="font-mono text-2xl sm:text-3xl font-medium">@{{ username }}</h1>
+          <h1 class="font-mono text-2xl sm:text-3xl font-medium">~{{ username }}</h1>
           <p v-if="results?.total" class="text-fg-muted text-sm mt-1">
             {{ $t('org.public_packages', { count: formatNumber(results.total) }, results.total) }}
           </p>
@@ -208,7 +202,7 @@ defineOgImageComponent('Default', {
 
     <!-- Loading state -->
     <LoadingSpinner
-      v-if="status === 'pending' && loadedPages === 1"
+      v-if="status === 'pending' && currentPage === 1"
       :text="$t('common.loading_packages')"
     />
 
@@ -223,7 +217,7 @@ defineOgImageComponent('Default', {
     <!-- Empty state -->
     <div v-else-if="results && results.total === 0" class="py-12 text-center">
       <p class="text-fg-muted font-mono">
-        {{ $t('user.page.no_packages') }} <span class="text-fg">@{{ username }}</span>
+        {{ $t('user.page.no_packages') }} <span class="text-fg">~{{ username }}</span>
       </p>
       <p class="text-fg-subtle text-sm mt-2">{{ $t('user.page.no_packages_hint') }}</p>
     </div>
@@ -255,7 +249,7 @@ defineOgImageComponent('Default', {
         v-else
         :results="filteredAndSortedPackages"
         :has-more="hasMore"
-        :is-loading="isLoadingMore || (status === 'pending' && loadedPages > 1)"
+        :is-loading="isLoadingMore || (status === 'pending' && currentPage > 1)"
         :page-size="pageSize"
         :initial-page="initialPage"
         @load-more="loadMore"
