@@ -134,10 +134,15 @@ const sizeTooltip = computed(() => {
   const chunks = [
     displayVersion.value &&
       displayVersion.value.dist.unpackedSize &&
-      `${formatBytes(displayVersion.value.dist.unpackedSize)} unpacked size (this package)`,
+      $t('package.stats.size_tooltip.unpacked', {
+        size: formatBytes(displayVersion.value.dist.unpackedSize),
+      }),
     installSize.value &&
       installSize.value.dependencyCount &&
-      `${formatBytes(installSize.value.totalSize)} total unpacked size (including all ${installSize.value.dependencyCount} dependencies for linux-x64)`,
+      $t('package.stats.size_tooltip.total', {
+        size: formatBytes(installSize.value.totalSize),
+        count: installSize.value.dependencyCount,
+      }),
   ]
   return chunks.filter(Boolean).join('\n')
 })
