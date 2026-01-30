@@ -64,7 +64,7 @@ async function handleLogin() {
         >
           <div class="p-6">
             <div class="flex items-center justify-between mb-6">
-              <h2 id="auth-modal-title" class="font-mono text-lg font-medium">Account Login</h2>
+              <h2 id="auth-modal-title" class="font-mono text-lg font-medium">Account</h2>
               <button
                 type="button"
                 class="text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
@@ -92,9 +92,7 @@ async function handleLogin() {
 
             <!-- Disconnected state -->
             <form v-else class="space-y-4" @submit.prevent="handleLogin">
-              <p class="text-sm text-fg-muted">
-                Login with your Atmosphere account. The same one as Bluesky, Blacksky, or tangled
-              </p>
+              <p class="text-sm text-fg-muted">Login with your Atmosphere account</p>
 
               <div class="space-y-3">
                 <div>
@@ -124,15 +122,31 @@ async function handleLogin() {
                   </summary>
                   <div class="mt-3">
                     <p>
-                      <span class="font-bold">npmx.dev</span> is an atmosphere application, meaning
-                      it's built on the
+                      <span class="font-bold">npmx.dev</span> is built on the
                       <a
                         href="https://atproto.com"
                         target="_blank"
                         class="text-blue-400 hover:underline"
-                        >AT Protocol</a
-                      >. This means users can own their data and use one account for all atmosphere
-                      accounts.
+                      >
+                        AT Protocol </a
+                      >, allowing users to own their data and use one account for all compatible
+                      applications. Once you create an account, you can use other apps like
+                      <a
+                        href="https://bsky.app"
+                        target="_blank"
+                        class="text-blue-400 hover:underline"
+                      >
+                        Bluesky
+                      </a>
+                      and
+                      <a
+                        href="https://tangled.org"
+                        target="_blank"
+                        class="text-blue-400 hover:underline"
+                      >
+                        Tangled
+                      </a>
+                      with the same login.
                     </p>
                   </div>
                 </details>
