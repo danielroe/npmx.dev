@@ -1,5 +1,6 @@
 export default defineEventHandler(async event => {
-  if (!process.env.NUXT_SESSION_PASSWORD) {
+  const config = useRuntimeConfig(event)
+  if (!config.sessionPassword) {
     throw createError({
       status: 500,
       message: 'NUXT_SESSION_PASSWORD not set',
@@ -7,7 +8,7 @@ export default defineEventHandler(async event => {
   }
 
   const session = await useSession(event, {
-    password: process.env.NUXT_SESSION_PASSWORD,
+    password: config.sessionPassword,
   })
 
   return session.data

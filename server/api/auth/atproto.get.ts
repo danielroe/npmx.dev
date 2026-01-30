@@ -5,7 +5,8 @@ import { OAuthSessionStore, OAuthStateStore } from '#server/utils/atproto/storag
 import { SLINGSHOT_ENDPOINT } from '#shared/utils/constants'
 
 export default defineEventHandler(async event => {
-  if (!process.env.NUXT_SESSION_PASSWORD) {
+  const config = useRuntimeConfig(event)
+  if (!config.sessionPassword) {
     throw createError({
       status: 500,
       message: 'NUXT_SESSION_PASSWORD not set',
@@ -47,7 +48,7 @@ export default defineEventHandler(async event => {
   event.context.agent = agent
 
   const session = await useSession(event, {
-    password: process.env.NUXT_SESSION_PASSWORD,
+    password: config.sessionPassword,
   })
 
   const response = await fetch(

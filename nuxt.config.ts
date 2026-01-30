@@ -45,10 +45,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/main.css', 'vue-data-ui/style.css'],
 
-  devtools: { enabled: true },
-  devServer: {
-    host: '127.0.0.1',
+  runtimeConfig: {
+    sessionPassword: '',
   },
+
+  devtools: { enabled: true },
 
   app: {
     head: {
