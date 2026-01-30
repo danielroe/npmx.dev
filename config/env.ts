@@ -7,26 +7,39 @@ export { version } from '../package.json'
  * Environment variable `PULL_REQUEST` provided by Netlify.
  * @see {@link https://docs.netlify.com/build/configure-builds/environment-variables/#git-metadata}
  *
+ * Environment variable `VERCEL_GIT_PULL_REQUEST_ID` provided by Vercel.
+ * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_GIT_PULL_REQUEST_ID}
+ *
  * Whether triggered by a GitHub PR
  */
-export const isPR = process.env.PULL_REQUEST === 'true'
+export const isPR = process.env.PULL_REQUEST === 'true' || !!process.env.VERCEL_GIT_PULL_REQUEST_ID
 
 /**
  * Environment variable `BRANCH` provided by Netlify.
  * @see {@link https://docs.netlify.com/build/configure-builds/environment-variables/#git-metadata}
  *
+ * Environment variable `VERCEL_GIT_COMMIT_REF` provided by Vercel.
+ * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_GIT_COMMIT_REF}
+ *
  * Git branch
  */
-export const gitBranch = process.env.BRANCH
+export const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_COMMIT_REF
 
 /**
  * Environment variable `CONTEXT` provided by Netlify.
  * @see {@link https://docs.netlify.com/build/configure-builds/environment-variables/#build-metadata}
  *
+ * Environment variable `VERCEL_ENV` provided by Vercel.
+ * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_ENV}
+ *
  * Whether triggered by PR, `deploy-preview` or `dev`.
  */
 export const isPreview =
-  isPR || process.env.CONTEXT === 'deploy-preview' || process.env.CONTEXT === 'dev'
+  isPR ||
+  process.env.CONTEXT === 'deploy-preview' ||
+  process.env.CONTEXT === 'dev' ||
+  process.env.VERCEL_ENV === 'preview' ||
+  process.env.VERCEL_ENV === 'development'
 
 const git = Git()
 export async function getGitInfo() {
@@ -39,14 +52,20 @@ export async function getGitInfo() {
 
   let commit
   try {
-    commit = await git.revparse(['HEAD'])
+    // Netlify: COMMIT_REF, Vercel: VERCEL_GIT_COMMIT_SHA
+    commit =
+      process.env.COMMIT_REF || process.env.VERCEL_GIT_COMMIT_SHA || (await git.revparse(['HEAD']))
   } catch {
     commit = 'unknown'
   }
 
   let shortCommit
   try {
-    shortCommit = await git.revparse(['--short=7', 'HEAD'])
+    if (commit && commit !== 'unknown') {
+      shortCommit = commit.slice(0, 7)
+    } else {
+      shortCommit = await git.revparse(['--short=7', 'HEAD'])
+    }
   } catch {
     shortCommit = 'unknown'
   }
