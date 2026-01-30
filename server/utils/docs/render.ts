@@ -184,7 +184,8 @@ async function renderJsDocTags(tags: JsDocTag[], symbolLookup: SymbolLookup): Pr
     lines.push(`<div class="docs-deprecated">`)
     lines.push(`<strong>Deprecated</strong>`)
     if (deprecated.doc) {
-      lines.push(`<p>${parseJsDocLinks(deprecated.doc, symbolLookup)}</p>`)
+      const renderedMessage = await renderMarkdown(deprecated.doc, symbolLookup)
+      lines.push(`<div class="docs-deprecated-message">${renderedMessage}</div>`)
     }
     lines.push(`</div>`)
   }
