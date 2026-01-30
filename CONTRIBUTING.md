@@ -30,13 +30,15 @@ We want to create 'a fast, modern browser for the npm registry.' This means, amo
    pnpm install
    ```
 
-3. start the development server:
+3. set `NUXT_SESSION_PASSWORD` in `.env`
+
+4. start the development server:
 
    ```bash
    pnpm dev
    ```
 
-4. (optional) if you want to test the admin UI/flow, you can run the local connector:
+5. (optional) if you want to test the admin UI/flow, you can run the local connector:
 
    ```bash
    pnpm npmx-connector
