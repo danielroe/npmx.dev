@@ -79,7 +79,7 @@ async function handleLogin() {
               <div class="flex items-center gap-3 p-4 bg-bg-subtle border border-border rounded-lg">
                 <span class="w-3 h-3 rounded-full bg-green-500" aria-hidden="true" />
                 <div>
-                  <p class="font-mono text-xs text-fg-muted">Logged in as @{{ user.handle }}</p>
+                  <p class="font-mono text-xs text-fg-muted">Connected in as @{{ user.handle }}</p>
                 </div>
               </div>
               <button
@@ -92,7 +92,7 @@ async function handleLogin() {
 
             <!-- Disconnected state -->
             <form v-else class="space-y-4" @submit.prevent="handleLogin">
-              <p class="text-sm text-fg-muted">Login with your Atmosphere account</p>
+              <p class="text-sm text-fg-muted">Connect with your Atmosphere account</p>
 
               <div class="space-y-3">
                 <div>
@@ -122,15 +122,17 @@ async function handleLogin() {
                   </summary>
                   <div class="mt-3">
                     <p>
-                      <span class="font-bold">npmx.dev</span> is built on the
+                      <span class="font-bold">npmx.dev</span> uses the
                       <a
                         href="https://atproto.com"
                         target="_blank"
                         class="text-blue-400 hover:underline"
                       >
-                        AT Protocol </a
-                      >, allowing users to own their data and use one account for all compatible
-                      applications. Once you create an account, you can use other apps like
+                        AT Protocol
+                      </a>
+                      to power many of its social features, allowing users to own their data and use
+                      one account for all compatible applications. Once you create an account, you
+                      can use other apps like
                       <a
                         href="https://bsky.app"
                         target="_blank"
@@ -146,7 +148,7 @@ async function handleLogin() {
                       >
                         Tangled
                       </a>
-                      with the same login.
+                      with the same account.
                     </p>
                   </div>
                 </details>
@@ -157,7 +159,7 @@ async function handleLogin() {
                 :disabled="!handleInput.trim()"
                 class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
               >
-                Login
+                Connect
               </button>
               <button
                 type="button"
@@ -172,7 +174,7 @@ async function handleLogin() {
                 @click="handleBlueskySignIn"
                 class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg flex items-center justify-center gap-2"
               >
-                Sign in with Bluesky
+                Connect with Bluesky
                 <svg fill="none" viewBox="0 0 64 57" width="20" style="width: 20px">
                   <path
                     fill="#0F73FF"
