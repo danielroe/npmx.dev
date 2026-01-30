@@ -79,7 +79,7 @@ async function handleLogin() {
               <div class="flex items-center gap-3 p-4 bg-bg-subtle border border-border rounded-lg">
                 <span class="w-3 h-3 rounded-full bg-green-500" aria-hidden="true" />
                 <div>
-                  <p class="font-mono text-xs text-fg-muted">Connected in as @{{ user.handle }}</p>
+                  <p class="font-mono text-xs text-fg-muted">Connected as @{{ user.handle }}</p>
                 </div>
               </div>
               <button
