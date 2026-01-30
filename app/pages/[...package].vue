@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { NpmVersionDist, PackumentVersion, ReadmeResponse } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
-import { assertValidPackageName } from '#shared/utils/npm'
 import { onKeyStroke } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
+import validatePackageName from 'validate-npm-package-name'
 
 definePageMeta({
   name: 'package',
@@ -17,8 +17,18 @@ const isMounted = useMounted()
 
 const { packageName, requestedVersion, orgName } = usePackageRoute()
 
+// Validate package name on server and show proper error page if invalid
 if (import.meta.server) {
-  assertValidPackageName(packageName.value)
+  const validation = validatePackageName(packageName.value)
+  if (!validation.validForNewPackages && !validation.validForOldPackages) {
+    const errorMessage =
+      validation.errors?.[0] ?? validation.warnings?.[0] ?? 'Invalid package name'
+    showError({
+      statusCode: 400,
+      statusMessage: 'Invalid Package Name',
+      message: errorMessage,
+    })
+  }
 }
 
 const { data: downloads } = usePackageDownloads(packageName, 'last-week')
