@@ -590,7 +590,7 @@
       "view_profile": "{name} のGitHubプロフィールを表示"
     },
     "get_involved": {
-      "title": "参加るには",
+      "title": "参加するには",
       "contribute": {
         "title": "貢献する",
         "description": "より良いnpm体験の開発に協力してください。",
