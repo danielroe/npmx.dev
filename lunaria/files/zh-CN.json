@@ -47,19 +47,19 @@
   },
   "settings": {
     "title": "设置",
-    "tagline": "自定义你的 npmx 体验",
-    "meta_description": "使用主题、语言和显示偏好来自定义你的 npmx.dev 使用体验。",
+    "tagline": "定制你的 npmx 体验",
+    "meta_description": "通过主题、语言和显示偏好，定制你的 npmx.dev 体验。",
     "sections": {
       "appearance": "外观",
-      "display": "展示",
+      "display": "显示",
       "language": "语言"
     },
     "relative_dates": "相对时间",
-    "relative_dates_description": "显示“3天前”而不是完整时间",
+    "relative_dates_description": "显示 \"3天前\" 而不是完整日期",
     "include_types": "在安装时包含 {'@'}types",
     "include_types_description": "为未提供类型定义的包自动添加 {'@'}types 包到安装命令",
-    "hide_platform_packages": "隐藏指定平台的包",
-    "hide_platform_packages_description": "在结果中隐藏原生二进制包（例如 {'@'}esbuild/linux-x64）",
+    "hide_platform_packages": "在搜索结果隐藏平台特定包",
+    "hide_platform_packages_description": "在搜索结果中隐藏平台特定的原生二进制包（例如 {'@'}esbuild/linux-x64）",
     "theme": "主题",
     "theme_dark": "深色",
     "theme_light": "浅色",
@@ -71,10 +71,10 @@
     "translation_progress": "翻译进度"
   },
   "i18n": {
-    "missing_keys": "{count} 个未翻译",
+    "missing_keys": "{count} 项缺少翻译",
     "copy_keys": "复制键",
-    "show_more_keys": "展示更多 {count} 个...",
-    "contribute_hint": "通过补充缺失的键来帮助改进翻译",
+    "show_more_keys": "显示其它 {count} 条...",
+    "contribute_hint": "补充缺失的键值以帮助改进翻译。",
     "edit_on_github": "在 GitHub 上编辑",
     "view_guide": "翻译指南"
   },
