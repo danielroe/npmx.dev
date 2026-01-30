@@ -7,6 +7,7 @@
  */
 
 import type { PackumentVersion } from '@npm/types'
+import type { ReadmeResponse } from './readme'
 
 // Re-export official npm types for packument/manifest
 export type {
@@ -82,6 +83,7 @@ export interface NpmPerson {
  * Note: Not covered by @npm/types (see https://github.com/npm/types/issues/28)
  */
 export interface NpmSearchResponse {
+  isStale: boolean
   objects: NpmSearchResult[]
   total: number
   time: string
@@ -325,4 +327,5 @@ export interface PackageFileContentResponse {
   content: string
   html: string
   lines: number
+  markdownHtml?: ReadmeResponse
 }

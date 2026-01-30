@@ -213,6 +213,7 @@
     "downloads": {
       "title": "التنزيلات الأسبوعية",
       "date_range": "من {start} إلى {end}",
+      "date_range_multiline": "من {start}\nإلى {end}",
       "analyze": "تحليل التنزيلات",
       "modal_title": "التنزيلات",
       "granularity": "مستوى التفصيل",
@@ -532,6 +533,10 @@
     "table": {
       "name": "الاسم",
       "size": "الحجم"
+    },
+    "markdown_view_mode": {
+      "preview": "معاينة",
+      "code": "الكود"
     }
   },
   "badges": {

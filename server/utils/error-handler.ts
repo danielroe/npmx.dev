@@ -16,7 +16,8 @@ export function handleApiError(error: unknown, fallback: ErrorOptions): never {
   // Handle Valibot validation errors
   if (v.isValiError(error)) {
     throw createError({
-      statusCode: 400,
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      statusCode: 404,
       message: error.issues[0].message,
     })
   }

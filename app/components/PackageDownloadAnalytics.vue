@@ -49,8 +49,6 @@ watch(
 
 const isDarkMode = computed(() => resolvedMode.value === 'dark')
 
-// oklh or css variables are not supported by vue-data-ui (for now)
-
 const accentColorValueById = computed<Record<string, string>>(() => {
   const map: Record<string, string> = {}
   for (const item of accentColors) {
@@ -140,7 +138,12 @@ function formatXyDataset(
           color: accent.value,
         },
       ],
-      dates: dataset.map(d => `${d.weekStart}\nto ${d.weekEnd}`),
+      dates: dataset.map(d =>
+        $t('package.downloads.date_range_multiline', {
+          start: d.weekStart,
+          end: d.weekEnd,
+        }),
+      ),
     }
   }
   if (selectedGranularity === 'daily' && isDailyDataset(dataset)) {
@@ -201,14 +204,16 @@ function safeMax(a: string, b: string): string {
   return a.localeCompare(b) >= 0 ? a : b
 }
 
-function extractDates(dateLabel: string) {
-  if (typeof dateLabel !== 'string') return []
+function extractDates(dateLabel: string): [string, string] | null {
+  const matches = dateLabel.match(/\b(\d{4}(?:-\d{2}-\d{2})?)\b/g) // either yyyy or yyyy-mm-dd
+  if (!matches) return null
 
-  const parts = dateLabel.trim().split(/\s+/).filter(Boolean)
+  const first = matches.at(0)
+  const last = matches.at(-1)
 
-  if (parts.length < 2) return []
+  if (!first || !last || first === last) return null
 
-  return [parts[0], parts[parts.length - 1]]
+  return [first, last]
 }
 
 /**
@@ -555,7 +560,8 @@ const config = computed(() => {
             ? undefined
             : ({ absoluteIndex, side }: { absoluteIndex: number; side: 'left' | 'right' }) => {
                 const parts = extractDates(chartData.value.dates[absoluteIndex] ?? '')
-                return side === 'left' ? parts[0] : parts.at(-1)
+                if (!parts) return ''
+                return side === 'left' ? parts[0] : parts[1]
               },
         highlightColor: colors.value.bgElevated,
         minimap: {
@@ -597,7 +603,7 @@ const config = computed(() => {
             <select
               id="granularity"
               v-model="selectedGranularity"
-              class="w-full bg-transparent font-mono text-sm text-fg outline-none appearance-none"
+              class="w-full bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none"
             >
               <option value="daily">{{ $t('package.downloads.granularity_daily') }}</option>
               <option value="weekly">{{ $t('package.downloads.granularity_weekly') }}</option>
@@ -624,7 +630,7 @@ const config = computed(() => {
                 id="startDate"
                 v-model="startDate"
                 type="date"
-                class="w-full min-w-0 bg-transparent font-mono text-sm text-fg outline-none [color-scheme:dark]"
+                class="w-full min-w-0 bg-transparent font-mono text-sm text-fg outline-none [color-scheme:light] dark:[color-scheme:dark]"
               />
             </div>
           </div>
@@ -644,7 +650,7 @@ const config = computed(() => {
                 id="endDate"
                 v-model="endDate"
                 type="date"
-                class="w-full min-w-0 bg-transparent font-mono text-sm text-fg outline-none [color-scheme:dark]"
+                class="w-full min-w-0 bg-transparent font-mono text-sm text-fg outline-none [color-scheme:light] dark:[color-scheme:dark]"
               />
             </div>
           </div>
@@ -672,7 +678,7 @@ const config = computed(() => {
     </div>
 
     <ClientOnly v-if="inModal && chartData.dataset">
-      <VueUiXy :dataset="chartData.dataset" :config="config">
+      <VueUiXy :dataset="chartData.dataset" :config="config" class="[direction:ltr]">
         <template #menuIcon="{ isOpen }">
           <span v-if="isOpen" class="i-carbon:close w-6 h-6" aria-hidden="true" />
           <span v-else class="i-carbon:overflow-menu-vertical w-6 h-6" aria-hidden="true" />
