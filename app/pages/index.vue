@@ -37,35 +37,44 @@ defineOgImageComponent('Default')
       <!-- Animated title -->
       <h1
         dir="ltr"
-        class="grid grid-cols-[auto_auto] items-center header-logo flex-gap1 font-mono text-5xl sm:text-7xl md:text-8xl font-medium tracking-tight mb-4 motion-safe:animate-fade-in motion-safe:animate-fill-both"
+        class="flex items-center justify-center gap-2 header-logo font-mono text-5xl sm:text-7xl md:text-8xl font-medium tracking-tight mb-4 motion-safe:animate-fade-in motion-safe:animate-fill-both"
       >
-        <img :alt="$t('alt_logo')" src="/favicon.svg" width="96" height="96" class="mt-6" />
-        <span class="block">
-          <span>npmx</span>
-          <span class="text-xs font-mono flex items-center justify-end flex-gap1">
-            <NuxtLink
-              v-if="buildInfo.env === 'release'"
-              external
-              :href="`1https://github.com/npmx-dev/npmx.dev/tag/v${buildInfo.version}`"
-              target="_blank"
-            >
-              v{{ buildInfo.version }}
-            </NuxtLink>
-            <span v-else>{{ buildInfo.env }}</span>
-            <template v-if="buildInfo.commit && buildInfo.branch !== 'release'">
-              &middot;
-              <NuxtLink
-                external
-                :href="`https://github.com/npmx-dev/npmx.dev/commit/${buildInfo.commit}`"
-                target="_blank"
-                class="text-balance"
-              >
-                {{ buildInfo.shortCommit }}
-              </NuxtLink>
-            </template>
-          </span>
-        </span>
+        <img
+          :alt="$t('alt_logo')"
+          src="/logo.svg"
+          class="w-12 h-12 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-2xl sm:rounded-3xl"
+        />
+        <span class="pb-4">npmx</span>
       </h1>
+
+      <!-- Build info badge (moved below title) -->
+      <div
+        class="mb-8 font-mono text-xs text-fg-muted flex items-center justify-center gap-2 motion-safe:animate-fade-in motion-safe:animate-fill-both"
+        style="animation-delay: 0.05s"
+      >
+        <NuxtLink
+          v-if="buildInfo.env === 'release'"
+          external
+          :href="`https://github.com/npmx-dev/npmx.dev/tag/v${buildInfo.version}`"
+          target="_blank"
+          class="hover:text-fg transition-colors"
+        >
+          v{{ buildInfo.version }}
+        </NuxtLink>
+        <span v-else class="uppercase tracking-wider">{{ buildInfo.env }}</span>
+
+        <template v-if="buildInfo.commit && buildInfo.branch !== 'release'">
+          <span>&middot;</span>
+          <NuxtLink
+            external
+            :href="`https://github.com/npmx-dev/npmx.dev/commit/${buildInfo.commit}`"
+            target="_blank"
+            class="hover:text-fg transition-colors"
+          >
+            {{ buildInfo.shortCommit }}
+          </NuxtLink>
+        </template>
+      </div>
 
       <p
         class="text-fg-muted text-lg sm:text-xl max-w-md mb-12 motion-safe:animate-slide-up motion-safe:animate-fill-both"

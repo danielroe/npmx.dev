@@ -46,11 +46,10 @@ onKeyStroke(',', e => {
             to="/"
             :aria-label="$t('header.home')"
             dir="ltr"
-            class="inline-flex items-center flex-gap1 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+            class="inline-flex items-center gap-2 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
           >
-            <img :alt="$t('alt_logo')" src="/favicon.svg" width="24" height="24" />
+            <img alt="npmx" src="/logo.svg" class="w-8 h-8 rounded-lg" />
             <span>npmx</span>
-            <!--          <span class="text-accent"><span class="-tracking-0.2em">.</span>/</span>npmx-->
           </NuxtLink>
         </div>
         <!-- Spacer when logo is hidden -->
