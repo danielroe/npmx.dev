@@ -91,7 +91,7 @@ function handleKeydown(event: KeyboardEvent) {
         </template>
       </ClientOnly>
       <span
-        class="i-carbon-chevron-down w-3 h-3"
+        class="i-carbon:chevron-down w-3 h-3"
         :class="[
           { 'rotate-180': isOpen },
           prefersReducedMotion ? '' : 'transition-transform duration-200',
@@ -120,7 +120,7 @@ function handleKeydown(event: KeyboardEvent) {
             : undefined
         "
         :aria-label="$t('settings.package_manager')"
-        class="absolute right-0 top-full mt-1 min-w-28 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 overflow-hidden py-1"
+        class="absolute inset-ie-0 top-full mt-1 min-w-28 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 py-1"
       >
         <li
           v-for="(pm, index) in packageManagers"
@@ -140,7 +140,7 @@ function handleKeydown(event: KeyboardEvent) {
           <span>{{ pm.label }}</span>
           <span
             v-if="selectedPM === pm.id"
-            class="i-carbon-checkmark w-3 h-3 text-accent ml-auto shrink-0"
+            class="i-carbon:checkmark w-3 h-3 text-accent ms-auto shrink-0"
             aria-hidden="true"
           />
         </li>

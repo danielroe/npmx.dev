@@ -125,7 +125,7 @@ watch(open, isOpen => {
               >
                 <span class="text-fg-subtle">$</span>
                 <span class="text-fg-subtle ms-2">{{ executeNpmxConnectorCommand }}</span>
-                <div class="ml-auto flex items-center gap-2">
+                <div class="ms-auto flex items-center gap-2">
                   <PackageManagerSelect />
 
                   <button
