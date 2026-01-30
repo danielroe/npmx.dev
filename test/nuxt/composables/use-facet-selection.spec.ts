@@ -227,4 +227,99 @@ describe('useFacetSelection', () => {
       expect(isNoneSelected.value).toBe(false)
     })
   })
+
+  describe('URL param behavior', () => {
+    it('clears URL param when selecting all defaults', () => {
+      mockRouteQuery.value = 'downloads,types'
+
+      const { selectAll } = useFacetSelection()
+
+      selectAll()
+
+      // Should clear to empty string when matching defaults
+      expect(mockRouteQuery.value).toBe('')
+    })
+
+    it('sets URL param when selecting subset of facets', () => {
+      mockRouteQuery.value = ''
+
+      const { selectedFacets } = useFacetSelection()
+
+      selectedFacets.value = ['downloads', 'types']
+
+      expect(mockRouteQuery.value).toBe('downloads,types')
+    })
+  })
+
+  describe('allFacets export', () => {
+    it('exports allFacets array', () => {
+      const { allFacets } = useFacetSelection()
+
+      expect(Array.isArray(allFacets)).toBe(true)
+      expect(allFacets.length).toBeGreaterThan(0)
+    })
+
+    it('allFacets includes all facets including comingSoon', () => {
+      const { allFacets } = useFacetSelection()
+
+      expect(allFacets).toContain('totalDependencies')
+    })
+  })
+
+  describe('whitespace handling', () => {
+    it('trims whitespace from facet names in query', () => {
+      mockRouteQuery.value = ' downloads , types , license '
+
+      const { selectedFacets } = useFacetSelection()
+
+      expect(selectedFacets.value).toContain('downloads')
+      expect(selectedFacets.value).toContain('types')
+      expect(selectedFacets.value).toContain('license')
+    })
+  })
+
+  describe('duplicate handling', () => {
+    it('handles duplicate facets in query by deduplication via Set', () => {
+      // When adding facets, the code uses Set for deduplication
+      mockRouteQuery.value = 'downloads'
+
+      const { selectedFacets, selectCategory } = useFacetSelection()
+
+      // downloads is in health category, selecting health should dedupe
+      selectCategory('health')
+
+      // Count occurrences of downloads
+      const downloadsCount = selectedFacets.value.filter(f => f === 'downloads').length
+      expect(downloadsCount).toBe(1)
+    })
+  })
+
+  describe('multiple category operations', () => {
+    it('can select multiple categories', () => {
+      mockRouteQuery.value = 'downloads'
+
+      const { selectedFacets, selectCategory } = useFacetSelection()
+
+      selectCategory('performance')
+      selectCategory('security')
+
+      // Should have facets from both categories plus original
+      expect(selectedFacets.value).toContain('packageSize')
+      expect(selectedFacets.value).toContain('license')
+      expect(selectedFacets.value).toContain('downloads')
+    })
+
+    it('can deselect multiple categories', () => {
+      mockRouteQuery.value = ''
+
+      const { selectedFacets, deselectCategory } = useFacetSelection()
+
+      deselectCategory('performance')
+      deselectCategory('health')
+
+      // Should not have performance or health facets
+      expect(selectedFacets.value).not.toContain('packageSize')
+      expect(selectedFacets.value).not.toContain('downloads')
+    })
+  })
 })
