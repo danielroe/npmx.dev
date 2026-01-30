@@ -67,8 +67,8 @@ if (import.meta.client) {
 </script>
 
 <template>
-  <NuxtPwaAssets />
   <div class="min-h-screen flex flex-col bg-bg text-fg">
+    <NuxtPwaAssets />
     <a href="#main-content" class="skip-link font-mono">{{ $t('common.skip_link') }}</a>
 
     <AppHeader :show-logo="!isHomepage" />

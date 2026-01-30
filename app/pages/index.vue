@@ -35,7 +35,7 @@ defineOgImageComponent('Default')
         dir="ltr"
         class="inline-flex items-center header-logo flex-gap1 font-mono text-5xl sm:text-7xl md:text-8xl font-medium tracking-tight mb-4 motion-safe:animate-fade-in motion-safe:animate-fill-both"
       >
-        <img :alt="$t('alt_logo')" src="/favicon.svg" width="72" height="72" class="mt-4" />
+        <img :alt="$t('alt_logo')" src="/favicon.svg" width="96" height="96" class="mt-6" />
         <span>npmx</span>
       </h1>
 

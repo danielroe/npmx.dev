@@ -99,6 +99,7 @@
     "typescript": "5.9.3",
     "unocss": "66.6.0",
     "unplugin-vue-router": "^0.19.2",
+    "vite-plugin-pwa": "1.2.0",
     "vite-plus": "latest",
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest",
     "vitest-environment-nuxt": "^1.0.1",
