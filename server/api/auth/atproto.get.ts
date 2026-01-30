@@ -56,9 +56,7 @@ export default defineEventHandler(async event => {
   )
   const miniDoc = (await response.json()) as { did: string; handle: string; pds: string }
 
-  await session.update({
-    miniDoc,
-  })
+  await session.update(miniDoc)
 
   return sendRedirect(event, '/')
 })

@@ -11,7 +11,7 @@ const { user } = await useAtproto()
       :aria-label="ariaLabel"
       @click="showModal = true"
     >
-      {{ user?.miniDoc?.handle || 'login' }}
+      {{ user?.handle || 'login' }}
     </button>
 
     <AuthModal v-model:open="showModal" />
