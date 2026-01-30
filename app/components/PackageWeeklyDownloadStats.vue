@@ -226,7 +226,7 @@ const config = computed(() => {
           </VueUiSparkline>
           <template #fallback>
             <!-- Skeleton matching sparkline layout: title row + chart with data label -->
-            <div class="min-h-[100px]">
+            <div class="min-h-[75.195px]">
               <!-- Title row: date range (24px height) -->
               <div class="h-6 flex items-center ps-3">
                 <span class="skeleton h-3 w-36" />
