@@ -8,13 +8,15 @@ export default defineCachedEventHandler(
   async event => {
     const pkgParam = getRouterParam(event, 'pkg')
     if (!pkgParam) {
-      throw createError({ statusCode: 400, message: 'Package name is required' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package name is required' })
     }
 
     const { packageName, version: requestedVersion } = parsePackageParam(pkgParam)
 
     if (!packageName) {
-      throw createError({ statusCode: 400, message: 'Package name is required' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package name is required' })
     }
     assertValidPackageName(packageName)
 

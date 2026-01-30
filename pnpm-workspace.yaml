@@ -1,25 +1,15 @@
 packages:
-  - '.'
-  - 'cli'
-  - 'docs'
+  - .
+  - cli
+  - docs
 
-savePrefix: ''
+ignoreDepScripts: true
 
-overrides:
-  sharp: 0.34.5
-  vite: npm:@voidzero-dev/vite-plus-core@0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab
-  vitest: npm:@voidzero-dev/vite-plus-test@0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab
-
-patchedDependencies:
-  '@jsr/deno__doc@0.189.1': patches/@jsr__deno__doc@0.189.1.patch
-
-packageExtensions:
-  '@nuxt/scripts':
-    dependencies:
-      estree-walker: '^3.0.3'
+ignoreWorkspaceRootCheck: true
 
 ignoredBuiltDependencies:
   - '@parcel/watcher'
+  - core-js
   - esbuild
   - unrs-resolver
   - vue-demi
@@ -29,6 +19,17 @@ onlyBuiltDependencies:
   - sharp@0.34.5
   - simple-git-hooks@2.13.1
 
-ignoreWorkspaceRootCheck: true
+overrides:
+  sharp: 0.34.5
+  vite: npm:@voidzero-dev/vite-plus-core@0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab
+  vitest: npm:@voidzero-dev/vite-plus-test@0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab
 
-ignoreDepScripts: true
+packageExtensions:
+  '@nuxt/scripts':
+    dependencies:
+      estree-walker: ^3.0.3
+
+patchedDependencies:
+  '@jsr/deno__doc@0.189.1': patches/@jsr__deno__doc@0.189.1.patch
+
+savePrefix: ''

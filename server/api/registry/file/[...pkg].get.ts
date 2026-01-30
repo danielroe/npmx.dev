@@ -106,7 +106,8 @@ export default defineCachedEventHandler(
 
     if (versionSegments.length < 2) {
       throw createError({
-        statusCode: 400,
+        // TODO: throwing 404 rather than 400 as it's cacheable
+        statusCode: 404,
         message: ERROR_PACKAGE_VERSION_AND_FILE_FAILED,
       })
     }
