@@ -213,6 +213,7 @@
     "downloads": {
       "title": "Descargas Semanales",
       "date_range": "{start} a {end}",
+      "date_range_multiline": "{start}\na {end}",
       "analyze": "Analizar descargas",
       "modal_title": "Descargas",
       "granularity": "Granularidad",
@@ -286,8 +287,6 @@
       "refresh": "Actualizar acceso de equipo",
       "list_label": "Lista de acceso de equipo",
       "owner": "propietario",
-      "rw": "le",
-      "ro": "sl",
       "revoke_access": "Revocar acceso de {name}",
       "no_access": "No hay acceso de equipo configurado",
       "select_team_label": "Seleccionar equipo",
@@ -537,6 +536,10 @@
     "table": {
       "name": "Nombre",
       "size": "Tamaño"
+    },
+    "markdown_view_mode": {
+      "preview": "vista previa",
+      "code": "código"
     }
   },
   "badges": {

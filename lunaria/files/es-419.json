@@ -213,6 +213,7 @@
     "downloads": {
       "title": "Descargas Semanales",
       "date_range": "{start} a {end}",
+      "date_range_multiline": "{start}\na {end}",
       "analyze": "Analizar descargas",
       "modal_title": "Descargas",
       "granularity": "Granularidad",
@@ -286,8 +287,6 @@
       "refresh": "Actualizar acceso de equipo",
       "list_label": "Lista de acceso de equipo",
       "owner": "propietario",
-      "rw": "le",
-      "ro": "sl",
       "revoke_access": "Revocar acceso de {name}",
       "no_access": "No hay acceso de equipo configurado",
       "select_team_label": "Seleccionar equipo",
@@ -298,9 +297,9 @@
         "read_only": "solo lectura",
         "read_write": "lectura-escritura"
       },
-      "grant_button": "conceder",
-      "cancel_grant": "Cancelar concesión de acceso",
-      "grant_access": "+ Conceder acceso de equipo"
+      "grant_button": "otorgar",
+      "cancel_grant": "Cancelar otorgar acceso",
+      "grant_access": "+ Otorgar acceso de equipo"
     },
     "list": {
       "filter_label": "Filtrar paquetes",
@@ -316,7 +315,7 @@
       "deps": "Deps",
       "updated": "Actualizado",
       "install": "Instalar",
-      "readme": "Léeme",
+      "readme": "Léame",
       "maintainers": "Mantenedores",
       "keywords": "Palabras clave",
       "versions": "Versiones",
@@ -537,6 +536,10 @@
     "table": {
       "name": "Nombre",
       "size": "Tamaño"
+    },
+    "markdown_view_mode": {
+      "preview": "vista previa",
+      "code": "código"
     }
   },
   "badges": {
@@ -729,13 +732,5 @@
       "empty": "No se encontraron organizaciones",
       "view_all": "Ver todo"
     }
-  },
-  "access": {
-    "grant_button": "otorgar",
-    "cancel_grant": "Cancelar otorgar acceso",
-    "grant_access": "+ Otorgar acceso de equipo"
-  },
-  "skeleton": {
-    "readme": "Léame"
   }
 }
