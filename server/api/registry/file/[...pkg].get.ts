@@ -1,5 +1,6 @@
 import * as v from 'valibot'
 import { PackageFileQuerySchema } from '#shared/schemas/package'
+import type { ReadmeResponse } from '#shared/types/readme'
 import {
   CACHE_MAX_AGE_ONE_YEAR,
   ERROR_PACKAGE_VERSION_AND_FILE_FAILED,
@@ -168,9 +169,14 @@ export default defineCachedEventHandler(
 
       let markdownHtml: ReadmeResponse | undefined
       if (language === 'markdown') {
-        const packageData = await fetchNpmPackage(rawPackageName)
-        const repoInfo = parseRepositoryInfo(packageData.repository)
-        markdownHtml = await renderReadmeHtml(content, rawPackageName, repoInfo)
+        // Best-effort: markdown preview is optional; never block code view
+        try {
+          const packageData = await fetchNpmPackage(rawPackageName)
+          const repoInfo = parseRepositoryInfo(packageData.repository)
+          markdownHtml = await renderReadmeHtml(content, rawPackageName, repoInfo)
+        } catch {
+          markdownHtml = undefined
+        }
       }
 
       return {
