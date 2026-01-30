@@ -239,7 +239,7 @@
       "loading": "Lädt...",
       "y_axis_label": "{granularity} Downloads",
       "download_file": "{fileType} herunterladen",
-      "toggle_annotator": "Kommentator umschalten"
+      "toggle_annotator": "Annotation umschalten"
     },
     "install_scripts": {
       "title": "Installationsskripte",
