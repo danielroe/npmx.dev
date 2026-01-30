@@ -48,7 +48,12 @@ onKeyStroke(',', e => {
             dir="ltr"
             class="inline-flex items-center gap-2 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
           >
-            <img alt="npmx" src="/logo.svg" class="w-8 h-8 rounded-lg" />
+            <img
+              aria-hidden="true"
+              :alt="$t('alt_logo')"
+              src="/logo.svg"
+              class="w-8 h-8 rounded-lg"
+            />
             <span>npmx</span>
           </NuxtLink>
         </div>
