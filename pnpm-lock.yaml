@@ -171,6 +171,9 @@ importers:
       axe-core:
         specifier: ^4.11.1
         version: 4.11.1
+      h3-next:
+        specifier: npm:h3@2.0.1-rc.11
+        version: h3@2.0.1-rc.11
       happy-dom:
         specifier: 20.3.5
         version: 20.3.5

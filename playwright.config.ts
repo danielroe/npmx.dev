@@ -11,6 +11,9 @@ export default defineConfig<ConfigOptions>({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   timeout: 120_000,
+  // Start/stop mock connector server before/after all tests
+  globalSetup: fileURLToPath(new URL('./tests/global-setup.ts', import.meta.url)),
+  globalTeardown: fileURLToPath(new URL('./tests/global-teardown.ts', import.meta.url)),
   use: {
     trace: 'on-first-retry',
     nuxt: {

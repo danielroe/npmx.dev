@@ -393,6 +393,56 @@ pnpm test:browser:ui     # Run with Playwright UI
 
 Make sure to read about [Playwright best practices](https://playwright.dev/docs/best-practices) and don't rely on classes/IDs but try to follow user-replicable behaviour (like selecting an element based on text content instead).
 
+### Testing connector features
+
+Features that require authentication through the local connector (org management, package collaborators, operations queue) are tested using a mock connector server. The testing infrastructure includes:
+
+**For Vitest component tests** (`test/nuxt/`):
+
+- Mock the `useConnector` composable with reactive state
+- Use `document.body` queries for components using Teleport
+- See `test/nuxt/components/ConnectorModal.spec.ts` for an example
+
+```typescript
+// Create mock state
+const mockState = ref({ connected: false, npmUser: null, ... })
+
+// Mock the composable
+vi.mock('~/composables/useConnector', () => ({
+  useConnector: () => ({
+    isConnected: computed(() => mockState.value.connected),
+    // ... other properties
+  }),
+}))
+```
+
+**For Playwright E2E tests** (`tests/`):
+
+- A mock HTTP server (`tests/helpers/mock-connector.ts`) implements the connector API
+- The server starts automatically via Playwright's global setup
+- Use the `mockConnector` fixture to set up test data and the `gotoConnected` helper to navigate with authentication
+
+```typescript
+test('shows org members', async ({ page, gotoConnected, mockConnector }) => {
+  // Set up test data
+  await mockConnector.setOrgData('@testorg', {
+    users: { testuser: 'owner', member1: 'admin' },
+  })
+
+  // Navigate with connector authentication
+  await gotoConnected('/@testorg')
+
+  // Test assertions
+  await expect(page.getByRole('link', { name: '@testuser' })).toBeVisible()
+})
+```
+
+The mock connector supports test endpoints for state manipulation:
+
+- `/__test__/org/:org` - Set org users and teams
+- `/__test__/user/orgs` - Set user's organizations
+- `/__test__/operations` - Get/manipulate operation queue
+
 ## Submitting changes
 
 ### Before submitting
