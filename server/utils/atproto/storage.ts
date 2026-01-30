@@ -45,7 +45,7 @@ export class OAuthStateStore implements NodeSavedStateStore {
 export const OAUTH_SESSION_CACHE_STORAGE_BASE = 'oauth-atproto-session'
 
 export class OAuthSessionStore implements NodeSavedSessionStore {
-  //TODO not sure if we will support multi accounts, but if we do in the future will need to change this around
+  // TODO: not sure if we will support multi accounts, but if we do in the future will need to change this around
   private readonly cookieKey = 'oauth:atproto:session'
   private readonly storage = useStorage(OAUTH_SESSION_CACHE_STORAGE_BASE)
 
@@ -70,5 +70,12 @@ export class OAuthSessionStore implements NodeSavedSessionStore {
       await this.storage.del(sessionKey)
     }
     deleteCookie(this.event, this.cookieKey)
+  }
+}
+
+export const useOAuthStorage = (event: H3Event) => {
+  return {
+    stateStore: new OAuthStateStore(event),
+    sessionStore: new OAuthSessionStore(event),
   }
 }

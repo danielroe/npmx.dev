@@ -1,7 +1,7 @@
 import { Agent } from '@atproto/api'
 import { NodeOAuthClient } from '@atproto/oauth-client-node'
 import { createError, getQuery, sendRedirect } from 'h3'
-import { OAuthSessionStore, OAuthStateStore } from '#server/utils/atproto/storage'
+import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { SLINGSHOT_ENDPOINT } from '#shared/utils/constants'
 
 export default defineEventHandler(async event => {
@@ -15,8 +15,8 @@ export default defineEventHandler(async event => {
 
   const query = getQuery(event)
   const clientMetadata = getOauthClientMetadata()
-  const stateStore = new OAuthStateStore(event)
-  const sessionStore = new OAuthSessionStore(event)
+  const { stateStore, sessionStore } = useOAuthStorage(event)
+
   const atclient = new NodeOAuthClient({
     stateStore,
     sessionStore,
