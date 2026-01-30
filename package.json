@@ -107,7 +107,7 @@
     "*.{js,ts,mjs,cjs,vue}": [
       "vite lint --fix"
     ],
-    "*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
+    "!(docs/content/index.md)*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
       "vite fmt"
     ]
   },
