@@ -113,7 +113,6 @@ watch(
   },
 )
 
-// Fetch provenance details when the displayed version has attestations
 const {
   data: provenanceData,
   status: provenanceStatus,
@@ -130,15 +129,18 @@ const {
     immediate: false,
   },
 )
-watch(
-  () => [displayVersion.value?.version, hasProvenance(displayVersion.value)],
-  () => {
+if (import.meta.client) {
+  watchEffect(() => {
     if (displayVersion.value && hasProvenance(displayVersion.value)) {
       fetchProvenance()
     }
-  },
-  { immediate: true },
-)
+  })
+}
+
+const provenanceBadgeMounted = ref(false)
+onMounted(() => {
+  provenanceBadgeMounted.value = true
+})
 
 // Keep latestVersion for comparison (to show "(latest)" badge)
 const latestVersion = computed(() => {
@@ -294,8 +296,6 @@ function getDependencyCount(version: PackumentVersion | null): number {
   return Object.keys(version.dependencies).length
 }
 
-// Check if a version has provenance/attestations
-// The dist object may have attestations that aren't in the base type
 function hasProvenance(version: PackumentVersion | null): boolean {
   if (!version?.dist) return false
   const dist = version.dist as NpmVersionDist
@@ -440,40 +440,48 @@ function handleClick(event: MouseEvent) {
               >
               <span v-else>v{{ displayVersion.version }}</span>
 
-              <AppPopover v-if="hasProvenance(displayVersion)" position="bottom">
-                <template #content>
-                  <p class="flex items-center gap-2 text-fg m-0">
-                    <span
-                      class="i-solar-shield-check-outline w-3.5 h-3.5 shrink-0 text-emerald-500"
-                      aria-hidden="true"
-                    />
-                    <span>{{
-                      provenanceData
-                        ? $t('package.provenance_section.built_and_signed_on', {
-                            provider: provenanceData.providerLabel,
-                          })
-                        : $t('package.verified_provenance')
-                    }}</span>
-                  </p>
-                  <a href="#provenance" class="block mt-1.5 link font-medium">
-                    {{ $t('package.provenance_section.view_more_details') }}
-                  </a>
-                </template>
-                <template #default="{ popoverVisible }">
-                  <a
-                    :href="`https://www.npmjs.com/package/${pkg.name}/v/${displayVersion.version}#provenance`"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-emerald-500 transition-colors duration-200 min-w-6 min-h-6"
-                    :class="popoverVisible && 'text-emerald-500'"
-                  >
-                    <span
-                      class="i-solar-shield-check-outline w-3.5 h-3.5 shrink-0"
-                      aria-hidden="true"
-                    />
-                  </a>
-                </template>
-              </AppPopover>
+              <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
+                <div class="relative inline-flex">
+                  <AppPopover position="bottom">
+                    <template #content>
+                      <p class="flex items-center gap-2 text-fg m-0">
+                        <span
+                          class="i-solar-shield-check-outline w-3.5 h-3.5 shrink-0 text-emerald-500"
+                          aria-hidden="true"
+                        />
+                        <span>{{
+                          provenanceData && provenanceStatus !== 'pending'
+                            ? $t('package.provenance_section.built_and_signed_on', {
+                                provider: provenanceData.providerLabel,
+                              })
+                            : $t('package.verified_provenance')
+                        }}</span>
+                      </p>
+                      <a href="#provenance" class="block mt-1.5 link font-medium">
+                        {{ $t('package.provenance_section.view_more_details') }}
+                      </a>
+                    </template>
+                    <template #default="{ popoverVisible, popoverId }">
+                      <a
+                        :href="`https://www.npmjs.com/package/${pkg.name}/v/${displayVersion.version}#provenance`"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        :aria-label="$t('package.provenance_section.view_more_details')"
+                        :aria-expanded="popoverVisible"
+                        aria-haspopup="true"
+                        :aria-controls="popoverVisible ? popoverId : undefined"
+                        class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-emerald-500 transition-colors duration-200 min-w-6 min-h-6"
+                        :class="popoverVisible && 'text-emerald-500'"
+                      >
+                        <span
+                          class="i-solar-shield-check-outline w-3.5 h-3.5 shrink-0"
+                          aria-hidden="true"
+                        />
+                      </a>
+                    </template>
+                  </AppPopover>
+                </div>
+              </template>
               <span
                 v-if="
                   requestedVersion &&
@@ -951,8 +959,11 @@ function handleClick(event: MouseEvent) {
           }}</a>
         </p>
 
-        <!-- Provenance details (when version has attestations) -->
-        <template v-if="hasProvenance(displayVersion)">
+        <section
+          v-if="hasProvenance(displayVersion) && provenanceBadgeMounted"
+          id="provenance"
+          class="scroll-mt-20"
+        >
           <div
             v-if="provenanceStatus === 'pending'"
             class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
@@ -970,7 +981,7 @@ function handleClick(event: MouseEvent) {
             :version="displayVersion?.version"
             class="mt-8"
           />
-        </template>
+        </section>
       </section>
 
       <div class="area-sidebar">
