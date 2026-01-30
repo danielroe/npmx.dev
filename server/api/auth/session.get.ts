@@ -1,3 +1,5 @@
+import type { UserSession } from '#shared/schemas/userSession'
+
 export default eventHandlerWithOAuthSession(async (event, oAuthSession, serverSession) => {
-  return serverSession.data
+  return serverSession.data as UserSession
 })

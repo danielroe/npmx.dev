@@ -3,6 +3,7 @@ import { NodeOAuthClient } from '@atproto/oauth-client-node'
 import { createError, getQuery, sendRedirect } from 'h3'
 import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { SLINGSHOT_ENDPOINT } from '#shared/utils/constants'
+import type { UserSession } from '#shared/schemas/userSession'
 
 export default defineEventHandler(async event => {
   const config = useRuntimeConfig(event)
@@ -55,7 +56,7 @@ export default defineEventHandler(async event => {
     `${SLINGSHOT_ENDPOINT}/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
     { headers: { 'User-Agent': 'npmx' } },
   )
-  const miniDoc = (await response.json()) as { did: string; handle: string; pds: string }
+  const miniDoc = (await response.json()) as UserSession
 
   await session.update(miniDoc)
 
