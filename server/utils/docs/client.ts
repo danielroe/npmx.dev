@@ -84,7 +84,9 @@ function createLoader(): (
     let url: URL
     try {
       url = new URL(specifier)
-    } catch {
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
       return undefined
     }
 
@@ -94,7 +96,7 @@ function createLoader(): (
     }
 
     try {
-      const response = await $fetch.raw<string>(url.toString(), {
+      const response = await $fetch.raw<Blob>(url.toString(), {
         method: 'GET',
         timeout: FETCH_TIMEOUT_MS,
         redirect: 'follow',
@@ -104,7 +106,7 @@ function createLoader(): (
         return undefined
       }
 
-      const content = response._data ?? ''
+      const content = (await response._data?.text()) ?? ''
       const headers: Record<string, string> = {}
       for (const [key, value] of response.headers) {
         headers[key.toLowerCase()] = value
@@ -116,7 +118,9 @@ function createLoader(): (
         headers,
         content,
       }
-    } catch {
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
       return undefined
     }
   }
@@ -163,7 +167,9 @@ async function getTypesUrl(packageName: string, version: string): Promise<string
       timeout: FETCH_TIMEOUT_MS,
     })
     return response.headers.get('x-typescript-types')
-  } catch {
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e)
     return null
   }
 }
