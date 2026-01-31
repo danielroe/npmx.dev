@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import MetricRow from '~/components/compare/MetricRow.vue'
+import FacetRow from '~/components/compare/FacetRow.vue'
 
 // Mock useRelativeDates for DateTime component
 vi.mock('~/composables/useSettings', () => ({
@@ -12,7 +12,7 @@ vi.mock('~/composables/useSettings', () => ({
   initAccentOnPrehydrate: () => {},
 }))
 
-describe('MetricRow', () => {
+describe('FacetRow', () => {
   const baseProps = {
     label: 'Downloads',
     values: [],
@@ -20,14 +20,14 @@ describe('MetricRow', () => {
 
   describe('label rendering', () => {
     it('renders the label', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: { ...baseProps, label: 'Weekly Downloads' },
       })
       expect(component.text()).toContain('Weekly Downloads')
     })
 
     it('renders description tooltip icon when provided', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           description: 'Number of downloads per week',
@@ -37,7 +37,7 @@ describe('MetricRow', () => {
     })
 
     it('does not render description icon when not provided', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: baseProps,
       })
       expect(component.find('.i-carbon\\:information').exists()).toBe(false)
@@ -46,7 +46,7 @@ describe('MetricRow', () => {
 
   describe('value rendering', () => {
     it('renders null values as dash', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [null, null],
@@ -57,8 +57,8 @@ describe('MetricRow', () => {
       expect(component.text()).toContain('-')
     })
 
-    it('renders metric values', async () => {
-      const component = await mountSuspended(MetricRow, {
+    it('renders facet values', async () => {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -72,7 +72,7 @@ describe('MetricRow', () => {
     })
 
     it('renders loading state', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [null],
@@ -85,7 +85,7 @@ describe('MetricRow', () => {
 
   describe('status styling', () => {
     it('applies good status class', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [{ raw: 0, display: 'None', status: 'good' }],
@@ -95,7 +95,7 @@ describe('MetricRow', () => {
     })
 
     it('applies warning status class', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [{ raw: 100, display: '100 MB', status: 'warning' }],
@@ -105,7 +105,7 @@ describe('MetricRow', () => {
     })
 
     it('applies bad status class', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [{ raw: 5, display: '5 critical', status: 'bad' }],
@@ -115,7 +115,7 @@ describe('MetricRow', () => {
     })
 
     it('applies info status class', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [{ raw: '@types', display: '@types', status: 'info' }],
@@ -127,7 +127,7 @@ describe('MetricRow', () => {
 
   describe('bar visualization', () => {
     it('shows bar for numeric values when bar prop is true', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -142,7 +142,7 @@ describe('MetricRow', () => {
     })
 
     it('hides bar when bar prop is false', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -156,7 +156,7 @@ describe('MetricRow', () => {
     })
 
     it('does not show bar for non-numeric values', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -171,7 +171,7 @@ describe('MetricRow', () => {
 
   describe('diff indicators', () => {
     it('renders diff with increase direction', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -186,7 +186,7 @@ describe('MetricRow', () => {
     })
 
     it('renders diff with decrease direction', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -200,7 +200,7 @@ describe('MetricRow', () => {
     })
 
     it('applies favorable diff styling (green)', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -214,7 +214,7 @@ describe('MetricRow', () => {
     })
 
     it('applies unfavorable diff styling (red)', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -230,7 +230,7 @@ describe('MetricRow', () => {
     })
 
     it('does not render diff indicator for same direction', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -247,7 +247,7 @@ describe('MetricRow', () => {
 
   describe('date values', () => {
     it('renders DateTime component for date type values', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [
@@ -268,7 +268,7 @@ describe('MetricRow', () => {
 
   describe('grid layout', () => {
     it('uses contents display for grid integration', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [{ raw: 100, display: '100', status: 'neutral' }],
@@ -278,7 +278,7 @@ describe('MetricRow', () => {
     })
 
     it('renders correct number of cells for values', async () => {
-      const component = await mountSuspended(MetricRow, {
+      const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
           values: [

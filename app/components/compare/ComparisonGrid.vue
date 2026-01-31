@@ -28,7 +28,7 @@ defineProps<{
         </div>
       </div>
 
-      <!-- Metric rows -->
+      <!-- Facet rows -->
       <slot />
     </div>
   </div>

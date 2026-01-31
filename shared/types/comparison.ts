@@ -2,7 +2,7 @@
  * Comparison feature types
  */
 
-/** Available comparison facets/metrics */
+/** Available comparison facets */
 export type ComparisonFacet =
   | 'downloads'
   | 'packageSize'
@@ -117,8 +117,8 @@ export const FACETS_BY_CATEGORY: Record<FacetInfo['category'], ComparisonFacet[]
 /** Default facets - all non-comingSoon facets */
 export const DEFAULT_FACETS: ComparisonFacet[] = ALL_FACETS.filter(f => !FACET_INFO[f].comingSoon)
 
-/** Metric value that can be compared */
-export interface MetricValue<T = unknown> {
+/** Facet value that can be compared */
+export interface FacetValue<T = unknown> {
   /** Raw value for comparison logic */
   raw: T
   /** Formatted display string (or ISO date string if type is 'date') */
@@ -129,8 +129,8 @@ export interface MetricValue<T = unknown> {
   type?: 'date'
 }
 
-/** Result of comparing two metric values */
-export interface DiffResult<_T = unknown> {
+/** Result of comparing two facet values */
+export interface FacetDiffResult<_T = unknown> {
   /** Absolute difference (for numeric values) */
   absoluteDiff?: number
   /** Percentage difference (for numeric values) */
@@ -139,7 +139,7 @@ export interface DiffResult<_T = unknown> {
   display: string
   /** Direction of change */
   direction: 'increase' | 'decrease' | 'same' | 'changed'
-  /** Whether the change is favorable (depends on metric semantics) */
+  /** Whether the change is favorable (depends on facet semantics) */
   favorable?: boolean
 }
 

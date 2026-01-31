@@ -29,7 +29,7 @@ const { selectedFacets, selectAll, deselectAll, isAllSelected, isNoneSelected } 
   useFacetSelection()
 
 // Fetch comparison data
-const { packagesData, status, getMetricValues, isFacetLoading } = usePackageComparison(packages)
+const { packagesData, status, getFacetValues, isFacetLoading } = usePackageComparison(packages)
 
 // Check if we have enough packages to compare
 const canCompare = computed(() => packages.value.length >= 2)
@@ -116,12 +116,12 @@ useSeoMeta({
 
       <div v-else-if="packagesData && packagesData.length > 0">
         <CompareComparisonGrid :columns="packages.length" :headers="gridHeaders">
-          <CompareMetricRow
+          <CompareFacetRow
             v-for="facet in selectedFacets"
             :key="facet"
             :label="FACET_INFO[facet].label"
             :description="FACET_INFO[facet].description"
-            :values="getMetricValues(facet)"
+            :values="getFacetValues(facet)"
             :loading="isFacetLoading(facet)"
             :bar="facet !== 'lastUpdated'"
           />

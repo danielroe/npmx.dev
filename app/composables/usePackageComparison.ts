@@ -1,4 +1,4 @@
-import type { MetricValue, ComparisonFacet, ComparisonPackage } from '#shared/types'
+import type { FacetValue, ComparisonFacet, ComparisonPackage } from '#shared/types'
 import type { PackageAnalysisResponse } from './usePackageAnalysis'
 
 export interface PackageComparisonData {
@@ -176,13 +176,13 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
     )
   }
 
-  // Compute metrics for each facet
-  function getMetricValues(facet: ComparisonFacet): (MetricValue | null)[] {
+  // Compute values for each facet
+  function getFacetValues(facet: ComparisonFacet): (FacetValue | null)[] {
     if (!packagesData.value || packagesData.value.length === 0) return []
 
     return packagesData.value.map(pkg => {
       if (!pkg) return null
-      return computeMetricValue(facet, pkg)
+      return computeFacetValue(facet, pkg)
     })
   }
 
@@ -197,7 +197,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
     packagesData: readonly(packagesData),
     status: readonly(status),
     error: readonly(error),
-    getMetricValues,
+    getFacetValues,
     isFacetLoading,
   }
 }
@@ -209,10 +209,7 @@ function encodePackageName(name: string): string {
   return encodeURIComponent(name)
 }
 
-function computeMetricValue(
-  facet: ComparisonFacet,
-  data: PackageComparisonData,
-): MetricValue | null {
+function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData): FacetValue | null {
   switch (facet) {
     case 'downloads':
       if (data.downloads === undefined) return null

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { MetricValue, DiffResult } from '#shared/types'
+import type { FacetValue, FacetDiffResult } from '#shared/types'
 
 const props = defineProps<{
-  /** Metric label */
+  /** Facet label */
   label: string
-  /** Description/tooltip for the metric */
+  /** Description/tooltip for the facet */
   description?: string
   /** Values for each column */
-  values: (MetricValue | null | undefined)[]
+  values: (FacetValue | null | undefined)[]
   /** Diff results between adjacent columns (for release comparison) */
-  diffs?: (DiffResult | null | undefined)[]
+  diffs?: (FacetDiffResult | null | undefined)[]
   /** Whether this row is loading */
   loading?: boolean
   /** Whether to show the proportional bar (defaults to true for numeric values) */
@@ -33,12 +33,12 @@ const maxValue = computed(() => {
 })
 
 // Calculate bar width percentage for a value
-function getBarWidth(value: MetricValue | null | undefined): number {
+function getBarWidth(value: FacetValue | null | undefined): number {
   if (!isNumeric.value || !maxValue.value || !value || typeof value.raw !== 'number') return 0
   return (value.raw / maxValue.value) * 100
 }
 
-function getStatusClass(status?: MetricValue['status']): string {
+function getStatusClass(status?: FacetValue['status']): string {
   switch (status) {
     case 'good':
       return 'text-emerald-400'
@@ -53,14 +53,14 @@ function getStatusClass(status?: MetricValue['status']): string {
   }
 }
 
-function getDiffClass(diff?: DiffResult | null): string {
+function getDiffClass(diff?: FacetDiffResult | null): string {
   if (!diff) return ''
   if (diff.favorable === true) return 'text-emerald-400'
   if (diff.favorable === false) return 'text-red-400'
   return 'text-fg-muted'
 }
 
-function getDiffIcon(diff?: DiffResult | null): string {
+function getDiffIcon(diff?: FacetDiffResult | null): string {
   if (!diff) return ''
   switch (diff.direction) {
     case 'increase':
