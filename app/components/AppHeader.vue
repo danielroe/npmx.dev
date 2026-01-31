@@ -20,6 +20,7 @@ const isSearchExpandedManually = shallowRef(false)
 const searchBoxRef = shallowRef<{ focus: () => void } | null>(null)
 
 // On search page, always show search expanded on mobile
+const isOnHomePage = computed(() => route.name === 'index')
 const isOnSearchPage = computed(() => route.name === 'search')
 const isSearchExpanded = computed(() => isOnSearchPage.value || isSearchExpandedManually.value)
 
@@ -78,11 +79,12 @@ onKeyStroke(
   <header class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border">
     <nav
       :aria-label="$t('nav.main_navigation')"
-      class="container min-h-14 flex items-center justify-between gap-2"
+      class="container min-h-14 flex items-center gap-2"
+      :class="isOnHomePage ? 'justify-end' : 'justify-between'"
     >
       <!-- Mobile: Logo + search button (expands search, doesn't navigate) -->
       <button
-        v-if="!isSearchExpanded"
+        v-if="!isSearchExpanded && !isOnHomePage"
         type="button"
         class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
         :aria-label="$t('nav.tap_to_search')"
