@@ -27,8 +27,15 @@ describe('PackageSelector', () => {
     mockFetch.mockReset()
     mockFetch.mockResolvedValue({
       objects: [
-        { package: { name: 'lodash', description: 'Lodash modular utilities' } },
-        { package: { name: 'underscore', description: 'JavaScript utility library' } },
+        {
+          package: { name: 'lodash', description: 'Lodash modular utilities' },
+        },
+        {
+          package: {
+            name: 'underscore',
+            description: 'JavaScript utility library',
+          },
+        },
       ],
     })
   })
@@ -223,9 +230,10 @@ describe('PackageSelector', () => {
       if (resultButton) {
         await resultButton.trigger('click')
       }
-      // The emit happens via addPackage which updates the model
-      // Test passes if no errors thrown
-      expect(true).toBe(true)
+
+      const emitted = component.emitted('update:modelValue')
+      expect(emitted).toBeTruthy()
+      expect(emitted![0]![0]).toEqual(['lodash'])
     })
 
     it('adds package on Enter key', async () => {
@@ -241,7 +249,7 @@ describe('PackageSelector', () => {
 
       const emitted = component.emitted('update:modelValue')
       expect(emitted).toBeTruthy()
-      expect(emitted![0]![0]).toContain('my-package')
+      expect(emitted![0]![0]).toEqual(['my-package'])
     })
 
     it('clears input after adding package', async () => {
@@ -385,7 +393,14 @@ describe('PackageSelector', () => {
 
     it('renders result items with package info', async () => {
       mockFetch.mockResolvedValue({
-        objects: [{ package: { name: 'lodash', description: 'Lodash modular utilities' } }],
+        objects: [
+          {
+            package: {
+              name: 'lodash',
+              description: 'Lodash modular utilities',
+            },
+          },
+        ],
       })
 
       const component = await mountSuspended(PackageSelector, {
