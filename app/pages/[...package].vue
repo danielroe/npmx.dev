@@ -259,10 +259,6 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num)
-}
-
 function getDependencyCount(version: PackumentVersion | null): number {
   if (!version?.dependencies) return 0
   return Object.keys(version.dependencies).length

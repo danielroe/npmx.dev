@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { formatNumber } from '#imports'
 import type { FilterChip, SortOption } from '#shared/types/preferences'
 import { onKeyDown } from '@vueuse/core'
 import { debounce } from 'perfect-debounce'

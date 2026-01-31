@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { formatNumber } from '#imports'
 import { debounce } from 'perfect-debounce'
 
 const route = useRoute('~username')

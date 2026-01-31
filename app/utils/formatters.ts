@@ -1,7 +1,7 @@
 /** @public */
-export function formatNumber(num: number, _locale?: string): string {
-  // TODO: Support different locales (needs care to ensure hydration works correctly)
-  return new Intl.NumberFormat('en-US').format(num)
+export function formatNumber(num: number): string {
+  const { locale } = useI18n()
+  return new Intl.NumberFormat(locale.value).format(num)
 }
 
 /** @public */
