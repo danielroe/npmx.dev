@@ -109,7 +109,7 @@ defineOgImageComponent('Default', {
       </search>
 
       <!-- Build info badge -->
-      <BuildEnvironment class="mt-4 text-fg-muted" />
+      <BuildEnvironment class="mt-4" />
     </header>
 
     <!-- Popular packages -->
