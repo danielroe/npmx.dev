@@ -274,7 +274,7 @@
       "cjs": "Obsługuje CommonJS",
       "no_esm": "Brak obsługi ES Modules",
       "types_label": "Typy",
-      "types_included": "Typy w pakiecie",
+      "types_included": "Typy wbudowane",
       "types_available": "Typy dostępne przez {package}",
       "no_types": "Brak typów TypeScript"
     },
@@ -894,7 +894,7 @@
         "unknown": "Nieznana",
         "deprecated": "Wycofany",
         "not_deprecated": "Nie",
-        "types_included": "W pakiecie",
+        "types_included": "Wbudowane",
         "types_none": "Brak",
         "vulnerabilities_summary": "{count} ({critical}K/{high}W)"
       }
