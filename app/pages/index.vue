@@ -13,6 +13,9 @@ const debouncedNavigate = debounce(() => {
     path: '/search',
     query: searchQuery.value.trim() ? { q: searchQuery.value.trim() } : undefined,
   })
+  nextTick(() => {
+    document.getElementById('header-search')?.focus()
+  })
 }, 250)
 
 function handleSearch() {
