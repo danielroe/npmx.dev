@@ -896,7 +896,7 @@
         "not_deprecated": "Nie",
         "types_included": "Wbudowane",
         "types_none": "Brak",
-        "vulnerabilities_summary": "{count} ({critical}C/{high}H)"
+        "vulnerabilities_summary": "{count} ({critical}K/{high}W)"
       }
     }
   }
