@@ -1,6 +1,7 @@
 import {
   defineConfig,
   presetIcons,
+  presetTypography,
   presetWind4,
   transformerDirectives,
   transformerVariantGroup,
@@ -23,6 +24,7 @@ export default defineConfig({
         custom: customIcons,
       },
     }),
+    presetTypography(),
   ],
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {

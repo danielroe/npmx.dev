@@ -41,9 +41,14 @@
   "nav": {
     "main_navigation": "Barre de navigation",
     "popular_packages": "Paquets populaires",
+    "blog": "blog",
     "search": "recherche",
     "settings": "paramètres",
     "back": "Retour"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Perspectives et actualités de la communauté npmx"
   },
   "settings": {
     "title": "paramètres",

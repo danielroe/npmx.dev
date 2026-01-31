@@ -26,6 +26,15 @@ onKeyStroke(',', e => {
   e.preventDefault()
   router.push('/settings')
 })
+onKeyStroke('.', e => {
+  const target = e.target as HTMLElement
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+    return
+  }
+
+  e.preventDefault()
+  router.push('/blog')
+})
 </script>
 
 <template>

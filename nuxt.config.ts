@@ -1,6 +1,8 @@
 import { currentLocales } from './config/i18n'
+import Markdown from 'unplugin-vue-markdown/vite'
 
 export default defineNuxtConfig({
+  extensions: ['.md'],
   modules: [
     function (_, nuxt) {
       if (nuxt.options._prepare) {
@@ -88,6 +90,7 @@ export default defineNuxtConfig({
     '/about': { prerender: true },
     '/settings': { prerender: true },
     // proxy for insights
+    '/blog/**': { isr: true, prerender: true },
     '/_v/script.js': { proxy: 'https://npmx.dev/_vercel/insights/script.js' },
     '/_v/view': { proxy: 'https://npmx.dev/_vercel/insights/view' },
     '/_v/event': { proxy: 'https://npmx.dev/_vercel/insights/event' },
@@ -176,6 +179,26 @@ export default defineNuxtConfig({
   },
 
   vite: {
+    vue: {
+      include: [/\.vue($|\?)/, /\.(md|markdown)($|\?)/],
+    },
+    plugins: [
+      Markdown({
+        include: [/\.(md|markdown)($|\?)/],
+        wrapperComponent: 'BlogPostWrapper',
+        async markdownItSetup(md) {
+          const shiki = await import('@shikijs/markdown-it')
+          md.use(
+            await shiki.default({
+              themes: {
+                dark: 'github-dark',
+                light: 'github-light',
+              },
+            }),
+          )
+        },
+      }),
+    ],
     optimizeDeps: {
       include: [
         '@vueuse/core',

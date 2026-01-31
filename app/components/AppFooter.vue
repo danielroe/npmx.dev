@@ -12,6 +12,12 @@
           >
             {{ $t('footer.about') }}
           </NuxtLink>
+          <NuxtLink
+            to="/blog"
+            class="link-subtle font-mono text-xs min-h-8 sm:min-h-11 flex items-center"
+          >
+            {{ $t('footer.blog') }}
+          </NuxtLink>
           <a
             href="https://docs.npmx.dev"
             target="_blank"

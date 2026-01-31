@@ -10,6 +10,7 @@
   "trademark_disclaimer": "npm is a registered trademark of npm, Inc. This site is not affiliated with npm, Inc.",
   "footer": {
     "about": "about",
+    "blog": "blog",
     "docs": "docs",
     "source": "source",
     "social": "social",
@@ -44,6 +45,10 @@
     "search": "search",
     "settings": "settings",
     "back": "back"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Insights and updates from the npmx community"
   },
   "settings": {
     "title": "settings",

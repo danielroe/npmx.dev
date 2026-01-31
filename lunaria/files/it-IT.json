@@ -41,9 +41,14 @@
   "nav": {
     "main_navigation": "Principale",
     "popular_packages": "Pacchetti popolari",
+    "blog": "blog",
     "search": "cerca",
     "settings": "impostazioni",
     "back": "Indietro"
+  },
+  "blog": {
+    "title": "Blog",
+    "description": "Approfondimenti e aggiornamenti dalla comunità npmx"
   },
   "settings": {
     "title": "impostazioni",
