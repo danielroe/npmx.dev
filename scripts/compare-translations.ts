@@ -1,5 +1,5 @@
-import { existsSync, readFileSync } from 'fs'
-import { join } from 'path'
+import { existsSync, readFileSync } from 'node:fs'
+import { join } from 'node:path'
 
 const LOCALES_DIRECTORY = join(process.cwd(), 'i18n/locales')
 const REFERENCE_FILE_NAME = 'en.json'
@@ -12,9 +12,11 @@ const COLORS = {
   yellow: '\x1b[33m',
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
-}
+} as const
 
-const validateInput = () => {
+type NestedObject = { [key: string]: unknown }
+
+const validateInput = (): void => {
   if (!TARGET_LOCALE_CODE) {
     console.error(
       `${COLORS.red}Error: Missing locale argument. Usage: pnpm i18n:check <locale>${COLORS.reset}`,
@@ -23,29 +25,36 @@ const validateInput = () => {
   }
 }
 
-const flattenObject = (obj, prefix = '') => {
-  return Object.keys(obj).reduce((acc, key) => {
+const flattenObject = (obj: NestedObject, prefix = ''): Record<string, unknown> => {
+  return Object.keys(obj).reduce<Record<string, unknown>>((acc, key) => {
     const propertyPath = prefix ? `${prefix}.${key}` : key
-    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
-      Object.assign(acc, flattenObject(obj[key], propertyPath))
+    const value = obj[key]
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      Object.assign(acc, flattenObject(value as NestedObject, propertyPath))
     } else {
-      acc[propertyPath] = obj[key]
+      acc[propertyPath] = value
     }
     return acc
   }, {})
 }
 
-const loadAndFlatten = locale => {
+const loadAndFlatten = (locale: string): string[] => {
   const filePath = join(LOCALES_DIRECTORY, locale.endsWith('.json') ? locale : `${locale}.json`)
   if (!existsSync(filePath)) {
     console.error(`${COLORS.red}Error: File not found at ${filePath}${COLORS.reset}`)
     process.exit(1)
   }
-  const content = JSON.parse(readFileSync(filePath, 'utf-8'))
+  const content = JSON.parse(readFileSync(filePath, 'utf-8')) as NestedObject
   return Object.keys(flattenObject(content))
 }
 
-const logSection = (title, keys, color, icon, emptyMessage) => {
+const logSection = (
+  title: string,
+  keys: string[],
+  color: string,
+  icon: string,
+  emptyMessage: string,
+): void => {
   console.log(`\n${color}${icon} ${title}${COLORS.reset}`)
   if (keys.length === 0) {
     console.log(`  ${COLORS.green}${emptyMessage}${COLORS.reset}`)
@@ -54,7 +63,7 @@ const logSection = (title, keys, color, icon, emptyMessage) => {
   keys.forEach(key => console.log(`  - ${key}`))
 }
 
-const run = () => {
+const run = (): void => {
   validateInput()
 
   const referenceKeys = loadAndFlatten(REFERENCE_FILE_NAME)
@@ -71,7 +80,7 @@ const run = () => {
     'MISSING KEYS (Path exists in en.json but not in target)',
     missingKeys,
     COLORS.yellow,
-    '⚠️ ',
+    '',
     'No missing keys found.',
   )
 
@@ -79,7 +88,7 @@ const run = () => {
     'EXTRANEOUS KEYS (Path exists in target but not in en.json)',
     extraneousKeys,
     COLORS.magenta,
-    '🗑️ ',
+    '',
     'No extraneous keys found.',
   )
 
