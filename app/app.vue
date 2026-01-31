@@ -75,7 +75,7 @@ function handleGlobalKeyup() {
 /* A hack to get light dismiss to work in safari because it does not support closedby="any" yet */
 // https://codepen.io/paramagicdev/pen/gbYompq
 // see: https://github.com/npmx-dev/npmx.dev/pull/522#discussion_r2749978022
-function handleModalLightDismiss(e: any) {
+function handleModalLightDismiss(e: MouseEvent) {
   const modal = document.querySelector<HTMLDialogElement>('dialog:modal')
   if (modal && modal.open && !e.composedPath().includes(modal)) {
     modal.close()
