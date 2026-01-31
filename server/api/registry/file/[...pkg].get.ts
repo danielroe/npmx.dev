@@ -6,7 +6,7 @@ import {
   ERROR_PACKAGE_VERSION_AND_FILE_FAILED,
 } from '#shared/utils/constants'
 
-const CACHE_VERSION = 2
+const CACHE_VERSION = 3
 
 // Maximum file size to fetch and highlight (500KB)
 const MAX_FILE_SIZE = 500 * 1024
@@ -106,7 +106,8 @@ export default defineCachedEventHandler(
 
     if (versionSegments.length < 2) {
       throw createError({
-        statusCode: 400,
+        // TODO: throwing 404 rather than 400 as it's cacheable
+        statusCode: 404,
         message: ERROR_PACKAGE_VERSION_AND_FILE_FAILED,
       })
     }

@@ -213,6 +213,7 @@
     "downloads": {
       "title": "週間ダウンロード数",
       "date_range": "{start} から {end}",
+      "date_range_multiline": "{start}\nから {end}",
       "analyze": "ダウンロード数を分析",
       "modal_title": "ダウンロード数",
       "granularity": "粒度",
@@ -590,7 +591,7 @@
       "view_profile": "{name} のGitHubプロフィールを表示"
     },
     "get_involved": {
-      "title": "参加るには",
+      "title": "参加するには",
       "contribute": {
         "title": "貢献する",
         "description": "より良いnpm体験の開発に協力してください。",

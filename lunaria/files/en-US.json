@@ -119,11 +119,12 @@
     "replacement": {
       "title": "You might not need this dependency.",
       "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
-      "simple": "The community has flagged this package as redundant, with the advice: {replacement}.",
-      "documented": "The community has flagged this package as having more performant alternatives.",
+      "simple": "The {community} has flagged this package as redundant, with the advice: {replacement}.",
+      "documented": "The {community} has flagged this package as having more performant alternatives.",
       "none": "This package has been flagged as no longer needed, and its functionality is likely available natively in all engines.",
       "learn_more": "Learn more",
-      "mdn": "MDN"
+      "mdn": "MDN",
+      "community": "community"
     },
     "stats": {
       "license": "License",
@@ -226,6 +227,7 @@
     "downloads": {
       "title": "Weekly Downloads",
       "date_range": "{start} to {end}",
+      "date_range_multiline": "{start}\nto {end}",
       "analyze": "Analyze downloads",
       "modal_title": "Downloads",
       "granularity": "Granularity",
@@ -328,7 +330,7 @@
       "size": "Size",
       "deps": "Deps",
       "updated": "Updated",
-      "install": "Install",
+      "get_started": "Get started",
       "readme": "Readme",
       "maintainers": "Maintainers",
       "keywords": "Keywords",
