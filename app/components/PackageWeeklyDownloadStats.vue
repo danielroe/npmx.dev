@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '../composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '../utils/colors'
@@ -8,7 +8,12 @@ const { packageName } = defineProps<{
   packageName: string
 }>()
 
-const showModal = shallowRef(false)
+function showChartModal() {
+  const chartModal = document.querySelector<HTMLDialogElement>('#chart-modal')
+  if (chartModal) {
+    chartModal.showModal()
+  }
+}
 
 const { data: packument } = usePackage(() => packageName)
 const createdIso = computed(() => packument.value?.time?.created ?? null)
@@ -195,7 +200,7 @@ const config = computed(() => {
       <template #actions>
         <button
           type="button"
-          @click="showModal = true"
+          @click="showChartModal"
           class="link-subtle font-mono text-sm inline-flex items-center gap-1.5 ms-auto shrink-0 self-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
           :title="$t('package.downloads.analyze')"
         >
@@ -242,28 +247,13 @@ const config = computed(() => {
     </CollapsibleSection>
   </div>
 
-  <ChartModal v-model:open="showModal">
-    <template #title>{{ $t('package.downloads.modal_title') }}</template>
-
+  <ChartModal>
     <PackageDownloadAnalytics
       :weeklyDownloads="weeklyDownloads"
       :inModal="true"
       :packageName="packageName"
       :createdIso="createdIso"
     />
-
-    <template #after="{ close }">
-      <div class="sm:hidden flex justify-center">
-        <button
-          type="button"
-          @click="close"
-          class="w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors"
-          :aria-label="$t('common.close')"
-        >
-          <span class="w-5 h-5 i-carbon:close" aria-hidden="true" />
-        </button>
-      </div>
-    </template>
   </ChartModal>
 </template>
 

@@ -33,7 +33,7 @@ function handleModalClose() {
         </button>
       </div>
       <!-- Modal body content -->
-      <slot></slot>
+      <slot />
     </dialog>
   </Teleport>
 </template>
