@@ -56,6 +56,7 @@ import DateTime from '~/components/DateTime.vue'
 import AppHeader from '~/components/AppHeader.vue'
 import AppFooter from '~/components/AppFooter.vue'
 import AppTooltip from '~/components/AppTooltip.vue'
+import AnnounceTooltip from '~/components/AnnounceTooltip.vue'
 import LoadingSpinner from '~/components/LoadingSpinner.vue'
 import JsrBadge from '~/components/JsrBadge.vue'
 import ProvenanceBadge from '~/components/ProvenanceBadge.vue'
@@ -74,8 +75,8 @@ import CodeDirectoryListing from '~/components/CodeDirectoryListing.vue'
 import CodeFileTree from '~/components/CodeFileTree.vue'
 import UserCombobox from '~/components/UserCombobox.vue'
 import ConnectorModal from '~/components/ConnectorModal.vue'
-import ConnectorStatusServer from '~/components/ConnectorStatus.server.vue'
-import ConnectorStatusClient from '~/components/ConnectorStatus.client.vue'
+import HeaderAccountMenuServer from '~/components/HeaderAccountMenu.server.vue'
+import HeaderAccountMenuClient from '~/components/HeaderAccountMenu.client.vue'
 import ClaimPackageModal from '~/components/ClaimPackageModal.vue'
 import OperationsQueue from '~/components/OperationsQueue.vue'
 import PackageList from '~/components/PackageList.vue'
@@ -99,6 +100,7 @@ import CompareFacetSelector from '~/components/compare/FacetSelector.vue'
 import ComparePackageSelector from '~/components/compare/PackageSelector.vue'
 import CompareFacetRow from '~/components/compare/FacetRow.vue'
 import CompareComparisonGrid from '~/components/compare/ComparisonGrid.vue'
+import PackageManagerSelect from '~/components/PackageManagerSelect.vue'
 
 describe('component accessibility audits', () => {
   describe('DateTime', () => {
@@ -190,6 +192,17 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(AppTooltip, {
         props: { text: 'Tooltip content' },
+        slots: { default: '<button>Trigger</button>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('AnnounceTooltip', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(AnnounceTooltip, {
+        props: { text: 'Tooltip content', isVisible: true },
         slots: { default: '<button>Trigger</button>' },
       })
       const results = await runAxe(component)
@@ -727,17 +740,17 @@ describe('component accessibility audits', () => {
     })
   })
 
-  describe('ConnectorStatus.server', () => {
+  describe('HeaderAccountMenu.server', () => {
     it('should have no accessibility violations', async () => {
-      const component = await mountSuspended(ConnectorStatusServer)
+      const component = await mountSuspended(HeaderAccountMenuServer)
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
   })
 
-  describe('ConnectorStatus.client', () => {
+  describe('HeaderAccountMenu.client', () => {
     it('should have no accessibility violations', async () => {
-      const component = await mountSuspended(ConnectorStatusClient)
+      const component = await mountSuspended(HeaderAccountMenuClient)
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
@@ -1388,6 +1401,14 @@ describe('component accessibility audits', () => {
           default: '<div>Grid content</div>',
         },
       })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('PackageManagerSelect', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(PackageManagerSelect)
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })

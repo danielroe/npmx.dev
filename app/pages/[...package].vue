@@ -2,7 +2,6 @@
 import type { NpmVersionDist, PackumentVersion, ReadmeResponse } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
-import { onKeyStroke } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 
@@ -84,6 +83,12 @@ const displayVersion = computed(() => {
   const latestTag = pkg.value['dist-tags']?.latest
   if (!latestTag) return null
   return pkg.value.versions[latestTag] ?? null
+})
+
+//copy package name
+const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
+  source: packageName,
+  copiedDuring: 2000,
 })
 
 // Fetch dependency analysis (lazy, client-side)
@@ -253,10 +258,6 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num)
-}
-
 function getDependencyCount(version: PackumentVersion | null): number {
   if (!version?.dependencies) return 0
   return Object.keys(version.dependencies).length
@@ -325,22 +326,32 @@ useSeoMeta({
   description: () => pkg.value?.description ?? '',
 })
 
-onKeyStroke('.', () => {
-  if (pkg.value && displayVersion.value) {
-    router.push({
-      name: 'code',
-      params: {
-        path: [pkg.value.name, 'v', displayVersion.value.version],
-      },
-    })
-  }
-})
+onKeyStroke(
+  '.',
+  e => {
+    if (pkg.value && displayVersion.value) {
+      e.preventDefault()
+      navigateTo({
+        name: 'code',
+        params: {
+          path: [pkg.value.name, 'v', displayVersion.value.version],
+        },
+      })
+    }
+  },
+  { dedupe: true },
+)
 
-onKeyStroke('d', () => {
-  if (docsLink.value) {
-    router.push(docsLink.value)
-  }
-})
+onKeyStroke(
+  'd',
+  e => {
+    if (docsLink.value) {
+      e.preventDefault()
+      navigateTo(docsLink.value)
+    }
+  },
+  { dedupe: true },
+)
 
 onKeyStroke('c', () => {
   if (pkg.value) {
@@ -351,8 +362,9 @@ onKeyStroke('c', () => {
 defineOgImageComponent('Package', {
   name: () => pkg.value?.name ?? 'Package',
   version: () => displayVersion.value?.version ?? '',
-  downloads: () => (downloads.value ? formatNumber(downloads.value.downloads) : ''),
+  downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
 })
 
 // We're using only @click because it catches touch events and enter hits
@@ -393,9 +405,19 @@ function handleClick(event: MouseEvent) {
                 :to="{ name: 'org', params: { org: orgName } }"
                 class="text-fg-muted hover:text-fg transition-colors duration-200"
                 >@{{ orgName }}</NuxtLink
-              ><span v-if="orgName">/</span
-              >{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+              ><span v-if="orgName">/</span>
+              <AnnounceTooltip :text="$t('common.copied')" :isVisible="copiedPkgName">
+                <button
+                  @click="copyPkgName()"
+                  aria-describedby="copy-pkg-name"
+                  class="cursor-copy ms-1 mt-1 active:scale-95 transition-transform"
+                >
+                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                </button>
+              </AnnounceTooltip>
             </h1>
+
+            <span id="copy-pkg-name" class="sr-only">{{ $t('package.copy_name') }}</span>
             <span
               v-if="displayVersion"
               class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
@@ -512,7 +534,7 @@ function handleClick(event: MouseEvent) {
           <!-- Description container with min-height to prevent CLS -->
           <div class="max-w-2xl min-h-[4.5rem]">
             <p v-if="pkg.description" class="text-fg-muted text-base m-0">
-              <MarkdownText :text="pkg.description" />
+              <MarkdownText :text="pkg.description" :package-name="pkg.name" />
             </p>
             <p v-else class="text-fg-subtle text-base m-0 italic">
               {{ $t('package.no_description') }}
@@ -827,8 +849,8 @@ function handleClick(event: MouseEvent) {
           <h2 id="run-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
             {{ $t('package.run.title') }}
           </h2>
-          <!-- Package manager tabs -->
-          <PackageManagerTabs />
+          <!-- Package manager dropdown -->
+          <PackageManagerSelect />
         </div>
         <div
           role="tabpanel"
@@ -861,8 +883,8 @@ function handleClick(event: MouseEvent) {
               />
             </a>
           </h2>
-          <!-- Package manager tabs -->
-          <PackageManagerTabs />
+          <!-- Package manager dropdown -->
+          <PackageManagerSelect />
         </div>
         <div
           role="tabpanel"
@@ -1100,18 +1122,21 @@ function handleClick(event: MouseEvent) {
   grid-area: header;
   overflow-x: hidden;
 }
+
 .area-install {
   grid-area: install;
-  overflow-x: hidden;
 }
+
 .area-vulns {
   grid-area: vulns;
   overflow-x: hidden;
 }
+
 .area-readme {
   grid-area: readme;
   overflow-x: hidden;
 }
+
 .area-sidebar {
   grid-area: sidebar;
 }

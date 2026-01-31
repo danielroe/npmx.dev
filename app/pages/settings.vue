@@ -6,12 +6,17 @@ const colorMode = useColorMode()
 const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
 
 // Escape to go back (but not when focused on form elements)
-onKeyStroke('Escape', e => {
-  const target = e.target as HTMLElement
-  if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(target?.tagName)) {
-    router.back()
-  }
-})
+onKeyStroke(
+  'Escape',
+  e => {
+    const target = e.target as HTMLElement
+    if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(target?.tagName)) {
+      e.preventDefault()
+      router.back()
+    }
+  },
+  { dedupe: true },
+)
 
 useSeoMeta({
   title: () => `${$t('settings.title')} - npmx`,
@@ -21,6 +26,7 @@ useSeoMeta({
 defineOgImageComponent('Default', {
   title: () => $t('settings.title'),
   description: () => $t('settings.tagline'),
+  primaryColor: '#60a5fa',
 })
 </script>
 

@@ -5,6 +5,9 @@
       "description": "Lepsza przeglądarka rejestru npm. Wyszukuj, przeglądaj i odkrywaj pakiety w nowoczesnym interfejsie."
     }
   },
+  "version": "Wersja",
+  "built_at": "zbudowano {0}",
+  "alt_logo": "npmx logo",
   "tagline": "lepsza przeglądarka rejestru npm",
   "non_affiliation_disclaimer": "niepowiązane z npm, Inc.",
   "trademark_disclaimer": "npm jest zarejestrowanym znakiem towarowym npm, Inc. Ta strona nie jest powiązana z npm, Inc.",
@@ -111,6 +114,7 @@
     "verified_provenance": "Zweryfikowane pochodzenie",
     "view_permalink": "Zobacz stały link do tej wersji",
     "navigation": "Pakiet",
+    "copy_name": "Kopiuj nazwę pakietu",
     "deprecation": {
       "package": "Ten pakiet został oznaczony jako przestarzały.",
       "version": "Ta wersja została oznaczona jako przestarzała.",
@@ -191,14 +195,18 @@
       "other_versions": "Inne wersje",
       "more_tagged": "jeszcze {count}",
       "all_covered": "Wszystkie wersje są objęte powyższymi tagami",
-      "deprecated_title": "{version} (przestarzała)"
+      "deprecated_title": "{version} (przestarzała)",
+      "view_all": "Zobacz wszystkie {count} wersje | Zobacz {count} wersję | Zobacz {count} wersje | Zobacz {count} wersji | Zobacz {count} wersji"
     },
     "dependencies": {
       "title": "Zależności ({count})",
       "list_label": "Zależności pakietu",
       "show_all": "pokaż wszystkie ({count})",
       "optional": "opcjonalne",
-      "view_vulnerabilities": "Zobacz luki"
+      "view_vulnerabilities": "Zobacz luki",
+      "outdated_major": "{count} wersji głównych w tyle (najnowsza: {latest}) | {count} wersja główna w tyle (najnowsza: {latest}) | {count} wersje główne w tyle (najnowsza: {latest}) | {count} wersji głównych w tyle (najnowsza: {latest}) | {count} wersji głównych w tyle (najnowsza: {latest})",
+      "outdated_minor": "{count} wersji minor w tyle (najnowsza: {latest}) | {count} wersja minor w tyle (najnowsza: {latest}) | {count} wersje minor w tyle (najnowsza: {latest}) | {count} wersji minor w tyle (najnowsza: {latest}) | {count} wersji minor w tyle (najnowsza: {latest})",
+      "outdated_patch": "Dostępna poprawka (najnowsza: {latest})"
     },
     "peer_dependencies": {
       "title": "Zależności peer ({count})",
@@ -257,6 +265,7 @@
       "esm": "Obsługuje ES Modules",
       "cjs": "Obsługuje CommonJS",
       "no_esm": "Brak obsługi ES Modules",
+      "types_label": "Typy",
       "types_included": "Typy w pakiecie",
       "types_available": "Typy dostępne przez {package}",
       "no_types": "Brak typów TypeScript"
@@ -357,9 +366,8 @@
     },
     "modal": {
       "title": "Lokalny konektor",
-      "close_modal": "Zamknij okno",
       "connected": "Połączono",
-      "logged_in_as": "Zalogowano jako {'@'}{user}",
+      "connected_as_user": "Połączono jako ~{user}",
       "connected_hint": "Możesz teraz zarządzać pakietami i organizacjami z poziomu interfejsu WWW.",
       "disconnect": "Rozłącz",
       "run_hint": "Uruchom konektor na swoim komputerze, aby włączyć funkcje administracyjne.",
@@ -374,6 +382,34 @@
       "warning_text": "To pozwala npmx uzyskać dostęp do twojego npm CLI. Łącz się tylko ze stronami, którym ufasz.",
       "connect": "Połącz",
       "connecting": "Łączenie..."
+    }
+  },
+  "account_menu": {
+    "connect": "połącz",
+    "account": "Konto",
+    "npm_cli": "npm CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "Zarządzaj pakietami i organizacjami",
+    "atmosphere_desc": "Funkcje społecznościowe i tożsamość",
+    "connect_npm_cli": "Połącz z npm CLI",
+    "connect_atmosphere": "Połącz z Atmosphere",
+    "connecting": "Łączenie...",
+    "ops": "{count} operacja | {count} operacje | {count} operacji | {count} operacji | {count} operacji",
+    "disconnect": "Rozłącz"
+  },
+  "auth": {
+    "modal": {
+      "title": "Atmosphere",
+      "connected_as": "Połączono jako {'@'}{handle}",
+      "disconnect": "Rozłącz",
+      "connect_prompt": "Połącz się ze swoim kontem Atmosphere",
+      "handle_label": "Identyfikator",
+      "handle_placeholder": "alice.npmx.social",
+      "connect": "Połącz",
+      "create_account": "Utwórz nowe konto",
+      "connect_bluesky": "Połącz z Bluesky",
+      "what_is_atmosphere": "Czym jest konto Atmosphere?",
+      "atmosphere_explanation": "{npmx} używa {atproto} do zasilania wielu funkcji społecznościowych, umożliwiając użytkownikom posiadanie swoich danych i korzystanie z jednego konta we wszystkich kompatybilnych aplikacjach. Gdy utworzysz konto, możesz używać innych aplikacji, takich jak {bluesky} i {tangled}, z tym samym kontem."
     }
   },
   "operations": {
@@ -505,7 +541,6 @@
   "claim": {
     "modal": {
       "title": "Zajmij nazwę pakietu",
-      "close_modal": "Zamknij okno",
       "success": "Pakiet zajęty!",
       "success_detail": "Opublikowano {name}{'@'}0.0.0 na npm.",
       "success_hint": "Możesz teraz publikować nowe wersje tego pakietu używając npm publish.",
