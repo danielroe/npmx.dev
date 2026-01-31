@@ -45,6 +45,10 @@ export async function getShikiHighlighter(): Promise<HighlighterCore> {
         import('@shikijs/langs/rust'),
         import('@shikijs/langs/go'),
       ],
+      langAlias: {
+        gjs: 'glimmer-js',
+        gts: 'glimmer-ts',
+      },
       engine: createJavaScriptRegexEngine(),
     })
   }
