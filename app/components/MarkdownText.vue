@@ -10,22 +10,17 @@ const props = defineProps<{
 // Strip markdown image badges from text
 function stripMarkdownImages(text: string): string {
   // Remove linked images: [![alt](image-url)](link-url) - handles incomplete URLs too
-  text = text.replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)?/g, '')
+  // Using {0,500} instead of * to prevent ReDoS on pathological inputs
+  text = text.replace(/\[!\[[^\]]{0,500}\]\([^)]{0,2000}\)\]\([^)]{0,2000}\)?/g, '')
   // Remove standalone images: ![alt](url)
-  text = text.replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+  text = text.replace(/!\[[^\]]{0,500}\]\([^)]{0,2000}\)/g, '')
   // Remove any leftover empty links or broken markdown link syntax
-  text = text.replace(/\[\]\([^)]*\)?/g, '')
+  text = text.replace(/\[\]\([^)]{0,2000}\)?/g, '')
   return text.trim()
 }
 
 // Strip HTML tags and escape remaining HTML to prevent XSS
 function stripAndEscapeHtml(text: string): string {
-  // Check if text contains actual HTML tags (tags that start with a letter or /)
-  // This avoids matching things like "a < b > c"
-  const hasHtmlTags = /<\/?[a-z][^>]*>/i.test(text)
-  // Check if text contains markdown images
-  const hasMarkdownImages = /!\[[^\]]*\]\([^)]*\)/.test(text)
-
   // First strip markdown image badges
   let stripped = stripMarkdownImages(text)
 
@@ -33,8 +28,7 @@ function stripAndEscapeHtml(text: string): string {
   // Only match tags that start with a letter or / (to avoid matching things like "a < b > c")
   stripped = stripped.replace(/<\/?[a-z][^>]*>/gi, '')
 
-  // Remove redundant package name only if original text had HTML tags or markdown images
-  if ((hasHtmlTags || hasMarkdownImages) && props.packageName) {
+  if (props.packageName) {
     // Trim first to handle leading/trailing whitespace from stripped HTML
     stripped = stripped.trim()
     // Collapse multiple whitespace into single space
@@ -60,7 +54,6 @@ function parseMarkdown(text: string): string {
   if (!text) return ''
 
   // First strip HTML tags and escape remaining HTML
-  // (package name removal happens inside stripAndEscapeHtml if HTML tags were present)
   let html = stripAndEscapeHtml(text)
 
   // Bold: **text** or __text__
