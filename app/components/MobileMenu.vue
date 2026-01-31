@@ -11,6 +11,16 @@ function closeMenu() {
   isOpen.value = false
 }
 
+function handleShowConnector() {
+  showConnectorModal.value = true
+  closeMenu()
+}
+
+function handleShowAuth() {
+  showAuthModal.value = true
+  closeMenu()
+}
+
 // Close menu on route change
 const route = useRoute()
 watch(() => route.fullPath, closeMenu)
@@ -203,10 +213,7 @@ watch(isOpen, open => (isLocked.value = open))
                 v-if="isConnected && npmUser"
                 type="button"
                 class="w-full flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200 text-start"
-                @click="
-                  showConnectorModal = true
-                  closeMenu()
-                "
+                @click="handleShowConnector"
               >
                 <img
                   v-if="npmAvatar"
@@ -231,10 +238,7 @@ watch(isOpen, open => (isLocked.value = open))
                 v-if="atprotoUser"
                 type="button"
                 class="w-full flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200 text-start"
-                @click="
-                  showAuthModal = true
-                  closeMenu()
-                "
+                @click="handleShowAuth"
               >
                 <span class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center">
                   <span class="i-carbon-cloud w-3 h-3 text-fg-muted" aria-hidden="true" />
@@ -247,10 +251,7 @@ watch(isOpen, open => (isLocked.value = open))
                 v-else
                 type="button"
                 class="w-full flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200 text-start"
-                @click="
-                  showAuthModal = true
-                  closeMenu()
-                "
+                @click="handleShowAuth"
               >
                 <span class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center">
                   <span class="i-carbon-cloud w-3 h-3 text-fg-muted" aria-hidden="true" />
