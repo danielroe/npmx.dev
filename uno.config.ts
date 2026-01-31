@@ -25,8 +25,8 @@ export default defineConfig({
       },
     }),
     // keep this preset last
-    presetRtl(),
-  ],
+    process.env.CI ? undefined : presetRtl(),
+  ].filter(Boolean),
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
     font: {
