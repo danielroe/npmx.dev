@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  label: string
+  label?: string
   description?: string
 }>()
 
@@ -17,7 +17,7 @@ const checked = defineModel<boolean>({
     :aria-checked="checked"
     @click="checked = !checked"
   >
-    <span class="text-sm text-fg font-medium text-start">
+    <span v-if="label" class="text-sm text-fg font-medium text-start">
       {{ label }}
     </span>
     <span
