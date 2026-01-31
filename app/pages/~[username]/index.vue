@@ -24,27 +24,40 @@ const updateUrl = debounce((updates: { page?: number; filter?: string; sort?: st
       ...route.query,
       page: updates.page && updates.page > 1 ? updates.page : undefined,
       q: updates.filter || undefined,
-      sort: updates.sort && updates.sort !== 'downloads' ? updates.sort : undefined,
+      sort: updates.sort && updates.sort !== 'downloads-desc' ? updates.sort : undefined,
     },
   })
 }, 300)
 
-type SortOption = 'downloads' | 'updated' | 'name-asc' | 'name-desc'
+type SortOption =
+  | 'downloads-desc'
+  | 'downloads-asc'
+  | 'updated-desc'
+  | 'updated-asc'
+  | 'name-asc'
+  | 'name-desc'
 
 // Filter and sort state (from URL)
 const filterText = shallowRef(
   (Array.isArray(route.query.q) ? route.query.q[0] : route.query.q) ?? '',
 )
-const sortOption = shallowRef<SortOption>(
-  ((Array.isArray(route.query.sort) ? route.query.sort[0] : route.query.sort) as SortOption) ||
-    'downloads',
-)
+const rawSort = (Array.isArray(route.query.sort) ? route.query.sort[0] : route.query.sort) as
+  | SortOption
+  | 'downloads'
+  | 'updated'
+  | undefined
+const normalizedSort: SortOption =
+  rawSort === 'downloads'
+    ? 'downloads-desc'
+    : rawSort === 'updated'
+      ? 'updated-desc'
+      : (rawSort ?? 'downloads-desc')
+
+const sortOption = shallowRef<SortOption>(normalizedSort)
 
 // Track if we've loaded all results (one-way flag, doesn't reset)
 // Initialize to true if URL already has filter/sort params
-const hasLoadedAll = shallowRef(
-  Boolean(route.query.q) || (route.query.sort && route.query.sort !== 'downloads'),
-)
+const hasLoadedAll = shallowRef(Boolean(route.query.q) || normalizedSort !== 'downloads-desc')
 
 // Update URL when filter/sort changes (debounced)
 const debouncedUpdateUrl = debounce((filter: string, sort: string) => {
@@ -53,7 +66,7 @@ const debouncedUpdateUrl = debounce((filter: string, sort: string) => {
 
 watch([filterText, sortOption], ([filter, sort]) => {
   // Once user interacts with filter/sort, load all results
-  if (!hasLoadedAll.value && (filter !== '' || sort !== 'downloads')) {
+  if (!hasLoadedAll.value && (filter !== '' || sort !== 'downloads-desc')) {
     hasLoadedAll.value = true
   }
   debouncedUpdateUrl(filter, sort)
@@ -104,11 +117,18 @@ const filteredAndSortedPackages = computed(() => {
 
   // Apply sort
   switch (sortOption.value) {
-    case 'updated':
+    case 'updated-desc':
       pkgs.sort((a, b) => {
         const dateA = a.package.date || ''
         const dateB = b.package.date || ''
         return dateB.localeCompare(dateA)
+      })
+      break
+    case 'updated-asc':
+      pkgs.sort((a, b) => {
+        const dateA = a.package.date || ''
+        const dateB = b.package.date || ''
+        return dateA.localeCompare(dateB)
       })
       break
     case 'name-asc':
@@ -117,7 +137,10 @@ const filteredAndSortedPackages = computed(() => {
     case 'name-desc':
       pkgs.sort((a, b) => b.package.name.localeCompare(a.package.name))
       break
-    case 'downloads':
+    case 'downloads-asc':
+      pkgs.sort((a, b) => (a.downloads?.weekly ?? 0) - (b.downloads?.weekly ?? 0))
+      break
+    case 'downloads-desc':
     default:
       pkgs.sort((a, b) => (b.downloads?.weekly ?? 0) - (a.downloads?.weekly ?? 0))
       break
@@ -158,7 +181,7 @@ function handlePageChange(page: number) {
 watch(username, () => {
   currentPage.value = 1
   filterText.value = ''
-  sortOption.value = 'downloads'
+  sortOption.value = 'downloads-desc'
   hasLoadedAll.value = false
 })
 

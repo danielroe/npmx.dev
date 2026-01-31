@@ -1,5 +1,11 @@
 <script setup lang="ts">
-export type SortOption = 'downloads' | 'updated' | 'name-asc' | 'name-desc'
+export type SortOption =
+  | 'downloads-desc'
+  | 'downloads-asc'
+  | 'updated-desc'
+  | 'updated-asc'
+  | 'name-asc'
+  | 'name-desc'
 
 const props = defineProps<{
   /** Current search/filter text */
@@ -32,8 +38,10 @@ const sortValue = computed({
 const sortOptions = computed(
   () =>
     [
-      { value: 'downloads', label: $t('package.sort.downloads') },
-      { value: 'updated', label: $t('package.sort.updated') },
+      { value: 'downloads-desc', label: $t('package.sort.downloads_desc') },
+      { value: 'downloads-asc', label: $t('package.sort.downloads_asc') },
+      { value: 'updated-desc', label: $t('package.sort.updated_desc') },
+      { value: 'updated-asc', label: $t('package.sort.updated_asc') },
       { value: 'name-asc', label: $t('package.sort.name_asc') },
       { value: 'name-desc', label: $t('package.sort.name_desc') },
     ] as const,
