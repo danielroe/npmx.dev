@@ -1,60 +1,76 @@
 <template>
-  <div class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  <Transition name="fade">
     <div
-      class="cmdbar-container flex items-center justify-center border border-border shadow-lg rounded-xl bg-bg p2 flex-col gap-2"
+      class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      v-show="show"
     >
-      <label for="command-input" class="sr-only">command-input</label>
+      <div
+        class="cmdbar-container flex items-center justify-center border border-border shadow-lg rounded-xl bg-bg p2 flex-col gap-2"
+      >
+        <label for="command-input" class="sr-only">command-input</label>
 
-      <input
-        type="text"
-        label="Enter command..."
-        v-model="inputVal"
-        id="command-input"
-        class="w-96 h-12 px-4 text-fg outline-none bg-bg-subtle border border-border rounded-md"
-        placeholder="Enter command..."
-      />
+        <input
+          type="text"
+          label="Enter command..."
+          v-model="inputVal"
+          id="command-input"
+          ref="inputRef"
+          class="w-xl h-12 px-4 text-fg outline-none bg-bg-subtle border border-border rounded-md"
+          placeholder="Enter command..."
+          @keydown="handleKeydown"
+        />
 
-      <div class="w-96 h-48 overflow-auto">
-        <div
-          v-for="item in filteredCmdList"
-          :key="item.id"
-          class="flex-col items-center justify-between px-4 py-2 not-first:mt-2 hover:bg-bg-subtle select-none cursor-pointer rounded-md"
-          :class="{ 'bg-bg-subtle': item.id === selected }"
-        >
-          <div class="text-fg">{{ item.name }}</div>
-          <div class="text-fg-subtle">{{ item.description }}</div>
+        <div class="w-xl h-lg overflow-auto">
+          <div
+            v-for="item in filteredCmdList"
+            :key="item.id"
+            class="flex-col items-center justify-between px-4 py-2 not-first:mt-2 hover:bg-bg-elevated select-none cursor-pointer rounded-md transition"
+            :class="{ 'bg-bg-subtle': item.id === selected }"
+            @click="triggerCommand(item.id)"
+          >
+            <div class="text-fg">{{ item.name }}</div>
+            <div class="text-fg-subtle text-sm">{{ item.description }}</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <script setup lang="ts">
 const cmdList = [
   {
-    id: 'npmx',
-    name: 'npmx',
-    description: 'Run npmx commands',
+    id: 'package:search',
+    name: 'Search packages',
+    description: 'Search for packages',
+    handler: () => {},
   },
   {
-    id: 'npmx-init',
-    name: 'npmx init',
-    description: 'Initialize a new npmx project',
+    id: 'org:search',
+    name: 'Search organizations',
+    description: 'Search for organizations',
+    handler: () => {},
   },
   {
-    id: 'npmx-install',
-    name: 'npmx install',
-    description: 'Install npmx dependencies',
+    id: 'package:like',
+    name: 'Like this',
+    description: 'Like this package',
+    handler: () => {},
   },
   {
-    id: 'npmx-run',
-    name: 'npmx run',
-    description: 'Run npmx scripts',
+    id: 'package:install',
+    name: 'Copy install command',
+    description: 'Copy install command to clipboard',
+    handler: () => {},
   },
 ]
 
 const selected = ref(cmdList[0]?.id || '')
 const inputVal = ref('')
+const show = ref(false)
+const inputRef = useTemplateRef('inputRef')
+
+const { focused: inputFocused } = useFocus(inputRef)
 
 const filteredCmdList = computed(() => {
   if (!inputVal.value) {
@@ -77,4 +93,80 @@ watch(
     }
   },
 )
+
+function focusInput() {
+  inputFocused.value = true
+}
+
+function open() {
+  inputVal.value = ''
+  selected.value = cmdList[0]?.id || ''
+  show.value = true
+  nextTick(focusInput)
+}
+
+function close() {
+  inputVal.value = ''
+  selected.value = cmdList[0]?.id || ''
+  show.value = false
+}
+
+function toggle() {
+  if (show.value) {
+    close()
+  } else {
+    open()
+  }
+}
+
+function triggerCommand(id: string) {
+  const selectedItem = filteredCmdList.value.find(item => item.id === id)
+  selectedItem?.handler?.()
+  close()
+}
+
+const handleKeydown = useThrottleFn((e: KeyboardEvent) => {
+  if (!filteredCmdList.value.length) return
+
+  const currentIndex = filteredCmdList.value.findIndex(item => item.id === selected.value)
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault()
+    const nextIndex = (currentIndex + 1) % filteredCmdList.value.length
+    selected.value = filteredCmdList.value[nextIndex]?.id || ''
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault()
+    const prevIndex =
+      (currentIndex - 1 + filteredCmdList.value.length) % filteredCmdList.value.length
+    selected.value = filteredCmdList.value[prevIndex]?.id || ''
+  } else if (e.key === 'Enter') {
+    e.preventDefault()
+    triggerCommand(selected.value)
+  } else if (e.key === 'Escape') {
+    e.preventDefault()
+    close()
+  }
+}, 50)
+
+defineExpose({
+  open,
+  close,
+  toggle,
+})
 </script>
+
+<style scoped>
+.fade-enter-active {
+  transition: all 0.05s ease-out;
+}
+
+.fade-leave-active {
+  transition: all 0.1s ease-in;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+</style>
