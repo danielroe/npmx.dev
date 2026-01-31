@@ -755,7 +755,7 @@
       "disconnect": "Disconnect",
       "connect_prompt": "Connect with your Atmosphere account",
       "handle_label": "Handle",
-      "handle_placeholder": "alice.bsky.social",
+      "handle_placeholder": "alice.npmx.social",
       "connect": "Connect",
       "create_account": "Create a new account",
       "connect_bluesky": "Connect with Bluesky",
