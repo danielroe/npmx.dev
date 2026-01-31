@@ -89,7 +89,7 @@ function createLoader(): (
     }
 
     try {
-      const response = await $fetch.raw(url.toString(), {
+      const response = await $fetch.raw<string>(url.toString(), {
         method: 'GET',
         timeout: FETCH_TIMEOUT_MS,
         redirect: 'follow',
@@ -99,7 +99,7 @@ function createLoader(): (
         return undefined
       }
 
-      const content = await response.text()
+      const content = response._data ?? ''
       const headers: Record<string, string> = {}
       for (const [key, value] of response.headers) {
         headers[key.toLowerCase()] = value
