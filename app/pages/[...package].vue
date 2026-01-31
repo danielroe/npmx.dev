@@ -310,34 +310,6 @@ const createPackageInfo = computed(() => {
   return packageAnalysis.value.createPackage
 })
 
-// Expandable description
-const descriptionExpanded = ref(false)
-const descriptionRef = useTemplateRef('descriptionRef')
-const descriptionOverflows = ref(false)
-
-// Check if description overflows on mount/update
-function checkDescriptionOverflow() {
-  if (descriptionRef.value) {
-    const paragraph = descriptionRef.value.querySelector('p')
-    if (paragraph) {
-      // Compare scrollHeight to the fixed container height (3 lines ~= 72px)
-      descriptionOverflows.value = paragraph.scrollHeight > 72
-    }
-  }
-}
-
-watch(
-  () => pkg.value?.description,
-  () => {
-    descriptionExpanded.value = false
-    nextTick(checkDescriptionOverflow)
-  },
-)
-
-onMounted(() => {
-  nextTick(checkDescriptionOverflow)
-})
-
 // Canonical URL for this package page
 const canonicalUrl = computed(() => {
   const base = `https://npmx.dev/${packageName.value}`
@@ -375,6 +347,7 @@ defineOgImageComponent('Package', {
   version: () => displayVersion.value?.version ?? '',
   downloads: () => (downloads.value ? formatNumber(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
 })
 
 // We're using only @click because it catches touch events and enter hits
@@ -517,32 +490,14 @@ function handleClick(event: MouseEvent) {
             </nav>
           </div>
 
-          <!-- Fixed height description container to prevent CLS -->
-          <div ref="descriptionRef" class="relative max-w-2xl min-h-[4.5rem]">
-            <p
-              v-if="pkg.description"
-              class="text-fg-muted text-base m-0 overflow-hidden"
-              :class="descriptionExpanded ? '' : 'max-h-[4.5rem]'"
-            >
-              <MarkdownText :text="pkg.description" />
+          <!-- Description container with min-height to prevent CLS -->
+          <div class="max-w-2xl min-h-[4.5rem]">
+            <p v-if="pkg.description" class="text-fg-muted text-base m-0">
+              <MarkdownText :text="pkg.description" :package-name="pkg.name" />
             </p>
             <p v-else class="text-fg-subtle text-base m-0 italic">
               {{ $t('package.no_description') }}
             </p>
-            <!-- Fade overlay with show more button - only when collapsed and overflowing -->
-            <div
-              v-if="pkg.description && descriptionOverflows && !descriptionExpanded"
-              class="absolute bottom-0 inset-is-0 inset-ie-0 h-10 bg-gradient-to-t from-bg via-bg/90 to-transparent flex items-end justify-end"
-            >
-              <button
-                type="button"
-                class="font-mono text-xs text-fg-muted hover:text-fg bg-bg px-1 transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-                :aria-label="$t('package.show_full_description')"
-                @click="descriptionExpanded = true"
-              >
-                {{ $t('common.show_more') }}
-              </button>
-            </div>
           </div>
 
           <!-- External links -->
@@ -844,8 +799,8 @@ function handleClick(event: MouseEvent) {
           <h2 id="run-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
             {{ $t('package.run.title') }}
           </h2>
-          <!-- Package manager tabs -->
-          <PackageManagerTabs />
+          <!-- Package manager dropdown -->
+          <PackageManagerSelect />
         </div>
         <div
           role="tabpanel"
@@ -878,8 +833,8 @@ function handleClick(event: MouseEvent) {
               />
             </a>
           </h2>
-          <!-- Package manager tabs -->
-          <PackageManagerTabs />
+          <!-- Package manager dropdown -->
+          <PackageManagerSelect />
         </div>
         <div
           role="tabpanel"
@@ -1117,18 +1072,21 @@ function handleClick(event: MouseEvent) {
   grid-area: header;
   overflow-x: hidden;
 }
+
 .area-install {
   grid-area: install;
-  overflow-x: hidden;
 }
+
 .area-vulns {
   grid-area: vulns;
   overflow-x: hidden;
 }
+
 .area-readme {
   grid-area: readme;
   overflow-x: hidden;
 }
+
 .area-sidebar {
   grid-area: sidebar;
 }

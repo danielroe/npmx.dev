@@ -16,15 +16,15 @@
     "chat": "Chat"
   },
   "search": {
-    "results": "Suchergebnisse",
     "label": "npm-Pakete durchsuchen",
     "placeholder": "Pakete suchen...",
     "button": "Suchen",
     "clear": "Suche löschen",
     "searching": "Suche läuft...",
-    "found_packages": "{count} Pakete gefunden",
+    "found_packages": "Keine Pakete gefunden | 1 Paket gefunden | {count} Pakete gefunden",
     "updating": "(wird aktualisiert...)",
     "no_results": "Keine Pakete gefunden für \"{query}\"",
+    "results": "Suchergebnisse",
     "not_taken": "{name} ist noch frei",
     "claim_prompt": "Diesen Paketnamen auf npm beanspruchen",
     "claim_button": "\"{name}\" beanspruchen",
@@ -58,6 +58,8 @@
     "relative_dates_description": "Zeige Daten relativ zur aktuellen Zeit an (z.B. 'vor 2 Tagen')",
     "include_types": "{'@'}types bei Installation einschließen",
     "include_types_description": "TypeScript-Typdefinitionen ({'@'}types-Pakete) automatisch bei Installationsbefehlen einschließen",
+    "hide_platform_packages": "Plattformspezifische Pakete in der Suche ausblenden",
+    "hide_platform_packages_description": "Native Binärpakete wie {'@'}esbuild/linux-x64 aus den Ergebnissen ausblenden",
     "theme": "Design",
     "theme_light": "Hell",
     "theme_dark": "Dunkel",
@@ -114,13 +116,28 @@
       "version": "Diese Version ist veraltet.",
       "no_reason": "Kein Grund angegeben"
     },
+    "replacement": {
+      "title": "Du brauchst diese Abhängigkeit vielleicht nicht.",
+      "native": "Dies kann durch {replacement} ersetzt werden, verfügbar seit Node {nodeVersion}.",
+      "simple": "Die {community} hat dieses Paket als überflüssig markiert und empfiehlt: {replacement}.",
+      "documented": "Die {community} hat dieses Paket als eines mit leistungsstärkeren Alternativen markiert.",
+      "none": "Dieses Paket wurde als nicht mehr nötig markiert, und seine Funktionen sind wahrscheinlich in allen Engines von Haus aus verfügbar.",
+      "learn_more": "Mehr erfahren",
+      "mdn": "MDN",
+      "community": "Community"
+    },
     "stats": {
       "license": "Lizenz",
       "deps": "Deps",
       "install_size": "Installationsgröße",
+      "vulns": "Vulns",
       "updated": "Aktualisiert",
       "view_dependency_graph": "Abhängigkeitsgraph anzeigen",
-      "inspect_dependency_tree": "Abhängigkeitsbaum untersuchen"
+      "inspect_dependency_tree": "Abhängigkeitsbaum untersuchen",
+      "size_tooltip": {
+        "unpacked": "{size} Größe nach dem Auspacken (dieses Paket)",
+        "total": "{size} Gesamtgröße nach dem Entpacken (inklusive aller {count} Abhängigkeiten für Linux-x64)"
+      }
     },
     "links": {
       "repo": "Repo",
@@ -174,14 +191,18 @@
       "other_versions": "Weitere Versionen",
       "more_tagged": "{count} weitere getaggt",
       "all_covered": "Alle Versionen sind durch obige Tags abgedeckt",
-      "deprecated_title": "{version} (veraltet)"
+      "deprecated_title": "{version} (veraltet)",
+      "view_all": "{count} Version anzeigen | Alle {count} Versionen anzeigen"
     },
     "dependencies": {
       "title": "Abhängigkeiten ({count})",
       "list_label": "Paketabhängigkeiten",
       "show_all": "alle {count} Deps anzeigen",
       "optional": "optional",
-      "view_vulnerabilities": "Sicherheitslücken anzeigen"
+      "view_vulnerabilities": "Sicherheitslücken anzeigen",
+      "outdated_major": "{count} Hauptversion zurück (neueste: {latest}) | {count} Hauptversionen zurück (neueste: {latest})",
+      "outdated_minor": "{count} Nebenversion zurück (neueste: {latest}) | {count} Nebenversionen zurück (neueste: {latest})",
+      "outdated_patch": "Patch-Update verfügbar (aktuellste Version: {latest})"
     },
     "peer_dependencies": {
       "title": "Peer-Abhängigkeiten ({count})",
@@ -210,6 +231,7 @@
     "downloads": {
       "title": "Wöchentliche Downloads",
       "date_range": "{start} bis {end}",
+      "date_range_multiline": "{start}\nbis {end}",
       "analyze": "Downloads analysieren",
       "modal_title": "Downloads",
       "granularity": "Granularität",
@@ -221,7 +243,9 @@
       "end_date": "Ende",
       "no_data": "Keine Download-Daten verfügbar",
       "loading": "Lädt...",
-      "y_axis_label": "{granularity} Downloads"
+      "y_axis_label": "{granularity} Downloads",
+      "download_file": "{fileType} herunterladen",
+      "toggle_annotator": "Annotation umschalten"
     },
     "install_scripts": {
       "title": "Installationsskripte",
@@ -240,6 +264,7 @@
       "esm": "ESM",
       "cjs": "CJS",
       "no_esm": "Kein ESM",
+      "types_label": "Typen",
       "types_included": "Typen enthalten",
       "types_available": "Typen verfügbar",
       "no_types": "Keine Typen"
@@ -310,7 +335,7 @@
       "size": "Größe",
       "deps": "Deps",
       "updated": "Aktualisiert",
-      "install": "Installieren",
+      "get_started": "Loslegen",
       "readme": "Readme",
       "maintainers": "Maintainer",
       "keywords": "Schlüsselwörter",
@@ -327,7 +352,7 @@
   "connector": {
     "status": {
       "connecting": "Verbinde...",
-      "connected_as": "verbunden als {'@'}{user}",
+      "connected_as": "verbunden als ~{user}",
       "connected": "verbunden",
       "connect_cli": "Lokale CLI verbinden",
       "aria_connecting": "Verbindung zum lokalen Connector wird hergestellt",
@@ -337,9 +362,8 @@
     },
     "modal": {
       "title": "Lokaler Connector",
-      "close_modal": "Modal schließen",
       "connected": "Verbunden",
-      "logged_in_as": "Angemeldet als {'@'}{user}",
+      "connected_as_user": "Angemeldet als ~{user}",
       "connected_hint": "Du kannst jetzt Pakete und Organisationen über die Web-Oberfläche verwalten.",
       "disconnect": "Trennen",
       "run_hint": "Führe den Connector auf deinem Rechner aus, um Admin-Funktionen zu aktivieren.",
@@ -485,7 +509,6 @@
   "claim": {
     "modal": {
       "title": "Paketnamen beanspruchen",
-      "close_modal": "Modal schließen",
       "success": "Paket beansprucht!",
       "success_detail": "{name}{'@'}0.0.0 wurde auf npm veröffentlicht.",
       "success_hint": "Du kannst jetzt neue Versionen dieses Pakets mit npm publish veröffentlichen.",
@@ -549,6 +572,112 @@
       "label": "JSR"
     }
   },
+  "filters": {
+    "title": "Filter",
+    "search": "Suche",
+    "search_scope": "Suchumfang",
+    "search_placeholder_name": "Nach Paketnamen filtern...",
+    "search_placeholder_description": "Nach Beschreibung filtern...",
+    "search_placeholder_keywords": "Nach Stichwörtern filtern...",
+    "search_placeholder_all": "Such nach allem oder verwende name: desc: kw:",
+    "scope_name": "Name",
+    "scope_name_description": "Nur nach Paketnamen suchen",
+    "scope_description": "Beschreibung",
+    "scope_description_description": "Nur nach Beschreibungen suchen",
+    "scope_keywords": "Stichwörter",
+    "scope_keywords_description": "Nur nach Stichwörtern suchen",
+    "scope_all": "Alles",
+    "scope_all_description": "Alle Felder durchsuchen, unterstützt name: desc: kw: Operatoren",
+    "weekly_downloads": "Wöchentliche Downloads",
+    "updated_within": "Aktualisiert innerhalb von",
+    "security": "Sicherheit",
+    "keywords": "Stichwörter",
+    "more_keywords": "+{count} mehr",
+    "clear_all": "Alles löschen",
+    "remove_filter": "Entferne den Filter {label}",
+    "download_range": {
+      "any": "Beliebig",
+      "lt100": "< 100",
+      "100_1k": "100 - 1K",
+      "1k_10k": "1K - 10K",
+      "10k_100k": "10K - 100K",
+      "gt100k": "> 100K"
+    },
+    "updated": {
+      "any": "Jederzeit",
+      "week": "Letzte Woche",
+      "month": "Letztes Monat",
+      "quarter": "Letzten drei Monate",
+      "year": "Letztes Jahr"
+    },
+    "security_options": {
+      "all": "Alle Pakete",
+      "secure": "Ohne Warnungen",
+      "insecure": "Mit Warnungen"
+    },
+    "sort": {
+      "label": "Pakete sortieren",
+      "toggle_direction": "Sortierreihenfolge umschalten",
+      "ascending": "Aufsteigend",
+      "descending": "Absteigend",
+      "relevance": "Relevanz",
+      "downloads_week": "Downloads/Woche",
+      "downloads_day": "Downloads/Tag",
+      "downloads_month": "Downloads/Monat",
+      "downloads_year": "Downloads/Jahr",
+      "updated": "Zuletzt aktualisiert",
+      "name": "Name",
+      "quality": "Qualität",
+      "popularity": "Beliebtheit",
+      "maintenance": "Wartung",
+      "score": "Bewertung"
+    },
+    "columns": {
+      "title": "Spalten",
+      "show": "Spalten anzeigen",
+      "reset": "Auf Standardwerte zurücksetzen",
+      "coming_soon": "Bald verfügbar",
+      "name": "Name",
+      "version": "Version",
+      "description": "Beschreibung",
+      "downloads": "Downloads/Woche",
+      "updated": "Zuletzt aktualisiert",
+      "maintainers": "Maintainers",
+      "keywords": "Stichwörter",
+      "quality_score": "Qualitätsfaktor",
+      "popularity_score": "Beliebtheitswert",
+      "maintenance_score": "Wartungsbewertung",
+      "combined_score": "Kombinierte Bewertung",
+      "security": "Sicherheit"
+    },
+    "view_mode": {
+      "label": "Anzeigemodus",
+      "cards": "Kartenansicht",
+      "table": "Tabellenansicht"
+    },
+    "pagination": {
+      "mode_label": "Paginierungsmodus",
+      "infinite": "Unendlich",
+      "paginated": "Paginiert",
+      "items_per_page": "Elemente pro Seite",
+      "per_page": "{count} / Seite",
+      "all_yolo": "Alle (YOLO)",
+      "showing": "{start}-{end} von {total}",
+      "previous": "Vorherige Seite",
+      "next": "Nächste Seite",
+      "nav_label": "Paginierung"
+    },
+    "count": {
+      "showing_filtered": "{filtered} von {total} Paketen",
+      "showing_all": "{total} Pakete",
+      "showing_paginated": "{pageSize} von {total} Paketen"
+    },
+    "table": {
+      "security_warning": "Sicherheitswarnung",
+      "secure": "Sicher",
+      "no_packages": "Keine Pakete gefunden"
+    }
+  },
   "about": {
     "title": "Über uns",
     "heading": "Über uns",
@@ -579,7 +708,7 @@
     },
     "contributors": {
       "title": "Mitwirkende",
-      "description": "npmx wird von einer wachsenden Community von Mitwirkenden entwickelt",
+      "description": "npmx wird von einer wachsenden Community von Mitwirkenden entwickelt. Mach mit und lass uns gemeinsam das npm-Browsing-Erlebnis gestalten, das wir uns schon immer gewünscht haben.",
       "loading": "Mitwirkende werden geladen...",
       "error": "Mitwirkende konnten nicht geladen werden",
       "view_profile": "Profil von {name} anzeigen"
@@ -601,6 +730,35 @@
         "description": "Bleib auf dem Laufenden über neue Features und Updates",
         "cta": "Folgen"
       }
+    }
+  },
+  "account_menu": {
+    "connect": "verbinden",
+    "account": "Konto",
+    "npm_cli": "npm-CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "Pakete und Organisationen verwalten",
+    "atmosphere_desc": "Soziale Funktionen & Identität",
+    "connect_npm_cli": "Verbinde dich mit der npm-CLI",
+    "connect_atmosphere": "Verbinde dich mit Atmosphere",
+    "connecting": "Verbinde...",
+    "ops": "{count} Operation | {count} Operationen",
+    "disconnect": "Verbindung trennen"
+  },
+  "auth": {
+    "modal": {
+      "title": "Atmosphere",
+      "close": "Schließen",
+      "connected_as": "Verbunden als {'@'}{handle}",
+      "disconnect": "Verbindung trennen",
+      "connect_prompt": "Melde dich bei deinem Atmosphere-Konto an",
+      "handle_label": "Handle",
+      "handle_placeholder": "alice.bsky.social",
+      "connect": "Verbinden",
+      "create_account": "Erstelle ein neues Konto",
+      "connect_bluesky": "Verbinde dich mit Bluesky",
+      "what_is_atmosphere": "Was ist ein Atmosphere-Konto?",
+      "atmosphere_explanation": "{npmx} nutzt {atproto}, um viele der sozialen Funktionen zu betreiben. So können Nutzer ihre Daten selbst verwalten und ein einziges Konto für alle kompatiblen Anwendungen nutzen. Sobald du ein Konto erstellt hast, kannst du andere Apps wie {bluesky} und {tangled} mit demselben Konto nutzen."
     }
   },
   "header": {

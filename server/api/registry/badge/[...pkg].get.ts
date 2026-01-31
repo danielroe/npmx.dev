@@ -14,7 +14,8 @@ export default defineCachedEventHandler(
   async event => {
     const pkgParamSegments = getRouterParam(event, 'pkg')?.split('/') ?? []
     if (pkgParamSegments.length === 0) {
-      throw createError({ statusCode: 400, message: 'Package name is required.' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package name is required.' })
     }
 
     const { rawPackageName, rawVersion } = parsePackageParams(pkgParamSegments)

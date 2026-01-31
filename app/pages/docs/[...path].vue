@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { setResponseHeader } from 'h3'
 import type { DocsResponse } from '#shared/types'
 import { assertValidPackageName } from '#shared/utils/npm'
 
@@ -37,6 +38,18 @@ if (import.meta.server && packageName.value) {
 const { data: pkg } = usePackage(packageName)
 
 const latestVersion = computed(() => pkg.value?.['dist-tags']?.latest ?? null)
+
+if (import.meta.server && !requestedVersion.value) {
+  const app = useNuxtApp()
+  const { data: pkg } = await usePackage(packageName)
+  const latest = pkg.value?.['dist-tags']?.latest
+  if (latest) {
+    setResponseHeader(useRequestEvent()!, 'Cache-Control', 'no-cache')
+    app.runWithContext(() =>
+      navigateTo('/docs/' + packageName.value + '/v/' + latest, { redirectCode: 302 }),
+    )
+  }
+}
 
 watch(
   [requestedVersion, latestVersion, packageName],
@@ -81,6 +94,12 @@ const pageTitle = computed(() => {
 
 useSeoMeta({
   title: () => pageTitle.value,
+})
+
+defineOgImageComponent('Default', {
+  title: () => `${pkg.value?.name ?? 'Package'} - Docs`,
+  description: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
 })
 
 const showLoading = computed(() => docsStatus.value === 'pending')
@@ -351,8 +370,16 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
   @apply text-badge-orange text-sm;
 }
 
-.docs-content .docs-deprecated p {
-  @apply text-badge-orange text-sm mt-2 mb-0;
+.docs-content .docs-deprecated-message {
+  @apply text-badge-orange text-sm mt-2;
+}
+
+.docs-content .docs-deprecated-message code {
+  @apply bg-badge-orange/20 text-badge-orange;
+}
+
+.docs-content .docs-deprecated-message .docs-link {
+  @apply text-badge-orange;
 }
 
 /* Parameters, Returns, Examples, See Also sections */

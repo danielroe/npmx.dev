@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const isMobile = useIsMobile()
 const router = useRouter()
 const searchQuery = ref('')
 
@@ -16,7 +17,11 @@ useSeoMeta({
   description: () => $t('seo.home.description'),
 })
 
-defineOgImageComponent('Default')
+defineOgImageComponent('Default', {
+  primaryColor: '#60a5fa',
+  title: 'npmx',
+  description: 'A better browser for the **npm registry**',
+})
 </script>
 
 <template>
@@ -68,7 +73,7 @@ defineOgImageComponent('Default')
                 name="q"
                 :placeholder="$t('search.placeholder')"
                 v-bind="noCorrect"
-                autofocus
+                :autofocus="!isMobile"
                 class="w-full bg-bg-subtle border border-border rounded-lg ps-8 pe-24 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-border-color duration-300 focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
               />
 

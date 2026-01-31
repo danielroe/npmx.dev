@@ -11,7 +11,6 @@ definePageMeta({
 })
 
 const route = useRoute('code')
-const router = useRouter()
 
 // Parse package name, version, and file path from URL
 // Patterns:
@@ -271,6 +270,12 @@ useSeoMeta({
     return `Code - ${packageName.value}@${version.value} - npmx`
   },
   description: () => `Browse source code for ${packageName.value}@${version.value}`,
+})
+
+defineOgImageComponent('Default', {
+  title: () => `${pkg.value?.name ?? 'Package'} - Code`,
+  description: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
 })
 </script>
 
