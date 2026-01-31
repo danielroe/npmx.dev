@@ -20,17 +20,21 @@ function stripMarkdownImages(text: string): string {
 
 // Strip HTML tags and escape remaining HTML to prevent XSS
 function stripAndEscapeHtml(text: string): string {
-  // Check if text contains HTML tags
-  const hasHtmlTags = /<[^>]*>/.test(text)
+  // Check if text contains actual HTML tags (tags that start with a letter or /)
+  // This avoids matching things like "a < b > c"
+  const hasHtmlTags = /<\/?[a-z][^>]*>/i.test(text)
+  // Check if text contains markdown images
+  const hasMarkdownImages = /!\[[^\]]*\]\([^)]*\)/.test(text)
 
   // First strip markdown image badges
   let stripped = stripMarkdownImages(text)
 
-  // Then strip HTML tags (keep their text content)
-  stripped = stripped.replace(/<[^>]*>/g, '')
+  // Then strip actual HTML tags (keep their text content)
+  // Only match tags that start with a letter or / (to avoid matching things like "a < b > c")
+  stripped = stripped.replace(/<\/?[a-z][^>]*>/gi, '')
 
-  // Remove redundant package name only if original text had HTML tags
-  if (hasHtmlTags && props.packageName) {
+  // Remove redundant package name only if original text had HTML tags or markdown images
+  if ((hasHtmlTags || hasMarkdownImages) && props.packageName) {
     // Trim first to handle leading/trailing whitespace from stripped HTML
     stripped = stripped.trim()
     // Collapse multiple whitespace into single space
