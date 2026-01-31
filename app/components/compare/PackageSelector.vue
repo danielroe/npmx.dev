@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
 
-const { t } = useI18n()
-
 const packages = defineModel<string[]>({ required: true })
 
 const props = defineProps<{
@@ -99,7 +97,7 @@ function handleBlur() {
         <button
           type="button"
           class="text-fg-subtle hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
-          :aria-label="t('compare.selector.remove_package', { package: pkg })"
+          :aria-label="$t('compare.selector.remove_package', { package: pkg })"
           @click="removePackage(pkg)"
         >
           <span class="i-carbon:close block w-3.5 h-3.5" aria-hidden="true" />
@@ -121,8 +119,8 @@ function handleBlur() {
           type="text"
           :placeholder="
             packages.length === 0
-              ? t('compare.selector.search_first')
-              : t('compare.selector.search_add')
+              ? $t('compare.selector.search_first')
+              : $t('compare.selector.search_add')
           "
           class="w-full bg-bg-subtle border border-border rounded-lg ps-10 pe-4 py-2.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-accent focus-visible:outline-none"
           aria-autocomplete="list"
@@ -145,7 +143,7 @@ function handleBlur() {
           class="absolute top-full inset-x-0 mt-1 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
         >
           <div v-if="isSearching" class="px-4 py-3 text-sm text-fg-muted">
-            {{ t('compare.selector.searching') }}
+            {{ $t('compare.selector.searching') }}
           </div>
           <button
             v-for="result in filteredResults"
@@ -165,8 +163,8 @@ function handleBlur() {
 
     <!-- Hint -->
     <p class="text-xs text-fg-subtle">
-      {{ t('compare.selector.packages_selected', { count: packages.length, max: maxPackages }) }}
-      <span v-if="packages.length < 2">{{ t('compare.selector.add_hint') }}</span>
+      {{ $t('compare.selector.packages_selected', { count: packages.length, max: maxPackages }) }}
+      <span v-if="packages.length < 2">{{ $t('compare.selector.add_hint') }}</span>
     </p>
   </div>
 </template>

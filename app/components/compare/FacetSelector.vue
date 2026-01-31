@@ -2,8 +2,6 @@
 import type { ComparisonFacet } from '#shared/types'
 import { FACET_INFO, FACETS_BY_CATEGORY, CATEGORY_ORDER } from '#shared/types/comparison'
 
-const { t } = useI18n()
-
 const {
   isFacetSelected,
   toggleFacet,
@@ -46,12 +44,12 @@ function isCategoryNoneSelected(category: string): boolean {
 </script>
 
 <template>
-  <div class="space-y-3" role="group" :aria-label="t('compare.facets.group_label')">
+  <div class="space-y-3" role="group" :aria-label="$t('compare.facets.group_label')">
     <div v-for="category in CATEGORY_ORDER" :key="category">
       <!-- Category header with all/none buttons -->
       <div class="flex items-center gap-2 mb-2">
         <span class="text-[10px] text-fg-subtle uppercase tracking-wider">
-          {{ t(`compare.facets.categories.${category}`) }}
+          {{ $t(`compare.facets.categories.${category}`) }}
         </span>
         <button
           type="button"
@@ -62,14 +60,14 @@ function isCategoryNoneSelected(category: string): boolean {
               : 'text-fg-muted/60 hover:text-fg-muted'
           "
           :aria-label="
-            t('compare.facets.select_category', {
-              category: t(`compare.facets.categories.${category}`),
+            $t('compare.facets.select_category', {
+              category: $t(`compare.facets.categories.${category}`),
             })
           "
           :disabled="isCategoryAllSelected(category)"
           @click="selectCategory(category)"
         >
-          {{ t('compare.facets.all') }}
+          {{ $t('compare.facets.all') }}
         </button>
         <span class="text-[10px] text-fg-muted/40">/</span>
         <button
@@ -81,14 +79,14 @@ function isCategoryNoneSelected(category: string): boolean {
               : 'text-fg-muted/60 hover:text-fg-muted'
           "
           :aria-label="
-            t('compare.facets.deselect_category', {
-              category: t(`compare.facets.categories.${category}`),
+            $t('compare.facets.deselect_category', {
+              category: $t(`compare.facets.categories.${category}`),
             })
           "
           :disabled="isCategoryNoneSelected(category)"
           @click="deselectCategory(category)"
         >
-          {{ t('compare.facets.none') }}
+          {{ $t('compare.facets.none') }}
         </button>
       </div>
 
@@ -98,7 +96,7 @@ function isCategoryNoneSelected(category: string): boolean {
           v-for="{ facet, info } in facetsByCategory[category]"
           :key="facet"
           type="button"
-          :title="info.comingSoon ? t('compare.facets.coming_soon') : info.description"
+          :title="info.comingSoon ? $t('compare.facets.coming_soon') : info.description"
           :disabled="info.comingSoon"
           :aria-pressed="isFacetSelected(facet)"
           :aria-label="info.label"
@@ -120,7 +118,7 @@ function isCategoryNoneSelected(category: string): boolean {
           />
           {{ info.label }}
           <span v-if="info.comingSoon" class="text-[9px]"
-            >({{ t('compare.facets.coming_soon') }})</span
+            >({{ $t('compare.facets.coming_soon') }})</span
           >
         </button>
       </div>

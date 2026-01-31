@@ -2,8 +2,6 @@
 import { FACET_INFO, type ComparisonFacet } from '#shared/types/comparison'
 import { useRouteQuery } from '@vueuse/router'
 
-const { t } = useI18n()
-
 definePageMeta({
   name: 'compare',
 })
@@ -47,12 +45,12 @@ const gridHeaders = computed(() => {
 useSeoMeta({
   title: () =>
     packages.value.length > 0
-      ? t('compare.packages.meta_title', { packages: packages.value.join(' vs ') })
-      : t('compare.packages.meta_title_empty'),
+      ? $t('compare.packages.meta_title', { packages: packages.value.join(' vs ') })
+      : $t('compare.packages.meta_title_empty'),
   description: () =>
     packages.value.length > 0
-      ? t('compare.packages.meta_description', { packages: packages.value.join(', ') })
-      : t('compare.packages.meta_description_empty'),
+      ? $t('compare.packages.meta_description', { packages: packages.value.join(', ') })
+      : $t('compare.packages.meta_description_empty'),
 })
 </script>
 
@@ -60,17 +58,17 @@ useSeoMeta({
   <main class="container py-8 xl:py-12">
     <header class="mb-8">
       <h1 class="font-mono text-2xl sm:text-3xl font-medium mb-2">
-        {{ t('compare.packages.title') }}
+        {{ $t('compare.packages.title') }}
       </h1>
       <p class="text-fg-muted">
-        {{ t('compare.packages.tagline') }}
+        {{ $t('compare.packages.tagline') }}
       </p>
     </header>
 
     <!-- Package selector -->
     <section class="mb-8" aria-labelledby="packages-heading">
       <h2 id="packages-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
-        {{ t('compare.packages.section_packages') }}
+        {{ $t('compare.packages.section_packages') }}
       </h2>
       <ComparePackageSelector v-model="packages" :max="4" />
     </section>
@@ -79,17 +77,17 @@ useSeoMeta({
     <section class="mb-8" aria-labelledby="facets-heading">
       <div class="flex items-center gap-2 mb-3">
         <h2 id="facets-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
-          {{ t('compare.packages.section_facets') }}
+          {{ $t('compare.packages.section_facets') }}
         </h2>
         <button
           type="button"
           class="text-[10px] transition-colors focus-visible:outline-none focus-visible:underline"
           :class="isAllSelected ? 'text-fg-muted' : 'text-fg-muted/60 hover:text-fg-muted'"
           :disabled="isAllSelected"
-          :aria-label="t('compare.facets.select_all')"
+          :aria-label="$t('compare.facets.select_all')"
           @click="selectAll"
         >
-          {{ t('compare.facets.all') }}
+          {{ $t('compare.facets.all') }}
         </button>
         <span class="text-[10px] text-fg-muted/40" aria-hidden="true">/</span>
         <button
@@ -97,10 +95,10 @@ useSeoMeta({
           class="text-[10px] transition-colors focus-visible:outline-none focus-visible:underline"
           :class="isNoneSelected ? 'text-fg-muted' : 'text-fg-muted/60 hover:text-fg-muted'"
           :disabled="isNoneSelected"
-          :aria-label="t('compare.facets.deselect_all')"
+          :aria-label="$t('compare.facets.deselect_all')"
           @click="deselectAll"
         >
-          {{ t('compare.facets.none') }}
+          {{ $t('compare.facets.none') }}
         </button>
       </div>
       <CompareFacetSelector />
@@ -109,11 +107,11 @@ useSeoMeta({
     <!-- Comparison grid -->
     <section v-if="canCompare" class="mt-10" aria-labelledby="comparison-heading">
       <h2 id="comparison-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
-        {{ t('compare.packages.section_comparison') }}
+        {{ $t('compare.packages.section_comparison') }}
       </h2>
 
       <div v-if="status === 'pending'" class="flex items-center justify-center py-12">
-        <LoadingSpinner :text="t('compare.packages.loading')" />
+        <LoadingSpinner :text="$t('compare.packages.loading')" />
       </div>
 
       <div v-else-if="packagesData && packagesData.length > 0">
@@ -131,16 +129,16 @@ useSeoMeta({
       </div>
 
       <div v-else class="text-center py-12" role="alert">
-        <p class="text-fg-muted">{{ t('compare.packages.error') }}</p>
+        <p class="text-fg-muted">{{ $t('compare.packages.error') }}</p>
       </div>
     </section>
 
     <!-- Empty state -->
     <section v-else class="text-center py-16 border border-dashed border-border rounded-lg">
       <div class="i-carbon:compare w-12 h-12 text-fg-subtle mx-auto mb-4" aria-hidden="true" />
-      <h2 class="font-mono text-lg text-fg-muted mb-2">{{ t('compare.packages.empty_title') }}</h2>
+      <h2 class="font-mono text-lg text-fg-muted mb-2">{{ $t('compare.packages.empty_title') }}</h2>
       <p class="text-sm text-fg-subtle max-w-md mx-auto">
-        {{ t('compare.packages.empty_description') }}
+        {{ $t('compare.packages.empty_description') }}
       </p>
     </section>
   </main>
