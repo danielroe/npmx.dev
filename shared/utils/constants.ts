@@ -19,6 +19,8 @@ export const ERROR_NPM_FETCH_FAILED = 'Failed to fetch package from npm registry
 export const UNSET_NUXT_SESSION_PASSWORD = 'NUXT_SESSION_PASSWORD not set'
 /** @public */
 export const ERROR_SUGGESTIONS_FETCH_FAILED = 'Failed to fetch suggestions.'
+export const ERROR_GRAVATAR_FETCH_FAILED = 'Failed to fetch Gravatar profile.'
+export const ERROR_GRAVATAR_EMAIL_UNAVAILABLE = "User's email not accessible."
 
 // microcosm services
 export const CONSTELLATION_HOST = 'constellation.microcosm.blue'

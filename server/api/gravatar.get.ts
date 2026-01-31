@@ -1,7 +1,9 @@
 import type { H3Event } from 'h3'
-import { CACHE_MAX_AGE_ONE_DAY } from '#shared/utils/constants'
+import { createError, getQuery } from 'h3'
+import * as v from 'valibot'
+import { GravatarQuerySchema } from '#shared/schemas/user'
 import { getGravatarFromUsername } from '#server/utils/gravatar'
-import { assertValidUsername } from '#shared/utils/npm'
+import { handleApiError } from '#server/utils/error-handler'
 
 function getQueryParam(event: H3Event, key: string): string {
   const query = getQuery(event)
@@ -11,30 +13,31 @@ function getQueryParam(event: H3Event, key: string): string {
 
 export default defineCachedEventHandler(
   async event => {
-    const username = getQueryParam(event, 'username').trim()
+    const rawUsername = getQueryParam(event, 'username')
+    const rawSize = getQueryParam(event, 'size')
 
-    if (!username) {
-      throw createError({
-        statusCode: 400,
-        message: 'Username is required',
+    try {
+      const { username, size } = v.parse(GravatarQuerySchema, {
+        username: rawUsername,
+        size: rawSize ? rawSize : undefined,
+      })
+
+      const url = await getGravatarFromUsername(username, size ?? 80)
+
+      if (!url) {
+        throw createError({
+          statusCode: 404,
+          message: ERROR_GRAVATAR_EMAIL_UNAVAILABLE,
+        })
+      }
+
+      return { url }
+    } catch (error: unknown) {
+      handleApiError(error, {
+        statusCode: 502,
+        message: ERROR_GRAVATAR_FETCH_FAILED,
       })
     }
-
-    assertValidUsername(username)
-
-    const sizeParam = Number.parseInt(getQueryParam(event, 'size'), 10)
-    const size = Number.isNaN(sizeParam) ? 80 : Math.max(16, Math.min(512, sizeParam))
-
-    const url = await getGravatarFromUsername(username, size)
-
-    if (!url) {
-      throw createError({
-        statusCode: 400,
-        message: "User's email not accessible",
-      })
-    }
-
-    return { url }
   },
   {
     maxAge: CACHE_MAX_AGE_ONE_DAY,

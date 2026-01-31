@@ -122,6 +122,6 @@ export const fetchUserEmail = defineCachedFunction(
     maxAge: CACHE_MAX_AGE_ONE_DAY,
     swr: true,
     name: 'npm-user-email',
-    getKey: (username: string) => `npm-user-email:${username.toLowerCase()}`,
+    getKey: (username: string) => `npm-user-email:${username.trim().toLowerCase()}`,
   },
 )
