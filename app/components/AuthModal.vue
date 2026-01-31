@@ -19,7 +19,7 @@ async function handleCreateAccount() {
   await navigateTo(
     {
       path: '/api/auth/atproto',
-      query: { handle: 'https://selfhosted.social', create: 'true' },
+      query: { handle: 'https://npmx.social', create: 'true' },
     },
     { external: true },
   )
