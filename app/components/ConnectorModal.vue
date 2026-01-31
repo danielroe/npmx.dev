@@ -8,7 +8,10 @@ const tokenInput = shallowRef('')
 const portInput = shallowRef('31415')
 const { copied, copy } = useClipboard({ copiedDuring: 2000 })
 
+const hasAttemptedConnect = shallowRef(false)
+
 async function handleConnect() {
+  hasAttemptedConnect.value = true
   const port = Number.parseInt(portInput.value, 10) || 31415
   const success = await connect(tokenInput.value.trim(), port)
   if (success) {
@@ -42,6 +45,7 @@ const executeNpmxConnectorCommand = computed(() => {
 watch(open, isOpen => {
   if (isOpen) {
     tokenInput.value = ''
+    hasAttemptedConnect.value = false
   }
 })
 </script>
@@ -242,9 +246,9 @@ watch(open, isOpen => {
                 </details>
               </div>
 
-              <!-- Error message -->
+              <!-- Error message (only show after user explicitly clicks Connect) -->
               <div
-                v-if="error"
+                v-if="error && hasAttemptedConnect"
                 role="alert"
                 class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md"
               >
