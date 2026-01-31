@@ -18,7 +18,7 @@ defineProps<{
     >
       <span class="i-carbon-link block size-full" />
     </a>
-    <details open class="col-span-full row-start-1">
+    <details open class="col-span-full row-start-1 open:pb-2">
       <summary
         :id="id + '-title'"
         class="collapsible-header flex items-center justify-between transition-all motion-reduce:pr-7 group-hover:pr-7 group-has-[[data-anchor]:focus]:pr-7"

@@ -889,7 +889,7 @@ function handleClick(event: MouseEvent) {
 
       <div class="area-sidebar self-start">
         <!-- Sidebar -->
-        <aside class="sticky top-20 px-2 py-1 space-y-4 sm:space-y-6 min-w-0 overflow-hidden">
+        <aside class="sticky top-20 px-2 py-1 space-y-2 sm:space-y-4 min-w-0 overflow-hidden">
           <!-- Maintainers -->
           <CollapsibleSection v-if="pkg.maintainers?.length" id="maintainers">
             <template #title>
@@ -1001,7 +1001,10 @@ function handleClick(event: MouseEvent) {
                 }}
               </h2>
             </template>
-            <PackageDependenciesList :dependencies="displayVersion.dependencies" />
+            <PackageDependenciesList
+              type="dependencies"
+              :dependencies="displayVersion.dependencies"
+            />
           </CollapsibleSection>
 
           <!-- Peer Dependencies -->
@@ -1015,9 +1018,10 @@ function handleClick(event: MouseEvent) {
                 }}
               </h2>
             </template>
-            <PackagePeerDependenciesList
-              :peer-dependencies="displayVersion.peerDependencies"
-              :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
+            <PackageDependenciesList
+              type="peer"
+              :dependencies="displayVersion.peerDependencies"
+              :meta="displayVersion.peerDependenciesMeta ?? {}"
             />
           </CollapsibleSection>
 
@@ -1035,8 +1039,9 @@ function handleClick(event: MouseEvent) {
                 }}
               </h2>
             </template>
-            <PackageOptionalDependenciesList
-              :optional-dependencies="displayVersion.optionalDependencies"
+            <PackageDependenciesList
+              type="optional"
+              :dependencies="displayVersion.optionalDependencies"
             />
           </CollapsibleSection>
         </aside>
