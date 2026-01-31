@@ -5,7 +5,6 @@ seo:
 ---
 
 <!-- prettier-ignore-start -->
-
 ::u-page-hero
 ---
 title: npmx.dev
@@ -25,7 +24,6 @@ links:
   variant: outline
 ---
 ::
-
 <!-- prettier-ignore-end -->
 
 ::u-page-section{title="What you can do"}
