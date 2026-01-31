@@ -34,14 +34,14 @@ jobs:
       - name: 📦 Install browsers
         run: pnpm playwright install
 
+      - name: 🌐 Compare translations
+        run: pnpm i18n:check
+
       - name: 🌍 Update lunaria data
         run: pnpm build:lunaria
 
       - name: 🔠 Fix lint errors
         run: pnpm lint:fix
-
-      - name: 🌐 Compare translations
-        run: pnpm i18n:check
 
       - name: 🧪 Update unit test snapshots
         run: pnpm test:unit -u
