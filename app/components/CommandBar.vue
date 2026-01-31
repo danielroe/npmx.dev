@@ -44,34 +44,9 @@
 </template>
 
 <script setup lang="ts">
-const cmdList = [
-  {
-    id: 'package:search',
-    name: 'Search packages',
-    description: 'Search for packages',
-    handler: () => {},
-  },
-  {
-    id: 'org:search',
-    name: 'Search organizations',
-    description: 'Search for organizations',
-    handler: () => {},
-  },
-  {
-    id: 'package:like',
-    name: 'Like this',
-    description: 'Like this package',
-    handler: () => {},
-  },
-  {
-    id: 'package:install',
-    name: 'Copy install command',
-    description: 'Copy install command to clipboard',
-    handler: () => {},
-  },
-]
+const { commands } = useCommandRegistry()
 
-const selected = shallowRef(cmdList[0]?.id || '')
+const selected = shallowRef(commands.value[0]?.id || '')
 const inputVal = shallowRef('')
 const show = shallowRef(false)
 const triggeringId = shallowRef('')
@@ -81,13 +56,13 @@ const { focused: inputFocused } = useFocus(inputRef)
 
 const filteredCmdList = computed(() => {
   if (!inputVal.value) {
-    return cmdList
+    return commands.value
   }
   const filter = inputVal.value.trim().toLowerCase()
-  return cmdList.filter(
+  return commands.value.filter(
     item =>
       item.name.toLowerCase().includes(filter) ||
-      item.description.toLowerCase().includes(filter) ||
+      item.description?.toLowerCase().includes(filter) ||
       item.id.includes(filter),
   )
 })
@@ -107,14 +82,14 @@ function focusInput() {
 
 function open() {
   inputVal.value = ''
-  selected.value = cmdList[0]?.id || ''
+  selected.value = commands.value[0]?.id || ''
   show.value = true
   nextTick(focusInput)
 }
 
 function close() {
   inputVal.value = ''
-  selected.value = cmdList[0]?.id || ''
+  selected.value = commands.value[0]?.id || ''
   show.value = false
 }
 
@@ -128,7 +103,7 @@ function toggle() {
 
 function triggerCommand(id: string) {
   const selectedItem = filteredCmdList.value.find(item => item.id === id)
-  selectedItem?.handler?.()
+  selectedItem?.handler?.({} as CommandContext)
   triggeringId.value = id
   setTimeout(() => {
     close()
