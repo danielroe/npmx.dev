@@ -70,9 +70,11 @@ watch(
     if (searchQuery.value !== value) {
       searchQuery.value = value
     }
-    nextTick(() => {
-      searchInputRef.value?.focus()
-    })
+    if (!isMobile.value) {
+      nextTick(() => {
+        searchInputRef.value?.focus()
+      })
+    }
   },
 )
 
