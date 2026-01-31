@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
-
 const packages = defineModel<string[]>({ required: true })
 
 const props = defineProps<{
@@ -14,42 +12,20 @@ const maxPackages = computed(() => props.max ?? 4)
 const inputValue = ref('')
 const isInputFocused = ref(false)
 
-// Search state
-const searchResults = ref<Array<{ name: string; description?: string }>>([])
-const isSearching = ref(false)
+// Use the shared npm search composable
+const { data: searchData, status } = useNpmSearch(inputValue, { size: 15 })
 
-// Debounced search
-const performSearch = debounce(async (query: string) => {
-  if (!query.trim()) {
-    searchResults.value = []
-    return
-  }
-
-  isSearching.value = true
-  try {
-    const response = await $fetch<{
-      objects: Array<{ package: { name: string; description?: string } }>
-    }>(`https://registry.npmjs.org/-/v1/search`, {
-      query: { text: query, size: 15 },
-    })
-    searchResults.value = response.objects.map(o => ({
-      name: o.package.name,
-      description: o.package.description,
-    }))
-  } catch {
-    searchResults.value = []
-  } finally {
-    isSearching.value = false
-  }
-}, 200)
-
-watch(inputValue, value => {
-  performSearch(value)
-})
+const isSearching = computed(() => status.value === 'pending')
 
 // Filter out already selected packages
 const filteredResults = computed(() => {
-  return searchResults.value.filter(r => !packages.value.includes(r.name))
+  if (!searchData.value?.objects) return []
+  return searchData.value.objects
+    .map(o => ({
+      name: o.package.name,
+      description: o.package.description,
+    }))
+    .filter(r => !packages.value.includes(r.name))
 })
 
 function addPackage(name: string) {
@@ -58,7 +34,6 @@ function addPackage(name: string) {
 
   packages.value = [...packages.value, name]
   inputValue.value = ''
-  searchResults.value = []
 }
 
 function removePackage(name: string) {
@@ -108,6 +83,9 @@ function handleBlur() {
     <!-- Add package input -->
     <div v-if="packages.length < maxPackages" class="relative">
       <div class="relative">
+        <label for="package-search" class="sr-only">
+          {{ $t('compare.selector.search_label') }}
+        </label>
         <span
           class="absolute inset-is-3 top-1/2 -translate-y-1/2 text-fg-subtle"
           aria-hidden="true"
@@ -115,6 +93,7 @@ function handleBlur() {
           <span class="i-carbon:search w-4 h-4" />
         </span>
         <input
+          id="package-search"
           v-model="inputValue"
           type="text"
           :placeholder="

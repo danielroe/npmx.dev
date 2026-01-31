@@ -33,42 +33,46 @@ export interface PackageComparisonData {
 export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   const packages = computed(() => toValue(packageNames))
 
-  // Reactive state
-  const packagesData = ref<(PackageComparisonData | null)[]>([])
+  // Cache of fetched data by package name (source of truth)
+  const cache = shallowRef(new Map<string, PackageComparisonData>())
+
+  // Derived array in current package order
+  const packagesData = computed(() => packages.value.map(name => cache.value.get(name) ?? null))
+
   const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
   const error = ref<Error | null>(null)
+
+  // Track which packages are currently being fetched
+  const loadingPackages = shallowRef(new Set<string>())
 
   // Track install size loading separately (it's slower)
   const installSizeLoading = ref(false)
 
-  // Track last fetched packages to avoid redundant fetches
-  let lastFetchedPackages: string[] = []
-
-  // Fetch function
+  // Fetch function - only fetches packages not already in cache
   async function fetchPackages(names: string[]) {
     if (names.length === 0) {
-      packagesData.value = []
       status.value = 'idle'
-      lastFetchedPackages = []
       return
     }
 
-    // Skip fetch if packages haven't actually changed
-    if (
-      names.length === lastFetchedPackages.length &&
-      names.every((n, i) => n === lastFetchedPackages[i])
-    ) {
+    // Only fetch packages not already cached
+    const namesToFetch = names.filter(name => !cache.value.has(name))
+
+    if (namesToFetch.length === 0) {
+      status.value = 'success'
       return
     }
 
-    lastFetchedPackages = [...names]
     status.value = 'pending'
     error.value = null
+
+    // Mark packages as loading
+    loadingPackages.value = new Set(namesToFetch)
 
     try {
       // First pass: fetch fast data (package info, downloads, analysis, vulns)
       const results = await Promise.all(
-        names.map(async (name): Promise<PackageComparisonData | null> => {
+        namesToFetch.map(async (name): Promise<PackageComparisonData | null> => {
           try {
             // Fetch basic package info first (required)
             const pkgData = await $fetch<{
@@ -131,13 +135,22 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
         }),
       )
 
-      packagesData.value = results
+      // Add results to cache
+      const newCache = new Map(cache.value)
+      for (const [i, name] of namesToFetch.entries()) {
+        const data = results[i]
+        if (data) {
+          newCache.set(name, data)
+        }
+      }
+      cache.value = newCache
+      loadingPackages.value = new Set()
       status.value = 'success'
 
-      // Second pass: fetch slow install size data in background
+      // Second pass: fetch slow install size data in background for new packages
       installSizeLoading.value = true
       Promise.all(
-        names.map(async (name, index) => {
+        namesToFetch.map(async name => {
           try {
             const installSize = await $fetch<{
               selfSize: number
@@ -145,12 +158,12 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               dependencyCount: number
             }>(`/api/registry/install-size/${name}`)
 
-            // Update the specific package's install size
-            if (packagesData.value[index]) {
-              packagesData.value[index] = {
-                ...packagesData.value[index]!,
-                installSize,
-              }
+            // Update cache with install size
+            const existing = cache.value.get(name)
+            if (existing) {
+              const updated = new Map(cache.value)
+              updated.set(name, { ...existing, installSize })
+              cache.value = updated
             }
           } catch {
             // Install size fetch failed, leave as undefined
@@ -160,6 +173,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
         installSizeLoading.value = false
       })
     } catch (e) {
+      loadingPackages.value = new Set()
       error.value = e as Error
       status.value = 'error'
     }
@@ -193,12 +207,19 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
     return facet === 'installSize' || facet === 'dependencies'
   }
 
+  // Check if a specific column (package) is loading
+  function isColumnLoading(index: number): boolean {
+    const name = packages.value[index]
+    return name ? loadingPackages.value.has(name) : false
+  }
+
   return {
     packagesData: readonly(packagesData),
     status: readonly(status),
     error: readonly(error),
     getFacetValues,
     isFacetLoading,
+    isColumnLoading,
   }
 }
 

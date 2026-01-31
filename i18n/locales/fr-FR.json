@@ -753,6 +753,7 @@
       "empty_description": "Recherchez et ajoutez au moins 2 paquets ci-dessus pour voir une comparaison côte à côte de leurs facettes."
     },
     "selector": {
+      "search_label": "Rechercher des paquets",
       "search_first": "Rechercher un paquet...",
       "search_add": "Ajouter un autre paquet...",
       "searching": "Recherche...",

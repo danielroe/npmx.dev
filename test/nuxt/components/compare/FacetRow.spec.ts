@@ -71,15 +71,29 @@ describe('FacetRow', () => {
       expect(component.text()).toContain('2K')
     })
 
-    it('renders loading state', async () => {
+    it('renders loading state for facet loading', async () => {
       const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
-          values: [null],
-          loading: true,
+          values: [null, null],
+          facetLoading: true,
         },
       })
-      expect(component.find('.i-carbon\\:circle-dash').exists()).toBe(true)
+      // All cells should show loading spinner
+      expect(component.findAll('.i-carbon\\:circle-dash').length).toBe(2)
+    })
+
+    it('renders loading state for specific column loading', async () => {
+      const component = await mountSuspended(FacetRow, {
+        props: {
+          ...baseProps,
+          values: [{ raw: 1000, display: '1K', status: 'neutral' }, null],
+          columnLoading: [false, true],
+        },
+      })
+      // Only second cell should show loading spinner
+      const spinners = component.findAll('.i-carbon\\:circle-dash')
+      expect(spinners.length).toBe(1)
     })
   })
 

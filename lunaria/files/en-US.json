@@ -768,6 +768,7 @@
       "empty_description": "Search and add at least 2 packages above to see a side-by-side comparison of their metrics."
     },
     "selector": {
+      "search_label": "Search for packages",
       "search_first": "Search for a package...",
       "search_add": "Add another package...",
       "searching": "Searching...",

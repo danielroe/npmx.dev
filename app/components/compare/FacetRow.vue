@@ -8,8 +8,10 @@ const props = defineProps<{
   description?: string
   /** Values for each column */
   values: (FacetValue | null | undefined)[]
-  /** Whether this row is loading */
-  loading?: boolean
+  /** Whether this facet is loading (e.g., install size) */
+  facetLoading?: boolean
+  /** Whether each column is loading (array matching values) */
+  columnLoading?: boolean[]
   /** Whether to show the proportional bar (defaults to true for numeric values) */
   bar?: boolean
 }>()
@@ -50,6 +52,11 @@ function getStatusClass(status?: FacetValue['status']): string {
       return 'text-fg'
   }
 }
+
+// Check if a specific cell is loading
+function isCellLoading(index: number): boolean {
+  return props.facetLoading || (props.columnLoading?.[index] ?? false)
+}
 </script>
 
 <template>
@@ -82,7 +89,7 @@ function getStatusClass(status?: FacetValue['status']): string {
       />
 
       <!-- Loading state -->
-      <template v-if="loading">
+      <template v-if="isCellLoading(index)">
         <span
           class="i-carbon:circle-dash w-4 h-4 text-fg-subtle motion-safe:animate-spin"
           aria-hidden="true"

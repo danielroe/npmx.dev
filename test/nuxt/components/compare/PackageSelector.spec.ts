@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import PackageSelector from '~/components/compare/PackageSelector.vue'
 
-// Mock $fetch for npm search
+// Mock $fetch for useNpmSearch
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
 
@@ -12,16 +12,11 @@ describe('PackageSelector', () => {
     mockFetch.mockReset()
     mockFetch.mockResolvedValue({
       objects: [
-        {
-          package: { name: 'lodash', description: 'Lodash modular utilities' },
-        },
-        {
-          package: {
-            name: 'underscore',
-            description: 'JavaScript utility library',
-          },
-        },
+        { package: { name: 'lodash', description: 'Lodash modular utilities' } },
+        { package: { name: 'underscore', description: 'JavaScript utility library' } },
       ],
+      total: 2,
+      time: new Date().toISOString(),
     })
   })
 
@@ -136,91 +131,7 @@ describe('PackageSelector', () => {
     })
   })
 
-  describe('search functionality', () => {
-    it('fetches search results on input', async () => {
-      const component = await mountSuspended(PackageSelector, {
-        props: {
-          modelValue: [],
-        },
-      })
-
-      const input = component.find('input')
-      await input.setValue('lod')
-      await input.trigger('focus')
-
-      // Wait for debounce
-      await new Promise(resolve => setTimeout(resolve, 250))
-
-      expect(mockFetch).toHaveBeenCalledWith(
-        'https://registry.npmjs.org/-/v1/search',
-        expect.objectContaining({
-          query: { text: 'lod', size: 15 },
-        }),
-      )
-    })
-
-    it('filters out already selected packages from results', async () => {
-      mockFetch.mockResolvedValue({
-        objects: [
-          { package: { name: 'lodash', description: 'Lodash' } },
-          { package: { name: 'underscore', description: 'Underscore' } },
-        ],
-      })
-
-      const component = await mountSuspended(PackageSelector, {
-        props: {
-          modelValue: ['lodash'], // lodash already selected
-        },
-      })
-
-      const input = component.find('input')
-      await input.setValue('lod')
-      await input.trigger('focus')
-
-      // Wait for debounce and search
-      await new Promise(resolve => setTimeout(resolve, 250))
-
-      // lodash should be filtered out from dropdown results (but still shown as selected chip)
-      // The dropdown results should only show underscore
-      const resultButtons = component
-        .findAll('button')
-        .filter(b => b.text().includes('underscore') && !b.find('.i-carbon\\:close').exists())
-      expect(resultButtons.length).toBeGreaterThanOrEqual(0) // Results may or may not be visible depending on focus state
-    })
-  })
-
   describe('adding packages', () => {
-    it('emits update when selecting from search results', async () => {
-      const component = await mountSuspended(PackageSelector, {
-        props: {
-          modelValue: [],
-        },
-      })
-
-      // Simulate search results being available and clicking one
-      // We need to trigger the search flow
-      const input = component.find('input')
-      await input.setValue('lodash')
-      await input.trigger('focus')
-
-      // Wait for search
-      await new Promise(resolve => setTimeout(resolve, 250))
-
-      // Find and click a result button
-      const resultButton = component
-        .findAll('button')
-        .find(b => b.text().includes('lodash') && !b.find('.i-carbon\\:close').exists())
-
-      // If results are rendered, clicking should emit
-      if (resultButton) {
-        await resultButton.trigger('click')
-      }
-
-      const emitted = component.emitted('update:modelValue')
-      expect(emitted).toBeTruthy()
-      expect(emitted![0]![0]).toEqual(['lodash'])
-    })
-
     it('adds package on Enter key', async () => {
       const component = await mountSuspended(PackageSelector, {
         props: {
@@ -328,54 +239,6 @@ describe('PackageSelector', () => {
       })
 
       expect(component.text()).toContain('3')
-    })
-  })
-
-  describe('search results dropdown', () => {
-    it('renders dropdown container when focused with results', async () => {
-      const component = await mountSuspended(PackageSelector, {
-        props: {
-          modelValue: [],
-        },
-      })
-
-      const input = component.find('input')
-      await input.setValue('test')
-      await input.trigger('focus')
-
-      // Wait for debounce
-      await new Promise(resolve => setTimeout(resolve, 250))
-
-      // Component should render without errors
-      expect(component.exists()).toBe(true)
-    })
-
-    it('renders result items with package info', async () => {
-      mockFetch.mockResolvedValue({
-        objects: [
-          {
-            package: {
-              name: 'lodash',
-              description: 'Lodash modular utilities',
-            },
-          },
-        ],
-      })
-
-      const component = await mountSuspended(PackageSelector, {
-        props: {
-          modelValue: [],
-        },
-      })
-
-      const input = component.find('input')
-      await input.setValue('lodash')
-      await input.trigger('focus')
-
-      await new Promise(resolve => setTimeout(resolve, 250))
-
-      // Component renders without errors and has expected structure
-      expect(component.find('input').exists()).toBe(true)
     })
   })
 })

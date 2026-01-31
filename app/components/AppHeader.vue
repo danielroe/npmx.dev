@@ -81,7 +81,7 @@ onKeyStroke(',', e => {
           to="/compare"
           class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
         >
-          <span class="i-carbon-compare w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
           {{ $t('nav.compare') }}
         </NuxtLink>
 

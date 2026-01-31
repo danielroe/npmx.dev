@@ -29,7 +29,11 @@ const { selectedFacets, selectAll, deselectAll, isAllSelected, isNoneSelected } 
   useFacetSelection()
 
 // Fetch comparison data
-const { packagesData, status, getFacetValues, isFacetLoading } = usePackageComparison(packages)
+const { packagesData, status, getFacetValues, isFacetLoading, isColumnLoading } =
+  usePackageComparison(packages)
+
+// Get loading state for each column
+const columnLoading = computed(() => packages.value.map((_, i) => isColumnLoading(i)))
 
 // Check if we have enough packages to compare
 const canCompare = computed(() => packages.value.length >= 2)
@@ -110,11 +114,14 @@ useSeoMeta({
         {{ $t('compare.packages.section_comparison') }}
       </h2>
 
-      <div v-if="status === 'pending'" class="flex items-center justify-center py-12">
+      <div
+        v-if="status === 'pending' && (!packagesData || packagesData.every(p => p === null))"
+        class="flex items-center justify-center py-12"
+      >
         <LoadingSpinner :text="$t('compare.packages.loading')" />
       </div>
 
-      <div v-else-if="packagesData && packagesData.length > 0">
+      <div v-else-if="packagesData && packagesData.some(p => p !== null)">
         <CompareComparisonGrid :columns="packages.length" :headers="gridHeaders">
           <CompareFacetRow
             v-for="facet in selectedFacets"
@@ -122,7 +129,8 @@ useSeoMeta({
             :label="FACET_INFO[facet].label"
             :description="FACET_INFO[facet].description"
             :values="getFacetValues(facet)"
-            :loading="isFacetLoading(facet)"
+            :facet-loading="isFacetLoading(facet)"
+            :column-loading="columnLoading"
             :bar="facet !== 'lastUpdated'"
           />
         </CompareComparisonGrid>
