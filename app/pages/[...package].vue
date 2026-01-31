@@ -70,7 +70,6 @@ const {
 )
 onMounted(() => fetchInstallSize())
 
-// Fetch skills data
 const { data: skillsData } = useLazyFetch<SkillsListResponse>(
   () => {
     const base = `/skills/${packageName.value}`
