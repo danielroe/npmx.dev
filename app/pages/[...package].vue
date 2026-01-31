@@ -93,24 +93,9 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
 
 // Fetch dependency analysis (lazy, client-side)
 // This is the same composable used by PackageVulnerabilityTree and PackageDeprecatedTree
-const {
-  data: vulnTree,
-  status: vulnTreeStatus,
-  fetch: fetchVulnTree,
-} = useDependencyAnalysis(packageName, () => displayVersion.value?.version ?? '')
-onMounted(() => {
-  // Fetch vulnerability tree once displayVersion is available
-  if (displayVersion.value) {
-    fetchVulnTree()
-  }
-})
-watch(
-  () => displayVersion.value?.version,
-  () => {
-    if (displayVersion.value) {
-      fetchVulnTree()
-    }
-  },
+const { data: vulnTree, status: vulnTreeStatus } = useDependencyAnalysis(
+  packageName,
+  () => displayVersion.value?.version ?? '',
 )
 
 // Keep latestVersion for comparison (to show "(latest)" badge)
