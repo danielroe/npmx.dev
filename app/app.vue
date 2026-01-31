@@ -10,6 +10,7 @@ const { locale, locales } = useI18n()
 initPreferencesOnPrehydrate()
 
 const isHomepage = computed(() => route.name === 'index')
+const showKbdHints = shallowRef(false)
 
 const localeMap = locales.value.reduce(
   (acc, l) => {
@@ -21,8 +22,9 @@ const localeMap = locales.value.reduce(
 
 useHead({
   htmlAttrs: {
-    lang: () => locale.value,
-    dir: () => localeMap[locale.value] ?? 'ltr',
+    'lang': () => locale.value,
+    'dir': () => localeMap[locale.value] ?? 'ltr',
+    'data-kbd-hints': () => showKbdHints.value,
   },
   titleTemplate: titleChunk => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
@@ -42,9 +44,7 @@ function handleGlobalKeydown(e: KeyboardEvent) {
   const isEditableTarget =
     target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
 
-  if (isEditableTarget) {
-    return
-  }
+  if (isEditableTarget) return
 
   if (e.key === '/') {
     e.preventDefault()
@@ -64,13 +64,12 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 
   if (e.key === '?') {
     e.preventDefault()
-    document.documentElement.setAttribute('data-keyboard-shortcut-highlight', 'true')
+    showKbdHints.value = true
   }
 }
 
 function handleGlobalKeyup() {
-  // Don't check for key, "?" requires a combination and keys can be released independently
-  document.documentElement.removeAttribute('data-keyboard-shortcut-highlight')
+  showKbdHints.value = false
 }
 
 if (import.meta.client) {
@@ -97,7 +96,7 @@ if (import.meta.client) {
 </template>
 
 <style>
-/* Keyboard shortcut highlight */
+/* Keyboard shortcut highlight on "?" key press */
 kbd {
   position: relative;
 }
@@ -109,11 +108,11 @@ kbd::before {
   border-radius: inherit;
   box-shadow: 0 0 4px 2px var(--accent);
   opacity: 0;
-  transition: opacity 100ms cubic-bezier(0.5, 0, 0.64, 0.73);
+  transition: opacity 200ms ease-out;
   pointer-events: none;
 }
 
-html[data-keyboard-shortcut-highlight='true'] kbd::before {
+html[data-kbd-hints='true'] kbd::before {
   opacity: 1;
 }
 </style>
