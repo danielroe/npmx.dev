@@ -6,7 +6,7 @@ const props = defineProps<{
 
 const isOpen = shallowRef(false)
 const popoverId = useId()
-const closeTimeout = shallowRef<ReturnType<typeof setTimeout> | null>(null)
+let closeTimeout: NodeJS.Timeout | null = null
 
 const closeDelayMs = 500
 
