@@ -1,5 +1,10 @@
 import type { ComparisonFacet } from '#shared/types/comparison'
-import { CATEGORY_ORDER, FACET_INFO, FACETS_BY_CATEGORY } from '#shared/types/comparison'
+import {
+  CATEGORY_ORDER,
+  FACET_INFO,
+  FACETS_BY_CATEGORY,
+  getFacetLabelKey,
+} from '#shared/types/comparison'
 import FacetSelector from '~/components/compare/FacetSelector.vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
@@ -76,10 +81,12 @@ describe('FacetSelector', () => {
   describe('facet buttons', () => {
     it('renders all facets from FACET_INFO', async () => {
       const component = await mountSuspended(FacetSelector)
+      const translate = (key: string) =>
+        (component.vm as { $t?: (k: string) => string }).$t?.(key) ?? key
 
       for (const facet of Object.keys(FACET_INFO)) {
-        const facetInfo = FACET_INFO[facet as keyof typeof FACET_INFO]
-        expect(component.text()).toContain(facetInfo.label)
+        const facetKey = getFacetLabelKey(facet as keyof typeof FACET_INFO)
+        expect(component.text()).toContain(translate(facetKey))
       }
     })
 

@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { FACET_INFO } from '#shared/types/comparison'
+import {
+  getFacetDescriptionKey,
+  getFacetLabelKey,
+} from '#shared/types/comparison'
 import { useRouteQuery } from '@vueuse/router'
 
 definePageMeta({
@@ -129,8 +132,8 @@ useSeoMeta({
               <CompareFacetRow
                 v-for="facet in selectedFacets"
                 :key="facet"
-                :label="FACET_INFO[facet].label"
-                :description="FACET_INFO[facet].description"
+                :label="$t(getFacetLabelKey(facet))"
+                :description="$t(getFacetDescriptionKey(facet))"
                 :values="getFacetValues(facet)"
                 :facet-loading="isFacetLoading(facet)"
                 :column-loading="columnLoading"
@@ -145,8 +148,8 @@ useSeoMeta({
             <CompareFacetCard
               v-for="facet in selectedFacets"
               :key="facet"
-              :label="FACET_INFO[facet].label"
-              :description="FACET_INFO[facet].description"
+              :label="$t(getFacetLabelKey(facet))"
+              :description="$t(getFacetDescriptionKey(facet))"
               :values="getFacetValues(facet)"
               :facet-loading="isFacetLoading(facet)"
               :column-loading="columnLoading"

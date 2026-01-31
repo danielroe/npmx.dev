@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { ComparisonFacet } from '#shared/types'
-import { FACET_INFO, FACETS_BY_CATEGORY, CATEGORY_ORDER } from '#shared/types/comparison'
+import {
+  FACET_INFO,
+  FACETS_BY_CATEGORY,
+  CATEGORY_ORDER,
+  getFacetDescriptionKey,
+  getFacetLabelKey,
+} from '#shared/types/comparison'
 
 const { isFacetSelected, toggleFacet, selectCategory, deselectCategory } = useFacetSelection()
 
@@ -87,10 +93,12 @@ function isCategoryNoneSelected(category: string): boolean {
           v-for="{ facet, info } in facetsByCategory[category]"
           :key="facet"
           type="button"
-          :title="info.comingSoon ? $t('compare.facets.coming_soon') : info.description"
+          :title="
+            info.comingSoon ? $t('compare.facets.coming_soon') : $t(getFacetDescriptionKey(facet))
+          "
           :disabled="info.comingSoon"
           :aria-pressed="isFacetSelected(facet)"
-          :aria-label="info.label"
+          :aria-label="$t(getFacetLabelKey(facet))"
           class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded border transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
           :class="
             info.comingSoon
@@ -107,7 +115,7 @@ function isCategoryNoneSelected(category: string): boolean {
             :class="isFacetSelected(facet) ? 'i-carbon:checkmark' : 'i-carbon:add'"
             aria-hidden="true"
           />
-          {{ info.label }}
+          {{ $t(getFacetLabelKey(facet)) }}
           <span v-if="info.comingSoon" class="text-[9px]"
             >({{ $t('compare.facets.coming_soon') }})</span
           >
