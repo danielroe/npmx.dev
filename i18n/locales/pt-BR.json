@@ -113,252 +113,252 @@
     "scroll_to_top": "Rolar para o topo"
   },
   "package": {
-    "not_found": "Package Not Found",
-    "not_found_message": "The package could not be found.",
-    "no_description": "No description provided",
-    "show_full_description": "Show full description",
-    "not_latest": "(not latest)",
-    "verified_provenance": "Verified provenance",
-    "view_permalink": "View permalink for this version",
-    "navigation": "Package",
-    "copy_name": "Copy package name",
+    "not_found": "Pacote não encontrado",
+    "not_found_message": "O pacote não pôde ser encontrado.",
+    "no_description": "Nenhuma descrição fornecida",
+    "show_full_description": "Mostrar descrição completa",
+    "not_latest": "(não é a mais recente)",
+    "verified_provenance": "Proveniência verificada",
+    "view_permalink": "Ver link permanente para esta versão",
+    "navigation": "Pacote",
+    "copy_name": "Copiar nome do pacote",
     "deprecation": {
-      "package": "This package has been deprecated.",
-      "version": "This version has been deprecated.",
-      "no_reason": "No reason provided"
+      "package": "Este pacote foi descontinuado.",
+      "version": "Esta versão foi descontinuada.",
+      "no_reason": "Nenhum motivo fornecido"
     },
     "replacement": {
-      "title": "You might not need this dependency.",
-      "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
-      "simple": "The {community} has flagged this package as redundant, with the advice: {replacement}.",
-      "documented": "The {community} has flagged this package as having more performant alternatives.",
-      "none": "This package has been flagged as no longer needed, and its functionality is likely available natively in all engines.",
-      "learn_more": "Learn more",
+      "title": "Você pode não precisar desta dependência.",
+      "native": "Isso pode ser substituído por {replacement}, disponível desde Node {nodeVersion}.",
+      "simple": "A {community} marcou este pacote como redundante, com o conselho: {replacement}.",
+      "documented": "A {community} marcou este pacote como tendo alternativas mais performáticas.",
+      "none": "Este pacote foi marcado como não mais necessário, e sua funcionalidade provavelmente está disponível nativamente em todas as engines.",
+      "learn_more": "Saiba mais",
       "mdn": "MDN",
-      "community": "community"
+      "community": "comunidade"
     },
     "stats": {
-      "license": "License",
+      "license": "Licença",
       "deps": "Deps",
-      "install_size": "Install Size",
-      "vulns": "Vulns",
-      "updated": "Updated",
-      "view_dependency_graph": "View dependency graph",
-      "inspect_dependency_tree": "Inspect dependency tree",
+      "install_size": "Tamanho de Instalação",
+      "vulns": "Vulnerabilidades",
+      "updated": "Atualizado",
+      "view_dependency_graph": "Ver gráfico de dependências",
+      "inspect_dependency_tree": "Inspecionar árvore de dependências",
       "size_tooltip": {
-        "unpacked": "{size} unpacked size (this package)",
-        "total": "{size} total unpacked size (including all {count} dependencies for linux-x64)"
+        "unpacked": "{size} tamanho descompactado (este pacote)",
+        "total": "{size} tamanho total descompactado (incluindo todas as {count} dependências para linux-x64)"
       }
     },
     "links": {
-      "repo": "repo",
-      "homepage": "homepage",
-      "issues": "issues",
+      "repo": "repositório",
+      "homepage": "página inicial",
+      "issues": "problemas",
       "jsr": "jsr",
-      "code": "code",
-      "docs": "docs",
-      "fund": "fund",
-      "compare": "compare"
+      "code": "código",
+      "docs": "documentação",
+      "fund": "financiar",
+      "compare": "comparar"
     },
     "docs": {
-      "not_available": "Docs not available",
-      "not_available_detail": "We could not generate docs for this version."
+      "not_available": "Documentação não disponível",
+      "not_available_detail": "Não conseguimos gerar documentação para esta versão."
     },
     "get_started": {
-      "title": "Get started",
-      "pm_label": "Package manager",
-      "copy_command": "Copy install command",
-      "view_types": "View {package}"
+      "title": "Comece agora",
+      "pm_label": "Gerenciador de pacotes",
+      "copy_command": "Copiar comando de instalação",
+      "view_types": "Ver {package}"
     },
     "create": {
-      "title": "Create new project",
-      "copy_command": "Copy create command"
+      "title": "Criar novo projeto",
+      "copy_command": "Copiar comando de criação"
     },
     "run": {
-      "title": "Run",
-      "locally": "Run locally"
+      "title": "Executar",
+      "locally": "Executar localmente"
     },
     "readme": {
       "title": "Readme",
-      "no_readme": "No README available.",
-      "view_on_github": "View on GitHub"
+      "no_readme": "README não disponível.",
+      "view_on_github": "Ver no GitHub"
     },
-    "keywords_title": "Keywords",
-    "compatibility": "Compatibility",
+    "keywords_title": "Palavras-chave",
+    "compatibility": "Compatibilidade",
     "card": {
-      "publisher": "Publisher",
-      "updated": "Updated",
-      "weekly_downloads": "Weekly downloads",
-      "keywords": "Keywords",
-      "license": "License"
+      "publisher": "Publicador",
+      "updated": "Atualizado",
+      "weekly_downloads": "Downloads semanais",
+      "keywords": "Palavras-chave",
+      "license": "Licença"
     },
     "versions": {
-      "title": "Versions",
-      "collapse": "Collapse {tag}",
-      "expand": "Expand {tag}",
-      "collapse_other": "Collapse other versions",
-      "expand_other": "Expand other versions",
-      "collapse_major": "Collapse major {major}",
-      "expand_major": "Expand major {major}",
-      "other_versions": "Other versions",
-      "more_tagged": "{count} more tagged",
-      "all_covered": "All versions are covered by tags above",
-      "deprecated_title": "{version} (deprecated)",
-      "view_all": "View {count} version | View all {count} versions"
+      "title": "Versões",
+      "collapse": "Recolher {tag}",
+      "expand": "Expandir {tag}",
+      "collapse_other": "Recolher outras versões",
+      "expand_other": "Expandir outras versões",
+      "collapse_major": "Recolher versão principal {major}",
+      "expand_major": "Expandir versão principal {major}",
+      "other_versions": "Outras versões",
+      "more_tagged": "{count} mais marcadas",
+      "all_covered": "Todas as versões estão cobertas pelas tags acima",
+      "deprecated_title": "{version} (descontinuada)",
+      "view_all": "Ver {count} versão | Ver todas as {count} versões"
     },
     "dependencies": {
-      "title": "Dependencies ({count})",
-      "list_label": "Package dependencies",
-      "show_all": "show {count} dep | show all {count} deps",
-      "optional": "optional",
-      "view_vulnerabilities": "View vulnerabilities",
-      "outdated_major": "{count} major version behind (latest: {latest}) | {count} major versions behind (latest: {latest})",
-      "outdated_minor": "{count} minor version behind (latest: {latest}) | {count} minor versions behind (latest: {latest})",
-      "outdated_patch": "Patch update available (latest: {latest})"
+      "title": "Dependências ({count})",
+      "list_label": "Dependências do pacote",
+      "show_all": "mostrar {count} dep | mostrar todas as {count} deps",
+      "optional": "opcional",
+      "view_vulnerabilities": "Ver vulnerabilidades",
+      "outdated_major": "{count} versão principal desatualizada (mais recente: {latest}) | {count} versões principais desatualizadas (mais recente: {latest})",
+      "outdated_minor": "{count} versão secundária desatualizada (mais recente: {latest}) | {count} versões secundárias desatualizadas (mais recente: {latest})",
+      "outdated_patch": "Atualização de patch disponível (mais recente: {latest})"
     },
     "peer_dependencies": {
-      "title": "Peer Dependencies ({count})",
-      "list_label": "Package peer dependencies",
-      "show_all": "show {count} peer dep | show all {count} peer deps"
+      "title": "Dependências Pares ({count})",
+      "list_label": "Dependências pares do pacote",
+      "show_all": "mostrar {count} dep par | mostrar todas as {count} deps pares"
     },
     "optional_dependencies": {
-      "title": "Optional Dependencies ({count})",
-      "list_label": "Package optional dependencies",
-      "show_all": "show {count} optional dep | show all {count} optional deps"
+      "title": "Dependências Opcionais ({count})",
+      "list_label": "Dependências opcionais do pacote",
+      "show_all": "mostrar {count} dep opcional | mostrar todas as {count} deps opcionais"
     },
     "maintainers": {
-      "title": "Maintainers",
-      "list_label": "Package maintainers",
-      "you": "(you)",
+      "title": "Mantenedores",
+      "list_label": "Mantenedores do pacote",
+      "you": "(você)",
       "via": "via {teams}",
-      "remove_owner": "Remove {name} as owner",
-      "username_to_add": "Username to add as owner",
-      "username_placeholder": "username...",
-      "add_button": "add",
-      "cancel_add": "Cancel adding owner",
-      "add_owner": "+ Add owner",
-      "show_more": "(show {count} more)",
-      "show_less": "(show fewer)"
+      "remove_owner": "Remover {name} como proprietário",
+      "username_to_add": "Nome de usuário para adicionar como proprietário",
+      "username_placeholder": "nome de usuário...",
+      "add_button": "adicionar",
+      "cancel_add": "Cancelar adição de proprietário",
+      "add_owner": "+ Adicionar proprietário",
+      "show_more": "(mostrar {count} mais)",
+      "show_less": "(mostrar menos)"
     },
     "downloads": {
-      "title": "Weekly Downloads",
-      "date_range": "{start} to {end}",
-      "date_range_multiline": "{start}\nto {end}",
-      "analyze": "Analyze downloads",
+      "title": "Downloads Semanais",
+      "date_range": "{start} a {end}",
+      "date_range_multiline": "{start}\npara {end}",
+      "analyze": "Analisar downloads",
       "modal_title": "Downloads",
-      "granularity": "Granularity",
-      "granularity_daily": "Daily",
-      "granularity_weekly": "Weekly",
-      "granularity_monthly": "Monthly",
-      "granularity_yearly": "Yearly",
-      "start_date": "Start",
-      "end_date": "End",
-      "no_data": "No download data available",
-      "loading": "Loading...",
-      "y_axis_label": "{granularity} downloads",
-      "download_file": "Download {fileType}",
-      "toggle_annotator": "Toggle annotator"
+      "granularity": "Granularidade",
+      "granularity_daily": "Diária",
+      "granularity_weekly": "Semanal",
+      "granularity_monthly": "Mensal",
+      "granularity_yearly": "Anual",
+      "start_date": "Início",
+      "end_date": "Fim",
+      "no_data": "Nenhum dado de download disponível",
+      "loading": "Carregando...",
+      "y_axis_label": "downloads {granularity}",
+      "download_file": "Baixar {fileType}",
+      "toggle_annotator": "Alternar anotador"
     },
     "install_scripts": {
-      "title": "Install Scripts",
+      "title": "Scripts de Instalação",
       "script_label": "(script)",
-      "npx_packages": "{count} npx package | {count} npx packages",
-      "currently": "currently {version}"
+      "npx_packages": "{count} pacote npx | {count} pacotes npx",
+      "currently": "atualmente {version}"
     },
     "playgrounds": {
-      "title": "Try it out",
-      "choose": "choose playground"
+      "title": "Experimente",
+      "choose": "escolher playground"
     },
     "metrics": {
-      "esm": "ES Modules supported",
-      "cjs": "CommonJS supported",
-      "no_esm": "No ES Modules support",
-      "types_label": "Types",
-      "types_included": "Types included",
-      "types_available": "Types available via {package}",
-      "no_types": "No TypeScript types"
+      "esm": "ES Modules suportados",
+      "cjs": "CommonJS suportado",
+      "no_esm": "Sem suporte a ES Modules",
+      "types_label": "Tipos",
+      "types_included": "Tipos inclusos",
+      "types_available": "Tipos disponíveis via {package}",
+      "no_types": "Sem tipos TypeScript"
     },
     "license": {
-      "view_spdx": "View license text on SPDX"
+      "view_spdx": "Ver texto da licença no SPDX"
     },
     "vulnerabilities": {
-      "no_description": "No description available",
-      "found": "{count} vulnerability found | {count} vulnerabilities found",
-      "deps_found": "{count} vulnerability found | {count} vulnerabilities found",
-      "deps_affected": "{count} dependency affected | {count} dependencies affected",
-      "tree_found": "{vulns} vulnerability in {packages}/{total} packages | {vulns} vulnerabilities in {packages}/{total} packages",
-      "scanning_tree": "Scanning dependency tree...",
-      "show_all_packages": "show all {count} affected packages",
-      "no_summary": "No summary",
-      "view_details": "View vulnerability details",
-      "path": "path",
-      "more": "+{count} more",
-      "packages_failed": "{count} package could not be checked | {count} packages could not be checked",
-      "no_known": "No known vulnerabilities in {count} packages",
-      "scan_failed": "Could not scan for vulnerabilities",
+      "no_description": "Nenhuma descrição disponível",
+      "found": "{count} vulnerabilidade encontrada | {count} vulnerabilidades encontradas",
+      "deps_found": "{count} vulnerabilidade encontrada | {count} vulnerabilidades encontradas",
+      "deps_affected": "{count} dependência afetada | {count} dependências afetadas",
+      "tree_found": "{vulns} vulnerabilidade em {packages}/{total} pacotes | {vulns} vulnerabilidades em {packages}/{total} pacotes",
+      "scanning_tree": "Verificando árvore de dependências...",
+      "show_all_packages": "mostrar todos os {count} pacotes afetados",
+      "no_summary": "Sem resumo",
+      "view_details": "Ver detalhes da vulnerabilidade",
+      "path": "caminho",
+      "more": "+{count} mais",
+      "packages_failed": "{count} pacote não pôde ser verificado | {count} pacotes não puderam ser verificados",
+      "no_known": "Nenhuma vulnerabilidade conhecida em {count} pacotes",
+      "scan_failed": "Não foi possível verificar vulnerabilidades",
       "depth": {
-        "root": "This package",
-        "direct": "Direct dependency",
-        "transitive": "Transitive dependency (indirect)"
+        "root": "Este pacote",
+        "direct": "Dependência direta",
+        "transitive": "Dependência transitória (indireta)"
       },
       "severity": {
-        "critical": "critical",
-        "high": "high",
-        "moderate": "moderate",
-        "low": "low"
+        "critical": "crítica",
+        "high": "alta",
+        "moderate": "moderada",
+        "low": "baixa"
       }
     },
     "deprecated": {
-      "label": "Deprecated",
-      "tree_found": "{count} deprecated dependency | {count} deprecated dependencies",
-      "show_all": "show {count} deprecated package | show all {count} deprecated packages"
+      "label": "Descontinuado",
+      "tree_found": "{count} dependência descontinuada | {count} dependências descontinuadas",
+      "show_all": "mostrar {count} pacote descontinuado | mostrar todos os {count} pacotes descontinuados"
     },
     "access": {
-      "title": "Team Access",
-      "refresh": "Refresh team access",
-      "list_label": "Team access list",
-      "owner": "owner",
+      "title": "Acesso da Equipe",
+      "refresh": "Atualizar acesso da equipe",
+      "list_label": "Lista de acesso da equipe",
+      "owner": "proprietário",
       "rw": "rw",
       "ro": "ro",
-      "revoke_access": "Revoke {name} access",
-      "no_access": "No team access configured",
-      "select_team_label": "Select team",
-      "loading_teams": "Loading teams...",
-      "select_team": "Select team",
-      "permission_label": "Permission level",
+      "revoke_access": "Revogar acesso de {name}",
+      "no_access": "Nenhum acesso de equipe configurado",
+      "select_team_label": "Selecionar equipe",
+      "loading_teams": "Carregando equipes...",
+      "select_team": "Selecionar equipe",
+      "permission_label": "Nível de permissão",
       "permission": {
-        "read_only": "read-only",
-        "read_write": "read-write"
+        "read_only": "somente leitura",
+        "read_write": "leitura-escrita"
       },
-      "grant_button": "grant",
-      "cancel_grant": "Cancel granting access",
-      "grant_access": "+ Grant team access"
+      "grant_button": "conceder",
+      "cancel_grant": "Cancelar concessão de acesso",
+      "grant_access": "+ Conceder acesso da equipe"
     },
     "list": {
-      "filter_label": "Filter packages",
-      "filter_placeholder": "Filter packages...",
-      "sort_label": "Sort packages",
-      "showing_count": "Showing {filtered} of {total} packages"
+      "filter_label": "Filtrar pacotes",
+      "filter_placeholder": "Filtrar pacotes...",
+      "sort_label": "Ordenar pacotes",
+      "showing_count": "Mostrando {filtered} de {total} pacotes"
     },
     "skeleton": {
-      "loading": "Loading package details",
-      "license": "License",
-      "weekly": "Weekly",
-      "size": "Size",
+      "loading": "Carregando detalhes do pacote",
+      "license": "Licença",
+      "weekly": "Semanal",
+      "size": "Tamanho",
       "deps": "Deps",
-      "updated": "Updated",
-      "get_started": "Get started",
+      "updated": "Atualizado",
+      "get_started": "Comece agora",
       "readme": "Readme",
-      "maintainers": "Maintainers",
-      "keywords": "Keywords",
-      "versions": "Versions",
-      "dependencies": "Dependencies"
+      "maintainers": "Mantenedores",
+      "keywords": "Palavras-chave",
+      "versions": "Versões",
+      "dependencies": "Dependências"
     },
     "sort": {
-      "downloads": "Most downloaded",
-      "updated": "Recently updated",
-      "name_asc": "Name (A-Z)",
-      "name_desc": "Name (Z-A)"
+      "downloads": "Mais baixados",
+      "updated": "Recentemente atualizado",
+      "name_asc": "Nome (A-Z)",
+      "name_desc": "Nome (Z-A)"
     }
   },
   "connector": {
