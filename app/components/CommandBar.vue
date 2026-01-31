@@ -9,16 +9,19 @@
       >
         <label for="command-input" class="sr-only">command-input</label>
 
-        <input
-          type="text"
-          label="Enter command..."
-          v-model="inputVal"
-          id="command-input"
-          ref="inputRef"
-          class="w-xl h-12 px-4 text-fg outline-none bg-bg-subtle border border-border rounded-md"
-          placeholder="Enter command..."
-          @keydown="handleKeydown"
-        />
+        <search class="relative w-xl h-12 flex items-center">
+          <span class="absolute inset-is-4 text-fg-subtle font-mono pointer-events-none"> > </span>
+          <input
+            type="text"
+            label="Enter command..."
+            v-model="inputVal"
+            id="command-input"
+            ref="inputRef"
+            class="w-full h-full px-4 pl-8 text-fg outline-none bg-bg-subtle border border-border rounded-md"
+            placeholder="Enter command..."
+            @keydown="handleKeydown"
+          />
+        </search>
 
         <div class="w-xl h-lg overflow-auto">
           <div
@@ -128,8 +131,8 @@ function triggerCommand(id: string) {
   selectedItem?.handler?.()
   triggeringId.value = id
   setTimeout(() => {
-    triggeringId.value = ''
     close()
+    triggeringId.value = ''
   }, 100)
 }
 
@@ -181,7 +184,6 @@ defineExpose({
 @keyframes trigger-pulse {
   0% {
     transform: scale(1);
-    background-color: var(--bg-subtle);
   }
 
   50% {
@@ -191,7 +193,6 @@ defineExpose({
 
   100% {
     transform: scale(1);
-    background-color: var(--bg-subtle);
   }
 }
 
