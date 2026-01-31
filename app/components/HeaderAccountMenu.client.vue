@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useModal } from '~/composables/useModal'
+
 const {
   isConnected: isNpmConnected,
   isConnecting: isNpmConnecting,
@@ -42,23 +44,21 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
 })
 
+const connectorModal = useModal('connector-modal')
+
 function openConnectorModal() {
-  const connectorModal = document.querySelector<HTMLDialogElement>('#connector-modal')
   if (connectorModal) {
     isOpen.value = false
-    setTimeout(() => {
-      connectorModal.showModal()
-    })
+    connectorModal.open()
   }
 }
 
+const authModal = useModal('auth-modal')
+
 function openAuthModal() {
-  const authModal = document.querySelector<HTMLDialogElement>('#auth-modal')
   if (authModal) {
     isOpen.value = false
-    setTimeout(() => {
-      authModal.showModal()
-    })
+    authModal.open()
   }
 }
 </script>
