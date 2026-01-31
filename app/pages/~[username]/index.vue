@@ -168,7 +168,7 @@ defineOgImageComponent('Default', {
   <main class="container flex-1 py-8 sm:py-12 w-full">
     <!-- Header -->
     <header class="mb-8 pb-8 border-b border-border">
-      <div class="flex items-center gap-4 mb-4">
+      <div class="flex items-end gap-4">
         <!-- Avatar placeholder -->
         <div
           class="w-16 h-16 rounded-full bg-bg-muted border border-border flex items-center justify-center"
@@ -184,20 +184,21 @@ defineOgImageComponent('Default', {
             {{ $t('org.public_packages', { count: formatNumber(results.total) }, results.total) }}
           </p>
         </div>
-      </div>
 
-      <!-- Link to npmjs.com profile -->
-      <nav aria-label="External links">
-        <a
-          :href="`https://www.npmjs.com/~${username}`"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-        >
-          <span class="i-carbon-cube w-4 h-4" />
-          {{ $t('common.view_on_npm') }}
-        </a>
-      </nav>
+        <!-- Link to npmjs.com profile -->
+        <nav aria-label="External links" class="ms-auto">
+          <a
+            :href="`https://www.npmjs.com/~${username}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+            :title="$t('common.view_on_npm')"
+          >
+            <span class="i-carbon:logo-npm w-4 h-4" aria-hidden="true" />
+            npm
+          </a>
+        </nav>
+      </div>
     </header>
 
     <!-- Loading state -->
