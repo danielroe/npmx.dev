@@ -34,7 +34,7 @@ onKeyStroke(',', e => {
     >
       <!-- Start: Logo -->
       <div :class="{ 'hidden sm:block': showFullSearch }" class="flex-shrink-0">
-        <div v-if="showLogo">
+        <div v-if="showLogo" class="flex items-center">
           <NuxtLink
             to="/"
             :aria-label="$t('header.home')"
