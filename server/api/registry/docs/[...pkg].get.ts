@@ -24,9 +24,12 @@ export default defineCachedEventHandler(
       throw createError({ statusCode: 404, message: 'Package version is required' })
     }
 
+    const versionData = packument.versions?.[version]
+    const exports = versionData?.exports as Record<string, unknown> | undefined
+
     let generated
     try {
-      generated = await generateDocsWithDeno(packageName, version)
+      generated = await generateDocsWithDeno(packageName, version, exports)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(`Doc generation failed for ${packageName}@${version}:`, error)
@@ -64,7 +67,7 @@ export default defineCachedEventHandler(
     swr: true,
     getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
-      return `docs:v1:${pkg}`
+      return `docs:v2:${pkg}`
     },
   },
 )
