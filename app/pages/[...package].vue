@@ -893,7 +893,7 @@ function handleClick(event: MouseEvent) {
       </div>
 
       <!-- README -->
-      <article id="readme" class="area-readme min-w-0 scroll-mt-20">
+      <section id="readme" class="area-readme min-w-0 scroll-mt-20">
         <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
           <a
             href="#readme"
@@ -907,7 +907,7 @@ function handleClick(event: MouseEvent) {
           </a>
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-        <div
+        <article
           v-if="readmeData?.html"
           class="readme-content prose prose-invert max-w-[70ch]"
           v-html="readmeData.html"
@@ -919,7 +919,7 @@ function handleClick(event: MouseEvent) {
             $t('package.readme.view_on_github')
           }}</a>
         </p>
-      </article>
+      </section>
 
       <div class="area-sidebar">
         <!-- Sidebar -->
