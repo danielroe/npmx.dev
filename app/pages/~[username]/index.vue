@@ -10,7 +10,7 @@ const username = computed(() => route.params.username)
 // Infinite scroll state
 const pageSize = 50
 const maxResults = 250 // npm API hard limit
-const currentPage = ref(1)
+const currentPage = shallowRef(1)
 
 // Get initial page from URL (for scroll restoration on reload)
 const initialPage = computed(() => {
@@ -33,12 +33,17 @@ const updateUrl = debounce((updates: { page?: number; filter?: string; sort?: st
 type SortOption = 'downloads' | 'updated' | 'name-asc' | 'name-desc'
 
 // Filter and sort state (from URL)
-const filterText = ref((route.query.q as string) ?? '')
-const sortOption = ref<SortOption>((route.query.sort as SortOption) || 'downloads')
+const filterText = shallowRef(
+  (Array.isArray(route.query.q) ? route.query.q[0] : route.query.q) ?? '',
+)
+const sortOption = shallowRef<SortOption>(
+  ((Array.isArray(route.query.sort) ? route.query.sort[0] : route.query.sort) as SortOption) ||
+    'downloads',
+)
 
 // Track if we've loaded all results (one-way flag, doesn't reset)
 // Initialize to true if URL already has filter/sort params
-const hasLoadedAll = ref(
+const hasLoadedAll = shallowRef(
   Boolean(route.query.q) || (route.query.sort && route.query.sort !== 'downloads'),
 )
 

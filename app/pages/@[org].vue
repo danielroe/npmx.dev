@@ -58,7 +58,7 @@ const {
 })
 
 // Pagination state
-const currentPage = ref(1)
+const currentPage = shallowRef(1)
 
 // Calculate total pages
 const totalPages = computed(() => {
@@ -114,7 +114,7 @@ function handleSortChange(option: SortOption) {
   setSort(option)
 }
 
-const activeTab = ref<'members' | 'teams'>('members')
+const activeTab = shallowRef<'members' | 'teams'>('members')
 
 // Canonical URL for this org page
 const canonicalUrl = computed(() => `https://npmx.dev/@${orgName.value}`)
