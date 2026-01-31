@@ -893,7 +893,7 @@ function handleClick(event: MouseEvent) {
       </div>
 
       <!-- README -->
-      <section id="readme" class="area-readme min-w-0 scroll-mt-20">
+      <article id="readme" class="area-readme min-w-0 scroll-mt-20">
         <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
           <a
             href="#readme"
@@ -919,7 +919,7 @@ function handleClick(event: MouseEvent) {
             $t('package.readme.view_on_github')
           }}</a>
         </p>
-      </section>
+      </article>
 
       <div class="area-sidebar">
         <!-- Sidebar -->
