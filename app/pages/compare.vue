@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { FACET_INFO, type ComparisonFacet } from '#shared/types/comparison'
+import {
+  FACET_INFO,
+  getFacetDescriptionKey,
+  getFacetLabelKey,
+  type ComparisonFacet,
+} from '#shared/types/comparison'
 import { useRouteQuery } from '@vueuse/router'
 
 definePageMeta({
@@ -28,9 +33,11 @@ const packages = computed({
 const { selectedFacets, selectAll, deselectAll, isAllSelected, isNoneSelected } =
   useFacetSelection()
 
+const { t } = useI18n()
+
 // Fetch comparison data
 const { packagesData, status, getFacetValues, isFacetLoading, isColumnLoading } =
-  usePackageComparison(packages)
+  usePackageComparison(packages, t)
 
 // Get loading state for each column
 const columnLoading = computed(() => packages.value.map((_, i) => isColumnLoading(i)))
@@ -129,8 +136,8 @@ useSeoMeta({
               <CompareFacetRow
                 v-for="facet in selectedFacets"
                 :key="facet"
-                :label="FACET_INFO[facet].label"
-                :description="FACET_INFO[facet].description"
+                :label="$t(getFacetLabelKey(facet))"
+                :description="$t(getFacetDescriptionKey(facet))"
                 :values="getFacetValues(facet)"
                 :facet-loading="isFacetLoading(facet)"
                 :column-loading="columnLoading"
@@ -145,8 +152,8 @@ useSeoMeta({
             <CompareFacetCard
               v-for="facet in selectedFacets"
               :key="facet"
-              :label="FACET_INFO[facet].label"
-              :description="FACET_INFO[facet].description"
+              :label="$t(getFacetLabelKey(facet))"
+              :description="$t(getFacetDescriptionKey(facet))"
               :values="getFacetValues(facet)"
               :facet-loading="isFacetLoading(facet)"
               :column-loading="columnLoading"

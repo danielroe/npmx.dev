@@ -29,7 +29,10 @@ export interface PackageComparisonData {
  * Composable for fetching and comparing multiple packages.
  *
  */
-export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
+export function usePackageComparison(
+  packageNames: MaybeRefOrGetter<string[]>,
+  t: (key: string, params?: Record<string, unknown>) => string = key => key,
+) {
   const packages = computed(() => toValue(packageNames))
 
   // Cache of fetched data by package name (source of truth)
@@ -195,7 +198,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
 
     return packagesData.value.map(pkg => {
       if (!pkg) return null
-      return computeFacetValue(facet, pkg)
+      return computeFacetValue(facet, pkg, t)
     })
   }
 
@@ -229,7 +232,11 @@ function encodePackageName(name: string): string {
   return encodeURIComponent(name)
 }
 
-function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData): FacetValue | null {
+function computeFacetValue(
+  facet: ComparisonFacet,
+  data: PackageComparisonData,
+  t: (key: string, params?: Record<string, unknown>) => string,
+): FacetValue | null {
   switch (facet) {
     case 'downloads':
       if (data.downloads === undefined) return null
@@ -270,13 +277,19 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
       return {
         raw: types.kind,
         display:
-          types.kind === 'included' ? 'Included' : types.kind === '@types' ? '@types' : 'None',
+          types.kind === 'included'
+            ? t('compare.facets.values.types_included')
+            : types.kind === '@types'
+              ? '@types'
+              : t('compare.facets.values.types_none'),
         status: types.kind === 'included' ? 'good' : types.kind === '@types' ? 'info' : 'bad',
       }
 
     case 'engines':
       const engines = data.metadata?.engines
-      if (!engines?.node) return { raw: null, display: 'Any', status: 'neutral' }
+      if (!engines?.node) {
+        return { raw: null, display: t('compare.facets.values.any'), status: 'neutral' }
+      }
       return {
         raw: engines.node,
         display: `Node ${engines.node}`,
@@ -289,7 +302,14 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
       const sev = data.vulnerabilities.severity
       return {
         raw: count,
-        display: count === 0 ? 'None' : `${count} (${sev.critical}C/${sev.high}H)`,
+        display:
+          count === 0
+            ? t('compare.facets.values.none')
+            : t('compare.facets.values.vulnerabilities_summary', {
+                count,
+                critical: sev.critical,
+                high: sev.high,
+              }),
         status: count === 0 ? 'good' : sev.critical > 0 || sev.high > 0 ? 'bad' : 'warning',
       }
 
@@ -305,7 +325,9 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
 
     case 'license':
       const license = data.metadata?.license
-      if (!license) return { raw: null, display: 'Unknown', status: 'warning' }
+      if (!license) {
+        return { raw: null, display: t('compare.facets.values.unknown'), status: 'warning' }
+      }
       return {
         raw: license,
         display: license,
@@ -325,7 +347,9 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
       const isDeprecated = !!data.metadata?.deprecated
       return {
         raw: isDeprecated,
-        display: isDeprecated ? 'Deprecated' : 'No',
+        display: isDeprecated
+          ? t('compare.facets.values.deprecated')
+          : t('compare.facets.values.not_deprecated'),
         status: isDeprecated ? 'bad' : 'good',
       }
 
