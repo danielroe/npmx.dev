@@ -6,6 +6,26 @@ const router = useRouter()
 
 const username = computed(() => route.params.username)
 
+async function fetchGravatarUrl(handle: string): Promise<string | null> {
+  if (!handle) return null
+
+  try {
+    const response = await $fetch<{ url: string | null }>(
+      `/api/gravatar?username=${encodeURIComponent(handle)}&size=64`,
+    )
+    return response.url ?? null
+  } catch {
+    // Gravatar couldn't be fetched, it is ignored as not considered an error
+    return null
+  }
+}
+
+const { data: gravatarUrl } = useLazyAsyncData(
+  () => `gravatar:${username.value}`,
+  () => fetchGravatarUrl(username.value),
+  { watch: [username] },
+)
+
 // Infinite scroll state
 const pageSize = 50
 const maxResults = 250 // npm API hard limit
@@ -179,14 +199,25 @@ defineOgImageComponent('Default', {
     <!-- Header -->
     <header class="mb-8 pb-8 border-b border-border">
       <div class="flex items-end gap-4">
-        <!-- Avatar placeholder -->
+        <!-- Avatar -->
         <div
-          class="w-16 h-16 rounded-full bg-bg-muted border border-border flex items-center justify-center"
-          aria-hidden="true"
+          class="w-16 h-16 rounded-full bg-bg-muted border border-border flex items-center justify-center overflow-hidden"
+          role="img"
+          :aria-label="`Avatar for ${username}`"
         >
-          <span class="text-2xl text-fg-subtle font-mono">{{
-            username.charAt(0).toUpperCase()
-          }}</span>
+          <!-- If Gravatar was fetched, display it -->
+          <img
+            v-if="gravatarUrl"
+            :src="gravatarUrl"
+            alt=""
+            width="64"
+            height="64"
+            class="w-full h-full object-cover"
+          />
+          <!-- Else fallback to initials -->
+          <span v-else class="text-2xl text-fg-subtle font-mono" aria-hidden="true">
+            {{ username.charAt(0).toUpperCase() }}
+          </span>
         </div>
         <div>
           <h1 class="font-mono text-2xl sm:text-3xl font-medium">~{{ username }}</h1>
