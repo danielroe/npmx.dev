@@ -7,7 +7,6 @@ import type {
 } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
-import { onKeyStroke } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 
@@ -100,6 +99,12 @@ const displayVersion = computed(() => {
   const latestTag = pkg.value['dist-tags']?.latest
   if (!latestTag) return null
   return pkg.value.versions[latestTag] ?? null
+})
+
+//copy package name
+const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
+  source: packageName,
+  copiedDuring: 2000,
 })
 
 // Fetch dependency analysis (lazy, client-side)
@@ -269,10 +274,6 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num)
-}
-
 function getDependencyCount(version: PackumentVersion | null): number {
   if (!version?.dependencies) return 0
   return Object.keys(version.dependencies).length
@@ -341,27 +342,43 @@ useSeoMeta({
   description: () => pkg.value?.description ?? '',
 })
 
-onKeyStroke('.', () => {
-  if (pkg.value && displayVersion.value) {
-    router.push({
-      name: 'code',
-      params: {
-        path: [pkg.value.name, 'v', displayVersion.value.version],
-      },
-    })
-  }
-})
+onKeyStroke(
+  '.',
+  e => {
+    if (pkg.value && displayVersion.value) {
+      e.preventDefault()
+      navigateTo({
+        name: 'code',
+        params: {
+          path: [pkg.value.name, 'v', displayVersion.value.version],
+        },
+      })
+    }
+  },
+  { dedupe: true },
+)
 
-onKeyStroke('d', () => {
-  if (docsLink.value) {
-    router.push(docsLink.value)
+onKeyStroke(
+  'd',
+  e => {
+    if (docsLink.value) {
+      e.preventDefault()
+      navigateTo(docsLink.value)
+    }
+  },
+  { dedupe: true },
+)
+
+onKeyStroke('c', () => {
+  if (pkg.value) {
+    router.push({ path: '/compare', query: { packages: pkg.value.name } })
   }
 })
 
 defineOgImageComponent('Package', {
   name: () => pkg.value?.name ?? 'Package',
   version: () => displayVersion.value?.version ?? '',
-  downloads: () => (downloads.value ? formatNumber(downloads.value.downloads) : ''),
+  downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
   primaryColor: '#60a5fa',
 })
@@ -404,9 +421,19 @@ function handleClick(event: MouseEvent) {
                 :to="{ name: 'org', params: { org: orgName } }"
                 class="text-fg-muted hover:text-fg transition-colors duration-200"
                 >@{{ orgName }}</NuxtLink
-              ><span v-if="orgName">/</span
-              >{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+              ><span v-if="orgName">/</span>
+              <AnnounceTooltip :text="$t('common.copied')" :isVisible="copiedPkgName">
+                <button
+                  @click="copyPkgName()"
+                  aria-describedby="copy-pkg-name"
+                  class="cursor-copy ms-1 mt-1 active:scale-95 transition-transform"
+                >
+                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                </button>
+              </AnnounceTooltip>
             </h1>
+
+            <span id="copy-pkg-name" class="sr-only">{{ $t('package.copy_name') }}</span>
             <span
               v-if="displayVersion"
               class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
@@ -465,11 +492,11 @@ function handleClick(event: MouseEvent) {
               </template>
             </ClientOnly>
 
-            <!-- Internal navigation: Docs + Code (hidden on mobile, shown in external links instead) -->
+            <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
             <nav
               v-if="displayVersion"
               :aria-label="$t('package.navigation')"
-              class="hidden sm:flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
+              class="hidden sm:flex items-center gap-0.5 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
             >
               <NuxtLink
                 v-if="docsLink"
@@ -501,6 +528,20 @@ function handleClick(event: MouseEvent) {
                   aria-hidden="true"
                 >
                   .
+                </kbd>
+              </NuxtLink>
+              <NuxtLink
+                :to="{ path: '/compare', query: { packages: pkg.name } }"
+                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                aria-keyshortcuts="c"
+              >
+                <span class="i-carbon:compare w-3 h-3" aria-hidden="true" />
+                {{ $t('package.links.compare') }}
+                <kbd
+                  class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  aria-hidden="true"
+                >
+                  c
                 </kbd>
               </NuxtLink>
             </nav>
@@ -611,7 +652,7 @@ function handleClick(event: MouseEvent) {
                 {{ $t('package.links.fund') }}
               </a>
             </li>
-            <!-- Mobile-only: Docs + Code links -->
+            <!-- Mobile-only: Docs + Code + Compare links -->
             <li v-if="docsLink && displayVersion" class="sm:hidden">
               <NuxtLink
                 :to="docsLink"
@@ -631,6 +672,15 @@ function handleClick(event: MouseEvent) {
               >
                 <span class="i-carbon:code w-4 h-4" aria-hidden="true" />
                 {{ $t('package.links.code') }}
+              </NuxtLink>
+            </li>
+            <li class="sm:hidden">
+              <NuxtLink
+                :to="{ path: '/compare', query: { packages: pkg.name } }"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
+                {{ $t('package.links.compare') }}
               </NuxtLink>
             </li>
           </ul>
@@ -932,7 +982,7 @@ function handleClick(event: MouseEvent) {
           </a>
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-        <div
+        <article
           v-if="readmeData?.html"
           class="readme-content prose prose-invert max-w-[70ch]"
           v-html="readmeData.html"
@@ -948,7 +998,7 @@ function handleClick(event: MouseEvent) {
 
       <div class="area-sidebar">
         <!-- Sidebar -->
-        <aside class="sticky top-20 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
+        <div class="sticky top-20 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
@@ -1056,7 +1106,7 @@ function handleClick(event: MouseEvent) {
             :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
             :optional-dependencies="displayVersion.optionalDependencies"
           />
-        </aside>
+        </div>
       </div>
     </article>
 

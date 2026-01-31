@@ -24,8 +24,8 @@ export const ERROR_SKILL_NOT_FOUND = 'Skill not found.'
 export const ERROR_SKILL_FILE_NOT_FOUND = 'Skill file not found.'
 
 // microcosm services
-export const CONSTELLATION_ENDPOINT = 'https://constellation.microcosm.blue'
-export const SLINGSHOT_ENDPOINT = 'https://slingshot.microcosm.blue'
+export const CONSTELLATION_HOST = 'constellation.microcosm.blue'
+export const SLINGSHOT_HOST = 'slingshot.microcosm.blue'
 
 // Theming
 export const ACCENT_COLORS = {
