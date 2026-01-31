@@ -767,26 +767,6 @@
       "empty_title": "Select packages to compare",
       "empty_description": "Search and add at least 2 packages above to see a side-by-side comparison of their metrics."
     },
-    "releases": {
-      "title": "Compare Versions",
-      "breadcrumb_diff": "diff",
-      "tagline_prefix": "See what changed between",
-      "tagline_separator": "and",
-      "meta_title": "{package} {v1} vs {v2} - npmx",
-      "meta_description": "Compare versions {v1} and {v2} of {package} - see what changed between releases",
-      "from_version": "From version",
-      "to_version": "To version",
-      "swap_versions": "Swap versions",
-      "section_changes": "Changes",
-      "section_file_changes": "File Changes",
-      "section_dependency_changes": "Dependency Changes",
-      "loading": "Loading version data...",
-      "error": "Failed to load version data. Make sure both versions exist.",
-      "file_diff_title": "File Diff Viewer",
-      "file_diff_description": "Visual diff of package files between versions, showing added, removed, and modified files with syntax highlighting.",
-      "dep_diff_title": "Dependency Diff",
-      "dep_diff_description": "See which dependencies were added, removed, or updated between versions, with version constraint changes highlighted."
-    },
     "selector": {
       "search_first": "Search for a package...",
       "search_add": "Add another package...",
