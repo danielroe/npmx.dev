@@ -18,31 +18,33 @@ const {
   refreshState,
 } = useConnector()
 
-// Fetch name availability when modal opens
-const checkResult = shallowRef<CheckNameResult | null>(null)
-
-const isChecking = shallowRef(false)
 const isPublishing = shallowRef(false)
-const publishError = shallowRef<string | null>(null)
 const publishSuccess = shallowRef(false)
 
-async function checkAvailability() {
-  isChecking.value = true
-  publishError.value = null
-  try {
-    checkResult.value = await checkPackageName(props.packageName)
-  } catch (err) {
-    publishError.value = err instanceof Error ? err.message : $t('claim.modal.failed_to_check')
-  } finally {
-    isChecking.value = false
-  }
-}
+const {
+  data: checkResult,
+  refresh: checkAvailability,
+  status,
+  error,
+} = useAsyncData(
+  (_nuxtApp, { signal }) => {
+    return checkPackageName(props.packageName, { signal })
+  },
+  { default: () => null, immediate: false },
+)
+
+const isChecking = computed(() => {
+  return status.value === 'pending'
+})
+
+const publishError = computed(() => {
+  return error.value instanceof Error ? error.value.message : $t('claim.modal.failed_to_check')
+})
 
 async function handleClaim() {
   if (!checkResult.value?.available || !isConnected.value) return
 
   isPublishing.value = true
-  publishError.value = null
 
   try {
     // Add the operation
