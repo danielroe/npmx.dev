@@ -191,14 +191,18 @@
       "other_versions": "Inne wersje",
       "more_tagged": "jeszcze {count}",
       "all_covered": "Wszystkie wersje są objęte powyższymi tagami",
-      "deprecated_title": "{version} (przestarzała)"
+      "deprecated_title": "{version} (przestarzała)",
+      "view_all": "Zobacz wszystkie {count} wersje | Zobacz {count} wersję | Zobacz {count} wersje | Zobacz {count} wersji | Zobacz {count} wersji"
     },
     "dependencies": {
       "title": "Zależności ({count})",
       "list_label": "Zależności pakietu",
       "show_all": "pokaż wszystkie ({count})",
       "optional": "opcjonalne",
-      "view_vulnerabilities": "Zobacz luki"
+      "view_vulnerabilities": "Zobacz luki",
+      "outdated_major": "{count} wersji głównych w tyle (najnowsza: {latest}) | {count} wersja główna w tyle (najnowsza: {latest}) | {count} wersje główne w tyle (najnowsza: {latest}) | {count} wersji głównych w tyle (najnowsza: {latest}) | {count} wersji głównych w tyle (najnowsza: {latest})",
+      "outdated_minor": "{count} wersji minor w tyle (najnowsza: {latest}) | {count} wersja minor w tyle (najnowsza: {latest}) | {count} wersje minor w tyle (najnowsza: {latest}) | {count} wersji minor w tyle (najnowsza: {latest}) | {count} wersji minor w tyle (najnowsza: {latest})",
+      "outdated_patch": "Dostępna poprawka (najnowsza: {latest})"
     },
     "peer_dependencies": {
       "title": "Zależności peer ({count})",
@@ -257,6 +261,7 @@
       "esm": "Obsługuje ES Modules",
       "cjs": "Obsługuje CommonJS",
       "no_esm": "Brak obsługi ES Modules",
+      "types_label": "Typy",
       "types_included": "Typy w pakiecie",
       "types_available": "Typy dostępne przez {package}",
       "no_types": "Brak typów TypeScript"
