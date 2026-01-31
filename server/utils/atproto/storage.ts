@@ -26,7 +26,11 @@ export class OAuthStateStore implements NodeSavedStateStore {
   }
 
   async set(key: string, val: NodeSavedState) {
-    setCookie(this.event, this.cookieKey, key)
+    setCookie(this.event, this.cookieKey, key, {
+      httpOnly: true,
+      secure: !import.meta.dev,
+      sameSite: 'lax',
+    })
     await this.storage.setItem<NodeSavedState>(key, val)
   }
 
@@ -60,7 +64,11 @@ export class OAuthSessionStore implements NodeSavedSessionStore {
   }
 
   async set(key: string, val: NodeSavedSession) {
-    setCookie(this.event, this.cookieKey, key)
+    setCookie(this.event, this.cookieKey, key, {
+      httpOnly: true,
+      secure: !import.meta.dev,
+      sameSite: 'lax',
+    })
     await this.storage.setItem<NodeSavedSession>(key, val)
   }
 
