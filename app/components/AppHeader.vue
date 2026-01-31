@@ -2,11 +2,9 @@
 withDefaults(
   defineProps<{
     showLogo?: boolean
-    showConnector?: boolean
   }>(),
   {
     showLogo: true,
-    showConnector: true,
   },
 )
 
@@ -14,7 +12,7 @@ const { isConnected, npmUser } = useConnector()
 
 const router = useRouter()
 
-const showFullSearch = ref(false)
+const showFullSearch = shallowRef(false)
 
 onKeyStroke(',', e => {
   // Don't trigger if user is typing in an input
@@ -36,14 +34,24 @@ onKeyStroke(',', e => {
     >
       <!-- Start: Logo -->
       <div :class="{ 'hidden sm:block': showFullSearch }" class="flex-shrink-0">
-        <NuxtLink
-          v-if="showLogo"
-          to="/"
-          :aria-label="$t('header.home')"
-          class="header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
-        >
-          <span class="text-accent"><span class="-tracking-0.2em">.</span>/</span>npmx
-        </NuxtLink>
+        <div v-if="showLogo">
+          <NuxtLink
+            to="/"
+            :aria-label="$t('header.home')"
+            dir="ltr"
+            class="inline-flex items-center gap-2 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+          >
+            <img
+              aria-hidden="true"
+              :alt="$t('alt_logo')"
+              src="/logo.svg"
+              width="96"
+              height="96"
+              class="w-8 h-8 rounded-lg"
+            />
+            <span>npmx</span>
+          </NuxtLink>
+        </div>
         <!-- Spacer when logo is hidden -->
         <span v-else class="w-1" />
       </div>
@@ -98,9 +106,7 @@ onKeyStroke(',', e => {
           </kbd>
         </NuxtLink>
 
-        <div v-if="showConnector" class="hidden sm:block">
-          <ConnectorStatus />
-        </div>
+        <HeaderAccountMenu />
       </div>
     </nav>
   </header>
