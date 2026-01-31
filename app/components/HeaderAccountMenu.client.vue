@@ -49,9 +49,12 @@ function openConnectorModal() {
   showConnectorModal.value = true
 }
 
-function openAuthModal() {
-  isOpen.value = false
-  showAuthModal.value = true
+function handleModalOpen() {
+  const authModal = document.querySelector<HTMLDialogElement>('#modal')
+  if (authModal) {
+    isOpen.value = false
+    authModal.showModal()
+  }
 }
 </script>
 
@@ -179,7 +182,7 @@ function openAuthModal() {
               type="button"
               role="menuitem"
               class="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-bg-subtle transition-colors text-start"
-              @click="openAuthModal"
+              @click="handleModalOpen"
             >
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
                 <span class="i-carbon-cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
@@ -228,10 +231,11 @@ function openAuthModal() {
 
             <button
               v-if="!atprotoUser"
+              id="auth-modal-trigger"
               type="button"
               role="menuitem"
               class="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-bg-subtle transition-colors text-start"
-              @click="openAuthModal"
+              @click="handleModalOpen"
             >
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
                 <span class="i-carbon-cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
@@ -247,9 +251,5 @@ function openAuthModal() {
         </div>
       </div>
     </Transition>
-
-    <!-- Modals -->
-    <ConnectorModal v-model:open="showConnectorModal" />
-    <AuthModal v-model:open="showAuthModal" />
   </div>
 </template>
