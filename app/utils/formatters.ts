@@ -1,10 +1,4 @@
 /** @public */
-export function formatNumber(num: number): string {
-  const { locale } = useI18n()
-  return new Intl.NumberFormat(locale.value).format(num)
-}
-
-/** @public */
 export function toIsoDateString(date: Date): string {
   const year = date.getUTCFullYear()
   const month = String(date.getUTCMonth() + 1).padStart(2, '0')

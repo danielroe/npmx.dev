@@ -186,7 +186,7 @@ defineOgImageComponent('Default', {
         <div>
           <h1 class="font-mono text-2xl sm:text-3xl font-medium">~{{ username }}</h1>
           <p v-if="results?.total" class="text-fg-muted text-sm mt-1">
-            {{ $t('org.public_packages', { count: formatNumber(results.total) }, results.total) }}
+            {{ $t('org.public_packages', { count: $n(results.total) }, results.total) }}
           </p>
         </div>
 

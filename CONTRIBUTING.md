@@ -361,13 +361,17 @@ We recommend the [i18n-ally](https://marketplace.visualstudio.com/items?itemName
 
 The extension is included in our workspace recommendations, so VSCode should prompt you to install it.
 
-### Formatting with locale
+### Formatting numbers and dates
 
-When formatting numbers or dates that should respect the user's locale, pass the locale:
+Use vue-i18n's built-in formatters for locale-aware formatting:
 
-```typescript
-const { locale } = useI18n()
-const formatted = formatNumber(12345, locale.value) // "12,345" in en-US
+```vue
+<template>
+  <p>{{ $n(12345) }}</p>
+  <!-- "12,345" in en-US, "12 345" in fr-FR -->
+  <p>{{ $d(new Date()) }}</p>
+  <!-- locale-aware date -->
+</template>
 ```
 
 ## Testing

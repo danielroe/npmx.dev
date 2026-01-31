@@ -782,7 +782,7 @@ defineOgImageComponent('Default', {
               {{
                 $t(
                   'search.found_packages',
-                  { count: formatNumber(visibleResults.total) },
+                  { count: $n(visibleResults.total) },
                   visibleResults.total,
                 )
               }}

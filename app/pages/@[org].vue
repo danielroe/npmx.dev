@@ -151,7 +151,7 @@ defineOgImageComponent('Default', {
         <div>
           <h1 class="font-mono text-2xl sm:text-3xl font-medium">@{{ orgName }}</h1>
           <p v-if="status === 'success'" class="text-fg-muted text-sm mt-1">
-            {{ $t('org.public_packages', { count: formatNumber(packageCount) }, packageCount) }}
+            {{ $t('org.public_packages', { count: $n(packageCount) }, packageCount) }}
           </p>
         </div>
 
