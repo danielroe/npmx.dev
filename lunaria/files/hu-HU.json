@@ -328,7 +328,6 @@
       "size": "Méret",
       "deps": "Függ.",
       "updated": "Frissítve",
-      "install": "Telepítés",
       "readme": "Readme",
       "maintainers": "Karbantartók",
       "keywords": "Kulcsszavak",
@@ -355,9 +354,7 @@
     },
     "modal": {
       "title": "Helyi Connector",
-      "close_modal": "Ablak bezárása",
       "connected": "Csatlakoztatva",
-      "logged_in_as": "Bejelentkezve mint {'@'}{user}",
       "connected_hint": "Most már kezelheted a csomagokat és szervezeteket a webes felületről.",
       "disconnect": "Szétkapcsolás",
       "run_hint": "Futtasd a connectort a gépeden az admin funkciók engedélyezéséhez.",
@@ -503,7 +500,6 @@
   "claim": {
     "modal": {
       "title": "Csomagnév lefoglalása",
-      "close_modal": "Ablak bezárása",
       "success": "Csomag lefoglalva!",
       "success_detail": "{name}{'@'}0.0.0 közzétéve az npm-en.",
       "success_hint": "Most már publikálhatsz új verziókat ehhez a csomaghoz az npm publish segítségével.",
