@@ -35,6 +35,26 @@ test.describe('Search Pages', () => {
     await expect(page.locator('input[type="search"]')).toBeFocused()
   })
 
+  test('/ (homepage) → search, keeps focus on search input', async ({ page, goto }) => {
+    await goto('/', { waitUntil: 'domcontentloaded' })
+
+    const homeSearchInput = page.locator('#home-search')
+    await homeSearchInput.click()
+    await page.keyboard.type('vue')
+
+    // Wait for navigation to /search (debounce is 250ms)
+    await expect(page).toHaveURL(/\/search/, { timeout: 10000 })
+    await expect(page.locator('text=/found \\d+/i')).toBeVisible({ timeout: 15000 })
+
+    // Home search input should be gone (we're on /search now)
+    await expect(homeSearchInput).not.toBeVisible()
+
+    // Header search input should now exist and be focused
+    const headerSearchInput = page.locator('#header-search')
+    await expect(headerSearchInput).toBeVisible()
+    await expect(headerSearchInput).toBeFocused()
+  })
+
   test('/settings → search, keeps focus on search input', async ({ page, goto }) => {
     await goto('/settings', { waitUntil: 'domcontentloaded' })
 
