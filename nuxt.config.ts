@@ -51,6 +51,12 @@ export default defineNuxtConfig({
 
   devtools: { enabled: true },
 
+  devServer: {
+    // Used with atproto oauth
+    // https://atproto.com/specs/oauth#localhost-client-development
+    host: '127.0.0.1',
+  },
+
   app: {
     head: {
       htmlAttrs: { lang: 'en-US' },

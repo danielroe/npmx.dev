@@ -1,8 +1,4 @@
-type MiniDoc = {
-  did: string
-  handle: string
-  pds: string
-}
+import type { UserSession } from '#shared/schemas/userSession'
 
 /** @public */
 export async function useAtproto() {
@@ -10,16 +6,14 @@ export async function useAtproto() {
     data: user,
     pending,
     clear,
-  } = await useAsyncData<MiniDoc | null>('user-state', async () => {
-    const data = await useRequestFetch()<MiniDoc>('/api/auth/session', {
+  } = await useAsyncData<UserSession | null>('user-state', async () => {
+    return await useRequestFetch()<UserSession>('/api/auth/session', {
       headers: { accept: 'application/json' },
     })
-
-    return data
   })
 
   const logout = async () => {
-    await useRequestFetch()<MiniDoc>('/api/auth/session', {
+    await useRequestFetch()<UserSession>('/api/auth/session', {
       method: 'delete',
       headers: { accept: 'application/json' },
     })

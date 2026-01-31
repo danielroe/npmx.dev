@@ -2,8 +2,11 @@ import type { OAuthClientMetadataInput } from '@atproto/oauth-client-node'
 import type { EventHandlerRequest, H3Event } from 'h3'
 import type { OAuthSession } from '@atproto/oauth-client-node'
 import { NodeOAuthClient } from '@atproto/oauth-client-node'
-import { OAuthSessionStore, OAuthStateStore } from '#server/utils/atproto/storage'
-
+import { parse } from 'valibot'
+import { useOAuthStorage } from '#server/utils/atproto/storage'
+import { UNSET_NUXT_SESSION_PASSWORD } from '#shared/utils/constants'
+import { OAuthMetadataSchema } from '#shared/schemas/oauth'
+import type { SessionManager } from 'h3'
 // TODO: limit scope as features gets added. atproto just allows login so no scary login screen till we have scopes
 export const scope = 'atproto'
 
@@ -18,7 +21,8 @@ export function getOauthClientMetadata() {
     ? `http://localhost?redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scope)}`
     : `${client_uri}/oauth-client-metadata.json`
 
-  return {
+  // If anything changes here, please make sure to also update /shared/schemas/oauth.ts to match
+  return parse(OAuthMetadataSchema, {
     client_name: 'npmx.dev',
     client_id,
     client_uri,
@@ -28,18 +32,18 @@ export function getOauthClientMetadata() {
     application_type: 'web',
     token_endpoint_auth_method: 'none',
     dpop_bound_access_tokens: true,
-  } as OAuthClientMetadataInput
+  }) as OAuthClientMetadataInput
 }
 
 type EventHandlerWithOAuthSession<T extends EventHandlerRequest, D> = (
   event: H3Event<T>,
   session: OAuthSession | undefined,
+  serverSession: SessionManager,
 ) => Promise<D>
 
 async function getOAuthSession(event: H3Event): Promise<OAuthSession | undefined> {
   const clientMetadata = getOauthClientMetadata()
-  const stateStore = new OAuthStateStore(event)
-  const sessionStore = new OAuthSessionStore(event)
+  const { stateStore, sessionStore } = useOAuthStorage(event)
 
   const client = new NodeOAuthClient({
     stateStore,
@@ -59,7 +63,20 @@ export function eventHandlerWithOAuthSession<T extends EventHandlerRequest, D>(
   handler: EventHandlerWithOAuthSession<T, D>,
 ) {
   return defineEventHandler(async event => {
+    const config = useRuntimeConfig(event)
+
+    if (!config.sessionPassword) {
+      throw createError({
+        status: 500,
+        message: UNSET_NUXT_SESSION_PASSWORD,
+      })
+    }
+
+    const serverSession = await useSession(event, {
+      password: config.sessionPassword,
+    })
+
     const oAuthSession = await getOAuthSession(event)
-    return await handler(event, oAuthSession)
+    return await handler(event, oAuthSession, serverSession)
   })
 }

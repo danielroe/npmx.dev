@@ -26,7 +26,7 @@ export const FETCH_CACHE_ALLOWED_DOMAINS = [
   'api.bitbucket.org', // Bitbucket API
   'codeberg.org', // Codeberg (Gitea-based)
   'gitee.com', // Gitee API
-  //microcosm endpoints for atproto data
+  // microcosm endpoints for atproto data
   CONSTELLATION_ENDPOINT,
   SLINGSHOT_ENDPOINT,
 ] as const
