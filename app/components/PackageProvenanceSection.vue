@@ -31,7 +31,13 @@ defineProps<{
           class="i-solar-shield-check-outline w-4 h-4 shrink-0 text-emerald-500"
           aria-hidden="true"
         />
-        <span v-html="$t('package.provenance_section.built_and_signed_on', { provider: `<b>${details.providerLabel}</b>` })" />
+        <span
+          v-html="
+            $t('package.provenance_section.built_and_signed_on', {
+              provider: `<b>${details.providerLabel}</b>`,
+            })
+          "
+        />
       </p>
       <a
         v-if="details.buildSummaryUrl"
