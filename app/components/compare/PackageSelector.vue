@@ -9,8 +9,8 @@ const props = defineProps<{
 const maxPackages = computed(() => props.max ?? 4)
 
 // Input state
-const inputValue = ref('')
-const isInputFocused = ref(false)
+const inputValue = shallowRef('')
+const isInputFocused = shallowRef(false)
 
 // Use the shared npm search composable
 const { data: searchData, status } = useNpmSearch(inputValue, { size: 15 })

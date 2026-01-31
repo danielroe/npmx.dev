@@ -39,14 +39,14 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   // Derived array in current package order
   const packagesData = computed(() => packages.value.map(name => cache.value.get(name) ?? null))
 
-  const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
-  const error = ref<Error | null>(null)
+  const status = shallowRef<'idle' | 'pending' | 'success' | 'error'>('idle')
+  const error = shallowRef<Error | null>(null)
 
   // Track which packages are currently being fetched
   const loadingPackages = shallowRef(new Set<string>())
 
   // Track install size loading separately (it's slower)
-  const installSizeLoading = ref(false)
+  const installSizeLoading = shallowRef(false)
 
   // Fetch function - only fetches packages not already in cache
   async function fetchPackages(names: string[]) {
