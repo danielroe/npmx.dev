@@ -7,21 +7,6 @@ import PackageSelector from '~/components/compare/PackageSelector.vue'
 const mockFetch = vi.fn()
 vi.stubGlobal('$fetch', mockFetch)
 
-// Mock useTimeoutFn
-vi.mock('@vueuse/core', async () => {
-  const actual = await vi.importActual('@vueuse/core')
-  return {
-    ...actual,
-    useTimeoutFn: (fn: () => void, _delay: number) => {
-      // Execute immediately for tests
-      return {
-        start: () => fn(),
-        stop: () => {},
-      }
-    },
-  }
-})
-
 describe('PackageSelector', () => {
   beforeEach(() => {
     mockFetch.mockReset()
