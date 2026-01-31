@@ -33,9 +33,9 @@ if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
-let kbdAnimations: Animation[] = []
-
-// Global keyboard shortcut: "/" focuses search or navigates to search page
+// Global keyboard shortcut:
+// "/" focuses search or navigates to search page
+// "?" highlights all keyboard shortcut elements
 function handleGlobalKeydown(e: KeyboardEvent) {
   const target = e.target as HTMLElement
 
@@ -64,30 +64,18 @@ function handleGlobalKeydown(e: KeyboardEvent) {
 
   if (e.key === '?') {
     e.preventDefault()
-
-    for (const anim of kbdAnimations) {
-      anim.cancel()
-    }
-    kbdAnimations = []
-
-    const kbdElements = document.querySelectorAll('kbd')
-    for (const kbd of kbdElements) {
-      const anim = kbd.animate(
-        [
-          { boxShadow: 'none' },
-          { boxShadow: '0 0 4px 2px var(--accent)', offset: 0.15 },
-          { boxShadow: '0 0 4px 2px var(--accent)', offset: 0.6 },
-          { boxShadow: 'none' },
-        ],
-        { duration: 700, easing: 'ease-out' },
-      )
-      kbdAnimations.push(anim)
-    }
+    document.documentElement.setAttribute('data-keyboard-shortcut-highlight', 'true')
   }
+}
+
+function handleGlobalKeyup() {
+  // Don't check for key, "?" requires a combination and keys can be released independently
+  document.documentElement.removeAttribute('data-keyboard-shortcut-highlight')
 }
 
 if (import.meta.client) {
   useEventListener(document, 'keydown', handleGlobalKeydown)
+  useEventListener(document, 'keyup', handleGlobalKeyup)
 }
 </script>
 
@@ -106,3 +94,25 @@ if (import.meta.client) {
     <ScrollToTop />
   </div>
 </template>
+
+<style>
+/* Keyboard shortcut highlight */
+kbd {
+  position: relative;
+}
+
+kbd::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 4px 2px var(--accent);
+  opacity: 0;
+  transition: opacity 100ms cubic-bezier(0.5, 0, 0.64, 0.73);
+  pointer-events: none;
+}
+
+html[data-keyboard-shortcut-highlight='true'] kbd::before {
+  opacity: 1;
+}
+</style>
