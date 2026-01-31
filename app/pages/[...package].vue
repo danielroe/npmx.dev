@@ -70,14 +70,14 @@ const {
 )
 onMounted(() => fetchInstallSize())
 
-// Fetch skills data (lazy, client-side)
+// Fetch skills data
 const { data: skillsData } = useLazyFetch<SkillsListResponse>(
   () => {
     const base = `/skills/${packageName.value}`
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { server: false, default: () => ({ package: '', version: '', skills: [] }) },
+  { default: () => ({ package: '', version: '', skills: [] }) },
 )
 
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
