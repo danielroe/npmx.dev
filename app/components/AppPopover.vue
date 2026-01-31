@@ -21,9 +21,9 @@ const panelPositionClasses: Record<string, string> = {
 const panelPosition = computed(() => panelPositionClasses[props.position ?? 'bottom'])
 
 function clearCloseTimeout() {
-  if (closeTimeout.value !== null) {
-    clearTimeout(closeTimeout.value)
-    closeTimeout.value = null
+  if (closeTimeout !== null) {
+    clearTimeout(closeTimeout)
+    closeTimeout = null
   }
 }
 
@@ -34,8 +34,8 @@ function open() {
 
 function close() {
   clearCloseTimeout()
-  closeTimeout.value = setTimeout(() => {
-    closeTimeout.value = null
+  closeTimeout = setTimeout(() => {
+    closeTimeout = null
     isOpen.value = false
   }, closeDelayMs)
 }
