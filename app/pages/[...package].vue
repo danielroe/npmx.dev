@@ -364,6 +364,7 @@ defineOgImageComponent('Package', {
   version: () => displayVersion.value?.version ?? '',
   downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
+  stars: () => stars.value ?? 0,
   primaryColor: '#60a5fa',
 })
 
