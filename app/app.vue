@@ -74,6 +74,14 @@ function handleGlobalKeyup() {
 function handleModalLightDismiss(e: MouseEvent) {
   const target = e.target as HTMLElement
   if (target.tagName === 'DIALOG' && target.hasAttribute('open')) {
+    const rect = target.getBoundingClientRect()
+    const isOutside =
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+
+    if (!isOutside) return
     ;(target as HTMLDialogElement).close()
   }
 }
