@@ -152,7 +152,22 @@
       }
     },
     "skills": {
-      "title": "Agent Skills"
+      "title": "Agent Skills",
+      "skills_available": "{count} skill available | {count} skills available",
+      "view": "View",
+      "compatible_with": "Compatible with {tool}",
+      "install": "Install",
+      "installation_method": "Installation method",
+      "learn_more": "Learn more",
+      "available_skills": "Available Skills",
+      "click_to_expand": "Click to expand",
+      "no_description": "No description",
+      "file_counts": {
+        "scripts": "{count} script | {count} scripts",
+        "refs": "{count} ref | {count} refs",
+        "assets": "{count} asset | {count} assets"
+      },
+      "view_source": "View source"
     },
     "links": {
       "repo": "repo",

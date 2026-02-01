@@ -85,7 +85,7 @@ function handleKeydown(event: KeyboardEvent) {
           <div class="p-4 sm:p-6">
             <div class="flex items-center justify-between mb-4">
               <h2 id="skills-modal-title" class="font-mono text-lg font-medium">
-                {{ $t('package.skills.title', 'Agent Skills') }}
+                {{ $t('package.skills.title') }}
               </h2>
               <button
                 type="button"
@@ -99,11 +99,13 @@ function handleKeydown(event: KeyboardEvent) {
 
             <!-- Install header with tabs -->
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-              <h3 class="text-xs text-fg-subtle uppercase tracking-wider">Install</h3>
+              <h3 class="text-xs text-fg-subtle uppercase tracking-wider">
+                {{ $t('package.skills.install') }}
+              </h3>
               <div
                 class="flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md"
                 role="tablist"
-                aria-label="Installation method"
+                :aria-label="$t('package.skills.installation_method')"
               >
                 <button
                   role="tab"
@@ -143,14 +145,20 @@ function handleKeydown(event: KeyboardEvent) {
               v-if="selectedMethod === 'skills-npm'"
               class="flex items-center justify-between gap-2 px-3 py-2.5 sm:px-4 bg-bg-subtle border border-border rounded-lg mb-5"
             >
-              <span class="text-sm text-fg-muted"
-                >Compatible with <code class="font-mono text-fg">skills-npm</code></span
+              <i18n-t
+                keypath="package.skills.compatible_with"
+                tag="span"
+                class="text-sm text-fg-muted"
               >
+                <template #tool>
+                  <code class="font-mono text-fg">skills-npm</code>
+                </template>
+              </i18n-t>
               <a
                 href="/skills-npm"
                 class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors shrink-0"
               >
-                Learn more
+                {{ $t('package.skills.learn_more') }}
                 <span class="i-carbon:arrow-right w-3 h-3" />
               </a>
             </div>
@@ -188,8 +196,12 @@ function handleKeydown(event: KeyboardEvent) {
 
             <!-- Skills list -->
             <div class="flex items-baseline justify-between gap-2 mb-2">
-              <h3 class="text-xs text-fg-subtle uppercase tracking-wider">Available Skills</h3>
-              <span class="text-xs text-fg-subtle/60">Click to expand</span>
+              <h3 class="text-xs text-fg-subtle uppercase tracking-wider">
+                {{ $t('package.skills.available_skills') }}
+              </h3>
+              <span class="text-xs text-fg-subtle/60">{{
+                $t('package.skills.click_to_expand')
+              }}</span>
             </div>
             <ul class="space-y-0.5 list-none m-0 p-0">
               <li v-for="skill in skills" :key="skill.dirName">
@@ -223,26 +235,40 @@ function handleKeydown(event: KeyboardEvent) {
                       <p v-if="skill.description" class="text-sm text-fg-subtle">
                         {{ skill.description }}
                       </p>
-                      <p v-else class="text-sm text-fg-subtle/50 italic">No description</p>
+                      <p v-else class="text-sm text-fg-subtle/50 italic">
+                        {{ $t('package.skills.no_description') }}
+                      </p>
 
                       <!-- File counts & warnings -->
                       <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                         <span v-if="skill.fileCounts?.scripts" class="text-fg-subtle">
                           <span class="i-carbon:script size-3 inline-block align-[-2px] me-0.5" />{{
-                            skill.fileCounts.scripts
+                            $t(
+                              'package.skills.file_counts.scripts',
+                              { count: skill.fileCounts.scripts },
+                              skill.fileCounts.scripts,
+                            )
                           }}
-                          scripts
                         </span>
                         <span v-if="skill.fileCounts?.references" class="text-fg-subtle">
                           <span
                             class="i-carbon:document size-3 inline-block align-[-2px] me-0.5"
-                          />{{ skill.fileCounts.references }} refs
+                          />{{
+                            $t(
+                              'package.skills.file_counts.refs',
+                              { count: skill.fileCounts.references },
+                              skill.fileCounts.references,
+                            )
+                          }}
                         </span>
                         <span v-if="skill.fileCounts?.assets" class="text-fg-subtle">
                           <span class="i-carbon:image size-3 inline-block align-[-2px] me-0.5" />{{
-                            skill.fileCounts.assets
+                            $t(
+                              'package.skills.file_counts.assets',
+                              { count: skill.fileCounts.assets },
+                              skill.fileCounts.assets,
+                            )
                           }}
-                          assets
                         </span>
                         <template v-for="warning in skill.warnings" :key="warning.message">
                           <span class="text-amber-500">
@@ -259,7 +285,7 @@ function handleKeydown(event: KeyboardEvent) {
                         class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors"
                         @click.stop
                       >
-                        <span class="i-carbon:code size-3" />View source
+                        <span class="i-carbon:code size-3" />{{ $t('package.skills.view_source') }}
                       </NuxtLink>
                     </div>
                   </div>

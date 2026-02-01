@@ -17,7 +17,7 @@ const open = defineModel<boolean>('open', { default: false })
         href="#skills"
         class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
       >
-        Agent Skills
+        {{ $t('package.skills.title') }}
         <span
           class="i-carbon:link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           aria-hidden="true"
@@ -30,13 +30,17 @@ const open = defineModel<boolean>('open', { default: false })
       @click="open = true"
     >
       <span class="i-custom:agent-skills size-4 text-fg-muted" aria-hidden="true" />
-      <span class="text-sm text-fg">{{ skills.length }} skills available</span>
-      <span class="text-xs text-fg-subtle group-hover/btn:text-fg transition-colors ms-auto"
-        >View</span
-      >
+      <span class="text-sm text-fg">{{
+        $t('package.skills.skills_available', { count: skills.length }, skills.length)
+      }}</span>
+      <span class="text-xs text-fg-subtle group-hover/btn:text-fg transition-colors ms-auto">{{
+        $t('package.skills.view')
+      }}</span>
     </button>
-    <p class="text-xs text-fg-subtle mt-2">
-      Compatible with <NuxtLink to="/skills-npm" class="link">skills-npm</NuxtLink>
-    </p>
+    <i18n-t keypath="package.skills.compatible_with" tag="p" class="text-xs text-fg-subtle mt-2">
+      <template #tool>
+        <NuxtLink to="/skills-npm" class="link">skills-npm</NuxtLink>
+      </template>
+    </i18n-t>
   </section>
 </template>
