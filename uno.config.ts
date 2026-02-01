@@ -120,7 +120,7 @@ export default defineConfig({
     ['container-sm', 'max-w-4xl mx-auto px-4 sm:px-6'],
 
     // Focus states - subtle but accessible
-    ['focus-ring', 'outline-none focus-visible:(ring-2 ring-fg/10 ring-offset-2)'],
+    ['focus-ring', 'outline-none focus-visible:(ring-2 ring-offset-2 ring-fg/50)'],
 
     // Buttons
     [
@@ -149,7 +149,7 @@ export default defineConfig({
     // Form elements
     [
       'input-base',
-      'w-full bg-bg-subtle border border-border rounded-md px-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-200 focus:(border-fg/40 outline-none ring-1 ring-fg/10)',
+      'w-full bg-bg-subtle border border-border rounded-md px-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-200 focus:(border-fg/40 outline-none ring-1 ring-accent/50)',
     ],
 
     // Tags/badges
