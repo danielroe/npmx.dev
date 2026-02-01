@@ -79,15 +79,15 @@ const sortedOptionalDependencies = computed(() => {
         <li
           v-for="[dep, version] in sortedDependencies.slice(0, depsExpanded ? undefined : 10)"
           :key="dep"
-          class="flex items-center justify-start py-1 text-sm gap-2"
+          class="flex items-center justify-between py-1 text-sm gap-2"
         >
           <NuxtLink
             :to="{ name: 'package', params: { package: dep.split('/') } }"
-            class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0"
+            class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0 flex-1"
           >
             {{ dep }}
           </NuxtLink>
-          <span class="flex items-center gap-1">
+          <span class="flex items-center gap-1 max-w-[40%]">
             <span
               v-if="outdatedDeps[dep]"
               class="shrink-0"
@@ -97,7 +97,6 @@ const sortedOptionalDependencies = computed(() => {
             >
               <span class="i-carbon:warning-alt w-3 h-3 block" />
             </span>
-            <span aria-hidden="true" class="shrink grow" />
             <NuxtLink
               v-if="getVulnerableDepInfo(dep)"
               :to="{
@@ -157,10 +156,10 @@ const sortedOptionalDependencies = computed(() => {
           :key="peer.name"
           class="flex items-center justify-between py-1 text-sm gap-1 min-w-0"
         >
-          <div class="flex items-center gap-1 shrink-0">
+          <div class="flex items-center gap-1 min-w-0 flex-1">
             <NuxtLink
               :to="{ name: 'package', params: { package: peer.name.split('/') } }"
-              class="font-mono text-fg-muted hover:text-fg transition-colors duration-200"
+              class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate"
             >
               {{ peer.name }}
             </NuxtLink>
@@ -179,7 +178,7 @@ const sortedOptionalDependencies = computed(() => {
               name: 'package',
               params: { package: [...peer.name.split('/'), 'v', peer.version] },
             }"
-            class="font-mono text-xs text-fg-subtle shrink-0"
+            class="font-mono text-xs text-fg-subtle max-w-[40%] truncate"
             :title="peer.version"
           >
             {{ peer.version }}
@@ -214,18 +213,17 @@ const sortedOptionalDependencies = computed(() => {
             optionalDepsExpanded ? undefined : 10,
           )"
           :key="dep"
-          class="flex items-center justify-start py-1 text-sm gap-2"
+          class="flex items-center justify-between py-1 text-sm gap-2"
         >
           <NuxtLink
             :to="{ name: 'package', params: { package: dep.split('/') } }"
-            class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0"
+            class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0 flex-1"
           >
             {{ dep }}
           </NuxtLink>
-          <span aria-hidden="true" class="shrink grow" />
           <NuxtLink
             :to="{ name: 'package', params: { package: [...dep.split('/'), 'v', version] } }"
-            class="font-mono text-xs text-fg-subtle max-w-[50%] text-end truncate"
+            class="font-mono text-xs text-fg-subtle max-w-[40%] text-end truncate"
             :title="version"
           >
             {{ version }}
