@@ -9,6 +9,13 @@ const props = defineProps<{
 
 const chartModal = useModal('chart-modal')
 
+const isChartModalOpen = shallowRef(false)
+function openChartModal() {
+  isChartModalOpen.value = true
+  // ensure the component renders before opening the dialog
+  nextTick(() => chartModal.open())
+}
+
 const { data: packument } = usePackage(() => props.packageName)
 const createdIso = computed(() => packument.value?.time?.created ?? null)
 
@@ -194,7 +201,7 @@ const config = computed(() => {
       <template #actions>
         <button
           type="button"
-          @click="chartModal.open()"
+          @click="openChartModal"
           class="link-subtle font-mono text-sm inline-flex items-center gap-1.5 ms-auto shrink-0 self-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
           :title="$t('package.downloads.analyze')"
         >
@@ -241,11 +248,11 @@ const config = computed(() => {
     </CollapsibleSection>
   </div>
 
-  <ChartModal>
+  <ChartModal v-if="isChartModalOpen" @close="isChartModalOpen = false">
     <PackageDownloadAnalytics
       :weeklyDownloads="weeklyDownloads"
       :inModal="true"
-      :packageName="packageName"
+      :packageName="props.packageName"
       :createdIso="createdIso"
     />
   </ChartModal>
