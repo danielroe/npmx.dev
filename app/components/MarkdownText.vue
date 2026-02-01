@@ -26,6 +26,11 @@ function stripAndEscapeHtml(text: string): string {
   // First decode any HTML entities in the input
   let stripped = decodeHtmlEntities(text)
 
+  // Check if original text has HTML tags or markdown images BEFORE stripping
+  // Only strip package name for these "badge-style" descriptions
+  const hasHtmlTags = /<\/?[a-z][^>]*>/i.test(stripped)
+  const hasMarkdownImages = /!\[[^\]]*\]\([^)]*\)/.test(stripped)
+
   // Then strip markdown image badges
   stripped = stripMarkdownImages(stripped)
 
@@ -33,7 +38,9 @@ function stripAndEscapeHtml(text: string): string {
   // Only match tags that start with a letter or / (to avoid matching things like "a < b > c")
   stripped = stripped.replace(/<\/?[a-z][^>]*>/gi, '')
 
-  if (props.packageName) {
+  // Only strip package name if original text had HTML tags or markdown images
+  // Normal descriptions like "Nuxt is a framework..." should keep the package name
+  if ((hasHtmlTags || hasMarkdownImages) && props.packageName) {
     // Trim first to handle leading/trailing whitespace from stripped HTML
     stripped = stripped.trim()
     // Collapse multiple whitespace into single space
