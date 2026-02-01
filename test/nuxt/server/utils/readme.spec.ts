@@ -47,7 +47,7 @@ describe('Playground Link Extraction', () => {
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
       expect(result.playgroundLinks).toHaveLength(1)
-      expect(result.playgroundLinks[0].provider).toBe('codesandbox')
+      expect(result.playgroundLinks[0]!.provider).toBe('codesandbox')
     })
   })
 
@@ -56,21 +56,21 @@ describe('Playground Link Extraction', () => {
       const markdown = `[Pen](https://codepen.io/user/pen/abc123)`
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
-      expect(result.playgroundLinks[0].provider).toBe('codepen')
+      expect(result.playgroundLinks[0]!.provider).toBe('codepen')
     })
 
     it('extracts Replit links', async () => {
       const markdown = `[Repl](https://replit.com/@user/project)`
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
-      expect(result.playgroundLinks[0].provider).toBe('replit')
+      expect(result.playgroundLinks[0]!.provider).toBe('replit')
     })
 
     it('extracts Gitpod links', async () => {
       const markdown = `[Open in Gitpod](https://gitpod.io/#https://github.com/user/repo)`
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
-      expect(result.playgroundLinks[0].provider).toBe('gitpod')
+      expect(result.playgroundLinks[0]!.provider).toBe('gitpod')
     })
   })
 
@@ -83,8 +83,8 @@ describe('Playground Link Extraction', () => {
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
       expect(result.playgroundLinks).toHaveLength(2)
-      expect(result.playgroundLinks[0].provider).toBe('stackblitz')
-      expect(result.playgroundLinks[1].provider).toBe('codesandbox')
+      expect(result.playgroundLinks[0]!.provider).toBe('stackblitz')
+      expect(result.playgroundLinks[1]!.provider).toBe('codesandbox')
     })
 
     it('deduplicates same URL', async () => {
@@ -127,7 +127,7 @@ describe('Playground Link Extraction', () => {
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
       expect(result.playgroundLinks).toHaveLength(1)
-      expect(result.playgroundLinks[0].provider).toBe('stackblitz')
+      expect(result.playgroundLinks[0]!.provider).toBe('stackblitz')
     })
   })
 })
