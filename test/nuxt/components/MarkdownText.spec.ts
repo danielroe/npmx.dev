@@ -259,84 +259,28 @@ describe('MarkdownText', () => {
   })
 
   describe('packageName prop', () => {
-    it('strips package name from the beginning of plain text', async () => {
+    // Package name stripping ONLY happens for descriptions with HTML tags or markdown images
+    // Normal plain text descriptions should keep the package name (like "Nuxt is a framework...")
+
+    it('does NOT strip package name from plain text descriptions', async () => {
+      // Plain text descriptions should be kept as-is
       const component = await mountSuspended(MarkdownText, {
         props: {
           text: 'my-package - A great library',
           packageName: 'my-package',
         },
       })
-      expect(component.text()).toBe('A great library')
+      expect(component.text()).toBe('my-package - A great library')
     })
 
-    it('strips package name with colon separator', async () => {
+    it('does NOT strip package name from plain text with colon', async () => {
       const component = await mountSuspended(MarkdownText, {
         props: {
           text: 'my-package: A great library',
           packageName: 'my-package',
         },
       })
-      expect(component.text()).toBe('A great library')
-    })
-
-    it('strips package name with em dash separator', async () => {
-      const component = await mountSuspended(MarkdownText, {
-        props: {
-          text: 'my-package — A great library',
-          packageName: 'my-package',
-        },
-      })
-      expect(component.text()).toBe('A great library')
-    })
-
-    it('strips package name without separator', async () => {
-      const component = await mountSuspended(MarkdownText, {
-        props: {
-          text: 'my-package A great library',
-          packageName: 'my-package',
-        },
-      })
-      expect(component.text()).toBe('A great library')
-    })
-
-    it('is case-insensitive', async () => {
-      const component = await mountSuspended(MarkdownText, {
-        props: {
-          text: 'MY-PACKAGE - A great library',
-          packageName: 'my-package',
-        },
-      })
-      expect(component.text()).toBe('A great library')
-    })
-
-    it('does not strip package name from middle of text', async () => {
-      const component = await mountSuspended(MarkdownText, {
-        props: {
-          text: 'A great my-package library',
-          packageName: 'my-package',
-        },
-      })
-      expect(component.text()).toBe('A great my-package library')
-    })
-
-    it('handles scoped package names', async () => {
-      const component = await mountSuspended(MarkdownText, {
-        props: {
-          text: '@org/my-package - A great library',
-          packageName: '@org/my-package',
-        },
-      })
-      expect(component.text()).toBe('A great library')
-    })
-
-    it('handles package names with special regex characters', async () => {
-      const component = await mountSuspended(MarkdownText, {
-        props: {
-          text: 'pkg.name+test - A great library',
-          packageName: 'pkg.name+test',
-        },
-      })
-      expect(component.text()).toBe('A great library')
+      expect(component.text()).toBe('my-package: A great library')
     })
 
     it('strips package name from HTML-containing descriptions', async () => {
@@ -344,6 +288,66 @@ describe('MarkdownText', () => {
         props: {
           text: '<b>my-package</b> - A great library',
           packageName: 'my-package',
+        },
+      })
+      expect(component.text()).toBe('A great library')
+    })
+
+    it('strips package name from HTML descriptions with colon separator', async () => {
+      const component = await mountSuspended(MarkdownText, {
+        props: {
+          text: '<div>my-package: A great library</div>',
+          packageName: 'my-package',
+        },
+      })
+      expect(component.text()).toBe('A great library')
+    })
+
+    it('strips package name from HTML descriptions with em dash', async () => {
+      const component = await mountSuspended(MarkdownText, {
+        props: {
+          text: '<span>my-package — A great library</span>',
+          packageName: 'my-package',
+        },
+      })
+      expect(component.text()).toBe('A great library')
+    })
+
+    it('is case-insensitive for HTML descriptions', async () => {
+      const component = await mountSuspended(MarkdownText, {
+        props: {
+          text: '<b>MY-PACKAGE</b> - A great library',
+          packageName: 'my-package',
+        },
+      })
+      expect(component.text()).toBe('A great library')
+    })
+
+    it('does not strip package name from middle of HTML text', async () => {
+      const component = await mountSuspended(MarkdownText, {
+        props: {
+          text: '<div>A great my-package library</div>',
+          packageName: 'my-package',
+        },
+      })
+      expect(component.text()).toBe('A great my-package library')
+    })
+
+    it('handles scoped package names in HTML descriptions', async () => {
+      const component = await mountSuspended(MarkdownText, {
+        props: {
+          text: '<b>@org/my-package</b> - A great library',
+          packageName: '@org/my-package',
+        },
+      })
+      expect(component.text()).toBe('A great library')
+    })
+
+    it('handles package names with special regex characters in HTML', async () => {
+      const component = await mountSuspended(MarkdownText, {
+        props: {
+          text: '<b>pkg.name+test</b> - A great library',
+          packageName: 'pkg.name+test',
         },
       })
       expect(component.text()).toBe('A great library')
