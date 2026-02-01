@@ -603,14 +603,6 @@ const config = computed(() => {
       },
       zoom: {
         maxWidth: isMobile.value ? 350 : 500,
-        // customFormat:
-        //   displayedGranularity.value !== 'weekly'
-        //     ? undefined
-        //     : ({ absoluteIndex, side }: { absoluteIndex: number; side: 'left' | 'right' }) => {
-        //         const parts = extractDates(chartData.value.dates[absoluteIndex] ?? '')
-        //         if (!parts) return ''
-        //         return side === 'left' ? parts[0] : parts[1]
-        //       },
         highlightColor: colors.value.bgElevated,
         minimap: {
           show: true,
