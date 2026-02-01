@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
+
 const isOpen = defineModel<boolean>('open', { default: false })
 
 const { isConnected, npmUser, avatar: npmAvatar } = useConnector()
 const { user: atprotoUser } = useAtproto()
 
-const { trapRef } = useFocusTrap()
+const navRef = useTemplateRef('navRef')
+const { activate, deactivate } = useFocusTrap(navRef, { allowOutsideClick: true })
 
 function closeMenu() {
   isOpen.value = false
@@ -40,6 +43,8 @@ onKeyStroke('Escape', () => {
 // Prevent body scroll when menu is open
 const isLocked = useScrollLock(document)
 watch(isOpen, open => (isLocked.value = open))
+watch(isOpen, open => (open ? nextTick(activate) : deactivate()))
+onUnmounted(deactivate)
 </script>
 
 <template>
@@ -76,7 +81,7 @@ watch(isOpen, open => (isLocked.value = open))
         >
           <nav
             v-if="isOpen"
-            ref="trapRef"
+            ref="navRef"
             class="absolute inset-ie-0 top-0 bottom-0 w-72 bg-bg border-is border-border shadow-xl flex flex-col"
           >
             <!-- Header -->
