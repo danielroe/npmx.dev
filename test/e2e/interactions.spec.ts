@@ -167,7 +167,7 @@ test.describe('Keyboard Shortcuts', () => {
 
     await page.keyboard.press('Shift+,')
     await expect(page).toHaveURL(/\/settings/)
-    await page.keyboard.press('Ctrl+,')
+    await page.keyboard.press('Control+,')
     await expect(page).toHaveURL(/\/settings/)
     await page.keyboard.press('Alt+,')
     await expect(page).toHaveURL(/\/settings/)
