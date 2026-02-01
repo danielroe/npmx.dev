@@ -59,7 +59,7 @@ async function handleClaim() {
 
     // Auto-approve and execute
     await approveOperation(operation.id)
-    const result = await executeOperations()
+    await executeOperations()
 
     // Refresh state and check if operation completed successfully
     await refreshState()
