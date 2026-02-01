@@ -312,10 +312,10 @@ function getTagVersions(tag: string): VersionDisplay[] {
         target="_blank"
         rel="noopener noreferrer"
         class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
-        :title="$t('package.stats.view_community_adoption_distribution')"
+        :title="$t('package.downloads.community_distribution')"
       >
         <span class="i-carbon:load-balancer-network w-3.5 h-3.5" aria-hidden="true" />
-        <span class="sr-only">{{ $t('package.stats.view_community_adoption_distribution') }}</span>
+        <span class="sr-only">{{ $t('package.downloads.community_distribution') }}</span>
       </a>
     </template>
     <div class="space-y-0.5 min-w-0">
