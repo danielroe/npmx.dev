@@ -1,10 +1,16 @@
 <script setup lang="ts">
-import type { NpmVersionDist, PackumentVersion, ReadmeResponse } from '#shared/types'
+import type {
+  NpmVersionDist,
+  PackumentVersion,
+  ReadmeResponse,
+  SkillsListResponse,
+} from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
-import { onKeyStroke } from '@vueuse/core'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
+import { isEditableElement } from '~/utils/input'
+import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'package',
@@ -65,6 +71,15 @@ const {
 )
 onMounted(() => fetchInstallSize())
 
+const { data: skillsData } = useLazyFetch<SkillsListResponse>(
+  () => {
+    const base = `/skills/${packageName.value}`
+    const version = requestedVersion.value
+    return version ? `${base}/v/${version}` : base
+  },
+  { default: () => ({ package: '', version: '', skills: [] }) },
+)
+
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
@@ -94,24 +109,9 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
 
 // Fetch dependency analysis (lazy, client-side)
 // This is the same composable used by PackageVulnerabilityTree and PackageDeprecatedTree
-const {
-  data: vulnTree,
-  status: vulnTreeStatus,
-  fetch: fetchVulnTree,
-} = useDependencyAnalysis(packageName, () => displayVersion.value?.version ?? '')
-onMounted(() => {
-  // Fetch vulnerability tree once displayVersion is available
-  if (displayVersion.value) {
-    fetchVulnTree()
-  }
-})
-watch(
-  () => displayVersion.value?.version,
-  () => {
-    if (displayVersion.value) {
-      fetchVulnTree()
-    }
-  },
+const { data: vulnTree, status: vulnTreeStatus } = useDependencyAnalysis(
+  packageName,
+  () => displayVersion.value?.version ?? '',
 )
 
 // Keep latestVersion for comparison (to show "(latest)" badge)
@@ -129,7 +129,10 @@ const deprecationNotice = computed(() => {
 
   // If latest is deprecated, show "package deprecated"
   if (isLatestDeprecated) {
-    return { type: 'package' as const, message: displayVersion.value.deprecated }
+    return {
+      type: 'package' as const,
+      message: displayVersion.value.deprecated,
+    }
   }
 
   // Otherwise show "version deprecated"
@@ -231,7 +234,9 @@ const docsLink = computed(() => {
 
   return {
     name: 'docs' as const,
-    params: { path: [...pkg.value!.name.split('/'), 'v', displayVersion.value.version] },
+    params: {
+      path: [...pkg.value!.name.split('/'), 'v', displayVersion.value.version],
+    },
   }
 })
 
@@ -251,16 +256,6 @@ function normalizeGitUrl(url: string): string {
     .replace(/\.git$/, '')
     .replace(/^ssh:\/\/git@github\.com/, 'https://github.com')
     .replace(/^git@github\.com:/, 'https://github.com/')
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
-
-function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num)
 }
 
 function getDependencyCount(version: PackumentVersion | null): number {
@@ -331,28 +326,46 @@ useSeoMeta({
   description: () => pkg.value?.description ?? '',
 })
 
-onKeyStroke('.', () => {
-  if (pkg.value && displayVersion.value) {
-    router.push({
+onKeyStroke(
+  e => isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
+  e => {
+    if (pkg.value == null || displayVersion.value == null) return
+    e.preventDefault()
+    navigateTo({
       name: 'code',
       params: {
         path: [pkg.value.name, 'v', displayVersion.value.version],
       },
     })
-  }
-})
+  },
+  { dedupe: true },
+)
 
-onKeyStroke('d', () => {
-  if (docsLink.value) {
-    router.push(docsLink.value)
-  }
-})
+onKeyStroke(
+  e => isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
+  e => {
+    if (!docsLink.value) return
+    e.preventDefault()
+    navigateTo(docsLink.value)
+  },
+  { dedupe: true },
+)
+
+onKeyStroke(
+  e => isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
+  e => {
+    if (!pkg.value) return
+    e.preventDefault()
+    router.push({ path: '/compare', query: { packages: pkg.value.name } })
+  },
+)
 
 defineOgImageComponent('Package', {
   name: () => pkg.value?.name ?? 'Package',
   version: () => displayVersion.value?.version ?? '',
-  downloads: () => (downloads.value ? formatNumber(downloads.value.downloads) : ''),
+  downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
+  stars: () => stars.value ?? 0,
   primaryColor: '#60a5fa',
 })
 
@@ -376,7 +389,7 @@ function handleClick(event: MouseEvent) {
 </script>
 
 <template>
-  <main class="container flex-1 py-8 xl:py-12">
+  <main class="container flex-1 w-full py-8 xl:py-12">
     <PackageSkeleton v-if="status === 'pending'" />
 
     <article v-else-if="status === 'success' && pkg" class="package-page">
@@ -395,7 +408,7 @@ function handleClick(event: MouseEvent) {
                 class="text-fg-muted hover:text-fg transition-colors duration-200"
                 >@{{ orgName }}</NuxtLink
               ><span v-if="orgName">/</span>
-              <AnnounceTooltip :text="$t('common.copied')" :isVisible="copiedPkgName">
+              <TooltipAnnounce :text="$t('common.copied')" :isVisible="copiedPkgName">
                 <button
                   @click="copyPkgName()"
                   aria-describedby="copy-pkg-name"
@@ -403,7 +416,7 @@ function handleClick(event: MouseEvent) {
                 >
                   {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
                 </button>
-              </AnnounceTooltip>
+              </TooltipAnnounce>
             </h1>
 
             <span id="copy-pkg-name" class="sr-only">{{ $t('package.copy_name') }}</span>
@@ -455,6 +468,7 @@ function handleClick(event: MouseEvent) {
                 v-if="displayVersion"
                 :package-name="pkg.name"
                 :version="displayVersion.version"
+                :is-binary="isBinaryOnly"
                 class="self-baseline ms-1 sm:ms-2"
               />
               <template #fallback>
@@ -465,11 +479,11 @@ function handleClick(event: MouseEvent) {
               </template>
             </ClientOnly>
 
-            <!-- Internal navigation: Docs + Code (hidden on mobile, shown in external links instead) -->
+            <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
             <nav
               v-if="displayVersion"
               :aria-label="$t('package.navigation')"
-              class="hidden sm:flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
+              class="hidden sm:flex items-center gap-0.5 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
             >
               <NuxtLink
                 v-if="docsLink"
@@ -489,7 +503,9 @@ function handleClick(event: MouseEvent) {
               <NuxtLink
                 :to="{
                   name: 'code',
-                  params: { path: [...pkg.name.split('/'), 'v', displayVersion.version] },
+                  params: {
+                    path: [...pkg.name.split('/'), 'v', displayVersion.version],
+                  },
                 }"
                 class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
                 aria-keyshortcuts="."
@@ -501,6 +517,20 @@ function handleClick(event: MouseEvent) {
                   aria-hidden="true"
                 >
                   .
+                </kbd>
+              </NuxtLink>
+              <NuxtLink
+                :to="{ path: '/compare', query: { packages: pkg.name } }"
+                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                aria-keyshortcuts="c"
+              >
+                <span class="i-carbon:compare w-3 h-3" aria-hidden="true" />
+                {{ $t('package.links.compare') }}
+                <kbd
+                  class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  aria-hidden="true"
+                >
+                  c
                 </kbd>
               </NuxtLink>
             </nav>
@@ -611,7 +641,7 @@ function handleClick(event: MouseEvent) {
                 {{ $t('package.links.fund') }}
               </a>
             </li>
-            <!-- Mobile-only: Docs + Code links -->
+            <!-- Mobile-only: Docs + Code + Compare links -->
             <li v-if="docsLink && displayVersion" class="sm:hidden">
               <NuxtLink
                 :to="docsLink"
@@ -625,12 +655,23 @@ function handleClick(event: MouseEvent) {
               <NuxtLink
                 :to="{
                   name: 'code',
-                  params: { path: [...pkg.name.split('/'), 'v', displayVersion.version] },
+                  params: {
+                    path: [...pkg.name.split('/'), 'v', displayVersion.version],
+                  },
                 }"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon:code w-4 h-4" aria-hidden="true" />
                 {{ $t('package.links.code') }}
+              </NuxtLink>
+            </li>
+            <li class="sm:hidden">
+              <NuxtLink
+                :to="{ path: '/compare', query: { packages: pkg.name } }"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
+                {{ $t('package.links.compare') }}
               </NuxtLink>
             </li>
           </ul>
@@ -650,7 +691,9 @@ function handleClick(event: MouseEvent) {
           <p v-if="deprecationNotice.message" class="text-base m-0">
             <MarkdownText :text="deprecationNotice.message" />
           </p>
-          <p v-else class="text-base m-0 italic">{{ $t('package.deprecation.no_reason') }}</p>
+          <p v-else class="text-base m-0 italic">
+            {{ $t('package.deprecation.no_reason') }}
+          </p>
         </div>
 
         <!-- Stats grid -->
@@ -807,6 +850,15 @@ function handleClick(event: MouseEvent) {
             </dd>
           </div>
         </dl>
+
+        <!-- Skills Modal -->
+        <ClientOnly>
+          <PackageSkillsModal
+            :skills="skillsData?.skills ?? []"
+            :package-name="pkg.name"
+            :version="displayVersion?.version"
+          />
+        </ClientOnly>
       </header>
 
       <!-- Binary-only packages: Show only execute command (no install) -->
@@ -823,7 +875,7 @@ function handleClick(event: MouseEvent) {
           :id="`pm-panel-${activePmId}`"
           :aria-labelledby="`pm-tab-${activePmId}`"
         >
-          <ExecuteCommandTerminal
+          <TerminalExecute
             :package-name="pkg.name"
             :jsr-info="jsrInfo"
             :is-create-package="isCreatePkg"
@@ -857,7 +909,7 @@ function handleClick(event: MouseEvent) {
           :id="`pm-panel-${activePmId}`"
           :aria-labelledby="`pm-tab-${activePmId}`"
         >
-          <InstallCommandTerminal
+          <TerminalInstall
             :package-name="pkg.name"
             :requested-version="requestedVersion"
             :jsr-info="jsrInfo"
@@ -887,166 +939,6 @@ function handleClick(event: MouseEvent) {
         </ClientOnly>
       </div>
 
-      <div class="area-sidebar self-start">
-        <!-- Sidebar -->
-        <aside class="sticky top-20 px-2 py-1 space-y-2 sm:space-y-4 min-w-0 overflow-hidden">
-          <!-- Maintainers -->
-          <CollapsibleSection v-if="pkg.maintainers?.length" id="maintainers">
-            <template #title>
-              <h2>{{ $t('package.maintainers.title') }}</h2>
-            </template>
-            <PackageMaintainersList :package-name="pkg.name" :maintainers="pkg.maintainers" />
-          </CollapsibleSection>
-
-          <!-- Access Controls -->
-          <ClientOnly>
-            <CollapsibleSection v-if="pkg.name.startsWith('@')" id="access">
-              <template #title>
-                <h2>{{ $t('package.access.title') }}</h2>
-              </template>
-              <PackageAccessControlsList :package-name="pkg.name" />
-            </CollapsibleSection>
-          </ClientOnly>
-
-          <!-- Keywords -->
-          <CollapsibleSection v-if="displayVersion?.keywords?.length" id="keywords">
-            <template #title>
-              <h2>{{ $t('package.keywords_title') }}</h2>
-            </template>
-            <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
-              <li v-for="keyword in displayVersion.keywords.slice(0, 15)" :key="keyword">
-                <NuxtLink :to="{ name: 'search', query: { q: `keywords:${keyword}` } }" class="tag">
-                  {{ keyword }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </CollapsibleSection>
-
-          <!-- Download Stats -->
-          <CollapsibleSection id="downloads">
-            <template #title>
-              <h2>{{ $t('package.downloads.title') }}</h2>
-            </template>
-            <PackageDownloadStatsContent :package-name="packageName" />
-          </CollapsibleSection>
-
-          <!-- Playgrounds -->
-          <CollapsibleSection v-if="readmeData?.playgroundLinks?.length" id="playgrounds">
-            <template #title>
-              <h2>{{ $t('package.playgrounds.title') }}</h2>
-            </template>
-            <PackagePlaygroundsList :links="readmeData.playgroundLinks" />
-          </CollapsibleSection>
-
-          <!-- Compatibility -->
-          <CollapsibleSection
-            v-if="displayVersion?.engines?.node || displayVersion?.engines?.npm"
-            id="compatibility"
-          >
-            <template #title>
-              <h2>{{ $t('package.compatibility') }}</h2>
-            </template>
-            <dl class="space-y-2">
-              <div v-if="displayVersion.engines?.node" class="flex justify-between gap-4 py-1">
-                <dt class="text-fg-muted text-sm shrink-0">node</dt>
-                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.node">
-                  {{ displayVersion.engines.node }}
-                </dd>
-              </div>
-              <div v-if="displayVersion.engines?.npm" class="flex justify-between gap-4 py-1">
-                <dt class="text-fg-muted text-sm shrink-0">npm</dt>
-                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.npm">
-                  {{ displayVersion.engines.npm }}
-                </dd>
-              </div>
-            </dl>
-          </CollapsibleSection>
-
-          <!-- Versions -->
-          <CollapsibleSection
-            v-if="pkg.versions && Object.keys(pkg.versions).length > 0"
-            id="versions"
-          >
-            <template #title>
-              <h2>{{ $t('package.versions.title') }}</h2>
-            </template>
-            <PackageVersionsList
-              :package-name="pkg.name"
-              :versions="pkg.versions"
-              :dist-tags="pkg['dist-tags'] ?? {}"
-              :time="pkg.time"
-            />
-          </CollapsibleSection>
-
-          <!-- Install Scripts Warning -->
-          <CollapsibleSection v-if="displayVersion?.installScripts" id="install-scripts">
-            <template #title>
-              <span class="i-carbon-warning-alt text-yellow-500 size-3" />
-              <h2>{{ $t('package.install_scripts.title') }}</h2>
-            </template>
-            <PackageInstallScriptsList
-              :package-name="pkg.name"
-              :install-scripts="displayVersion.installScripts"
-            />
-          </CollapsibleSection>
-
-          <!-- Dependencies -->
-          <CollapsibleSection v-if="displayVersion?.dependencies" id="dependencies">
-            <template #title>
-              <h2>
-                {{
-                  $t('package.dependencies.title', {
-                    count: Object.keys(displayVersion.dependencies).length,
-                  })
-                }}
-              </h2>
-            </template>
-            <PackageDependenciesList
-              type="dependencies"
-              :dependencies="displayVersion.dependencies"
-            />
-          </CollapsibleSection>
-
-          <!-- Peer Dependencies -->
-          <CollapsibleSection v-if="displayVersion?.peerDependencies" id="peer-dependencies">
-            <template #title>
-              <h2>
-                {{
-                  $t('package.peer_dependencies.title', {
-                    count: Object.keys(displayVersion.peerDependencies).length,
-                  })
-                }}
-              </h2>
-            </template>
-            <PackageDependenciesList
-              type="peer"
-              :dependencies="displayVersion.peerDependencies"
-              :meta="displayVersion.peerDependenciesMeta ?? {}"
-            />
-          </CollapsibleSection>
-
-          <!-- Optional Dependencies -->
-          <CollapsibleSection
-            v-if="displayVersion?.optionalDependencies"
-            id="optional-dependencies"
-          >
-            <template #title>
-              <h2>
-                {{
-                  $t('package.optional_dependencies.title', {
-                    count: Object.keys(displayVersion.optionalDependencies).length,
-                  })
-                }}
-              </h2>
-            </template>
-            <PackageDependenciesList
-              type="optional"
-              :dependencies="displayVersion.optionalDependencies"
-            />
-          </CollapsibleSection>
-        </aside>
-      </div>
-
       <!-- README -->
       <section id="readme" class="area-readme min-w-0 scroll-mt-20">
         <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
@@ -1062,12 +954,7 @@ function handleClick(event: MouseEvent) {
           </a>
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-        <div
-          v-if="readmeData?.html"
-          class="readme-content prose prose-invert max-w-[70ch]"
-          v-html="readmeData.html"
-          @click="handleClick"
-        />
+        <Readme v-if="readmeData?.html" :html="readmeData.html" @click="handleClick" />
         <p v-else class="text-fg-subtle italic">
           {{ $t('package.readme.no_readme') }}
           <a v-if="repositoryUrl" :href="repositoryUrl" rel="noopener noreferrer" class="link">{{
@@ -1075,6 +962,129 @@ function handleClick(event: MouseEvent) {
           }}</a>
         </p>
       </section>
+
+      <div class="area-sidebar">
+        <!-- Sidebar -->
+        <div class="sticky top-20 space-y-6 sm:space-y-8 min-w-0 overflow-hidden">
+          <!-- Maintainers (with admin actions when connected) -->
+          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
+
+          <!-- Team access controls (for scoped packages when connected) -->
+          <ClientOnly>
+            <PackageAccessControls :package-name="pkg.name" />
+          </ClientOnly>
+
+          <!-- Keywords -->
+          <section id="keywords" v-if="displayVersion?.keywords?.length" class="scroll-mt-20">
+            <h2
+              id="keywords-heading"
+              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
+            >
+              <a
+                href="#keywords"
+                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+              >
+                {{ $t('package.keywords_title') }}
+                <span
+                  class="i-carbon:link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  aria-hidden="true"
+                />
+              </a>
+            </h2>
+            <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
+              <li v-for="keyword in displayVersion.keywords.slice(0, 15)" :key="keyword">
+                <NuxtLink :to="{ name: 'search', query: { q: `keywords:${keyword}` } }" class="tag">
+                  {{ keyword }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </section>
+
+          <!-- Agent Skills -->
+          <ClientOnly>
+            <PackageSkillsCard
+              v-if="skillsData?.skills?.length"
+              :skills="skillsData.skills"
+              :package-name="pkg.name"
+              :version="displayVersion?.version"
+            />
+          </ClientOnly>
+
+          <!-- Download stats -->
+          <PackageWeeklyDownloadStats :packageName />
+
+          <!-- Playground links -->
+          <PackagePlaygrounds
+            v-if="readmeData?.playgroundLinks?.length"
+            :links="readmeData.playgroundLinks"
+          />
+
+          <section
+            id="compatibility"
+            v-if="
+              displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)
+            "
+            class="scroll-mt-20"
+          >
+            <h2
+              id="compatibility-heading"
+              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
+            >
+              <a
+                href="#compatibility"
+                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+              >
+                {{ $t('package.compatibility') }}
+                <span
+                  class="i-carbon:link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                  aria-hidden="true"
+                />
+              </a>
+            </h2>
+            <dl class="space-y-2">
+              <div v-if="displayVersion.engines.node" class="flex justify-between gap-4 py-1">
+                <dt class="text-fg-muted text-sm shrink-0">node</dt>
+                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.node">
+                  {{ displayVersion.engines.node }}
+                </dd>
+              </div>
+              <div v-if="displayVersion.engines.npm" class="flex justify-between gap-4 py-1">
+                <dt class="text-fg-muted text-sm shrink-0">npm</dt>
+                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.npm">
+                  {{ displayVersion.engines.npm }}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <!-- Versions (grouped by release channel) -->
+          <PackageVersions
+            v-if="pkg.versions && Object.keys(pkg.versions).length > 0"
+            :package-name="pkg.name"
+            :versions="pkg.versions"
+            :dist-tags="pkg['dist-tags'] ?? {}"
+            :time="pkg.time"
+          />
+
+          <!-- Install Scripts Warning -->
+          <PackageInstallScripts
+            v-if="displayVersion?.installScripts"
+            :package-name="pkg.name"
+            :install-scripts="displayVersion.installScripts"
+          />
+
+          <!-- Dependencies -->
+          <PackageDependencies
+            v-if="hasDependencies && displayVersion"
+            :package-name="pkg.name"
+            :version="displayVersion.version"
+            :dependencies="displayVersion.dependencies"
+            :peer-dependencies="displayVersion.peerDependencies"
+            :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
+            :optional-dependencies="displayVersion.optionalDependencies"
+          />
+        </div>
+      </div>
     </article>
 
     <!-- Error state -->
@@ -1083,7 +1093,9 @@ function handleClick(event: MouseEvent) {
       role="alert"
       class="flex flex-col items-center py-20 text-center"
     >
-      <h1 class="font-mono text-2xl font-medium mb-4">{{ $t('package.not_found') }}</h1>
+      <h1 class="font-mono text-2xl font-medium mb-4">
+        {{ $t('package.not_found') }}
+      </h1>
       <p class="text-fg-muted mb-8">
         {{ error?.message ?? $t('package.not_found_message') }}
       </p>
@@ -1096,9 +1108,9 @@ function handleClick(event: MouseEvent) {
 .package-page {
   display: grid;
   gap: 2rem;
-  grid-auto-rows: min-content;
 
   /* Mobile: single column, sidebar above readme */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     'header'
     'install'
@@ -1116,6 +1128,7 @@ function handleClick(event: MouseEvent) {
       'install install'
       'vulns   vulns'
       'readme  sidebar';
+    grid-template-rows: auto auto auto 1fr;
   }
 }
 
@@ -1123,20 +1136,11 @@ function handleClick(event: MouseEvent) {
 @media (min-width: 1280px) {
   .package-page {
     grid-template-columns: 1fr 20rem;
-    /* Use min-content for top rows, 1fr for readme to absorb any extra sidebar height */
-    grid-template-rows: repeat(3, min-content) 1fr;
     grid-template-areas:
       'header  sidebar'
       'install sidebar'
       'vulns   sidebar'
       'readme  sidebar';
-
-    &:not(:has(.area-vulns)) {
-      /* If there is no vulnerabilities section we don't want extra space above the readme */
-      .area-readme {
-        grid-row: vulns / readme;
-      }
-    }
   }
 }
 

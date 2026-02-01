@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { formatNumber } from '#imports'
 import { debounce } from 'perfect-debounce'
 
 const route = useRoute('~username')
@@ -107,8 +106,8 @@ const filteredAndSortedPackages = computed(() => {
   switch (sortOption.value) {
     case 'updated':
       pkgs.sort((a, b) => {
-        const dateA = a.updated || a.package.date || ''
-        const dateB = b.updated || b.package.date || ''
+        const dateA = a.package.date || ''
+        const dateB = b.package.date || ''
         return dateB.localeCompare(dateA)
       })
       break
@@ -176,13 +175,13 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <main class="container flex-1 py-8 sm:py-12 w-full">
+  <main class="container flex-1 flex flex-col py-8 sm:py-12 w-full">
     <!-- Header -->
     <header class="mb-8 pb-8 border-b border-border">
-      <div class="flex items-end gap-4">
+      <div class="flex flex-wrap items-center gap-4">
         <!-- Avatar placeholder -->
         <div
-          class="w-16 h-16 rounded-full bg-bg-muted border border-border flex items-center justify-center"
+          class="size-16 shrink-0 rounded-full bg-bg-muted border border-border flex items-center justify-center"
           aria-hidden="true"
         >
           <span class="text-2xl text-fg-subtle font-mono">{{
@@ -192,7 +191,7 @@ defineOgImageComponent('Default', {
         <div>
           <h1 class="font-mono text-2xl sm:text-3xl font-medium">~{{ username }}</h1>
           <p v-if="results?.total" class="text-fg-muted text-sm mt-1">
-            {{ $t('org.public_packages', { count: formatNumber(results.total) }, results.total) }}
+            {{ $t('org.public_packages', { count: $n(results.total) }, results.total) }}
           </p>
         </div>
 
@@ -216,7 +215,7 @@ defineOgImageComponent('Default', {
           >
             <span class="i-carbon:chart-line w-3.5 h-3.5" aria-hidden="true" />
             <span class="font-mono"
-              >{{ formatNumber(totalWeeklyDownloads) }} {{ $t('common.per_week') }}</span
+              >{{ $n(totalWeeklyDownloads) }} {{ $t('common.per_week') }}</span
             >
           </p>
         </div>
@@ -237,16 +236,8 @@ defineOgImageComponent('Default', {
       <NuxtLink to="/" class="btn">{{ $t('common.go_back_home') }}</NuxtLink>
     </div>
 
-    <!-- Empty state -->
-    <div v-else-if="results && results.total === 0" class="py-12 text-center">
-      <p class="text-fg-muted font-mono">
-        {{ $t('user.page.no_packages') }} <span class="text-fg">~{{ username }}</span>
-      </p>
-      <p class="text-fg-subtle text-sm mt-2">{{ $t('user.page.no_packages_hint') }}</p>
-    </div>
-
     <!-- Package list -->
-    <section v-else-if="results && packages.length > 0">
+    <section v-else-if="packages.length > 0">
       <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
         {{ $t('user.page.packages_title') }}
       </h2>
@@ -255,7 +246,7 @@ defineOgImageComponent('Default', {
       <PackageListControls
         v-model:filter="filterText"
         v-model:sort="sortOption"
-        :placeholder="$t('user.page.filter_placeholder', { count: results.total })"
+        :placeholder="$t('user.page.filter_placeholder', { count: results?.total ?? 0 })"
         :total-count="packageCount"
         :filtered-count="filteredCount"
       />
@@ -279,5 +270,15 @@ defineOgImageComponent('Default', {
         @page-change="handlePageChange"
       />
     </section>
+
+    <!-- Empty state (no packages found for user) -->
+    <div v-else-if="status === 'success'" class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        <p class="text-fg-muted font-mono">
+          {{ $t('user.page.no_packages') }} <span class="text-fg">~{{ username }}</span>
+        </p>
+        <p class="text-fg-subtle text-sm mt-2">{{ $t('user.page.no_packages_hint') }}</p>
+      </div>
+    </div>
   </main>
 </template>
