@@ -5,6 +5,20 @@ export function toIsoDateString(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
+const htmlEntities: Record<string, string> = {
+  '&amp;': '&',
+  '&lt;': '<',
+  '&gt;': '>',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&apos;': "'",
+  '&nbsp;': ' ',
+}
+
+export function decodeHtmlEntities(text: string): string {
+  return text.replace(/&(?:amp|lt|gt|quot|apos|nbsp|#39);/g, match => htmlEntities[match] || match)
+}
+
 export function formatCompactNumber(
   value: number,
   options?: { decimals?: number; space?: boolean },
@@ -31,4 +45,11 @@ export function formatCompactNumber(
   if (abs >= 1e3) return join('k', abs / 1e3)
 
   return `${sign}${Math.round(abs)}`
+}
+
+// Format file size
+export function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
