@@ -71,7 +71,7 @@ function handleBlur() {
         </NuxtLink>
         <button
           type="button"
-          class="text-fg-subtle hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          class="text-fg-subtle hover:text-fg transition-colors focus-ring rounded"
           :aria-label="$t('compare.selector.remove_package', { package: pkg })"
           @click="removePackage(pkg)"
         >
@@ -101,7 +101,7 @@ function handleBlur() {
               ? $t('compare.selector.search_first')
               : $t('compare.selector.search_add')
           "
-          class="w-full bg-bg-subtle border border-border rounded-lg ps-10 pe-4 py-2.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          class="w-full bg-bg-subtle border border-border rounded-lg ps-10 pe-4 py-2.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
           aria-autocomplete="list"
           @focus="isInputFocused = true"
           @blur="handleBlur"

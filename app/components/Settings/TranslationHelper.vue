@@ -68,7 +68,7 @@ ${template}`
         </h4>
         <button
           type="button"
-          class="text-xs text-accent hover:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+          class="text-xs text-accent hover:underline rounded focus-ring"
           @click="copyMissingKeysTemplate"
         >
           {{ copied ? $t('common.copied') : $t('i18n.copy_keys') }}
