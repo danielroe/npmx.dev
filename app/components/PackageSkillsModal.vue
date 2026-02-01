@@ -166,17 +166,15 @@ function handleKeydown(event: KeyboardEvent) {
                 <span class="w-2.5 h-2.5 rounded-full bg-fg-subtle" />
               </div>
               <div class="px-3 pt-2 pb-3 sm:px-4 sm:pt-3 sm:pb-4 overflow-x-auto">
-                <div class="flex flex-wrap items-start gap-x-2 gap-y-1 group/cmd">
-                  <span class="text-fg-subtle font-mono text-sm select-none">$</span>
-                  <code class="font-mono text-sm break-all"
-                    ><span class="text-fg">npx </span
-                    ><span class="text-fg-muted"
-                      >skills add {{ baseUrl }}/{{ packageName }}</span
-                    ></code
-                  >
+                <div class="relative group/cmd">
+                  <code class="font-mono text-sm whitespace-nowrap">
+                    <span class="text-fg-subtle select-none">$ </span>
+                    <span class="text-fg">npx </span>
+                    <span class="text-fg-muted">skills add {{ baseUrl }}/{{ packageName }}</span>
+                  </code>
                   <button
                     type="button"
-                    class="px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/cmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                    class="absolute top-0 right-0 px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/cmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
                     :aria-label="$t('package.get_started.copy_command')"
                     @click.stop="copyCommand"
                   >
