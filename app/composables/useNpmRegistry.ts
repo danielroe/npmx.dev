@@ -361,6 +361,7 @@ export function useNpmSearch(
     const currentCount = cache.value?.objects.length ?? 0
     const total = cache.value?.total ?? Infinity
 
+    // Already have enough or no more to fetch
     if (currentCount >= targetSize || currentCount >= total) {
       return
     }
