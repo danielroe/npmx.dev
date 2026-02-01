@@ -1063,6 +1063,9 @@ function handleClick(event: MouseEvent) {
             :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
             :optional-dependencies="displayVersion.optionalDependencies"
           />
+
+          <!-- Dependents (packages that depend on this one) -->
+          <PackageDependents :package-name="pkg.name" />
         </div>
       </div>
     </article>
