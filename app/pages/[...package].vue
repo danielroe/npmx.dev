@@ -30,8 +30,12 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', playgroundLinks: [] }) },
+  { default: () => ({ html: '', playgroundLinks: [], toc: [] }) },
 )
+
+// Track active TOC item based on scroll position
+const tocItems = computed(() => readmeData.value?.toc ?? [])
+const { activeId: activeTocId, scrollToHeading } = useActiveTocItem(tocItems)
 
 // Check if package exists on JSR (only for scoped packages)
 const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${packageName.value}`, {
@@ -926,18 +930,29 @@ function handleClick(event: MouseEvent) {
 
       <!-- README -->
       <section id="readme" class="area-readme min-w-0 scroll-mt-20">
-        <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
-          <a
-            href="#readme"
-            class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-          >
-            {{ $t('package.readme.title') }}
-            <span
-              class="i-carbon:link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              aria-hidden="true"
+        <div class="flex flex-wrap items-center justify-between mb-3">
+          <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
+            <a
+              href="#readme"
+              class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+            >
+              {{ $t('package.readme.title') }}
+              <span
+                class="i-carbon:link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                aria-hidden="true"
+              />
+            </a>
+          </h2>
+          <ClientOnly>
+            <ReadmeTocDropdown
+              v-if="readmeData?.toc && readmeData.toc.length > 1"
+              :toc="readmeData.toc"
+              :active-id="activeTocId"
+              :scroll-to-heading="scrollToHeading"
             />
-          </a>
-        </h2>
+          </ClientOnly>
+        </div>
+
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
         <article
           v-if="readmeData?.html"
