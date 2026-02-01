@@ -87,7 +87,7 @@ const isExactMatch = computed(() => {
               class="flex items-center gap-1.5"
             >
               <dt class="sr-only">{{ $t('package.card.publisher') }}</dt>
-              <dd class="font-mono">@{{ result.package.publisher.username }}</dd>
+              <dd class="font-mono">{{ result.package.publisher.username }}</dd>
             </div>
             <div v-if="result.package.date" class="flex items-center gap-1.5">
               <dt class="sr-only">{{ $t('package.card.updated') }}</dt>

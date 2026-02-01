@@ -5,9 +5,12 @@ const { locale, locales, setLocale: setNuxti18nLocale } = useI18n()
 const colorMode = useColorMode()
 const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
 
-// Escape to go back (but not when focused on form elements)
+// Escape to go back (but not when focused on form elements or modal is open)
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'Escape') && !isEditableElement(e.target),
+  e =>
+    isKeyWithoutModifiers(e, 'Escape') &&
+    !isEditableElement(e.target) &&
+    !document.documentElement.matches('html:has(:modal)'),
   e => {
     e.preventDefault()
     router.back()

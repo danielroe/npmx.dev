@@ -5,6 +5,7 @@ import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
+import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'package',
@@ -241,12 +242,6 @@ function normalizeGitUrl(url: string): string {
     .replace(/\.git$/, '')
     .replace(/^ssh:\/\/git@github\.com/, 'https://github.com')
     .replace(/^git@github\.com:/, 'https://github.com/')
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 function getDependencyCount(version: PackumentVersion | null): number {
