@@ -139,7 +139,7 @@ const ALLOWED_TAGS = [
 
 const ALLOWED_ATTR: Record<string, string[]> = {
   a: ['href', 'title', 'target', 'rel'],
-  img: ['src', 'alt', 'title', 'width', 'height'],
+  img: ['src', 'alt', 'title', 'width', 'height', 'align', 'style'],
   source: ['src', 'srcset', 'type', 'media'],
   th: ['colspan', 'rowspan', 'align'],
   td: ['colspan', 'rowspan', 'align'],
