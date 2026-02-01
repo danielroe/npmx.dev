@@ -8,7 +8,8 @@ import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'code',
-  alias: ['/package/code/:path(.*)*', '/code/:path(.*)*'],
+  // Both alias paths need to be (.+) so that they don't match the package page alias.
+  alias: ['/package/code/:path(.+)', '/code/:path(.+)'],
 })
 
 const route = useRoute('code')
@@ -19,7 +20,8 @@ const route = useRoute('code')
 //   /code/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
 //   /code/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
 const parsedRoute = computed(() => {
-  const segments = route.params.path || []
+  const path = route.params.path
+  const segments = typeof path === 'string' ? (path as string).split('/') : path || []
 
   // Find the /v/ separator for version
   const vIndex = segments.indexOf('v')

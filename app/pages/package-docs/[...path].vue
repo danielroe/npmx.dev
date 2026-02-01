@@ -5,14 +5,16 @@ import { assertValidPackageName } from '#shared/utils/npm'
 
 definePageMeta({
   name: 'docs',
-  alias: ['/package/docs/:path(.*)*', '/docs/:path(.*)*'],
+  // Both alias paths need to be (.+) so that they don't match the package page alias.
+  alias: ['/package/docs/:path(.+)', '/docs/:path(.+)'],
 })
 
 const route = useRoute('docs')
 const router = useRouter()
 
 const parsedRoute = computed(() => {
-  const segments = route.params.path || []
+  const path = route.params.path
+  const segments = typeof path === 'string' ? (path as string).split('/') : path || []
   const vIndex = segments.indexOf('v')
 
   if (vIndex === -1 || vIndex >= segments.length - 1) {
