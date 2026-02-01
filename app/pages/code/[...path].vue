@@ -99,9 +99,18 @@ const fileContentUrl = computed(() => {
   return `/api/registry/file/${packageName.value}/v/${version.value}/${filePath.value}`
 })
 
-const { data: fileContent, status: fileStatus } = useFetch<PackageFileContentResponse>(
-  () => fileContentUrl.value!,
-  { immediate: !!fileContentUrl.value },
+const {
+  data: fileContent,
+  status: fileStatus,
+  execute: fetchFileContent,
+} = useFetch<PackageFileContentResponse>(() => fileContentUrl.value!, { immediate: false })
+
+watch(
+  fileContentUrl,
+  url => {
+    if (url) fetchFileContent()
+  },
+  { immediate: true },
 )
 
 // Track hash manually since we update it via history API to avoid scroll
@@ -433,7 +442,7 @@ defineOgImageComponent('Default', {
             v-show="markdownViewMode === 'preview'"
             class="flex justify-center p-4"
           >
-            <Readme v-html="fileContent.markdownHtml.html" />
+            <Readme :html="fileContent.markdownHtml.html" />
           </div>
 
           <CodeViewer
