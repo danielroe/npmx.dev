@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isEditableElement } from '~/utils/input'
+
 withDefaults(
   defineProps<{
     showLogo?: boolean
@@ -62,11 +64,7 @@ function handleSearchFocus() {
 onKeyStroke(
   ',',
   e => {
-    // Don't trigger if user is typing in an input
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
-    }
+    if (isEditableElement(e.target)) return
 
     e.preventDefault()
     navigateTo('/settings')
@@ -79,12 +77,7 @@ onKeyStroke(
   e => {
     // Allow more specific handlers to take precedence
     if (e.defaultPrevented) return
-
-    // Don't trigger if user is typing in an input
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
-    }
+    if (isEditableElement(e.target)) return
 
     e.preventDefault()
     navigateTo('/compare')

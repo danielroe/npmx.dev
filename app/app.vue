@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Directions } from '@nuxtjs/i18n'
 import { useEventListener } from '@vueuse/core'
+import { isEditableElement } from '~/utils/input'
 
 const route = useRoute()
 const router = useRouter()
@@ -39,12 +40,7 @@ if (import.meta.server) {
 // "/" focuses search or navigates to search page
 // "?" highlights all keyboard shortcut elements
 function handleGlobalKeydown(e: KeyboardEvent) {
-  const target = e.target as HTMLElement
-
-  const isEditableTarget =
-    target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
-
-  if (isEditableTarget) return
+  if (isEditableElement(e.target)) return
 
   if (e.key === '/') {
     e.preventDefault()

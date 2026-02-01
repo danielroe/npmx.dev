@@ -4,16 +4,10 @@ defineProps<{
   type: 'user' | 'org'
   /** The name (username or org name) */
   name: string
-  /** Whether this suggestion is currently selected (keyboard nav) */
-  selected?: boolean
   /** Whether this is an exact match for the query */
   isExactMatch?: boolean
   /** Index for keyboard navigation */
   index?: number
-}>()
-
-const emit = defineEmits<{
-  focus: [index: number]
 }>()
 </script>
 
@@ -23,8 +17,6 @@ const emit = defineEmits<{
       :to="type === 'user' ? `/~${name}` : `/@${name}`"
       :data-suggestion-index="index"
       class="flex items-center gap-4 focus-visible:outline-none after:content-[''] after:absolute after:inset-0"
-      @focus="index != null && emit('focus', index)"
-      @mouseenter="index != null && emit('focus', index)"
     >
       <!-- Avatar placeholder -->
       <div

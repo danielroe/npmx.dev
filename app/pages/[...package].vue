@@ -4,6 +4,7 @@ import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
+import { isEditableElement } from '~/utils/input'
 
 definePageMeta({
   name: 'package',
@@ -113,7 +114,10 @@ const deprecationNotice = computed(() => {
 
   // If latest is deprecated, show "package deprecated"
   if (isLatestDeprecated) {
-    return { type: 'package' as const, message: displayVersion.value.deprecated }
+    return {
+      type: 'package' as const,
+      message: displayVersion.value.deprecated,
+    }
   }
 
   // Otherwise show "version deprecated"
@@ -215,7 +219,9 @@ const docsLink = computed(() => {
 
   return {
     name: 'docs' as const,
-    params: { path: [...pkg.value!.name.split('/'), 'v', displayVersion.value.version] },
+    params: {
+      path: [...pkg.value!.name.split('/'), 'v', displayVersion.value.version],
+    },
   }
 })
 
@@ -314,6 +320,7 @@ useSeoMeta({
 onKeyStroke(
   '.',
   e => {
+    if (isEditableElement(e.target)) return
     if (pkg.value && displayVersion.value) {
       e.preventDefault()
       navigateTo({
@@ -330,6 +337,7 @@ onKeyStroke(
 onKeyStroke(
   'd',
   e => {
+    if (isEditableElement(e.target)) return
     if (docsLink.value) {
       e.preventDefault()
       navigateTo(docsLink.value)
@@ -339,6 +347,7 @@ onKeyStroke(
 )
 
 onKeyStroke('c', e => {
+  if (isEditableElement(e.target)) return
   if (pkg.value) {
     e.preventDefault()
     router.push({ path: '/compare', query: { packages: pkg.value.name } })
@@ -350,6 +359,7 @@ defineOgImageComponent('Package', {
   version: () => displayVersion.value?.version ?? '',
   downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
+  stars: () => stars.value ?? 0,
   primaryColor: '#60a5fa',
 })
 
@@ -452,6 +462,7 @@ function handleClick(event: MouseEvent) {
                 v-if="displayVersion"
                 :package-name="pkg.name"
                 :version="displayVersion.version"
+                :is-binary="isBinaryOnly"
                 class="self-baseline ms-1 sm:ms-2"
               />
               <template #fallback>
@@ -486,7 +497,9 @@ function handleClick(event: MouseEvent) {
               <NuxtLink
                 :to="{
                   name: 'code',
-                  params: { path: [...pkg.name.split('/'), 'v', displayVersion.version] },
+                  params: {
+                    path: [...pkg.name.split('/'), 'v', displayVersion.version],
+                  },
                 }"
                 class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
                 aria-keyshortcuts="."
@@ -636,7 +649,9 @@ function handleClick(event: MouseEvent) {
               <NuxtLink
                 :to="{
                   name: 'code',
-                  params: { path: [...pkg.name.split('/'), 'v', displayVersion.version] },
+                  params: {
+                    path: [...pkg.name.split('/'), 'v', displayVersion.version],
+                  },
                 }"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
@@ -670,7 +685,9 @@ function handleClick(event: MouseEvent) {
           <p v-if="deprecationNotice.message" class="text-base m-0">
             <MarkdownText :text="deprecationNotice.message" />
           </p>
-          <p v-else class="text-base m-0 italic">{{ $t('package.deprecation.no_reason') }}</p>
+          <p v-else class="text-base m-0 italic">
+            {{ $t('package.deprecation.no_reason') }}
+          </p>
         </div>
 
         <!-- Stats grid -->
@@ -1056,7 +1073,9 @@ function handleClick(event: MouseEvent) {
       role="alert"
       class="flex flex-col items-center py-20 text-center"
     >
-      <h1 class="font-mono text-2xl font-medium mb-4">{{ $t('package.not_found') }}</h1>
+      <h1 class="font-mono text-2xl font-medium mb-4">
+        {{ $t('package.not_found') }}
+      </h1>
       <p class="text-fg-muted mb-8">
         {{ error?.message ?? $t('package.not_found_message') }}
       </p>
@@ -1089,6 +1108,7 @@ function handleClick(event: MouseEvent) {
       'install install'
       'vulns   vulns'
       'readme  sidebar';
+    grid-template-rows: auto auto auto 1fr;
   }
 }
 
