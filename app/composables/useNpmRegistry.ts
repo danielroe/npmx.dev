@@ -343,7 +343,6 @@ export function useNpmSearch(
     { default: () => lastSearch || emptySearchResponse },
   )
 
-  // Fetch more results incrementally (only used in incremental mode)
   async function fetchMore(targetSize: number): Promise<void> {
     const q = toValue(query).trim()
     if (!q) {
@@ -351,7 +350,6 @@ export function useNpmSearch(
       return
     }
 
-    // If query changed, reset cache (shouldn't happen, but safety check)
     if (cache.value && cache.value.query !== q) {
       cache.value = null
       await asyncData.refresh()
@@ -361,7 +359,6 @@ export function useNpmSearch(
     const currentCount = cache.value?.objects.length ?? 0
     const total = cache.value?.total ?? Infinity
 
-    // Already have enough or no more to fetch
     if (currentCount >= targetSize || currentCount >= total) {
       return
     }
@@ -369,7 +366,6 @@ export function useNpmSearch(
     isLoadingMore.value = true
 
     try {
-      // Fetch from where we left off - calculate size needed
       const from = currentCount
       const size = Math.min(targetSize - currentCount, total - currentCount)
 
@@ -386,9 +382,11 @@ export function useNpmSearch(
 
       // Update cache
       if (cache.value && cache.value.query === q) {
+        const existingNames = new Set(cache.value.objects.map(obj => obj.package.name))
+        const newObjects = response.objects.filter(obj => !existingNames.has(obj.package.name))
         cache.value = {
           query: q,
-          objects: [...cache.value.objects, ...response.objects],
+          objects: [...cache.value.objects, ...newObjects],
           total: response.total,
         }
       } else {
@@ -399,7 +397,6 @@ export function useNpmSearch(
         }
       }
 
-      // If we still need more, fetch again recursively
       if (
         cache.value.objects.length < targetSize &&
         cache.value.objects.length < cache.value.total
