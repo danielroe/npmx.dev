@@ -51,7 +51,7 @@ if (import.meta.server && !requestedVersion.value && packageName.value) {
       navigateTo(
         { name: 'docs', params: { path: pathSegments as [string, ...string[]] } },
         { redirectCode: 302 },
-      ),
+      )
     )
   }
 }

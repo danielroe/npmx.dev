@@ -34,6 +34,34 @@ export async function fetchLatestVersion(name: string): Promise<string | null> {
 }
 
 /**
+ * Encode package name for URL usage.
+ * Scoped packages need special handling (@scope/name → @scope%2Fname)
+ */
+export function encodePackageName(name: string): string {
+  if (name.startsWith('@')) {
+    return `@${encodeURIComponent(name.slice(1))}`
+  }
+  return encodeURIComponent(name)
+}
+
+/**
+ * Fetch the latest version of a package using fast-npm-meta API.
+ * This is a lightweight alternative to fetching the full packument.
+ *
+ * @param name Package name
+ * @returns Latest version string or null if not found
+ * @see https://github.com/antfu/fast-npm-meta
+ */
+export async function fetchLatestVersion(name: string): Promise<string | null> {
+  try {
+    const meta = await getLatestVersion(name)
+    return meta.version
+  } catch {
+    return null
+  }
+}
+
+/**
  * Validate an npm package name and throw an HTTP error if invalid.
  * Uses validate-npm-package-name to check against npm naming rules.
  */
