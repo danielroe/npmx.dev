@@ -21,21 +21,24 @@ const { width } = useElementSize(rootEl)
 
 const chartKey = ref(0)
 
-function nextAnimationFrame(): Promise<void> {
-  return new Promise(resolve => {
-    requestAnimationFrame(() => resolve())
-  })
-}
+let chartRemountTimeoutId: ReturnType<typeof setTimeout> | null = null
 
-onMounted(async () => {
+onMounted(() => {
   rootEl.value = document.documentElement
   resolvedMode.value = colorMode.value === 'dark' ? 'dark' : 'light'
 
   // If the chart is painted too early, built-in auto-sizing does not adapt to the final container size
-  await nextAnimationFrame()
-  await nextAnimationFrame()
-  await nextAnimationFrame()
-  chartKey.value += 1
+  chartRemountTimeoutId = setTimeout(() => {
+    chartKey.value += 1
+    chartRemountTimeoutId = null
+  }, 10)
+})
+
+onBeforeUnmount(() => {
+  if (chartRemountTimeoutId !== null) {
+    clearTimeout(chartRemountTimeoutId)
+    chartRemountTimeoutId = null
+  }
 })
 
 const { colors } = useCssVariables(
