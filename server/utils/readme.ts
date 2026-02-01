@@ -310,9 +310,10 @@ export async function renderReadmeHtml(
   renderer.code = ({ text, lang }: Tokens.Code) => {
     const html = highlightCodeSync(shiki, text, lang || 'text')
     // Add copy button
-    return `<div class="readme-code-block" dir="ltr">
-<button type="button" class="readme-copy-button" title="Copy code" check-icon="i-carbon:checkmark" copy-icon="i-carbon:copy" data-copy>
+    return `<div class="readme-code-block" >
+<button type="button" class="readme-copy-button" aria-label="Copy code" check-icon="i-carbon:checkmark" copy-icon="i-carbon:copy" data-copy>
 <span class="i-carbon:copy" aria-hidden="true"></span>
+<span class="sr-only">Copy code</span>
 </button>
 ${html}
 </div>`

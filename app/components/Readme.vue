@@ -137,8 +137,7 @@ const handleCopy = async (e: MouseEvent) => {
 .readme :deep(.readme-copy-button) {
   position: absolute;
   top: 0.4rem;
-  right: 0.4rem;
-  left: auto;
+  inset-inline-end: 0.4rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -154,7 +153,8 @@ const handleCopy = async (e: MouseEvent) => {
     border-color 0.2s ease;
 }
 
-.readme :deep(.readme-code-block:hover .readme-copy-button) {
+.readme :deep(.readme-code-block:hover .readme-copy-button),
+.readme :deep(.readme-copy-button:focus-visible) {
   opacity: 1;
 }
 
@@ -179,8 +179,7 @@ const handleCopy = async (e: MouseEvent) => {
 .readme :deep(.readme-copy-button) {
   position: absolute;
   top: 0.4rem;
-  right: 0.4rem;
-  left: auto;
+  inset-inline-end: 0.4rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -196,7 +195,8 @@ const handleCopy = async (e: MouseEvent) => {
     border-color 0.2s ease;
 }
 
-.readme :deep(.readme-code-block:hover .readme-copy-button) {
+.readme :deep(.readme-code-block:hover .readme-copy-button),
+.readme :deep(.readme-copy-button:focus-visible) {
   opacity: 1;
 }
 
@@ -420,5 +420,18 @@ const handleCopy = async (e: MouseEvent) => {
   display: inline-block;
   margin: 0 0.25rem 0.25rem 0;
   border-radius: 4px;
+}
+
+/* Screen reader only text */
+.readme :deep(.sr-only) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 </style>
