@@ -132,7 +132,7 @@ defineOgImageComponent('Default', {
     </section>
 
     <section class="border-t border-border py-24 bg-bg-subtle/10">
-      <div class="container max-w-2xl mx-auto">
+      <div class="container max-w-3xl mx-auto">
         <CallToAction />
       </div>
     </section>
