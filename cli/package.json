@@ -45,5 +45,8 @@
     "@types/validate-npm-package-name": "4.0.2",
     "tsdown": "0.20.1",
     "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
