@@ -741,7 +741,7 @@ function handleClick(event: MouseEvent) {
             </dt>
             <dd class="font-mono text-sm text-fg">
               <LicenseDisplay v-if="pkg.license" :license="pkg.license" />
-              <span v-else>None</span>
+              <span v-else>{{ $t('package.license.none') }}</span>
             </dd>
           </div>
 
