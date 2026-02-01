@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Card from '../Card.vue'
+
 const props = defineProps<{
   /** The search result object containing package data */
   result: NpmSearchResult
