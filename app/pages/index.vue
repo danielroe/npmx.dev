@@ -160,13 +160,8 @@ defineOgImageComponent('Default', {
           class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
         >
           <div class="flex gap-2">
-            <span
-              class="i-carbon:logo-github shrink-0 mt-1 w-5 h-5 text-fg"
-              aria-hidden="true"
-            />
-            <span class="font-medium text-fg">{{
-              $t('about.get_involved.contribute.title')
-            }}</span>
+            <span class="i-carbon:logo-github shrink-0 mt-1 w-5 h-5 text-fg" aria-hidden="true" />
+            <span class="font-medium text-fg">{{ $t('about.get_involved.contribute.title') }}</span>
           </div>
           <p class="text-sm text-fg-muted leading-relaxed">
             {{ $t('about.get_involved.contribute.description') }}
@@ -188,9 +183,7 @@ defineOgImageComponent('Default', {
         >
           <div class="flex gap-2">
             <span class="i-carbon:chat shrink-0 mt-1 w-5 h-5 text-fg" aria-hidden="true" />
-            <span class="font-medium text-fg">{{
-              $t('about.get_involved.community.title')
-            }}</span>
+            <span class="font-medium text-fg">{{ $t('about.get_involved.community.title') }}</span>
           </div>
           <p class="text-sm text-fg-muted leading-relaxed">
             {{ $t('about.get_involved.community.description') }}
@@ -211,10 +204,7 @@ defineOgImageComponent('Default', {
           class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
         >
           <div class="flex gap-2">
-            <span
-              class="i-simple-icons:bluesky shrink-0 mt-1 w-5 h-5 text-fg"
-              aria-hidden="true"
-            />
+            <span class="i-simple-icons:bluesky shrink-0 mt-1 w-5 h-5 text-fg" aria-hidden="true" />
             <span class="font-medium text-fg">{{ $t('about.get_involved.follow.title') }}</span>
           </div>
           <p class="text-sm text-fg-muted leading-relaxed">
