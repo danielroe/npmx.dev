@@ -20,7 +20,7 @@ defineProps<{
       fill="var(--accent)"
       x="320"
       y="370"
-      font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace"
+      font-family="'Geist Mono',ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace"
       font-size="420"
       font-weight="500"
       text-anchor="middle"

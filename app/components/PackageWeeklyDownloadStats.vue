@@ -64,7 +64,7 @@ const isDarkMode = computed(() => resolvedMode.value === 'dark')
 
 const accentColorValueById = computed<Record<string, string>>(() => {
   const map: Record<string, string> = {}
-  for (const item of accentColors) {
+  for (const item of accentColors.value) {
     map[item.id] = item.value
   }
   return map

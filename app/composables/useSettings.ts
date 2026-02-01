@@ -72,33 +72,44 @@ export function useAccentColor() {
   const { settings } = useSettings()
   const colorMode = useColorMode()
 
-  const accentColors = computed(() =>
-    Object.entries(ACCENT_COLORS[colorMode.value as 'light' | 'dark']).map(([id, value]) => ({
+  const accentColors = computed(() => {
+    const mode = (colorMode.value || 'dark') as 'light' | 'dark'
+    const colors = ACCENT_COLORS[mode]
+
+    return Object.entries(colors).map(([id, value]) => ({
       id: id as AccentColorId,
       name: id,
       value,
-    })),
-  )
-
-  const currentAccentColor = computed(() => {
-    const id = settings.value.accentColorId
-    const theme = colorMode.value as 'light' | 'dark'
-    return id ? ACCENT_COLORS[theme][id] : null
+    }))
   })
 
-  // Simple client-side check
-  if (process.client) {
-    watchEffect(() => {
-      if (currentAccentColor.value) {
-        document.documentElement.style.setProperty('--accent-color', currentAccentColor.value)
-      } else {
-        document.documentElement.style.removeProperty('--accent-color')
-      }
-    })
+  function setAccentColor(id: AccentColorId | null) {
+    const mode = (colorMode.value || 'dark') as 'light' | 'dark'
+    const color = id ? ACCENT_COLORS[mode][id] : null
+
+    if (color) {
+      document.documentElement.style.setProperty('--accent-color', color)
+    } else {
+      document.documentElement.style.removeProperty('--accent-color')
+    }
+
+    settings.value.accentColorId = id
   }
 
-  function setAccentColor(id: AccentColorId | null) {
-    settings.value.accentColorId = id
+  // Apply color on mount and when theme changes
+  if (process.client) {
+    onMounted(() => {
+      const id = settings.value.accentColorId
+      if (id) setAccentColor(id)
+    })
+
+    watch(
+      () => colorMode.value,
+      () => {
+        const id = settings.value.accentColorId
+        if (id) setAccentColor(id)
+      },
+    )
   }
 
   return {
