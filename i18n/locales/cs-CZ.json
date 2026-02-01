@@ -295,7 +295,8 @@
       "no_types": "Žádné typy TypeScriptu"
     },
     "license": {
-      "view_spdx": "Zobrazit text licence na SPDX"
+      "view_spdx": "Zobrazit text licence na SPDX",
+      "none": "Žádná"
     },
     "vulnerabilities": {
       "no_description": "Popis není k dispozici",
@@ -735,7 +736,7 @@
       }
     },
     "contributors": {
-      "title": "Přispěvatelé",
+      "title": "Přispěvatelé | {count} přispěvatelé | {count} přispěvatelů",
       "description": "npmx je plně open source, postavený úžasnou komunitou přispěvatelů. Přidejte se k nám a společně vytvořme npm prohlížeč, jaký jsme vždy chtěli.",
       "loading": "Načítání přispěvatelů...",
       "error": "Nepodařilo se načíst přispěvatele",
