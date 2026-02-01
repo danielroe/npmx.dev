@@ -250,12 +250,7 @@ const homepageUrl = computed(() => {
 const docsLink = computed(() => {
   if (!resolvedVersion.value) return null
 
-  return {
-    name: 'docs' as const,
-    params: {
-      path: [...pkg.value!.name.split('/'), 'v', resolvedVersion.value],
-    },
-  }
+  return `/package-docs/${pkg.value!.name}/v/${resolvedVersion.value}`
 })
 
 const fundingUrl = computed(() => {
@@ -515,12 +510,7 @@ function handleClick(event: MouseEvent) {
               </kbd>
             </NuxtLink>
             <NuxtLink
-              :to="{
-                name: 'code',
-                params: {
-                  path: [...pkg.name.split('/'), 'v', resolvedVersion],
-                },
-              }"
+              :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
               class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
               aria-keyshortcuts="."
             >
@@ -671,12 +661,7 @@ function handleClick(event: MouseEvent) {
             </li>
             <li v-if="resolvedVersion" class="sm:hidden">
               <NuxtLink
-                :to="{
-                  name: 'code',
-                  params: {
-                    path: [...pkg.name.split('/'), 'v', resolvedVersion],
-                  },
-                }"
+                :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon:code w-4 h-4" aria-hidden="true" />

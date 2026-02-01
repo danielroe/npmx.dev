@@ -13,10 +13,7 @@ const route = useRoute('docs')
 const router = useRouter()
 
 const parsedRoute = computed(() => {
-  const path = route.params.path
-  const segments =
-    typeof path === 'string' ? (path as string).split('/') : path?.filter(Boolean) || []
-
+  const segments = route.params.path?.filter(Boolean)
   const vIndex = segments.indexOf('v')
 
   if (vIndex === -1 || vIndex >= segments.length - 1) {

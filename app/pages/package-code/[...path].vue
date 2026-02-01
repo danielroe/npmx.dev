@@ -20,8 +20,7 @@ const route = useRoute('code')
 //   /code/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
 //   /code/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
 const parsedRoute = computed(() => {
-  const path = route.params.path
-  const segments = typeof path === 'string' ? (path as string).split('/') : path || []
+  const segments = route.params.path
 
   // Find the /v/ separator for version
   const vIndex = segments.indexOf('v')
