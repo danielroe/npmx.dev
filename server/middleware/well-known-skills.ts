@@ -6,8 +6,17 @@ import { CACHE_MAX_AGE_ONE_HOUR, CACHE_MAX_AGE_ONE_YEAR } from '#shared/utils/co
 
 /**
  * Serves /.well-known/skills endpoints for `npx skills add` CLI.
+ * Middleware pattern allows non-matching paths to pass through to Nuxt.
  */
-export default defineCachedEventHandler(
+export default defineEventHandler(event => {
+  const url = getRequestURL(event)
+  const match = url.pathname.match(/^\/(.+?)\/\.well-known\/skills\/(.*)$/)
+  if (!match) return
+
+  return cachedHandler(event)
+})
+
+const cachedHandler = defineCachedEventHandler(
   async (event: H3Event) => {
     const url = getRequestURL(event)
     const match = url.pathname.match(/^\/(.+?)\/\.well-known\/skills\/(.*)$/)!
