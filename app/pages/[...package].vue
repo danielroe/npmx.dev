@@ -370,6 +370,14 @@ function handleClick(event: MouseEvent) {
     router.push(route)
   }
 }
+
+function handleCopy() {
+  const selection = window.getSelection()
+  if (selection && selection.toString().length > 0) {
+    return
+  }
+  copyPkgName()
+}
 </script>
 
 <template>
@@ -391,20 +399,14 @@ function handleClick(event: MouseEvent) {
                 class="text-fg-muted hover:text-fg transition-colors duration-200"
                 >@{{ orgName }}</NuxtLink
               ><span v-if="orgName">/</span>
-              <span>{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}</span>
               <AnnounceTooltip :text="$t('common.copied')" :isVisible="copiedPkgName">
-                <button
-                  @click="copyPkgName()"
-                  aria-describedby="copy-pkg-name"
-                  class="cursor-copy ms-2 text-fg-subtle hover:text-fg transition-colors active:scale-95 inline-flex items-center justify-center align-middle"
+                <span
+                  @click="handleCopy"
+                  class="cursor-copy hover:text-fg transition-colors duration-200"
+                  :class="{ 'text-fg-muted': orgName }"
                 >
-                  <span v-if="!copiedPkgName" class="i-carbon:copy w-5 h-5" aria-hidden="true" />
-                  <span
-                    v-else
-                    class="i-carbon:checkmark w-5 h-5 text-green-500"
-                    aria-hidden="true"
-                  />
-                </button>
+                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                </span>
               </AnnounceTooltip>
             </h1>
 
