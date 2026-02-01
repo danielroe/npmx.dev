@@ -397,19 +397,21 @@ function handleClick(event: MouseEvent) {
       <header class="area-header border-b border-border">
         <div class="mb-4">
           <div class="flex items-baseline gap-2 mb-1.5 sm:gap-3 sm:mb-2 flex-wrap min-w-0">
-            <h1
-              class="group font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-              :title="pkg.name"
-            >
-              <NuxtLink
-                v-if="orgName"
-                :to="{ name: 'org', params: { org: orgName } }"
-                class="text-fg-muted hover:text-fg transition-colors duration-200"
-                >@{{ orgName }}</NuxtLink
-              ><span v-if="orgName">/</span>
-              <span :class="{ 'text-fg-muted': orgName }">
-                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
-              </span>
+            <div class="group flex items-baseline min-w-0">
+              <h1
+                class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+                :title="pkg.name"
+              >
+                <NuxtLink
+                  v-if="orgName"
+                  :to="{ name: 'org', params: { org: orgName } }"
+                  class="text-fg-muted hover:text-fg transition-colors duration-200"
+                  >@{{ orgName }}</NuxtLink
+                ><span v-if="orgName">/</span>
+                <span :class="{ 'text-fg-muted': orgName }">
+                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                </span>
+              </h1>
               <TooltipAnnounce :text="$t('common.copied')" :isVisible="copiedPkgName">
                 <button
                   type="button"
@@ -420,7 +422,7 @@ function handleClick(event: MouseEvent) {
                   <span class="i-carbon:copy w-5 h-5 block" aria-hidden="true" />
                 </button>
               </TooltipAnnounce>
-            </h1>
+            </div>
             <span
               v-if="displayVersion"
               class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
