@@ -589,12 +589,10 @@ defineOgImageComponent('Default', {
 
 <template>
   <main class="flex-1" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
-    <h1 id="search-heading-title" class="sr-only">
-      {{ $t('search.results') }}
-    </h1>
+    <h1 class="sr-only">{{ $t('search.results') }}</h1>
     <!-- Results area with container padding -->
     <div class="container-sm py-6">
-      <section v-if="query" aria-labelledby="search-heading-title">
+      <section v-if="query">
         <!-- Initial loading (only after user interaction, not during view transition) -->
         <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 
