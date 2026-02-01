@@ -116,6 +116,7 @@
       "version": "This version has been deprecated.",
       "no_reason": "No reason provided"
     },
+    "replacement": {},
     "stats": {
       "license": "License",
       "deps": "Deps",
@@ -123,7 +124,11 @@
       "vulns": "Vulns",
       "updated": "Updated",
       "view_dependency_graph": "View dependency graph",
-      "inspect_dependency_tree": "Inspect dependency tree"
+      "inspect_dependency_tree": "Inspect dependency tree",
+      "size_tooltip": {}
+    },
+    "skills": {
+      "file_counts": {}
     },
     "links": {
       "repo": "repo",
@@ -276,6 +281,7 @@
         "low": "low"
       }
     },
+    "deprecated": {},
     "access": {
       "title": "Team Access",
       "refresh": "Refresh team access",
@@ -310,7 +316,6 @@
       "size": "Size",
       "deps": "Deps",
       "updated": "Updated",
-      "install": "Install",
       "readme": "Readme",
       "maintainers": "Maintainers",
       "keywords": "Keywords",
@@ -337,9 +342,7 @@
     },
     "modal": {
       "title": "Local Connector",
-      "close_modal": "Close modal",
       "connected": "Connected",
-      "logged_in_as": "Logged in as {'@'}{user}",
       "connected_hint": "You can now manage packages and organizations from the web UI.",
       "disconnect": "Disconnect",
       "run_hint": "Run the connector on your machine to enable admin features.",
@@ -485,7 +488,6 @@
   "claim": {
     "modal": {
       "title": "Claim Package Name",
-      "close_modal": "Close modal",
       "success": "Package claimed!",
       "success_detail": "{name}{'@'}0.0.0 has been published to npm.",
       "success_hint": "You can now publish new versions to this package using npm publish.",
@@ -532,7 +534,8 @@
     "table": {
       "name": "Name",
       "size": "Size"
-    }
+    },
+    "markdown_view_mode": {}
   },
   "badges": {
     "provenance": {
@@ -705,6 +708,10 @@
       }
     }
   },
+  "account_menu": {},
+  "auth": {
+    "modal": {}
+  },
   "header": {
     "home": "npmx home",
     "github": "GitHub",
@@ -723,6 +730,13 @@
       "error": "Failed to load organizations",
       "empty": "No organizations found",
       "view_all": "View all"
+    }
+  },
+  "compare": {
+    "packages": {},
+    "selector": {},
+    "facets": {
+      "categories": {}
     }
   }
 }

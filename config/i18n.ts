@@ -212,15 +212,15 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
         return { zero: 2 /!* not used *!/, one: 0, two: 1 /!* not used *!/, few: 1, many: 2, other: 3 }[name]
       },
     },*/
-    {
-      code: 'cs-CZ',
-      file: 'cs-CZ.json',
-      name: 'Čeština',
-      pluralRule: (choice: number) => {
-        const name = new Intl.PluralRules('cs-CZ').select(choice)
-        return { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }[name]
-      },
-    },/*
+  {
+    code: 'cs-CZ',
+    file: 'cs-CZ.json',
+    name: 'Čeština',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('cs-CZ').select(choice)
+      return { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }[name]
+    },
+  } /*
     {
       code: 'pl-PL',
       file: 'pl-PL.json',
@@ -262,7 +262,7 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
       code: 'ko-KR',
       file: 'ko-KR.json',
       name: '한국어',
-    },*/
+    },*/,
   {
     code: 'id-ID',
     file: 'id-ID.json',
