@@ -1,0 +1,36 @@
+<script setup lang="ts">
+const props = defineProps<{
+  username: string
+}>()
+
+const { data: gravatarUrl } = useLazyFetch('/api/gravatar', {
+  query: {
+    username: computed(() => props.username),
+    size: 128,
+  },
+  transform: res => res.url,
+})
+</script>
+
+<template>
+  <!-- Avatar -->
+  <div
+    class="size-16 shrink-0 rounded-full bg-bg-muted border border-border flex items-center justify-center overflow-hidden"
+    role="img"
+    :aria-label="`Avatar for ${username}`"
+  >
+    <!-- If Gravatar was fetched, display it -->
+    <img
+      v-if="gravatarUrl"
+      :src="gravatarUrl"
+      alt=""
+      width="64"
+      height="64"
+      class="w-full h-full object-cover"
+    />
+    <!-- Else fallback to initials -->
+    <span v-else class="text-2xl text-fg-subtle font-mono" aria-hidden="true">
+      {{ username.charAt(0).toUpperCase() }}
+    </span>
+  </div>
+</template>
