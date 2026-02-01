@@ -4,6 +4,7 @@ import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
+import { isEditableElement } from '~/utils/input'
 
 definePageMeta({
   name: 'package',
@@ -319,10 +320,7 @@ useSeoMeta({
 onKeyStroke(
   '.',
   e => {
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
-    }
+    if (isEditableElement(e.target)) return
     if (pkg.value && displayVersion.value) {
       e.preventDefault()
       navigateTo({
@@ -339,10 +337,7 @@ onKeyStroke(
 onKeyStroke(
   'd',
   e => {
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
-    }
+    if (isEditableElement(e.target)) return
     if (docsLink.value) {
       e.preventDefault()
       navigateTo(docsLink.value)
@@ -352,10 +347,7 @@ onKeyStroke(
 )
 
 onKeyStroke('c', e => {
-  const target = e.target as HTMLElement
-  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-    return
-  }
+  if (isEditableElement(e.target)) return
   if (pkg.value) {
     e.preventDefault()
     router.push({ path: '/compare', query: { packages: pkg.value.name } })
