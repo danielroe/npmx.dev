@@ -553,7 +553,7 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageListControls, {
         props: {
           filter: '',
-          sort: 'downloads',
+          sort: 'downloads-desc',
         },
       })
       const results = await runAxe(component)
@@ -564,7 +564,7 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageListControls, {
         props: {
           filter: 'vue',
-          sort: 'downloads',
+          sort: 'downloads-desc',
           totalCount: 100,
           filteredCount: 10,
         },
