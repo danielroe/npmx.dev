@@ -92,17 +92,6 @@ async function fetchBulkDownloads(
   return downloads
 }
 
-/**
- * Encode a package name for use in npm registry URLs.
- * Handles scoped packages (e.g., @scope/name -> @scope%2Fname).
- */
-export function encodePackageName(name: string): string {
-  if (name.startsWith('@')) {
-    return `@${encodeURIComponent(name.slice(1))}`
-  }
-  return encodeURIComponent(name)
-}
-
 /** Number of recent versions to include in initial payload */
 const RECENT_VERSIONS_COUNT = 5
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { setResponseHeader } from 'h3'
 import type { DocsResponse } from '#shared/types'
-import { assertValidPackageName } from '#shared/utils/npm'
+import { assertValidPackageName, fetchLatestVersion } from '#shared/utils/npm'
 
 definePageMeta({
   name: 'docs',
@@ -39,7 +39,7 @@ const { data: pkg } = usePackage(packageName)
 
 const latestVersion = computed(() => pkg.value?.['dist-tags']?.latest ?? null)
 
-if (import.meta.server && !requestedVersion.value) {
+if (import.meta.server && !requestedVersion.value && packageName.value) {
   const app = useNuxtApp()
   const version = await fetchLatestVersion(packageName.value)
   if (version) {
