@@ -157,12 +157,6 @@ export default defineConfig({
     ['badge-pink', 'bg-badge-pink/10 text-badge-pink'],
     ['badge-subtle', 'bg-bg-subtle text-fg-subtle'],
 
-    // Code blocks
-    [
-      'code-block',
-      'bg-bg-muted border border-border rounded-md p-4 font-mono text-sm overflow-x-auto',
-    ],
-
     // Skeleton loading
     ['skeleton', 'bg-bg-elevated rounded animate-skeleton-pulse'],
 
