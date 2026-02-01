@@ -1,11 +1,14 @@
 <script setup lang="ts">
+defineProps<{
+  html: string
+}>()
+
 const { copy } = useClipboard()
 
 const handleCopy = async (e: MouseEvent) => {
   const target = (e.target as HTMLElement).closest('[data-copy]')
   if (!target) return
 
-  // Find the code block sibling
   const wrapper = target.closest('.readme-code-block')
   if (!wrapper) return
 
@@ -14,29 +17,24 @@ const handleCopy = async (e: MouseEvent) => {
 
   await copy(pre.textContent)
 
-  // Visual feedback
   const icon = target.querySelector('span')
-  if (icon) {
-    const originalIcon = 'i-carbon:copy'
-    const successIcon = 'i-carbon:checkmark'
+  if (!icon) return
 
-    icon.classList.remove(originalIcon)
-    icon.classList.add(successIcon)
+  const originalIcon = 'i-carbon:copy'
+  const successIcon = 'i-carbon:checkmark'
 
-    setTimeout(() => {
-      icon.classList.remove(successIcon)
-      icon.classList.add(originalIcon)
-    }, 2000)
-  }
+  icon.classList.remove(originalIcon)
+  icon.classList.add(successIcon)
+
+  setTimeout(() => {
+    icon.classList.remove(successIcon)
+    icon.classList.add(originalIcon)
+  }, 2000)
 }
 </script>
 
 <template>
-  <article class="readme prose prose-invert max-w-[70ch]" @click="handleCopy">
-    <!-- Hidden element to safelist icons for dynamic usage -->
-    <div class="hidden i-carbon:copy i-carbon:checkmark"></div>
-    <slot />
-  </article>
+  <article class="readme prose prose-invert max-w-[70ch]" v-html="html" @click="handleCopy" />
 </template>
 
 <style scoped>
@@ -128,6 +126,45 @@ const handleCopy = async (e: MouseEvent) => {
   /* Fix horizontal overflow */
   max-width: 100%;
   box-sizing: border-box;
+}
+
+.readme :deep(.readme-code-block) {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.readme :deep(.readme-copy-button) {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--bg-subtle) 80%, transparent);
+  border: 1px solid var(--border);
+  color: var(--fg-subtle);
+  opacity: 0;
+  transition: opacity 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.readme :deep(.readme-code-block:hover .readme-copy-button) {
+  opacity: 1;
+}
+
+.readme :deep(.readme-copy-button:hover) {
+  color: var(--fg);
+  border-color: var(--border-hover);
+}
+
+.readme :deep(.readme-copy-button > span) {
+  width: 1rem;
+  height: 1rem;
+  display: inline-block;
+  pointer-events: none;
 }
 
 .readme :deep(.readme-code-block) {
