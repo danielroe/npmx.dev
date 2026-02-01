@@ -4,6 +4,12 @@ import type { JsrPackageInfo } from '#shared/types/jsr'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
+import { parseRepoUrl } from '#shared/utils/git-providers'
+import {
+  detectModuleFormat,
+  hasBuiltInTypes,
+  type ExtendedPackageJson,
+} from '#shared/utils/package-analysis'
 
 definePageMeta({
   name: 'package',
@@ -243,6 +249,37 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
+// OG Image helpers
+function formatOgDate(isoDate?: string): string {
+  if (!isoDate) return ''
+  const date = new Date(isoDate)
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+// Computed values for OG image
+const ogRepoRef = computed(() => {
+  const repoUrl = displayVersion.value?.repository?.url
+  if (!repoUrl) return null
+  return parseRepoUrl(normalizeGitUrl(repoUrl))
+})
+
+const ogDirectDepsCount = computed(() => {
+  const deps = displayVersion.value?.dependencies
+  return deps ? Object.keys(deps).length : 0
+})
+
+const ogModuleFormat = computed(() => {
+  const ver = displayVersion.value as ExtendedPackageJson | null
+  if (!ver) return 'unknown'
+  return detectModuleFormat(ver)
+})
+
+const ogHasTypes = computed(() => {
+  const ver = displayVersion.value as ExtendedPackageJson | null
+  if (!ver) return false
+  return hasBuiltInTypes(ver)
+})
+
 function getDependencyCount(version: PackumentVersion | null): number {
   if (!version?.dependencies) return 0
   return Object.keys(version.dependencies).length
@@ -348,9 +385,19 @@ onKeyStroke('c', e => {
 defineOgImageComponent('Package', {
   name: () => pkg.value?.name ?? 'Package',
   version: () => displayVersion.value?.version ?? '',
-  downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
+  downloads: () => (downloads.value ? formatCompactNumber(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
   primaryColor: '#60a5fa',
+  description: () => pkg.value?.description ?? '',
+  repoOwner: () => ogRepoRef.value?.owner ?? '',
+  repoName: () => ogRepoRef.value?.repo ?? '',
+  stars: () => stars.value ?? 0,
+  forks: () => forks.value ?? 0,
+  directDepsCount: () => ogDirectDepsCount.value,
+  updatedAt: () => formatOgDate(pkg.value?.time?.modified),
+  hasTypes: () => ogHasTypes.value,
+  hasESM: () => ogModuleFormat.value === 'esm' || ogModuleFormat.value === 'dual',
+  hasCJS: () => ogModuleFormat.value === 'cjs' || ogModuleFormat.value === 'dual',
 })
 
 // We're using only @click because it catches touch events and enter hits
