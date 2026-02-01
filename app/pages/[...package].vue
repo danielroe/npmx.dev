@@ -380,7 +380,6 @@ function handleClick(event: MouseEvent) {
       <!-- Package header -->
       <header class="area-header border-b border-border">
         <div class="mb-4">
-          <!-- Package name and version -->
           <div class="flex items-baseline gap-2 mb-1.5 sm:gap-3 sm:mb-2 flex-wrap min-w-0">
             <h1
               class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
@@ -392,13 +391,19 @@ function handleClick(event: MouseEvent) {
                 class="text-fg-muted hover:text-fg transition-colors duration-200"
                 >@{{ orgName }}</NuxtLink
               ><span v-if="orgName">/</span>
+              <span>{{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}</span>
               <AnnounceTooltip :text="$t('common.copied')" :isVisible="copiedPkgName">
                 <button
                   @click="copyPkgName()"
                   aria-describedby="copy-pkg-name"
-                  class="cursor-copy ms-1 mt-1 active:scale-95 transition-transform"
+                  class="cursor-copy ms-2 text-fg-subtle hover:text-fg transition-colors active:scale-95 inline-flex items-center justify-center align-middle"
                 >
-                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                  <span v-if="!copiedPkgName" class="i-carbon:copy w-5 h-5" aria-hidden="true" />
+                  <span
+                    v-else
+                    class="i-carbon:checkmark w-5 h-5 text-green-500"
+                    aria-hidden="true"
+                  />
                 </button>
               </AnnounceTooltip>
             </h1>
