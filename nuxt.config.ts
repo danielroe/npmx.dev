@@ -113,7 +113,7 @@ export default defineNuxtConfig({
     typedPages: true,
   },
 
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: '2026-01-31',
 
   nitro: {
     experimental: {
@@ -221,6 +221,14 @@ export default defineNuxtConfig({
 
   debug: {
     hydration: true,
+  },
+
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        noUnusedLocals: true,
+      },
+    },
   },
 
   vite: {
