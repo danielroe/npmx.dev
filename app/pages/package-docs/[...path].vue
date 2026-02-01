@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { setResponseHeader } from 'h3'
 import type { DocsResponse } from '#shared/types'
-import { assertValidPackageName } from '#shared/utils/npm'
+import { assertValidPackageName, fetchLatestVersion } from '#shared/utils/npm'
 
 definePageMeta({
   name: 'docs',
@@ -14,7 +14,9 @@ const router = useRouter()
 
 const parsedRoute = computed(() => {
   const path = route.params.path
-  const segments = typeof path === 'string' ? (path as string).split('/') : path || []
+  const segments =
+    typeof path === 'string' ? (path as string).split('/') : path?.filter(Boolean) || []
+
   const vIndex = segments.indexOf('v')
 
   if (vIndex === -1 || vIndex >= segments.length - 1) {
@@ -42,14 +44,13 @@ const { data: pkg } = usePackage(packageName)
 
 const latestVersion = computed(() => pkg.value?.['dist-tags']?.latest ?? null)
 
-if (import.meta.server && !requestedVersion.value) {
+if (import.meta.server && !requestedVersion.value && packageName.value) {
   const app = useNuxtApp()
-  const { data: pkg } = await usePackage(packageName)
-  const latest = pkg.value?.['dist-tags']?.latest
-  if (latest) {
+  const version = await fetchLatestVersion(packageName.value)
+  if (version) {
     setResponseHeader(useRequestEvent()!, 'Cache-Control', 'no-cache')
     app.runWithContext(() =>
-      navigateTo('/package-docs/' + packageName.value + '/v/' + latest, { redirectCode: 302 }),
+      navigateTo('/package-docs/' + packageName.value + '/v/' + version, { redirectCode: 302 }),
     )
   }
 }
