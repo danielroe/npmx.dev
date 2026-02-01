@@ -30,6 +30,10 @@ export const ERROR_GRAVATAR_EMAIL_UNAVAILABLE = "User's email not accessible."
 export const CONSTELLATION_HOST = 'constellation.microcosm.blue'
 export const SLINGSHOT_HOST = 'slingshot.microcosm.blue'
 
+// ATProtocol
+// Refrence prefix used to link packages to things that are not inherently atproto
+export const SUBJECT_REF_PREFIX = 'https://npmx.dev'
+
 // Theming
 export const ACCENT_COLORS = {
   rose: 'oklch(0.797 0.084 11.056)',

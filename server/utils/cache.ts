@@ -93,7 +93,7 @@ export class RedisCacheAdatper implements CacheAdapter {
   }
 }
 
-export function getCache(prefix: string): CacheAdapter {
+export function getCacheAdatper(prefix: string): CacheAdapter {
   const config = useRuntimeConfig()
 
   if (!import.meta.dev && config.upstash?.redisRestUrl && config.upstash?.redisRestToken) {
@@ -103,7 +103,5 @@ export function getCache(prefix: string): CacheAdapter {
     })
     return new RedisCacheAdatper(redis, prefix)
   }
-
-  console.log('using storage')
   return new StorageCacheAdapter()
 }

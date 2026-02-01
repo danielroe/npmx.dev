@@ -11,7 +11,7 @@ export default defineEventHandler(async event => {
   if (!config.sessionPassword) {
     throw createError({
       status: 500,
-      message: 'NUXT_SESSION_PASSWORD not set',
+      message: UNSET_NUXT_SESSION_PASSWORD,
     })
   }
 
