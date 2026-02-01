@@ -158,7 +158,7 @@ export default defineConfig({
     // Tags/badges
     [
       'tag',
-      'inline-flex items-center px-2 py-0.5 text-xs font-mono text-fg-muted bg-bg-muted border border-border rounded transition-colors duration-200 hover:(text-fg border-border-hover)',
+      'inline-flex items-center px-2 py-0.5 text-xs font-mono text-fg-muted bg-bg-muted border border-border rounded transition-colors duration-200 hover:(text-fg border-border-hover) focus-visible:(outline-none ring-2 ring-fg/50 ring-offset-1 ring-offset-bg)',
     ],
     ['badge-orange', 'bg-badge-orange/10 text-badge-orange'],
     ['badge-yellow', 'bg-badge-yellow/10 text-badge-yellow'],

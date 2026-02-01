@@ -12,7 +12,7 @@ const checked = defineModel<boolean>({
 <template>
   <button
     type="button"
-    class="w-full flex items-center justify-between gap-4 group"
+    class="w-full flex items-center justify-between gap-4 group rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-subtle"
     role="switch"
     :aria-checked="checked"
     @click="checked = !checked"

@@ -105,7 +105,7 @@ useHead({
 
         <a
           :href="`#${id}`"
-          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         >
           {{ title }}
           <span
