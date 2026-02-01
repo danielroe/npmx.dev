@@ -462,6 +462,7 @@ function handleClick(event: MouseEvent) {
                 v-if="displayVersion"
                 :package-name="pkg.name"
                 :version="displayVersion.version"
+                :is-binary="isBinaryOnly"
                 class="self-baseline ms-1 sm:ms-2"
               />
               <template #fallback>
@@ -1107,6 +1108,7 @@ function handleClick(event: MouseEvent) {
       'install install'
       'vulns   vulns'
       'readme  sidebar';
+    grid-template-rows: auto auto auto 1fr;
   }
 }
 
