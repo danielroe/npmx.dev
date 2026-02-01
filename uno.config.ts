@@ -136,12 +136,6 @@ export default defineConfig({
     ],
     ['link-subtle', 'text-fg-muted hover:text-fg transition-colors duration-200 focus-ring'],
 
-    // Form elements
-    [
-      'input-base',
-      'w-full bg-bg-subtle border border-border rounded-md px-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-200 focus:(border-fg/40 outline-none ring-1 ring-fg/10)',
-    ],
-
     // Tags/badges
     [
       'tag',
