@@ -4,19 +4,21 @@
 
 <p align="center">
   <a href="https://npmx.dev/">
-    <img width="1090" alt="Screenshot of npmx.dev showing the nuxt package" src="https://github.com/user-attachments/assets/229497a2-8491-461c-aa1d-fba981215340">
+    <img width="1090" alt="Screenshot of npmx.dev showing the nuxt package" src="https://github.com/user-attachments/assets/1a2a3205-0227-46dc-b1f9-48f9a65691d3">
   </a>
 </p>
 
 - [👉 &nbsp;Check it out](https://npmx.dev/)
+- [📖 &nbsp;About npmx](https://npmx.dev/about)
 
 ## Vision
 
-The aim of [npmx.dev](https://npmx.dev) is to provide a better browser for the npm registry &ndash; fast, modern, and accessible. We don't aim to replace the [npmjs.com](https://www.npmjs.com/) registry, just provide a better UI and DX.
+The aim of [npmx.dev](https://npmx.dev) is to provide a better browser for the npm registry &ndash; fast, modern, and accessible. We don't aim to replace the [npmjs.com](https://www.npmjs.com/) registry, just provide a better UI, DX, and admin experience.
 
 - **Speed first** &ndash; Layout shift, flakiness, slowness is The Worst. Fast searching, filtering, and navigation.
 - **URL compatible** &ndash; Replace `npmjs.com` with `xnpmjs.com` or `npmx.dev` in any URL and it just works.
 - **Simplicity** &ndash; No noise, cluttered display, or confusing UI. If in doubt: choose simplicity.
+- **Admin UI** &ndash; Manage your packages, teams, and organizations from the browser, powered by your local npm CLI.
 
 ## Shortcuts
 
@@ -157,3 +159,13 @@ If you're building something cool, let us know! 🙏
 Made with ❤️
 
 Published under [MIT License](./LICENSE).
+
+## Star History
+
+<a href="https://www.star-history.com/#npmx-dev/npmx.dev&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=npmx-dev/npmx.dev&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=npmx-dev/npmx.dev&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=npmx-dev/npmx.dev&type=date&legend=top-left" />
+ </picture>
+</a>

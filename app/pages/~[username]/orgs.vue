@@ -17,9 +17,9 @@ interface OrgInfo {
   isLoadingDetails: boolean
 }
 
-const isLoading = ref(true)
-const orgs = ref<OrgInfo[]>([])
-const error = ref<string | null>(null)
+const isLoading = shallowRef(true)
+const orgs = shallowRef<OrgInfo[]>([])
+const error = shallowRef<string | null>(null)
 
 async function loadOrgDetails(org: OrgInfo) {
   org.isLoadingDetails = true
@@ -101,16 +101,28 @@ useSeoMeta({
   title: () => `@${username.value} Organizations - npmx`,
   description: () => `npm organizations for ${username.value}`,
 })
+
+defineOgImageComponent('Default', {
+  title: () => `@${username.value}`,
+  description: () => {
+    if (isLoading.value) return 'npm organizations'
+    if (orgs.value.length === 0) return 'No organizations found'
+
+    const count = orgs.value.length
+    return `${count} ${count === 1 ? 'organization' : 'organizations'}`
+  },
+  primaryColor: '#60a5fa',
+})
 </script>
 
 <template>
-  <main class="container py-8 sm:py-12 w-full">
+  <main class="container flex-1 py-8 sm:py-12 w-full">
     <!-- Header -->
     <header class="mb-8 pb-8 border-b border-border">
-      <div class="flex items-center gap-4 mb-4">
+      <div class="flex flex-wrap items-center gap-4 mb-4">
         <!-- Avatar placeholder -->
         <div
-          class="w-16 h-16 rounded-full bg-bg-muted border border-border flex items-center justify-center"
+          class="size-16 shrink-0 rounded-full bg-bg-muted border border-border flex items-center justify-center"
           aria-hidden="true"
         >
           <span class="text-2xl text-fg-subtle font-mono">{{
@@ -118,18 +130,19 @@ useSeoMeta({
           }}</span>
         </div>
         <div>
-          <h1 class="font-mono text-2xl sm:text-3xl font-medium">@{{ username }}</h1>
+          <h1 class="font-mono text-2xl sm:text-3xl font-medium">~{{ username }}</h1>
           <p class="text-fg-muted text-sm mt-1">{{ $t('user.orgs_page.title') }}</p>
         </div>
       </div>
 
       <!-- Back link -->
-      <nav aria-label="Navigation">
+      <nav aria-labelledby="back-to-profile">
         <NuxtLink
           :to="`/~${username}`"
+          id="back-to-profile"
           class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
         >
-          <span class="i-carbon-arrow-left w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
           {{ $t('user.orgs_page.back_to_profile') }}
         </NuxtLink>
       </nav>
@@ -213,7 +226,7 @@ useSeoMeta({
               <!-- Stats -->
               <div class="flex items-center gap-4 text-sm text-fg-muted">
                 <div class="flex items-center gap-1.5">
-                  <span class="i-carbon-cube w-4 h-4" aria-hidden="true" />
+                  <span class="i-carbon:cube w-4 h-4" aria-hidden="true" />
                   <span v-if="org.packageCount !== null">
                     {{
                       $t(

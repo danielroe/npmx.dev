@@ -8,23 +8,25 @@ export default defineCachedEventHandler(
   async event => {
     const pkgParam = getRouterParam(event, 'pkg')
     if (!pkgParam) {
-      throw createError({ statusCode: 400, message: 'Package name is required' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package name is required' })
     }
 
-    const { packageName, version: requestedVersion } = parsePackageParam(pkgParam)
+    const { packageName, version } = parsePackageParam(pkgParam)
 
     if (!packageName) {
-      throw createError({ statusCode: 400, message: 'Package name is required' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package name is required' })
     }
     assertValidPackageName(packageName)
 
-    const packument = await fetchNpmPackage(packageName)
-    const version = requestedVersion ?? packument['dist-tags']?.latest
-
     if (!version) {
-      throw createError({ statusCode: 404, message: 'No latest version found' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package version is required' })
     }
 
+    // Fetch packument to get exports field for multi-entrypoint type docs
+    const packument = await fetchNpmPackage(packageName)
     const versionData = packument.versions?.[version]
     const exports = versionData?.exports as Record<string, unknown> | undefined
 
@@ -32,6 +34,7 @@ export default defineCachedEventHandler(
     try {
       generated = await generateDocsWithDeno(packageName, version, exports)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(`Doc generation failed for ${packageName}@${version}:`, error)
       return {
         package: packageName,

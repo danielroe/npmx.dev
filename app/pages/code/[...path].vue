@@ -4,6 +4,7 @@ import type {
   PackageFileTreeResponse,
   PackageFileContentResponse,
 } from '#shared/types'
+import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'code',
@@ -11,7 +12,6 @@ definePageMeta({
 })
 
 const route = useRoute('code')
-const router = useRouter()
 
 // Parse package name, version, and file path from URL
 // Patterns:
@@ -99,13 +99,22 @@ const fileContentUrl = computed(() => {
   return `/api/registry/file/${packageName.value}/v/${version.value}/${filePath.value}`
 })
 
-const { data: fileContent, status: fileStatus } = useFetch<PackageFileContentResponse>(
-  () => fileContentUrl.value!,
-  { immediate: !!fileContentUrl.value },
+const {
+  data: fileContent,
+  status: fileStatus,
+  execute: fetchFileContent,
+} = useFetch<PackageFileContentResponse>(() => fileContentUrl.value!, { immediate: false })
+
+watch(
+  fileContentUrl,
+  url => {
+    if (url) fetchFileContent()
+  },
+  { immediate: true },
 )
 
 // Track hash manually since we update it via history API to avoid scroll
-const currentHash = ref('')
+const currentHash = shallowRef('')
 
 onMounted(() => {
   currentHash.value = window.location.hash
@@ -137,7 +146,7 @@ const selectedLines = computed(() => {
 })
 
 // Scroll to selected line only on initial load or file change (not on click)
-const shouldScrollOnHashChange = ref(true)
+const shouldScrollOnHashChange = shallowRef(true)
 
 function scrollToLine() {
   if (!shouldScrollOnHashChange.value) return
@@ -195,13 +204,6 @@ function packageRoute(ver?: string | null) {
   return { name: 'package' as const, params: { package: segments } }
 }
 
-// Format file size
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
-
 // Line number click handler - update URL hash without scrolling
 function handleLineClick(lineNum: number, event: MouseEvent) {
   let newHash: string
@@ -228,9 +230,10 @@ function handleLineClick(lineNum: number, event: MouseEvent) {
 }
 
 // Copy link to current line(s)
-async function copyPermalink() {
+const { copied: permalinkCopied, copy: copyPermalink } = useClipboard({ copiedDuring: 2000 })
+function copyPermalinkUrl() {
   const url = new URL(window.location.href)
-  await navigator.clipboard.writeText(url.toString())
+  copyPermalink(url.toString())
 }
 
 // Canonical URL for this code page
@@ -241,6 +244,22 @@ const canonicalUrl = computed(() => {
   }
   return url
 })
+
+// Toggle markdown view mode
+const markdownViewModes = [
+  {
+    key: 'preview',
+    label: $t('code.markdown_view_mode.preview'),
+    icon: 'i-carbon-view',
+  },
+  {
+    key: 'code',
+    label: $t('code.markdown_view_mode.code'),
+    icon: 'i-carbon-code',
+  },
+] as const
+
+const markdownViewMode = shallowRef<(typeof markdownViewModes)[number]['key']>('preview')
 
 useHead({
   link: [{ rel: 'canonical', href: canonicalUrl }],
@@ -254,6 +273,12 @@ useSeoMeta({
     return `Code - ${packageName.value}@${version.value} - npmx`
   },
   description: () => `Browse source code for ${packageName.value}@${version.value}`,
+})
+
+defineOgImageComponent('Default', {
+  title: () => `${pkg.value?.name ?? 'Package'} - Code`,
+  description: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
 })
 </script>
 
@@ -294,7 +319,7 @@ useSeoMeta({
 
         <!-- Breadcrumb navigation -->
         <nav
-          aria-label="File path"
+          :aria-label="$t('code.file_path')"
           class="flex items-center gap-1 font-mono text-sm overflow-x-auto"
         >
           <NuxtLink
@@ -328,7 +353,7 @@ useSeoMeta({
 
     <!-- Loading state -->
     <div v-else-if="treeStatus === 'pending'" class="container py-20 text-center">
-      <div class="i-svg-spinners-ring-resize w-8 h-8 mx-auto text-fg-muted" />
+      <div class="i-svg-spinners:ring-resize w-8 h-8 mx-auto text-fg-muted" />
       <p class="mt-4 text-fg-muted">{{ $t('code.loading_tree') }}</p>
     </div>
 
@@ -342,7 +367,7 @@ useSeoMeta({
     <div v-else-if="fileTree" class="flex flex-1">
       <!-- File tree sidebar - sticky with internal scroll -->
       <aside
-        class="w-64 lg:w-72 border-r border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
+        class="w-64 lg:w-72 border-ie border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
       >
         <CodeFileTree
           :tree="fileTree.tree"
@@ -358,24 +383,48 @@ useSeoMeta({
         <!-- File viewer -->
         <template v-if="isViewingFile && fileContent">
           <div
-            class="sticky top-0 bg-bg border-b border-border px-4 py-2 flex items-center justify-between"
+            class="sticky z-10 top-0 bg-bg border-b border-border px-4 py-2 flex items-center justify-between"
           >
-            <div class="flex items-center gap-3 text-sm">
-              <span class="text-fg-muted">{{
-                $t('code.lines', { count: fileContent.lines })
-              }}</span>
-              <span v-if="currentNode?.size" class="text-fg-subtle">{{
-                formatBytes(currentNode.size)
-              }}</span>
+            <div class="flex items-center gap-2">
+              <div
+                v-if="fileContent.markdownHtml"
+                class="flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md overflow-x-auto"
+                role="tablist"
+                aria-label="Markdown view mode selector"
+              >
+                <button
+                  v-for="mode in markdownViewModes"
+                  :key="mode.key"
+                  role="tab"
+                  class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                  :class="
+                    markdownViewMode === mode.key
+                      ? 'bg-bg shadow text-fg border-border'
+                      : 'text-fg-subtle hover:text-fg border-transparent'
+                  "
+                  @click="markdownViewMode = mode.key"
+                >
+                  <span class="inline-block h-3 w-3" :class="mode.icon" aria-hidden="true" />
+                  {{ mode.label }}
+                </button>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-fg-muted">{{
+                  $t('code.lines', { count: fileContent.lines })
+                }}</span>
+                <span v-if="currentNode?.size" class="text-fg-subtle">{{
+                  formatBytes(currentNode.size)
+                }}</span>
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <button
                 v-if="selectedLines"
                 type="button"
-                class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors"
-                @click="copyPermalink"
+                class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors active:scale-95"
+                @click="copyPermalinkUrl"
               >
-                {{ $t('code.copy_link') }}
+                {{ permalinkCopied ? $t('common.copied') : $t('code.copy_link') }}
               </button>
               <a
                 :href="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
@@ -384,11 +433,20 @@ useSeoMeta({
                 class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors inline-flex items-center gap-1"
               >
                 {{ $t('code.raw') }}
-                <span class="i-carbon-launch w-3 h-3" />
+                <span class="i-carbon:launch w-3 h-3" />
               </a>
             </div>
           </div>
+          <div
+            v-if="fileContent.markdownHtml"
+            v-show="markdownViewMode === 'preview'"
+            class="flex justify-center p-4"
+          >
+            <Readme :html="fileContent.markdownHtml.html" />
+          </div>
+
           <CodeViewer
+            v-show="!fileContent.markdownHtml || markdownViewMode === 'code'"
             :html="fileContent.html"
             :lines="fileContent.lines"
             :selected-lines="selectedLines"
@@ -398,7 +456,7 @@ useSeoMeta({
 
         <!-- File too large warning -->
         <div v-else-if="isViewingFile && isFileTooLarge" class="py-20 text-center">
-          <div class="i-carbon-document w-12 h-12 mx-auto text-fg-subtle mb-4" />
+          <div class="i-carbon:document w-12 h-12 mx-auto text-fg-subtle mb-4" />
           <p class="text-fg-muted mb-2">{{ $t('code.file_too_large') }}</p>
           <p class="text-fg-subtle text-sm mb-4">
             {{ $t('code.file_size_warning', { size: formatBytes(currentNode?.size ?? 0) }) }}
@@ -410,7 +468,7 @@ useSeoMeta({
             class="btn inline-flex items-center gap-2"
           >
             {{ $t('code.view_raw') }}
-            <span class="i-carbon-launch w-4 h-4" />
+            <span class="i-carbon:launch w-4 h-4" />
           </a>
         </div>
 
@@ -422,7 +480,7 @@ useSeoMeta({
           :aria-label="$t('common.loading')"
         >
           <!-- Fake line numbers column -->
-          <div class="shrink-0 bg-bg-subtle border-r border-border w-14 py-0">
+          <div class="shrink-0 bg-bg-subtle border-ie border-border w-14 py-0">
             <div v-for="n in 20" :key="n" class="px-3 h-6 flex items-center justify-end">
               <span class="skeleton w-4 h-3 rounded-sm" />
             </div>
@@ -454,7 +512,7 @@ useSeoMeta({
 
         <!-- Error loading file -->
         <div v-else-if="filePath && fileStatus === 'error'" class="py-20 text-center" role="alert">
-          <div class="i-carbon-warning-alt w-8 h-8 mx-auto text-fg-subtle mb-4" />
+          <div class="i-carbon:warning-alt w-8 h-8 mx-auto text-fg-subtle mb-4" />
           <p class="text-fg-muted mb-2">{{ $t('code.failed_to_load') }}</p>
           <p class="text-fg-subtle text-sm mb-4">{{ $t('code.unavailable_hint') }}</p>
           <a
@@ -464,7 +522,7 @@ useSeoMeta({
             class="btn inline-flex items-center gap-2"
           >
             {{ $t('code.view_raw') }}
-            <span class="i-carbon-launch w-4 h-4" />
+            <span class="i-carbon:launch w-4 h-4" />
           </a>
         </div>
 

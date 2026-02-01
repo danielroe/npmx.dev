@@ -8,6 +8,7 @@
  */
 
 import { doc } from '@deno/doc'
+import { $fetch } from 'ofetch'
 import type { DenoDocNode, DenoDocResult } from '#shared/types/deno-doc'
 
 // =============================================================================
@@ -164,7 +165,9 @@ function createLoader(): (
     let url: URL
     try {
       url = new URL(specifier)
-    } catch {
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
       return undefined
     }
 
@@ -173,21 +176,18 @@ function createLoader(): (
       return undefined
     }
 
-    const controller = new AbortController()
-    const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
-
     try {
-      const response = await fetch(url.toString(), {
+      const response = await $fetch.raw<Blob>(url.toString(), {
+        method: 'GET',
+        timeout: FETCH_TIMEOUT_MS,
         redirect: 'follow',
-        signal: controller.signal,
       })
-      clearTimeout(timeoutId)
 
       if (response.status !== 200) {
         return undefined
       }
 
-      const content = await response.text()
+      const content = (await response._data?.text()) ?? ''
       const headers: Record<string, string> = {}
       for (const [key, value] of response.headers) {
         headers[key.toLowerCase()] = value
@@ -199,8 +199,9 @@ function createLoader(): (
         headers,
         content,
       }
-    } catch {
-      clearTimeout(timeoutId)
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
       return undefined
     }
   }
@@ -259,18 +260,15 @@ async function getTypesUrlForSubpath(
  * Fetch the x-typescript-types header from an esm.sh URL.
  */
 async function fetchTypesHeader(url: string): Promise<string | null> {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
-
   try {
-    const response = await fetch(url, {
-      method: 'HEAD',
-      signal: controller.signal,
+    const response = await $fetch.raw(url, {
+      method: 'HEAD' as 'GET', // Cast to satisfy Nitro's typed $fetch (external URL, any method is fine)
+      timeout: FETCH_TIMEOUT_MS,
     })
-    clearTimeout(timeoutId)
     return response.headers.get('x-typescript-types')
-  } catch {
-    clearTimeout(timeoutId)
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(e)
     return null
   }
 }
