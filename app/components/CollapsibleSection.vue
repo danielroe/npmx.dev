@@ -115,7 +115,8 @@ useHead({
         >
           {{ title }}
           <span
-            class="i-carbon:link w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            class="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            :class="hasCustomHref ? 'i-carbon:arrow-right' : 'i-carbon:link'"
             aria-hidden="true"
           />
         </a>

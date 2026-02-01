@@ -859,16 +859,5 @@
         "security": "Security & Compliance"
       }
     }
-  },
-  "dependencies": {
-    "title": "Dependencies",
-    "dev_title": "Dev Dependencies",
-    "loading": "Loading dependencies...",
-    "error": "Failed to load dependencies",
-    "no_deps": "No dependencies",
-    "version_required": "Version is required to view dependencies",
-    "back_to_package": "Back to package",
-    "go_to_package": "Go to package",
-    "optional": "Optional"
   }
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PackageDependenciesResponse } from '#shared/types'
-import { formatBytes } from '#shared/utils/format'
+import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'dependencies',

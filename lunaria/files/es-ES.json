@@ -779,16 +779,5 @@
       "what_is_atmosphere": "¿Qué es una cuenta de la Atmosphere?",
       "connect_bluesky": "Conectar con Bluesky"
     }
-  },
-  "dependencies": {
-    "title": "Dependencias",
-    "dev_title": "Dependencias de Desarrollo",
-    "loading": "Cargando dependencias...",
-    "error": "Error al cargar dependencias",
-    "no_deps": "Sin dependencias",
-    "version_required": "Se requiere una versión para ver las dependencias",
-    "back_to_package": "Volver al paquete",
-    "go_to_package": "Ir al paquete",
-    "optional": "Opcional"
   }
 }
