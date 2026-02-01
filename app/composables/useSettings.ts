@@ -21,6 +21,7 @@ export interface AppSettings {
   selectedLocale: LocaleObject['code'] | null
   sidebar: {
     collapsed: string[]
+    pinned: string[]
   }
 }
 
@@ -32,6 +33,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   selectedLocale: null,
   sidebar: {
     collapsed: [],
+    pinned: [],
   },
 }
 

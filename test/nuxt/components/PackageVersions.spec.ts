@@ -51,6 +51,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -64,6 +65,7 @@ describe('PackageVersions', () => {
           versions: {},
           distTags: {},
           time: {},
+          order: 0,
         },
       })
 
@@ -79,6 +81,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -99,6 +102,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -121,6 +125,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -139,6 +144,7 @@ describe('PackageVersions', () => {
             stable: '1.0.0',
           },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -160,6 +166,7 @@ describe('PackageVersions', () => {
             beta: '1.0.0',
           },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -193,6 +200,7 @@ describe('PackageVersions', () => {
             '1.5.0': '2024-01-10T00:00:00.000Z',
             '2.0.0': '2024-01-15T00:00:00.000Z',
           },
+          order: 0,
         },
       })
 
@@ -216,6 +224,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -236,6 +245,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -263,6 +273,7 @@ describe('PackageVersions', () => {
             '1.0.0': '2024-01-01T00:00:00.000Z',
             '2.0.0': '2024-01-15T00:00:00.000Z',
           },
+          order: 0,
         },
       })
 
@@ -282,6 +293,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -299,6 +311,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -317,6 +330,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -335,6 +349,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -352,6 +367,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -373,6 +389,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -401,6 +418,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.2.0' },
           time: { '1.2.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -451,6 +469,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -476,6 +495,7 @@ describe('PackageVersions', () => {
           versions,
           distTags,
           time,
+          order: 0,
         },
       })
 
@@ -497,6 +517,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -527,6 +548,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -568,6 +590,7 @@ describe('PackageVersions', () => {
           versions,
           distTags,
           time,
+          order: 0,
         },
       })
 
@@ -597,6 +620,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -628,6 +652,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -659,6 +684,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -690,6 +716,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -722,6 +749,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -754,6 +782,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '2.0.0' },
           time: { '2.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -793,6 +822,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -824,6 +854,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -854,6 +885,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -873,6 +905,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -890,6 +923,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -909,6 +943,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -925,6 +960,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -951,6 +987,7 @@ describe('PackageVersions', () => {
           },
           distTags: { latest: '1.0.0' },
           time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
+          order: 0,
         },
       })
 
@@ -989,6 +1026,7 @@ describe('PackageVersions', () => {
             '2.0.0': '2024-01-15T12:00:00.000Z',
             '1.0.0': '2024-01-10T12:00:00.000Z',
           },
+          order: 0,
         },
       })
 

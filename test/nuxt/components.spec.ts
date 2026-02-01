@@ -437,7 +437,7 @@ describe('component accessibility audits', () => {
         },
       ]
       const component = await mountSuspended(PackagePlaygrounds, {
-        props: { links },
+        props: { links, order: 0 },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -459,7 +459,7 @@ describe('component accessibility audits', () => {
         },
       ]
       const component = await mountSuspended(PackagePlaygrounds, {
-        props: { links },
+        props: { links, order: 0 },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -467,7 +467,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with empty links', async () => {
       const component = await mountSuspended(PackagePlaygrounds, {
-        props: { links: [] },
+        props: { links: [], order: 0 },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -477,7 +477,11 @@ describe('component accessibility audits', () => {
   describe('PackageDependencies', () => {
     it('should have no accessibility violations without dependencies', async () => {
       const component = await mountSuspended(PackageDependencies, {
-        props: { packageName: 'test-package', version: '1.0.0' },
+        props: {
+          packageName: 'test-package',
+          version: '1.0.0',
+          sideBarSections: ['dependencies', 'peerDependencies', 'optionalDependencies'],
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -492,6 +496,7 @@ describe('component accessibility audits', () => {
             vue: '^3.0.0',
             lodash: '^4.17.0',
           },
+          sideBarSections: ['dependencies', 'peerDependencies', 'optionalDependencies'],
         },
       })
       const results = await runAxe(component)
@@ -509,6 +514,7 @@ describe('component accessibility audits', () => {
           peerDependenciesMeta: {
             vue: { optional: true },
           },
+          sideBarSections: ['dependencies', 'peerDependencies', 'optionalDependencies'],
         },
       })
       const results = await runAxe(component)
@@ -541,6 +547,7 @@ describe('component accessibility audits', () => {
             '3.5.0': '2024-01-15T00:00:00.000Z',
             '3.4.0': '2024-01-01T00:00:00.000Z',
           },
+          order: 0,
         },
       })
       const results = await runAxe(component)
@@ -577,7 +584,7 @@ describe('component accessibility audits', () => {
   describe('PackageMaintainers', () => {
     it('should have no accessibility violations without maintainers', async () => {
       const component = await mountSuspended(PackageMaintainers, {
-        props: { packageName: 'vue' },
+        props: { packageName: 'vue', order: 0 },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -591,6 +598,7 @@ describe('component accessibility audits', () => {
             { name: 'yyx990803', email: 'evan@vuejs.org' },
             { name: 'posva', email: 'posva@example.com' },
           ],
+          order: 0,
         },
       })
       const results = await runAxe(component)
