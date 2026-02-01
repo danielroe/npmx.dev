@@ -37,10 +37,5 @@ const open = defineModel<boolean>('open', { default: false })
         $t('package.skills.view')
       }}</span>
     </button>
-    <i18n-t keypath="package.skills.compatible_with" tag="p" class="text-xs text-fg-subtle mt-2">
-      <template #tool>
-        <NuxtLink to="/skills-npm" class="link">skills-npm</NuxtLink>
-      </template>
-    </i18n-t>
   </section>
 </template>
