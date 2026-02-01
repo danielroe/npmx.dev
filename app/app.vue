@@ -49,9 +49,6 @@ function handleGlobalKeydown(e: KeyboardEvent) {
     commandBarRef.value?.toggle()
   }
 
-  const isEditableTarget =
-    target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
-
   if (isEditableElement(e.target)) return
 
   if (e.key === '/') {
