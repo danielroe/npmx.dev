@@ -735,12 +735,13 @@ function handleClick(event: MouseEvent) {
         <dl
           class="grid grid-cols-2 sm:grid-cols-11 gap-3 sm:gap-4 py-4 sm:py-6 mt-4 sm:mt-6 border-t border-b border-border"
         >
-          <div v-if="pkg.license" class="space-y-1 sm:col-span-2">
+          <div class="space-y-1 sm:col-span-2">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider">
               {{ $t('package.stats.license') }}
             </dt>
             <dd class="font-mono text-sm text-fg">
-              <LicenseDisplay :license="pkg.license" />
+              <LicenseDisplay v-if="pkg.license" :license="pkg.license" />
+              <span v-else>None</span>
             </dd>
           </div>
 
