@@ -1,4 +1,4 @@
-import type { FastNpmMetaResponse } from '#shared/types'
+import type { ResolvedPackageVersion } from 'fast-npm-meta'
 import { createError } from 'h3'
 import validatePackageName from 'validate-npm-package-name'
 
@@ -26,7 +26,7 @@ export function encodePackageName(name: string): string {
 export async function fetchLatestVersion(name: string): Promise<string | null> {
   try {
     const encodedName = encodePackageName(name)
-    const meta = await $fetch<FastNpmMetaResponse>(`${FAST_NPM_META_API}/${encodedName}`)
+    const meta = await $fetch<ResolvedPackageVersion>(`${FAST_NPM_META_API}/${encodedName}`)
     return meta.version
   } catch {
     return null

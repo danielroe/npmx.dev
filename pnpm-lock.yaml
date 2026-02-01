@@ -219,6 +219,9 @@ importers:
       axe-core:
         specifier: 4.11.1
         version: 4.11.1
+      fast-npm-meta:
+        specifier: 1.0.0
+        version: 1.0.0
       knip:
         specifier: 5.82.1
         version: 5.82.1(@types/node@24.10.9)(typescript@5.9.3)
@@ -5685,6 +5688,9 @@ packages:
 
   fast-npm-meta@0.4.8:
     resolution: {integrity: sha512-ybZVlDZ2PkO79dosM+6CLZfKWRH8MF0PiWlw8M4mVWJl8IEJrPfxYc7Tsu830Dwj/R96LKXfePGTSzKWbPJ08w==}
+
+  fast-npm-meta@1.0.0:
+    resolution: {integrity: sha512-LZN+gRB2TnkkhRbNnTOgEXyhNBkDypngGX9nJzcKzrOaIQqfZnWEDYdxBqGw6bgiyl0tzpxDuTk1G7tKHyUcsg==}
 
   fast-redact@3.5.0:
     resolution: {integrity: sha512-dwsoQlS7h9hMeYUq1W++23NDcBLV4KqONnITDV9DjfS3q1SgDGVrBdvvTLUotWtPSD7asWDV9/CmsZPy8Hf70A==}
@@ -15800,6 +15806,8 @@ snapshots:
   fast-levenshtein@2.0.6: {}
 
   fast-npm-meta@0.4.8: {}
+
+  fast-npm-meta@1.0.0: {}
 
   fast-redact@3.5.0: {}
 
