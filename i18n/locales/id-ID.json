@@ -150,6 +150,9 @@
         "total": "{size} total ukuran tidak terkompresi (termasuk semua {count} dependensi untuk linux-x64)"
       }
     },
+    "skills": {
+      "file_counts": {}
+    },
     "links": {
       "repo": "repo",
       "homepage": "beranda",
@@ -355,8 +358,6 @@
       "dependencies": "Dependensi"
     },
     "sort": {
-      "downloads": "Paling banyak diunduh",
-      "updated": "Terakhir diperbarui",
       "name_asc": "Nama (A-Z)",
       "name_desc": "Nama (Z-A)"
     }

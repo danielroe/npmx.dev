@@ -150,6 +150,9 @@
         "total": "{size} कुल अनप्याक्ड साइज (linux-x64 का लागि {count} सबै डिपेन्डेन्सीहरू सहित)"
       }
     },
+    "skills": {
+      "file_counts": {}
+    },
     "links": {
       "repo": "रिपो",
       "homepage": "होमपेज",
@@ -355,8 +358,6 @@
       "dependencies": "डिपेन्डेन्सीहरू"
     },
     "sort": {
-      "downloads": "धेरै डाउनलोड भएका",
-      "updated": "भर्खरै अपडेट भएका",
       "name_asc": "नाम (A-Z)",
       "name_desc": "नाम (Z-A)"
     }
