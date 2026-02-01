@@ -21,8 +21,9 @@ test.describe('vulnerabilities API', () => {
 
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/json')
-    expect(body).toHaveProperty('packageName', 'vue')
+    expect(body).toHaveProperty('package', 'vue')
     expect(body).toHaveProperty('version')
+    expect(body).toHaveProperty('totalCounts')
   })
 
   test('scoped package vulnerabilities with URL encoding', async ({ page, baseURL }) => {
@@ -31,7 +32,7 @@ test.describe('vulnerabilities API', () => {
 
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/json')
-    expect(body).toHaveProperty('packageName', '@vitejs/plugin-vue')
+    expect(body).toHaveProperty('package', '@vitejs/plugin-vue')
     expect(body).toHaveProperty('version')
   })
 
@@ -41,7 +42,7 @@ test.describe('vulnerabilities API', () => {
 
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/json')
-    expect(body).toHaveProperty('packageName', '@vitejs/plugin-vue')
+    expect(body).toHaveProperty('package', '@vitejs/plugin-vue')
     expect(body).toHaveProperty('version', '6.0.3')
   })
 
@@ -51,7 +52,7 @@ test.describe('vulnerabilities API', () => {
 
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/json')
-    expect(body).toHaveProperty('packageName', '@nuxt/kit')
+    expect(body).toHaveProperty('package', '@nuxt/kit')
     expect(body).toHaveProperty('version')
   })
 
@@ -61,7 +62,7 @@ test.describe('vulnerabilities API', () => {
 
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toContain('application/json')
-    expect(body).toHaveProperty('packageName', '@babel/core')
+    expect(body).toHaveProperty('package', '@babel/core')
     expect(body).toHaveProperty('version')
   })
 
