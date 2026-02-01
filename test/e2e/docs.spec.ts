@@ -70,7 +70,7 @@ test.describe('API Documentation Pages', () => {
     await goto('/package-docs/ufo', { waitUntil: 'networkidle' })
 
     // Should redirect to include version
-    await expect(page).toHaveURL(/\/docs\/ufo\/v\//)
+    await expect(page).toHaveURL(/\/package-docs\/ufo\/v\//)
   })
 
   test('package link in header navigates to package page', async ({ page, goto }) => {
@@ -81,7 +81,7 @@ test.describe('API Documentation Pages', () => {
     await packageLink.click()
 
     // Should navigate to package page (URL ends with /ufo)
-    await expect(page).toHaveURL(/\/ufo$/)
+    await expect(page).toHaveURL(/\/package\/ufo$/)
   })
 
   test('docs page handles package gracefully when types unavailable', async ({ page, goto }) => {
