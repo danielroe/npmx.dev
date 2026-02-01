@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, computed, shallowRef, watch } from 'vue'
 import type { VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'

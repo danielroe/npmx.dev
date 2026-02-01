@@ -223,6 +223,14 @@ export default defineNuxtConfig({
     hydration: true,
   },
 
+  typescript: {
+    tsConfig: {
+      compilerOptions: {
+        noUnusedLocals: true,
+      },
+    },
+  },
+
   vite: {
     optimizeDeps: {
       include: [
