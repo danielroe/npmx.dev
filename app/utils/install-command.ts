@@ -25,7 +25,7 @@ export const packageManagers = [
     id: 'yarn',
     label: 'yarn',
     action: 'add',
-    executeLocal: 'yarn',
+    executeLocal: 'npx',
     executeRemote: 'yarn dlx',
     create: 'yarn create',
     icon: 'i-simple-icons:yarn',
