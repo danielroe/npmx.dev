@@ -151,6 +151,10 @@ export default defineNuxtConfig({
         driver: 'fsLite',
         base: './.cache/fetch',
       },
+      'generic-cache': {
+        driver: 'fsLite',
+        base: './.cache/generic',
+      },
     },
     typescript: {
       tsConfig: {
