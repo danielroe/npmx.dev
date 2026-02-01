@@ -1046,7 +1046,7 @@ function handleClick(event: MouseEvent) {
           </ClientOnly>
 
           <!-- Download stats -->
-          <PackageWeeklyDownloadStats :packageName />
+          <PackageWeeklyDownloadStats :packageName :createdIso="pkg?.time?.created ?? null" />
 
           <!-- Playground links -->
           <PackagePlaygrounds
