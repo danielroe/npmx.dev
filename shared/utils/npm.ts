@@ -57,7 +57,8 @@ export function assertValidPackageName(name: string): void {
 export function assertValidUsername(username: string): void {
   if (!username || username.length > NPM_USERNAME_MAX_LENGTH || !NPM_USERNAME_RE.test(username)) {
     throw createError({
-      statusCode: 400,
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      statusCode: 404,
       message: `Invalid username: ${username}`,
     })
   }
