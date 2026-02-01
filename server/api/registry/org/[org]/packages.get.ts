@@ -8,7 +8,8 @@ const NPM_ORG_NAME_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i
 function validateOrgName(name: string): void {
   if (!name || name.length > 50 || !NPM_ORG_NAME_RE.test(name)) {
     throw createError({
-      statusCode: 400,
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      statusCode: 404,
       message: `Invalid org name: ${name}`,
     })
   }
@@ -20,7 +21,8 @@ export default defineCachedEventHandler(
 
     if (!org) {
       throw createError({
-        statusCode: 400,
+        // TODO: throwing 404 rather than 400 as it's cacheable
+        statusCode: 404,
         message: 'Org name is required',
       })
     }

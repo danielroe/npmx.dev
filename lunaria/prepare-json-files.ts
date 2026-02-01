@@ -2,19 +2,18 @@ import type { Locale } from '@lunariajs/core'
 import type { LocaleObject } from '@nuxtjs/i18n'
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
-import { currentLocales } from '../config/i18n.ts'
+import { currentLocales, lunariaJSONFiles } from '../config/i18n.ts'
 import { deepCopy } from '@intlify/shared'
 
 const destFolder = path.resolve('lunaria/files')
 const localesFolder = path.resolve('i18n/locales')
 
 const defaultLocale = currentLocales.find(l => l.code === 'en-US')!
-/** @public */
+export { lunariaJSONFiles }
 export const sourceLocale = {
   label: defaultLocale.name,
   lang: defaultLocale.code,
 }
-/** @public */
 export const locales: Locale[] = currentLocales
   .filter(l => l.code !== 'en-US')
   .map(l => ({

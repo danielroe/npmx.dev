@@ -4,6 +4,7 @@ import type {
   PackageFileTreeResponse,
   PackageFileContentResponse,
 } from '#shared/types'
+import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'code',
@@ -11,7 +12,6 @@ definePageMeta({
 })
 
 const route = useRoute('code')
-const router = useRouter()
 
 // Parse package name, version, and file path from URL
 // Patterns:
@@ -99,13 +99,22 @@ const fileContentUrl = computed(() => {
   return `/api/registry/file/${packageName.value}/v/${version.value}/${filePath.value}`
 })
 
-const { data: fileContent, status: fileStatus } = useFetch<PackageFileContentResponse>(
-  () => fileContentUrl.value!,
-  { immediate: !!fileContentUrl.value },
+const {
+  data: fileContent,
+  status: fileStatus,
+  execute: fetchFileContent,
+} = useFetch<PackageFileContentResponse>(() => fileContentUrl.value!, { immediate: false })
+
+watch(
+  fileContentUrl,
+  url => {
+    if (url) fetchFileContent()
+  },
+  { immediate: true },
 )
 
 // Track hash manually since we update it via history API to avoid scroll
-const currentHash = ref('')
+const currentHash = shallowRef('')
 
 onMounted(() => {
   currentHash.value = window.location.hash
@@ -137,7 +146,7 @@ const selectedLines = computed(() => {
 })
 
 // Scroll to selected line only on initial load or file change (not on click)
-const shouldScrollOnHashChange = ref(true)
+const shouldScrollOnHashChange = shallowRef(true)
 
 function scrollToLine() {
   if (!shouldScrollOnHashChange.value) return
@@ -195,13 +204,6 @@ function packageRoute(ver?: string | null) {
   return { name: 'package' as const, params: { package: segments } }
 }
 
-// Format file size
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-}
-
 // Line number click handler - update URL hash without scrolling
 function handleLineClick(lineNum: number, event: MouseEvent) {
   let newHash: string
@@ -243,6 +245,22 @@ const canonicalUrl = computed(() => {
   return url
 })
 
+// Toggle markdown view mode
+const markdownViewModes = [
+  {
+    key: 'preview',
+    label: $t('code.markdown_view_mode.preview'),
+    icon: 'i-carbon-view',
+  },
+  {
+    key: 'code',
+    label: $t('code.markdown_view_mode.code'),
+    icon: 'i-carbon-code',
+  },
+] as const
+
+const markdownViewMode = shallowRef<(typeof markdownViewModes)[number]['key']>('preview')
+
 useHead({
   link: [{ rel: 'canonical', href: canonicalUrl }],
 })
@@ -255,6 +273,12 @@ useSeoMeta({
     return `Code - ${packageName.value}@${version.value} - npmx`
   },
   description: () => `Browse source code for ${packageName.value}@${version.value}`,
+})
+
+defineOgImageComponent('Default', {
+  title: () => `${pkg.value?.name ?? 'Package'} - Code`,
+  description: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
 })
 </script>
 
@@ -359,21 +383,45 @@ useSeoMeta({
         <!-- File viewer -->
         <template v-if="isViewingFile && fileContent">
           <div
-            class="sticky top-0 bg-bg border-b border-border px-4 py-2 flex items-center justify-between"
+            class="sticky z-10 top-0 bg-bg border-b border-border px-4 py-2 flex items-center justify-between"
           >
-            <div class="flex items-center gap-3 text-sm">
-              <span class="text-fg-muted">{{
-                $t('code.lines', { count: fileContent.lines })
-              }}</span>
-              <span v-if="currentNode?.size" class="text-fg-subtle">{{
-                formatBytes(currentNode.size)
-              }}</span>
+            <div class="flex items-center gap-2">
+              <div
+                v-if="fileContent.markdownHtml"
+                class="flex items-center gap-1 p-0.5 bg-bg-subtle border border-border-subtle rounded-md overflow-x-auto"
+                role="tablist"
+                aria-label="Markdown view mode selector"
+              >
+                <button
+                  v-for="mode in markdownViewModes"
+                  :key="mode.key"
+                  role="tab"
+                  class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                  :class="
+                    markdownViewMode === mode.key
+                      ? 'bg-bg shadow text-fg border-border'
+                      : 'text-fg-subtle hover:text-fg border-transparent'
+                  "
+                  @click="markdownViewMode = mode.key"
+                >
+                  <span class="inline-block h-3 w-3" :class="mode.icon" aria-hidden="true" />
+                  {{ mode.label }}
+                </button>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-fg-muted">{{
+                  $t('code.lines', { count: fileContent.lines })
+                }}</span>
+                <span v-if="currentNode?.size" class="text-fg-subtle">{{
+                  formatBytes(currentNode.size)
+                }}</span>
+              </div>
             </div>
             <div class="flex items-center gap-2">
               <button
                 v-if="selectedLines"
                 type="button"
-                class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors"
+                class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors active:scale-95"
                 @click="copyPermalinkUrl"
               >
                 {{ permalinkCopied ? $t('common.copied') : $t('code.copy_link') }}
@@ -389,7 +437,16 @@ useSeoMeta({
               </a>
             </div>
           </div>
+          <div
+            v-if="fileContent.markdownHtml"
+            v-show="markdownViewMode === 'preview'"
+            class="flex justify-center p-4"
+          >
+            <Readme :html="fileContent.markdownHtml.html" />
+          </div>
+
           <CodeViewer
+            v-show="!fileContent.markdownHtml || markdownViewMode === 'code'"
             :html="fileContent.html"
             :lines="fileContent.lines"
             :selected-lines="selectedLines"
