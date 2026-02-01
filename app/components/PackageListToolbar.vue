@@ -62,7 +62,6 @@ const availableSortKeys = computed(() => {
     return SORT_KEYS.filter(k => !k.searchOnly || k.key === 'relevance').map(k =>
       Object.assign({}, k, {
         disabled: k.key !== 'relevance',
-        disabledReason: k.key !== 'relevance' ? 'Coming soon' : undefined,
       }),
     )
   }
@@ -118,12 +117,12 @@ function getSortKeyLabelKey(key: SortKey): string {
           {{
             $t('filters.count.showing_filtered', {
               filtered: filteredCount.toLocaleString(),
-              total: totalCount.toLocaleString(),
+              count: totalCount.toLocaleString(),
             })
           }}
         </template>
         <template v-else>
-          {{ $t('filters.count.showing_all', { total: totalCount.toLocaleString() }) }}
+          {{ $t('filters.count.showing_all', { count: totalCount.toLocaleString() }) }}
         </template>
       </div>
 
@@ -135,31 +134,25 @@ function getSortKeyLabelKey(key: SortKey): string {
         {{
           $t('filters.count.showing_paginated', {
             pageSize: pageSize === 'all' ? filteredCount : pageSize,
-            total: filteredCount.toLocaleString(),
+            count: filteredCount.toLocaleString(),
           })
         }}
       </div>
 
       <div class="flex-1" />
 
-      <div class="flex flex-wrap items-center gap-3">
-        <!-- Column picker (table view only) -->
-        <ColumnPicker
-          v-if="viewMode === 'table'"
-          :columns="columns"
-          @toggle="emit('toggleColumn', $event)"
-          @reset="emit('resetColumns')"
-        />
-
+      <div
+        class="flex flex-wrap items-center gap-3 sm:justify-end justify-between w-full sm:w-auto"
+      >
         <!-- Sort controls -->
-        <div class="flex items-center gap-1 shrink-0">
+        <div class="flex items-center gap-1 shrink-0 order-1 sm:order-1">
           <!-- Sort key dropdown -->
           <div class="relative">
             <label for="sort-select" class="sr-only">{{ $t('filters.sort.label') }}</label>
             <select
               id="sort-select"
               :value="currentSort.key"
-              class="appearance-none bg-bg-subtle border border-border rounded-md pl-3 pr-8 py-1.5 font-mono text-sm text-fg cursor-pointer transition-colors duration-200 hover:border-border-hover focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2 focus-visible:ring-offset-bg focus-visible:outline-none"
+              class="appearance-none bg-bg-subtle border border-border rounded-md ps-3 pe-8 py-1.5 font-mono text-sm text-fg cursor-pointer transition-colors duration-200 hover:border-border-hover focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2 focus-visible:ring-offset-bg focus-visible:outline-none"
               @change="handleSortKeyChange"
             >
               <option
@@ -168,12 +161,11 @@ function getSortKeyLabelKey(key: SortKey): string {
                 :value="keyConfig.key"
                 :disabled="keyConfig.disabled"
               >
-                {{ $t(getSortKeyLabelKey(keyConfig.key))
-                }}{{ keyConfig.disabled ? ` (${$t('filters.columns.coming_soon')})` : '' }}
+                {{ $t(getSortKeyLabelKey(keyConfig.key)) }}
               </option>
             </select>
             <div
-              class="absolute right-2 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none"
+              class="absolute inset-ie-2 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none"
               aria-hidden="true"
             >
               <span class="i-carbon-chevron-down w-4 h-4" />
@@ -205,8 +197,31 @@ function getSortKeyLabelKey(key: SortKey): string {
           </button>
         </div>
 
-        <!-- View mode toggle -->
-        <ViewModeToggle v-model="viewMode" />
+        <!-- View mode toggle - mobile (left side, row 2) -->
+        <div class="flex sm:hidden items-center gap-1 order-2">
+          <ViewModeToggle v-model="viewMode" />
+        </div>
+
+        <!-- Column picker - mobile (right side, row 2) -->
+        <ColumnPicker
+          v-if="viewMode === 'table'"
+          class="flex sm:hidden order-3"
+          :columns="columns"
+          @toggle="emit('toggleColumn', $event)"
+          @reset="emit('resetColumns')"
+        />
+
+        <!-- View mode toggle + Column picker - desktop (right side, row 1) -->
+        <div class="hidden sm:flex items-center gap-1 order-2">
+          <ViewModeToggle v-model="viewMode" />
+
+          <ColumnPicker
+            v-if="viewMode === 'table'"
+            :columns="columns"
+            @toggle="emit('toggleColumn', $event)"
+            @reset="emit('resetColumns')"
+          />
+        </div>
       </div>
     </div>
 

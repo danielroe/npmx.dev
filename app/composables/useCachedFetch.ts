@@ -1,21 +1,15 @@
-/**
- * Type for the cachedFetch function attached to event context.
- */
-export type CachedFetchFunction = <T = unknown>(
-  url: string,
-  options?: {
-    method?: string
-    body?: unknown
-    headers?: Record<string, string>
-  },
-  ttl?: number,
-) => Promise<T>
+import type { CachedFetchResult } from '#shared/utils/fetch-cache-config'
 
 /**
  * Get the cachedFetch function from the current request context.
  *
  * IMPORTANT: This must be called in the composable setup context (outside of
  * useAsyncData handlers). The returned function can then be used inside handlers.
+ *
+ * The returned function returns a wrapper object with staleness metadata:
+ * - `data`: The response data
+ * - `isStale`: Whether the data came from stale cache
+ * - `cachedAt`: Unix timestamp when cached, or null if fresh fetch
  *
  * @example
  * ```ts
@@ -25,26 +19,25 @@ export type CachedFetchFunction = <T = unknown>(
  *
  *   return useLazyAsyncData(
  *     () => `package:${toValue(name)}`,
- *     // Use it inside the handler
- *     () => cachedFetch<Packument>(`https://registry.npmjs.org/${toValue(name)}`)
+ *     // Use it inside the handler - destructure { data } or { data, isStale }
+ *     async () => {
+ *       const { data } = await cachedFetch<Packument>(`https://registry.npmjs.org/${toValue(name)}`)
+ *       return data
+ *     }
  *   )
  * }
  * ```
- * @public
  */
 export function useCachedFetch(): CachedFetchFunction {
-  // On client, return a function that just uses $fetch
+  // On client, return a function that just uses $fetch (no caching, not stale)
   if (import.meta.client) {
     return async <T = unknown>(
       url: string,
-      options: {
-        method?: string
-        body?: unknown
-        headers?: Record<string, string>
-      } = {},
+      options: Parameters<typeof $fetch>[1] = {},
       _ttl?: number,
-    ): Promise<T> => {
-      return (await $fetch(url, options as Parameters<typeof $fetch>[1])) as T
+    ): Promise<CachedFetchResult<T>> => {
+      const data = (await $fetch<T>(url, options)) as T
+      return { data, isStale: false, cachedAt: null }
     }
   }
 
@@ -61,13 +54,10 @@ export function useCachedFetch(): CachedFetchFunction {
   // (shouldn't happen in normal operation)
   return async <T = unknown>(
     url: string,
-    options: {
-      method?: string
-      body?: unknown
-      headers?: Record<string, string>
-    } = {},
+    options: Parameters<typeof $fetch>[1] = {},
     _ttl?: number,
-  ): Promise<T> => {
-    return (await $fetch(url, options as Parameters<typeof $fetch>[1])) as T
+  ): Promise<CachedFetchResult<T>> => {
+    const data = (await $fetch<T>(url, options)) as T
+    return { data, isStale: false, cachedAt: null }
   }
 }

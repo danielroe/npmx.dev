@@ -6,14 +6,12 @@ import { buildSortOption, parseSortOption, toggleDirection } from '#shared/types
 const props = defineProps<{
   results: NpmSearchResult[]
   columns: ColumnConfig[]
-  selectedIndex?: number
   isLoading?: boolean
 }>()
 
 const sortOption = defineModel<SortOption>('sortOption')
 
 const emit = defineEmits<{
-  select: [index: number]
   clickKeyword: [keyword: string]
 }>()
 
@@ -104,7 +102,7 @@ function getColumnLabelKey(id: ColumnId): string {
 
 <template>
   <div class="overflow-x-auto">
-    <table class="w-full text-left">
+    <table class="w-full text-start">
       <thead class="border-b border-border">
         <tr>
           <!-- Name (always visible) -->
@@ -160,7 +158,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('downloads')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
               'cursor-pointer hover:text-fg transition-colors duration-200':
                 isSortable('downloads'),
@@ -245,7 +243,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('qualityScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
           >
             {{ $t(getColumnLabelKey('qualityScore')) }}
           </th>
@@ -253,7 +251,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('popularityScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
           >
             {{ $t(getColumnLabelKey('popularityScore')) }}
           </th>
@@ -261,7 +259,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('maintenanceScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
           >
             {{ $t(getColumnLabelKey('maintenanceScore')) }}
           </th>
@@ -269,7 +267,7 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('combinedScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-right"
+            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
           >
             {{ $t(getColumnLabelKey('combinedScore')) }}
           </th>
@@ -296,8 +294,8 @@ function getColumnLabelKey(id: ColumnId): string {
             <td v-if="isColumnVisible('description')" class="py-3 px-3">
               <div class="h-4 w-48 bg-bg-muted rounded animate-pulse" />
             </td>
-            <td v-if="isColumnVisible('downloads')" class="py-3 px-3 text-right">
-              <div class="h-4 w-16 bg-bg-muted rounded animate-pulse ml-auto" />
+            <td v-if="isColumnVisible('downloads')" class="py-3 px-3 text-end">
+              <div class="h-4 w-16 bg-bg-muted rounded animate-pulse ms-auto" />
             </td>
             <td v-if="isColumnVisible('updated')" class="py-3 px-3">
               <div class="h-4 w-20 bg-bg-muted rounded animate-pulse" />
@@ -318,9 +316,7 @@ function getColumnLabelKey(id: ColumnId): string {
             :key="result.package.name"
             :result="result"
             :columns="columns"
-            :selected="selectedIndex === index"
             :index="index"
-            @focus="emit('select', index)"
             @click-keyword="emit('clickKeyword', $event)"
           />
         </template>

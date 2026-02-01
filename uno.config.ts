@@ -6,6 +6,7 @@ import {
   transformerVariantGroup,
 } from 'unocss'
 import type { Theme } from '@unocss/preset-wind4/theme'
+import { presetRtl } from './uno-preset-rtl'
 
 const customIcons = {
   tangled:
@@ -23,7 +24,9 @@ export default defineConfig({
         custom: customIcons,
       },
     }),
-  ],
+    // keep this preset last
+    process.env.CI ? undefined : presetRtl(),
+  ].filter(Boolean),
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
     font: {
@@ -58,6 +61,16 @@ export default defineConfig({
         str: 'var(--syntax-str)',
         kw: 'var(--syntax-kw)',
         comment: 'var(--syntax-comment)',
+      },
+      badge: {
+        orange: 'var(--badge-orange)',
+        yellow: 'var(--badge-yellow)',
+        green: 'var(--badge-green)',
+        cyan: 'var(--badge-cyan)',
+        blue: 'var(--badge-blue)',
+        indigo: 'var(--badge-indigo)',
+        purple: 'var(--badge-purple)',
+        pink: 'var(--badge-pink)',
       },
       // Playground provider brand colors
       provider: {
@@ -141,6 +154,15 @@ export default defineConfig({
       'tag',
       'inline-flex items-center px-2 py-0.5 text-xs font-mono text-fg-muted bg-bg-muted border border-border rounded transition-colors duration-200 hover:(text-fg border-border-hover)',
     ],
+    ['badge-orange', 'bg-badge-orange/10 text-badge-orange'],
+    ['badge-yellow', 'bg-badge-yellow/10 text-badge-yellow'],
+    ['badge-green', 'bg-badge-green/10 text-badge-green'],
+    ['badge-cyan', 'bg-badge-cyan/10 text-badge-cyan'],
+    ['badge-blue', 'bg-badge-blue/10 text-badge-blue'],
+    ['badge-indigo', 'bg-badge-indigo/10 text-badge-indigo'],
+    ['badge-purple', 'bg-badge-purple/10 text-badge-purple'],
+    ['badge-pink', 'bg-badge-pink/10 text-badge-pink'],
+    ['badge-subtle', 'bg-bg-subtle text-fg-subtle'],
 
     // Code blocks
     [

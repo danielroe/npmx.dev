@@ -1,16 +1,22 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '../composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '../utils/colors'
 
-const { packageName } = defineProps<{
+const props = defineProps<{
   packageName: string
 }>()
 
-const showModal = ref(false)
+const chartModal = useModal('chart-modal')
 
-const { data: packument } = usePackage(() => packageName)
+const isChartModalOpen = shallowRef(false)
+function openChartModal() {
+  isChartModalOpen.value = true
+  // ensure the component renders before opening the dialog
+  nextTick(() => chartModal.open())
+}
+
+const { data: packument } = usePackage(() => props.packageName)
 const createdIso = computed(() => packument.value?.time?.created ?? null)
 
 const { fetchPackageDownloadEvolution } = useCharts()
@@ -19,7 +25,7 @@ const { accentColors, selectedAccentColor } = useAccentColor()
 
 const colorMode = useColorMode()
 
-const resolvedMode = ref<'light' | 'dark'>('light')
+const resolvedMode = shallowRef<'light' | 'dark'>('light')
 
 const rootEl = shallowRef<HTMLElement | null>(null)
 
@@ -78,14 +84,14 @@ const pulseColor = computed(() => {
   return isDarkMode.value ? accent.value : lightenOklch(accent.value, 0.5)
 })
 
-const weeklyDownloads = ref<WeeklyDownloadPoint[]>([])
+const weeklyDownloads = shallowRef<WeeklyDownloadPoint[]>([])
 
 async function loadWeeklyDownloads() {
   if (!import.meta.client) return
 
   try {
     const result = await fetchPackageDownloadEvolution(
-      () => packageName,
+      () => props.packageName,
       () => createdIso.value,
       () => ({ granularity: 'week' as const, weeks: 52 }),
     )
@@ -100,7 +106,7 @@ onMounted(() => {
 })
 
 watch(
-  () => packageName,
+  () => props.packageName,
   () => loadWeeklyDownloads(),
 )
 
@@ -116,10 +122,32 @@ const dataset = computed(() =>
 
 const lastDatapoint = computed(() => dataset.value.at(-1)?.period ?? '')
 
-// oklh or css variables are not supported by vue-data-ui (for now)
 const config = computed(() => {
   return {
     theme: 'dark',
+    /**
+     * The built-in skeleton loader kicks in when the component is mounted but the data is not yet ready.
+     * The configuration of the skeleton is customized for a seemless transition with the final state
+     */
+    skeletonConfig: {
+      style: {
+        backgroundColor: 'transparent',
+        dataLabel: {
+          show: true,
+          color: 'transparent',
+        },
+        area: {
+          color: colors.value.borderHover,
+          useGradient: false,
+          opacity: 10,
+        },
+        line: {
+          color: colors.value.borderHover,
+        },
+      },
+    },
+    // Same idea: initialize the line at zero, so it nicely transitions to the final dataset
+    skeletonDataset: Array.from({ length: 52 }, () => 0),
     style: {
       backgroundColor: 'transparent',
       animation: { show: false },
@@ -169,43 +197,36 @@ const config = computed(() => {
 
 <template>
   <div class="space-y-8">
-    <section id="downloads" class="scroll-mt-20">
-      <div class="flex items-center justify-between mb-3">
-        <h2 class="group text-xs text-fg-subtle uppercase tracking-wider">
-          <a
-            href="#downloads"
-            class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-          >
-            {{ $t('package.downloads.title') }}
-            <span
-              class="i-carbon:link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              aria-hidden="true"
-            />
-          </a>
-        </h2>
+    <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
+      <template #actions>
         <button
           type="button"
-          @click="showModal = true"
+          @click="openChartModal"
           class="link-subtle font-mono text-sm inline-flex items-center gap-1.5 ms-auto shrink-0 self-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
           :title="$t('package.downloads.analyze')"
         >
           <span class="i-carbon:data-analytics w-4 h-4" aria-hidden="true" />
           <span class="sr-only">{{ $t('package.downloads.analyze') }}</span>
         </button>
-      </div>
+      </template>
 
       <div class="w-full overflow-hidden">
         <ClientOnly>
-          <VueUiSparkline class="w-full max-w-xs" :dataset :config />
+          <VueUiSparkline class="w-full max-w-xs" :dataset :config>
+            <template #skeleton>
+              <!-- This empty div overrides the default built-in scanning animation on load -->
+              <div />
+            </template>
+          </VueUiSparkline>
           <template #fallback>
             <!-- Skeleton matching sparkline layout: title row + chart with data label -->
-            <div class="max-w-xs">
-              <!-- Title row: date range -->
-              <div class="h-5 flex items-center ps-3">
+            <div class="min-h-[75.195px]">
+              <!-- Title row: date range (24px height) -->
+              <div class="h-6 flex items-center ps-3">
                 <span class="skeleton h-3 w-36" />
               </div>
-              <!-- Chart area: data label left, sparkline right (h-[51px] matches rendered SVG) -->
-              <div class="h-[55px] flex items-center">
+              <!-- Chart area: data label left, sparkline right -->
+              <div class="aspect-[500/80] flex items-center">
                 <!-- Data label (covers ~42% width) -->
                 <div class="w-[42%] flex items-center ps-0.5">
                   <span class="skeleton h-7 w-24" />
@@ -224,31 +245,16 @@ const config = computed(() => {
           </template>
         </ClientOnly>
       </div>
-    </section>
+    </CollapsibleSection>
   </div>
 
-  <ChartModal v-model:open="showModal">
-    <template #title>{{ $t('package.downloads.modal_title') }}</template>
-
+  <ChartModal v-if="isChartModalOpen" @close="isChartModalOpen = false">
     <PackageDownloadAnalytics
       :weeklyDownloads="weeklyDownloads"
       :inModal="true"
-      :packageName="packageName"
+      :packageName="props.packageName"
       :createdIso="createdIso"
     />
-
-    <template #after="{ close }">
-      <div class="sm:hidden flex justify-center">
-        <button
-          type="button"
-          @click="close"
-          class="w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors"
-          :aria-label="$t('common.close')"
-        >
-          <span class="w-5 h-5 i-carbon:close" aria-hidden="true" />
-        </button>
-      </div>
-    </template>
   </ChartModal>
 </template>
 

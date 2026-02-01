@@ -10,39 +10,29 @@ const emit = defineEmits<{
   reset: []
 }>()
 
-const isOpen = ref(false)
+const isOpen = shallowRef(false)
 const buttonRef = useTemplateRef('buttonRef')
 const menuRef = useTemplateRef('menuRef')
 const menuId = useId()
 
 // Close on click outside (check both button and menu)
-function handleClickOutside(event: MouseEvent) {
-  const target = event.target as Node
-  const isOutsideButton = buttonRef.value && !buttonRef.value.contains(target)
-  const isOutsideMenu = !menuRef.value || !menuRef.value.contains(target)
-  if (isOutsideButton && isOutsideMenu) {
+onClickOutside(
+  menuRef,
+  () => {
     isOpen.value = false
-  }
-}
+  },
+  {
+    ignore: [buttonRef],
+  },
+)
 
 // Close on Escape key
-function handleKeydown(event: KeyboardEvent) {
+useEventListener('keydown', event => {
   if (event.key === 'Escape' && isOpen.value) {
     isOpen.value = false
     buttonRef.value?.focus()
   }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-  document.addEventListener('keydown', handleKeydown)
 })
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-  document.removeEventListener('keydown', handleKeydown)
-})
-
 // Columns that can be toggled (name is always visible)
 const toggleableColumns = computed(() => props.columns.filter(col => col.id !== 'name'))
 
@@ -93,7 +83,7 @@ function handleReset() {
         v-if="isOpen"
         ref="menuRef"
         :id="menuId"
-        class="absolute right-0 mt-2 w-60 bg-bg-subtle border border-border rounded-lg shadow-lg z-20"
+        class="absolute inset-is-0 sm:inset-is-auto sm:inset-ie-0 mt-2 w-60 bg-bg-subtle border border-border rounded-lg shadow-lg z-20"
         role="group"
         :aria-label="$t('filters.columns.show')"
       >
@@ -144,7 +134,7 @@ function handleReset() {
           <div class="border-t border-border py-1">
             <button
               type="button"
-              class="w-full px-3 py-2 text-left text-sm font-mono text-fg-muted hover:bg-bg-muted hover:text-fg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset"
+              class="w-full px-3 py-2 text-start text-sm font-mono text-fg-muted hover:bg-bg-muted hover:text-fg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset"
               @click="handleReset"
             >
               {{ $t('filters.columns.reset') }}

@@ -5,7 +5,6 @@ import type { ErrorOptions } from '#shared/types/error'
 /**
  * Generic error handler for Nitro routes
  * Handles H3 errors, Valibot, and fallbacks in that order
- * @public
  */
 export function handleApiError(error: unknown, fallback: ErrorOptions): never {
   // If already a known Nuxt/H3 Error, re-throw
@@ -16,7 +15,8 @@ export function handleApiError(error: unknown, fallback: ErrorOptions): never {
   // Handle Valibot validation errors
   if (v.isValiError(error)) {
     throw createError({
-      statusCode: 400,
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      statusCode: 404,
       message: error.issues[0].message,
     })
   }

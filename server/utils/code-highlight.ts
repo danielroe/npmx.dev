@@ -21,6 +21,8 @@ const EXTENSION_MAP: Record<string, string> = {
   vue: 'vue',
   svelte: 'svelte',
   astro: 'astro',
+  gjs: 'glimmer-js',
+  gts: 'glimmer-ts',
 
   // Data formats
   json: 'json',
@@ -79,7 +81,6 @@ const FILENAME_MAP: Record<string, string> = {
 
 /**
  * Determine the language for syntax highlighting based on file path
- * @public
  */
 export function getLanguageFromPath(filePath: string): string {
   const filename = filePath.split('/').pop() || ''
@@ -220,11 +221,20 @@ function linkifyImports(html: string, options?: LinkifyOptions): string {
   // or: <span>import</span><span>(</span><span>'module'</span>
   // Note: require often has a leading space in the span from Shiki
   result = result.replace(
-    /(<span[^>]*>)\s*(require|import)(<\/span>)(<span[^>]*>\(<\/span>)(<span[^>]*>)(['"][^'"]+['"])<\/span>/g,
-    (match, spanOpen, keyword, spanClose, parenSpan, stringSpanOpen, moduleSpecifier) => {
+    /(<span[^>]*>)(\s*)(require|import)(<\/span>)(<span[^>]*>\(<\/span>)(<span[^>]*>)(['"][^'"]+['"])<\/span>/g,
+    (
+      match,
+      spanOpen,
+      whitespace,
+      keyword,
+      spanClose,
+      parenSpan,
+      stringSpanOpen,
+      moduleSpecifier,
+    ) => {
       const href = getHref(moduleSpecifier)
       if (!href) return match
-      return `${spanOpen}${keyword}${spanClose}${parenSpan}${stringSpanOpen}<a href="${href}" class="import-link">${moduleSpecifier}</a></span>`
+      return `${spanOpen}${whitespace}${keyword}${spanClose}${parenSpan}${stringSpanOpen}<a href="${href}" class="import-link">${moduleSpecifier}</a></span>`
     },
   )
 
@@ -252,7 +262,6 @@ export interface HighlightOptions {
 /**
  * Highlight code using Shiki with line-by-line output for line highlighting.
  * Each line is wrapped in a span.line for individual line highlighting.
- * @public
  */
 export async function highlightCode(
   code: string,
