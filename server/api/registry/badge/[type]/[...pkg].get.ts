@@ -9,6 +9,7 @@ import { handleApiError } from '#server/utils/error-handler'
 const NPM_DOWNLOADS_API = 'https://api.npmjs.org/downloads/point'
 const OSV_QUERY_API = 'https://api.osv.dev/v1/query'
 const BUNDLEPHOBIA_API = 'https://bundlephobia.com/api/size'
+const NPMS_API = 'https://api.npms.io/v2/package'
 
 const QUERY_SCHEMA = v.object({
   color: v.optional(v.string()),
@@ -63,7 +64,7 @@ function getLatestVersion(pkgData: globalThis.Packument): string | undefined {
 
 async function fetchDownloads(
   packageName: string,
-  period: 'last-month' | 'last-week',
+  period: 'last-day' | 'last-week' | 'last-month' | 'last-year',
 ): Promise<number> {
   try {
     const response = await fetch(`${NPM_DOWNLOADS_API}/${period}/${packageName}`)
@@ -71,6 +72,16 @@ async function fetchDownloads(
     return data.downloads ?? 0
   } catch {
     return 0
+  }
+}
+
+async function fetchNpmsScore(packageName: string) {
+  try {
+    const response = await fetch(`${NPMS_API}/${encodeURIComponent(packageName)}`)
+    const data = await response.json()
+    return data.score
+  } catch {
+    return null
   }
 }
 
@@ -116,15 +127,11 @@ const badgeStrategies = {
   'size': async (pkgData: globalThis.Packument) => {
     const latest = getLatestVersion(pkgData)
     const versionData = latest ? pkgData.versions?.[latest] : undefined
-
-    // Fallback to unpacked size if bundlephobia fails or latest is missing
     let bytes = versionData?.dist?.unpackedSize ?? 0
-
     if (latest) {
       const installSize = await fetchInstallSize(pkgData.name, latest)
       if (installSize !== null) bytes = installSize
     }
-
     return { label: 'install size', value: formatBytes(bytes), color: COLORS.purple }
   },
 
@@ -133,9 +140,24 @@ const badgeStrategies = {
     return { label: 'downloads/mo', value: formatNumber(count), color: COLORS.orange }
   },
 
+  'downloads-day': async (pkgData: globalThis.Packument) => {
+    const count = await fetchDownloads(pkgData.name, 'last-day')
+    return { label: 'downloads/day', value: formatNumber(count), color: COLORS.orange }
+  },
+
   'downloads-week': async (pkgData: globalThis.Packument) => {
     const count = await fetchDownloads(pkgData.name, 'last-week')
     return { label: 'downloads/wk', value: formatNumber(count), color: COLORS.orange }
+  },
+
+  'downloads-month': async (pkgData: globalThis.Packument) => {
+    const count = await fetchDownloads(pkgData.name, 'last-month')
+    return { label: 'downloads/mo', value: formatNumber(count), color: COLORS.orange }
+  },
+
+  'downloads-year': async (pkgData: globalThis.Packument) => {
+    const count = await fetchDownloads(pkgData.name, 'last-year')
+    return { label: 'downloads/yr', value: formatNumber(count), color: COLORS.orange }
   },
 
   'vulnerabilities': async (pkgData: globalThis.Packument) => {
@@ -192,9 +214,33 @@ const badgeStrategies = {
       color: isDeprecated ? COLORS.red : COLORS.green,
     }
   },
+
+  'quality': async (pkgData: globalThis.Packument) => {
+    const score = await fetchNpmsScore(pkgData.name)
+    const value = score ? `${Math.round(score.detail.quality * 100)}%` : 'unknown'
+    return { label: 'quality', value, color: COLORS.purple }
+  },
+
+  'popularity': async (pkgData: globalThis.Packument) => {
+    const score = await fetchNpmsScore(pkgData.name)
+    const value = score ? `${Math.round(score.detail.popularity * 100)}%` : 'unknown'
+    return { label: 'popularity', value, color: COLORS.cyan }
+  },
+
+  'maintenance': async (pkgData: globalThis.Packument) => {
+    const score = await fetchNpmsScore(pkgData.name)
+    const value = score ? `${Math.round(score.detail.maintenance * 100)}%` : 'unknown'
+    return { label: 'maintenance', value, color: COLORS.yellow }
+  },
+
+  'score': async (pkgData: globalThis.Packument) => {
+    const score = await fetchNpmsScore(pkgData.name)
+    const value = score ? `${Math.round(score.final * 100)}%` : 'unknown'
+    return { label: 'score', value, color: COLORS.blue }
+  },
 }
 
-const BadgeTypeSchema = v.picklist(Object.keys(badgeStrategies))
+const BadgeTypeSchema = v.picklist(Object.keys(badgeStrategies) as [string, ...string[]])
 
 export default defineCachedEventHandler(
   async event => {
