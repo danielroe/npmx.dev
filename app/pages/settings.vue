@@ -103,6 +103,7 @@ defineOgImageComponent('Default', {
                 type="button"
                 class="w-full flex items-center justify-between gap-4 group"
                 role="switch"
+                data-testid="settings-toggle"
                 :aria-checked="settings.relativeDates"
                 @click="settings.relativeDates = !settings.relativeDates"
               >
@@ -134,6 +135,7 @@ defineOgImageComponent('Default', {
                 type="button"
                 class="w-full flex items-center justify-between gap-4 group"
                 role="switch"
+                data-testid="settings-toggle"
                 :aria-checked="settings.includeTypesInInstall"
                 @click="settings.includeTypesInInstall = !settings.includeTypesInInstall"
               >
@@ -167,6 +169,7 @@ defineOgImageComponent('Default', {
                 type="button"
                 class="w-full flex items-center justify-between gap-4 group"
                 role="switch"
+                data-testid="settings-toggle"
                 :aria-checked="settings.hidePlatformPackages"
                 @click="settings.hidePlatformPackages = !settings.hidePlatformPackages"
               >
