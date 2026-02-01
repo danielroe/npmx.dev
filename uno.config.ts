@@ -159,9 +159,6 @@ export default defineConfig({
 
     // Skeleton loading
     ['skeleton', 'bg-bg-elevated rounded animate-skeleton-pulse'],
-
-    // Subtle divider
-    ['divider', 'border-t border-border'],
   ],
   rules: [
     // Custom scale for active states
