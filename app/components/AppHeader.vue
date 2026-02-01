@@ -14,6 +14,7 @@ const { isConnected, npmUser } = useConnector()
 
 const showFullSearch = shallowRef(false)
 const showMobileMenu = shallowRef(false)
+const { env } = useAppConfig().buildInfo
 
 // On mobile, clicking logo+search button expands search
 const route = useRoute()
@@ -114,6 +115,9 @@ onKeyStroke(
         >
           <AppLogo class="w-8 h-8 rounded-lg" />
           <span>npmx</span>
+          <sup class="text-sm ms--1.5 italic text-fg-muted">
+            {{ env === 'release' ? 'alpha' : env }}
+          </sup>
         </NuxtLink>
       </div>
       <!-- Spacer when logo is hidden on desktop -->
