@@ -1,6 +1,7 @@
 import type { Packument } from '#shared/types'
 import { encodePackageName, fetchLatestVersion as _fetchLatestVersion } from '#shared/utils/npm'
 import { maxSatisfying, prerelease } from 'semver'
+import { CACHE_MAX_AGE_FIVE_MINUTES } from '#shared/utils/constants'
 
 const NPM_REGISTRY = 'https://registry.npmjs.org'
 
@@ -10,7 +11,7 @@ export const fetchNpmPackage = defineCachedFunction(
     return await $fetch<Packument>(`${NPM_REGISTRY}/${encodedName}`)
   },
   {
-    maxAge: 60 * 5,
+    maxAge: CACHE_MAX_AGE_FIVE_MINUTES,
     swr: true,
     name: 'npm-package',
     getKey: (name: string) => name,
