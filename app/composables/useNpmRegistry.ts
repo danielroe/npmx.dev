@@ -1,6 +1,5 @@
 import type {
   Packument,
-  PackumentVersion,
   SlimPackument,
   NpmSearchResponse,
   NpmSearchResult,
@@ -128,20 +127,28 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
   }
 
   // Build filtered versions object with install scripts info per version
-  const filteredVersions: Record<string, PackumentVersion> = {}
+  const filteredVersions: Record<string, SlimVersion> = {}
+  let versionData: SlimPackumentVersion | null = null
   for (const v of includedVersions) {
     const version = pkg.versions[v]
     if (version) {
-      // Strip readme from each version, extract install scripts info
-      const { readme: _readme, scripts, ...slimVersion } = version
+      if (version.version === requestedVersion) {
+        // Strip readme from each version, extract install scripts info
+        const { readme: _readme, scripts, ...slimVersion } = version
 
-      // Extract install scripts info (which scripts exist + npx deps)
-      const installScripts = scripts ? extractInstallScriptsInfo(scripts) : null
-
+        // Extract install scripts info (which scripts exist + npx deps)
+        const installScripts = scripts ? extractInstallScriptsInfo(scripts) : null
+        versionData = {
+          ...slimVersion,
+          installScripts: installScripts ?? undefined,
+        }
+      }
       filteredVersions[v] = {
-        ...slimVersion,
-        installScripts: installScripts ?? undefined,
-      } satisfies PackumentVersion
+        ...((version?.dist as { attestations?: unknown }) ? { hasProvenance: true } : {}),
+        version: version.version,
+        deprecated: version.deprecated,
+        tags: version.tags as string[],
+      }
     }
   }
 
@@ -167,6 +174,7 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
     'keywords': pkg.keywords,
     'repository': pkg.repository,
     'bugs': pkg.bugs,
+    'requestedVersion': versionData,
     'versions': filteredVersions,
   }
 }

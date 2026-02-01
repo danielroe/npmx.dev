@@ -105,22 +105,9 @@ const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersi
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
 const { data: resolvedVersion } = await useResolvedVersion(packageName, requestedVersion)
+
 const { data: pkg, status, error } = usePackage(packageName, requestedVersion)
-
-// Get the version to display (resolved version or latest)
-const displayVersion = computed(() => {
-  if (!pkg.value) return null
-
-  // Use resolved version if available
-  if (resolvedVersion.value) {
-    return pkg.value.versions[resolvedVersion.value] ?? null
-  }
-
-  // Fallback to latest
-  const latestTag = pkg.value['dist-tags']?.latest
-  if (!latestTag) return null
-  return pkg.value.versions[latestTag] ?? null
-})
+const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
 
 // Process package description
 const pkgDescription = useMarkdown(() => ({
