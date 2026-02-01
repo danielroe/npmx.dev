@@ -93,24 +93,9 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
 
 // Fetch dependency analysis (lazy, client-side)
 // This is the same composable used by PackageVulnerabilityTree and PackageDeprecatedTree
-const {
-  data: vulnTree,
-  status: vulnTreeStatus,
-  fetch: fetchVulnTree,
-} = useDependencyAnalysis(packageName, () => displayVersion.value?.version ?? '')
-onMounted(() => {
-  // Fetch vulnerability tree once displayVersion is available
-  if (displayVersion.value) {
-    fetchVulnTree()
-  }
-})
-watch(
-  () => displayVersion.value?.version,
-  () => {
-    if (displayVersion.value) {
-      fetchVulnTree()
-    }
-  },
+const { data: vulnTree, status: vulnTreeStatus } = useDependencyAnalysis(
+  packageName,
+  () => displayVersion.value?.version ?? '',
 )
 
 // Keep latestVersion for comparison (to show "(latest)" badge)
@@ -353,8 +338,9 @@ onKeyStroke(
   { dedupe: true },
 )
 
-onKeyStroke('c', () => {
+onKeyStroke('c', e => {
   if (pkg.value) {
+    e.preventDefault()
     router.push({ path: '/compare', query: { packages: pkg.value.name } })
   }
 })
@@ -364,6 +350,7 @@ defineOgImageComponent('Package', {
   version: () => displayVersion.value?.version ?? '',
   downloads: () => (downloads.value ? $n(downloads.value.downloads) : ''),
   license: () => pkg.value?.license ?? '',
+  stars: () => stars.value ?? 0,
   primaryColor: '#60a5fa',
 })
 
