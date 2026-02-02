@@ -11,10 +11,11 @@ import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
 import { formatBytes } from '~/utils/formatters'
+import { NuxtLink } from '#components'
 
 definePageMeta({
   name: 'package',
-  alias: ['/package/:package(.*)*'],
+  alias: ['/:package(.*)*'],
 })
 
 const router = useRouter()
@@ -104,9 +105,30 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
-const { data: resolvedVersion } = await useResolvedVersion(packageName, requestedVersion)
+const {
+  data: resolvedVersion,
+  status: versionStatus,
+  error: versionError,
+} = await useResolvedVersion(packageName, requestedVersion)
 
-const { data: pkg, status, error } = usePackage(packageName, requestedVersion)
+if (
+  versionStatus.value === 'error' &&
+  versionError.value?.statusCode &&
+  versionError.value.statusCode >= 400 &&
+  versionError.value.statusCode < 500
+) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: $t('package.not_found'),
+    message: $t('package.not_found_message'),
+  })
+}
+
+const {
+  data: pkg,
+  status,
+  error,
+} = usePackage(packageName, resolvedVersion.value ?? requestedVersion)
 const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
 
 // Process package description
@@ -250,12 +272,7 @@ const homepageUrl = computed(() => {
 const docsLink = computed(() => {
   if (!resolvedVersion.value) return null
 
-  return {
-    name: 'docs' as const,
-    params: {
-      path: [...pkg.value!.name.split('/'), 'v', resolvedVersion.value],
-    },
-  }
+  return `/package-docs/${pkg.value!.name}/v/${resolvedVersion.value}`
 })
 
 const fundingUrl = computed(() => {
@@ -331,7 +348,7 @@ const createPackageInfo = computed(() => {
 
 // Canonical URL for this package page
 const canonicalUrl = computed(() => {
-  const base = `https://npmx.dev/${packageName.value}`
+  const base = `https://npmx.dev/package/${packageName.value}`
   return requestedVersion.value ? `${base}/v/${requestedVersion.value}` : base
 })
 
@@ -386,24 +403,6 @@ defineOgImageComponent('Package', {
   stars: () => stars.value ?? 0,
   primaryColor: '#60a5fa',
 })
-
-// We're using only @click because it catches touch events and enter hits
-function handleClick(event: MouseEvent) {
-  const target = (event?.target as HTMLElement | undefined)?.closest('a')
-  if (!target) return
-
-  const href = target.getAttribute('href')
-  if (!href) return
-
-  const match = href.match(/^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)(\/.+)$/)
-  if (!match || !match[1]) return
-
-  const route = router.resolve(match[1])
-  if (route) {
-    event.preventDefault()
-    router.push(route)
-  }
-}
 </script>
 
 <template>
@@ -419,28 +418,37 @@ function handleClick(event: MouseEvent) {
       >
         <!-- Package name and version -->
         <div class="flex items-baseline gap-2 sm:gap-3 flex-wrap min-w-0">
-          <h1
-            class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-            :title="pkg.name"
-          >
-            <NuxtLink
-              v-if="orgName"
-              :to="{ name: 'org', params: { org: orgName } }"
-              class="text-fg-muted hover:text-fg transition-colors duration-200"
-              >@{{ orgName }}</NuxtLink
-            ><span v-if="orgName">/</span>
+          <div class="group relative flex flex-col items-start min-w-0">
+            <h1
+              class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+              :title="pkg.name"
+            >
+              <NuxtLink
+                v-if="orgName"
+                :to="{ name: 'org', params: { org: orgName } }"
+                class="text-fg-muted hover:text-fg transition-colors duration-200"
+              >
+                @{{ orgName }}
+              </NuxtLink>
+              <span v-if="orgName">/</span>
+              <span :class="{ 'text-fg-muted': orgName }">
+                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+              </span>
+            </h1>
+
+            <!-- Floating copy button -->
             <TooltipAnnounce :text="$t('common.copied')" :isVisible="copiedPkgName">
               <button
+                type="button"
                 @click="copyPkgName()"
-                aria-describedby="copy-pkg-name"
-                class="cursor-copy active:scale-95 transition-transform"
+                class="copy-button absolute z-20 left-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap text-fg-muted bg-bg border-border opacity-0 -translate-y-1 pointer-events-none transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/40"
+                :aria-label="$t('package.copy_name')"
               >
-                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                <span class="i-carbon:copy w-3.5 h-3.5" aria-hidden="true" />
+                {{ $t('package.copy_name') }}
               </button>
             </TooltipAnnounce>
-          </h1>
-
-          <span id="copy-pkg-name" class="sr-only">{{ $t('package.copy_name') }}</span>
+          </div>
           <span
             v-if="resolvedVersion"
             class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
@@ -453,7 +461,7 @@ function handleClick(event: MouseEvent) {
 
             <NuxtLink
               v-if="requestedVersion && resolvedVersion !== requestedVersion"
-              :to="`/${pkg.name}/v/${resolvedVersion}`"
+              :to="`/package/${pkg.name}/v/${resolvedVersion}`"
               :title="$t('package.view_permalink')"
               >{{ resolvedVersion }}</NuxtLink
             >
@@ -486,10 +494,10 @@ function handleClick(event: MouseEvent) {
               class="self-baseline ms-1 sm:ms-2"
             />
             <template #fallback>
-              <ul class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
-                <li class="skeleton w-8 h-5 rounded" />
-                <li class="skeleton w-12 h-5 rounded" />
-              </ul>
+              <div class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
+                <SkeletonBlock class="w-8 h-5 rounded" />
+                <SkeletonBlock class="w-12 h-5 rounded" />
+              </div>
             </template>
           </ClientOnly>
 
@@ -515,12 +523,7 @@ function handleClick(event: MouseEvent) {
               </kbd>
             </NuxtLink>
             <NuxtLink
-              :to="{
-                name: 'code',
-                params: {
-                  path: [...pkg.name.split('/'), 'v', resolvedVersion],
-                },
-              }"
+              :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
               class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
               aria-keyshortcuts="."
             >
@@ -671,12 +674,7 @@ function handleClick(event: MouseEvent) {
             </li>
             <li v-if="resolvedVersion" class="sm:hidden">
               <NuxtLink
-                :to="{
-                  name: 'code',
-                  params: {
-                    path: [...pkg.name.split('/'), 'v', resolvedVersion],
-                  },
-                }"
+                :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon:code w-4 h-4" aria-hidden="true" />
@@ -857,12 +855,23 @@ function handleClick(event: MouseEvent) {
             </template>
           </ClientOnly>
 
-          <div v-if="pkg.time?.modified" class="space-y-1 sm:col-span-2">
-            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-              {{ $t('package.stats.updated') }}
+          <div
+            v-if="resolvedVersion && pkg.time?.[resolvedVersion]"
+            class="space-y-1 sm:col-span-2"
+          >
+            <dt
+              class="text-xs text-fg-subtle uppercase tracking-wider"
+              :title="
+                $t('package.stats.published_tooltip', {
+                  package: pkg.name,
+                  version: resolvedVersion,
+                })
+              "
+            >
+              {{ $t('package.stats.published') }}
             </dt>
             <dd class="font-mono text-sm text-fg">
-              <DateTime :datetime="pkg.time.modified" date-style="medium" />
+              <DateTime :datetime="pkg.time[resolvedVersion]!" date-style="medium" />
             </dd>
           </div>
         </dl>
@@ -872,7 +881,7 @@ function handleClick(event: MouseEvent) {
           <PackageSkillsModal
             :skills="skillsData?.skills ?? []"
             :package-name="pkg.name"
-            :version="displayVersion?.version"
+            :version="resolvedVersion || undefined"
           />
         </ClientOnly>
       </section>
@@ -970,12 +979,17 @@ function handleClick(event: MouseEvent) {
           </a>
         </h2>
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-        <Readme v-if="readmeData?.html" :html="readmeData.html" @click="handleClick" />
+        <Readme v-if="readmeData?.html" :html="readmeData.html" />
         <p v-else class="text-fg-subtle italic">
           {{ $t('package.readme.no_readme') }}
-          <a v-if="repositoryUrl" :href="repositoryUrl" rel="noopener noreferrer" class="link">{{
-            $t('package.readme.view_on_github')
-          }}</a>
+          <a
+            v-if="repositoryUrl"
+            :href="repositoryUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link"
+            >{{ $t('package.readme.view_on_github') }}</a
+          >
         </p>
       </section>
 
@@ -991,30 +1005,7 @@ function handleClick(event: MouseEvent) {
           </ClientOnly>
 
           <!-- Keywords -->
-          <section id="keywords" v-if="displayVersion?.keywords?.length" class="scroll-mt-20">
-            <h2
-              id="keywords-heading"
-              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
-            >
-              <a
-                href="#keywords"
-                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-              >
-                {{ $t('package.keywords_title') }}
-                <span
-                  class="i-carbon:link w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  aria-hidden="true"
-                />
-              </a>
-            </h2>
-            <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
-              <li v-for="keyword in displayVersion.keywords.slice(0, 15)" :key="keyword">
-                <NuxtLink :to="{ name: 'search', query: { q: `keywords:${keyword}` } }" class="tag">
-                  {{ keyword }}
-                </NuxtLink>
-              </li>
-            </ul>
-          </section>
+          <PackageKeywords :keywords="displayVersion?.keywords" />
 
           <!-- Agent Skills -->
           <ClientOnly>
@@ -1022,7 +1013,7 @@ function handleClick(event: MouseEvent) {
               v-if="skillsData?.skills?.length"
               :skills="skillsData.skills"
               :package-name="pkg.name"
-              :version="displayVersion?.version"
+              :version="resolvedVersion || undefined"
             />
           </ClientOnly>
 
@@ -1035,43 +1026,7 @@ function handleClick(event: MouseEvent) {
             :links="readmeData.playgroundLinks"
           />
 
-          <section
-            id="compatibility"
-            v-if="
-              displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)
-            "
-            class="scroll-mt-20"
-          >
-            <h2
-              id="compatibility-heading"
-              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
-            >
-              <a
-                href="#compatibility"
-                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-              >
-                {{ $t('package.compatibility') }}
-                <span
-                  class="i-carbon:link w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  aria-hidden="true"
-                />
-              </a>
-            </h2>
-            <dl class="space-y-2">
-              <div v-if="displayVersion.engines.node" class="flex justify-between gap-4 py-1">
-                <dt class="text-fg-muted text-sm shrink-0">node</dt>
-                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.node">
-                  {{ displayVersion.engines.node }}
-                </dd>
-              </div>
-              <div v-if="displayVersion.engines.npm" class="flex justify-between gap-4 py-1">
-                <dt class="text-fg-muted text-sm shrink-0">npm</dt>
-                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.npm">
-                  {{ displayVersion.engines.npm }}
-                </dd>
-              </div>
-            </dl>
-          </section>
+          <PackageCompatibility :engines="displayVersion?.engines" />
 
           <!-- Versions (grouped by release channel) -->
           <PackageVersions
@@ -1146,7 +1101,7 @@ function handleClick(event: MouseEvent) {
       'install install'
       'vulns   vulns'
       'readme  sidebar';
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-rows: auto auto auto auto 1fr;
   }
 }
 
@@ -1219,5 +1174,11 @@ function handleClick(event: MouseEvent) {
 .package-page > * {
   max-width: 100%;
   min-width: 0;
+}
+
+@media (hover: none) {
+  .copy-button {
+    display: none;
+  }
 }
 </style>

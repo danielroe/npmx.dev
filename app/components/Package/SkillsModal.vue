@@ -8,7 +8,7 @@ const props = defineProps<{
 }>()
 
 function getSkillSourceUrl(skill: SkillListItem): string {
-  const base = `/code/${props.packageName}`
+  const base = `/package-code/${props.packageName}`
   const versionPath = props.version ? `/v/${props.version}` : ''
   return `${base}${versionPath}/skills/${skill.dirName}/SKILL.md`
 }
@@ -95,13 +95,18 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
       v-if="selectedMethod === 'skills-npm'"
       class="flex items-center justify-between gap-2 px-3 py-2.5 sm:px-4 bg-bg-subtle border border-border rounded-lg mb-5"
     >
-      <i18n-t keypath="package.skills.compatible_with" tag="span" class="text-sm text-fg-muted">
+      <i18n-t
+        keypath="package.skills.compatible_with"
+        tag="span"
+        class="text-sm text-fg-muted"
+        scope="global"
+      >
         <template #tool>
           <code class="font-mono text-fg">skills-npm</code>
         </template>
       </i18n-t>
       <a
-        href="/skills-npm"
+        href="/package/skills-npm"
         class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors shrink-0"
       >
         {{ $t('package.skills.learn_more') }}
