@@ -1,16 +1,16 @@
 {
-  "version": "الإصدار",
-  "built_at": "تم البناء في {0}",
-  "alt_logo": "شعار npmx",
-  "tagline": "متصفح أفضل لسجل npm",
-  "non_affiliation_disclaimer": "غير مرتبط بشركة npm, Inc.",
-  "trademark_disclaimer": "npm علامة تجارية مسجلة لشركة npm, Inc. هذا الموقع غير مرتبط بشركة npm, Inc.",
   "seo": {
     "home": {
       "title": "npmx - متصفح الحزم لسجل npm",
       "description": "متصفح أفضل لسجل npm. ابحث عن الحزم واستعرضها واستكشفها عبر واجهة حديثة."
     }
   },
+  "version": "الإصدار",
+  "built_at": "تم البناء في {0}",
+  "alt_logo": "شعار npmx",
+  "tagline": "متصفح أفضل لسجل npm",
+  "non_affiliation_disclaimer": "غير مرتبط بشركة npm, Inc.",
+  "trademark_disclaimer": "npm علامة تجارية مسجلة لشركة npm, Inc. هذا الموقع غير مرتبط بشركة npm, Inc.",
   "footer": {
     "about": "حول",
     "docs": "التوثيق",
@@ -708,34 +708,6 @@
       "no_packages": "لم يتم العثور على حزم"
     }
   },
-  "account_menu": {
-    "connect": "اتصال",
-    "account": "الحساب",
-    "npm_cli": "npm CLI",
-    "atmosphere": "Atmosphere",
-    "npm_cli_desc": "إدارة الحزم والمنظمات",
-    "atmosphere_desc": "ميزات اجتماعية وهوية",
-    "connect_npm_cli": "الاتصال بـ npm CLI",
-    "connect_atmosphere": "الاتصال بـ Atmosphere",
-    "connecting": "جارٍ الاتصال...",
-    "ops": "{count} عملية | عملية واحدة | عمليتان | {count} عمليات | {count} عملية | {count} عملية",
-    "disconnect": "قطع الاتصال"
-  },
-  "auth": {
-    "modal": {
-      "title": "Atmosphere",
-      "connected_as": "متصل كـ {'@'}{handle}",
-      "disconnect": "قطع الاتصال",
-      "connect_prompt": "اتصل بحساب Atmosphere الخاص بك",
-      "handle_label": "المعرّف",
-      "handle_placeholder": "alice.npmx.social",
-      "connect": "اتصال",
-      "create_account": "إنشاء حساب جديد",
-      "connect_bluesky": "الاتصال عبر Bluesky",
-      "what_is_atmosphere": "ما هو حساب Atmosphere؟",
-      "atmosphere_explanation": "{npmx} يستخدم {atproto} لتشغيل العديد من ميزاته الاجتماعية، مما يسمح للمستخدمين بامتلاك بياناتهم واستخدام حساب واحد لكل التطبيقات المتوافقة. بعد إنشاء حساب، يمكنك استخدام تطبيقات أخرى مثل {bluesky} و {tangled} بالحساب نفسه."
-    }
-  },
   "about": {
     "title": "حول",
     "heading": "حول",
@@ -788,6 +760,34 @@
         "description": "اكتشف آخر الأخبار عن npmx.",
         "cta": "تابع على Bluesky"
       }
+    }
+  },
+  "account_menu": {
+    "connect": "اتصال",
+    "account": "الحساب",
+    "npm_cli": "npm CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "إدارة الحزم والمنظمات",
+    "atmosphere_desc": "ميزات اجتماعية وهوية",
+    "connect_npm_cli": "الاتصال بـ npm CLI",
+    "connect_atmosphere": "الاتصال بـ Atmosphere",
+    "connecting": "جارٍ الاتصال...",
+    "ops": "{count} عملية | عملية واحدة | عمليتان | {count} عمليات | {count} عملية | {count} عملية",
+    "disconnect": "قطع الاتصال"
+  },
+  "auth": {
+    "modal": {
+      "title": "Atmosphere",
+      "connected_as": "متصل كـ {'@'}{handle}",
+      "disconnect": "قطع الاتصال",
+      "connect_prompt": "اتصل بحساب Atmosphere الخاص بك",
+      "handle_label": "المعرّف",
+      "handle_placeholder": "alice.npmx.social",
+      "connect": "اتصال",
+      "create_account": "إنشاء حساب جديد",
+      "connect_bluesky": "الاتصال عبر Bluesky",
+      "what_is_atmosphere": "ما هو حساب Atmosphere؟",
+      "atmosphere_explanation": "{npmx} يستخدم {atproto} لتشغيل العديد من ميزاته الاجتماعية، مما يسمح للمستخدمين بامتلاك بياناتهم واستخدام حساب واحد لكل التطبيقات المتوافقة. بعد إنشاء حساب، يمكنك استخدام تطبيقات أخرى مثل {bluesky} و {tangled} بالحساب نفسه."
     }
   },
   "header": {
