@@ -25,7 +25,7 @@
     "clear": "खोज साफ़ करें",
     "searching": "खोज रहे हैं...",
     "found_packages": "कोई पैकेज नहीं मिला | 1 पैकेज मिला | {count} पैकेज मिले",
-    "updating": "(अपडेट हो रहा है...)",
+    "updating": "(अद्यतन हो रहा है...)",
     "no_results": "\"{query}\" के लिए कोई पैकेज नहीं मिला",
     "not_taken": "{name} उपलब्ध है",
     "claim_prompt": "npm पर इस पैकेज नाम को क्लेम करें",
@@ -141,7 +141,7 @@
       "deps": "डिपेंडेंसी",
       "install_size": "इंस्टॉल साइज़",
       "vulns": "कमजोरियाँ",
-      "updated": "अपडेट किया गया",
+      "updated": "अद्यतन किया गया",
       "skills": "स्किल्स",
       "view_dependency_graph": "डिपेंडेंसी ग्राफ़ देखें",
       "inspect_dependency_tree": "डिपेंडेंसी ट्री का निरीक्षण करें",
@@ -205,7 +205,7 @@
     "compatibility": "संगतता",
     "card": {
       "publisher": "प्रकाशक",
-      "updated": "अपडेट किया गया",
+      "updated": "अद्यतन किया गया",
       "weekly_downloads": "साप्ताहिक डाउनलोड्स",
       "keywords": "कीवर्ड्स",
       "license": "लाइसेंस"
@@ -232,7 +232,7 @@
       "view_vulnerabilities": "कमजोरियाँ देखें",
       "outdated_major": "{count} मेजर संस्करण पीछे (नवीनतम: {latest}) | {count} मेजर संस्करण पीछे (नवीनतम: {latest})",
       "outdated_minor": "{count} माइनर संस्करण पीछे (नवीनतम: {latest}) | {count} माइनर संस्करण पीछे (नवीनतम: {latest})",
-      "outdated_patch": "पैच अपडेट उपलब्ध (नवीनतम: {latest})"
+      "outdated_patch": "पैच अद्यतन उपलब्ध (नवीनतम: {latest})"
     },
     "peer_dependencies": {
       "title": "पीयर डिपेंडेंसी ({count})",
@@ -365,7 +365,7 @@
       "weekly": "साप्ताहिक",
       "size": "साइज़",
       "deps": "डिपेंडेंसी",
-      "updated": "अपडेट किया गया",
+      "updated": "अद्यतन किया गया",
       "get_started": "शुरू करें",
       "readme": "रीडमी",
       "maintainers": "मेंटेनर्स",
@@ -375,7 +375,7 @@
     },
     "sort": {
       "downloads": "सबसे अधिक डाउनलोड किए गए",
-      "updated": "हाल ही में अपडेट किए गए",
+      "updated": "हाल ही में अद्यतन किए गए",
       "name_asc": "नाम (A-Z)",
       "name_desc": "नाम (Z-A)"
     }
@@ -624,7 +624,7 @@
     "scope_all": "सभी",
     "scope_all_description": "सभी फ़ील्ड खोजें, name: desc: kw: ऑपरेटर समर्थित",
     "weekly_downloads": "साप्ताहिक डाउनलोड्स",
-    "updated_within": "अपडेट किया गया",
+    "updated_within": "अद्यतन किया गया",
     "security": "सुरक्षा",
     "keywords": "कीवर्ड्स",
     "more_keywords": "+{count} और",
@@ -660,7 +660,7 @@
       "downloads_day": "डाउनलोड्स/दिन",
       "downloads_month": "डाउनलोड्स/महीना",
       "downloads_year": "डाउनलोड्स/वर्ष",
-      "updated": "अंतिम अपडेट",
+      "updated": "अंतिम अद्यतन",
       "name": "नाम",
       "quality": "गुणवत्ता",
       "popularity": "लोकप्रियता",
@@ -676,7 +676,7 @@
       "version": "संस्करण",
       "description": "विवरण",
       "downloads": "डाउनलोड्स/सप्ताह",
-      "updated": "अंतिम अपडेट",
+      "updated": "अंतिम अद्यतन",
       "maintainers": "मेंटेनर्स",
       "keywords": "कीवर्ड्स",
       "quality_score": "गुणवत्ता स्कोर",
@@ -761,7 +761,7 @@
         "cta": "Discord से जुड़ें"
       },
       "follow": {
-        "title": "अपडेट रहें",
+        "title": "अद्यतन रहें",
         "description": "npmx पर नवीनतम जानकारी प्राप्त करें।",
         "cta": "Bluesky पर फॉलो करें"
       }
