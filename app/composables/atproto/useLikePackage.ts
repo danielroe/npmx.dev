@@ -13,7 +13,7 @@ export function useLikePackage(packageName: string) {
     error.value = null
 
     try {
-      const result = await $fetch<PackageLikes>('/api/auth/social/like', {
+      const result = await $fetch<PackageLikes>('/api/social/like', {
         method: 'POST',
         body: { packageName },
       })
