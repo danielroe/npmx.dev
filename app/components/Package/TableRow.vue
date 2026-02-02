@@ -122,7 +122,6 @@ const allMaintainersText = computed(() => {
           v-for="keyword in pkg.keywords.slice(0, 3)"
           :key="keyword"
           type="button"
-          class="text-xs hover:bg-fg hover:text-bg hover:border-fg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
           :title="`Filter by ${keyword}`"
           @click.stop="emit('clickKeyword', keyword)"
         >

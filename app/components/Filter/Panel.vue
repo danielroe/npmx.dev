@@ -249,7 +249,6 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               type="button"
               role="radio"
               :aria-checked="filters.downloadRange === range.value"
-              class="transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
               :class="
                 filters.downloadRange === range.value
                   ? 'bg-fg text-bg border-fg hover:text-bg/50'
@@ -278,7 +277,6 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               type="button"
               role="radio"
               :aria-checked="filters.updatedWithin === option.value"
-              class="transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
               :class="
                 filters.updatedWithin === option.value
                   ? 'bg-fg text-bg border-fg hover:text-bg/70'
@@ -307,7 +305,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               role="radio"
               disabled
               :aria-checked="filters.security === option.value"
-              class="transition-colors duration-200 opacity-50 cursor-not-allowed focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+              class="opacity-50 cursor-not-allowed"
               :class="
                 filters.security === option.value ? 'bg-fg text-bg border-fg hover:text-bg/70' : ''
               "
@@ -328,7 +326,6 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               :key="keyword"
               type="button"
               :aria-pressed="filters.keywords.includes(keyword)"
-              class="text-xs transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
               :class="
                 filters.keywords.includes(keyword) ? 'bg-fg text-bg border-fg hover:text-bg/70' : ''
               "
