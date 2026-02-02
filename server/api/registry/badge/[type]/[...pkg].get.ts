@@ -14,6 +14,7 @@ const NPMS_API = 'https://api.npms.io/v2/package'
 const QUERY_SCHEMA = v.object({
   color: v.optional(v.string()),
   name: v.optional(v.string()),
+  colorLeft: v.optional(v.string()),
 })
 
 const COLORS = {
@@ -263,6 +264,7 @@ export default defineCachedEventHandler(
 
       const queryParams = v.safeParse(QUERY_SCHEMA, query)
       const userColor = queryParams.success ? queryParams.output.color : undefined
+      const userColorLeft = queryParams.success ? queryParams.output.colorLeft : undefined
       const showName = queryParams.success && queryParams.output.name === 'true'
 
       const badgeTypeResult = v.safeParse(BadgeTypeSchema, typeParam)
@@ -280,6 +282,9 @@ export default defineCachedEventHandler(
       const rawColor = userColor ?? strategyResult.color
       const finalColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor}`
 
+      const rawLeftColor = userColorLeft ?? '#0a0a0a'
+      const finalLeftColor = rawLeftColor?.startsWith('#') ? rawLeftColor : `#${rawLeftColor}`
+
       const leftWidth = measureTextWidth(finalLabel)
       const rightWidth = measureTextWidth(finalValue)
       const totalWidth = leftWidth + rightWidth
@@ -291,7 +296,7 @@ export default defineCachedEventHandler(
             <rect width="${totalWidth}" height="${height}" rx="3" fill="#fff"/>
           </clipPath>
           <g clip-path="url(#r)">
-            <rect width="${leftWidth}" height="${height}" fill="#0a0a0a"/>
+            <rect width="${leftWidth}" height="${height}" fill="${finalLeftColor}"/>
             <rect x="${leftWidth}" width="${rightWidth}" height="${height}" fill="${finalColor}"/>
           </g>
           <g text-anchor="middle" font-family="'Geist', system-ui, -apple-system, sans-serif" font-size="11">
