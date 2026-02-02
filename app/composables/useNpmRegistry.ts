@@ -18,12 +18,6 @@ import type { CachedFetchFunction } from '#shared/utils/fetch-cache-config'
 const NPM_REGISTRY = 'https://registry.npmjs.org'
 const NPM_API = 'https://api.npmjs.org'
 
-interface NpmSearchError {
-  data: {
-    code: string
-  }
-}
-
 // Cache for packument fetches to avoid duplicate requests across components
 const packumentCache = new Map<string, Promise<Packument | null>>()
 
@@ -328,57 +322,48 @@ export function useNpmSearch(
       // Use requested size for initial fetch
       params.set('size', String(opts.size ?? 25))
 
-      try {
-        const { data: response, isStale } = await cachedFetch<NpmSearchResponse>(
-          `${NPM_REGISTRY}/-/v1/search?${params.toString()}`,
-          { signal },
-          60,
-        )
+      if (q.length === 1) {
+        const encodedName = encodePackageName(q)
+        const [{ data: pkg, isStale }, { data: downloads }] = await Promise.all([
+          cachedFetch<Packument>(`${NPM_REGISTRY}/${encodedName}`, { signal }),
+          cachedFetch<NpmDownloadCount>(`${NPM_API}/downloads/point/last-week/${encodedName}`, {
+            signal,
+          }),
+        ])
+
+        if (!pkg) {
+          return emptySearchResponse
+        }
+
+        const result = packumentToSearchResult(pkg, downloads?.downloads)
 
         cache.value = {
           query: q,
-          objects: response.objects,
-          total: response.total,
+          objects: [result],
+          total: 1,
         }
 
-        return { ...response, isStale }
-      } catch (error) {
-        if ((error as NpmSearchError)?.data?.code === 'ERR_TEXT_LENGTH') {
-          try {
-            const encodedName = encodePackageName(q)
-            const [{ data: pkg, isStale }, { data: downloads }] = await Promise.all([
-              cachedFetch<Packument>(`${NPM_REGISTRY}/${encodedName}`, { signal }),
-              cachedFetch<NpmDownloadCount>(`${NPM_API}/downloads/point/last-week/${encodedName}`, {
-                signal,
-              }),
-            ])
-
-            if (!pkg) {
-              throw error
-            }
-
-            const result = packumentToSearchResult(pkg, downloads?.downloads)
-
-            cache.value = {
-              query: q,
-              objects: [result],
-              total: 1,
-            }
-
-            return {
-              objects: [result],
-              total: 1,
-              isStale,
-              time: new Date().toISOString(),
-            }
-          } catch {
-            // If exact lookup also fails, throw original error
-            throw error
-          }
+        return {
+          objects: [result],
+          total: 1,
+          isStale,
+          time: new Date().toISOString(),
         }
-
-        throw error
       }
+
+      const { data: response, isStale } = await cachedFetch<NpmSearchResponse>(
+        `${NPM_REGISTRY}/-/v1/search?${params.toString()}`,
+        { signal },
+        60,
+      )
+
+      cache.value = {
+        query: q,
+        objects: response.objects,
+        total: response.total,
+      }
+
+      return { ...response, isStale }
     },
     { default: () => lastSearch || emptySearchResponse },
   )
