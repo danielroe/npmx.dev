@@ -152,7 +152,7 @@ const config = computed(() => {
       backgroundColor: 'transparent',
       animation: { show: false },
       area: {
-        color: colors.value.borderHover,
+        color: transparentizeOklch(accent.value, 0.2),
         useGradient: false,
         opacity: 10,
       },
@@ -163,7 +163,7 @@ const config = computed(() => {
         color: colors.value.fg,
       },
       line: {
-        color: transparentizeOklch(accent.value, 0.75),
+        color: isDarkMode.value ? darkenOklch(accent.value, 0.5) : darkenOklch(accent.value, 0.125),
         pulse: {
           show: true,
           loop: true, // runs only once if false
