@@ -1,6 +1,5 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignore": ["shared/types/lexicons/**"],
   "workspaces": {
     ".": {
       "entry": [
@@ -43,7 +42,6 @@
     },
     "docs": {
       "entry": ["app/**/*.{ts,vue}"],
-      "project": ["**/*.{ts,vue}"],
       "ignoreDependencies": ["docus", "better-sqlite3"]
     }
   }
