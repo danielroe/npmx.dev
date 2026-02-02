@@ -245,8 +245,8 @@
       "show_all": "{count} वैकल्पिक dep दिखाएं | सभी {count} वैकल्पिक deps दिखाएं"
     },
     "maintainers": {
-      "title": "मेंटेनर्स",
-      "list_label": "पैकेज मेंटेनर्स",
+      "title": "अनुरक्षक",
+      "list_label": "पैकेज अनुरक्षक",
       "you": "(आप)",
       "via": "{teams} के माध्यम से",
       "remove_owner": "{name} को स्वामी के रूप में हटाएं",
@@ -368,7 +368,7 @@
       "updated": "अद्यतन किया गया",
       "get_started": "शुरू करें",
       "readme": "रीडमी",
-      "maintainers": "मेंटेनर्स",
+      "maintainers": "अनुरक्षक",
       "keywords": "कीवर्ड्स",
       "versions": "संस्करण",
       "dependencies": "डिपेंडेंसी"
@@ -677,7 +677,7 @@
       "description": "विवरण",
       "downloads": "डाउनलोड्स/सप्ताह",
       "updated": "अंतिम अद्यतन",
-      "maintainers": "मेंटेनर्स",
+      "maintainers": "अनुरक्षक",
       "keywords": "कीवर्ड्स",
       "quality_score": "गुणवत्ता स्कोर",
       "popularity_score": "लोकप्रियता स्कोर",
