@@ -4,7 +4,7 @@ const props = withDefaults(defineProps<{ as?: string | Component }>(), { as: 'sp
 
 <template>
   <component
-    :is="props.as"
+    :is="as"
     class="inline-flex items-center px-2 py-0.5 text-xs font-mono text-fg-muted bg-bg-muted border border-border rounded"
   >
     <slot />
