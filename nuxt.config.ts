@@ -250,11 +250,9 @@ export default defineNuxtConfig({
     },
     nodeTsConfig: {
       compilerOptions: {
-        allowImportingTsExtensions: true
+        allowImportingTsExtensions: true,
       },
-      include: [
-        '../*.ts'
-      ]
+      include: ['../*.ts'],
     },
   },
 
