@@ -154,9 +154,9 @@ const pkgDescription = useMarkdown(() => ({
       :aria-label="$t('package.card.keywords')"
       class="relative z-10 flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border list-none m-0 p-0"
     >
-      <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword" class="tag">
+      <TagStatic as="li" v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword">
         {{ keyword }}
-      </li>
+      </TagStatic>
     </ul>
   </BaseCard>
 </template>

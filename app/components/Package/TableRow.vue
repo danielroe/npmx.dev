@@ -118,16 +118,16 @@ const allMaintainersText = computed(() => {
     <!-- Keywords -->
     <td v-if="isColumnVisible('keywords')" class="py-2 px-3">
       <div v-if="pkg.keywords?.length" class="flex flex-wrap gap-1">
-        <button
+        <TagClickable
           v-for="keyword in pkg.keywords.slice(0, 3)"
           :key="keyword"
           type="button"
-          class="tag text-xs hover:bg-fg hover:text-bg hover:border-fg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+          class="text-xs hover:bg-fg hover:text-bg hover:border-fg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
           :title="`Filter by ${keyword}`"
           @click.stop="emit('clickKeyword', keyword)"
         >
           {{ keyword }}
-        </button>
+        </TagClickable>
         <span v-if="pkg.keywords.length > 3" class="text-fg-subtle text-xs">
           +{{ pkg.keywords.length - 3 }}
         </span>
