@@ -1,5 +1,45 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { usePackageComparison } from '~/composables/usePackageComparison'
+import { mountSuspended } from '@nuxt/test-utils/runtime'
+import type { PackageComparisonData } from '~/composables/usePackageComparison'
+
+/**
+ * Helper to test usePackageComparison by wrapping it in a component.
+ * This is required because the composable uses useI18n which must be
+ * called inside a Vue component's setup function.
+ */
+async function usePackageComparisonInComponent(packageNames: string[]) {
+  // Create refs to capture the composable's return values
+  const capturedPackagesData = ref<(PackageComparisonData | null)[]>([]) as Ref<
+    (PackageComparisonData | null)[]
+  >
+  const capturedStatus = ref<'idle' | 'pending' | 'success' | 'error'>('idle') as Ref<
+    'idle' | 'pending' | 'success' | 'error'
+  >
+  let capturedGetFacetValues: (facet: ComparisonFacet) => (FacetValue | null)[]
+
+  const WrapperComponent = defineComponent({
+    setup() {
+      const { packagesData, status, getFacetValues } = usePackageComparison(packageNames)
+
+      // Sync values to captured refs
+      watchEffect(() => {
+        capturedPackagesData.value = [...packagesData.value]
+        capturedStatus.value = status.value
+      })
+      capturedGetFacetValues = getFacetValues
+
+      return () => h('div')
+    },
+  })
+
+  await mountSuspended(WrapperComponent)
+
+  return {
+    packagesData: capturedPackagesData,
+    status: capturedStatus,
+    getFacetValues: (facet: ComparisonFacet) => capturedGetFacetValues(facet),
+  }
+}
 
 describe('usePackageComparison', () => {
   afterEach(() => {
@@ -31,7 +71,9 @@ describe('usePackageComparison', () => {
         }),
       )
 
-      const { packagesData, status, getFacetValues } = usePackageComparison(['test-package'])
+      const { packagesData, status, getFacetValues } = await usePackageComparisonInComponent([
+        'test-package',
+      ])
 
       await vi.waitFor(() => {
         expect(status.value).toBe('success')
@@ -70,7 +112,7 @@ describe('usePackageComparison', () => {
         }),
       )
 
-      const { packagesData, status } = usePackageComparison(['test-package'])
+      const { packagesData, status } = await usePackageComparisonInComponent(['test-package'])
 
       await vi.waitFor(() => {
         expect(status.value).toBe('success')
@@ -104,7 +146,7 @@ describe('usePackageComparison', () => {
         }),
       )
 
-      const { status, getFacetValues } = usePackageComparison(['old-package'])
+      const { status, getFacetValues } = await usePackageComparisonInComponent(['old-package'])
 
       await vi.waitFor(() => {
         expect(status.value).toBe('success')
@@ -135,7 +177,7 @@ describe('usePackageComparison', () => {
         }),
       )
 
-      const { status, getFacetValues } = usePackageComparison(['fresh-package'])
+      const { status, getFacetValues } = await usePackageComparisonInComponent(['fresh-package'])
 
       await vi.waitFor(() => {
         expect(status.value).toBe('success')
