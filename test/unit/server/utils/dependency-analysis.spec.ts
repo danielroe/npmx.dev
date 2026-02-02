@@ -2,7 +2,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 // Mock Nitro globals before importing the module
 vi.stubGlobal('defineCachedFunction', (fn: Function) => fn)
-vi.stubGlobal('$fetch', vi.fn())
+const $fetchMock = vi.fn()
+vi.stubGlobal('$fetch', $fetchMock)
 
 // Import module under test
 const { analyzeDependencyTree } = await import('../../../../server/utils/dependency-analysis')
@@ -26,7 +27,7 @@ function mockOsvApi(
   batchResults: Array<{ vulns?: Array<{ id: string; modified: string }> }>,
   detailResults: Map<string, { vulns?: Array<Record<string, unknown>> }> = new Map(),
 ) {
-  vi.mocked($fetch).mockImplementation(async (url: string, options?: { body?: unknown }) => {
+  $fetchMock.mockImplementation(async (url: string, options?: { body?: unknown }) => {
     if (url === 'https://api.osv.dev/v1/querybatch') {
       return { results: batchResults }
     }
@@ -102,7 +103,7 @@ describe('dependency-analysis', () => {
       vi.mocked(resolveDependencyTree).mockResolvedValue(mockResolved)
 
       // Batch query fails entirely
-      vi.mocked($fetch).mockRejectedValue(new Error('OSV API error'))
+      $fetchMock.mockRejectedValue(new Error('OSV API error'))
 
       const result = await analyzeDependencyTree('test-pkg', '1.0.0')
 
