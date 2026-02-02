@@ -8,9 +8,7 @@ import { LIKES_SCOPE, UNSET_NUXT_SESSION_PASSWORD } from '#shared/utils/constant
 import { OAuthMetadataSchema } from '#shared/schemas/oauth'
 // @ts-expect-error virtual file from oauth module
 import { clientUri } from '#oauth/config'
-import { useServerSession } from '#server/utils/server-session'
-// TODO: limit scope as features gets added. atproto just allows login so no scary login screen till we have scopes
-// export const scope = 'atproto'
+// TODO: If you add writing a new record you will need to add a scope for it
 export const scope = `atproto ${LIKES_SCOPE}`
 
 export function getOauthClientMetadata() {
@@ -61,6 +59,22 @@ async function getOAuthSession(event: H3Event): Promise<OAuthSession | undefined
 
   // restore using the subject
   return await client.restore(currentSession.tokenSet.sub)
+}
+
+/**
+ * As we add new scopes we need to check if the client has the ability to use it.
+ * If not need to let the client know to redirect the user to the PDS to upgrade their scopes.
+ * @param oAuthSession - The current OAuth session from the event
+ * @param requiredScopes - The required scope you are checking if you can use
+ */
+export async function checkOAuthScope(oAuthSession: OAuthSession, requiredScopes: string) {
+  const tokenInfo = await oAuthSession.getTokenInfo()
+  if (!tokenInfo.scope.includes(requiredScopes)) {
+    throw createError({
+      status: 403,
+      message: ERROR_NEED_REAUTH,
+    })
+  }
 }
 
 export function eventHandlerWithOAuthSession<T extends EventHandlerRequest, D>(

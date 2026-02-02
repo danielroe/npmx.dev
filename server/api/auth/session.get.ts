@@ -7,12 +7,5 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession, serverSe
     return null
   }
 
-  if (oAuthSession) {
-    let tokenInfo = await oAuthSession.getTokenInfo()
-    console.log('scopes', tokenInfo.scope)
-
-    // return null
-  }
-
   return result.output
 })

@@ -367,13 +367,14 @@ const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.valu
 })
 
 const { mutate: likePackage } = useLikePackage(packageName.value)
+const { mutate: unlikePackage } = useUnlikePackage(packageName.value)
 
 const likeAction = async () => {
   if (user.value?.handle == null) {
     authModal.open()
   } else {
-    const result = await likePackage()
-    if (result?.totalLikes) {
+    const result = likesData.value?.userHasLiked ? await unlikePackage() : await likePackage()
+    if (result?.totalLikes != null) {
       likesData.value = result
     }
   }

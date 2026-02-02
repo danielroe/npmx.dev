@@ -1,5 +1,6 @@
 import { getCacheAdatper } from '../../cache'
 import { $nsid as likeNsid } from '#shared/types/lexicons/dev/npmx/feed/like.defs'
+import type { Backlink } from '~~/shared/utils/constellation'
 
 /**
  * Likes for a npm package on npmx
@@ -40,6 +41,8 @@ export class PackageLikesUtils {
       '.subjectRef',
       //Limit doesn't matter here since we are just counting the total likes
       1,
+      undefined,
+      0,
     )
     return totalLinks.total
   }
@@ -60,6 +63,7 @@ export class PackageLikesUtils {
       undefined,
       false,
       [[usersDid]],
+      0,
     )
     //TODO: need to double check this logic
     return userLikes.total > 0
@@ -147,6 +151,57 @@ export class PackageLikesUtils {
     return {
       totalLikes: totalLikes,
       userHasLiked: true,
+    } as PackageLikes
+  }
+
+  /**
+   * We need to get the record the user has that they liked the package
+   * @param packageName
+   * @param usersDid
+   * @returns
+   */
+  async getTheUsersLikedRecord(
+    packageName: string,
+    usersDid: string,
+  ): Promise<Backlink | undefined> {
+    const subjectRef = PACKAGE_SUBJECT_REF(packageName)
+    const { data: userLikes } = await this.constellation.getBackLinks(
+      subjectRef,
+      likeNsid,
+      'subjectRef',
+      //Limit doesn't matter here since we are just counting the total likes
+      1,
+      undefined,
+      false,
+      [[usersDid]],
+      0,
+    )
+    if (userLikes.total > 0 && userLikes.records.length > 0) {
+      return userLikes.records[0]
+    }
+  }
+
+  /**
+   * At this point you should have checked if the user had a record for the package on the network and removed it before updating the cache
+   * @param packageName
+   * @param usersDid
+   * @returns
+   */
+  async unlikeAPackageAndReturnLikes(packageName: string, usersDid: string): Promise<PackageLikes> {
+    const totalLikesKey = CACHE_PACKAGE_TOTAL_KEY(packageName)
+    const subjectRef = PACKAGE_SUBJECT_REF(packageName)
+
+    let totalLikes = await this.cache.get<number>(totalLikesKey)
+    if (!totalLikes) {
+      totalLikes = await this.constellationLikes(subjectRef)
+    }
+    totalLikes = totalLikes - 1
+    await this.cache.set(totalLikesKey, totalLikes, CACHE_MAX_AGE)
+
+    await this.cache.delete(CACHE_USER_LIKES_KEY(packageName, usersDid))
+    return {
+      totalLikes: totalLikes,
+      userHasLiked: false,
     } as PackageLikes
   }
 }

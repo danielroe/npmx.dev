@@ -75,3 +75,19 @@ export function useLikePackage(packageName: string) {
 
   return { data, error, pending, mutate }
 }
+
+export function useUnlikePackage(packageName: string) {
+  const { user } = useAtproto()
+
+  const { data, error, pending, execute } = useFetch<PackageLikes>('/api/auth/social/like', {
+    method: 'DELETE',
+    body: { packageName },
+    immediate: false,
+    watch: false,
+    onResponseError: async ({ error: e }) => {
+      await handleAuthError(e, user.value?.handle)
+    },
+  })
+
+  return { data, error, pending, mutate: execute }
+}
