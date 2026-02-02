@@ -137,7 +137,7 @@
       "community": "समुदाय"
     },
     "stats": {
-      "license": "लाइसेंस",
+      "license": "अनुज्ञप्ति",
       "deps": "डिपेंडेंसी",
       "install_size": "इंस्टॉल साइज़",
       "vulns": "कमजोरियाँ",
@@ -208,7 +208,7 @@
       "updated": "अद्यतन किया गया",
       "weekly_downloads": "साप्ताहिक डाउनलोड्स",
       "keywords": "कीवर्ड्स",
-      "license": "लाइसेंस"
+      "license": "अनुज्ञप्ति"
     },
     "versions": {
       "title": "संस्करण",
@@ -297,7 +297,7 @@
       "no_types": "कोई TypeScript टाइप्स नहीं"
     },
     "license": {
-      "view_spdx": "SPDX पर लाइसेंस टेक्स्ट देखें",
+      "view_spdx": "SPDX पर अनुज्ञप्ति टेक्स्ट देखें",
       "none": "कोई नहीं"
     },
     "vulnerabilities": {
@@ -361,7 +361,7 @@
     },
     "skeleton": {
       "loading": "पैकेज विवरण लोड हो रहे हैं",
-      "license": "लाइसेंस",
+      "license": "अनुज्ञप्ति",
       "weekly": "साप्ताहिक",
       "size": "साइज़",
       "deps": "डिपेंडेंसी",
