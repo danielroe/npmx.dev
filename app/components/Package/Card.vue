@@ -164,6 +164,7 @@ const pkgDescription = useMarkdown(() => ({
     >
       <TagButton
         v-for="keyword in result.package.keywords.slice(0, 5)"
+        class="pointer-events-auto"
         :key="keyword"
         :pressed="props.filters?.keywords.includes(keyword)"
         :title="`Filter by ${keyword}`"
