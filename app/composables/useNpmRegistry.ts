@@ -858,3 +858,8 @@ export function getVersionClass(info: OutdatedDependencyInfo | undefined): strin
   // Yellow for patch versions behind
   return 'text-yellow-500 cursor-help'
 }
+
+export function getDependencyCount(version: PackumentVersion | null): number {
+  if (!version?.dependencies) return 0
+  return Object.keys(version.dependencies).length
+}
