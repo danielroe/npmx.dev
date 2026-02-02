@@ -711,7 +711,7 @@ defineOgImageComponent('Default', {
           <div v-else-if="status !== 'pending'" role="status" class="py-12">
             <div
               v-if="hasTextLengthError"
-              class="mb-6 p-4 bg-bg-subtle border border-border rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
+              class="p-4 bg-bg-subtle border border-border rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
             >
               <div class="flex-1 min-w-0">
                 <p class="font-mono text-sm text-fg">
