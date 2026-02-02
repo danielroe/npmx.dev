@@ -28,6 +28,6 @@
 // @grant none
 // ==/UserScript==
 
-(function() {
-    location.host = 'npmx.dev'
+;(function () {
+  location.host = 'npmx.dev'
 })()
