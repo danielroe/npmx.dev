@@ -31,6 +31,7 @@ export default defineConfig({
               rootDir: fileURLToPath(new URL('.', import.meta.url)),
               overrides: {
                 experimental: {
+                  payloadExtraction: false,
                   viteEnvironmentApi: false,
                 },
                 pwa: {
