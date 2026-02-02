@@ -34,6 +34,7 @@ export interface PackageComparisonData {
  *
  */
 export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
+  const { t } = useI18n()
   const packages = computed(() => toValue(packageNames))
 
   // Cache of fetched data by package name (source of truth)
@@ -205,7 +206,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
 
     return packagesData.value.map(pkg => {
       if (!pkg) return null
-      return computeFacetValue(facet, pkg)
+      return computeFacetValue(facet, pkg, t)
     })
   }
 
@@ -232,7 +233,11 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   }
 }
 
-function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData): FacetValue | null {
+function computeFacetValue(
+  facet: ComparisonFacet,
+  data: PackageComparisonData,
+  t: (key: string) => string,
+): FacetValue | null {
   switch (facet) {
     case 'downloads':
       if (data.downloads === undefined) return null
@@ -273,6 +278,7 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
           raw: 'binary',
           display: 'N/A',
           status: 'muted',
+          tooltip: t('compare.facets.binary_only_tooltip'),
         }
       }
       if (!data.analysis) return null

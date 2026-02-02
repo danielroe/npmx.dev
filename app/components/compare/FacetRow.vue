@@ -66,9 +66,9 @@ function isCellLoading(index: number): boolean {
     <!-- Label cell -->
     <div class="comparison-label flex items-center gap-1.5 px-4 py-3 border-b border-border">
       <span class="text-xs text-fg-muted uppercase tracking-wider">{{ label }}</span>
-      <AppTooltip v-if="description" :text="description" position="top">
+      <TooltipApp v-if="description" :text="description" position="top">
         <span class="i-carbon:information w-3 h-3 text-fg-subtle cursor-help" aria-hidden="true" />
-      </AppTooltip>
+      </TooltipApp>
     </div>
 
     <!-- Value cells -->
@@ -100,7 +100,21 @@ function isCellLoading(index: number): boolean {
 
       <!-- Value display -->
       <template v-else>
-        <span class="relative font-mono text-sm tabular-nums" :class="getStatusClass(value.status)">
+        <TooltipApp v-if="value.tooltip" :text="value.tooltip" position="top">
+          <span
+            class="relative font-mono text-sm tabular-nums cursor-help"
+            :class="getStatusClass(value.status)"
+          >
+            <!-- Date values use DateTime component for i18n and user settings -->
+            <DateTime v-if="value.type === 'date'" :datetime="value.display" date-style="medium" />
+            <template v-else>{{ value.display }}</template>
+          </span>
+        </TooltipApp>
+        <span
+          v-else
+          class="relative font-mono text-sm tabular-nums"
+          :class="getStatusClass(value.status)"
+        >
           <!-- Date values use DateTime component for i18n and user settings -->
           <DateTime v-if="value.type === 'date'" :datetime="value.display" date-style="medium" />
           <template v-else>{{ value.display }}</template>
