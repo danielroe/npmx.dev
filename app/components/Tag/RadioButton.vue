@@ -19,6 +19,11 @@ const uid = useId()
 const internalId = `${model.value}-${uid}`
 
 const checked = computed(() => model.value === props.value)
+
+/** Todo: This shouldn't be necessary, but using v-model on `input type=radio` doesn't work as expected in Vue */
+const onChange = () => {
+  model.value = props.value
+}
 </script>
 
 <template>
@@ -40,8 +45,9 @@ const checked = computed(() => model.value === props.value)
       :name="props.value"
       :id="internalId"
       :value="props.value"
-      v-model="model"
+      :checked="checked"
       :disabled="props.disabled ? true : undefined"
+      @change="onChange"
     />
     <slot />
   </label>
