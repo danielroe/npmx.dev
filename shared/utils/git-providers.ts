@@ -265,8 +265,8 @@ export function normalizeGitUrl(input: string): string | null {
 
   const normalized = raw.replace(/^git\+/, '')
 
-  // Handle ssh:// URLs by converting to https://
-  if (/^ssh:\/\//i.test(normalized)) {
+  // Handle ssh:// and git:// URLs by converting to https://
+  if (/^(ssh|git):\/\//i.test(normalized)) {
     try {
       const url = new URL(normalized)
       const path = url.pathname.replace(/^\/*/, '')
@@ -320,7 +320,6 @@ export function parseRepoUrl(input: string): RepoRef | null {
 /**
  * Parse repository field from package.json into repository info.
  * Supports both full objects and shorthand strings.
- * @public
  */
 export function parseRepositoryInfo(
   repository?: { type?: string; url?: string; directory?: string } | string,
@@ -352,7 +351,6 @@ export function parseRepositoryInfo(
   }
 }
 
-/** @public */
 export function getProviderConfig(providerId: ProviderId): ProviderConfig | undefined {
   return providers.find(p => p.id === providerId)
 }
@@ -365,7 +363,6 @@ export function convertBlobToRawUrl(url: string, providerId: ProviderId): string
   return url
 }
 
-/** @public */
 export function isKnownGitProvider(url: string): boolean {
   return parseRepoUrl(url) !== null
 }

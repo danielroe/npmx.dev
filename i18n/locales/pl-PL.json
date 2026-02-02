@@ -27,7 +27,6 @@
     "found_packages": "Nie znaleziono pakietów | Znaleziono 1 pakiet | Znaleziono {count} pakiety | Znaleziono {count} pakietów | Znaleziono {count} pakietów",
     "updating": "(aktualizowanie...)",
     "no_results": "Nie znaleziono pakietów dla \"{query}\"",
-    "results": "Wyniki wyszukiwania",
     "not_taken": "{name} jest wolne",
     "claim_prompt": "Zajmij tę nazwę pakietu w npm",
     "claim_button": "Zajmij \"{name}\"",
@@ -46,7 +45,13 @@
     "popular_packages": "Popularne pakiety",
     "search": "szukaj",
     "settings": "ustawienia",
-    "back": "wstecz"
+    "compare": "porównaj",
+    "back": "wstecz",
+    "menu": "Menu",
+    "mobile_menu": "Menu nawigacji",
+    "open_menu": "Otwórz menu",
+    "links": "Linki",
+    "tap_to_search": "Dotknij, aby wyszukać"
   },
   "settings": {
     "title": "ustawienia",
@@ -98,6 +103,7 @@
     "go_back_home": "Wróć na stronę główną",
     "view_on_npm": "zobacz na npm",
     "per_week": "/ tydz.",
+    "vanity_downloads_hint": "Numer ozdobny: brak wyświetlonych pakietów | Numer ozdobny: dla wyświetlanego pakietu | Numer ozdobny: suma {count} wyświetlanych pakietów | Numer ozdobny: suma {count} wyświetlanych pakietów | Numer ozdobny: suma {count} wyświetlanych pakietów",
     "sort": {
       "name": "nazwa",
       "role": "rola",
@@ -143,6 +149,9 @@
         "total": "{size} łączny rozpakowany rozmiar (w tym {count} zależności dla linux-x64)"
       }
     },
+    "skills": {
+      "file_counts": {}
+    },
     "links": {
       "repo": "repozytorium",
       "homepage": "strona",
@@ -150,7 +159,8 @@
       "jsr": "jsr",
       "code": "kod źródłowy",
       "docs": "dokumentacja",
-      "fund": "wsparcie"
+      "fund": "wsparcie",
+      "compare": "porównaj"
     },
     "docs": {
       "not_available": "Dokumentacja niedostępna",
@@ -366,6 +376,9 @@
     },
     "modal": {
       "title": "Lokalny konektor",
+      "contributor_badge": "Tylko dla współtwórców",
+      "contributor_notice": "Konektor nie jest jeszcze opublikowany na npm. Zobacz {link}, aby uruchomić lokalnie.",
+      "contributor_link": "przewodnik współtworzenia",
       "connected": "Połączono",
       "connected_as_user": "Połączono jako ~{user}",
       "connected_hint": "Możesz teraz zarządzać pakietami i organizacjami z poziomu interfejsu WWW.",
@@ -382,34 +395,6 @@
       "warning_text": "To pozwala npmx uzyskać dostęp do twojego npm CLI. Łącz się tylko ze stronami, którym ufasz.",
       "connect": "Połącz",
       "connecting": "Łączenie..."
-    }
-  },
-  "account_menu": {
-    "connect": "połącz",
-    "account": "Konto",
-    "npm_cli": "npm CLI",
-    "atmosphere": "Atmosphere",
-    "npm_cli_desc": "Zarządzaj pakietami i organizacjami",
-    "atmosphere_desc": "Funkcje społecznościowe i tożsamość",
-    "connect_npm_cli": "Połącz z npm CLI",
-    "connect_atmosphere": "Połącz z Atmosphere",
-    "connecting": "Łączenie...",
-    "ops": "{count} operacja | {count} operacje | {count} operacji | {count} operacji | {count} operacji",
-    "disconnect": "Rozłącz"
-  },
-  "auth": {
-    "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Połączono jako {'@'}{handle}",
-      "disconnect": "Rozłącz",
-      "connect_prompt": "Połącz się ze swoim kontem Atmosphere",
-      "handle_label": "Identyfikator",
-      "handle_placeholder": "alice.npmx.social",
-      "connect": "Połącz",
-      "create_account": "Utwórz nowe konto",
-      "connect_bluesky": "Połącz z Bluesky",
-      "what_is_atmosphere": "Czym jest konto Atmosphere?",
-      "atmosphere_explanation": "{npmx} używa {atproto} do zasilania wielu funkcji społecznościowych, umożliwiając użytkownikom posiadanie swoich danych i korzystanie z jednego konta we wszystkich kompatybilnych aplikacjach. Gdy utworzysz konto, możesz używać innych aplikacji, takich jak {bluesky} i {tangled}, z tym samym kontem."
     }
   },
   "operations": {
@@ -591,7 +576,8 @@
     "markdown_view_mode": {
       "preview": "podgląd",
       "code": "kod"
-    }
+    },
+    "file_path": "Ścieżka pliku"
   },
   "badges": {
     "provenance": {
@@ -700,9 +686,9 @@
       "nav_label": "Paginacja"
     },
     "count": {
-      "showing_filtered": "{filtered} z {total} pakietów",
-      "showing_all": "{total} pakietów",
-      "showing_paginated": "{pageSize} z {total} pakietów"
+      "showing_filtered": "{filtered} z {count} pakietów",
+      "showing_all": "{count} pakietów",
+      "showing_paginated": "{pageSize} z {count} pakietów"
     },
     "table": {
       "security_warning": "Ostrzeżenie bezpieczeństwa",
@@ -764,6 +750,34 @@
       }
     }
   },
+  "account_menu": {
+    "connect": "połącz",
+    "account": "Konto",
+    "npm_cli": "npm CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "Zarządzaj pakietami i organizacjami",
+    "atmosphere_desc": "Funkcje społecznościowe i tożsamość",
+    "connect_npm_cli": "Połącz z npm CLI",
+    "connect_atmosphere": "Połącz z Atmosphere",
+    "connecting": "Łączenie...",
+    "ops": "{count} operacja | {count} operacje | {count} operacji | {count} operacji | {count} operacji",
+    "disconnect": "Rozłącz"
+  },
+  "auth": {
+    "modal": {
+      "title": "Atmosphere",
+      "connected_as": "Połączono jako {'@'}{handle}",
+      "disconnect": "Rozłącz",
+      "connect_prompt": "Połącz się ze swoim kontem Atmosphere",
+      "handle_label": "Identyfikator",
+      "handle_placeholder": "alice.npmx.social",
+      "connect": "Połącz",
+      "create_account": "Utwórz nowe konto",
+      "connect_bluesky": "Połącz z Bluesky",
+      "what_is_atmosphere": "Czym jest konto Atmosphere?",
+      "atmosphere_explanation": "{npmx} używa {atproto} do zasilania wielu funkcji społecznościowych, umożliwiając użytkownikom posiadanie swoich danych i korzystanie z jednego konta we wszystkich kompatybilnych aplikacjach. Gdy utworzysz konto, możesz używać innych aplikacji, takich jak {bluesky} i {tangled}, z tym samym kontem."
+    }
+  },
   "header": {
     "home": "npmx — strona główna",
     "github": "GitHub",
@@ -782,6 +796,50 @@
       "error": "Nie udało się wczytać organizacji",
       "empty": "Nie znaleziono organizacji",
       "view_all": "Zobacz wszystkie"
+    }
+  },
+  "compare": {
+    "packages": {
+      "title": "porównaj pakiety",
+      "tagline": "porównuj pakiety npm obok siebie, aby łatwiej wybrać właściwy.",
+      "meta_title": "Porównaj {packages} - npmx",
+      "meta_title_empty": "Porównaj pakiety - npmx",
+      "meta_description": "Porównanie obok siebie: {packages}",
+      "meta_description_empty": "Porównuj pakiety npm obok siebie",
+      "section_packages": "Pakiety",
+      "section_facets": "Aspekty",
+      "section_comparison": "Porównanie",
+      "loading": "Ładowanie danych pakietów...",
+      "error": "Nie udało się wczytać danych pakietów. Spróbuj ponownie.",
+      "empty_title": "Wybierz pakiety do porównania",
+      "empty_description": "Wyszukaj i dodaj co najmniej 2 pakiety powyżej, aby zobaczyć porównanie ich metryk."
+    },
+    "selector": {
+      "search_label": "Szukaj pakietów",
+      "search_first": "Wyszukaj pakiet...",
+      "search_add": "Dodaj kolejny pakiet...",
+      "searching": "Wyszukiwanie...",
+      "remove_package": "Usuń {package}",
+      "packages_selected": "Wybrano pakiety: {count}/{max}.",
+      "add_hint": "Dodaj co najmniej 2 pakiety do porównania.",
+      "loading_versions": "Ładowanie wersji...",
+      "select_version": "Wybierz wersję"
+    },
+    "facets": {
+      "group_label": "Aspekty porównania",
+      "all": "wszystkie",
+      "none": "brak",
+      "coming_soon": "Wkrótce",
+      "select_all": "Wybierz wszystkie aspekty",
+      "deselect_all": "Odznacz wszystkie aspekty",
+      "select_category": "Wybierz wszystkie aspekty: {category}",
+      "deselect_category": "Odznacz wszystkie aspekty: {category}",
+      "categories": {
+        "performance": "Wydajność",
+        "health": "Zdrowie",
+        "compatibility": "Kompatybilność",
+        "security": "Bezpieczeństwo i zgodność"
+      }
     }
   }
 }
