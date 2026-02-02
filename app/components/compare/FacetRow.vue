@@ -41,13 +41,13 @@ function getBarWidth(value: FacetValue | null | undefined): number {
 function getStatusClass(status?: FacetValue['status']): string {
   switch (status) {
     case 'good':
-      return 'text-emerald-400'
+      return 'bg-emerald-400 text-white px-3 py-0.5 rounded-xl'
     case 'info':
-      return 'text-blue-400'
+      return 'bg-blue-400 text-white px-3 py-0.5 rounded-xl'
     case 'warning':
-      return 'text-amber-400'
+      return 'bg-amber-400 px-3 py-0.5 rounded-xl'
     case 'bad':
-      return 'text-red-400'
+      return 'bg-red-400 text-white px-3 py-0.5 rounded-xl'
     case 'muted':
       return 'text-fg-subtle'
     default:
