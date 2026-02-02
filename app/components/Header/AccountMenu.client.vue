@@ -134,7 +134,7 @@ function openAuthModal() {
               v-if="isNpmConnected && npmUser"
               type="button"
               role="menuitem"
-              class="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-bg-subtle transition-colors text-start"
+              class="w-full px-3 py-2.5 flex items-center gap-3 rounded-md hover:bg-bg-subtle focus:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-inset transition-colors text-start"
               @click="openConnectorModal"
             >
               <img
@@ -177,7 +177,7 @@ function openAuthModal() {
               v-if="atprotoUser"
               type="button"
               role="menuitem"
-              class="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-bg-subtle transition-colors text-start"
+              class="w-full px-3 py-2.5 flex items-center gap-3 rounded-md hover:bg-bg-subtle focus:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-inset transition-colors text-start"
               @click="openAuthModal"
             >
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
@@ -202,7 +202,7 @@ function openAuthModal() {
               v-if="!isNpmConnected"
               type="button"
               role="menuitem"
-              class="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-bg-subtle transition-colors text-start rounded-md"
+              class="w-full px-3 py-2.5 flex items-center gap-3 rounded-md hover:bg-bg-subtle focus:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-inset transition-colors text-start"
               @click="openConnectorModal"
             >
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
@@ -229,7 +229,7 @@ function openAuthModal() {
               v-if="!atprotoUser"
               type="button"
               role="menuitem"
-              class="w-full px-3 py-2.5 flex items-center gap-3 hover:bg-bg-subtle transition-colors text-start rounded-md"
+              class="w-full px-3 py-2.5 flex items-center gap-3 rounded-md hover:bg-bg-subtle focus:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-inset transition-colors text-start"
               @click="openAuthModal"
             >
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
