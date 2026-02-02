@@ -497,7 +497,7 @@ defineOgImageComponent('Package', {
 
             <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
               <div class="relative inline-flex">
-                <AppPopover position="bottom">
+                <AppPopover :label="$t('package.verified_provenance')" position="bottom">
                   <template #content>
                     <p class="flex items-center gap-2 text-fg m-0">
                       <span

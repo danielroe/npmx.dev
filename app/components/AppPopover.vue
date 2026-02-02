@@ -1,5 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
+  /** Accessible name for the dialog (required for a11y when popover is open) */
+  label?: string
   /** Position of the popover panel: 'top' | 'bottom' | 'left' | 'right' */
   position?: 'top' | 'bottom' | 'left' | 'right'
 }>()
@@ -63,6 +65,7 @@ onBeforeUnmount(clearCloseTimeout)
         v-if="isOpen"
         :id="popoverId"
         role="dialog"
+        :aria-label="label"
         aria-modal="false"
         class="absolute font-mono text-xs text-fg bg-bg-subtle border border-border rounded-lg shadow-lg z-[100] pointer-events-auto px-4 py-3 min-w-[14rem] max-w-[22rem] whitespace-normal"
         :class="panelPosition"

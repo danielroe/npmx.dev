@@ -233,6 +233,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations when open', async () => {
       const component = await mountSuspended(AppPopover, {
+        props: { label: 'Popover' },
         slots: {
           default: '<button type="button">Trigger</button>',
           content: '<p>Popover content</p>',
