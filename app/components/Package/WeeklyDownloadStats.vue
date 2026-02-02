@@ -11,6 +11,8 @@ const props = defineProps<{
 const chartModal = useModal('chart-modal')
 
 const isChartModalOpen = shallowRef(false)
+const isChartModalReady = shallowRef(false)
+
 function openChartModal() {
   isChartModalOpen.value = true
   // ensure the component renders before opening the dialog
@@ -246,8 +248,18 @@ const config = computed(() => {
     </CollapsibleSection>
   </div>
 
-  <PackageChartModal v-if="isChartModalOpen" @close="isChartModalOpen = false">
+  <PackageChartModal
+    v-if="isChartModalOpen"
+    @close="isChartModalOpen = false"
+    @opened="isChartModalReady = true"
+    @closed="
+      isChartModalOpen = false
+      isChartModalReady = false
+    "
+  >
+    <!-- The chart is only rendered when the dialog element has fully transitioned, to avoid the chart from triggering too early its internal auto-sizing -->
     <PackageDownloadAnalytics
+      v-if="isChartModalReady"
       :weeklyDownloads="weeklyDownloads"
       :inModal="true"
       :packageName="props.packageName"
