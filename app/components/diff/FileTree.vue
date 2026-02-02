@@ -24,6 +24,19 @@ const emit = defineEmits<{
 
 const depth = computed(() => props.depth ?? 0)
 
+// Sort: directories first, then alphabetically
+function sortTree(nodes: DiffTreeNode[]): DiffTreeNode[] {
+  return nodes
+    .map(n => ({
+      ...n,
+      children: n.children ? sortTree(n.children) : undefined,
+    }))
+    .sort((a, b) => {
+      if (a.type !== b.type) return a.type === 'directory' ? -1 : 1
+      return a.name.localeCompare(b.name)
+    })
+}
+
 // Build tree structure from flat file list (only at root level)
 function buildTree(files: FileChange[]): DiffTreeNode[] {
   const root: DiffTreeNode[] = []
@@ -53,19 +66,6 @@ function buildTree(files: FileChange[]): DiffTreeNode[] {
         current = node.children!
       }
     }
-  }
-
-  // Sort: directories first, then alphabetically
-  function sortTree(nodes: DiffTreeNode[]): DiffTreeNode[] {
-    return nodes
-      .map(n => ({
-        ...n,
-        children: n.children ? sortTree(n.children) : undefined,
-      }))
-      .sort((a, b) => {
-        if (a.type !== b.type) return a.type === 'directory' ? -1 : 1
-        return a.name.localeCompare(b.name)
-      })
   }
 
   return sortTree(root)

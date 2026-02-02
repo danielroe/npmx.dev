@@ -21,6 +21,17 @@ export function flattenTree(tree: PackageFileTree[]): Map<string, PackageFileTre
   return result
 }
 
+const hasChanged = (fromNode: PackageFileTree, toNode: PackageFileTree): boolean => {
+  // Prefer strong hash comparison when both hashes are available
+  if (fromNode.hash && toNode.hash) return fromNode.hash !== toNode.hash
+  // Fallback to size comparison if hashes are missing
+  if (typeof fromNode.size === 'number' && typeof toNode.size === 'number') {
+    return fromNode.size !== toNode.size
+  }
+  // If we lack comparable signals, assume unchanged
+  return false
+}
+
 /** Compare two file trees and return changes */
 export function compareFileTrees(
   fromTree: PackageFileTree[],
@@ -28,17 +39,6 @@ export function compareFileTrees(
 ): { added: FileChange[]; removed: FileChange[]; modified: FileChange[]; truncated: boolean } {
   const fromFiles = flattenTree(fromTree)
   const toFiles = flattenTree(toTree)
-
-  const hasChanged = (fromNode: PackageFileTree, toNode: PackageFileTree): boolean => {
-    // Prefer strong hash comparison when both hashes are available
-    if (fromNode.hash && toNode.hash) return fromNode.hash !== toNode.hash
-    // Fallback to size comparison if hashes are missing
-    if (typeof fromNode.size === 'number' && typeof toNode.size === 'number') {
-      return fromNode.size !== toNode.size
-    }
-    // If we lack comparable signals, assume unchanged
-    return false
-  }
 
   const added: FileChange[] = []
   const removed: FileChange[] = []
