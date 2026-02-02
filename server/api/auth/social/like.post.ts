@@ -1,8 +1,8 @@
 import { Client } from '@atproto/lex'
 import * as dev from '#shared/types/lexicons/dev'
 import type { UriString } from '@atproto/lex'
-import { LIKES_SCOPE } from '~~/shared/utils/constants'
-import { checkOAuthScope } from '~~/server/utils/atproto/oauth'
+import { LIKES_SCOPE } from '#shared/utils/constants'
+import { throwOnMissingOAuthScope } from '~~/server/utils/atproto/oauth'
 
 export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
   const loggedInUsersDid = oAuthSession?.did.toString()
@@ -10,6 +10,9 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
   if (!oAuthSession || !loggedInUsersDid) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
+
+  //Checks if the user has a scope to like packages
+  await throwOnMissingOAuthScope(oAuthSession, LIKES_SCOPE)
 
   const body = await readBody<{ packageName: string }>(event)
 
@@ -30,9 +33,6 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
     })
   }
 
-  //Checks if the user has a scope to like packages
-  await checkOAuthScope(oAuthSession, LIKES_SCOPE)
-
   const subjectRef = PACKAGE_SUBJECT_REF(body.packageName)
   const client = new Client(oAuthSession)
 
@@ -49,5 +49,5 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
     })
   }
 
-  return await likesUtil.likeAPackageAndRetunLikes(body.packageName, loggedInUsersDid, result.uri)
+  return await likesUtil.likeAPackageAndReturnLikes(body.packageName, loggedInUsersDid, result.uri)
 })

@@ -1,6 +1,6 @@
 import { getCacheAdatper } from '../../cache'
 import { $nsid as likeNsid } from '#shared/types/lexicons/dev/npmx/feed/like.defs'
-import type { Backlink } from '~~/shared/utils/constellation'
+import type { Backlink } from '#shared/utils/constellation'
 
 /**
  * Likes for a npm package on npmx
@@ -123,7 +123,7 @@ export class PackageLikesUtils {
     return {
       totalLikes: totalLikes,
       userHasLiked,
-    } as PackageLikes
+    }
   }
 
   /**
@@ -151,7 +151,7 @@ export class PackageLikesUtils {
    * @param usersDid
    * @param atUri - The URI of the like record
    */
-  async likeAPackageAndRetunLikes(
+  async likeAPackageAndReturnLikes(
     packageName: string,
     usersDid: string,
     atUri: string,
@@ -181,7 +181,7 @@ export class PackageLikesUtils {
     return {
       totalLikes: totalLikes,
       userHasLiked: true,
-    } as PackageLikes
+    }
   }
 
   /**
@@ -241,6 +241,6 @@ export class PackageLikesUtils {
     return {
       totalLikes: totalLikes,
       userHasLiked: false,
-    } as PackageLikes
+    }
   }
 }

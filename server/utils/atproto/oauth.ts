@@ -62,12 +62,13 @@ async function getOAuthSession(event: H3Event): Promise<OAuthSession | undefined
 }
 
 /**
+ * Throws if the logged in OAuth Session does not have the required scopes.
  * As we add new scopes we need to check if the client has the ability to use it.
  * If not need to let the client know to redirect the user to the PDS to upgrade their scopes.
  * @param oAuthSession - The current OAuth session from the event
  * @param requiredScopes - The required scope you are checking if you can use
  */
-export async function checkOAuthScope(oAuthSession: OAuthSession, requiredScopes: string) {
+export async function throwOnMissingOAuthScope(oAuthSession: OAuthSession, requiredScopes: string) {
   const tokenInfo = await oAuthSession.getTokenInfo()
   if (!tokenInfo.scope.includes(requiredScopes)) {
     throw createError({
