@@ -72,20 +72,10 @@ const {
   isLoadingMore,
   hasMore,
   fetchMore,
-  error,
 } = useNpmSearch(query, () => ({
   size: requestedSize.value,
   incremental: true,
 }))
-
-interface SearchError {
-  code?: string
-}
-
-const hasTextLengthError = computed<boolean>(() => {
-  const errorData = error.value?.data as SearchError | undefined
-  return errorData?.code === 'ERR_TEXT_LENGTH'
-})
 
 // Results to display (directly from incremental search)
 const rawVisibleResults = computed(() => results.value)
@@ -709,8 +699,7 @@ defineOgImageComponent('Default', {
 
           <!-- No results found -->
           <div v-else-if="status !== 'pending'" role="status" class="py-12">
-            <PackageCardExact v-if="hasTextLengthError" :query />
-            <p v-else class="text-fg-muted font-mono mb-6 text-center">
+            <p class="text-fg-muted font-mono mb-6 text-center">
               {{ $t('search.no_results', { query }) }}
             </p>
 
