@@ -1105,12 +1105,9 @@ defineOgImageComponent('Package', {
       role="alert"
       class="flex flex-col items-center py-20 text-center"
     >
-      <h1 class="font-mono text-2xl font-medium mb-4">
+      <h1 class="font-mono text-2xl font-medium mb-8">
         {{ $t('package.not_found') }}
       </h1>
-      <p class="text-fg-muted mb-8">
-        {{ error?.message ?? $t('package.not_found_message') }}
-      </p>
       <NuxtLink to="/" class="btn">{{ $t('common.go_back_home') }}</NuxtLink>
     </div>
   </main>
