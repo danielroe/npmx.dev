@@ -364,6 +364,7 @@ const authModal = useModal('auth-modal')
 
 const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.value}`, {
   default: () => ({ totalLikes: 0, userHasLiked: false }),
+  server: false,
 })
 
 const { mutate: likePackage } = useLikePackage(packageName.value)
