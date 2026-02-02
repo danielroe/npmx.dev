@@ -1,17 +1,9 @@
-<script setup lang="ts">
-defineEmits<{
-  (e: 'opened'): void
-  (e: 'closed'): void
-}>()
-</script>
+<script setup lang="ts"></script>
 
 <template>
   <Modal
-    id="chart-modal"
-    whenReadyOnly
     :modalTitle="$t('package.downloads.modal_title')"
-    @opened="$emit('opened')"
-    @closed="$emit('closed')"
+    id="chart-modal"
     class="h-full sm:h-min sm:border sm:border-border sm:rounded-lg shadow-xl sm:max-h-[90vh] sm:max-w-3xl"
   >
     <div class="font-mono text-sm">
