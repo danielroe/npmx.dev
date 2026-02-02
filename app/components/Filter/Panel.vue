@@ -249,11 +249,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               type="button"
               role="radio"
               :aria-checked="filters.downloadRange === range.value"
-              :class="
-                filters.downloadRange === range.value
-                  ? 'bg-fg text-bg border-fg hover:text-bg/50'
-                  : ''
-              "
+              :status="filters.downloadRange === range.value ? 'active' : 'default'"
               @click="emit('update:downloadRange', range.value)"
             >
               {{ $t(getDownloadRangeLabelKey(range.value)) }}
@@ -277,11 +273,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               type="button"
               role="radio"
               :aria-checked="filters.updatedWithin === option.value"
-              :class="
-                filters.updatedWithin === option.value
-                  ? 'bg-fg text-bg border-fg hover:text-bg/70'
-                  : ''
-              "
+              :status="filters.updatedWithin === option.value ? 'active' : 'default'"
               @click="emit('update:updatedWithin', option.value)"
             >
               {{ $t(getUpdatedWithinLabelKey(option.value)) }}
@@ -305,10 +297,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               role="radio"
               disabled
               :aria-checked="filters.security === option.value"
-              class="opacity-50 cursor-not-allowed"
-              :class="
-                filters.security === option.value ? 'bg-fg text-bg border-fg hover:text-bg/70' : ''
-              "
+              :status="filters.security === option.value ? 'active' : 'default'"
             >
               {{ $t(getSecurityLabelKey(option.value)) }}
             </TagClickable>
@@ -326,9 +315,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               :key="keyword"
               type="button"
               :aria-pressed="filters.keywords.includes(keyword)"
-              :class="
-                filters.keywords.includes(keyword) ? 'bg-fg text-bg border-fg hover:text-bg/70' : ''
-              "
+              :status="filters.keywords.includes(keyword) ? 'active' : 'default'"
               @click="emit('toggleKeyword', keyword)"
             >
               {{ keyword }}

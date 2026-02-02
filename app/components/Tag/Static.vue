@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = withDefaults(defineProps<{ as?: string | Component }>(),{ as: 'span' })
+const props = withDefaults(defineProps<{ as?: string | Component }>(), { as: 'span' })
 </script>
 
 <template>
