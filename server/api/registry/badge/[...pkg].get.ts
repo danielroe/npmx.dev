@@ -2,7 +2,7 @@ import * as v from 'valibot'
 import { createError, getRouterParam, setHeader } from 'h3'
 import { PackageRouteParamsSchema } from '#shared/schemas/package'
 import { CACHE_MAX_AGE_ONE_HOUR } from '#shared/utils/constants'
-import { fetchNpmPackage } from '#server/utils/npm'
+import { fetchLatestVersionWithFallback } from '#server/utils/npm'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { handleApiError } from '#server/utils/error-handler'
 
@@ -14,7 +14,8 @@ export default defineCachedEventHandler(
   async event => {
     const pkgParamSegments = getRouterParam(event, 'pkg')?.split('/') ?? []
     if (pkgParamSegments.length === 0) {
-      throw createError({ statusCode: 400, message: 'Package name is required.' })
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      throw createError({ statusCode: 404, message: 'Package name is required.' })
     }
 
     const { rawPackageName, rawVersion } = parsePackageParams(pkgParamSegments)
@@ -29,8 +30,8 @@ export default defineCachedEventHandler(
 
       const label = `./ ${packageName}`
 
-      const packument = await fetchNpmPackage(packageName)
-      const value = requestedVersion ?? packument['dist-tags']?.latest ?? 'unknown'
+      const value =
+        requestedVersion ?? (await fetchLatestVersionWithFallback(packageName)) ?? 'unknown'
 
       const leftWidth = measureTextWidth(label)
       const rightWidth = measureTextWidth(value)

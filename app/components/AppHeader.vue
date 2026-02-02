@@ -1,114 +1,155 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
+import { isEditableElement } from '~/utils/input'
 
 withDefaults(
   defineProps<{
     showLogo?: boolean
-    showConnector?: boolean
   }>(),
   {
     showLogo: true,
-    showConnector: true,
   },
 )
 
 const { isConnected, npmUser } = useConnector()
 
-const router = useRouter()
+const showFullSearch = shallowRef(false)
+const showMobileMenu = shallowRef(false)
+
+// On mobile, clicking logo+search button expands search
 const route = useRoute()
+const isMobile = useIsMobile()
+const isSearchExpandedManually = shallowRef(false)
+const searchBoxRef = shallowRef<{ focus: () => void } | null>(null)
 
-const searchQuery = ref('')
-const isSearchFocused = ref(false)
+// On search page, always show search expanded on mobile
+const isOnHomePage = computed(() => route.name === 'index')
+const isOnSearchPage = computed(() => route.name === 'search')
+const isSearchExpanded = computed(() => isOnSearchPage.value || isSearchExpandedManually.value)
 
-const showSearchBar = computed(() => {
-  return route.name !== 'search' && route.name !== 'index'
-})
-
-const debouncedNavigate = debounce(async () => {
-  const query = searchQuery.value.trim()
-  await router.push({
-    name: 'search',
-    query: query ? { q: query } : undefined,
+function expandMobileSearch() {
+  isSearchExpandedManually.value = true
+  nextTick(() => {
+    searchBoxRef.value?.focus()
   })
-  // allow time for the navigation to occur before resetting searchQuery
-  setTimeout(() => (searchQuery.value = ''), 1000)
-}, 100)
-
-async function handleSearchInput() {
-  debouncedNavigate()
 }
 
-onKeyStroke(',', e => {
-  // Don't trigger if user is typing in an input
-  const target = e.target as HTMLElement
-  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-    return
-  }
+watch(
+  isOnSearchPage,
+  visible => {
+    if (!visible) return
 
-  e.preventDefault()
-  router.push('/settings')
-})
+    searchBoxRef.value?.focus()
+    nextTick(() => {
+      searchBoxRef.value?.focus()
+    })
+  },
+  { flush: 'sync' },
+)
+
+function handleSearchBlur() {
+  showFullSearch.value = false
+  // Collapse expanded search on mobile after blur (with delay for click handling)
+  // But don't collapse if we're on the search page
+  if (isMobile.value && !isOnSearchPage.value) {
+    setTimeout(() => {
+      isSearchExpandedManually.value = false
+    }, 150)
+  }
+}
+
+function handleSearchFocus() {
+  showFullSearch.value = true
+}
+
+onKeyStroke(
+  e => isKeyWithoutModifiers(e, ',') && !isEditableElement(e.target),
+  e => {
+    e.preventDefault()
+    navigateTo('/settings')
+  },
+  { dedupe: true },
+)
+
+onKeyStroke(
+  e =>
+    isKeyWithoutModifiers(e, 'c') &&
+    !isEditableElement(e.target) &&
+    // Allow more specific handlers to take precedence
+    !e.defaultPrevented,
+  e => {
+    e.preventDefault()
+    navigateTo('/compare')
+  },
+  { dedupe: true },
+)
 </script>
 
 <template>
   <header class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border">
-    <nav :aria-label="$t('nav.main_navigation')" class="container h-14 flex items-center">
-      <!-- Left: Logo -->
-      <div class="flex-shrink-0">
+    <nav
+      :aria-label="$t('nav.main_navigation')"
+      class="container min-h-14 flex items-center gap-2"
+      :class="isOnHomePage ? 'justify-end' : 'justify-between'"
+    >
+      <!-- Mobile: Logo + search button (expands search, doesn't navigate) -->
+      <button
+        v-if="!isSearchExpanded && !isOnHomePage"
+        type="button"
+        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+        :aria-label="$t('nav.tap_to_search')"
+        @click="expandMobileSearch"
+      >
+        <img
+          aria-hidden="true"
+          :alt="$t('alt_logo')"
+          src="/logo.svg"
+          width="96"
+          height="96"
+          class="w-8 h-8 rounded-lg"
+        />
+        <span class="i-carbon:search w-4 h-4 text-fg-subtle" aria-hidden="true" />
+      </button>
+
+      <!-- Desktop: Logo (navigates home) -->
+      <div v-if="showLogo" class="hidden sm:flex flex-shrink-0 items-center">
         <NuxtLink
-          v-if="showLogo"
           to="/"
           :aria-label="$t('header.home')"
-          class="header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+          dir="ltr"
+          class="inline-flex items-center gap-2 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
         >
-          <span class="text-accent"><span class="-tracking-0.2em">.</span>/</span>npmx
+          <img
+            aria-hidden="true"
+            :alt="$t('alt_logo')"
+            src="/logo.svg"
+            width="96"
+            height="96"
+            class="w-8 h-8 rounded-lg"
+          />
+          <span>npmx</span>
         </NuxtLink>
-        <!-- Spacer when logo is hidden -->
-        <span v-else class="w-1" />
       </div>
+      <!-- Spacer when logo is hidden on desktop -->
+      <span v-else class="hidden sm:block w-1" />
 
       <!-- Center: Search bar + nav items -->
-      <div class="flex-1 flex items-center justify-center gap-4 sm:gap-6">
-        <!-- Search bar (shown on all pages except home and search) -->
-        <search v-if="showSearchBar" class="hidden sm:block flex-1 max-w-md">
-          <form
-            role="search"
-            method="GET"
-            action="/search"
-            class="relative"
-            @submit.prevent="handleSearchInput"
-          >
-            <label for="header-search" class="sr-only">
-              {{ $t('search.label') }}
-            </label>
-
-            <div class="relative group" :class="{ 'is-focused': isSearchFocused }">
-              <div class="search-box relative flex items-center">
-                <span
-                  class="absolute left-3 text-fg-subtle font-mono text-sm pointer-events-none transition-colors duration-200 motion-reduce:transition-none group-focus-within:text-accent z-1"
-                >
-                  /
-                </span>
-
-                <input
-                  id="header-search"
-                  v-model="searchQuery"
-                  type="search"
-                  name="q"
-                  :placeholder="$t('search.placeholder')"
-                  v-bind="noCorrect"
-                  class="w-full bg-bg-subtle border border-border rounded-md pl-7 pr-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-border-color duration-300 motion-reduce:transition-none focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
-                  @input="handleSearchInput"
-                  @focus="isSearchFocused = true"
-                  @blur="isSearchFocused = false"
-                />
-                <button type="submit" class="sr-only">{{ $t('search.button') }}</button>
-              </div>
-            </div>
-          </form>
-        </search>
-
-        <ul class="flex items-center gap-4 sm:gap-6 list-none m-0 p-0">
+      <div
+        class="flex-1 flex items-center justify-center md:gap-6"
+        :class="{ 'hidden sm:flex': !isSearchExpanded }"
+      >
+        <!-- Search bar (hidden on mobile unless expanded) -->
+        <HeaderSearchBox
+          ref="searchBoxRef"
+          :inputClass="isSearchExpanded ? 'w-full' : ''"
+          :class="{ 'max-w-md': !isSearchExpanded }"
+          @focus="handleSearchFocus"
+          @blur="handleSearchBlur"
+        />
+        <ul
+          v-if="!isSearchExpanded"
+          :class="{ hidden: showFullSearch }"
+          class="hidden sm:flex items-center gap-4 sm:gap-6 list-none m-0 p-0"
+        >
           <!-- Packages dropdown (when connected) -->
           <li v-if="isConnected && npmUser" class="flex items-center">
             <HeaderPackagesDropdown :username="npmUser" />
@@ -121,33 +162,61 @@ onKeyStroke(',', e => {
         </ul>
       </div>
 
-      <!-- Right: User status + GitHub -->
-      <div class="flex-shrink-0 flex items-center gap-4 sm:gap-6 ml-auto sm:ml-0">
+      <!-- End: Desktop nav items + Mobile menu button -->
+      <div class="flex-shrink-0 flex items-center gap-4 sm:gap-6">
+        <!-- Desktop: Compare link -->
         <NuxtLink
-          to="/about"
-          class="sm:hidden link-subtle font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          to="/compare"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          aria-keyshortcuts="c"
         >
-          {{ $t('footer.about') }}
+          {{ $t('nav.compare') }}
+          <kbd
+            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+            aria-hidden="true"
+          >
+            c
+          </kbd>
         </NuxtLink>
 
+        <!-- Desktop: Settings link -->
         <NuxtLink
           to="/settings"
-          class="link-subtle font-mono text-sm inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
           aria-keyshortcuts=","
         >
           {{ $t('nav.settings') }}
           <kbd
-            class="hidden sm:inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
             aria-hidden="true"
           >
             ,
           </kbd>
         </NuxtLink>
 
-        <div v-if="showConnector" class="hidden sm:block">
-          <ConnectorStatus />
+        <!-- Desktop: Account menu -->
+        <div class="hidden sm:block">
+          <HeaderAccountMenu />
         </div>
+
+        <!-- Mobile: Menu button (always visible, toggles menu) -->
+        <button
+          type="button"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          :aria-label="showMobileMenu ? $t('common.close') : $t('nav.open_menu')"
+          :aria-expanded="showMobileMenu"
+          @click="showMobileMenu = !showMobileMenu"
+        >
+          <span
+            class="w-6 h-6 inline-block"
+            :class="showMobileMenu ? 'i-carbon:close' : 'i-carbon:menu'"
+            aria-hidden="true"
+          />
+        </button>
       </div>
     </nav>
+
+    <!-- Mobile menu -->
+    <HeaderMobileMenu v-model:open="showMobileMenu" />
   </header>
 </template>

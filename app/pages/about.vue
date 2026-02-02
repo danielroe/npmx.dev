@@ -13,8 +13,9 @@ useSeoMeta({
 })
 
 defineOgImageComponent('Default', {
-  title: () => $t('about.title'),
-  description: () => $t('tagline'),
+  primaryColor: '#60a5fa',
+  title: 'About npmx',
+  description: 'A better browser for the **npm registry**',
 })
 
 const pmLinks = {
@@ -26,12 +27,6 @@ const pmLinks = {
   vlt: 'https://www.vlt.sh/',
 }
 
-const socialLinks = {
-  github: 'https://repo.npmx.dev',
-  discord: 'https://chat.npmx.dev',
-  bluesky: 'https://social.npmx.dev',
-}
-
 const { data: contributors, status: contributorsStatus } = useFetch<GitHubContributor[]>(
   '/api/contributors',
   {
@@ -41,7 +36,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
 </script>
 
 <template>
-  <main class="container py-12 sm:py-16 min-h-screen">
+  <main class="container flex-1 py-12 sm:py-16">
     <article class="max-w-2xl mx-auto">
       <header class="mb-12">
         <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4">{{ $t('about.heading') }}</h1>
@@ -52,11 +47,11 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
 
       <section class="prose prose-invert max-w-none space-y-8">
         <div>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
-            <i18n-t keypath="about.what_we_are.description" tag="span">
+            <i18n-t keypath="about.what_we_are.description" tag="span" scope="global">
               <template #betterUxDx>
                 <strong class="text-fg">{{ $t('about.what_we_are.better_ux_dx') }}</strong>
               </template>
@@ -72,7 +67,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
             </i18n-t>
           </p>
           <p class="text-fg-muted leading-relaxed">
-            <i18n-t keypath="about.what_we_are.admin_description" tag="span">
+            <i18n-t keypath="about.what_we_are.admin_description" tag="span" scope="global">
               <template #adminUi>
                 <strong class="text-fg">{{ $t('about.what_we_are.admin_ui') }}</strong>
               </template>
@@ -81,7 +76,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
         </div>
 
         <div>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are_not.title') }}
           </h2>
           <ul class="space-y-3 text-fg-muted list-none p-0">
@@ -92,7 +87,11 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                   $t('about.what_we_are_not.not_package_manager')
                 }}</strong>
                 {{ ' ' }}
-                <i18n-t keypath="about.what_we_are_not.package_managers_exist" tag="span">
+                <i18n-t
+                  keypath="about.what_we_are_not.package_managers_exist"
+                  tag="span"
+                  scope="global"
+                >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
                   <template #people>
                     <a
@@ -162,8 +161,8 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
         </div>
 
         <div>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
-            {{ $t('about.contributors.title') }}
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+            {{ contributors?.length ?? 0 }} {{ $t('about.contributors.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-6">
             {{ $t('about.contributors.description') }}
@@ -184,98 +183,28 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
               target="_blank"
               rel="noopener noreferrer"
               class="group relative"
-              :title="$t('about.contributors.view_profile', { name: contributor.login })"
+              :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
             >
-              <img
-                :src="`${contributor.avatar_url}&s=64`"
-                :alt="contributor.login"
-                width="32"
-                height="32"
-                class="w-8 h-8 rounded-full ring-2 ring-transparent group-hover:ring-accent transition-all duration-200"
-                loading="lazy"
-              />
+              <div class="relative flex items-center">
+                <img
+                  :src="`${contributor.avatar_url}&s=64`"
+                  :alt="contributor.login"
+                  width="32"
+                  height="32"
+                  class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out hover:scale-125 will-change-transform"
+                  loading="lazy"
+                />
+                <span
+                  class="pointer-events-none absolute -top-9 inset-is-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs px-2 py-1 shadow-lg opacity-0 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100"
+                >
+                  @{{ contributor.login }}
+                </span>
+              </div>
             </a>
           </div>
         </div>
 
-        <!-- Get Involved CTAs -->
-        <div>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-6">
-            {{ $t('about.get_involved.title') }}
-          </h2>
-
-          <div class="grid gap-4 sm:grid-cols-3">
-            <!-- Contribute CTA -->
-            <a
-              :href="socialLinks.github"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
-            >
-              <div class="flex items-center gap-2">
-                <span class="i-carbon-logo-github w-5 h-5 text-fg" aria-hidden="true" />
-                <span class="font-medium text-fg">{{
-                  $t('about.get_involved.contribute.title')
-                }}</span>
-              </div>
-              <p class="text-sm text-fg-muted leading-relaxed">
-                {{ $t('about.get_involved.contribute.description') }}
-              </p>
-              <span
-                class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto"
-              >
-                {{ $t('about.get_involved.contribute.cta') }}
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
-              </span>
-            </a>
-
-            <!-- Community CTA -->
-            <a
-              :href="socialLinks.discord"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
-            >
-              <div class="flex items-center gap-2">
-                <span class="i-carbon-chat w-5 h-5 text-fg" aria-hidden="true" />
-                <span class="font-medium text-fg">{{
-                  $t('about.get_involved.community.title')
-                }}</span>
-              </div>
-              <p class="text-sm text-fg-muted leading-relaxed">
-                {{ $t('about.get_involved.community.description') }}
-              </p>
-              <span
-                class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto"
-              >
-                {{ $t('about.get_involved.community.cta') }}
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
-              </span>
-            </a>
-
-            <!-- Follow CTA -->
-            <a
-              :href="socialLinks.bluesky"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group flex flex-col gap-3 p-4 rounded-lg bg-bg-subtle hover:bg-bg-elevated border border-border hover:border-border-hover transition-all duration-200"
-            >
-              <div class="flex items-center gap-2">
-                <span class="i-simple-icons-bluesky w-5 h-5 text-fg" aria-hidden="true" />
-                <span class="font-medium text-fg">{{ $t('about.get_involved.follow.title') }}</span>
-              </div>
-              <p class="text-sm text-fg-muted leading-relaxed">
-                {{ $t('about.get_involved.follow.description') }}
-              </p>
-              <span
-                class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto"
-              >
-                {{ $t('about.get_involved.follow.cta') }}
-                <span class="i-carbon-arrow-right w-3 h-3" aria-hidden="true" />
-              </span>
-            </a>
-          </div>
-        </div>
+        <CallToAction />
       </section>
 
       <footer class="mt-16 pt-8 border-t border-border">
@@ -283,7 +212,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
           to="/"
           class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-[color] duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
         >
-          <span class="i-carbon-arrow-left w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
           {{ $t('about.back_home') }}
         </NuxtLink>
       </footer>

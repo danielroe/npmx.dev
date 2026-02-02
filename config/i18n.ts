@@ -13,26 +13,26 @@ interface LocaleObjectData extends LocaleObject {
 }
 
 export const countryLocaleVariants: Record<string, (LocaleObjectData & { country?: boolean })[]> = {
-  /*ar: [
-      // ar.json contains ar-EG translations
-      // { code: 'ar-DZ', name: 'Arabic (Algeria)' },
-      // { code: 'ar-BH', name: 'Arabic (Bahrain)' },
-      { country: true, code: 'ar-EG', name: 'العربية' },
-      // { code: 'ar-EG', name: 'Arabic (Egypt)' },
-      // { code: 'ar-IQ', name: 'Arabic (Iraq)' },
-      // { code: 'ar-JO', name: 'Arabic (Jordan)' },
-      // { code: 'ar-KW', name: 'Arabic (Kuwait)' },
-      // { code: 'ar-LB', name: 'Arabic (Lebanon)' },
-      // { code: 'ar-LY', name: 'Arabic (Libya)' },
-      // { code: 'ar-MA', name: 'Arabic (Morocco)' },
-      // { code: 'ar-OM', name: 'Arabic (Oman)' },
-      // { code: 'ar-QA', name: 'Arabic (Qatar)' },
-      // { code: 'ar-SA', name: 'Arabic (Saudi Arabia)' },
-      // { code: 'ar-SY', name: 'Arabic (Syria)' },
-      // { code: 'ar-TN', name: 'Arabic (Tunisia)' },
-      // { code: 'ar-AE', name: 'Arabic (U.A.E.)' },
-      // { code: 'ar-YE', name: 'Arabic (Yemen)' },
-    ],*/
+  ar: [
+    // ar.json contains ar-EG translations
+    // { code: 'ar-DZ', name: 'Arabic (Algeria)' },
+    // { code: 'ar-BH', name: 'Arabic (Bahrain)' },
+    { country: true, code: 'ar-EG', name: 'العربية' },
+    // { code: 'ar-EG', name: 'Arabic (Egypt)' },
+    // { code: 'ar-IQ', name: 'Arabic (Iraq)' },
+    // { code: 'ar-JO', name: 'Arabic (Jordan)' },
+    // { code: 'ar-KW', name: 'Arabic (Kuwait)' },
+    // { code: 'ar-LB', name: 'Arabic (Lebanon)' },
+    // { code: 'ar-LY', name: 'Arabic (Libya)' },
+    // { code: 'ar-MA', name: 'Arabic (Morocco)' },
+    // { code: 'ar-OM', name: 'Arabic (Oman)' },
+    // { code: 'ar-QA', name: 'Arabic (Qatar)' },
+    // { code: 'ar-SA', name: 'Arabic (Saudi Arabia)' },
+    // { code: 'ar-SY', name: 'Arabic (Syria)' },
+    // { code: 'ar-TN', name: 'Arabic (Tunisia)' },
+    // { code: 'ar-AE', name: 'Arabic (U.A.E.)' },
+    // { code: 'ar-YE', name: 'Arabic (Yemen)' },
+  ],
   en: [
     // en.json contains en-US translations
     { country: true, code: 'en-US', name: 'English (US)' },
@@ -78,63 +78,71 @@ export const countryLocaleVariants: Record<string, (LocaleObjectData & { country
     ],*/
 }
 
-const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
+const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: string }))[] = [
   {
     code: 'en',
     file: 'en.json',
     name: 'English',
   },
+  {
+    code: 'ar',
+    file: 'ar.json',
+    name: 'العربية',
+    dir: 'rtl',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('ar-EG').select(choice)
+      return { zero: 0, one: 1, two: 2, few: 3, many: 4, other: 5 }[name]
+    },
+  },
+  {
+    code: 'az-AZ',
+    file: 'az.json',
+    name: 'Azərbaycanca',
+  },
   /*{
-      code: 'ar',
-      file: 'ar.json',
-      name: 'العربية',
-      dir: 'rtl',
-      pluralRule: (choice: number) => {
-        const name = new Intl.PluralRules('ar-EG').select(choice)
-        return { zero: 0, one: 1, two: 2, few: 3, many: 4, other: 5 }[name]
-      },
-    } satisfies LocaleObjectData,
-    {
-      code: 'ckb',
-      file: 'ckb.json',
-      name: 'کوردیی ناوەندی',
-      dir: 'rtl',
-      pluralRule: (choice: number) => {
-        const name = new Intl.PluralRules('ckb').select(choice)
-        return { zero: 0, one: 1, two: 2, few: 3, many: 4, other: 5 }[name]
-      },
-    } satisfies LocaleObjectData,
-    {
-      code: 'fa-IR',
-      file: 'fa-IR.json',
-      name: 'فارسی',
-      dir: 'rtl',
-      pluralRule: (choice: number) => {
-        const name = new Intl.PluralRules('fa-IR').select(choice)
-        return { zero: 0, one: 1, two: 2, few: 3, many: 4, other: 5 }[name]
-      },
-    } satisfies LocaleObjectData,
-    {
-      code: 'ca',
-      file: 'ca.json',
-      name: 'Català',
+    code: 'ckb',
+    file: 'ckb.json',
+    name: 'کوردیی ناوەندی',
+    dir: 'rtl',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('ckb').select(choice)
+      return { zero: 0, one: 1, two: 2, few: 3, many: 4, other: 5 }[name]
     },
-    {
-      code: 'el-GR',
-      file: 'el-GR.json',
-      name: 'Ελληνικά',
+  },
+  {
+    code: 'fa-IR',
+    file: 'fa-IR.json',
+    name: 'فارسی',
+    dir: 'rtl',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('fa-IR').select(choice)
+      return { zero: 0, one: 1, two: 2, few: 3, many: 4, other: 5 }[name]
     },
-    */
+  },
+  {
+    code: 'ca',
+    file: 'ca.json',
+    name: 'Català',
+  },
+  {
+    code: 'el-GR',
+    file: 'el-GR.json',
+    name: 'Ελληνικά',
+  },*/
   {
     code: 'de-DE',
     file: 'de-DE.json',
     name: 'Deutsch',
   },
-  /*{
-      code: 'hu-HU',
-      file: 'hu-HU.json',
-      name: 'Magyar',
-    },*/
+  {
+    code: 'hu-HU',
+    file: 'hu-HU.json',
+    name: 'Magyar',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('hu-HU').select(choice)
+      return { zero: 0, one: 0, two: 1, few: 1, many: 1, other: 1 }[name]
+    },
+  },
   {
     code: 'zh-CN',
     file: 'zh-CN.json',
@@ -149,6 +157,11 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
     code: 'ja-JP',
     file: 'ja-JP.json',
     name: '日本語',
+  },
+  {
+    code: 'ne-NP',
+    file: 'ne-NP.json',
+    name: 'नेपाली',
   },
   /*{
       code: 'nl-NL',
@@ -170,6 +183,26 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
     file: 'fr-FR.json',
     name: 'Français',
   },
+  {
+    code: 'ru-RU',
+    file: 'ru-RU.json',
+    name: 'Русский',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('ru-RU').select(choice)
+      return { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 3 }[name]
+    },
+  },
+  {
+    code: 'uk-UA',
+    file: 'uk-UA.json',
+    name: 'Українська',
+    pluralRule: (choice: number) => {
+      if (choice === 0) return 0
+
+      const name = new Intl.PluralRules('uk-UA').select(choice)
+      return { zero: 0, one: 1, two: 0, few: 2, many: 3, other: 4 }[name]
+    },
+  },
   /*{
       code: 'ru-RU',
       file: 'ru-RU.json',
@@ -178,24 +211,16 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
         const name = new Intl.PluralRules('ru-RU').select(choice)
         return { zero: 2 /!* not used *!/, one: 0, two: 1 /!* not used *!/, few: 1, many: 2, other: 3 }[name]
       },
+    },*/
+  {
+    code: 'cs-CZ',
+    file: 'cs-CZ.json',
+    name: 'Čeština',
+    pluralRule: (choice: number) => {
+      const name = new Intl.PluralRules('cs-CZ').select(choice)
+      return { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }[name]
     },
-    {
-      code: 'uk-UA',
-      file: 'uk-UA.json',
-      name: 'Українська',
-      pluralRule: (choice: number) => {
-        if (choice === 0)
-          return 0
-
-        const name = new Intl.PluralRules('uk-UA').select(choice)
-        return { zero: 0, one: 1, two: 0 /!* not used *!/, few: 2, many: 3, other: 4 }[name]
-      },
-    },
-    {
-      code: 'cs-CZ',
-      file: 'cs-CZ.json',
-      name: 'Česky',
-    },
+  } /*
     {
       code: 'pl-PL',
       file: 'pl-PL.json',
@@ -237,11 +262,32 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
       code: 'ko-KR',
       file: 'ko-KR.json',
       name: '한국어',
-    },*/
+    },*/,
+  {
+    code: 'id-ID',
+    file: 'id-ID.json',
+    name: 'Indonesia',
+  },
   {
     code: 'it-IT',
     file: 'it-IT.json',
     name: 'Italiano',
+  },
+  {
+    code: 'pl-PL',
+    file: 'pl-PL.json',
+    name: 'Polski',
+    pluralRule: (choice: number) => {
+      if (choice === 0) return 0
+
+      const name = new Intl.PluralRules('pl-PL').select(choice)
+      return { zero: 0, one: 1, two: 0, few: 2, many: 3, other: 4 }[name]
+    },
+  },
+  {
+    code: 'pt-BR',
+    file: 'pt-BR.json',
+    name: 'Português (Brasil)',
   },
   /*{
       code: 'sv',
@@ -270,6 +316,8 @@ const locales: (Omit<LocaleObjectData, 'code'> & { code: string })[] = [
     },*/
 ]
 
+const lunariaJSONFiles: Record<string, string> = {}
+
 function buildLocales() {
   const useLocales = Object.values(locales).reduce((acc, data) => {
     const locales = countryLocaleVariants[data.code]
@@ -281,10 +329,12 @@ function buildLocales() {
           name: l.name,
           files: [data.file as string, `${l.code}.json`],
         }
+        lunariaJSONFiles[l.code] = l.country ? (data.file as string) : `${l.code}.json`
         delete entry.file
         acc.push(entry)
       })
     } else {
+      lunariaJSONFiles[data.code] = data.file as string
       acc.push(data as LocaleObjectData)
     }
     return acc
@@ -294,6 +344,8 @@ function buildLocales() {
 }
 
 export const currentLocales = buildLocales()
+
+export { lunariaJSONFiles }
 
 export const datetimeFormats = Object.values(currentLocales).reduce((acc, data) => {
   const dateTimeFormats = data.dateTimeFormats

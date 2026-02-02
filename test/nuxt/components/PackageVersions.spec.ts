@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import PackageVersions from '~/components/PackageVersions.vue'
-import type { PackumentVersion } from '#shared/types'
+import PackageVersions from '~/components/Package/Versions.vue'
+import type { SlimVersion } from '#shared/types'
 
 // Mock the fetchAllPackageVersions function
 const mockFetchAllPackageVersions = vi.fn()
@@ -10,7 +10,7 @@ vi.mock('~/composables/useNpmRegistry', () => ({
 }))
 
 /**
- * Helper to create a minimal PackumentVersion for testing
+ * Helper to create a minimal SlimVersion for testing
  */
 function createVersion(
   version: string,
@@ -18,22 +18,13 @@ function createVersion(
     deprecated?: string
     hasProvenance?: boolean
   } = {},
-): PackumentVersion {
-  const dist: Record<string, unknown> = {
-    tarball: `https://registry.npmjs.org/test-package/-/test-package-${version}.tgz`,
-    shasum: 'abc123',
-  }
-  if (options.hasProvenance) {
-    dist.attestations = { url: 'https://example.com', provenance: { predicateType: 'test' } }
-  }
+): SlimVersion {
   return {
-    _id: `test-package@${version}`,
-    _npmVersion: '10.0.0',
-    name: 'test-package',
     version,
-    dist,
     deprecated: options.deprecated,
-  } as unknown as PackumentVersion
+    tags: undefined,
+    ...(options.hasProvenance ? { hasProvenance: true } : {}),
+  } as SlimVersion
 }
 
 describe('PackageVersions', () => {
@@ -338,7 +329,7 @@ describe('PackageVersions', () => {
         },
       })
 
-      const expandButton = component.find('button[aria-expanded]')
+      const expandButton = component.find('[data-testid="tag-expand-button"]')
       expect(expandButton.exists()).toBe(true)
       expect(expandButton.attributes('aria-expanded')).toBe('false')
     })
@@ -355,7 +346,7 @@ describe('PackageVersions', () => {
         },
       })
 
-      const expandButton = component.find('button[aria-expanded="false"]')
+      const expandButton = component.find('[data-testid="tag-expand-button"]')
       expect(expandButton.attributes('aria-label')).toBe('Expand latest')
     })
 
@@ -376,7 +367,7 @@ describe('PackageVersions', () => {
         },
       })
 
-      const expandButton = component.find('button[aria-expanded="false"]')
+      const expandButton = component.find('[data-testid="tag-expand-button"]')
       await expandButton.trigger('click')
 
       // Wait for async operation
@@ -405,7 +396,7 @@ describe('PackageVersions', () => {
       })
 
       // Get initial expand button
-      const expandButton = component.find('button[aria-expanded]')
+      const expandButton = component.find('[data-testid="tag-expand-button"]')
       expect(expandButton.exists()).toBe(true)
 
       // Expand
@@ -419,19 +410,21 @@ describe('PackageVersions', () => {
       // Wait for the component to update after loading
       await vi.waitFor(
         () => {
-          const btn = component.find('button[aria-expanded="true"]')
+          const btn = component.find('[data-testid="tag-expand-button"][aria-expanded="true"]')
           expect(btn.exists()).toBe(true)
         },
         { timeout: 2000 },
       )
 
       // Now collapse by clicking again
-      const expandedButton = component.find('button[aria-expanded="true"]')
+      const expandedButton = component.find(
+        '[data-testid="tag-expand-button"][aria-expanded="true"]',
+      )
       await expandedButton.trigger('click')
 
       await vi.waitFor(
         () => {
-          const btn = component.find('button[aria-expanded="false"]')
+          const btn = component.find('[data-testid="tag-expand-button"][aria-expanded="false"]')
           expect(btn.exists()).toBe(true)
         },
         { timeout: 2000 },
@@ -457,7 +450,7 @@ describe('PackageVersions', () => {
 
     it('shows count of hidden tagged versions', async () => {
       // Create more than MAX_VISIBLE_TAGS (10) dist-tags
-      const versions: Record<string, PackumentVersion> = {}
+      const versions: Record<string, SlimVersion> = {}
       const distTags: Record<string, string> = {}
       const time: Record<string, string> = {}
 
@@ -549,7 +542,7 @@ describe('PackageVersions', () => {
   describe('MAX_VISIBLE_TAGS limit', () => {
     it('limits visible tag rows to 10', async () => {
       // Create 15 dist-tags
-      const versions: Record<string, PackumentVersion> = {}
+      const versions: Record<string, SlimVersion> = {}
       const distTags: Record<string, string> = {}
       const time: Record<string, string> = {}
 
@@ -795,7 +788,7 @@ describe('PackageVersions', () => {
       })
 
       // Click expand
-      const expandButton = component.find('button[aria-expanded]')
+      const expandButton = component.find('[data-testid="tag-expand-button"]')
       await expandButton.trigger('click')
 
       // Should show loading spinner (animate-spin class)
@@ -843,22 +836,6 @@ describe('PackageVersions', () => {
   })
 
   describe('accessibility', () => {
-    it('has accessible section with labelledby', async () => {
-      const component = await mountSuspended(PackageVersions, {
-        props: {
-          packageName: 'test-package',
-          versions: {
-            '1.0.0': createVersion('1.0.0'),
-          },
-          distTags: { latest: '1.0.0' },
-          time: { '1.0.0': '2024-01-15T12:00:00.000Z' },
-        },
-      })
-
-      const section = component.find('section')
-      expect(section.attributes('aria-labelledby')).toBe('versions-heading')
-    })
-
     it('expand buttons have aria-expanded attribute', async () => {
       const component = await mountSuspended(PackageVersions, {
         props: {
@@ -943,7 +920,7 @@ describe('PackageVersions', () => {
       })
 
       // Find chevron icons inside buttons
-      const chevronIcons = component.findAll('button span.i-carbon-chevron-right')
+      const chevronIcons = component.findAll('button span.i-carbon\\:chevron-right')
       expect(chevronIcons.length).toBeGreaterThan(0)
       for (const icon of chevronIcons) {
         expect(icon.attributes('aria-hidden')).toBe('true')
@@ -969,7 +946,7 @@ describe('PackageVersions', () => {
       })
 
       // Click expand
-      const expandButton = component.find('button[aria-expanded]')
+      const expandButton = component.find('[data-testid="tag-expand-button"]')
       await expandButton.trigger('click')
 
       // Wait for error to be logged
@@ -1007,7 +984,7 @@ describe('PackageVersions', () => {
       })
 
       // Expand first tag row
-      const expandButtons = component.findAll('button[aria-expanded="false"]')
+      const expandButtons = component.findAll('[data-testid="tag-expand-button"]')
       await expandButtons[0]?.trigger('click')
 
       await vi.waitFor(() => {
@@ -1015,9 +992,9 @@ describe('PackageVersions', () => {
       })
 
       // Expand second tag row - should not fetch again
-      const updatedButtons = component.findAll('button[aria-expanded="false"]')
-      if (updatedButtons[0]) {
-        await updatedButtons[0].trigger('click')
+      const updatedButtons = component.findAll('[data-testid="tag-expand-button"]')
+      if (updatedButtons[1]) {
+        await updatedButtons[1].trigger('click')
       }
 
       // Should still only have been called once

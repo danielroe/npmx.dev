@@ -1,5 +1,34 @@
+import { getLatestVersion } from 'fast-npm-meta'
 import { createError } from 'h3'
 import validatePackageName from 'validate-npm-package-name'
+
+/**
+ * Encode package name for URL usage.
+ * Scoped packages need special handling (@scope/name → @scope%2Fname)
+ */
+export function encodePackageName(name: string): string {
+  if (name.startsWith('@')) {
+    return `@${encodeURIComponent(name.slice(1))}`
+  }
+  return encodeURIComponent(name)
+}
+
+/**
+ * Fetch the latest version of a package using fast-npm-meta API.
+ * This is a lightweight alternative to fetching the full packument.
+ *
+ * @param name Package name
+ * @returns Latest version string or null if not found
+ * @see https://github.com/antfu/fast-npm-meta
+ */
+export async function fetchLatestVersion(name: string): Promise<string | null> {
+  try {
+    const meta = await getLatestVersion(name)
+    return meta.version
+  } catch {
+    return null
+  }
+}
 
 /**
  * Validate an npm package name and throw an HTTP error if invalid.
@@ -10,7 +39,8 @@ export function assertValidPackageName(name: string): void {
   if (!result.validForNewPackages && !result.validForOldPackages) {
     const errors = [...(result.errors ?? []), ...(result.warnings ?? [])]
     throw createError({
-      statusCode: 400,
+      // TODO: throwing 404 rather than 400 as it's cacheable
+      statusCode: 404,
       message: `Invalid package name: ${errors[0] ?? 'unknown error'}`,
     })
   }

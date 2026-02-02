@@ -7,6 +7,7 @@
  */
 
 import type { PackumentVersion } from '@npm/types'
+import type { ReadmeResponse } from './readme'
 
 // Re-export official npm types for packument/manifest
 export type {
@@ -27,6 +28,10 @@ export interface InstallScriptsInfo {
 /** PackumentVersion with additional install scripts info */
 export type SlimPackumentVersion = PackumentVersion & {
   installScripts?: InstallScriptsInfo
+}
+
+export type SlimVersion = Pick<SlimPackumentVersion, 'version' | 'deprecated' | 'tags'> & {
+  hasProvenance?: true
 }
 
 /**
@@ -51,8 +56,10 @@ export interface SlimPackument {
   'keywords'?: string[]
   'repository'?: { type?: string; url?: string; directory?: string }
   'bugs'?: { url?: string; email?: string }
+  /** current version */
+  'requestedVersion': SlimPackumentVersion | null
   /** Only includes dist-tag versions (with installScripts info added per version) */
-  'versions': Record<string, SlimPackumentVersion>
+  'versions': Record<string, SlimVersion>
 }
 
 /**
@@ -82,6 +89,7 @@ export interface NpmPerson {
  * Note: Not covered by @npm/types (see https://github.com/npm/types/issues/28)
  */
 export interface NpmSearchResponse {
+  isStale: boolean
   objects: NpmSearchResult[]
   total: number
   time: string
@@ -204,7 +212,6 @@ export interface NpmDownloadCount {
   package: string
 }
 
-/** @public */
 export interface NpmDownloadRange {
   downloads: Array<{
     downloads: number
@@ -219,21 +226,18 @@ export interface NpmDownloadRange {
  * Organization API types
  * These require authentication
  * Note: Not covered by @npm/types
- * @public
  */
 export interface NpmOrgMember {
   user: string
   role: 'developer' | 'admin' | 'owner'
 }
 
-/** @public */
 export interface NpmTeam {
   name: string
   description?: string
   members?: string[]
 }
 
-/** @public */
 export interface NpmPackageAccess {
   permissions: 'read-only' | 'read-write'
 }
@@ -241,7 +245,6 @@ export interface NpmPackageAccess {
 /**
  * Trusted Publishing types
  * Note: Not covered by @npm/types
- * @public
  */
 export interface NpmTrustedPublisher {
   type: 'github-actions' | 'gitlab-ci'
@@ -325,4 +328,5 @@ export interface PackageFileContentResponse {
   content: string
   html: string
   lines: number
+  markdownHtml?: ReadmeResponse
 }

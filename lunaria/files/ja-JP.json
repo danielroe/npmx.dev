@@ -24,7 +24,6 @@
     "found_packages": "{count} 個のパッケージが見つかりました",
     "updating": "（更新中...）",
     "no_results": "\"{query}\" に一致するパッケージは見つかりませんでした",
-    "results": "検索結果",
     "not_taken": "{name} は使用可能です",
     "claim_prompt": "このパッケージ名をnpmで取得する",
     "claim_button": "\"{name}\" を取得",
@@ -46,15 +45,37 @@
     "back": "戻る"
   },
   "settings": {
+    "title": "設定",
+    "tagline": "npmxの体験をカスタマイズ",
+    "meta_description": "テーマ、言語、表示設定でnpmx.devの体験をカスタマイズします。",
+    "sections": {
+      "appearance": "外観",
+      "display": "表示",
+      "language": "言語"
+    },
     "relative_dates": "日付を相対表記",
+    "relative_dates_description": "完全な日付の代わりに「3日前」のように表示します",
     "include_types": "インストール時に {'@'}types を含める",
+    "include_types_description": "型定義のないパッケージのインストールコマンドに {'@'}types パッケージを追加します",
+    "hide_platform_packages": "検索でプラットフォーム固有のパッケージを非表示",
+    "hide_platform_packages_description": "検索結果から {'@'}esbuild/linux-x64 のようなネイティブバイナリパッケージを非表示にします",
     "theme": "テーマ",
     "theme_light": "ライト",
     "theme_dark": "ダーク",
     "theme_system": "システム",
     "language": "言語",
     "help_translate": "npmxの翻訳に協力する",
-    "accent_colors": "アクセントカラー"
+    "accent_colors": "アクセントカラー",
+    "clear_accent": "アクセントカラーをクリア",
+    "translation_progress": "翻訳の進捗状況"
+  },
+  "i18n": {
+    "missing_keys": "{count} 件の未翻訳 | {count} 件の未翻訳",
+    "copy_keys": "キーをコピー",
+    "show_more_keys": "他 {count} 件を表示...",
+    "contribute_hint": "不足しているキーを追加して翻訳の改善にご協力ください。",
+    "edit_on_github": "GitHubで編集",
+    "view_guide": "翻訳ガイド"
   },
   "common": {
     "loading": "読み込み中...",
@@ -94,21 +115,24 @@
       "version": "このバージョンは非推奨になりました。",
       "no_reason": "理由は提供されていません"
     },
+    "replacement": {},
     "stats": {
       "license": "ライセンス",
-      "weekly": "週間",
       "deps": "依存関係",
       "install_size": "インストールサイズ",
+      "vulns": "脆弱性",
       "updated": "最終更新",
-      "view_download_trends": "ダウンロード傾向を表示",
       "view_dependency_graph": "依存関係グラフを表示",
-      "inspect_dependency_tree": "依存関係ツリーを検査"
+      "inspect_dependency_tree": "依存関係ツリーを検査",
+      "size_tooltip": {}
+    },
+    "skills": {
+      "file_counts": {}
     },
     "links": {
       "repo": "リポジトリ",
       "homepage": "ホームページ",
       "issues": "issues",
-      "forks": "フォーク",
       "jsr": "jsr",
       "code": "コード",
       "docs": "ドキュメント",
@@ -186,11 +210,14 @@
       "username_placeholder": "ユーザー名...",
       "add_button": "追加",
       "cancel_add": "オーナーの追加をキャンセル",
-      "add_owner": "+ オーナーを追加"
+      "add_owner": "+ オーナーを追加",
+      "show_more": "（他 {count} 個を表示）",
+      "show_less": "（折りたたむ）"
     },
     "downloads": {
       "title": "週間ダウンロード数",
       "date_range": "{start} から {end}",
+      "date_range_multiline": "{start}\nから {end}",
       "analyze": "ダウンロード数を分析",
       "modal_title": "ダウンロード数",
       "granularity": "粒度",
@@ -202,7 +229,9 @@
       "end_date": "終了日",
       "no_data": "ダウンロードデータはありません",
       "loading": "読み込み中...",
-      "y_axis_label": "{granularity} ダウンロード数"
+      "y_axis_label": "{granularity} ダウンロード数",
+      "download_file": "{fileType} をダウンロード",
+      "toggle_annotator": "アノテーターを切り替え"
     },
     "install_scripts": {
       "title": "インストールスクリプト",
@@ -252,6 +281,11 @@
         "low": "低"
       }
     },
+    "deprecated": {
+      "label": "非推奨",
+      "tree_found": "{count} 件の非推奨の依存関係",
+      "show_all": "{count} 件の非推奨パッケージをすべて表示"
+    },
     "access": {
       "title": "チームアクセス",
       "refresh": "チームアクセスを更新",
@@ -286,7 +320,6 @@
       "size": "サイズ",
       "deps": "依存関係",
       "updated": "最終更新",
-      "install": "インストール",
       "readme": "Readme",
       "maintainers": "メンテナ",
       "keywords": "キーワード",
@@ -313,9 +346,7 @@
     },
     "modal": {
       "title": "ローカルコネクタ",
-      "close_modal": "モーダルを閉じる",
       "connected": "接続済み",
-      "logged_in_as": "{'@'}{user} としてログイン中",
       "connected_hint": "Web UIからパッケージとOrganizationを管理できるようになりました。",
       "disconnect": "切断",
       "run_hint": "管理機能を有効にするには、ローカル環境でコネクタを実行してください。",
@@ -461,7 +492,6 @@
   "claim": {
     "modal": {
       "title": "パッケージ名を取得",
-      "close_modal": "モーダルを閉じる",
       "success": "パッケージ名を取得しました！",
       "success_detail": "{name}{'@'}0.0.0 がnpmに公開されました。",
       "success_hint": "npm publish を使用して、このパッケージの新しいバージョンを公開できるようになりました。",
@@ -508,6 +538,10 @@
     "table": {
       "name": "名前",
       "size": "サイズ"
+    },
+    "markdown_view_mode": {
+      "preview": "プレビュー",
+      "code": "コード"
     }
   },
   "badges": {
@@ -520,6 +554,33 @@
       "title": "JSRでも利用可能",
       "label": "jsr"
     }
+  },
+  "filters": {
+    "download_range": {},
+    "updated": {},
+    "security_options": {},
+    "sort": {
+      "label": "パッケージ一覧を並び替える",
+      "toggle_direction": "並び順を切り替える",
+      "ascending": "昇順",
+      "descending": "降順",
+      "relevance": "関連度",
+      "downloads_week": "ダウンロード数/週",
+      "downloads_day": "ダウンロード数/日",
+      "downloads_month": "ダウンロード数/月",
+      "downloads_year": "ダウンロード数/年",
+      "updated": "最終更新",
+      "name": "パッケージ名",
+      "quality": "品質",
+      "popularity": "人気度",
+      "maintenance": "メンテナンス",
+      "score": "スコア"
+    },
+    "columns": {},
+    "view_mode": {},
+    "pagination": {},
+    "count": {},
+    "table": {}
   },
   "about": {
     "title": "npmxについて",
@@ -543,7 +604,7 @@
         "already": "すでに",
         "people": "素晴らしい",
         "building": "パッケージ",
-        "really": "マネージャー",
+        "really": "マネージャーを",
         "cool": "作っている",
         "package": "人たちが",
         "managers": "存在します"
@@ -557,7 +618,7 @@
       "view_profile": "{name} のGitHubプロフィールを表示"
     },
     "get_involved": {
-      "title": "参加るには",
+      "title": "参加するには",
       "contribute": {
         "title": "貢献する",
         "description": "より良いnpm体験の開発に協力してください。",
@@ -574,6 +635,10 @@
         "cta": "Blueskyでフォロー"
       }
     }
+  },
+  "account_menu": {},
+  "auth": {
+    "modal": {}
   },
   "header": {
     "home": "ホーム",
@@ -593,6 +658,13 @@
       "error": "Organizationの読み込みに失敗しました",
       "empty": "Organizationは見つかりませんでした",
       "view_all": "すべて表示"
+    }
+  },
+  "compare": {
+    "packages": {},
+    "selector": {},
+    "facets": {
+      "categories": {}
     }
   }
 }

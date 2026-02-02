@@ -3,8 +3,11 @@ import type { JsrPackageInfo } from '#shared/types/jsr'
 
 describe('useInstallCommand', () => {
   beforeEach(() => {
-    // Reset localStorage before each test
+    // Reset localStorage and package manager state before each test
     localStorage.clear()
+    // Reset the shared composable state to default 'npm'
+    const pm = useSelectedPackageManager()
+    pm.value = 'npm'
   })
 
   afterEach(() => {
@@ -244,8 +247,8 @@ describe('useInstallCommand', () => {
     })
 
     it('should update when using ref values', () => {
-      const packageName = ref<string | null>('vue')
-      const version = ref<string | null>(null)
+      const packageName = shallowRef<string | null>('vue')
+      const version = shallowRef<string | null>(null)
 
       const { installCommand } = useInstallCommand(packageName, version, null, null)
 

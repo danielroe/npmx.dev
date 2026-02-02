@@ -5,6 +5,9 @@
       "description": "A better browser for the npm registry. Search, browse, and explore packages with a modern interface."
     }
   },
+  "version": "Version",
+  "built_at": "built {0}",
+  "alt_logo": "npmx logo",
   "tagline": "a better browser for the npm registry",
   "non_affiliation_disclaimer": "not affiliated with npm, Inc.",
   "trademark_disclaimer": "npm is a registered trademark of npm, Inc. This site is not affiliated with npm, Inc.",
@@ -21,10 +24,10 @@
     "button": "search",
     "clear": "Clear search",
     "searching": "Searching...",
-    "found_packages": "Found {count} packages",
+    "found_packages": "No packages found | Found 1 package | Found {count} packages",
     "updating": "(updating...)",
     "no_results": "No packages found for \"{query}\"",
-    "results": "Search results",
+    "title": "search",
     "not_taken": "{name} is not taken",
     "claim_prompt": "Claim this package name on npm",
     "claim_button": "Claim \"{name}\"",
@@ -43,7 +46,13 @@
     "popular_packages": "Popular packages",
     "search": "search",
     "settings": "settings",
-    "back": "back"
+    "compare": "compare",
+    "back": "back",
+    "menu": "Menu",
+    "mobile_menu": "Navigation menu",
+    "open_menu": "Open menu",
+    "links": "Links",
+    "tap_to_search": "Tap to search"
   },
   "settings": {
     "title": "settings",
@@ -95,6 +104,7 @@
     "go_back_home": "Go back home",
     "view_on_npm": "view on npm",
     "per_week": "/ week",
+    "vanity_downloads_hint": "Vanity number: no packages displayed | Vanity number: for the displayed package | Vanity number: Sum of {count} displayed packages",
     "sort": {
       "name": "name",
       "role": "role",
@@ -110,11 +120,22 @@
     "not_latest": "(not latest)",
     "verified_provenance": "Verified provenance",
     "view_permalink": "View permalink for this version",
-    "navigation": "Package navigation",
+    "navigation": "Package",
+    "copy_name": "Copy package name",
     "deprecation": {
       "package": "This package has been deprecated.",
       "version": "This version has been deprecated.",
       "no_reason": "No reason provided"
+    },
+    "replacement": {
+      "title": "You might not need this dependency.",
+      "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
+      "simple": "The {community} has flagged this package as redundant, with the advice: {replacement}.",
+      "documented": "The {community} has flagged this package as having more performant alternatives.",
+      "none": "This package has been flagged as no longer needed, and its functionality is likely available natively in all engines.",
+      "learn_more": "Learn more",
+      "mdn": "MDN",
+      "community": "community"
     },
     "stats": {
       "license": "License",
@@ -122,8 +143,31 @@
       "install_size": "Install Size",
       "vulns": "Vulns",
       "updated": "Updated",
+      "skills": "Skills",
       "view_dependency_graph": "View dependency graph",
-      "inspect_dependency_tree": "Inspect dependency tree"
+      "inspect_dependency_tree": "Inspect dependency tree",
+      "size_tooltip": {
+        "unpacked": "{size} unpacked size (this package)",
+        "total": "{size} total unpacked size (including all {count} dependencies for linux-x64)"
+      }
+    },
+    "skills": {
+      "title": "Agent Skills",
+      "skills_available": "{count} skill available | {count} skills available",
+      "view": "View",
+      "compatible_with": "Compatible with {tool}",
+      "install": "Install",
+      "installation_method": "Installation method",
+      "learn_more": "Learn more",
+      "available_skills": "Available Skills",
+      "click_to_expand": "Click to expand",
+      "no_description": "No description",
+      "file_counts": {
+        "scripts": "{count} script | {count} scripts",
+        "refs": "{count} ref | {count} refs",
+        "assets": "{count} asset | {count} assets"
+      },
+      "view_source": "View source"
     },
     "links": {
       "repo": "repo",
@@ -132,7 +176,8 @@
       "jsr": "jsr",
       "code": "code",
       "docs": "docs",
-      "fund": "fund"
+      "fund": "fund",
+      "compare": "compare"
     },
     "docs": {
       "not_available": "Docs not available",
@@ -177,24 +222,28 @@
       "other_versions": "Other versions",
       "more_tagged": "{count} more tagged",
       "all_covered": "All versions are covered by tags above",
-      "deprecated_title": "{version} (deprecated)"
+      "deprecated_title": "{version} (deprecated)",
+      "view_all": "View {count} version | View all {count} versions"
     },
     "dependencies": {
       "title": "Dependencies ({count})",
       "list_label": "Package dependencies",
-      "show_all": "show all {count} deps",
+      "show_all": "show {count} dep | show all {count} deps",
       "optional": "optional",
-      "view_vulnerabilities": "View vulnerabilities"
+      "view_vulnerabilities": "View vulnerabilities",
+      "outdated_major": "{count} major version behind (latest: {latest}) | {count} major versions behind (latest: {latest})",
+      "outdated_minor": "{count} minor version behind (latest: {latest}) | {count} minor versions behind (latest: {latest})",
+      "outdated_patch": "Patch update available (latest: {latest})"
     },
     "peer_dependencies": {
       "title": "Peer Dependencies ({count})",
       "list_label": "Package peer dependencies",
-      "show_all": "show all {count} peer deps"
+      "show_all": "show {count} peer dep | show all {count} peer deps"
     },
     "optional_dependencies": {
       "title": "Optional Dependencies ({count})",
       "list_label": "Package optional dependencies",
-      "show_all": "show all {count} optional deps"
+      "show_all": "show {count} optional dep | show all {count} optional deps"
     },
     "maintainers": {
       "title": "Maintainers",
@@ -206,11 +255,14 @@
       "username_placeholder": "username...",
       "add_button": "add",
       "cancel_add": "Cancel adding owner",
-      "add_owner": "+ Add owner"
+      "add_owner": "+ Add owner",
+      "show_more": "(show {count} more)",
+      "show_less": "(show fewer)"
     },
     "downloads": {
       "title": "Weekly Downloads",
       "date_range": "{start} to {end}",
+      "date_range_multiline": "{start}\nto {end}",
       "analyze": "Analyze downloads",
       "modal_title": "Downloads",
       "granularity": "Granularity",
@@ -240,12 +292,14 @@
       "esm": "ES Modules supported",
       "cjs": "CommonJS supported",
       "no_esm": "No ES Modules support",
+      "types_label": "Types",
       "types_included": "Types included",
       "types_available": "Types available via {package}",
       "no_types": "No TypeScript types"
     },
     "license": {
-      "view_spdx": "View license text on SPDX"
+      "view_spdx": "View license text on SPDX",
+      "none": "None"
     },
     "vulnerabilities": {
       "no_description": "No description available",
@@ -273,6 +327,11 @@
         "moderate": "moderate",
         "low": "low"
       }
+    },
+    "deprecated": {
+      "label": "Deprecated",
+      "tree_found": "{count} deprecated dependency | {count} deprecated dependencies",
+      "show_all": "show {count} deprecated package | show all {count} deprecated packages"
     },
     "access": {
       "title": "Team Access",
@@ -308,7 +367,7 @@
       "size": "Size",
       "deps": "Deps",
       "updated": "Updated",
-      "install": "Install",
+      "get_started": "Get started",
       "readme": "Readme",
       "maintainers": "Maintainers",
       "keywords": "Keywords",
@@ -325,7 +384,7 @@
   "connector": {
     "status": {
       "connecting": "connecting...",
-      "connected_as": "connected as {'@'}{user}",
+      "connected_as": "connected as ~{user}",
       "connected": "connected",
       "connect_cli": "connect local CLI",
       "aria_connecting": "Connecting to local connector",
@@ -335,9 +394,11 @@
     },
     "modal": {
       "title": "Local Connector",
-      "close_modal": "Close modal",
+      "contributor_badge": "Contributors only",
+      "contributor_notice": "The connector is not yet published to npm. See the {link} for how to run locally.",
+      "contributor_link": "contributing guide",
       "connected": "Connected",
-      "logged_in_as": "Logged in as {'@'}{user}",
+      "connected_as_user": "Connected as ~{user}",
       "connected_hint": "You can now manage packages and organizations from the web UI.",
       "disconnect": "Disconnect",
       "run_hint": "Run the connector on your machine to enable admin features.",
@@ -483,7 +544,6 @@
   "claim": {
     "modal": {
       "title": "Claim Package Name",
-      "close_modal": "Close modal",
       "success": "Package claimed!",
       "success_detail": "{name}{'@'}0.0.0 has been published to npm.",
       "success_hint": "You can now publish new versions to this package using npm publish.",
@@ -530,7 +590,12 @@
     "table": {
       "name": "Name",
       "size": "Size"
-    }
+    },
+    "markdown_view_mode": {
+      "preview": "preview",
+      "code": "code"
+    },
+    "file_path": "File path"
   },
   "badges": {
     "provenance": {
@@ -541,6 +606,112 @@
     "jsr": {
       "title": "also available on JSR",
       "label": "jsr"
+    }
+  },
+  "filters": {
+    "title": "Filters",
+    "search": "Search",
+    "search_scope": "Search scope",
+    "search_placeholder_name": "Filter by package name...",
+    "search_placeholder_description": "Filter by description...",
+    "search_placeholder_keywords": "Filter by keywords...",
+    "search_placeholder_all": "Search all or use name: desc: kw:",
+    "scope_name": "Name",
+    "scope_name_description": "Search package names only",
+    "scope_description": "Description",
+    "scope_description_description": "Search descriptions only",
+    "scope_keywords": "Keywords",
+    "scope_keywords_description": "Search keywords only",
+    "scope_all": "All",
+    "scope_all_description": "Search all fields, supports name: desc: kw: operators",
+    "weekly_downloads": "Weekly downloads",
+    "updated_within": "Updated within",
+    "security": "Security",
+    "keywords": "Keywords",
+    "more_keywords": "+{count} more",
+    "clear_all": "Clear all",
+    "remove_filter": "Remove {label} filter",
+    "download_range": {
+      "any": "Any",
+      "lt100": "< 100",
+      "100_1k": "100 - 1K",
+      "1k_10k": "1K - 10K",
+      "10k_100k": "10K - 100K",
+      "gt100k": "> 100K"
+    },
+    "updated": {
+      "any": "Any time",
+      "week": "Past week",
+      "month": "Past month",
+      "quarter": "Past 3 months",
+      "year": "Past year"
+    },
+    "security_options": {
+      "all": "All packages",
+      "secure": "Without warnings",
+      "insecure": "With warnings"
+    },
+    "sort": {
+      "label": "Sort packages",
+      "toggle_direction": "Toggle sort direction",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "relevance": "Relevance",
+      "downloads_week": "Downloads/wk",
+      "downloads_day": "Downloads/day",
+      "downloads_month": "Downloads/mo",
+      "downloads_year": "Downloads/yr",
+      "updated": "Last Updated",
+      "name": "Name",
+      "quality": "Quality",
+      "popularity": "Popularity",
+      "maintenance": "Maintenance",
+      "score": "Score"
+    },
+    "columns": {
+      "title": "Columns",
+      "show": "Show columns",
+      "reset": "Reset to defaults",
+      "coming_soon": "Coming soon",
+      "name": "Name",
+      "version": "Version",
+      "description": "Description",
+      "downloads": "Downloads/wk",
+      "updated": "Last Updated",
+      "maintainers": "Maintainers",
+      "keywords": "Keywords",
+      "quality_score": "Quality score",
+      "popularity_score": "Popularity score",
+      "maintenance_score": "Maintenance score",
+      "combined_score": "Combined score",
+      "security": "Security"
+    },
+    "view_mode": {
+      "label": "View mode",
+      "cards": "Card view",
+      "table": "Table view"
+    },
+    "pagination": {
+      "mode_label": "Pagination mode",
+      "infinite": "Infinite",
+      "paginated": "Paginated",
+      "items_per_page": "Items per page",
+      "per_page": "{count} / page",
+      "all_yolo": "All (YOLO)",
+      "showing": "{start}-{end} of {total}",
+      "previous": "Previous page",
+      "next": "Next page",
+      "nav_label": "Pagination"
+    },
+    "count": {
+      "showing_filtered": "{filtered} of {count} package | {filtered} of {count} packages",
+      "showing_all": "{count} package | {count} packages",
+      "showing_paginated": "{pageSize} of {count} package | {pageSize} of {count} packages"
+    },
+    "table": {
+      "security_warning": "Security warning",
+      "secure": "Secure",
+      "no_packages": "No packages found"
     }
   },
   "about": {
@@ -597,6 +768,34 @@
       }
     }
   },
+  "account_menu": {
+    "connect": "connect",
+    "account": "Account",
+    "npm_cli": "npm CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "Manage packages & orgs",
+    "atmosphere_desc": "Social features & identity",
+    "connect_npm_cli": "Connect to npm CLI",
+    "connect_atmosphere": "Connect to Atmosphere",
+    "connecting": "Connecting...",
+    "ops": "{count} op | {count} ops",
+    "disconnect": "Disconnect"
+  },
+  "auth": {
+    "modal": {
+      "title": "Atmosphere",
+      "connected_as": "Connected as {'@'}{handle}",
+      "disconnect": "Disconnect",
+      "connect_prompt": "Connect with your Atmosphere account",
+      "handle_label": "Handle",
+      "handle_placeholder": "alice.npmx.social",
+      "connect": "Connect",
+      "create_account": "Create a new account",
+      "connect_bluesky": "Connect with Bluesky",
+      "what_is_atmosphere": "What is an Atmosphere account?",
+      "atmosphere_explanation": "{npmx} uses the {atproto} to power many of its social features, allowing users to own their data and use one account for all compatible applications. Once you create an account, you can use other apps like {bluesky} and {tangled} with the same account."
+    }
+  },
   "header": {
     "home": "npmx home",
     "github": "GitHub",
@@ -615,6 +814,50 @@
       "error": "Failed to load organizations",
       "empty": "No organizations found",
       "view_all": "View all"
+    }
+  },
+  "compare": {
+    "packages": {
+      "title": "compare packages",
+      "tagline": "compare npm packages side-by-side to help you choose the right one.",
+      "meta_title": "Compare {packages} - npmx",
+      "meta_title_empty": "Compare Packages - npmx",
+      "meta_description": "Side-by-side comparison of {packages}",
+      "meta_description_empty": "Compare npm packages side-by-side",
+      "section_packages": "Packages",
+      "section_facets": "Facets",
+      "section_comparison": "Comparison",
+      "loading": "Loading package data...",
+      "error": "Failed to load package data. Please try again.",
+      "empty_title": "Select packages to compare",
+      "empty_description": "Search and add at least 2 packages above to see a side-by-side comparison of their metrics."
+    },
+    "selector": {
+      "search_label": "Search for packages",
+      "search_first": "Search for a package...",
+      "search_add": "Add another package...",
+      "searching": "Searching...",
+      "remove_package": "Remove {package}",
+      "packages_selected": "{count}/{max} packages selected.",
+      "add_hint": "Add at least 2 packages to compare.",
+      "loading_versions": "Loading versions...",
+      "select_version": "Select version"
+    },
+    "facets": {
+      "group_label": "Comparison facets",
+      "all": "all",
+      "none": "none",
+      "coming_soon": "Coming soon",
+      "select_all": "Select all facets",
+      "deselect_all": "Deselect all facets",
+      "select_category": "Select all {category} facets",
+      "deselect_category": "Deselect all {category} facets",
+      "categories": {
+        "performance": "Performance",
+        "health": "Health",
+        "compatibility": "Compatibility",
+        "security": "Security & Compliance"
+      }
     }
   }
 }
