@@ -15,11 +15,11 @@ export type PackageLikes = {
 const CACHE_PREFIX = 'atproto-likes:'
 const CACHE_PACKAGE_TOTAL_KEY = (packageName: string) => `${CACHE_PREFIX}:${packageName}:total`
 const CACHE_USER_LIKES_KEY = (packageName: string, did: string) =>
-  `${CACHE_PREFIX}${packageName}users:${did}`
+  `${CACHE_PREFIX}${packageName}:users:${did}`
 
 const CACHE_MAX_AGE = CACHE_MAX_AGE_ONE_MINUTE * 5
 
-export class PackageLikesService {
+export class PackageLikesUtils {
   private readonly constellation: Constellation
   private readonly cache: CacheAdapter
 
@@ -74,35 +74,38 @@ export class PackageLikesService {
    * @param usersDid
    * @returns
    */
-  async getLikes(packageName: string, usersDid?: string) {
+  async getLikes(packageName: string, usersDid?: string | undefined) {
     //TODO: May need to do some clean up on the package name, and maybe even hash it? some of the charcteres may be a bit odd as keys
-    const cache = getCacheAdatper(CACHE_PREFIX)
-
-    const cachedLikes = await cache.get<PackageLikes>(packageName)
-    if (cachedLikes) {
-      return cachedLikes
-    }
-
+    const totalLikesKey = CACHE_PACKAGE_TOTAL_KEY(packageName)
     const subjectRef = `${SUBJECT_REF_PREFIX}/${packageName}`
 
-    const totalLikes = await this.constellationLikes(subjectRef)
+    const cachedLikes = await this.cache.get<number>(totalLikesKey)
+    let totalLikes = 0
+    if (cachedLikes) {
+      totalLikes = cachedLikes
+    } else {
+      totalLikes = await this.constellationLikes(subjectRef)
+      await this.cache.set(totalLikesKey, totalLikes, CACHE_MAX_AGE)
+    }
 
     let userHasLiked = false
-
     if (usersDid) {
-      userHasLiked = await this.constellationUserHasLiked(subjectRef, usersDid)
+      const userCachedLike = await this.cache.get<boolean>(
+        CACHE_USER_LIKES_KEY(packageName, usersDid),
+      )
+      if (userCachedLike) {
+        userHasLiked = userCachedLike
+      } else {
+        userHasLiked = await this.constellationUserHasLiked(subjectRef, usersDid)
+        await this.cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), true, CACHE_MAX_AGE)
+      }
     }
 
     const packageLikes = {
       totalPackageLikes: totalLikes,
       userHasLiked,
     }
-    if (userHasLiked && usersDid) {
-      await cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), true, CACHE_MAX_AGE)
-    }
 
-    const totalLikesKey = CACHE_PACKAGE_TOTAL_KEY(packageName)
-    await cache.set(totalLikesKey, packageLikes.totalPackageLikes, CACHE_MAX_AGE)
     return packageLikes
   }
 
@@ -113,8 +116,7 @@ export class PackageLikesService {
    * @returns
    */
   async hasTheUserLikedThePackage(packageName: string, usersDid: string) {
-    const cache = getCacheAdatper(CACHE_PREFIX)
-    const cached = await cache.get<boolean>(CACHE_USER_LIKES_KEY(packageName, usersDid))
+    const cached = await this.cache.get<boolean>(CACHE_USER_LIKES_KEY(packageName, usersDid))
     if (cached !== undefined) {
       return cached
     }
@@ -122,7 +124,7 @@ export class PackageLikesService {
       `${SUBJECT_REF_PREFIX}/${packageName}`,
       usersDid,
     )
-    await cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), userHasLiked, CACHE_MAX_AGE)
+    await this.cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), userHasLiked, CACHE_MAX_AGE)
     return userHasLiked
   }
 
@@ -133,19 +135,17 @@ export class PackageLikesService {
    * @param usersDid
    */
   async likeAPackageAndRetunLikes(packageName: string, usersDid: string): Promise<PackageLikes> {
-    const cache = getCacheAdatper(CACHE_PREFIX)
-
     const totalLikesKey = CACHE_PACKAGE_TOTAL_KEY(packageName)
-    let totalLikes = await cache.get<number>(totalLikesKey)
+    let totalLikes = await this.cache.get<number>(totalLikesKey)
     // If a cahce entry was found for total likes increase by 1
     if (totalLikes !== undefined) {
-      await cache.set(totalLikesKey, totalLikes + 1, CACHE_MAX_AGE)
+      await this.cache.set(totalLikesKey, totalLikes + 1, CACHE_MAX_AGE)
     } else {
       const subjectRef = `${SUBJECT_REF_PREFIX}/${packageName}`
       totalLikes = await this.constellationLikes(subjectRef)
     }
     // We already know the user has not liked the package so set in the cache
-    await cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), true, CACHE_MAX_AGE)
+    await this.cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), true, CACHE_MAX_AGE)
     return {
       totalLikes: totalLikes,
       userHasLiked: true,
