@@ -32,7 +32,7 @@ async function search() {
 
 const handleInput = isTouchDevice()
   ? search
-  : debounce(search, 300, { leading: false, trailing: true })
+  : debounce(search, 250, { leading: false, trailing: true })
 
 useSeoMeta({
   title: () => $t('seo.home.title'),
