@@ -31,7 +31,7 @@ export default defineConfig({
       },
     }),
     // keep this preset last
-    process.env.CI ? undefined : presetRtl(),
+    ...(process.env.CI ? [] : [presetRtl()]),
   ].filter(Boolean),
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {

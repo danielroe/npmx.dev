@@ -27,7 +27,6 @@
     "found_packages": "Nalezen {count} balíček | Nalezeny {count} balíčky | Nalezeno {count} balíčků",
     "updating": "(aktualizace...)",
     "no_results": "Žádné výsledky pro \"{query}\"",
-    "results": "Výsledky hledání",
     "not_taken": "{name} není rezervováno",
     "claim_prompt": "Nárokovat toto jméno balíčku na npm",
     "claim_button": "Nárokovat \"{name}\"",
@@ -142,7 +141,6 @@
       "deps": "Závislosti",
       "install_size": "Velikost instalace",
       "vulns": "Zranitelnosti",
-      "updated": "Aktualizováno",
       "skills": "Dovednosti",
       "view_dependency_graph": "Zobrazit graf závislostí",
       "inspect_dependency_tree": "Prozkoumat strom závislostí",
@@ -206,7 +204,6 @@
     "compatibility": "Kompatibilita",
     "card": {
       "publisher": "Vydavatel",
-      "updated": "Aktualizováno",
       "weekly_downloads": "Týdenní stažení",
       "keywords": "Klíčová slova",
       "license": "Licence"
@@ -365,7 +362,6 @@
       "weekly": "Týdenní",
       "size": "Velikost",
       "deps": "Závislosti",
-      "updated": "Aktualizováno",
       "get_started": "Začínáme",
       "readme": "Readme",
       "maintainers": "Správci",
@@ -375,7 +371,6 @@
     },
     "sort": {
       "downloads": "Nejvíce stažení",
-      "updated": "Nedávno aktualizováné",
       "name_asc": "Název (A-Z)",
       "name_desc": "Název (Z-A)"
     }
@@ -660,7 +655,6 @@
       "downloads_day": "Stažení/den",
       "downloads_month": "Stažení/měsíc",
       "downloads_year": "Stažení/rok",
-      "updated": "Naposledy aktualizováno",
       "name": "Název",
       "quality": "Kvalita",
       "popularity": "Popularita",
@@ -676,7 +670,6 @@
       "version": "Verze",
       "description": "Popis",
       "downloads": "Stažení/týden",
-      "updated": "Naposledy aktualizováno",
       "maintainers": "Správci",
       "keywords": "Klíčová slova",
       "quality_score": "Skóre kvality",
