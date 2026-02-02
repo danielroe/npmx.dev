@@ -85,7 +85,7 @@ const pkgDescription = useMarkdown(() => ({
               <dd class="font-mono">{{ result.package.publisher.username }}</dd>
             </div>
             <div v-if="result.package.date" class="flex items-center gap-1.5">
-              <dt class="sr-only">{{ $t('package.card.updated') }}</dt>
+              <dt class="sr-only">{{ $t('package.card.published') }}</dt>
               <dd>
                 <DateTime
                   :datetime="result.package.date"

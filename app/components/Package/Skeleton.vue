@@ -70,10 +70,10 @@
           </dd>
         </div>
 
-        <!-- Updated -->
+        <!-- Published -->
         <div class="space-y-1 col-span-2">
           <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-            {{ $t('package.skeleton.updated') }}
+            {{ $t('package.skeleton.published') }}
           </dt>
           <dd class="font-mono text-sm">
             <SkeletonInline class="h-5 w-28" />
