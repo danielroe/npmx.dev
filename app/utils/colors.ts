@@ -148,14 +148,14 @@ export function lightenOklch(
 }
 
 /**
- * Lighten an OKLCH color by a given factor.
+ * Darken an OKLCH color by a given factor.
  *
  * Works with strict TypeScript settings including `noUncheckedIndexedAccess`,
  * where `match[n]` is typed as `string | undefined`.
  *
  * @param oklch - Color in the form "oklch(L C H)" or "oklch(L C H / A)"
- * @param factor - Lightening force in range [0, 1]
- * @returns Lightened OKLCH color string (0.5 = 50% lighter)
+ * @param factor - Darkening force in range [0, 1]
+ * @returns Darkened OKLCH color string (0.5 = 50% lighter)
  */
 export function darkenOklch(
   oklch: string | null | undefined,
