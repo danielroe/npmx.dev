@@ -24,7 +24,7 @@ export function useBlogPostBlueskyLink(slug: MaybeRefOrGetter<string | null | un
     // return TESTING_BACKLINK_URL
   })
 
-  return useLazyAsyncData<BlogPostBlueskyLink | null>(
+  return useAsyncData<BlogPostBlueskyLink | null>(
     () => (blogUrl.value ? `blog-bsky-link:${blogUrl.value}` : 'blog-bsky-link:none'),
     async () => {
       const url = blogUrl.value
@@ -76,6 +76,8 @@ export function useBlogPostBlueskyLink(slug: MaybeRefOrGetter<string | null | un
         }
       } catch {
         // Constellation unavailable or error - fail silently
+        // But during dev we will get an error
+        if (import.meta.dev) console.error('[Bluesky] Constellation error:', err)
       }
 
       return null

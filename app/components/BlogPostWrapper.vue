@@ -16,7 +16,7 @@ useSeoMeta({
 const slug = computed(() => props.frontmatter?.slug)
 
 // Use Constellation to find the Bluesky post linking to this blog post
-const { data: blueskyLink } = useBlogPostBlueskyLink(slug)
+const { data: blueskyLink } = await useBlogPostBlueskyLink(slug)
 const blueskyPostUri = computed(() => blueskyLink.value?.postUri ?? null)
 </script>
 
@@ -26,6 +26,10 @@ const blueskyPostUri = computed(() => blueskyLink.value?.postUri ?? null)
       <slot />
     </article>
 
+    <!--
+      - Only renders if Constellation found a Bluesky post linking to this slug
+      - Cached API route avoids rate limits during build
+    -->
     <LazyBlueskyComments v-if="blueskyPostUri" :post-uri="blueskyPostUri" />
   </main>
 </template>

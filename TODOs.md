@@ -17,10 +17,11 @@
 
 ## On Deck
 
+- How does i18n deal with dynamic values? $t('blog.post.title'),
+- i18n - currently incomplete
 - automatic pulls or pushes from an action runner
 - records walkers
 - bsky posts stuff - Bluesky comments
-- How does i18n deal with dynamic values? $t('blog.post.title'),
 - blog publishing for https://bsky.app/profile/npmx.dev - cli/actions pipeline
 - site.standard.publication lexicon - declares it's a blog on atproto can be manual setup
 - site.standard.document - publishes everytime there's a new blog entry.
