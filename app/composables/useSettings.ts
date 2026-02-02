@@ -74,7 +74,7 @@ export function useAccentColor() {
 
   const accentColors = computed(() => {
     const mode = (colorMode.value || 'dark') as 'light' | 'dark'
-    const colors = ACCENT_COLORS[mode]
+    const colors = ACCENT_COLORS[mode] ?? ACCENT_COLORS.dark
 
     return Object.entries(colors).map(([id, value]) => ({
       id: id as AccentColorId,
