@@ -39,6 +39,72 @@ export default defineConfig({
       mono: "'Geist Mono', monospace",
       sans: "'Geist', system-ui, -apple-system, sans-serif",
     },
+    text: {
+      '9xl': {
+        fontSize: 'var(--text-9xl-font-size)',
+        lineHeight: 'var(--text-9xl-line-height)',
+      },
+      '8xl': {
+        fontSize: 'var(--text-8xl-font-size)',
+        lineHeight: 'var(--text-8xl-line-height)',
+      },
+      '7xl': {
+        fontSize: 'var(--text-7xl-font-size)',
+        lineHeight: 'var(--text-7xl-line-height)',
+      },
+      '6xl': {
+        fontSize: 'var(--text-6xl-font-size)',
+        lineHeight: 'var(--text-6xl-line-height)',
+      },
+      '5xl': {
+        fontSize: 'var(--text-5xl-font-size)',
+        lineHeight: 'var(--text-5xl-line-height)',
+      },
+      '4xl': {
+        fontSize: 'var(--text-4xl-font-size)',
+        lineHeight: 'var(--text-4xl-line-height)',
+      },
+      '3xl': {
+        fontSize: 'var(--text-3xl-font-size)',
+        lineHeight: 'var(--text-3xl-line-height)',
+      },
+      '2xl': {
+        fontSize: 'var(--text-2xl-font-size)',
+        lineHeight: 'var(--text-2xl-line-height)',
+      },
+      'xl': {
+        fontSize: 'var(--text-xl-font-size)',
+        lineHeight: 'var(--text-xl-line-height)',
+      },
+      'lg': {
+        fontSize: 'var(--text-lg-font-size)',
+        lineHeight: 'var(--text-lg-line-height)',
+      },
+      'base': {
+        fontSize: 'var(--text-base-font-size)',
+        lineHeight: 'var(--text-base-line-height)',
+      },
+      'sm': {
+        fontSize: 'var(--text-sm-font-size)',
+        lineHeight: 'var(--text-sm-line-height)',
+      },
+      'xs': {
+        fontSize: 'var(--text-xs-font-size)',
+        lineHeight: 'var(--text-xs-line-height)',
+      },
+      '2xs': {
+        fontSize: 'var(--text-2xs-font-size)',
+        lineHeight: 'var(--text-2xs-line-height)',
+      },
+      '3xs': {
+        fontSize: 'var(--text-3xs-font-size)',
+        lineHeight: 'var(--text-3xs-line-height)',
+      },
+      '4xs': {
+        fontSize: 'var(--text-4xs-font-size)',
+        lineHeight: 'var(--text-4xs-line-height)',
+      },
+    },
     colors: {
       // Minimal black & white palette with subtle grays
       bg: {

@@ -41,6 +41,12 @@ export function initPreferencesOnPrehydrate() {
       document.documentElement.dataset.bgTheme = preferredBackgroundTheme
     }
 
+    // Apply text size
+    const preferredTextSize = settings.preferredTextSize
+    if (preferredTextSize) {
+      document.documentElement.dataset.textSize = preferredTextSize
+    }
+
     // Read and apply package manager preference
     const storedPM = localStorage.getItem('npmx-pm')
     // Parse the stored value (it's stored as a JSON string by useLocalStorage)

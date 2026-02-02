@@ -1,12 +1,13 @@
 import type { RemovableRef } from '@vueuse/core'
 import { useLocalStorage } from '@vueuse/core'
-import { ACCENT_COLORS } from '#shared/utils/constants'
 import type { LocaleObject } from '@nuxtjs/i18n'
-import { BACKGROUND_THEMES } from '#shared/utils/constants'
+import { ACCENT_COLORS, BACKGROUND_THEMES, TEXT_SIZES } from '#shared/utils/constants'
 
 type BackgroundThemeId = keyof typeof BACKGROUND_THEMES
 
 type AccentColorId = keyof typeof ACCENT_COLORS
+
+type TextSizeId = keyof typeof TEXT_SIZES
 
 /**
  * Application settings stored in localStorage
@@ -20,6 +21,8 @@ export interface AppSettings {
   accentColorId: AccentColorId | null
   /** Preferred background shade */
   preferredBackgroundTheme: BackgroundThemeId | null
+  /** Preferred text size */
+  preferredTextSize: TextSizeId | null
   /** Hide platform-specific packages (e.g., @scope/pkg-linux-x64) from search results */
   hidePlatformPackages: boolean
   /** User-selected locale */
@@ -36,6 +39,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   hidePlatformPackages: true,
   selectedLocale: null,
   preferredBackgroundTheme: null,
+  preferredTextSize: null,
   sidebar: {
     collapsed: [],
   },
@@ -122,5 +126,30 @@ export function useBackgroundTheme() {
     backgroundThemes,
     selectedBackgroundTheme: computed(() => settings.value.preferredBackgroundTheme),
     setBackgroundTheme,
+  }
+}
+
+export function useTextSize() {
+  const textSizes = Object.entries(TEXT_SIZES).map(([id, value]) => ({
+    id: id as TextSizeId,
+    name: id,
+    value,
+  }))
+
+  const { settings } = useSettings()
+
+  function setTextSize(id: TextSizeId | null) {
+    if (id) {
+      document.documentElement.dataset.textSize = id
+    } else {
+      document.documentElement.removeAttribute('data-text-size')
+    }
+    settings.value.preferredTextSize = id
+  }
+
+  return {
+    textSizes,
+    selectedTextSize: computed(() => settings.value.preferredTextSize),
+    setTextSize,
   }
 }

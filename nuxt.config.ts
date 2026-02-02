@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     storageKey: 'npmx-color-mode',
   },
 
-  css: ['~/assets/main.css', 'vue-data-ui/style.css'],
+  css: ['~/assets/main.css', '~/assets/font-sizes.css', 'vue-data-ui/style.css'],
 
   $production: {
     debug: {

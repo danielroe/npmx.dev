@@ -47,3 +47,11 @@ export const BACKGROUND_THEMES = {
   slate: 'oklch(0.555 0.046 257.407)',
   black: 'oklch(0.4 0 0)',
 } as const
+
+export const TEXT_SIZES = {
+  smallest: 'smallest',
+  small: 'small',
+  normal: 'normal',
+  large: 'large',
+  largest: 'largest',
+} as const
