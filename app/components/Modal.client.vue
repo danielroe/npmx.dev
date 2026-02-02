@@ -1,9 +1,16 @@
 <script setup lang="ts">
 const props = defineProps<{
   modalTitle: string
+  whenReadyOnly?: boolean
+}>()
+
+const emit = defineEmits<{
+  (e: 'opened'): void
+  (e: 'closed'): void
 }>()
 
 const dialogRef = ref<HTMLDialogElement>()
+const isReady = ref(false)
 
 const modalTitleId = computed(() => {
   const id = getCurrentInstance()?.attrs.id
@@ -14,8 +21,25 @@ function handleModalClose() {
   dialogRef.value?.close()
 }
 
+function handleTransitionEnd(e: TransitionEvent) {
+  if (e.target !== dialogRef.value) return
+  if (e.propertyName !== 'opacity') return
+  if (!dialogRef.value?.matches(':modal')) return
+
+  isReady.value = true
+  emit('opened')
+}
+
+function handleCloseEvent() {
+  isReady.value = false
+  emit('closed')
+}
+
 defineExpose({
-  showModal: () => dialogRef.value?.showModal(),
+  showModal: () => {
+    isReady.value = false
+    dialogRef.value?.showModal()
+  },
   close: () => dialogRef.value?.close(),
 })
 </script>
@@ -24,12 +48,14 @@ defineExpose({
   <Teleport to="body">
     <dialog
       ref="dialogRef"
+      @transitionend="handleTransitionEnd"
+      @close="handleCloseEvent"
       closedby="any"
       class="w-full bg-bg border border-border rounded-lg shadow-xl max-h-[90vh] overflow-y-auto overscroll-contain m-0 m-auto p-6 text-white"
+      :class="props.whenReadyOnly ? (isReady ? 'modal-ready' : 'modal-not-ready') : ''"
       :aria-labelledby="modalTitleId"
       v-bind="$attrs"
     >
-      <!-- Modal top header section -->
       <div class="flex items-center justify-between mb-6">
         <h2 :id="modalTitleId" class="font-mono text-lg font-medium">
           {{ modalTitle }}
@@ -43,14 +69,13 @@ defineExpose({
           <span class="i-carbon-close w-5 h-5" aria-hidden="true" />
         </button>
       </div>
-      <!-- Modal body content -->
+
       <slot />
     </dialog>
   </Teleport>
 </template>
 
 <style scoped>
-/* Backdrop styling when any of the modals are open */
 dialog:modal::backdrop {
   @apply bg-black/60;
 }
@@ -76,5 +101,16 @@ dialog:modal {
   dialog:modal {
     opacity: 0;
   }
+}
+
+/* whenReadyOnly: keep it non-visible but allow opacity transition to run */
+.modal-not-ready:modal {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-ready:modal {
+  visibility: visible;
+  pointer-events: auto;
 }
 </style>
