@@ -57,6 +57,7 @@ afterEach(() => {
 import {
   AppFooter,
   AppHeader,
+  UserAvatar,
   BuildEnvironment,
   CallToAction,
   CodeDirectoryListing,
@@ -366,18 +367,24 @@ describe('component accessibility audits', () => {
         weekKey: '2024-W01',
         weekStart: '2024-01-01',
         weekEnd: '2024-01-07',
+        timestampStart: 1704067200,
+        timestampEnd: 1704585600,
       },
       {
         downloads: 1200,
         weekKey: '2024-W02',
         weekStart: '2024-01-08',
         weekEnd: '2024-01-14',
+        timestampStart: 1704672000,
+        timestampEnd: 1705190400,
       },
       {
         downloads: 1500,
         weekKey: '2024-W03',
         weekStart: '2024-01-15',
         weekEnd: '2024-01-21',
+        timestampStart: 1705276800,
+        timestampEnd: 1705795200,
       },
     ]
 
@@ -625,7 +632,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: '',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -637,7 +644,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: 'src',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -661,7 +668,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: '',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -673,7 +680,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: 'src/index.ts',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -888,7 +895,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: '',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -1773,7 +1780,7 @@ describe('component accessibility audits', () => {
           currentVersion: '3.5.0',
           versions: mockVersions,
           distTags: mockDistTags,
-          urlPattern: '/vue/v/{version}',
+          urlPattern: '/package/vue/v/{version}',
         },
       })
       const results = await runAxe(component)
@@ -1787,8 +1794,34 @@ describe('component accessibility audits', () => {
           currentVersion: '3.4.0',
           versions: mockVersions,
           distTags: mockDistTags,
-          urlPattern: '/vue/v/{version}',
+          urlPattern: '/package/vue/v/{version}',
         },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('UserAvatar', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(UserAvatar, {
+        props: { username: 'testuser' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with short username', async () => {
+      const component = await mountSuspended(UserAvatar, {
+        props: { username: 'a' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with long username', async () => {
+      const component = await mountSuspended(UserAvatar, {
+        props: { username: 'verylongusernameexample' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])

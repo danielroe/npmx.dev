@@ -8,7 +8,8 @@ import { formatBytes } from '~/utils/formatters'
 
 definePageMeta({
   name: 'code',
-  alias: ['/package/code/:path(.*)*'],
+  path: '/package-code/:path+',
+  alias: ['/package/code/:path+', '/code/:path+'],
 })
 
 const route = useRoute('code')
@@ -19,7 +20,7 @@ const route = useRoute('code')
 //   /code/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
 //   /code/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
 const parsedRoute = computed(() => {
-  const segments = route.params.path || []
+  const segments = route.params.path
 
   // Find the /v/ separator for version
   const vIndex = segments.indexOf('v')
@@ -50,7 +51,7 @@ const { data: pkg } = usePackage(packageName)
 
 // URL pattern for version selector - includes file path if present
 const versionUrlPattern = computed(() => {
-  const base = `/code/${packageName.value}/v/{version}`
+  const base = `/package-code/${packageName.value}/v/{version}`
   return filePath.value ? `${base}/${filePath.value}` : base
 })
 
@@ -193,7 +194,7 @@ const breadcrumbs = computed(() => {
 
 // Navigation helper - build URL for a path
 function getCodeUrl(path?: string): string {
-  const base = `/code/${packageName.value}/v/${version.value}`
+  const base = `/package-code/${packageName.value}/v/${version.value}`
   return path ? `${base}/${path}` : base
 }
 
@@ -248,7 +249,7 @@ function copyPermalinkUrl() {
 
 // Canonical URL for this code page
 const canonicalUrl = computed(() => {
-  let url = `https://npmx.dev/code/${packageName.value}/v/${version.value}`
+  let url = `https://npmx.dev/package-code/${packageName.value}/v/${version.value}`
   if (filePath.value) {
     url += `/${filePath.value}`
   }
