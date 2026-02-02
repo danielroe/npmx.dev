@@ -193,6 +193,14 @@ const hasDependencies = computed(() => {
 // Vulnerability count for the stats banner
 const vulnCount = computed(() => vulnTree.value?.totalCounts.total ?? 0)
 const hasVulnerabilities = computed(() => vulnCount.value > 0)
+const hasDeprecated = computed(
+  () => vulnTree.value?.deprecatedPackages && vulnTree.value.deprecatedPackages.length > 0,
+)
+
+// Check if vulns area should be shown
+const showVulnsArea = computed(() => {
+  return moduleReplacement.value || hasVulnerabilities.value || hasDeprecated.value
+})
 
 // Total transitive dependencies count (from either vuln tree or install size)
 // Subtract 1 to exclude the root package itself
@@ -409,7 +417,11 @@ function handleClick(event: MouseEvent) {
   <main class="container flex-1 w-full py-8">
     <PackageSkeleton v-if="status === 'pending'" />
 
-    <article v-else-if="status === 'success' && pkg" class="package-page">
+    <article
+      v-else-if="status === 'success' && pkg"
+      class="package-page"
+      :class="{ 'hide-vulns': !showVulnsArea }"
+    >
       <!-- Package header -->
       <header
         class="area-header sticky top-14 z-1 bg-[--bg] py-2 border-border"
@@ -949,7 +961,7 @@ function handleClick(event: MouseEvent) {
         <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-4">
           <a
             href="#readme"
-            class="inline-flex py-4 px-2 items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+            class="inline-flex py-1 px-2 items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
           >
             {{ $t('package.readme.title') }}
             <span
@@ -1153,6 +1165,43 @@ function handleClick(event: MouseEvent) {
       'details sidebar'
       'install sidebar'
       'vulns   sidebar'
+      'readme  sidebar';
+  }
+}
+
+/* Hide vulns area when empty - mobile */
+.package-page.hide-vulns {
+  grid-template-areas:
+    'header'
+    'details'
+    'install'
+    'sidebar'
+    'readme';
+}
+
+.package-page.hide-vulns .area-vulns {
+  display: none;
+}
+
+/* Hide vulns area when empty - tablet */
+@media (min-width: 1024px) {
+  .package-page.hide-vulns {
+    grid-template-areas:
+      'header  header'
+      'details details'
+      'install install'
+      'readme  sidebar';
+    grid-template-rows: auto auto auto 1fr;
+  }
+}
+
+/* Hide vulns area when empty - desktop */
+@media (min-width: 1280px) {
+  .package-page.hide-vulns {
+    grid-template-areas:
+      'header  sidebar'
+      'details sidebar'
+      'install sidebar'
       'readme  sidebar';
   }
 }
