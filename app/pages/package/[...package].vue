@@ -495,16 +495,46 @@ function handleClick(event: MouseEvent) {
             >
             <span v-else>v{{ resolvedVersion }}</span>
 
-            <a
-              v-if="hasProvenance(displayVersion)"
-              :href="`https://www.npmjs.com/package/${pkg.name}/v/${resolvedVersion}#provenance`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-fg transition-colors duration-200 min-w-6 min-h-6"
-              :title="$t('package.verified_provenance')"
-            >
-              <span class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-            </a>
+            <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
+              <div class="relative inline-flex">
+                <AppPopover position="bottom">
+                  <template #content>
+                    <p class="flex items-center gap-2 text-fg m-0">
+                      <span
+                        class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0 text-emerald-500"
+                        aria-hidden="true"
+                      />
+                      <span>{{
+                        provenanceData && provenanceStatus !== 'pending'
+                          ? $t('package.provenance_section.built_and_signed_on', {
+                              provider: provenanceData.providerLabel,
+                            })
+                          : $t('package.verified_provenance')
+                      }}</span>
+                    </p>
+                    <a href="#provenance" class="block mt-1.5 link font-medium">
+                      {{ $t('package.provenance_section.view_more_details') }}
+                    </a>
+                  </template>
+                  <template #default="{ popoverVisible, popoverId }">
+                    <a
+                      href="#provenance"
+                      :aria-label="$t('package.provenance_section.view_more_details')"
+                      :aria-expanded="popoverVisible"
+                      aria-haspopup="true"
+                      :aria-controls="popoverVisible ? popoverId : undefined"
+                      class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-emerald-500 transition-colors duration-200 min-w-6 min-h-6"
+                      :class="popoverVisible && 'text-emerald-500'"
+                    >
+                      <span
+                        class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0"
+                        aria-hidden="true"
+                      />
+                    </a>
+                  </template>
+                </AppPopover>
+              </div>
+            </template>
             <span
               v-if="requestedVersion && latestVersion && resolvedVersion !== latestVersion.version"
               class="text-fg-subtle text-sm shrink-0"
@@ -1027,8 +1057,6 @@ function handleClick(event: MouseEvent) {
           <PackageProvenanceSection
             v-else-if="provenanceData"
             :details="provenanceData"
-            :package-name="pkg.name"
-            :version="displayVersion?.version"
             class="mt-8"
           />
         </section>
