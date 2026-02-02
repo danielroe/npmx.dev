@@ -16,7 +16,7 @@ export default defineConfig<ConfigOptions>({
     command: 'pnpm start:playwright:webserver',
     url: baseURL,
     reuseExistingServer: false,
-    timeout: 120_000,
+    timeout: 180_000,
   },
   use: {
     baseURL,
