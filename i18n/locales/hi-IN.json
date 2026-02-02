@@ -777,7 +777,7 @@
     "atmosphere_desc": "सोशल सुविधाएँ और पहचान",
     "connect_npm_cli": "npm CLI से कनेक्ट करें",
     "connect_atmosphere": "Atmosphere से कनेक्ट करें",
-    "connecting": "Connecting...",
+    "connecting": "कनेक्ट हो रहा है...",
     "ops": "{count} op | {count} ops",
     "disconnect": "डिस्कनेक्ट करें"
   },
