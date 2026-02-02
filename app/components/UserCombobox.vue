@@ -145,8 +145,7 @@ const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
       type="text"
       :placeholder="placeholder ?? $t('user.combobox.default_placeholder')"
       :disabled="disabled"
-      autocomplete="off"
-      spellcheck="false"
+      v-bind="noCorrect"
       role="combobox"
       aria-autocomplete="list"
       :aria-expanded="isOpen && (filteredSuggestions.length > 0 || showNewUserHint)"
@@ -205,10 +204,7 @@ const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
           role="status"
           aria-live="polite"
         >
-          <span
-            class="i-carbon-information w-3 h-3 inline-block mr-1 align-middle"
-            aria-hidden="true"
-          />
+          <span class="i-carbon:information w-3 h-3 me-1 align-middle" aria-hidden="true" />
           {{
             $t('user.combobox.press_enter_to_add', {
               username: inputValue.trim().replace(/^@/, ''),

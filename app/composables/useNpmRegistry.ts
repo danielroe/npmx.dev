@@ -1,6 +1,5 @@
 import type {
   Packument,
-  PackumentVersion,
   SlimPackument,
   NpmSearchResponse,
   NpmSearchResult,
@@ -8,10 +7,13 @@ import type {
   NpmPerson,
   PackageVersionInfo,
 } from '#shared/types'
+import { getVersions } from 'fast-npm-meta'
+import type { ResolvedPackageVersion } from 'fast-npm-meta'
 import type { ReleaseType } from 'semver'
+import { mapWithConcurrency } from '#shared/utils/async'
 import { maxSatisfying, prerelease, major, minor, diff, gt, compare } from 'semver'
-import { isExactVersion } from '~/utils/versions'
 import { extractInstallScriptsInfo } from '~/utils/install-scripts'
+import type { CachedFetchFunction } from '#shared/utils/fetch-cache-config'
 
 const NPM_REGISTRY = 'https://registry.npmjs.org'
 const NPM_API = 'https://api.npmjs.org'
@@ -20,65 +22,75 @@ const NPM_API = 'https://api.npmjs.org'
 const packumentCache = new Map<string, Promise<Packument | null>>()
 
 /**
- * Fetch a package's full packument data.
- * Uses caching to avoid duplicate requests.
+ * Fetch downloads for multiple packages.
+ * Returns a map of package name -> weekly downloads.
+ * Uses bulk API for unscoped packages, parallel individual requests for scoped.
+ * Note: npm bulk downloads API does not support scoped packages.
  */
-async function fetchNpmPackage(name: string): Promise<Packument> {
-  const encodedName = encodePackageName(name)
-  return await $fetch<Packument>(`${NPM_REGISTRY}/${encodedName}`)
-}
+async function fetchBulkDownloads(
+  packageNames: string[],
+  options: Parameters<typeof $fetch>[1] = {},
+): Promise<Map<string, number>> {
+  const downloads = new Map<string, number>()
+  if (packageNames.length === 0) return downloads
 
-/**
- * Fetch a package's packument with caching (returns null on error).
- * This is useful for batch operations where some packages might not exist.
- */
-async function fetchCachedPackument(name: string): Promise<Packument | null> {
-  const cached = packumentCache.get(name)
-  if (cached) return cached
+  // Separate scoped and unscoped packages
+  const scopedPackages = packageNames.filter(n => n.startsWith('@'))
+  const unscopedPackages = packageNames.filter(n => !n.startsWith('@'))
 
-  const promise = fetchNpmPackage(name).catch(() => null)
-  packumentCache.set(name, promise)
-  return promise
-}
-
-async function searchNpmPackages(
-  query: string,
-  options: {
-    size?: number
-    from?: number
-    quality?: number
-    popularity?: number
-    maintenance?: number
-  } = {},
-): Promise<NpmSearchResponse> {
-  const params = new URLSearchParams()
-  params.set('text', query)
-  if (options.size) params.set('size', String(options.size))
-  if (options.from) params.set('from', String(options.from))
-  if (options.quality !== undefined) params.set('quality', String(options.quality))
-  if (options.popularity !== undefined) params.set('popularity', String(options.popularity))
-  if (options.maintenance !== undefined) params.set('maintenance', String(options.maintenance))
-
-  return await $fetch<NpmSearchResponse>(`${NPM_REGISTRY}/-/v1/search?${params.toString()}`)
-}
-
-async function fetchNpmDownloads(
-  packageName: string,
-  period: 'last-day' | 'last-week' | 'last-month' | 'last-year' = 'last-week',
-): Promise<NpmDownloadCount> {
-  const encodedName = encodePackageName(packageName)
-  return await $fetch<NpmDownloadCount>(`${NPM_API}/downloads/point/${period}/${encodedName}`)
-}
-
-/**
- * Encode a package name for use in npm registry URLs.
- * Handles scoped packages (e.g., @scope/name -> @scope%2Fname).
- */
-export function encodePackageName(name: string): string {
-  if (name.startsWith('@')) {
-    return `@${encodeURIComponent(name.slice(1))}`
+  // Fetch unscoped packages via bulk API (max 128 per request)
+  const bulkPromises: Promise<void>[] = []
+  const chunkSize = 100
+  for (let i = 0; i < unscopedPackages.length; i += chunkSize) {
+    const chunk = unscopedPackages.slice(i, i + chunkSize)
+    bulkPromises.push(
+      (async () => {
+        try {
+          const response = await $fetch<Record<string, { downloads: number } | null>>(
+            `${NPM_API}/downloads/point/last-week/${chunk.join(',')}`,
+            options,
+          )
+          for (const [name, data] of Object.entries(response)) {
+            if (data?.downloads !== undefined) {
+              downloads.set(name, data.downloads)
+            }
+          }
+        } catch {
+          // Ignore errors - downloads are optional
+        }
+      })(),
+    )
   }
-  return encodeURIComponent(name)
+
+  // Fetch scoped packages in parallel batches (concurrency limit to avoid overwhelming the API)
+  // Use Promise.allSettled to not fail on individual errors
+  const scopedBatchSize = 20 // Concurrent requests per batch
+  for (let i = 0; i < scopedPackages.length; i += scopedBatchSize) {
+    const batch = scopedPackages.slice(i, i + scopedBatchSize)
+    bulkPromises.push(
+      (async () => {
+        const results = await Promise.allSettled(
+          batch.map(async name => {
+            const encoded = encodePackageName(name)
+            const data = await $fetch<{ downloads: number }>(
+              `${NPM_API}/downloads/point/last-week/${encoded}`,
+            )
+            return { name, downloads: data.downloads }
+          }),
+        )
+        for (const result of results) {
+          if (result.status === 'fulfilled' && result.value.downloads !== undefined) {
+            downloads.set(result.value.name, result.value.downloads)
+          }
+        }
+      })(),
+    )
+  }
+
+  // Wait for all fetches to complete
+  await Promise.all(bulkPromises)
+
+  return downloads
 }
 
 /** Number of recent versions to include in initial payload */
@@ -115,20 +127,28 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
   }
 
   // Build filtered versions object with install scripts info per version
-  const filteredVersions: Record<string, PackumentVersion> = {}
+  const filteredVersions: Record<string, SlimVersion> = {}
+  let versionData: SlimPackumentVersion | null = null
   for (const v of includedVersions) {
     const version = pkg.versions[v]
     if (version) {
-      // Strip readme from each version, extract install scripts info
-      const { readme: _readme, scripts, ...slimVersion } = version
+      if (version.version === requestedVersion) {
+        // Strip readme from each version, extract install scripts info
+        const { readme: _readme, scripts, ...slimVersion } = version
 
-      // Extract install scripts info (which scripts exist + npx deps)
-      const installScripts = scripts ? extractInstallScriptsInfo(scripts) : null
-
+        // Extract install scripts info (which scripts exist + npx deps)
+        const installScripts = scripts ? extractInstallScriptsInfo(scripts) : null
+        versionData = {
+          ...slimVersion,
+          installScripts: installScripts ?? undefined,
+        }
+      }
       filteredVersions[v] = {
-        ...slimVersion,
-        installScripts: installScripts ?? undefined,
-      } as PackumentVersion
+        ...((version?.dist as { attestations?: unknown }) ? { hasProvenance: true } : {}),
+        version: version.version,
+        deprecated: version.deprecated,
+        tags: version.tags as string[],
+      }
     }
   }
 
@@ -154,58 +174,81 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
     'keywords': pkg.keywords,
     'repository': pkg.repository,
     'bugs': pkg.bugs,
+    'requestedVersion': versionData,
     'versions': filteredVersions,
   }
+}
+
+export function useResolvedVersion(
+  packageName: MaybeRefOrGetter<string>,
+  requestedVersion: MaybeRefOrGetter<string | null>,
+) {
+  return useFetch(
+    () => {
+      const version = toValue(requestedVersion)
+      return version
+        ? `https://npm.antfu.dev/${toValue(packageName)}@${version}`
+        : `https://npm.antfu.dev/${toValue(packageName)}`
+    },
+    {
+      transform: (data: ResolvedPackageVersion) => data.version,
+    },
+  )
 }
 
 export function usePackage(
   name: MaybeRefOrGetter<string>,
   requestedVersion?: MaybeRefOrGetter<string | null>,
 ) {
+  const cachedFetch = useCachedFetch()
+
   const asyncData = useLazyAsyncData(
     () => `package:${toValue(name)}:${toValue(requestedVersion) ?? ''}`,
-    () =>
-      fetchNpmPackage(toValue(name)).then(r => transformPackument(r, toValue(requestedVersion))),
+    async (_nuxtApp, { signal }) => {
+      const encodedName = encodePackageName(toValue(name))
+      const { data: r, isStale } = await cachedFetch<Packument>(`${NPM_REGISTRY}/${encodedName}`, {
+        signal,
+      })
+      const reqVer = toValue(requestedVersion)
+      const pkg = transformPackument(r, reqVer)
+      return { ...pkg, isStale }
+    },
   )
 
-  // Resolve requestedVersion to an exact version
-  // Handles: exact versions, dist-tags (latest, next), and semver ranges (^4.2, >=1.0.0)
-  const resolvedVersion = computed(() => {
-    const pkg = asyncData.data.value
-    const reqVer = toValue(requestedVersion)
-    if (!pkg || !reqVer) return null
-
-    // 1. Check if it's already an exact version in pkg.versions
-    if (isExactVersion(reqVer) && pkg.versions[reqVer]) {
-      return reqVer
-    }
-
-    // 2. Check if it's a dist-tag (latest, next, beta, etc.)
-    const tagVersion = pkg['dist-tags']?.[reqVer]
-    if (tagVersion) {
-      return tagVersion
-    }
-
-    // 3. Try to resolve as a semver range
-    const versions = Object.keys(pkg.versions)
-    const resolved = maxSatisfying(versions, reqVer)
-    return resolved
-  })
-
-  return {
-    ...asyncData,
-    resolvedVersion,
+  if (import.meta.client && asyncData.data.value?.isStale) {
+    onMounted(() => {
+      asyncData.refresh()
+    })
   }
+
+  return asyncData
 }
 
 export function usePackageDownloads(
   name: MaybeRefOrGetter<string>,
   period: MaybeRefOrGetter<'last-day' | 'last-week' | 'last-month' | 'last-year'> = 'last-week',
 ) {
-  return useLazyAsyncData(
+  const cachedFetch = useCachedFetch()
+
+  const asyncData = useLazyAsyncData(
     () => `downloads:${toValue(name)}:${toValue(period)}`,
-    () => fetchNpmDownloads(toValue(name), toValue(period)),
+    async (_nuxtApp, { signal }) => {
+      const encodedName = encodePackageName(toValue(name))
+      const { data, isStale } = await cachedFetch<NpmDownloadCount>(
+        `${NPM_API}/downloads/point/${toValue(period)}/${encodedName}`,
+        { signal },
+      )
+      return { ...data, isStale }
+    },
   )
+
+  if (import.meta.client && asyncData.data.value?.isStale) {
+    onMounted(() => {
+      asyncData.refresh()
+    })
+  }
+
+  return asyncData
 }
 
 type NpmDownloadsRangeResponse = {
@@ -215,7 +258,11 @@ type NpmDownloadsRangeResponse = {
   downloads: Array<{ day: string; downloads: number }>
 }
 
-async function fetchNpmDownloadsRange(
+/**
+ * Fetch download range data from npm API.
+ * Exported for external use (e.g., in components).
+ */
+export async function fetchNpmDownloadsRange(
   packageName: string,
   start: string,
   end: string,
@@ -226,87 +273,187 @@ async function fetchNpmDownloadsRange(
   )
 }
 
-export function usePackageWeeklyDownloadEvolution(
-  name: MaybeRefOrGetter<string>,
-  options: MaybeRefOrGetter<{
-    weeks?: number
-    endDate?: string
-  }> = {},
-) {
-  return useLazyAsyncData(
-    () => `downloads-weekly-evolution:${toValue(name)}:${JSON.stringify(toValue(options))}`,
-    async () => {
-      const packageName = toValue(name)
-      const { weeks = 12, endDate } = toValue(options) ?? {}
-
-      const today = new Date()
-      const yesterday = new Date(
-        Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
-      )
-
-      const end = endDate ? new Date(`${endDate}T00:00:00.000Z`) : yesterday
-
-      const start = addDays(end, -(weeks * 7) + 1)
-      const startIso = toIsoDateString(start)
-      const endIso = toIsoDateString(end)
-      const range = await fetchNpmDownloadsRange(packageName, startIso, endIso)
-      const sortedDaily = [...range.downloads].sort((a, b) => a.day.localeCompare(b.day))
-      return buildWeeklyEvolutionFromDaily(sortedDaily)
-    },
-  )
-}
-
 const emptySearchResponse = {
   objects: [],
   total: 0,
+  isStale: false,
   time: new Date().toISOString(),
 } satisfies NpmSearchResponse
 
+export interface NpmSearchOptions {
+  /** Number of results to fetch */
+  size?: number
+}
+
 export function useNpmSearch(
   query: MaybeRefOrGetter<string>,
-  options: MaybeRefOrGetter<{
-    size?: number
-    from?: number
-  }> = {},
+  options: MaybeRefOrGetter<NpmSearchOptions> = {},
 ) {
+  const cachedFetch = useCachedFetch()
+  // Client-side cache
+  const cache = shallowRef<{
+    query: string
+    objects: NpmSearchResult[]
+    total: number
+  } | null>(null)
+
+  const isLoadingMore = shallowRef(false)
+
+  // Standard (non-incremental) search implementation
   let lastSearch: NpmSearchResponse | undefined = undefined
 
-  return useLazyAsyncData(
-    () => `search:${toValue(query)}:${JSON.stringify(toValue(options))}`,
-    async () => {
+  const asyncData = useLazyAsyncData(
+    () => `search:incremental:${toValue(query)}`,
+    async (_nuxtApp, { signal }) => {
       const q = toValue(query)
       if (!q.trim()) {
-        return Promise.resolve(emptySearchResponse)
+        return emptySearchResponse
       }
-      return (lastSearch = await searchNpmPackages(q, toValue(options)))
+
+      const opts = toValue(options)
+
+      // This only runs for initial load or query changes
+      // Reset cache for new query
+      cache.value = null
+
+      const params = new URLSearchParams()
+      params.set('text', q)
+      // Use requested size for initial fetch
+      params.set('size', String(opts.size ?? 25))
+
+      const { data: response, isStale } = await cachedFetch<NpmSearchResponse>(
+        `${NPM_REGISTRY}/-/v1/search?${params.toString()}`,
+        { signal },
+        60,
+      )
+
+      cache.value = {
+        query: q,
+        objects: response.objects,
+        total: response.total,
+      }
+
+      return { ...response, isStale }
     },
     { default: () => lastSearch || emptySearchResponse },
   )
-}
 
-/**
- * Fetch all package names in an npm organization
- * Uses the /-/org/{org}/package endpoint
- * Throws error with statusCode 404 if org doesn't exist
- * Returns empty array if org exists but has no packages
- */
-async function fetchOrgPackageNames(orgName: string): Promise<string[]> {
-  try {
-    const data = await $fetch<Record<string, string>>(
-      `${NPM_REGISTRY}/-/org/${encodeURIComponent(orgName)}/package`,
-    )
-    return Object.keys(data)
-  } catch (err) {
-    // Check if this is a 404 (org not found)
-    if (err && typeof err === 'object' && 'statusCode' in err && err.statusCode === 404) {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'Organization not found',
-        message: `The organization "@${orgName}" does not exist on npm`,
-      })
+  // Fetch more results incrementally (only used in incremental mode)
+  async function fetchMore(targetSize: number): Promise<void> {
+    const q = toValue(query).trim()
+    if (!q) {
+      cache.value = null
+      return
     }
-    // For other errors (network, etc.), return empty array to be safe
-    return []
+
+    // If query changed, reset cache (shouldn't happen, but safety check)
+    if (cache.value && cache.value.query !== q) {
+      cache.value = null
+      await asyncData.refresh()
+      return
+    }
+
+    const currentCount = cache.value?.objects.length ?? 0
+    const total = cache.value?.total ?? Infinity
+
+    // Already have enough or no more to fetch
+    if (currentCount >= targetSize || currentCount >= total) {
+      return
+    }
+
+    isLoadingMore.value = true
+
+    try {
+      // Fetch from where we left off - calculate size needed
+      const from = currentCount
+      const size = Math.min(targetSize - currentCount, total - currentCount)
+
+      const params = new URLSearchParams()
+      params.set('text', q)
+      params.set('size', String(size))
+      params.set('from', String(from))
+
+      const { data: response } = await cachedFetch<NpmSearchResponse>(
+        `${NPM_REGISTRY}/-/v1/search?${params.toString()}`,
+        {},
+        60,
+      )
+
+      // Update cache
+      if (cache.value && cache.value.query === q) {
+        const existingNames = new Set(cache.value.objects.map(obj => obj.package.name))
+        const newObjects = response.objects.filter(obj => !existingNames.has(obj.package.name))
+        cache.value = {
+          query: q,
+          objects: [...cache.value.objects, ...newObjects],
+          total: response.total,
+        }
+      } else {
+        cache.value = {
+          query: q,
+          objects: response.objects,
+          total: response.total,
+        }
+      }
+
+      // If we still need more, fetch again recursively
+      if (
+        cache.value.objects.length < targetSize &&
+        cache.value.objects.length < cache.value.total
+      ) {
+        await fetchMore(targetSize)
+      }
+    } finally {
+      isLoadingMore.value = false
+    }
+  }
+
+  // Watch for size increases in incremental mode
+  watch(
+    () => toValue(options).size,
+    async (newSize, oldSize) => {
+      if (!newSize) return
+      if (oldSize && newSize > oldSize && toValue(query).trim()) {
+        await fetchMore(newSize)
+      }
+    },
+  )
+
+  // Computed data that uses cache in incremental mode
+  const data = computed<NpmSearchResponse | null>(() => {
+    if (cache.value) {
+      return {
+        isStale: false,
+        objects: cache.value.objects,
+        total: cache.value.total,
+        time: new Date().toISOString(),
+      }
+    }
+    return asyncData.data.value
+  })
+
+  if (import.meta.client && asyncData.data.value?.isStale) {
+    onMounted(() => {
+      asyncData.refresh()
+    })
+  }
+
+  // Whether there are more results available on the server (incremental mode only)
+  const hasMore = computed(() => {
+    if (!cache.value) return true
+    return cache.value.objects.length < cache.value.total
+  })
+
+  return {
+    ...asyncData,
+    /** Reactive search results (uses cache in incremental mode) */
+    data,
+    /** Whether currently loading more results (incremental mode only) */
+    isLoadingMore,
+    /** Whether there are more results available (incremental mode only) */
+    hasMore,
+    /** Manually fetch more results up to target size (incremental mode only) */
+    fetchMore,
   }
 }
 
@@ -316,6 +463,7 @@ async function fetchOrgPackageNames(orgName: string): Promise<string[]> {
 interface MinimalPackument {
   'name': string
   'description'?: string
+  'keywords'?: string[]
   // `dist-tags` can be missing in some later unpublished packages
   'dist-tags'?: Record<string, string>
   'time': Record<string, string>
@@ -323,26 +471,9 @@ interface MinimalPackument {
 }
 
 /**
- * Fetch minimal packument data for a single package
- */
-async function fetchMinimalPackument(name: string): Promise<MinimalPackument | null> {
-  try {
-    const encoded = encodePackageName(name)
-    return await $fetch<MinimalPackument>(`${NPM_REGISTRY}/${encoded}`, {
-      // Only fetch the fields we need using Accept header
-      // Note: npm registry doesn't support field filtering, so we get full packument
-      // but we only use what we need
-    })
-  } catch {
-    // Package might not exist or be private
-    return null
-  }
-}
-
-/**
  * Convert packument to search result format for display
  */
-function packumentToSearchResult(pkg: MinimalPackument): NpmSearchResult {
+function packumentToSearchResult(pkg: MinimalPackument, weeklyDownloads?: number): NpmSearchResult {
   let latestVersion = ''
   if (pkg['dist-tags']) {
     latestVersion = pkg['dist-tags'].latest || Object.values(pkg['dist-tags'])[0] || ''
@@ -354,6 +485,7 @@ function packumentToSearchResult(pkg: MinimalPackument): NpmSearchResult {
       name: pkg.name,
       version: latestVersion,
       description: pkg.description,
+      keywords: pkg.keywords,
       date: pkg.time[latestVersion] || modified,
       links: {
         npm: `https://www.npmjs.com/package/${pkg.name}`,
@@ -362,7 +494,8 @@ function packumentToSearchResult(pkg: MinimalPackument): NpmSearchResult {
     },
     score: { final: 0, detail: { quality: 0, popularity: 0, maintenance: 0 } },
     searchScore: 0,
-    updated: modified,
+    downloads: weeklyDownloads !== undefined ? { weekly: weeklyDownloads } : undefined,
+    updated: pkg.time[latestVersion] || modified,
   }
 }
 
@@ -371,38 +504,77 @@ function packumentToSearchResult(pkg: MinimalPackument): NpmSearchResult {
  * Returns search-result-like objects for compatibility with PackageList
  */
 export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
-  return useLazyAsyncData(
+  const cachedFetch = useCachedFetch()
+
+  const asyncData = useLazyAsyncData(
     () => `org-packages:${toValue(orgName)}`,
-    async () => {
+    async (_nuxtApp, { signal }) => {
       const org = toValue(orgName)
       if (!org) {
         return emptySearchResponse
       }
 
       // Get all package names in the org
-      const packageNames = await fetchOrgPackageNames(org)
+      let packageNames: string[]
+      try {
+        const { data } = await cachedFetch<Record<string, string>>(
+          `${NPM_REGISTRY}/-/org/${encodeURIComponent(org)}/package`,
+          { signal },
+        )
+        packageNames = Object.keys(data)
+      } catch (err) {
+        // Check if this is a 404 (org not found)
+        if (err && typeof err === 'object' && 'statusCode' in err && err.statusCode === 404) {
+          throw createError({
+            statusCode: 404,
+            statusMessage: 'Organization not found',
+            message: `The organization "@${org}" does not exist on npm`,
+          })
+        }
+        // For other errors (network, etc.), return empty array to be safe
+        packageNames = []
+      }
 
       if (packageNames.length === 0) {
         return emptySearchResponse
       }
 
-      // Fetch packuments in parallel (with concurrency limit)
-      const concurrency = 10
-      const results: NpmSearchResult[] = []
-
-      for (let i = 0; i < packageNames.length; i += concurrency) {
-        const batch = packageNames.slice(i, i + concurrency)
-        const packuments = await Promise.all(batch.map(name => fetchMinimalPackument(name)))
-
-        for (const pkg of packuments) {
+      // Fetch packuments and downloads in parallel
+      const [packuments, downloads] = await Promise.all([
+        // Fetch packuments with concurrency limit
+        (async () => {
+          const results = await mapWithConcurrency(
+            packageNames,
+            async name => {
+              try {
+                const encoded = encodePackageName(name)
+                const { data: pkg } = await cachedFetch<MinimalPackument>(
+                  `${NPM_REGISTRY}/${encoded}`,
+                  { signal },
+                )
+                return pkg
+              } catch {
+                return null
+              }
+            },
+            10,
+          )
           // Filter out any unpublished packages (missing dist-tags)
-          if (pkg && pkg['dist-tags']) {
-            results.push(packumentToSearchResult(pkg))
-          }
-        }
-      }
+          return results.filter(
+            (pkg): pkg is MinimalPackument => pkg !== null && !!pkg['dist-tags'],
+          )
+        })(),
+        // Fetch downloads in bulk
+        fetchBulkDownloads(packageNames, { signal }),
+      ])
+
+      // Convert to search results with download data
+      const results: NpmSearchResult[] = packuments.map(pkg =>
+        packumentToSearchResult(pkg, downloads.get(pkg.name)),
+      )
 
       return {
+        isStale: false,
         objects: results,
         total: results.length,
         time: new Date().toISOString(),
@@ -410,38 +582,40 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
     },
     { default: () => emptySearchResponse },
   )
+
+  return asyncData
 }
 
 // ============================================================================
 // Package Versions
 // ============================================================================
 
-// Cache for full version lists
+// Cache for full version lists (client-side only, for non-composable usage)
 const allVersionsCache = new Map<string, Promise<PackageVersionInfo[]>>()
 
 /**
- * Fetch all versions of a package from the npm registry.
+ * Fetch all versions of a package using fast-npm-meta API.
  * Returns version info sorted by version (newest first).
  * Results are cached to avoid duplicate requests.
+ *
+ * Note: This is a standalone async function for use in event handlers.
+ * For composable usage, use useAllPackageVersions instead.
+ *
+ * @see https://github.com/antfu/fast-npm-meta
  */
 export async function fetchAllPackageVersions(packageName: string): Promise<PackageVersionInfo[]> {
   const cached = allVersionsCache.get(packageName)
   if (cached) return cached
 
   const promise = (async () => {
-    const encodedName = encodePackageName(packageName)
-    const data = await $fetch<{
-      versions: Record<string, { deprecated?: string }>
-      time: Record<string, string>
-    }>(`${NPM_REGISTRY}/${encodedName}`)
+    const data = await getVersions(packageName, { metadata: true })
 
-    return Object.entries(data.versions)
-      .filter(([v]) => data.time[v])
-      .map(([version, versionData]) => ({
+    return Object.entries(data.versionsMeta)
+      .map(([version, meta]) => ({
         version,
-        time: data.time[version],
-        hasProvenance: false, // Would need to check dist.attestations for each version
-        deprecated: versionData.deprecated,
+        time: meta.time,
+        hasProvenance: meta.provenance === 'trustedPublisher' || meta.provenance === true,
+        deprecated: meta.deprecated,
       }))
       .sort((a, b) => compare(b.version, a.version))
   })()
@@ -472,7 +646,7 @@ export interface OutdatedDependencyInfo {
  * Check if a version constraint explicitly includes a prerelease tag.
  * e.g., "^1.0.0-alpha" or ">=2.0.0-beta.1" include prereleases
  */
-function constraintIncludesPrerelease(constraint: string): boolean {
+export function constraintIncludesPrerelease(constraint: string): boolean {
   return (
     /-(alpha|beta|rc|next|canary|dev|preview|pre|experimental)/i.test(constraint) ||
     /-\d/.test(constraint)
@@ -482,7 +656,7 @@ function constraintIncludesPrerelease(constraint: string): boolean {
 /**
  * Check if a constraint is a non-semver value (git URL, file path, etc.)
  */
-function isNonSemverConstraint(constraint: string): boolean {
+export function isNonSemverConstraint(constraint: string): boolean {
   return (
     constraint.startsWith('git') ||
     constraint.startsWith('http') ||
@@ -497,12 +671,9 @@ function isNonSemverConstraint(constraint: string): boolean {
 /**
  * Check if a dependency is outdated.
  * Returns null if up-to-date or if we can't determine.
- *
- * A dependency is only considered "outdated" if the resolved version
- * is older than the latest version. If the resolved version is newer
- * (e.g., using ^2.0.0-rc when latest is 1.x), it's not outdated.
  */
 async function checkDependencyOutdated(
+  cachedFetch: CachedFetchFunction,
   packageName: string,
   constraint: string,
 ): Promise<OutdatedDependencyInfo | null> {
@@ -510,7 +681,19 @@ async function checkDependencyOutdated(
     return null
   }
 
-  const packument = await fetchCachedPackument(packageName)
+  // Check in-memory cache first
+  let packument: Packument | null
+  const cached = packumentCache.get(packageName)
+  if (cached) {
+    packument = await cached
+  } else {
+    const promise = cachedFetch<Packument>(`${NPM_REGISTRY}/${encodePackageName(packageName)}`)
+      .then(({ data }) => data)
+      .catch(() => null)
+    packumentCache.set(packageName, promise)
+    packument = await promise
+  }
+
   if (!packument) return null
 
   const latestTag = packument['dist-tags']?.latest
@@ -565,6 +748,7 @@ async function checkDependencyOutdated(
 export function useOutdatedDependencies(
   dependencies: MaybeRefOrGetter<Record<string, string> | undefined>,
 ) {
+  const cachedFetch = useCachedFetch()
   const outdated = shallowRef<Record<string, OutdatedDependencyInfo>>({})
 
   async function fetchOutdatedInfo(deps: Record<string, string> | undefined) {
@@ -573,23 +757,20 @@ export function useOutdatedDependencies(
       return
     }
 
-    const results: Record<string, OutdatedDependencyInfo> = {}
     const entries = Object.entries(deps)
-    const batchSize = 5
+    const batchResults = await mapWithConcurrency(
+      entries,
+      async ([name, constraint]) => {
+        const info = await checkDependencyOutdated(cachedFetch, name, constraint)
+        return [name, info] as const
+      },
+      5,
+    )
 
-    for (let i = 0; i < entries.length; i += batchSize) {
-      const batch = entries.slice(i, i + batchSize)
-      const batchResults = await Promise.all(
-        batch.map(async ([name, constraint]) => {
-          const info = await checkDependencyOutdated(name, constraint)
-          return [name, info] as const
-        }),
-      )
-
-      for (const [name, info] of batchResults) {
-        if (info) {
-          results[name] = info
-        }
+    const results: Record<string, OutdatedDependencyInfo> = {}
+    for (const [name, info] of batchResults) {
+      if (info) {
+        results[name] = info
       }
     }
 
@@ -610,16 +791,25 @@ export function useOutdatedDependencies(
 /**
  * Get tooltip text for an outdated dependency
  */
-export function getOutdatedTooltip(info: OutdatedDependencyInfo): string {
+export function getOutdatedTooltip(
+  info: OutdatedDependencyInfo,
+  t: (key: string, params?: Record<string, unknown>, plural?: number) => string,
+): string {
   if (info.majorsBehind > 0) {
-    const s = info.majorsBehind === 1 ? '' : 's'
-    return `${info.majorsBehind} major version${s} behind (latest: ${info.latest})`
+    return t(
+      'package.dependencies.outdated_major',
+      { count: info.majorsBehind, latest: info.latest },
+      info.majorsBehind,
+    )
   }
   if (info.minorsBehind > 0) {
-    const s = info.minorsBehind === 1 ? '' : 's'
-    return `${info.minorsBehind} minor version${s} behind (latest: ${info.latest})`
+    return t(
+      'package.dependencies.outdated_minor',
+      { count: info.minorsBehind, latest: info.latest },
+      info.minorsBehind,
+    )
   }
-  return `Patch update available (latest: ${info.latest})`
+  return t('package.dependencies.outdated_patch', { latest: info.latest })
 }
 
 /**
