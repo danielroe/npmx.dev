@@ -77,7 +77,8 @@
     "help_translate": "Help translate npmx",
     "accent_colors": "Accent colors",
     "clear_accent": "Clear accent color",
-    "translation_progress": "Translation progress"
+    "translation_progress": "Translation progress",
+    "background_themes": "Background shade"
   },
   "i18n": {
     "missing_keys": "{count} missing translation | {count} missing translations",

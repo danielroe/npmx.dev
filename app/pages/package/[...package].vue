@@ -480,10 +480,10 @@ defineOgImageComponent('Package', {
               class="self-baseline ms-1 sm:ms-2"
             />
             <template #fallback>
-              <ul class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
-                <li class="skeleton w-8 h-5 rounded" />
-                <li class="skeleton w-12 h-5 rounded" />
-              </ul>
+              <div class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
+                <SkeletonBlock class="w-8 h-5 rounded" />
+                <SkeletonBlock class="w-12 h-5 rounded" />
+              </div>
             </template>
           </ClientOnly>
         </div>

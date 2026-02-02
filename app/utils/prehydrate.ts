@@ -47,6 +47,12 @@ export function initPreferencesOnPrehydrate() {
       document.documentElement.style.setProperty('--accent-color', colors[theme][accentColorId])
     }
 
+    // Apply background accent
+    const preferredBackgroundTheme = settings.preferredBackgroundTheme
+    if (preferredBackgroundTheme) {
+      document.documentElement.dataset.bgTheme = preferredBackgroundTheme
+    }
+
     // Read and apply package manager preference
     const storedPM = localStorage.getItem('npmx-pm')
     // Parse the stored value (it's stored as a JSON string by useLocalStorage)
