@@ -365,7 +365,12 @@ export function useNpmSearch(
               total: 1,
             }
 
-            return { ...pkg, isStale }
+            return {
+              objects: [result],
+              total: 1,
+              isStale,
+              time: new Date().toISOString(),
+            }
           } catch {
             // If exact lookup also fails, throw original error
             throw error
