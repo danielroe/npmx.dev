@@ -20,17 +20,7 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
     })
   }
 
-  const cachedFetch = event.context.cachedFetch
-  if (!cachedFetch) {
-    // TODO: Probably needs to add in a normal fetch if not provided
-    // but ideally should not happen
-    throw createError({
-      status: 500,
-      message: 'cachedFetch not provided in context',
-    })
-  }
-
-  const likesUtil = new PackageLikesUtils(cachedFetch)
+  const likesUtil = new PackageLikesUtils()
 
   const hasLiked = await likesUtil.hasTheUserLikedThePackage(body.packageName, loggedInUsersDid)
   if (hasLiked) {
@@ -59,5 +49,5 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
     })
   }
 
-  return await likesUtil.likeAPackageAndRetunLikes(body.packageName, loggedInUsersDid)
+  return await likesUtil.likeAPackageAndRetunLikes(body.packageName, loggedInUsersDid, result.uri)
 })

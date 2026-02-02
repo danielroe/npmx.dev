@@ -19,17 +19,7 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
     })
   }
 
-  const cachedFetch = event.context.cachedFetch
-  if (!cachedFetch) {
-    // TODO: Probably needs to add in a normal fetch if not provided
-    // but ideally should not happen
-    throw createError({
-      status: 500,
-      message: 'cachedFetch not provided in context',
-    })
-  }
-
-  const likesUtil = new PackageLikesUtils(cachedFetch)
+  const likesUtil = new PackageLikesUtils()
 
   const getTheUsersLikedRecord = await likesUtil.getTheUsersLikedRecord(
     body.packageName,
@@ -40,10 +30,10 @@ export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
     await checkOAuthScope(oAuthSession, LIKES_SCOPE)
     const client = new Client(oAuthSession)
 
-    var result = await client.delete(dev.npmx.feed.like, {
+    await client.delete(dev.npmx.feed.like, {
       rkey: getTheUsersLikedRecord.rkey,
     })
-    console.log(result)
-    return await likesUtil.unlikeAPackageAndReturnLikes(body.packageName, loggedInUsersDid)
+    var result = await likesUtil.unlikeAPackageAndReturnLikes(body.packageName, loggedInUsersDid)
+    return result
   }
 })

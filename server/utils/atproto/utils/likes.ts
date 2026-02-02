@@ -12,19 +12,35 @@ export type PackageLikes = {
   userHasLiked: boolean
 }
 
+//Cache keys and helpers
 const CACHE_PREFIX = 'atproto-likes:'
 const CACHE_PACKAGE_TOTAL_KEY = (packageName: string) => `${CACHE_PREFIX}:${packageName}:total`
 const CACHE_USER_LIKES_KEY = (packageName: string, did: string) =>
-  `${CACHE_PREFIX}${packageName}:users:${did}`
+  `${CACHE_PREFIX}${packageName}:users:${did}:liked`
+const CACHE_USERS_BACK_LINK = (packageName: string, did: string) =>
+  `${CACHE_PREFIX}${packageName}:users:${did}:backlink`
 
 const CACHE_MAX_AGE = CACHE_MAX_AGE_ONE_MINUTE * 5
 
+/**
+ * Logic to handle liking, unliking, and seeing if a user has liked a package on npmx
+ */
 export class PackageLikesUtils {
   private readonly constellation: Constellation
   private readonly cache: CacheAdapter
 
-  constructor(cachedFunction: CachedFetchFunction) {
-    this.constellation = new Constellation(cachedFunction)
+  constructor() {
+    this.constellation = new Constellation(
+      // Passes in a fetch wrapped as cachedfetch since are already doing some heavy caching here
+      async <T = unknown>(
+        url: string,
+        options: Parameters<typeof $fetch>[1] = {},
+        _ttl?: number,
+      ): Promise<CachedFetchResult<T>> => {
+        const data = (await $fetch<T>(url, options)) as T
+        return { data, isStale: false, cachedAt: null }
+      },
+    )
     this.cache = getCacheAdatper(CACHE_PREFIX)
   }
 
@@ -34,7 +50,6 @@ export class PackageLikesUtils {
    * @returns
    */
   private async constellationLikes(subjectRef: string) {
-    // TODO: I need to see what failed fetch calls do here
     const { data: totalLinks } = await this.constellation.getLinksDistinctDids(
       subjectRef,
       likeNsid,
@@ -65,7 +80,6 @@ export class PackageLikesUtils {
       [[usersDid]],
       0,
     )
-    //TODO: need to double check this logic
     return userLikes.total > 0
   }
 
@@ -135,10 +149,26 @@ export class PackageLikesUtils {
    * to the user's atproto repostiory
    * @param packageName
    * @param usersDid
+   * @param atUri - The URI of the like record
    */
-  async likeAPackageAndRetunLikes(packageName: string, usersDid: string): Promise<PackageLikes> {
+  async likeAPackageAndRetunLikes(
+    packageName: string,
+    usersDid: string,
+    atUri: string,
+  ): Promise<PackageLikes> {
     const totalLikesKey = CACHE_PACKAGE_TOTAL_KEY(packageName)
     const subjectRef = PACKAGE_SUBJECT_REF(packageName)
+
+    const splitAtUri = atUri.replace('at://', '').split('/')
+    const backLink = {
+      did: usersDid,
+      collection: splitAtUri[1],
+      rkey: splitAtUri[2],
+    } as Backlink
+
+    // We store the backlink incase a user is liking and unlikign rapidly. constellation takes a few seconds to capture the backlink
+    const usersBackLinkKey = CACHE_USERS_BACK_LINK(packageName, usersDid)
+    await this.cache.set(usersBackLinkKey, backLink, CACHE_MAX_AGE)
 
     let totalLikes = await this.cache.get<number>(totalLikesKey)
     if (!totalLikes) {
@@ -146,7 +176,7 @@ export class PackageLikesUtils {
       totalLikes = totalLikes + 1
       await this.cache.set(totalLikesKey, totalLikes, CACHE_MAX_AGE)
     }
-    // We already know the user has not liked the package so set in the cache
+    // We already know the user has not liked the package before so set in the cache
     await this.cache.set(CACHE_USER_LIKES_KEY(packageName, usersDid), true, CACHE_MAX_AGE)
     return {
       totalLikes: totalLikes,
@@ -164,6 +194,12 @@ export class PackageLikesUtils {
     packageName: string,
     usersDid: string,
   ): Promise<Backlink | undefined> {
+    const usersBackLinkKey = CACHE_USERS_BACK_LINK(packageName, usersDid)
+    const backLink = await this.cache.get<Backlink>(usersBackLinkKey)
+    if (backLink) {
+      return backLink
+    }
+
     const subjectRef = PACKAGE_SUBJECT_REF(packageName)
     const { data: userLikes } = await this.constellation.getBackLinks(
       subjectRef,
@@ -198,7 +234,10 @@ export class PackageLikesUtils {
     totalLikes = totalLikes - 1
     await this.cache.set(totalLikesKey, totalLikes, CACHE_MAX_AGE)
 
+    //Clean up
     await this.cache.delete(CACHE_USER_LIKES_KEY(packageName, usersDid))
+    await this.cache.delete(CACHE_USERS_BACK_LINK(packageName, usersDid))
+
     return {
       totalLikes: totalLikes,
       userHasLiked: false,
