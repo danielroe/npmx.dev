@@ -155,6 +155,7 @@
       "repo": "repo",
       "homepage": "beranda",
       "issues": "kendala",
+      "changelog": "changelog",
       "jsr": "jsr",
       "code": "kode",
       "docs": "dokumen",
