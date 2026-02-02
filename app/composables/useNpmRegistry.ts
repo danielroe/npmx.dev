@@ -631,29 +631,6 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
   return asyncData
 }
 
-/**
- * Returns a single package as an NpmSearchResult
- * Similar to useNpmSearch but for exact package lookups
- */
-export function useExactPackage(query: MaybeRefOrGetter<string>) {
-  const { data: pkg, status, error } = usePackage(query)
-  const { data: downloads } = usePackageDownloads(query)
-
-  const data = computed<NpmSearchResult | undefined>(() => {
-    if (!pkg.value) {
-      return undefined
-    }
-
-    return packumentToSearchResult(pkg.value, downloads.value?.downloads)
-  })
-
-  return {
-    data,
-    status,
-    error,
-  }
-}
-
 // ============================================================================
 // Package Versions
 // ============================================================================
