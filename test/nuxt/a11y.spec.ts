@@ -57,6 +57,7 @@ afterEach(() => {
 import {
   AppFooter,
   AppHeader,
+  AppPopover,
   UserAvatar,
   BuildEnvironment,
   CallToAction,
@@ -80,6 +81,7 @@ import {
   LoadingSpinner,
   PackageChartModal,
   PackageClaimPackageModal,
+  PackageProvenanceSection,
   HeaderConnectorModal,
   OrgMembersPanel,
   OrgOperationsQueue,
@@ -206,6 +208,43 @@ describe('component accessibility audits', () => {
   describe('AppFooter', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(AppFooter)
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('AppPopover', () => {
+    it('should have no accessibility violations when closed', async () => {
+      const component = await mountSuspended(AppPopover, {
+        slots: {
+          default: '<button type="button">Trigger</button>',
+          content: '<p>Popover content</p>',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations when open', async () => {
+      const component = await mountSuspended(AppPopover, {
+        slots: {
+          default: '<button type="button">Trigger</button>',
+          content: '<p>Popover content</p>',
+        },
+      })
+      await component.find('.relative').trigger('focusin')
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with position prop', async () => {
+      const component = await mountSuspended(AppPopover, {
+        props: { position: 'top' },
+        slots: {
+          default: '<button type="button">Trigger</button>',
+          content: '<p>Popover content</p>',
+        },
+      })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
@@ -739,6 +778,40 @@ describe('component accessibility audits', () => {
         props: {
           packageName: 'test-package',
           open: true,
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('PackageProvenanceSection', () => {
+    it('should have no accessibility violations with minimal details', async () => {
+      const component = await mountSuspended(PackageProvenanceSection, {
+        props: {
+          details: {
+            provider: 'github',
+            providerLabel: 'GitHub Actions',
+          },
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with full details', async () => {
+      const component = await mountSuspended(PackageProvenanceSection, {
+        props: {
+          details: {
+            provider: 'github',
+            providerLabel: 'GitHub Actions',
+            buildSummaryUrl: 'https://github.com/owner/repo/actions/runs/123',
+            sourceCommitUrl: 'https://github.com/owner/repo/commit/abc123',
+            sourceCommitSha: 'abc123def456',
+            buildFileUrl: 'https://github.com/owner/repo/blob/main/.github/workflows/release.yml',
+            buildFilePath: '.github/workflows/release.yml',
+            publicLedgerUrl: 'https://search.sigstore.dev/example',
+          },
         },
       })
       const results = await runAxe(component)
