@@ -79,6 +79,10 @@ function handleSearchFocus() {
   emit('focus')
 }
 
+function handleSubmit() {
+  updateUrlQuery.flush()
+}
+
 // Expose focus method for parent components
 const inputRef = shallowRef<HTMLInputElement | null>(null)
 function focus() {
@@ -88,7 +92,7 @@ defineExpose({ focus })
 </script>
 <template>
   <search v-if="showSearchBar" :class="'flex-1 sm:max-w-md ' + inputClass">
-    <form method="GET" action="/search" class="relative">
+    <form method="GET" action="/search" class="relative" @submit.prevent="handleSubmit">
       <label for="header-search" class="sr-only">
         {{ $t('search.label') }}
       </label>
