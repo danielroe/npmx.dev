@@ -631,7 +631,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: '',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -643,7 +643,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: 'src',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -667,7 +667,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: '',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -679,7 +679,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: 'src/index.ts',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -894,7 +894,7 @@ describe('component accessibility audits', () => {
         props: {
           tree: mockTree,
           currentPath: '',
-          baseUrl: '/code/vue',
+          baseUrl: '/package-code/vue',
         },
       })
       const results = await runAxe(component)
@@ -1779,7 +1779,7 @@ describe('component accessibility audits', () => {
           currentVersion: '3.5.0',
           versions: mockVersions,
           distTags: mockDistTags,
-          urlPattern: '/vue/v/{version}',
+          urlPattern: '/package/vue/v/{version}',
         },
       })
       const results = await runAxe(component)
@@ -1793,7 +1793,7 @@ describe('component accessibility audits', () => {
           currentVersion: '3.4.0',
           versions: mockVersions,
           distTags: mockDistTags,
-          urlPattern: '/vue/v/{version}',
+          urlPattern: '/package/vue/v/{version}',
         },
       })
       const results = await runAxe(component)
