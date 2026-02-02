@@ -12,7 +12,7 @@
   "non_affiliation_disclaimer": "npm, Inc. से संबद्ध नहीं है।",
   "trademark_disclaimer": "npm, npm, Inc. का पंजीकृत ट्रेडमार्क है। यह साइट npm, Inc. से संबद्ध नहीं है।",
   "footer": {
-    "about": "के बारे में",
+    "about": "हमारे बारे में जानकारी",
     "docs": "दस्तावेज़",
     "source": "स्रोत",
     "social": "सोशल",
@@ -714,8 +714,8 @@
     }
   },
   "about": {
-    "title": "के बारे में",
-    "heading": "के बारे में",
+    "title": "हमारे बारे में जानकारी",
+    "heading": "हमारे बारे में जानकारी",
     "meta_description": "npmx npm रजिस्ट्री के लिए एक तेज़, आधुनिक ब्राउज़र है। npm पैकेज अन्वेषण करने के लिए बेहतर UX/DX।",
     "back_home": "होम पर वापस जाएं",
     "what_we_are": {
