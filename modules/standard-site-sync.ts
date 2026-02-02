@@ -5,9 +5,15 @@ import { safeParse } from 'valibot'
 import * as site from '../shared/types/lexicons/site'
 import { BlogPostSchema } from '../shared/schemas/blog'
 import { NPMX_SITE } from '../shared/utils/constants'
+import { parseBasicFrontmatter } from '../shared/utils/parse-basic-frontmatter'
+import { TID } from '@atproto/common'
+import { Client } from '@atproto/lex'
 
 const syncedDocuments = new Map<string, string>()
+const CLOCK_ID_THREE = 3
+const DATE_TO_MICROSECONDS = 1000
 
+// TODO: Currently logging quite a lot, can remove some later if we want
 export default defineNuxtModule({
   meta: { name: 'standard-site-sync' },
   async setup() {
@@ -15,114 +21,117 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
     const contentDir = resolve('../app/pages/blog')
 
+    // Authentication with PDS using an app password
+    const pdsUrl = process.env.NPMX_PDS_URL
+    if (!pdsUrl) {
+      console.warn('[standard-site-sync] NPMX_PDS_URL not set, skipping sync')
+      return
+    }
+    // Instantiate a single new client instance that is reused for every file
+    const client = new Client(pdsUrl)
+
     if (nuxt.options._prepare) return
 
     nuxt.hook('build:before', async () => {
-      const glob = await import('fast-glob').then(m => m.default)
-      const files = await glob(`${contentDir}/**/*.md`)
+      const { globby } = await import('globby')
+      const files: string[] = await globby(`${contentDir}/**/*.md`)
 
-      for (const file of files) {
-        await syncFile(file, NPMX_SITE)
+      // INFO: Arbitrarily chosen concurrency limit, can be changed if needed
+      const concurrencyLimit = 5
+      for (let i = 0; i < files.length; i += concurrencyLimit) {
+        const batch = files.slice(i, i + concurrencyLimit)
+        // Process files in parallel
+        await Promise.all(
+          batch.map(file =>
+            syncFile(file, NPMX_SITE, client).catch(error =>
+              console.error(`[standard-site-sync] Error in ${file}:` + error),
+            ),
+          ),
+        )
       }
     })
 
-    nuxt.hook('builder:watch', async (_event, path) => {
-      if (path.endsWith('.md')) {
-        await syncFile(resolve(nuxt.options.rootDir, path), NPMX_SITE)
+    nuxt.hook('builder:watch', async (event, path) => {
+      if (!path.endsWith('.md')) return
+
+      // Ignore deleted files
+      if (event === 'unlink') {
+        console.log(`[standard-site-sync] File deleted: ${path}`)
+        return
       }
+
+      // Process add/change events only
+      await syncFile(resolve(nuxt.options.rootDir, path), NPMX_SITE, client).catch(err =>
+        console.error(`[standard-site-sync] Failed ${path}:`, err),
+      )
     })
   },
 })
 
-// TODO: Placeholder algo, can likely be simplified
-function parseBasicFrontmatter(fileContent: string): Record<string, any> {
-  const match = fileContent.match(/^---\r?\n([\s\S]+?)\r?\n---/)
-  if (!match) return {}
+/*
+ * INFO: Loads record to atproto and ensures uniqueness by checking the date the article is published
+ * publishedAt is an id that does not change
+ * Atomicity is enforced with upsert using publishedAt so we always update existing records instead of creating new ones
+ * Clock id(3) provides a deterministic ID
+ * WARN: DOES NOT CATCH ERRORS, THIS MUST BE HANDLED
+ */
+const syncFile = async (filePath: string, siteUrl: string, client: Client) => {
+  const fileContent = readFileSync(filePath, 'utf-8')
+  const frontmatter = parseBasicFrontmatter(fileContent)
 
-  const obj: Record<string, any> = {}
-  const lines = match[1]?.split('\n')
-
-  if (!lines) return {}
-
-  for (const line of lines) {
-    const [key, ...valParts] = line.split(':')
-    if (key && valParts.length) {
-      let value = valParts.join(':').trim()
-
-      // Remove surrounding quotes
-      value = value.replace(/^["']|["']$/g, '')
-
-      // Handle Booleans
-      if (value === 'true') {
-        obj[key.trim()] = true
-        continue
-      }
-      if (value === 'false') {
-        obj[key.trim()] = false
-        continue
-      }
-
-      // Handle basic array [tag1, tag2]
-      if (value.startsWith('[') && value.endsWith(']')) {
-        obj[key.trim()] = value
-          .slice(1, -1)
-          .split(',')
-          .map(s => s.trim().replace(/^["']|["']$/g, ''))
-      } else {
-        obj[key.trim()] = value
-      }
-    }
+  // Schema expects 'path' & frontmatter provides 'slug'
+  const normalizedFrontmatter = {
+    ...frontmatter,
+    path: typeof frontmatter.slug === 'string' ? `/blog/${frontmatter.slug}` : frontmatter.path,
   }
-  return obj
-}
 
-const syncFile = async (filePath: string, siteUrl: string) => {
-  try {
-    const fileContent = readFileSync(filePath, 'utf-8')
-    const frontmatter = parseBasicFrontmatter(fileContent)
-
-    // Schema expects 'path' & frontmatter provides 'slug'
-    if (frontmatter.slug) {
-      frontmatter.path = `/blog/${frontmatter.slug}`
-    }
-
-    const result = safeParse(BlogPostSchema, frontmatter)
-    if (!result.success) {
-      console.warn(`[standard-site-sync] Validation failed for ${filePath}`, result.issues)
-      return
-    }
-
-    const data = result.output
-
-    // filter drafts
-    if (data.draft) {
-      if (process.env.DEBUG === 'true') {
-        console.debug(`[standard-site-sync] Skipping draft: ${data.path}`)
-      }
-      return
-    }
-
-    const hash = createHash('sha1').update(JSON.stringify(data)).digest('hex')
-
-    if (syncedDocuments.get(data.path) === hash) {
-      return
-    }
-
-    // TODO: Review later
-    const document = site.standard.document.$build({
-      site: siteUrl as `${string}:${string}`,
-      path: data.path,
-      title: data.title,
-      description: data.description ?? data.excerpt,
-      tags: data.tags,
-      publishedAt: new Date(data.date).toISOString(),
-    })
-
-    console.log('[standard-site-sync] Pushing:', JSON.stringify(document, null, 2))
-    // TODO: Real PDS push
-
-    syncedDocuments.set(data.path, hash)
-  } catch (error) {
-    console.error(`[standard-site-sync] Error in ${filePath}:`, error)
+  const result = safeParse(BlogPostSchema, normalizedFrontmatter)
+  if (!result.success) {
+    console.warn(`[standard-site-sync] Validation failed for ${filePath}`, result.issues)
+    return
   }
+
+  const data = result.output
+
+  // filter drafts
+  if (data.draft) {
+    if (process.env.DEBUG === 'true') {
+      console.debug(`[standard-site-sync] Skipping draft: ${data.path}`)
+    }
+    return
+  }
+
+  // Keys are sorted to provide a more stable hash
+  const hash = createHash('sha256')
+    .update(JSON.stringify(data, Object.keys(data).sort()))
+    .digest('hex')
+
+  if (syncedDocuments.get(data.path) === hash) {
+    return
+  }
+
+  const document = site.standard.document.$build({
+    site: siteUrl as `${string}:${string}`,
+    path: data.path,
+    title: data.title,
+    description: data.description ?? data.excerpt,
+    tags: data.tags,
+    // This can be extended to update the site.standard.document .updatedAt if it is changed and use the posts date here
+    publishedAt: new Date(data.date).toISOString(),
+  })
+
+  const dateInMicroSeconds = new Date(result.output.date).getTime() * DATE_TO_MICROSECONDS
+
+  // Clock id(3) needs to be the same everytime to get the same TID from a timestamp
+  const tid = TID.fromTime(dateInMicroSeconds, CLOCK_ID_THREE)
+
+  // client.put is async and needs to be awaited
+  await client.put(site.standard.document, document, {
+    rkey: tid.str,
+  })
+
+  // TODO: Replace with real PDS push
+  console.log('[standard-site-sync] Pushing:', JSON.stringify(document, null, 2))
+
+  syncedDocuments.set(data.path, hash)
 }

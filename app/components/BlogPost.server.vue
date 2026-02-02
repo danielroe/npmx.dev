@@ -15,6 +15,7 @@ const props = defineProps<{ title: string; htmlContent: string; date: string }>(
       class="text-xs text-fg-subtle"
     />
 
+    <!-- INFO: v-html can only be used in ssr on html elements, not components -->
     <div class="" v-html="htmlContent" />
   </main>
 </template>

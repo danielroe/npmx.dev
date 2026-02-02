@@ -36,8 +36,9 @@
     "start:playwright:webserver": "NODE_ENV=test pnpm build && pnpm preview --port 5678"
   },
   "dependencies": {
-    "@atproto/api": "^0.18.17",
     "@atcute/bluesky-richtext-segmenter": "3.0.0",
+    "@atproto/api": "^0.18.17",
+    "@atproto/common": "0.5.10",
     "@atproto/lex": "0.0.13",
     "@atproto/oauth-client-node": "^0.3.15",
     "@deno/doc": "jsr:^0.189.1",
@@ -71,6 +72,7 @@
     "@vueuse/nuxt": "14.2.0",
     "@vueuse/router": "^14.2.0",
     "focus-trap": "^7.8.0",
+    "globby": "16.1.0",
     "marked": "17.0.1",
     "module-replacements": "2.11.0",
     "nuxt": "4.3.0",
@@ -83,6 +85,7 @@
     "simple-git": "3.30.0",
     "spdx-license-list": "6.11.0",
     "std-env": "3.10.0",
+    "tinyglobby": "0.2.15",
     "ufo": "1.6.3",
     "unocss": "66.6.0",
     "unplugin-vue-router": "0.19.2",
