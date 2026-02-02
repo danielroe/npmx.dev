@@ -1005,33 +1005,7 @@ defineOgImageComponent('Package', {
           </ClientOnly>
 
           <!-- Keywords -->
-          <section id="keywords" v-if="displayVersion?.keywords?.length" class="scroll-mt-20">
-            <h2
-              id="keywords-heading"
-              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
-            >
-              <a
-                href="#keywords"
-                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-              >
-                {{ $t('package.keywords_title') }}
-                <span
-                  class="i-carbon:link w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  aria-hidden="true"
-                />
-              </a>
-            </h2>
-            <ul class="flex flex-wrap gap-1.5 list-none m-0 p-0">
-              <li v-for="keyword in displayVersion.keywords.slice(0, 15)" :key="keyword">
-                <TagClickable
-                  :as="NuxtLink"
-                  :to="{ name: 'search', query: { q: `keywords:${keyword}` } }"
-                >
-                  {{ keyword }}
-                </TagClickable>
-              </li>
-            </ul>
-          </section>
+          <PackageKeywords :keywords="displayVersion?.keywords" />
 
           <!-- Agent Skills -->
           <ClientOnly>
@@ -1052,43 +1026,7 @@ defineOgImageComponent('Package', {
             :links="readmeData.playgroundLinks"
           />
 
-          <section
-            id="compatibility"
-            v-if="
-              displayVersion?.engines && (displayVersion.engines.node || displayVersion.engines.npm)
-            "
-            class="scroll-mt-20"
-          >
-            <h2
-              id="compatibility-heading"
-              class="group text-xs text-fg-subtle uppercase tracking-wider mb-3"
-            >
-              <a
-                href="#compatibility"
-                class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-              >
-                {{ $t('package.compatibility') }}
-                <span
-                  class="i-carbon:link w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                  aria-hidden="true"
-                />
-              </a>
-            </h2>
-            <dl class="space-y-2">
-              <div v-if="displayVersion.engines.node" class="flex justify-between gap-4 py-1">
-                <dt class="text-fg-muted text-sm shrink-0">node</dt>
-                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.node">
-                  {{ displayVersion.engines.node }}
-                </dd>
-              </div>
-              <div v-if="displayVersion.engines.npm" class="flex justify-between gap-4 py-1">
-                <dt class="text-fg-muted text-sm shrink-0">npm</dt>
-                <dd class="font-mono text-sm text-fg text-end" :title="displayVersion.engines.npm">
-                  {{ displayVersion.engines.npm }}
-                </dd>
-              </div>
-            </dl>
-          </section>
+          <PackageCompatibility :engines="displayVersion?.engines" />
 
           <!-- Versions (grouped by release channel) -->
           <PackageVersions
