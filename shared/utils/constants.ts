@@ -45,5 +45,5 @@ export const BACKGROUND_THEMES = {
   stone: 'oklch(0.555 0.013 58.123)',
   zinc: 'oklch(0.555 0.016 285.931)',
   slate: 'oklch(0.555 0.046 257.407)',
-  contrast: 'oklch(0.4 0 0)',
+  black: 'oklch(0.4 0 0)',
 } as const

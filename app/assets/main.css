@@ -17,7 +17,7 @@
   --fg-muted: oklch(0.709 0 0);
   --fg-subtle: oklch(0.633 0 0);
 
-  /* border, seperator colors */
+  /* border, separator colors */
   --border: oklch(0.269 0 0);
   --border-subtle: oklch(0.239 0 0);
   --border-hover: oklch(0.371 0 0);
@@ -64,7 +64,7 @@
   --bg-elevated: oklch(0.252 0.007 34.298);
 }
 
-:root[data-theme='dark'][data-bg-theme='contrast'] {
+:root[data-theme='dark'][data-bg-theme='black'] {
   --bg: oklch(0 0 0);
   --bg-subtle: oklch(0.148 0 0);
   --bg-muted: oklch(0.204 0 0);
