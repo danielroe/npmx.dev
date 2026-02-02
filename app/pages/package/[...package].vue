@@ -418,28 +418,37 @@ function handleClick(event: MouseEvent) {
       >
         <!-- Package name and version -->
         <div class="flex items-baseline gap-2 sm:gap-3 flex-wrap min-w-0">
-          <h1
-            class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-            :title="pkg.name"
-          >
-            <NuxtLink
-              v-if="orgName"
-              :to="{ name: 'org', params: { org: orgName } }"
-              class="text-fg-muted hover:text-fg transition-colors duration-200"
-              >@{{ orgName }}</NuxtLink
-            ><span v-if="orgName">/</span>
+          <div class="group relative flex flex-col items-start min-w-0">
+            <h1
+              class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+              :title="pkg.name"
+            >
+              <NuxtLink
+                v-if="orgName"
+                :to="{ name: 'org', params: { org: orgName } }"
+                class="text-fg-muted hover:text-fg transition-colors duration-200"
+              >
+                @{{ orgName }}
+              </NuxtLink>
+              <span v-if="orgName">/</span>
+              <span :class="{ 'text-fg-muted': orgName }">
+                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+              </span>
+            </h1>
+
+            <!-- Floating copy button -->
             <TooltipAnnounce :text="$t('common.copied')" :isVisible="copiedPkgName">
               <button
+                type="button"
                 @click="copyPkgName()"
-                aria-describedby="copy-pkg-name"
-                class="cursor-copy active:scale-95 transition-transform"
+                class="copy-button absolute z-20 left-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap text-fg-muted bg-bg border-border opacity-0 -translate-y-1 pointer-events-none transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/40"
+                :aria-label="$t('package.copy_name')"
               >
-                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                <span class="i-carbon:copy w-3.5 h-3.5" aria-hidden="true" />
+                {{ $t('package.copy_name') }}
               </button>
             </TooltipAnnounce>
-          </h1>
-
-          <span id="copy-pkg-name" class="sr-only">{{ $t('package.copy_name') }}</span>
+          </div>
           <span
             v-if="resolvedVersion"
             class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
@@ -1151,7 +1160,7 @@ function handleClick(event: MouseEvent) {
       'install install'
       'vulns   vulns'
       'readme  sidebar';
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-rows: auto auto auto auto 1fr;
   }
 }
 
@@ -1224,5 +1233,11 @@ function handleClick(event: MouseEvent) {
 .package-page > * {
   max-width: 100%;
   min-width: 0;
+}
+
+@media (hover: none) {
+  .copy-button {
+    display: none;
+  }
 }
 </style>
