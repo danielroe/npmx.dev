@@ -1,15 +1,8 @@
-import type { H3Event } from 'h3'
-import { createError, getQuery } from 'h3'
+import { createError } from 'h3'
 import * as v from 'valibot'
 import { GravatarQuerySchema } from '#shared/schemas/user'
 import { getGravatarFromUsername } from '#server/utils/gravatar'
 import { handleApiError } from '#server/utils/error-handler'
-
-function getQueryParam(event: H3Event, key: string): string {
-  const query = getQuery(event)
-  const value = query[key]
-  return Array.isArray(value) ? String(value[0] ?? '') : String(value ?? '')
-}
 
 export default defineCachedEventHandler(
   async event => {
@@ -41,9 +34,8 @@ export default defineCachedEventHandler(
     maxAge: CACHE_MAX_AGE_ONE_DAY,
     swr: true,
     getKey: event => {
-      const username = getQueryParam(event, 'username').trim().toLowerCase()
-      const size = getQueryParam(event, 'size') || '80'
-      return `gravatar:v1:${username}:${size}`
+      const username = getRouterParam(event, 'username')?.trim().toLowerCase()
+      return `gravatar:v1:${username}`
     },
   },
 )

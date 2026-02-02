@@ -5,6 +5,9 @@ const props = defineProps<{
 
 const { data: gravatarUrl } = useLazyFetch(() => `/api/gravatar/${props.username}`, {
   transform: res => (res.hash ? `/_avatar/${res.hash}?s=128&d=404` : null),
+  getCachedData(key, nuxtApp) {
+    return nuxtApp.static.data[key] ?? nuxtApp.payload.data[key]
+  },
 })
 </script>
 
