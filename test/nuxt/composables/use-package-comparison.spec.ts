@@ -51,7 +51,7 @@ describe('usePackageComparison', () => {
       vi.stubGlobal(
         '$fetch',
         vi.fn().mockImplementation((url: string) => {
-          if (url.includes('registry.npmjs.org')) {
+          if (url.startsWith('https://registry.npmjs.org/')) {
             return Promise.resolve({
               'name': 'test-package',
               'dist-tags': { latest: '2.0.0' },
@@ -94,7 +94,7 @@ describe('usePackageComparison', () => {
       vi.stubGlobal(
         '$fetch',
         vi.fn().mockImplementation((url: string) => {
-          if (url.includes('registry.npmjs.org')) {
+          if (url.startsWith('https://registry.npmjs.org/')) {
             return Promise.resolve({
               'name': 'test-package',
               'dist-tags': { latest: '1.0.0' },
@@ -129,7 +129,7 @@ describe('usePackageComparison', () => {
       vi.stubGlobal(
         '$fetch',
         vi.fn().mockImplementation((url: string) => {
-          if (url.includes('registry.npmjs.org')) {
+          if (url.startsWith('https://registry.npmjs.org/')) {
             return Promise.resolve({
               'name': 'old-package',
               'dist-tags': { latest: '1.0.0' },
@@ -160,7 +160,7 @@ describe('usePackageComparison', () => {
       vi.stubGlobal(
         '$fetch',
         vi.fn().mockImplementation((url: string) => {
-          if (url.includes('registry.npmjs.org')) {
+          if (url.startsWith('https://registry.npmjs.org/')) {
             return Promise.resolve({
               'name': 'fresh-package',
               'dist-tags': { latest: '1.0.0' },
