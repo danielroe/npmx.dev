@@ -19,6 +19,11 @@ function openChartModal() {
   nextTick(() => chartModal.open())
 }
 
+function handleCloseChartModal() {
+  isChartModalOpen.value = false
+  isChartModalReady.value = false
+}
+
 const { fetchPackageDownloadEvolution } = useCharts()
 
 const { accentColors, selectedAccentColor } = useAccentColor()
@@ -252,10 +257,7 @@ const config = computed(() => {
     v-if="isChartModalOpen"
     @close="isChartModalOpen = false"
     @opened="isChartModalReady = true"
-    @closed="
-      isChartModalOpen = false
-      isChartModalReady = false
-    "
+    @closed="handleCloseChartModal"
   >
     <!-- The chart is only rendered when the dialog element has fully transitioned, to avoid the chart from triggering too early its internal auto-sizing -->
     <PackageDownloadAnalytics
