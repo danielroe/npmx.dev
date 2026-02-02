@@ -72,10 +72,20 @@ const {
   isLoadingMore,
   hasMore,
   fetchMore,
+  error,
 } = useNpmSearch(query, () => ({
   size: requestedSize.value,
   incremental: true,
 }))
+
+interface SearchError {
+  code?: string
+}
+
+const hasTextLengthError = computed<boolean>(() => {
+  const errorData = error.value?.data as SearchError | undefined
+  return errorData?.code === 'ERR_TEXT_LENGTH'
+})
 
 // Results to display (directly from incremental search)
 const rawVisibleResults = computed(() => results.value)
@@ -594,6 +604,25 @@ defineOgImageComponent('Default', {
       <h1 class="font-mono text-2xl sm:text-3xl font-medium mb-4">
         {{ $t('search.title') }}
       </h1>
+      <div
+        v-if="hasTextLengthError"
+        class="mb-6 p-4 bg-bg-subtle border border-border rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
+      >
+        <div class="flex-1 min-w-0">
+          <p class="font-mono text-sm text-fg">
+            {{ $t('search.not_invalid') }}
+          </p>
+          <p class="text-xs text-fg-muted mt-0.5">
+            {{ $t('search.not_invalid_description') }}
+          </p>
+        </div>
+        <NuxtLink
+          :to="{ name: 'package', params: { package: [query] } }"
+          class="shrink-0 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md hover:text-fg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        >
+          {{ $t('search.not_invalid_button_label', { name: query }) }}
+        </NuxtLink>
+      </div>
 
       <section v-if="query">
         <!-- Initial loading (only after user interaction, not during view transition) -->
@@ -698,7 +727,7 @@ defineOgImageComponent('Default', {
           </div>
 
           <!-- No results found -->
-          <div v-else-if="status !== 'pending'" role="status" class="py-12">
+          <div v-else-if="status !== 'pending' && !hasTextLengthError" role="status" class="py-12">
             <p class="text-fg-muted font-mono mb-6 text-center">
               {{ $t('search.no_results', { query }) }}
             </p>
