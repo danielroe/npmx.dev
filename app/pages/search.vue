@@ -709,25 +709,7 @@ defineOgImageComponent('Default', {
 
           <!-- No results found -->
           <div v-else-if="status !== 'pending'" role="status" class="py-12">
-            <div
-              v-if="hasTextLengthError"
-              class="p-4 bg-bg-subtle border border-border rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
-            >
-              <div class="flex-1 min-w-0">
-                <p class="font-mono text-sm text-fg">
-                  {{ $t('search.not_invalid') }}
-                </p>
-                <p class="text-xs text-fg-muted mt-0.5">
-                  {{ $t('search.not_invalid_description') }}
-                </p>
-              </div>
-              <NuxtLink
-                :to="{ name: 'package', params: { package: [query] } }"
-                class="shrink-0 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md hover:bg-fg/90 hover:text-bg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-              >
-                {{ $t('search.not_invalid_button_label', { name: query }) }}
-              </NuxtLink>
-            </div>
+            <PackageCardExact v-if="hasTextLengthError" :query />
             <p v-else class="text-fg-muted font-mono mb-6 text-center">
               {{ $t('search.no_results', { query }) }}
             </p>
