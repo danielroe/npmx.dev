@@ -56,6 +56,7 @@ afterEach(() => {
 // For server/client variants, we need to import directly to test the specific variant
 import {
   AppFooter,
+  AppLogo,
   AppHeader,
   UserAvatar,
   BuildEnvironment,
@@ -173,6 +174,22 @@ describe('component accessibility audits', () => {
           month: 'short',
           day: 'numeric',
         },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('AppLogo', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(AppLogo)
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with custom class', async () => {
+      const component = await mountSuspended(AppLogo, {
+        props: { class: 'h-6 w-6 text-accent' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
