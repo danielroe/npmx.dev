@@ -99,9 +99,9 @@ export default defineNuxtConfig({
     '/search': { isr: false, cache: false },
     '/api/auth/**': { isr: false, cache: false },
     // infinite cache (versioned - doesn't change)
-    '/code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/docs/:pkg/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/docs/:scope/:pkg/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/package-docs/:pkg/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/package-docs/:scope/:pkg/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/file/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/files/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -161,6 +161,11 @@ export default defineNuxtConfig({
       'oauth-atproto-session': {
         driver: 'fsLite',
         base: './.cache/atproto-oauth/session',
+      },
+    },
+    typescript: {
+      tsConfig: {
+        include: ['../test/unit/server/**/*.ts'],
       },
     },
   },
