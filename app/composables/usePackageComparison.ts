@@ -23,8 +23,8 @@ export interface PackageComparisonData {
     /**
      * Publish date of this version (ISO 8601 date-time string).
      * Uses `time[version]` from the registry, NOT `time.modified`.
-     * For example, if the package was most recently *published 3 years ago
-     * but a maintainer was removed last week, this would show the 'last week' time.
+     * For example, if the package was most recently published 3 years ago
+     * but a maintainer was removed last week, this would show the '3 years ago' time.
      */
     lastUpdated?: string
     engines?: { node?: string; npm?: string }

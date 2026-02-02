@@ -847,7 +847,7 @@ function handleClick(event: MouseEvent) {
           </ClientOnly>
 
           <div
-            v-if="displayVersion && pkg.time?.[displayVersion.version]"
+            v-if="resolvedVersion && pkg.time?.[resolvedVersion]"
             class="space-y-1 sm:col-span-2"
           >
             <dt
@@ -855,14 +855,14 @@ function handleClick(event: MouseEvent) {
               :title="
                 $t('package.stats.published_tooltip', {
                   package: pkg.name,
-                  version: displayVersion.version,
+                  version: resolvedVersion,
                 })
               "
             >
               {{ $t('package.stats.published') }}
             </dt>
             <dd class="font-mono text-sm text-fg">
-              <DateTime :datetime="pkg.time[displayVersion.version]!" date-style="medium" />
+              <DateTime :datetime="pkg.time[resolvedVersion]!" date-style="medium" />
             </dd>
           </div>
         </dl>
@@ -872,7 +872,7 @@ function handleClick(event: MouseEvent) {
           <PackageSkillsModal
             :skills="skillsData?.skills ?? []"
             :package-name="pkg.name"
-            :version="displayVersion?.version"
+            :version="resolvedVersion || undefined"
           />
         </ClientOnly>
       </section>
@@ -1027,7 +1027,7 @@ function handleClick(event: MouseEvent) {
               v-if="skillsData?.skills?.length"
               :skills="skillsData.skills"
               :package-name="pkg.name"
-              :version="displayVersion?.version"
+              :version="resolvedVersion || undefined"
             />
           </ClientOnly>
 
