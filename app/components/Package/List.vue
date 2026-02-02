@@ -39,6 +39,8 @@ const props = defineProps<{
   paginationMode?: PaginationMode
   /** Current page (1-indexed) for paginated mode */
   currentPage?: number
+  /** When true, shows search-specific UI (relevance sort, no filters) */
+  searchContext?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -60,7 +62,11 @@ const sortOption = defineModel<SortOption>('sortOption')
 
 // View mode and columns
 const viewMode = computed(() => props.viewMode ?? 'cards')
-const columns = computed(() => props.columns ?? DEFAULT_COLUMNS)
+const columns = computed(() => {
+  const targetColumns = props.columns ?? DEFAULT_COLUMNS
+  if (props.searchContext) return targetColumns.map(column => ({ ...column, sortable: false }))
+  return targetColumns
+})
 // Table view forces pagination mode (no virtualization for tables)
 const paginationMode = computed(() =>
   viewMode.value === 'table' ? 'paginated' : (props.paginationMode ?? 'infinite'),

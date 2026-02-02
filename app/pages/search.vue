@@ -737,6 +737,7 @@ defineOgImageComponent('Default', {
             v-if="displayResults.length > 0"
             :results="displayResults"
             :search-query="query"
+            search-context
             heading-level="h2"
             show-publisher
             :has-more="hasMore"
