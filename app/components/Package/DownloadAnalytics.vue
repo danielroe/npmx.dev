@@ -595,7 +595,11 @@ const config = computed(() => {
         customFormat: ({ datapoint }: { datapoint: Record<string, any> }) => {
           if (!datapoint) return ''
           const displayValue = formatter({ value: datapoint[0]?.value ?? 0 })
-          return `<div class="flex flex-col font-mono text-xs p-3 border border-border rounded-md bg-[var(--bg)]/10 backdrop-blur-md">
+          // Use higher opacity in light mode for better contrast
+          const bgClass = isDarkMode.value
+            ? 'bg-[var(--bg)]/10'
+            : 'bg-[var(--bg)]/90'
+          return `<div class="flex flex-col font-mono text-xs p-3 border border-border rounded-md ${bgClass} backdrop-blur-md">
           <span class="text-xl text-[var(--fg)]">${displayValue}</span>
         </div>
         `
