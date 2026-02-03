@@ -31,6 +31,7 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 
+const { settings } = useSettings()
 const relativeDates = useRelativeDates()
 
 const dateFormatter = new Intl.DateTimeFormat(locale.value, {
@@ -51,27 +52,18 @@ const titleValue = computed(() => {
 </script>
 
 <template>
-  <span>
-    <ClientOnly>
-      <NuxtTime
-        v-if="relativeDates"
-        :datetime="datetime"
-        :title="titleValue"
-        relative
-        :locale="locale"
-      />
-      <NuxtTime
-        v-else
-        :datetime="datetime"
-        :title="titleValue"
-        :date-style="dateStyle"
-        :year="year"
-        :month="month"
-        :day="day"
-        :locale="locale"
-      />
-      <template #fallback>
+  <button @click="settings.relativeDates = !settings.relativeDates">
+    <span>
+      <ClientOnly>
         <NuxtTime
+          v-if="relativeDates"
+          :datetime="datetime"
+          :title="titleValue"
+          relative
+          :locale="locale"
+        />
+        <NuxtTime
+          v-else
           :datetime="datetime"
           :title="titleValue"
           :date-style="dateStyle"
@@ -80,7 +72,18 @@ const titleValue = computed(() => {
           :day="day"
           :locale="locale"
         />
-      </template>
-    </ClientOnly>
-  </span>
+        <template #fallback>
+          <NuxtTime
+            :datetime="datetime"
+            :title="titleValue"
+            :date-style="dateStyle"
+            :year="year"
+            :month="month"
+            :day="day"
+            :locale="locale"
+          />
+        </template>
+      </ClientOnly>
+    </span>
+  </button>
 </template>
