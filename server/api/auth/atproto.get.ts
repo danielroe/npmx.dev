@@ -3,7 +3,7 @@ import { NodeOAuthClient } from '@atproto/oauth-client-node'
 import { createError, getQuery, sendRedirect } from 'h3'
 import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { SLINGSHOT_HOST } from '#shared/utils/constants'
-import type { UserSession } from '#shared/schemas/userSession'
+import { useServerSession } from '~~/server/utils/server-session'
 
 export default defineEventHandler(async event => {
   const config = useRuntimeConfig(event)
@@ -16,7 +16,8 @@ export default defineEventHandler(async event => {
 
   const query = getQuery(event)
   const clientMetadata = getOauthClientMetadata()
-  const { stateStore, sessionStore } = useOAuthStorage(event)
+  const session = await useServerSession(event)
+  const { stateStore, sessionStore } = useOAuthStorage(session)
 
   const atclient = new NodeOAuthClient({
     stateStore,
@@ -48,17 +49,19 @@ export default defineEventHandler(async event => {
   const agent = new Agent(authSession)
   event.context.agent = agent
 
-  const session = await useSession(event, {
-    password: config.sessionPassword,
-  })
-
   const response = await fetch(
     `https://${SLINGSHOT_HOST}/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
     { headers: { 'User-Agent': 'npmx' } },
   )
-  const miniDoc = (await response.json()) as UserSession
+  const miniDoc = await response.json()
 
-  await session.update(miniDoc)
+  await session.update({
+    public: {
+      did: miniDoc.did,
+      handle: miniDoc.handle,
+      pds: miniDoc.pds,
+    },
+  })
 
   return sendRedirect(event, '/')
 })
