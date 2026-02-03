@@ -514,7 +514,7 @@ defineOgImageComponent('Package', {
           </div>
 
           <a
-            v-if="repositoryUrl && repoMeta && starsLink"
+            v-if="starsLink && stars"
             :href="starsLink"
             target="_blank"
             rel="noopener noreferrer"
@@ -550,7 +550,7 @@ defineOgImageComponent('Package', {
                   class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
                 >
                   <span class="w-4 h-4" :class="repoProviderIcon" aria-hidden="true" />
-                  <span v-if="repoRef">{{ repoRef.provider }}</span>
+                  <span v-if="repoRef?.provider">{{ repoRef.provider }}</span>
                   <span v-else>{{ $t('package.links.repo') }}</span>
                 </a>
               </li>
