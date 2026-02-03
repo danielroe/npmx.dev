@@ -7,6 +7,15 @@ import { SLINGSHOT_HOST } from '#shared/utils/constants'
 import { useServerSession } from '#server/utils/server-session'
 import type { PublicUserSession } from '#shared/schemas/publicUserSession'
 
+interface ProfileRecord {
+  avatar?: {
+    $type: 'blob'
+    ref: { $link: string }
+    mimeType: string
+    size: number
+  }
+}
+
 export default defineEventHandler(async event => {
   const config = useRuntimeConfig(event)
   if (!config.sessionPassword) {
@@ -58,8 +67,33 @@ export default defineEventHandler(async event => {
   )
   if (response.ok) {
     const miniDoc: PublicUserSession = await response.json()
+
+    // Fetch the user's profile record to get their avatar blob reference
+    // We use com.atproto.repo.getRecord to fetch directly from the user's PDS
+    // This works with any PDS, not just Bluesky
+    let avatar: string | undefined
+    try {
+      const profileResponse = await fetch(
+        `${miniDoc.pds}/xrpc/com.atproto.repo.getRecord?repo=${encodeURIComponent(agent.did!)}&collection=app.bsky.actor.profile&rkey=self`,
+        { headers: { 'User-Agent': 'npmx' } },
+      )
+      if (profileResponse.ok) {
+        const record = (await profileResponse.json()) as { value: ProfileRecord }
+        const avatarBlob = record.value.avatar
+        if (avatarBlob?.ref?.$link) {
+          // Construct the blob URL from the user's PDS
+          avatar = `${miniDoc.pds}/xrpc/com.atproto.sync.getBlob?did=${encodeURIComponent(agent.did!)}&cid=${encodeURIComponent(avatarBlob.ref.$link)}`
+        }
+      }
+    } catch {
+      // Avatar fetch failed, continue without it
+    }
+
     await session.update({
-      public: miniDoc,
+      public: {
+        ...miniDoc,
+        avatar,
+      },
     })
   }
 
