@@ -33,8 +33,8 @@ export default defineNuxtModule({
     if (nuxt.options._prepare) return
 
     nuxt.hook('build:before', async () => {
-      const { globby } = await import('globby')
-      const files: string[] = await globby(`${contentDir}/**/*.md`)
+      const { glob } = await import('tinyglobby')
+      const files: string[] = await glob(`${contentDir}/**/*.md`)
 
       // INFO: Arbitrarily chosen concurrency limit, can be changed if needed
       const concurrencyLimit = 5

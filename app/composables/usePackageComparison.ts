@@ -1,28 +1,49 @@
-import type { FacetValue, ComparisonFacet, ComparisonPackage } from '#shared/types'
+import type {
+  FacetValue,
+  ComparisonFacet,
+  ComparisonPackage,
+  Packument,
+  VulnerabilityTreeResult,
+} from '#shared/types'
+import { encodePackageName } from '#shared/utils/npm'
 import type { PackageAnalysisResponse } from './usePackageAnalysis'
+import { isBinaryOnlyPackage } from '#shared/utils/binary-detection'
+import { formatBytes } from '~/utils/formatters'
+import { getDependencyCount } from '~/utils/npm/dependency-count'
 
 export interface PackageComparisonData {
   package: ComparisonPackage
   downloads?: number
   /** Package's own unpacked size (from dist.unpackedSize) */
   packageSize?: number
+  /** Number of direct dependencies */
+  directDeps: number | null
   /** Install size data (fetched lazily) */
   installSize?: {
     selfSize: number
     totalSize: number
+    /** Total dependency count */
     dependencyCount: number
   }
   analysis?: PackageAnalysisResponse
   vulnerabilities?: {
     count: number
-    severity: { critical: number; high: number; medium: number; low: number }
+    severity: { critical: number; high: number; moderate: number; low: number }
   }
   metadata?: {
     license?: string
+    /**
+     * Publish date of this version (ISO 8601 date-time string).
+     * Uses `time[version]` from the registry, NOT `time.modified`.
+     * For example, if the package was most recently published 3 years ago
+     * but a maintainer was removed last week, this would show the '3 years ago' time.
+     */
     lastUpdated?: string
     engines?: { node?: string; npm?: string }
     deprecated?: string
   }
+  /** Whether this is a binary-only package (CLI without library entry points) */
+  isBinaryOnly?: boolean
 }
 
 /**
@@ -30,6 +51,7 @@ export interface PackageComparisonData {
  *
  */
 export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
+  const { t } = useI18n()
   const packages = computed(() => toValue(packageNames))
 
   // Cache of fetched data by package name (source of truth)
@@ -74,13 +96,9 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
         namesToFetch.map(async (name): Promise<PackageComparisonData | null> => {
           try {
             // Fetch basic package info first (required)
-            const pkgData = await $fetch<{
-              'name': string
-              'dist-tags': Record<string, string>
-              'time': Record<string, string>
-              'license'?: string
-              'versions': Record<string, { dist?: { unpackedSize?: number }; deprecated?: string }>
-            }>(`https://registry.npmjs.org/${encodePackageName(name)}`)
+            const pkgData = await $fetch<Packument>(
+              `https://registry.npmjs.org/${encodePackageName(name)}`,
+            )
 
             const latestVersion = pkgData['dist-tags']?.latest
             if (!latestVersion) return null
@@ -91,20 +109,31 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
                 `https://api.npmjs.org/downloads/point/last-week/${encodePackageName(name)}`,
               ).catch(() => null),
               $fetch<PackageAnalysisResponse>(`/api/registry/analysis/${name}`).catch(() => null),
-              $fetch<{
-                vulnerabilities: Array<{ severity: string }>
-              }>(`/api/registry/vulnerabilities/${name}`).catch(() => null),
+              $fetch<VulnerabilityTreeResult>(`/api/registry/vulnerabilities/${name}`).catch(
+                () => null,
+              ),
             ])
 
             const versionData = pkgData.versions[latestVersion]
             const packageSize = versionData?.dist?.unpackedSize
 
-            // Count vulnerabilities by severity
-            const vulnCounts = { critical: 0, high: 0, medium: 0, low: 0 }
-            const vulnList = vulns?.vulnerabilities ?? []
-            for (const v of vulnList) {
-              const sev = v.severity.toLowerCase() as keyof typeof vulnCounts
-              if (sev in vulnCounts) vulnCounts[sev]++
+            // Detect if package is binary-only
+            const isBinary = isBinaryOnlyPackage({
+              name: pkgData.name,
+              bin: versionData?.bin,
+              main: versionData?.main,
+              module: versionData?.module,
+              exports: versionData?.exports,
+            })
+
+            // Vulnerabilities
+            let vulnsTotal: number = 0
+            let vulnsSeverity = { critical: 0, high: 0, moderate: 0, low: 0 }
+
+            if (vulns) {
+              const { total, ...severity } = vulns.totalCounts
+              vulnsTotal = total
+              vulnsSeverity = severity
             }
 
             return {
@@ -115,18 +144,22 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               },
               downloads: downloads?.downloads,
               packageSize,
+              directDeps: versionData ? getDependencyCount(versionData) : null,
               installSize: undefined, // Will be filled in second pass
               analysis: analysis ?? undefined,
               vulnerabilities: {
-                count: vulnList.length,
-                severity: vulnCounts,
+                count: vulnsTotal,
+                severity: vulnsSeverity,
               },
               metadata: {
                 license: pkgData.license,
-                lastUpdated: pkgData.time?.modified,
+                // Use version-specific publish time, NOT time.modified (which can be
+                // updated by metadata changes like maintainer additions)
+                lastUpdated: pkgData.time?.[latestVersion],
                 engines: analysis?.engines,
                 deprecated: versionData?.deprecated,
               },
+              isBinaryOnly: isBinary,
             }
           } catch {
             return null
@@ -195,7 +228,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
 
     return packagesData.value.map(pkg => {
       if (!pkg) return null
-      return computeFacetValue(facet, pkg)
+      return computeFacetValue(facet, pkg, t)
     })
   }
 
@@ -203,7 +236,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   function isFacetLoading(facet: ComparisonFacet): boolean {
     if (!installSizeLoading.value) return false
     // These facets depend on install-size API
-    return facet === 'installSize' || facet === 'dependencies'
+    return facet === 'installSize' || facet === 'totalDependencies'
   }
 
   // Check if a specific column (package) is loading
@@ -222,40 +255,37 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   }
 }
 
-function encodePackageName(name: string): string {
-  if (name.startsWith('@')) {
-    return `@${encodeURIComponent(name.slice(1))}`
-  }
-  return encodeURIComponent(name)
-}
-
-function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData): FacetValue | null {
+function computeFacetValue(
+  facet: ComparisonFacet,
+  data: PackageComparisonData,
+  t: (key: string, params?: Record<string, unknown>) => string,
+): FacetValue | null {
   switch (facet) {
-    case 'downloads':
+    case 'downloads': {
       if (data.downloads === undefined) return null
       return {
         raw: data.downloads,
         display: formatCompactNumber(data.downloads),
         status: 'neutral',
       }
-
-    case 'packageSize':
+    }
+    case 'packageSize': {
       if (!data.packageSize) return null
       return {
         raw: data.packageSize,
         display: formatBytes(data.packageSize),
         status: data.packageSize > 5 * 1024 * 1024 ? 'warning' : 'neutral',
       }
-
-    case 'installSize':
+    }
+    case 'installSize': {
       if (!data.installSize) return null
       return {
         raw: data.installSize.totalSize,
         display: formatBytes(data.installSize.totalSize),
         status: data.installSize.totalSize > 50 * 1024 * 1024 ? 'warning' : 'neutral',
       }
-
-    case 'moduleFormat':
+    }
+    case 'moduleFormat': {
       if (!data.analysis) return null
       const format = data.analysis.moduleFormat
       return {
@@ -263,37 +293,58 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
         display: format === 'dual' ? 'ESM + CJS' : format.toUpperCase(),
         status: format === 'esm' || format === 'dual' ? 'good' : 'neutral',
       }
-
-    case 'types':
+    }
+    case 'types': {
+      if (data.isBinaryOnly) {
+        return {
+          raw: 'binary',
+          display: 'N/A',
+          status: 'muted',
+          tooltip: t('compare.facets.binary_only_tooltip'),
+        }
+      }
       if (!data.analysis) return null
       const types = data.analysis.types
       return {
         raw: types.kind,
         display:
-          types.kind === 'included' ? 'Included' : types.kind === '@types' ? '@types' : 'None',
+          types.kind === 'included'
+            ? t('compare.facets.values.types_included')
+            : types.kind === '@types'
+              ? '@types'
+              : t('compare.facets.values.types_none'),
         status: types.kind === 'included' ? 'good' : types.kind === '@types' ? 'info' : 'bad',
       }
-
-    case 'engines':
+    }
+    case 'engines': {
       const engines = data.metadata?.engines
-      if (!engines?.node) return { raw: null, display: 'Any', status: 'neutral' }
+      if (!engines?.node) {
+        return { raw: null, display: t('compare.facets.values.any'), status: 'neutral' }
+      }
       return {
         raw: engines.node,
         display: `Node ${engines.node}`,
         status: 'neutral',
       }
-
-    case 'vulnerabilities':
+    }
+    case 'vulnerabilities': {
       if (!data.vulnerabilities) return null
       const count = data.vulnerabilities.count
       const sev = data.vulnerabilities.severity
       return {
         raw: count,
-        display: count === 0 ? 'None' : `${count} (${sev.critical}C/${sev.high}H)`,
+        display:
+          count === 0
+            ? t('compare.facets.values.none')
+            : t('compare.facets.values.vulnerabilities_summary', {
+                count,
+                critical: sev.critical,
+                high: sev.high,
+              }),
         status: count === 0 ? 'good' : sev.critical > 0 || sev.high > 0 ? 'bad' : 'warning',
       }
-
-    case 'lastUpdated':
+    }
+    case 'lastUpdated': {
       if (!data.metadata?.lastUpdated) return null
       const date = new Date(data.metadata.lastUpdated)
       return {
@@ -302,46 +353,51 @@ function computeFacetValue(facet: ComparisonFacet, data: PackageComparisonData):
         status: isStale(date) ? 'warning' : 'neutral',
         type: 'date',
       }
-
-    case 'license':
+    }
+    case 'license': {
       const license = data.metadata?.license
-      if (!license) return { raw: null, display: 'Unknown', status: 'warning' }
+      if (!license) {
+        return { raw: null, display: t('compare.facets.values.unknown'), status: 'warning' }
+      }
       return {
         raw: license,
         display: license,
         status: 'neutral',
       }
-
-    case 'dependencies':
-      if (!data.installSize) return null
-      const depCount = data.installSize.dependencyCount
+    }
+    case 'dependencies': {
+      const depCount = data.directDeps
+      if (depCount === null) return null
       return {
         raw: depCount,
         display: String(depCount),
-        status: depCount > 50 ? 'warning' : 'neutral',
+        status: depCount > 10 ? 'warning' : 'neutral',
       }
-
-    case 'deprecated':
+    }
+    case 'deprecated': {
       const isDeprecated = !!data.metadata?.deprecated
       return {
         raw: isDeprecated,
-        display: isDeprecated ? 'Deprecated' : 'No',
+        display: isDeprecated
+          ? t('compare.facets.values.deprecated')
+          : t('compare.facets.values.not_deprecated'),
         status: isDeprecated ? 'bad' : 'good',
       }
-
+    }
     // Coming soon facets
-    case 'totalDependencies':
+    case 'totalDependencies': {
+      if (!data.installSize) return null
+      const totalDepCount = data.installSize.dependencyCount
+      return {
+        raw: totalDepCount,
+        display: String(totalDepCount),
+        status: totalDepCount > 50 ? 'warning' : 'neutral',
+      }
+    }
+    default: {
       return null
-
-    default:
-      return null
+    }
   }
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 function isStale(date: Date): boolean {

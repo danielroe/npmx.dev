@@ -26,6 +26,8 @@ type LikesResponse = {
 
 type PostsResponse = { posts: Array<{ likeCount?: number }> }
 
+const $bluesky = $fetch.create({ baseURL: BLUESKY_API })
+
 /**
  * Provides both build and runtime comments refreshes
  * During build, cache aggressively to avoid rate limits
@@ -48,18 +50,18 @@ export default defineCachedEventHandler(
     try {
       // Fetch thread, likes, and post metadata in parallel
       const [threadResponse, likesResponse, postsResponse] = await Promise.all([
-        $fetch<ThreadResponse>(`${BLUESKY_API}app.bsky.feed.getPostThread`, {
+        $bluesky<ThreadResponse>('/app.bsky.feed.getPostThread', {
           query: { uri, depth: 10 },
         }).catch((err: Error) => {
           console.warn(`[Bluesky] Thread fetch failed for ${uri}:`, err.message)
           return null
         }),
 
-        $fetch<LikesResponse>(`${BLUESKY_API}app.bsky.feed.getLikes`, {
+        $bluesky<LikesResponse>('/app.bsky.feed.getLikes', {
           query: { uri, limit: 50 },
         }).catch(() => ({ likes: [] })),
 
-        $fetch<PostsResponse>(`${BLUESKY_API}app.bsky.feed.getPosts`, {
+        $bluesky<PostsResponse>('/app.bsky.feed.getPosts', {
           query: { uris: [uri] },
         }).catch(() => ({ posts: [] })),
       ])
@@ -79,8 +81,8 @@ export default defineCachedEventHandler(
 
       return {
         thread,
-        likes: likesResponse.likes || [],
-        totalLikes: postsResponse.posts?.[0]?.likeCount || thread?.likeCount || 0,
+        likes: likesResponse.likes,
+        totalLikes: postsResponse.posts?.[0]?.likeCount ?? thread?.likeCount ?? 0,
         postUrl: atUriToWebUrl(uri),
       }
     } catch (error) {

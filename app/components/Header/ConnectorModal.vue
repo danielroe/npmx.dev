@@ -81,20 +81,18 @@ function handleDisconnect() {
     <form v-else class="space-y-4" @submit.prevent="handleConnect">
       <!-- Contributor-only notice -->
       <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-        <div class="space-y-2">
-          <span
-            class="inline-block px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 rounded"
-          >
+        <div>
+          <span class="inline-block text-xs font-bold uppercase tracking-wider text-fg rounded">
             {{ $t('connector.modal.contributor_badge') }}
           </span>
           <p class="text-sm text-fg-muted">
-            <i18n-t keypath="connector.modal.contributor_notice">
+            <i18n-t keypath="connector.modal.contributor_notice" scope="global">
               <template #link>
                 <a
                   href="https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md#local-connector-cli"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="text-amber-400 hover:underline"
+                  class="text-blue-400 hover:underline"
                 >
                   {{ $t('connector.modal.contributor_link') }}
                 </a>
@@ -119,8 +117,8 @@ function handleDisconnect() {
           class="ms-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
           @click="copy('pnpm npmx-connector')"
         >
-          <span v-if="!copied" class="i-carbon:copy block w-5 h-5" aria-hidden="true" />
-          <span v-else class="i-carbon:checkmark block w-5 h-5 text-green-500" aria-hidden="true" />
+          <span v-if="!copied" class="i-carbon:copy w-5 h-5" aria-hidden="true" />
+          <span v-else class="i-carbon:checkmark w-5 h-5 text-green-500" aria-hidden="true" />
         </button>
       </div>
 
@@ -141,10 +139,10 @@ function handleDisconnect() {
                           class="ms-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
                           @click="copyCommand"
                         >
-                          <span v-if="!copied" class="i-carbon:copy block w-5 h-5" aria-hidden="true" />
+                          <span v-if="!copied" class="i-carbon:copy w-5 h-5" aria-hidden="true" />
                           <span
                             v-else
-                            class="i-carbon:checkmark block w-5 h-5 text-green-500"
+                            class="i-carbon:checkmark w-5 h-5 text-green-500"
                             aria-hidden="true"
                           />
                         </button>
@@ -213,7 +211,7 @@ function handleDisconnect() {
         role="alert"
         class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md"
       >
-        <p class="font-mono text-sm text-fg font-bold">
+        <p class="inline-block text-xs font-bold uppercase tracking-wider text-fg rounded">
           {{ $t('connector.modal.warning') }}
         </p>
         <p class="text-sm text-fg-muted">

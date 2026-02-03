@@ -165,7 +165,7 @@ function handlePageSizeChange(event: Event) {
           </option>
         </select>
         <div
-          class="absolute inset-ie-2 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none"
+          class="flex items-center absolute inset-ie-2 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none"
           aria-hidden="true"
         >
           <span class="i-carbon-chevron-down w-3 h-3" />
@@ -181,7 +181,7 @@ function handlePageSizeChange(event: Event) {
           $t('filters.pagination.showing', {
             start: startItem,
             end: endItem,
-            total: totalItems.toLocaleString(),
+            total: $n(totalItems),
           })
         }}
       </span>

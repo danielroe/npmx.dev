@@ -57,46 +57,31 @@ export default defineCachedEventHandler(
       }
     }
 
-    try {
-      const response = await $fetch<ProfilesResponse>(`${BLUESKY_API}app.bsky.actor.getProfiles`, {
-        query: { actors: handles },
-      })
+    const response = await $fetch<ProfilesResponse>(`${BLUESKY_API}app.bsky.actor.getProfiles`, {
+      query: { actors: handles },
+    }).catch(() => ({ profiles: [] }))
 
-      const avatarMap = new Map<string, string>()
-      for (const profile of response.profiles) {
-        if (profile.avatar) {
-          avatarMap.set(profile.handle, profile.avatar)
-        }
-      }
-
-      const resolvedAuthors: ResolvedAuthor[] = authors.map(author => ({
-        ...author,
-        avatar: author.blueskyHandle ? avatarMap.get(author.blueskyHandle) || null : null,
-        profileUrl: author.blueskyHandle
-          ? `https://bsky.app/profile/${author.blueskyHandle}`
-          : null,
-      }))
-
-      return { authors: resolvedAuthors }
-    } catch (error) {
-      console.error('[Author Profiles] Failed to fetch profiles:', error)
-      return {
-        authors: authors.map(author => ({
-          ...author,
-          avatar: null,
-          profileUrl: author.blueskyHandle
-            ? `https://bsky.app/profile/${author.blueskyHandle}`
-            : null,
-        })),
+    const avatarMap = new Map<string, string>()
+    for (const profile of response.profiles) {
+      if (profile.avatar) {
+        avatarMap.set(profile.handle, profile.avatar)
       }
     }
+
+    const resolvedAuthors: ResolvedAuthor[] = authors.map(author => ({
+      ...author,
+      avatar: author.blueskyHandle ? avatarMap.get(author.blueskyHandle) || null : null,
+      profileUrl: author.blueskyHandle ? `https://bsky.app/profile/${author.blueskyHandle}` : null,
+    }))
+
+    return { authors: resolvedAuthors }
   },
   {
     name: 'author-profiles',
     maxAge: CACHE_MAX_AGE_ONE_DAY,
     getKey: event => {
       const { authors } = getQuery(event)
-      return `author-profiles:${authors}`
+      return `author-profiles:${authors ?? 'npmx.dev'}`
     },
   },
 )
