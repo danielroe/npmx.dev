@@ -421,140 +421,108 @@ defineOgImageComponent('Package', {
         :class="{ 'border-b': isHeaderPinned }"
       >
         <!-- Package name and version -->
-        <div class="flex items-baseline gap-2 sm:gap-3 flex-wrap min-w-0">
-          <div class="group relative flex flex-col items-start min-w-0">
-            <h1
-              class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-              :title="pkg.name"
-            >
-              <NuxtLink
-                v-if="orgName"
-                :to="{ name: 'org', params: { org: orgName } }"
-                class="text-fg-muted hover:text-fg transition-colors duration-200"
+        <div class="flex items-baseline justify-between gap-6 flex-wrap min-w-0">
+          <div class="flex flex-col items-baseline gap-2 sm:gap-3 flex-1">
+            <div class="group relative flex flex-col items-start min-w-0">
+              <h1
+                class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+                :title="pkg.name"
               >
-                @{{ orgName }}
-              </NuxtLink>
-              <span v-if="orgName">/</span>
-              <span :class="{ 'text-fg-muted': orgName }">
-                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                <NuxtLink
+                  v-if="orgName"
+                  :to="{ name: 'org', params: { org: orgName } }"
+                  class="text-fg-muted hover:text-fg transition-colors duration-200"
+                >
+                  @{{ orgName }}
+                </NuxtLink>
+                <span v-if="orgName">/</span>
+                <span :class="{ 'text-fg-muted': orgName }">
+                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+                </span>
+              </h1>
+
+              <!-- Floating copy button -->
+              <TooltipAnnounce :text="$t('common.copied')" :isVisible="copiedPkgName">
+                <button
+                  type="button"
+                  @click="copyPkgName()"
+                  class="copy-button absolute z-20 left-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap text-fg-muted bg-bg border-border opacity-0 -translate-y-1 pointer-events-none transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/40"
+                  :aria-label="$t('package.copy_name')"
+                >
+                  <span class="i-carbon:copy w-3.5 h-3.5" aria-hidden="true" />
+                  {{ $t('package.copy_name') }}
+                </button>
+              </TooltipAnnounce>
+            </div>
+            <div class="flex items-center gap-2">
+              <span
+                v-if="resolvedVersion"
+                class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
+              >
+                <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
+                <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
+                  <span class="font-mono text-fg-muted text-sm">{{ requestedVersion }}</span>
+                  <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
+                </template>
+
+                <NuxtLink
+                  v-if="requestedVersion && resolvedVersion !== requestedVersion"
+                  :to="`/package/${pkg.name}/v/${resolvedVersion}`"
+                  :title="$t('package.view_permalink')"
+                  >{{ resolvedVersion }}</NuxtLink
+                >
+                <span v-else>v{{ resolvedVersion }}</span>
+
+                <a
+                  v-if="hasProvenance(displayVersion)"
+                  :href="`https://www.npmjs.com/package/${pkg.name}/v/${resolvedVersion}#provenance`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-fg transition-colors duration-200 min-w-6 min-h-6"
+                  :title="$t('package.verified_provenance')"
+                >
+                  <span
+                    class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                </a>
+                <span
+                  v-if="
+                    requestedVersion && latestVersion && resolvedVersion !== latestVersion.version
+                  "
+                  class="text-fg-subtle text-sm shrink-0"
+                  >{{ $t('package.not_latest') }}</span
+                >
               </span>
-            </h1>
 
-            <!-- Floating copy button -->
-            <TooltipAnnounce :text="$t('common.copied')" :isVisible="copiedPkgName">
-              <button
-                type="button"
-                @click="copyPkgName()"
-                class="copy-button absolute z-20 left-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap text-fg-muted bg-bg border-border opacity-0 -translate-y-1 pointer-events-none transition-all duration-150 group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/40"
-                :aria-label="$t('package.copy_name')"
-              >
-                <span class="i-carbon:copy w-3.5 h-3.5" aria-hidden="true" />
-                {{ $t('package.copy_name') }}
-              </button>
-            </TooltipAnnounce>
+              <!-- Package metrics (module format, types) -->
+              <ClientOnly>
+                <PackageMetricsBadges
+                  v-if="resolvedVersion"
+                  :package-name="pkg.name"
+                  :version="resolvedVersion"
+                  :is-binary="isBinaryOnly"
+                />
+                <template #fallback>
+                  <div class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
+                    <SkeletonBlock class="w-8 h-5 rounded" />
+                    <SkeletonBlock class="w-12 h-5 rounded" />
+                  </div>
+                </template>
+              </ClientOnly>
+            </div>
           </div>
-          <span
-            v-if="resolvedVersion"
-            class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
+
+          <a
+            v-if="repositoryUrl && repoMeta && starsLink"
+            :href="starsLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-subtle font-mono text-sm flex items-center gap-1.5 shrink-0"
           >
-            <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
-            <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
-              <span class="font-mono text-fg-muted text-sm">{{ requestedVersion }}</span>
-              <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
-            </template>
-
-            <NuxtLink
-              v-if="requestedVersion && resolvedVersion !== requestedVersion"
-              :to="`/package/${pkg.name}/v/${resolvedVersion}`"
-              :title="$t('package.view_permalink')"
-              >{{ resolvedVersion }}</NuxtLink
-            >
-            <span v-else>v{{ resolvedVersion }}</span>
-
-            <a
-              v-if="hasProvenance(displayVersion)"
-              :href="`https://www.npmjs.com/package/${pkg.name}/v/${resolvedVersion}#provenance`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-fg transition-colors duration-200 min-w-6 min-h-6"
-              :title="$t('package.verified_provenance')"
-            >
-              <span class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-            </a>
-            <span
-              v-if="requestedVersion && latestVersion && resolvedVersion !== latestVersion.version"
-              class="text-fg-subtle text-sm shrink-0"
-              >{{ $t('package.not_latest') }}</span
-            >
-          </span>
-
-          <!-- Package metrics (module format, types) -->
-          <ClientOnly>
-            <PackageMetricsBadges
-              v-if="resolvedVersion"
-              :package-name="pkg.name"
-              :version="resolvedVersion"
-              :is-binary="isBinaryOnly"
-              class="self-baseline ms-1 sm:ms-2"
-            />
-            <template #fallback>
-              <div class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
-                <SkeletonBlock class="w-8 h-5 rounded" />
-                <SkeletonBlock class="w-12 h-5 rounded" />
-              </div>
-            </template>
-          </ClientOnly>
-
-          <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
-          <nav
-            v-if="resolvedVersion"
-            :aria-label="$t('package.navigation')"
-            class="hidden sm:flex items-center gap-0.5 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
-          >
-            <NuxtLink
-              v-if="docsLink"
-              :to="docsLink"
-              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
-              aria-keyshortcuts="d"
-            >
-              <span class="i-carbon:document w-3 h-3" aria-hidden="true" />
-              {{ $t('package.links.docs') }}
-              <kbd
-                class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
-                aria-hidden="true"
-              >
-                d
-              </kbd>
-            </NuxtLink>
-            <NuxtLink
-              :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
-              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
-              aria-keyshortcuts="."
-            >
-              <span class="i-carbon:code w-3 h-3" aria-hidden="true" />
-              {{ $t('package.links.code') }}
-              <kbd
-                class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
-                aria-hidden="true"
-              >
-                .
-              </kbd>
-            </NuxtLink>
-            <NuxtLink
-              :to="{ path: '/compare', query: { packages: pkg.name } }"
-              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
-              aria-keyshortcuts="c"
-            >
-              <span class="i-carbon:compare w-3 h-3" aria-hidden="true" />
-              {{ $t('package.links.compare') }}
-              <kbd
-                class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
-                aria-hidden="true"
-              >
-                c
-              </kbd>
-            </NuxtLink>
-          </nav>
+            <span class="w-4 h-4 i-carbon:star" aria-hidden="true" />
+            {{ formatCompactNumber(stars, { decimals: 1 }) }}
+          </a>
         </div>
       </header>
 
@@ -571,130 +539,159 @@ defineOgImageComponent('Package', {
             </p>
           </div>
 
-          <!-- External links -->
-          <ul class="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:gap-4 list-none m-0 p-0 mt-3">
-            <li v-if="repositoryUrl">
-              <a
-                :href="repositoryUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="w-4 h-4" :class="repoProviderIcon" aria-hidden="true" />
-                <span v-if="repoRef">
-                  {{ repoRef.owner }}<span class="opacity-50">/</span>{{ repoRef.repo }}
-                </span>
-                <span v-else>{{ $t('package.links.repo') }}</span>
-              </a>
-            </li>
-            <li v-if="repositoryUrl && repoMeta && starsLink">
-              <a
-                :href="starsLink"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="w-4 h-4 i-carbon:star" aria-hidden="true" />
-                {{ formatCompactNumber(stars, { decimals: 1 }) }}
-              </a>
-            </li>
-            <li v-if="forks && forksLink">
-              <a
-                :href="forksLink"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="i-carbon:fork w-4 h-4" aria-hidden="true" />
-                {{ formatCompactNumber(forks, { decimals: 1 }) }}
-              </a>
-            </li>
-            <li v-if="homepageUrl">
-              <a
-                :href="homepageUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="i-carbon:link w-4 h-4" aria-hidden="true" />
-                {{ $t('package.links.homepage') }}
-              </a>
-            </li>
-            <li v-if="displayVersion?.bugs?.url">
-              <a
-                :href="displayVersion.bugs.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="i-carbon:warning w-4 h-4" aria-hidden="true" />
-                {{ $t('package.links.issues') }}
-              </a>
-            </li>
-            <li>
-              <a
-                :href="`https://www.npmjs.com/package/${pkg.name}`"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-                :title="$t('common.view_on_npm')"
-              >
-                <span class="i-carbon:logo-npm w-4 h-4" aria-hidden="true" />
-                npm
-              </a>
-            </li>
-            <li v-if="jsrInfo?.exists && jsrInfo.url">
-              <a
-                :href="jsrInfo.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-                :title="$t('badges.jsr.title')"
-              >
-                <span class="i-simple-icons:jsr w-4 h-4" aria-hidden="true" />
-                {{ $t('package.links.jsr') }}
-              </a>
-            </li>
-            <li v-if="fundingUrl">
-              <a
-                :href="fundingUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-              >
-                <span class="i-carbon:favorite w-4 h-4" aria-hidden="true" />
-                {{ $t('package.links.fund') }}
-              </a>
-            </li>
-            <!-- Mobile-only: Docs + Code + Compare links -->
-            <li v-if="docsLink && displayVersion" class="sm:hidden">
+          <div class="flex items-baseline justify-between gap-4 mt-4">
+            <!-- External links -->
+            <ul class="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:gap-4 list-none m-0 p-0">
+              <li v-if="repositoryUrl">
+                <a
+                  :href="repositoryUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="w-4 h-4" :class="repoProviderIcon" aria-hidden="true" />
+                  <span v-if="repoRef"> github </span>
+                  <span v-else>{{ $t('package.links.repo') }}</span>
+                </a>
+              </li>
+              <li v-if="homepageUrl">
+                <a
+                  :href="homepageUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="i-carbon:link w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.homepage') }}
+                </a>
+              </li>
+              <li v-if="displayVersion?.bugs?.url">
+                <a
+                  :href="displayVersion.bugs.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="i-carbon:warning w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.issues') }}
+                </a>
+              </li>
+              <li>
+                <a
+                  :href="`https://www.npmjs.com/package/${pkg.name}`"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                  :title="$t('common.view_on_npm')"
+                >
+                  <span class="i-carbon:logo-npm w-4 h-4" aria-hidden="true" />
+                  npm
+                </a>
+              </li>
+              <li v-if="jsrInfo?.exists && jsrInfo.url">
+                <a
+                  :href="jsrInfo.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                  :title="$t('badges.jsr.title')"
+                >
+                  <span class="i-simple-icons:jsr w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.jsr') }}
+                </a>
+              </li>
+              <li v-if="fundingUrl">
+                <a
+                  :href="fundingUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="i-carbon:favorite w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.fund') }}
+                </a>
+              </li>
+              <!-- Mobile-only: Docs + Code + Compare links -->
+              <li v-if="docsLink && displayVersion" class="sm:hidden">
+                <NuxtLink
+                  :to="docsLink"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="i-carbon:document w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.docs') }}
+                </NuxtLink>
+              </li>
+              <li v-if="resolvedVersion" class="sm:hidden">
+                <NuxtLink
+                  :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="i-carbon:code w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.code') }}
+                </NuxtLink>
+              </li>
+              <li class="sm:hidden">
+                <NuxtLink
+                  :to="{ path: '/compare', query: { packages: pkg.name } }"
+                  class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                >
+                  <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
+                  {{ $t('package.links.compare') }}
+                </NuxtLink>
+              </li>
+            </ul>
+
+            <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
+            <nav
+              v-if="resolvedVersion"
+              :aria-label="$t('package.navigation')"
+              class="hidden sm:flex items-center gap-0.5 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 h-fit"
+            >
               <NuxtLink
+                v-if="docsLink"
                 :to="docsLink"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                aria-keyshortcuts="d"
               >
-                <span class="i-carbon:document w-4 h-4" aria-hidden="true" />
+                <span class="i-carbon:document w-3 h-3" aria-hidden="true" />
                 {{ $t('package.links.docs') }}
+                <kbd
+                  class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  aria-hidden="true"
+                >
+                  d
+                </kbd>
               </NuxtLink>
-            </li>
-            <li v-if="resolvedVersion" class="sm:hidden">
               <NuxtLink
                 :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                aria-keyshortcuts="."
               >
-                <span class="i-carbon:code w-4 h-4" aria-hidden="true" />
+                <span class="i-carbon:code w-3 h-3" aria-hidden="true" />
                 {{ $t('package.links.code') }}
+                <kbd
+                  class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  aria-hidden="true"
+                >
+                  .
+                </kbd>
               </NuxtLink>
-            </li>
-            <li class="sm:hidden">
               <NuxtLink
                 :to="{ path: '/compare', query: { packages: pkg.name } }"
-                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+                class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+                aria-keyshortcuts="c"
               >
-                <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
+                <span class="i-carbon:compare w-3 h-3" aria-hidden="true" />
                 {{ $t('package.links.compare') }}
+                <kbd
+                  class="inline-flex items-center justify-center w-4 h-4 text-xs bg-bg-muted border border-border rounded"
+                  aria-hidden="true"
+                >
+                  c
+                </kbd>
               </NuxtLink>
-            </li>
-          </ul>
+            </nav>
+          </div>
         </div>
 
         <div
