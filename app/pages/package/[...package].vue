@@ -14,8 +14,7 @@ import { formatBytes } from '~/utils/formatters'
 import { NuxtLink } from '#components'
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
-import { useLikePackage } from '~/composables/atproto/useLikePackage'
-import { useUnlikePackage } from '~/composables/atproto/useUnlikePackage'
+import { togglePackageLike } from '~/utils/atproto/likes'
 
 definePageMeta({
   name: 'package',
@@ -361,6 +360,7 @@ const canonicalUrl = computed(() => {
 })
 
 //atproto
+// TODO: Maybe set this where it's not loaded here every load?
 const { user } = useAtproto()
 
 const authModal = useModal('auth-modal')
@@ -370,16 +370,39 @@ const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.valu
   server: false,
 })
 
-const { mutate: likePackage } = useLikePackage(packageName.value)
-const { mutate: unlikePackage } = useUnlikePackage(packageName.value)
+const isLikeActionPending = ref(false)
 
 const likeAction = async () => {
   if (user.value?.handle == null) {
     authModal.open()
+    return
+  }
+
+  if (isLikeActionPending.value) return
+
+  const currentlyLiked = likesData.value?.userHasLiked ?? false
+  const currentLikes = likesData.value?.totalLikes ?? 0
+
+  // Optimistic update
+  likesData.value = {
+    totalLikes: currentlyLiked ? currentLikes - 1 : currentLikes + 1,
+    userHasLiked: !currentlyLiked,
+  }
+
+  isLikeActionPending.value = true
+
+  const result = await togglePackageLike(packageName.value, currentlyLiked, user.value?.handle)
+
+  isLikeActionPending.value = false
+
+  if (result.success) {
+    // Update with server response
+    likesData.value = result.data
   } else {
-    const result = likesData.value?.userHasLiked ? await unlikePackage() : await likePackage()
-    if (result?.totalLikes != null) {
-      likesData.value = result
+    // Revert on error
+    likesData.value = {
+      totalLikes: currentLikes,
+      userHasLiked: currentlyLiked,
     }
   }
 }
