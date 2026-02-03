@@ -131,7 +131,7 @@ describe('DateTime', () => {
       expect(component.find('time').attributes('title')).toContain(testYear)
     })
 
-    it('always toggle relative dates settings when click', async () => {
+    it('clicking button to toggle the relative dates settings', async () => {
       const component = await mountSuspended(DateTime, {
         props: { datetime: testDate },
       })
