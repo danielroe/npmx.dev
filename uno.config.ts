@@ -120,7 +120,7 @@ export default defineConfig({
   shortcuts: [
     // Layout
     ['container', 'max-w-6xl mx-auto px-4 sm:px-6'],
-    ['container-sm', 'max-w-4xl mx-auto px-4 sm:px-6'],
+    ['container-sm', 'max-w-5xl mx-auto px-4 sm:px-6'],
 
     // Focus states - subtle but accessible
     ['focus-ring', 'outline-none focus-visible:(ring-2 ring-fg/10 ring-offset-2)'],
@@ -152,6 +152,13 @@ export default defineConfig({
     ['badge-purple', 'bg-badge-purple/10 text-badge-purple'],
     ['badge-pink', 'bg-badge-pink/10 text-badge-pink'],
     ['badge-subtle', 'bg-bg-subtle text-fg-subtle'],
+
+    // table
+    [
+      'table-th',
+      'py-3 px-3 text-(xs start fg-muted) font-(mono medium) uppercase tracking-wider whitespace-nowrap select-none',
+    ],
+    ['table-td-skeleton', 'bg-bg-muted rounded animate-pulse'],
   ],
   rules: [
     // Custom scale for active states
