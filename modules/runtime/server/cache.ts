@@ -1,4 +1,5 @@
 import type { CachedFetchResult } from '#shared/utils/fetch-cache-config'
+import { createFetch } from 'ofetch'
 
 /**
  * Test fixtures plugin for CI environments.
@@ -68,7 +69,7 @@ function getMockForUrl(url: string): MockResult | null {
     return null
   }
 
-  const { host, pathname } = urlObj
+  const { host, pathname, searchParams } = urlObj
 
   // OSV API - return empty vulnerability results
   if (host === 'api.osv.dev') {
@@ -85,30 +86,92 @@ function getMockForUrl(url: string): MockResult | null {
     return { data: null }
   }
 
+  // Bundlephobia API - return mock size data
+  if (host === 'bundlephobia.com' && pathname === '/api/size') {
+    const packageSpec = searchParams.get('package')
+    if (packageSpec) {
+      return {
+        data: {
+          name: packageSpec.split('@')[0],
+          size: 12345,
+          gzip: 4567,
+          dependencyCount: 3,
+        },
+      }
+    }
+  }
+
+  // npms.io API - return mock package score data
+  if (host === 'api.npms.io') {
+    const packageMatch = decodeURIComponent(pathname).match(/^\/v2\/package\/(.+)$/)
+    if (packageMatch?.[1]) {
+      return {
+        data: {
+          analyzedAt: new Date().toISOString(),
+          collected: {
+            metadata: { name: packageMatch[1] },
+          },
+          score: {
+            final: 0.75,
+            detail: {
+              quality: 0.8,
+              popularity: 0.7,
+              maintenance: 0.75,
+            },
+          },
+        },
+      }
+    }
+  }
+
+  // jsdelivr CDN - return 404 for README files, etc.
+  if (host === 'cdn.jsdelivr.net') {
+    // Return null data which will cause a 404 - README files are optional
+    return { data: null }
+  }
+
+  // jsdelivr data API - return mock file listing
+  if (host === 'data.jsdelivr.com') {
+    const packageMatch = decodeURIComponent(pathname).match(/^\/v1\/packages\/npm\/(.+)$/)
+    if (packageMatch?.[1]) {
+      const pkgWithVersion = packageMatch[1]
+      const [name] = pkgWithVersion.split('@')
+      return {
+        data: {
+          type: 'npm',
+          name,
+          version: pkgWithVersion.includes('@') ? pkgWithVersion.split('@')[1] : 'latest',
+          files: [
+            { name: 'package.json', hash: 'abc123', size: 1000 },
+            { name: 'index.js', hash: 'def456', size: 500 },
+            { name: 'README.md', hash: 'ghi789', size: 2000 },
+          ],
+        },
+      }
+    }
+  }
+
+  // Gravatar API - return 404 (avatars not needed in tests)
+  if (host === 'www.gravatar.com') {
+    return { data: null }
+  }
+
   // esm.sh is handled specially via $fetch.raw override, not here
   // Return null to indicate no mock available at the cachedFetch level
 
   return null
 }
 
-async function handleFastNpmMeta(
-  url: string,
+/**
+ * Process a single package query for fast-npm-meta.
+ * Returns the metadata for a single package or null/error result.
+ */
+async function processSingleFastNpmMeta(
+  packageQuery: string,
   storage: ReturnType<typeof useStorage>,
-): Promise<MockResult | null> {
-  let urlObj: URL
-  try {
-    urlObj = new URL(url)
-  } catch {
-    return null
-  }
-
-  const { host, pathname } = urlObj
-
-  if (host !== 'npm.antfu.dev') return null
-
-  let packageName = decodeURIComponent(pathname.slice(1))
-  if (!packageName) return null
-
+  metadata: boolean,
+): Promise<Record<string, unknown>> {
+  let packageName = packageQuery
   let specifier = 'latest'
 
   if (packageName.startsWith('@')) {
@@ -125,11 +188,18 @@ async function handleFastNpmMeta(
     }
   }
 
+  // Special case: packages with "does-not-exist" in the name should 404
+  if (packageName.includes('does-not-exist') || packageName.includes('nonexistent')) {
+    return { error: 'not_found' }
+  }
+
   const fixturePath = getFixturePath('packument', packageName)
   const packument = await storage.getItem<any>(fixturePath)
 
   if (!packument) {
-    return { data: null }
+    // For unknown packages without the special markers, try to return stub data
+    // This is handled elsewhere - returning error here for fast-npm-meta
+    return { error: 'not_found' }
   }
 
   let version: string | undefined
@@ -143,103 +213,71 @@ async function handleFastNpmMeta(
     version = packument['dist-tags']?.latest
   }
 
-  if (!version) return null
-
-  return {
-    data: {
-      name: packageName,
-      specifier,
-      version,
-      publishedAt: packument.time?.[version] || new Date().toISOString(),
-      lastSynced: Date.now(),
-    },
+  if (!version) {
+    return { error: 'version_not_found' }
   }
+
+  const result: Record<string, unknown> = {
+    name: packageName,
+    specifier,
+    version,
+    publishedAt: packument.time?.[version] || new Date().toISOString(),
+    lastSynced: Date.now(),
+  }
+
+  // Include metadata if requested
+  if (metadata) {
+    const versionData = packument.versions?.[version]
+    if (versionData?.deprecated) {
+      result.deprecated = versionData.deprecated
+    }
+  }
+
+  return result
 }
 
-/**
- * Handle esm.sh requests for $fetch.raw (returns response object with headers).
- */
-async function handleEsmShRawRequest(
+async function handleFastNpmMeta(
   url: string,
-  options: unknown,
   storage: ReturnType<typeof useStorage>,
-): Promise<unknown | null> {
-  const urlObj = new URL(url)
-  if (urlObj.hostname !== 'esm.sh') return null
+): Promise<MockResult | null> {
+  let urlObj: URL
+  try {
+    urlObj = new URL(url)
+  } catch {
+    return null
+  }
 
-  const pathname = urlObj.pathname.slice(1) // Remove leading /
-  const opts = options as { method?: string } | undefined
+  const { host, pathname, searchParams } = urlObj
 
-  // HEAD request - return headers with x-typescript-types
-  if (opts?.method === 'HEAD') {
-    // Extract package@version from pathname (e.g., "ufo@1.6.3" or "@scope/pkg@1.0.0")
-    let pkgVersion = pathname
-    // Remove any trailing path after the version
-    const slashIndex = pkgVersion.indexOf(
-      '/',
-      pkgVersion.includes('@') ? pkgVersion.lastIndexOf('@') + 1 : 0,
+  if (host !== 'npm.antfu.dev') return null
+
+  const pathPart = decodeURIComponent(pathname.slice(1))
+  if (!pathPart) return null
+
+  const metadata = searchParams.get('metadata') === 'true'
+
+  // Handle batch requests (package1+package2+...)
+  if (pathPart.includes('+')) {
+    const packages = pathPart.split('+')
+    const results = await Promise.all(
+      packages.map(pkg => processSingleFastNpmMeta(pkg, storage, metadata)),
     )
-    if (slashIndex !== -1) {
-      pkgVersion = pkgVersion.slice(0, slashIndex)
-    }
-
-    const fixturePath = `${FIXTURE_PATHS.esmHeaders}:${pkgVersion.replace(/\//g, ':')}.json`
-    const headerData = await storage.getItem<{ 'x-typescript-types': string }>(fixturePath)
-
-    if (headerData) {
-      if (VERBOSE) process.stdout.write(`[test-fixtures] esm.sh HEAD: ${pkgVersion}\n`)
-      // Return a mock response object similar to what $fetch.raw returns
-      return {
-        status: 200,
-        statusText: 'OK',
-        url,
-        headers: new Headers({
-          'x-typescript-types': headerData['x-typescript-types'],
-          'content-type': 'application/javascript',
-        }),
-        _data: null,
-      }
-    }
-
-    // No fixture - return empty response (no types available)
-    if (VERBOSE) process.stdout.write(`[test-fixtures] esm.sh HEAD (no fixture): ${pkgVersion}\n`)
-    return {
-      status: 200,
-      statusText: 'OK',
-      url,
-      headers: new Headers({
-        'content-type': 'application/javascript',
-      }),
-      _data: null,
-    }
+    return { data: results }
   }
 
-  // GET request - return .d.ts content
-  if (pathname.endsWith('.d.ts') || pathname.includes('.d.ts')) {
-    const fixturePath = `${FIXTURE_PATHS.esmTypes}:${pathname.replace(/\//g, ':')}`
-    const content = await storage.getItem<string>(fixturePath)
-
-    if (content) {
-      if (VERBOSE) process.stdout.write(`[test-fixtures] esm.sh GET: ${pathname}\n`)
-      // Create a blob-like response
-      return {
-        status: 200,
-        statusText: 'OK',
-        url,
-        headers: new Headers({
-          'content-type': 'application/typescript',
-        }),
-        _data: {
-          text: async () => content,
-        },
-      }
-    }
+  // Handle single package request
+  const result = await processSingleFastNpmMeta(pathPart, storage, metadata)
+  if ('error' in result) {
+    return { data: null }
   }
-
-  return null
+  return { data: result }
 }
 
-function matchUrlToFixture(url: string): FixtureMatch | null {
+interface FixtureMatchWithVersion extends FixtureMatch {
+  version?: string // 'latest', a semver version, or undefined for full packument
+}
+
+function matchUrlToFixture(url: string): FixtureMatchWithVersion | null {
   let urlObj: URL
   try {
     urlObj = new URL(url)
@@ -270,21 +308,30 @@ function matchUrlToFixture(url: string): FixtureMatch | null {
       return { type: 'org', name: orgMatch[1] }
     }
 
-    // Packument
+    // Packument - handle both full packument and version manifest requests
     let packagePath = decodeURIComponent(pathname.slice(1))
     if (packagePath && !packagePath.startsWith('-/')) {
+      let version: string | undefined
+
       if (packagePath.startsWith('@')) {
         const parts = packagePath.split('/')
         if (parts.length > 2) {
+          // @scope/name/version or @scope/name/latest
+          version = parts[2]
           packagePath = `${parts[0]}/${parts[1]}`
         }
+        // else just @scope/name - full packument
       } else {
         const slashIndex = packagePath.indexOf('/')
         if (slashIndex !== -1) {
+          // name/version or name/latest
+          version = packagePath.slice(slashIndex + 1)
           packagePath = packagePath.slice(0, slashIndex)
         }
+        // else just name - full packument
       }
-      return { type: 'packument', name: packagePath }
+
+      return { type: 'packument', name: packagePath, version }
     }
   }
 
@@ -350,9 +397,9 @@ async function fetchFromFixtures<T>(
   }
 
   const fixturePath = getFixturePath(match.type, match.name)
-  const data = await storage.getItem<T>(fixturePath)
+  const rawData = await storage.getItem<any>(fixturePath)
 
-  if (data === null) {
+  if (rawData === null) {
     // For user searches or search queries without fixtures, return empty results
     if (match.type === 'user' || match.type === 'search') {
       if (VERBOSE) process.stdout.write(`[test-fixtures] Empty ${match.type}: ${match.name}\n`)
@@ -363,19 +410,125 @@ async function fetchFromFixtures<T>(
       }
     }
 
-    // Log missing fixture (but don't spam - these are often expected for dependencies)
+    // For org packages without fixtures, return 404
+    if (match.type === 'org') {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Org not found',
+        message: `No fixture for org: ${match.name}`,
+      })
+    }
+
+    // For packuments without fixtures, return a stub packument
+    // This allows tests to work without needing fixtures for every dependency
+    if (match.type === 'packument') {
+      // Special case: packages with "does-not-exist" in the name should 404
+      // This allows tests to verify 404 behavior for nonexistent packages
+      if (match.name.includes('does-not-exist') || match.name.includes('nonexistent')) {
+        throw createError({
+          statusCode: 404,
+          statusMessage: 'Package not found',
+          message: `Package ${match.name} does not exist`,
+        })
+      }
+
+      if (VERBOSE) process.stderr.write(`[test-fixtures] Stub packument: ${match.name}\n`)
+      const stubVersion = '1.0.0'
+      const stubPackument = {
+        'name': match.name,
+        'dist-tags': { latest: stubVersion },
+        'versions': {
+          [stubVersion]: {
+            name: match.name,
+            version: stubVersion,
+            description: `Stub fixture for ${match.name}`,
+            dependencies: {},
+          },
+        },
+        'time': {
+          created: new Date().toISOString(),
+          modified: new Date().toISOString(),
+          [stubVersion]: new Date().toISOString(),
+        },
+        'maintainers': [],
+      }
+
+      // If a specific version was requested, return just that version manifest
+      if (match.version) {
+        return {
+          data: stubPackument.versions[stubVersion] as T,
+          isStale: false,
+          cachedAt: Date.now(),
+        }
+      }
+
+      return {
+        data: stubPackument as T,
+        isStale: false,
+        cachedAt: Date.now(),
+      }
+    }
+
+    // For downloads without fixtures, return zero downloads
+    if (match.type === 'downloads') {
+      if (VERBOSE) process.stderr.write(`[test-fixtures] Stub downloads: ${match.name}\n`)
+      return {
+        data: {
+          downloads: 0,
+          start: '2025-01-01',
+          end: '2025-01-31',
+          package: match.name,
+        } as T,
+        isStale: false,
+        cachedAt: Date.now(),
+      }
+    }
+
+    // Log missing fixture for unknown types
     if (VERBOSE) {
       process.stderr.write(`[test-fixtures] Missing: ${fixturePath}\n`)
     }
 
     throw createError({
       statusCode: 404,
-      statusMessage: 'Package not found',
+      statusMessage: 'Not found',
       message: `No fixture for ${match.type}: ${match.name}`,
     })
   }
 
-  if (VERBOSE) process.stdout.write(`[test-fixtures] Served: ${match.type}/${match.name}\n`)
+  // Handle version-specific requests for packuments (e.g., /create-vite/latest)
+  let data: T = rawData
+  if (match.type === 'packument' && match.version) {
+    const packument = rawData as any
+    let resolvedVersion = match.version
+
+    // Resolve 'latest' or dist-tags to actual version
+    if (packument['dist-tags']?.[resolvedVersion]) {
+      resolvedVersion = packument['dist-tags'][resolvedVersion]
+    }
+
+    // Return the version manifest instead of full packument
+    const versionData = packument.versions?.[resolvedVersion]
+    if (versionData) {
+      data = versionData as T
+      if (VERBOSE)
+        process.stdout.write(
+          `[test-fixtures] Served: ${match.type}/${match.name}@${resolvedVersion}\n`,
+        )
+    } else {
+      if (VERBOSE)
+        process.stderr.write(
+          `[test-fixtures] Version not found: ${match.name}@${resolvedVersion}\n`,
+        )
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Version not found',
+        message: `No version ${resolvedVersion} in fixture for ${match.name}`,
+      })
+    }
+  } else {
+    if (VERBOSE) process.stdout.write(`[test-fixtures] Served: ${match.type}/${match.name}\n`)
+  }
 
   return { data, isStale: false, cachedAt: Date.now() }
 }
@@ -387,11 +540,7 @@ async function handleEsmShFetch(
   urlStr: string,
   init: RequestInit | undefined,
   storage: ReturnType<typeof useStorage>,
-): Promise<Response | null> {
-  if (!urlStr.startsWith('https://esm.sh/')) {
-    return null
-  }
-
+): Promise<Response> {
   const method = init?.method?.toUpperCase() || 'GET'
   const urlObj = new URL(urlStr)
   const pathname = urlObj.pathname.slice(1) // Remove leading /
@@ -444,21 +593,27 @@ async function handleEsmShFetch(
       })
     }
 
-    // No fixture - return 404 for missing .d.ts files
+    // Return a minimal stub .d.ts file instead of 404
+    // This allows docs tests to work without real type definition fixtures
     if (VERBOSE)
-      process.stdout.write(`[test-fixtures] fetch GET esm.sh (no fixture): ${pathname}\n`)
-    return new Response('Not Found', {
-      status: 404,
-      headers: { 'content-type': 'text/plain' },
+      process.stdout.write(`[test-fixtures] fetch GET esm.sh (stub types): ${pathname}\n`)
+    const stubTypes = `// Stub types for ${pathname}
+export declare function stubFunction(): void;
+export declare const stubConstant: string;
+export type StubType = string | number;
+export interface StubInterface {
+  value: string;
+}
+`
+    return new Response(stubTypes, {
+      status: 200,
+      headers: { 'content-type': 'application/typescript' },
     })
   }
 
   // Other esm.sh requests - return empty response
   return new Response(null, { status: 200 })
 }
-
-// Flag to ensure we only patch globals once
-let globalsPatched = false
 
 export default defineNitroPlugin(nitroApp => {
   const storage = useStorage('fixtures')
@@ -467,66 +622,75 @@ export default defineNitroPlugin(nitroApp => {
     process.stdout.write('[test-fixtures] Test mode active (verbose logging enabled)\n')
   }
 
-  // Patch global fetch/$fetch once, not per-request
-  if (!globalsPatched) {
-    globalsPatched = true
+  const originalFetch = globalThis.fetch
+  const original$fetch = globalThis.$fetch
 
-    const originalFetch = globalThis.fetch
-    const original$FetchRaw = globalThis.$fetch.raw
+  // Override native fetch for esm.sh requests
+  globalThis.fetch = async (input: URL | RequestInfo, init?: RequestInit): Promise<Response> => {
+    const urlStr =
+      typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
 
-    // Override native fetch for esm.sh requests
-    globalThis.fetch = async (input: URL | RequestInfo, init?: RequestInit): Promise<Response> => {
-      const urlStr =
-        typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
-
-      const esmResponse = await handleEsmShFetch(urlStr, init, storage)
-      if (esmResponse) {
-        return esmResponse
-      }
-
-      return originalFetch(input, init)
+    if (urlStr.startsWith('/')) {
+      return await originalFetch(input, init)
     }
 
-    // Override $fetch.raw for esm.sh requests
-    // @ts-expect-error - modifying global
-    globalThis.$fetch.raw = async (url: string, options?: any) => {
-      if (typeof url === 'string' && url.startsWith('/')) {
-        return original$FetchRaw(url, options)
-      }
+    if (urlStr.startsWith('https://esm.sh/')) {
+      return await handleEsmShFetch(urlStr, init, storage)
+    }
 
-      // Handle esm.sh requests specially (used by docs feature)
-      if (typeof url === 'string' && url.includes('esm.sh')) {
-        const esmResult = await handleEsmShRawRequest(url, options, storage)
-        if (esmResult !== null) {
-          return esmResult
-        }
-        // No fixture - return response without types (graceful degradation)
-        if (VERBOSE)
-          process.stdout.write(`[test-fixtures] $fetch.raw esm.sh (no fixture): ${url}\n`)
-        return {
+    try {
+      const res = await fetchFromFixtures(urlStr, storage)
+      if (res.data) {
+        return new Response(JSON.stringify(res.data), {
           status: 200,
-          statusText: 'OK',
-          url,
-          headers: new Headers({ 'content-type': 'application/javascript' }),
-          _data: null,
-        }
+          headers: { 'content-type': 'application/json' },
+        })
       }
-
-      return original$FetchRaw(url, options)
+      return new Response('Not Found', { status: 404 })
+    } catch (err: any) {
+      // Convert createError exceptions to proper HTTP responses
+      const statusCode = err?.statusCode || err?.status || 404
+      const message = err?.message || 'Not Found'
+      return new Response(JSON.stringify({ error: message }), {
+        status: statusCode,
+        headers: { 'content-type': 'application/json' },
+      })
     }
-
-    // Note: We don't override $fetch itself globally because it needs
-    // access to event.context.cachedFetch which is per-request
   }
+
+  const $fetch = createFetch({
+    fetch: globalThis.fetch,
+  })
+
+  // Create the wrapper function for globalThis.$fetch
+  const fetchWrapper = async <T = unknown>(
+    url: string,
+    options?: Parameters<typeof $fetch>[1],
+  ): Promise<T> => {
+    if (typeof url === 'string' && !url.startsWith('/')) {
+      return $fetch<T>(url, options as any)
+    }
+    return original$fetch<T>(url, options as any) as any
+  }
+
+  // Copy .raw and .create from the created $fetch instance to the wrapper
+  Object.assign(fetchWrapper, {
+    raw: $fetch.raw,
+    create: $fetch.create,
+  })
+
+  // Replace globalThis.$fetch with our wrapper (must be done AFTER setting .raw/.create)
+  // @ts-expect-error - wrapper function types don't fully match Nitro's $fetch types
+  globalThis.$fetch = fetchWrapper
 
   // Per-request: set up cachedFetch on the event context
   nitroApp.hooks.hook('request', event => {
-    event.context.cachedFetch = <T = unknown>(
-      url: string,
-      _options?: Parameters<typeof $fetch>[1],
-      _ttl?: number,
-    ): Promise<CachedFetchResult<T>> => {
-      return fetchFromFixtures<T>(url, storage)
+    event.context.cachedFetch = async (url: string, options?: any) => {
+      return {
+        data: await globalThis.$fetch(url, options),
+        isStale: false,
+        cachedAt: null,
+      }
     }
   })
 })
