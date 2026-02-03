@@ -163,11 +163,11 @@ onKeyStroke(
       </div>
 
       <!-- End: Desktop nav items + Mobile menu button -->
-      <div class="flex-shrink-0 flex items-center gap-4 sm:gap-6">
+      <div class="flex-shrink-0 flex items-center gap-0.5 sm:gap-2">
         <!-- Desktop: Compare link -->
         <NuxtLink
           to="/compare"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts="c"
         >
           {{ $t('nav.compare') }}
@@ -182,7 +182,7 @@ onKeyStroke(
         <!-- Desktop: Settings link -->
         <NuxtLink
           to="/settings"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts=","
         >
           {{ $t('nav.settings') }}
@@ -202,7 +202,7 @@ onKeyStroke(
         <!-- Mobile: Menu button (always visible, toggles menu) -->
         <button
           type="button"
-          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 rounded"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
           :aria-label="showMobileMenu ? $t('common.close') : $t('nav.open_menu')"
           :aria-expanded="showMobileMenu"
           @click="showMobileMenu = !showMobileMenu"
