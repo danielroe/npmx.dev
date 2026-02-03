@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { TextSizeId } from '~/composables/useSettings'
+
 const { textSizes, selectedTextSize, setTextSize } = useTextSize()
 
 onPrehydrate(el => {
@@ -15,24 +17,17 @@ onPrehydrate(el => {
 </script>
 
 <template>
-  <fieldset class="flex items-center gap-1 rounded-md border border-border p-1 w-fit">
+  <fieldset>
     <legend class="sr-only">{{ $t('settings.text_size') }}</legend>
-    <label
-      v-for="textSize in textSizes"
-      :key="textSize.id"
-      class="rounded-xs px-2 bg-bg-subtle border border-border-subtle transition-transform duration-150 motion-safe:hover:bg-bg-elevated cursor-pointer has-[:checked]:(ring-2 ring-fg ring-offset-2 ring-offset-bg-subtle) has-[:focus-visible]:(ring-2 ring-fg ring-offset-2 ring-offset-bg-subtle)"
-      :style="{ backgroundColor: textSize.value }"
+    <select
+      id="text-size-select"
+      :value="selectedTextSize"
+      class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 cursor-pointer"
+      @change="setTextSize(($event.target as HTMLSelectElement).value as TextSizeId)"
     >
-      <input
-        type="radio"
-        name="text-size"
-        class="sr-only"
-        :value="textSize.id"
-        :checked="selectedTextSize === textSize.id"
-        :aria-label="textSize.name"
-        @change="setTextSize(textSize.id)"
-      />
-      <span>{{ $t(`settings.text_sizes.${textSize.id}`) }}</span>
-    </label>
+      <option v-for="textSize in textSizes" :key="textSize.id" :value="textSize.id">
+        {{ $t(`settings.text_sizes.${textSize.id}`) }}
+      </option>
+    </select>
   </fieldset>
 </template>

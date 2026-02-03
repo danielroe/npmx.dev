@@ -3,11 +3,11 @@ import { useLocalStorage } from '@vueuse/core'
 import type { LocaleObject } from '@nuxtjs/i18n'
 import { ACCENT_COLORS, BACKGROUND_THEMES, TEXT_SIZES } from '#shared/utils/constants'
 
-type BackgroundThemeId = keyof typeof BACKGROUND_THEMES
+export type BackgroundThemeId = keyof typeof BACKGROUND_THEMES
 
-type AccentColorId = keyof typeof ACCENT_COLORS
+export type AccentColorId = keyof typeof ACCENT_COLORS
 
-type TextSizeId = keyof typeof TEXT_SIZES
+export type TextSizeId = keyof typeof TEXT_SIZES
 
 /**
  * Application settings stored in localStorage
