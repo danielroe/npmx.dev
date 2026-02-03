@@ -4,7 +4,7 @@ import * as dev from '#shared/types/lexicons/dev'
 import type { UriString } from '@atproto/lex'
 import { LIKES_SCOPE } from '#shared/utils/constants'
 import { PackageLikeBodySchema } from '#shared/schemas/social'
-import { throwOnMissingOAuthScope } from '~~/server/utils/atproto/oauth'
+import { throwOnMissingOAuthScope } from '#server/utils/atproto/oauth'
 
 export default eventHandlerWithOAuthSession(async (event, oAuthSession) => {
   const loggedInUsersDid = oAuthSession?.did.toString()
