@@ -17,12 +17,14 @@ export class OAuthStateStore implements NodeSavedStateStore {
 
   async set(_key: string, val: NodeSavedState) {
     // We are ignoring the key since the mapping is already done in the session
-    this.session.data.oauthState = val
-    await this.session.update(this.session.data)
+    await this.session.update({
+      oauthState: val,
+    })
   }
 
   async del() {
-    this.session.data.oauthState = undefined
-    await this.session.update(this.session.data)
+    await this.session.update({
+      oauthState: undefined,
+    })
   }
 }
