@@ -78,7 +78,15 @@
     "accent_colors": "Accent colors",
     "clear_accent": "Clear accent color",
     "translation_progress": "Translation progress",
-    "background_themes": "Background shade"
+    "background_themes": "Background shade",
+    "text_size": "Text size",
+    "text_sizes": {
+      "largest": "Largest",
+      "large": "Larger",
+      "normal": "Normal",
+      "small": "Smaller",
+      "smallest": "Smallest"
+    }
   },
   "i18n": {
     "missing_keys": "{count} missing translation | {count} missing translations",

@@ -615,7 +615,7 @@ const config = computed(() => {
         <div class="flex flex-col gap-1 sm:shrink-0">
           <label
             for="granularity"
-            class="text-[10px] font-mono text-fg-subtle tracking-wide uppercase"
+            class="text-2xs font-mono text-fg-subtle tracking-wide uppercase"
           >
             {{ $t('package.downloads.granularity') }}
           </label>
@@ -641,7 +641,7 @@ const config = computed(() => {
           <div class="flex flex-col gap-1">
             <label
               for="startDate"
-              class="text-[10px] font-mono text-fg-subtle tracking-wide uppercase"
+              class="text-2xs font-mono text-fg-subtle tracking-wide uppercase"
             >
               {{ $t('package.downloads.start_date') }}
             </label>
@@ -659,10 +659,7 @@ const config = computed(() => {
           </div>
 
           <div class="flex flex-col gap-1">
-            <label
-              for="endDate"
-              class="text-[10px] font-mono text-fg-subtle tracking-wide uppercase"
-            >
+            <label for="endDate" class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
               {{ $t('package.downloads.end_date') }}
             </label>
             <div

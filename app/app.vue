@@ -139,7 +139,8 @@ if (import.meta.client) {
   padding: 0.5rem 1rem;
   background: var(--fg);
   color: var(--bg);
-  font-size: 0.875rem;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
   z-index: 100;
   transition: top 0.2s ease;
 }

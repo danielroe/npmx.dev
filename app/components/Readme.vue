@@ -99,24 +99,32 @@ function handleClick(event: MouseEvent) {
 
 /* Visual styling based on original README heading level */
 .readme :deep([data-level='1']) {
-  font-size: 1.5rem;
+  font-size: var(--text-2xl-font-size);
+  line-height: var(--text-2xl-line-height);
 }
 .readme :deep([data-level='2']) {
-  font-size: 1.25rem;
+  font-size: var(--text-xl-font-size);
+  line-height: var(--text-xl-line-height);
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
 }
 .readme :deep([data-level='3']) {
-  font-size: 1.125rem;
+  font-size: var(--text-lg-font-size);
+  line-height: var(--text-lg-line-height);
 }
 .readme :deep([data-level='4']) {
-  font-size: 1rem;
+  font-size: var(--text-base-font-size);
+  line-height: var(--text-base-line-height);
 }
 .readme :deep([data-level='5']) {
-  font-size: 0.925rem;
+  font-size: var(--text-base-font-size);
+  line-height: var(--text-base-line-height);
+  font-weight: 500;
 }
 .readme :deep([data-level='6']) {
-  font-size: 0.875rem;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
+  font-weight: 500;
 }
 
 .readme :deep(p) {
@@ -137,7 +145,8 @@ function handleClick(event: MouseEvent) {
 
 .readme :deep(code) {
   @apply font-mono;
-  font-size: 0.875em;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
   background: var(--bg-muted);
   padding: 0.2em 0.4em;
   border-radius: 4px;
@@ -247,7 +256,8 @@ function handleClick(event: MouseEvent) {
   border: none;
   padding: 0;
   @apply font-mono;
-  font-size: 0.875rem;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
   color: var(--fg);
   /* Prevent code from forcing width */
   white-space: pre;
@@ -303,7 +313,8 @@ function handleClick(event: MouseEvent) {
 .readme :deep(blockquote[data-callout]::before) {
   display: block;
   @apply font-mono;
-  font-size: 0.75rem;
+  font-size: var(--text-xs-font-size);
+  line-height: var(--text-xs-line-height);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -409,7 +420,8 @@ function handleClick(event: MouseEvent) {
   overflow-x: auto;
   border-collapse: collapse;
   margin: 1.5rem 0;
-  font-size: 0.875rem;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
   word-break: keep-all;
 }
 

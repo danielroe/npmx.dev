@@ -270,7 +270,8 @@ html.light .shiki span {
 p > span > code,
 .line-clamp-2 code {
   @apply font-mono;
-  font-size: 0.85em;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
   background: var(--bg-muted);
   padding: 0.1em 0.3em;
   border-radius: 3px;
@@ -292,7 +293,8 @@ input[type='search'] {
   input,
   select,
   textarea {
-    font-size: 16px !important;
+    font-size: var(--text-base-font-size) !important;
+    line-height: var(--text-base-line-height) !important;
   }
 }
 

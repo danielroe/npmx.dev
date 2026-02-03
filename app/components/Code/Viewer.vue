@@ -90,7 +90,8 @@ watch(
 
 <style scoped>
 .code-viewer {
-  font-size: 14px;
+  font-size: var(--text-sm-font-size);
+  line-height: var(--text-sm-line-height);
 }
 
 .line-numbers {
