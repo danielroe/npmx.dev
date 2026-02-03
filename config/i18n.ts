@@ -206,11 +206,23 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     code: 'uk-UA',
     file: 'uk-UA.json',
     name: 'Українська',
-    pluralRule: (choice: number) => {
+    pluralRule: (choice: number, choicesLength: number) => {
       if (choice === 0) return 0
 
       const name = new Intl.PluralRules('uk-UA').select(choice)
-      return { zero: 0, one: 1, two: 0, few: 2, many: 3, other: 4 }[name]
+      const plural = { zero: 0, one: 1, two: 0, few: 2, many: 3, other: 4 }[name]
+
+      // In case translation doesn't have all plural forms, use the last available form
+      if (plural > choicesLength - 1) {
+        if (import.meta.dev) {
+          console.warn(
+            `Plural form index ${plural} for choice ${choice} exceeds available forms ${choicesLength} for locale uk-UA.`,
+          )
+        }
+        return choicesLength - 1
+      }
+
+      return plural
     },
   },
   /*{
