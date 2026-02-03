@@ -107,13 +107,13 @@ defineOgImageComponent('Default', {
                   autofocus
                   :placeholder="$t('search.placeholder')"
                   v-bind="noCorrect"
-                  class="w-full bg-bg-subtle border border-border rounded-lg ps-8 pe-24 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-border-color duration-300 focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  class="w-full bg-bg-subtle border border-border rounded-lg ps-8 pe-24 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-border-color duration-300 focus:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
                   @input="handleInput"
                 />
 
                 <button
                   type="submit"
-                  class="absolute inset-ie-2 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-[background-color,transform] duration-200 hover:bg-fg/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                  class="absolute inset-ie-2 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-[background-color,transform] duration-200 hover:bg-fg/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
                 >
                   <span class="i-carbon:search align-middle w-4 h-4" aria-hidden="true"></span>
                   {{ $t('search.button') }}

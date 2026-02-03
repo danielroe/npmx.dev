@@ -582,7 +582,7 @@ defineOgImageComponent('Package', {
             <NuxtLink
               v-if="docsLink"
               :to="docsLink"
-              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 inline-flex items-center gap-1.5"
               aria-keyshortcuts="d"
             >
               <span class="i-carbon:document w-3 h-3" aria-hidden="true" />
@@ -596,7 +596,7 @@ defineOgImageComponent('Package', {
             </NuxtLink>
             <NuxtLink
               :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
-              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 inline-flex items-center gap-1.5"
               aria-keyshortcuts="."
             >
               <span class="i-carbon:code w-3 h-3" aria-hidden="true" />
@@ -610,7 +610,7 @@ defineOgImageComponent('Package', {
             </NuxtLink>
             <NuxtLink
               :to="{ path: '/compare', query: { packages: pkg.name } }"
-              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 inline-flex items-center gap-1.5"
+              class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 inline-flex items-center gap-1.5"
               aria-keyshortcuts="c"
             >
               <span class="i-carbon:compare w-3 h-3" aria-hidden="true" />
