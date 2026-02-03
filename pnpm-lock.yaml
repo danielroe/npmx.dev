@@ -53,6 +53,9 @@ importers:
       '@iconify-json/vscode-icons':
         specifier: 1.2.40
         version: 1.2.40
+      '@intlify/shared':
+        specifier: 11.2.8
+        version: 11.2.8
       '@lunariajs/core':
         specifier: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3
         version: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3
@@ -190,9 +193,6 @@ importers:
         version: 3.14.3(vue@3.5.27(typescript@5.9.3))
     devDependencies:
       '@intlify/core-base':
-        specifier: 11.2.8
-        version: 11.2.8
-      '@intlify/shared':
         specifier: 11.2.8
         version: 11.2.8
       '@npm/types':
