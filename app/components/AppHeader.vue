@@ -26,10 +26,18 @@ const isOnHomePage = computed(() => route.name === 'index')
 const isOnSearchPage = computed(() => route.name === 'search')
 const isSearchExpanded = computed(() => isOnSearchPage.value || isSearchExpandedManually.value)
 
+// Track if we're in the process of expanding (to prevent immediate collapse)
+const isExpandingSearch = shallowRef(false)
+
 function expandMobileSearch() {
+  isExpandingSearch.value = true
   isSearchExpandedManually.value = true
   nextTick(() => {
     searchBoxRef.value?.focus()
+    // Reset expanding flag after focus is established
+    setTimeout(() => {
+      isExpandingSearch.value = false
+    }, 200)
   })
 }
 
@@ -49,8 +57,8 @@ watch(
 function handleSearchBlur() {
   showFullSearch.value = false
   // Collapse expanded search on mobile after blur (with delay for click handling)
-  // But don't collapse if we're on the search page
-  if (isMobile.value && !isOnSearchPage.value) {
+  // But don't collapse if we're on the search page or currently expanding
+  if (isMobile.value && !isOnSearchPage.value && !isExpandingSearch.value) {
     setTimeout(() => {
       isSearchExpandedManually.value = false
     }, 150)

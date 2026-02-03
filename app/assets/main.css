@@ -282,6 +282,13 @@ p > span > code,
   view-transition-name: search-box;
 }
 
+/* Disable search-box view transition on mobile to prevent jump when expanding */
+@media screen and (max-width: 639px) {
+  .search-box {
+    view-transition-name: none;
+  }
+}
+
 /* Safari search input fixes */
 input[type='search'] {
   -webkit-appearance: none;
