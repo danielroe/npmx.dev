@@ -70,7 +70,10 @@ function handleFileSelect(file: FileChange) {
     <div class="border-b border-border shrink-0">
       <div class="px-3 py-2.5 border-b border-border">
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <h2 class="text-xs font-medium">Summary</h2>
+          <span class="text-xs font-medium flex items-center gap-1.5">
+            <span class="i-lucide-lightbulb w-3.5 h-3.5" />
+            Summary
+          </span>
           <div class="flex items-center gap-3 font-mono text-[10px]">
             <span class="flex items-center gap-1">
               <span class="text-green-500">+{{ compare.stats.filesAdded }}</span>
