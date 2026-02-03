@@ -74,7 +74,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
               <select
                 id="theme-select"
                 :value="colorMode.preference"
-                class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg focus-visible:outline-accent/70 cursor-pointer"
+                class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg cursor-pointer"
                 @change="
                   colorMode.preference = ($event.target as HTMLSelectElement).value as
                     | 'light'

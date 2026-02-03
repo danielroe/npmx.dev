@@ -167,7 +167,7 @@ onKeyStroke(
         <!-- Desktop: Compare link -->
         <NuxtLink
           to="/compare"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 focus-visible:outline-accent/70 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts="c"
         >
           {{ $t('nav.compare') }}
@@ -182,7 +182,7 @@ onKeyStroke(
         <!-- Desktop: Settings link -->
         <NuxtLink
           to="/settings"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 focus-visible:outline-accent/70 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts=","
         >
           {{ $t('nav.settings') }}
