@@ -7,7 +7,7 @@
  * @module server/utils/docs/client
  */
 
-import { doc, type DocNode } from '@deno/doc'
+import { doc } from '@deno/doc'
 import { $fetch } from 'ofetch'
 import type { DenoDocNode, DenoDocResult } from '#shared/types/deno-doc'
 
@@ -18,39 +18,119 @@ import type { DenoDocNode, DenoDocResult } from '#shared/types/deno-doc'
 /** Timeout for fetching modules in milliseconds */
 const FETCH_TIMEOUT_MS = 30 * 1000
 
+/** Maximum number of subpath exports to process (prevents runaway on huge packages) */
+const MAX_SUBPATH_EXPORTS = 10
+
 // =============================================================================
 // Main Export
 // =============================================================================
 
 /**
  * Get documentation nodes for a package using @deno/doc WASM.
+ *
+ * This function fetches types for all subpath exports (e.g., `nuxt`, `nuxt/app`, `nuxt/kit`)
+ * to provide comprehensive documentation for packages with multiple entry points.
+ *
+ * All errors are caught and result in empty nodes - docgen failures are graceful degradation
+ * and should never cause error logging or wake up a maintainer.
  */
-export async function getDocNodes(packageName: string, version: string): Promise<DenoDocResult> {
-  // Get types URL from esm.sh header
-  const typesUrl = await getTypesUrl(packageName, version)
-
-  if (!typesUrl) {
-    return { version: 1, nodes: [] }
-  }
-
-  // Generate docs using @deno/doc WASM
-  let result: Record<string, DocNode[]>
+export async function getDocNodes(
+  packageName: string,
+  version: string,
+  exports?: Record<string, unknown>,
+): Promise<DenoDocResult> {
   try {
-    result = await doc([typesUrl], {
+    // Get all types URLs from package exports (uses pre-fetched exports data)
+    const typesUrls = await getAllTypesUrls(packageName, version, exports)
+
+    if (typesUrls.length === 0) {
+      return { version: 1, nodes: [] }
+    }
+
+    // Generate docs using @deno/doc WASM for all entry points
+    const result = await doc(typesUrls, {
       load: createLoader(),
       resolve: createResolver(),
     })
+
+    // Collect all nodes from all specifiers
+    const allNodes: DenoDocNode[] = []
+    for (const nodes of Object.values(result)) {
+      allNodes.push(...(nodes as DenoDocNode[]))
+    }
+
+    return { version: 1, nodes: allNodes }
   } catch {
+    // Silent failure - all docgen errors are graceful degradation
+    // In future should maybe consider debug mode / struct logging of some kind
     return { version: 1, nodes: [] }
   }
+}
 
-  // Collect all nodes from all specifiers
-  const allNodes: DenoDocNode[] = []
-  for (const nodes of Object.values(result)) {
-    allNodes.push(...(nodes as DenoDocNode[]))
+// =============================================================================
+// Types URL Discovery
+// =============================================================================
+
+/**
+ * Get all TypeScript types URLs for a package, including subpath exports.
+ */
+async function getAllTypesUrls(
+  packageName: string,
+  version: string,
+  exports?: Record<string, unknown>,
+): Promise<string[]> {
+  const mainTypesUrl = await getTypesUrl(packageName, version)
+  const subpathTypesUrls = await getSubpathTypesUrlsFromExports(packageName, version, exports)
+
+  // Combine and deduplicate
+  const allUrls = new Set<string>()
+  if (mainTypesUrl) allUrls.add(mainTypesUrl)
+  for (const url of subpathTypesUrls) {
+    allUrls.add(url)
   }
 
-  return { version: 1, nodes: allNodes }
+  return [...allUrls]
+}
+
+/**
+ * Extract types URLs from pre-fetched package exports.
+ */
+async function getSubpathTypesUrlsFromExports(
+  packageName: string,
+  version: string,
+  exports?: Record<string, unknown>,
+): Promise<string[]> {
+  // No exports field or simple string export
+  if (!exports || typeof exports !== 'object') return []
+
+  // Find subpaths with types
+  const subpathsWithTypes: string[] = []
+  for (const [subpath, config] of Object.entries(exports)) {
+    // Skip the main entry (already handled) and non-object configs
+    if (subpath === '.' || typeof config !== 'object' || config === null) continue
+    // Skip package.json export
+    if (subpath === './package.json') continue
+
+    const exportConfig = config as Record<string, unknown>
+    if (exportConfig.types && typeof exportConfig.types === 'string') {
+      subpathsWithTypes.push(subpath)
+    }
+  }
+
+  // Limit to prevent runaway on huge packages
+  const limitedSubpaths = subpathsWithTypes.slice(0, MAX_SUBPATH_EXPORTS)
+
+  // Fetch types URLs for each subpath in parallel
+  const typesUrls = await Promise.all(
+    limitedSubpaths.map(async subpath => {
+      // Convert ./app to /app for esm.sh URL
+      // esm.sh format: https://esm.sh/nuxt@3.15.4/app (not nuxt/app@3.15.4)
+      const esmSubpath = subpath.startsWith('./') ? subpath.slice(1) : subpath
+      return getTypesUrlForSubpath(packageName, version, esmSubpath)
+    }),
+  )
+
+  return typesUrls.filter((url): url is string => url !== null)
 }
 
 // =============================================================================
@@ -160,8 +240,26 @@ function createResolver(): (specifier: string, referrer: string) => string {
  *   x-typescript-types: https://esm.sh/ufo@1.5.0/dist/index.d.ts
  */
 async function getTypesUrl(packageName: string, version: string): Promise<string | null> {
-  const url = `https://esm.sh/${packageName}@${version}`
+  return fetchTypesHeader(`https://esm.sh/${packageName}@${version}`)
+}
 
+/**
+ * Get types URL for a package subpath.
+ * Example: getTypesUrlForSubpath('nuxt', '3.15.4', '/app')
+ *   → fetches https://esm.sh/nuxt@3.15.4/app
+ */
+async function getTypesUrlForSubpath(
+  packageName: string,
+  version: string,
+  subpath: string,
+): Promise<string | null> {
+  return fetchTypesHeader(`https://esm.sh/${packageName}@${version}${subpath}`)
+}
+
+/**
+ * Fetch the x-typescript-types header from an esm.sh URL.
+ */
+async function fetchTypesHeader(url: string): Promise<string | null> {
   try {
     const response = await $fetch.raw(url, {
       method: 'HEAD' as 'GET', // Cast to satisfy Nitro's typed $fetch (external URL, any method is fine)

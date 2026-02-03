@@ -1,4 +1,5 @@
 import type { DocsResponse } from '#shared/types'
+import { fetchNpmPackage } from '#server/utils/npm'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { parsePackageParam } from '#shared/utils/parse-package-param'
 import { generateDocsWithDeno } from '#server/utils/docs'
@@ -24,9 +25,14 @@ export default defineCachedEventHandler(
       throw createError({ statusCode: 404, message: 'Package version is required' })
     }
 
+    // Fetch packument to get exports field for multi-entrypoint type docs
+    const packument = await fetchNpmPackage(packageName)
+    const versionData = packument.versions?.[version]
+    const exports = versionData?.exports as Record<string, unknown> | undefined
+
     let generated
     try {
-      generated = await generateDocsWithDeno(packageName, version)
+      generated = await generateDocsWithDeno(packageName, version, exports)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error(`Doc generation failed for ${packageName}@${version}:`, error)
