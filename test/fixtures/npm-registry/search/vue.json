@@ -2,12 +2,12 @@
   "objects": [
     {
       "downloads": {
-        "monthly": 32818849,
-        "weekly": 8497364
+        "monthly": 32731392,
+        "weekly": 8525448
       },
-      "dependents": "83901",
-      "updated": "2026-02-02T03:48:16.987Z",
-      "searchScore": 1843.0671,
+      "dependents": "83903",
+      "updated": "2026-02-03T06:14:11.935Z",
+      "searchScore": 1816.6466,
       "package": {
         "name": "vue",
         "keywords": ["vue"],
@@ -47,7 +47,7 @@
         }
       },
       "score": {
-        "final": 1843.0671,
+        "final": 1816.6466,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -60,12 +60,12 @@
     },
     {
       "downloads": {
-        "monthly": 28698428,
-        "weekly": 7420034
+        "monthly": 28629952,
+        "weekly": 7438820
       },
       "dependents": "342",
-      "updated": "2026-02-02T03:48:01.062Z",
-      "searchScore": 332.18774,
+      "updated": "2026-02-03T06:12:31.957Z",
+      "searchScore": 332.11798,
       "package": {
         "name": "@vue/reactivity",
         "keywords": ["vue"],
@@ -101,7 +101,7 @@
         }
       },
       "score": {
-        "final": 332.18774,
+        "final": 332.11798,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -114,12 +114,12 @@
     },
     {
       "downloads": {
-        "monthly": 49346590,
-        "weekly": 12928247
+        "monthly": 49162084,
+        "weekly": 12956797
       },
       "dependents": "1505",
-      "updated": "2026-02-02T03:48:14.412Z",
-      "searchScore": 331.008,
+      "updated": "2026-02-03T06:14:04.916Z",
+      "searchScore": 329.1668,
       "package": {
         "name": "@vue/compiler-sfc",
         "keywords": ["vue"],
@@ -155,7 +155,7 @@
         }
       },
       "score": {
-        "final": 331.008,
+        "final": 329.1668,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -168,12 +168,12 @@
     },
     {
       "downloads": {
-        "monthly": 53893390,
-        "weekly": 14115159
+        "monthly": 53664231,
+        "weekly": 14133155
       },
-      "dependents": "170",
-      "updated": "2026-02-02T03:47:56.720Z",
-      "searchScore": 327.85788,
+      "dependents": "171",
+      "updated": "2026-02-03T06:12:30.962Z",
+      "searchScore": 327.29965,
       "package": {
         "name": "@vue/compiler-core",
         "keywords": ["vue"],
@@ -209,7 +209,7 @@
         }
       },
       "score": {
-        "final": 327.85788,
+        "final": 327.29965,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -222,12 +222,12 @@
     },
     {
       "downloads": {
-        "monthly": 45511168,
-        "weekly": 11882845
+        "monthly": 45340294,
+        "weekly": 11890551
       },
       "dependents": "17",
-      "updated": "2026-02-02T03:48:21.080Z",
-      "searchScore": 325.4508,
+      "updated": "2026-02-03T06:14:10.773Z",
+      "searchScore": 325.8949,
       "package": {
         "name": "@vue/compiler-ssr",
         "keywords": ["vue"],
@@ -263,7 +263,7 @@
         }
       },
       "score": {
-        "final": 325.4508,
+        "final": 325.8949,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -276,12 +276,12 @@
     },
     {
       "downloads": {
-        "monthly": 53582524,
-        "weekly": 14040384
+        "monthly": 53354511,
+        "weekly": 14057688
       },
-      "dependents": "289",
-      "updated": "2026-02-02T03:48:00.624Z",
-      "searchScore": 324.96396,
+      "dependents": "290",
+      "updated": "2026-02-03T06:12:27.496Z",
+      "searchScore": 324.55072,
       "package": {
         "name": "@vue/compiler-dom",
         "keywords": ["vue"],
@@ -317,7 +317,7 @@
         }
       },
       "score": {
-        "final": 324.96396,
+        "final": 324.55072,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -330,12 +330,12 @@
     },
     {
       "downloads": {
-        "monthly": 26613404,
-        "weekly": 6877617
+        "monthly": 26549999,
+        "weekly": 6894284
       },
       "dependents": "226",
-      "updated": "2026-02-02T03:48:36.444Z",
-      "searchScore": 314.3801,
+      "updated": "2026-02-03T06:14:29.790Z",
+      "searchScore": 312.50375,
       "package": {
         "name": "@vue/runtime-core",
         "keywords": ["vue"],
@@ -371,7 +371,7 @@
         }
       },
       "score": {
-        "final": 314.3801,
+        "final": 312.50375,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -384,120 +384,12 @@
     },
     {
       "downloads": {
-        "monthly": 26455360,
-        "weekly": 6839600
-      },
-      "dependents": "126",
-      "updated": "2026-02-02T03:47:24.951Z",
-      "searchScore": 312.65,
-      "package": {
-        "name": "@vue/server-renderer",
-        "keywords": ["vue"],
-        "version": "3.5.27",
-        "description": "@vue/server-renderer",
-        "sanitized_name": "@vue/server-renderer",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "yyx990803",
-            "type": "user",
-            "email": "yyx990803@gmail.com"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:2a643cb9-597d-4130-b579-f34ea33eab7c",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "yyx990803@gmail.com",
-            "username": "yyx990803"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-19T06:33:37.342Z",
-        "links": {
-          "homepage": "https://github.com/vuejs/core/tree/main/packages/server-renderer#readme",
-          "repository": "git+https://github.com/vuejs/core.git",
-          "bugs": "https://github.com/vuejs/core/issues",
-          "npm": "https://www.npmjs.com/package/@vue/server-renderer"
-        }
-      },
-      "score": {
-        "final": 312.65,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 59727151,
-        "weekly": 15602236
-      },
-      "dependents": "663",
-      "updated": "2026-02-02T03:47:46.558Z",
-      "searchScore": 312.16455,
-      "package": {
-        "name": "@vue/shared",
-        "keywords": ["vue"],
-        "version": "3.5.27",
-        "description": "internal utils shared across @vue packages",
-        "sanitized_name": "@vue/shared",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "yyx990803",
-            "type": "user",
-            "email": "yyx990803@gmail.com"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:b5675c34-a1f5-4f65-a3e4-cc57df0448f4",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "yyx990803@gmail.com",
-            "username": "yyx990803"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-19T06:33:40.459Z",
-        "links": {
-          "homepage": "https://github.com/vuejs/core/tree/main/packages/shared#readme",
-          "repository": "git+https://github.com/vuejs/core.git",
-          "bugs": "https://github.com/vuejs/core/issues",
-          "npm": "https://www.npmjs.com/package/@vue/shared"
-        }
-      },
-      "score": {
-        "final": 312.16455,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 26565944,
-        "weekly": 6866386
+        "monthly": 26501927,
+        "weekly": 6882891
       },
       "dependents": "96",
-      "updated": "2026-02-02T03:46:57.475Z",
-      "searchScore": 311.4814,
+      "updated": "2026-02-03T06:13:20.652Z",
+      "searchScore": 311.5848,
       "package": {
         "name": "@vue/runtime-dom",
         "keywords": ["vue"],
@@ -533,7 +425,7 @@
         }
       },
       "score": {
-        "final": 311.4814,
+        "final": 311.5848,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -546,12 +438,120 @@
     },
     {
       "downloads": {
-        "monthly": 18075637,
-        "weekly": 4679722
+        "monthly": 59480594,
+        "weekly": 15580246
       },
-      "dependents": "24056",
-      "updated": "2026-02-02T09:26:34.377Z",
-      "searchScore": 292.554,
+      "dependents": "665",
+      "updated": "2026-02-03T06:12:31.781Z",
+      "searchScore": 311.50748,
+      "package": {
+        "name": "@vue/shared",
+        "keywords": ["vue"],
+        "version": "3.5.27",
+        "description": "internal utils shared across @vue packages",
+        "sanitized_name": "@vue/shared",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "yyx990803",
+            "type": "user",
+            "email": "yyx990803@gmail.com"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:b5675c34-a1f5-4f65-a3e4-cc57df0448f4",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "yyx990803@gmail.com",
+            "username": "yyx990803"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-19T06:33:40.459Z",
+        "links": {
+          "homepage": "https://github.com/vuejs/core/tree/main/packages/shared#readme",
+          "repository": "git+https://github.com/vuejs/core.git",
+          "bugs": "https://github.com/vuejs/core/issues",
+          "npm": "https://www.npmjs.com/package/@vue/shared"
+        }
+      },
+      "score": {
+        "final": 311.50748,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 27258749,
+        "weekly": 6810503
+      },
+      "dependents": "126",
+      "updated": "2026-02-03T06:15:35.994Z",
+      "searchScore": 311.263,
+      "package": {
+        "name": "@vue/server-renderer",
+        "keywords": ["vue"],
+        "version": "3.5.27",
+        "description": "@vue/server-renderer",
+        "sanitized_name": "@vue/server-renderer",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "yyx990803",
+            "type": "user",
+            "email": "yyx990803@gmail.com"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:2a643cb9-597d-4130-b579-f34ea33eab7c",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "yyx990803@gmail.com",
+            "username": "yyx990803"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-19T06:33:37.342Z",
+        "links": {
+          "homepage": "https://github.com/vuejs/core/tree/main/packages/server-renderer#readme",
+          "repository": "git+https://github.com/vuejs/core.git",
+          "bugs": "https://github.com/vuejs/core/issues",
+          "npm": "https://www.npmjs.com/package/@vue/server-renderer"
+        }
+      },
+      "score": {
+        "final": 311.263,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 18737934,
+        "weekly": 4703121
+      },
+      "dependents": "24058",
+      "updated": "2026-02-03T06:15:19.729Z",
+      "searchScore": 293.7927,
       "package": {
         "name": "vue-router",
         "keywords": [],
@@ -586,7 +586,7 @@
         }
       },
       "score": {
-        "final": 292.554,
+        "final": 293.7927,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -599,12 +599,12 @@
     },
     {
       "downloads": {
-        "monthly": 8690498,
-        "weekly": 2230304
+        "monthly": 8641502,
+        "weekly": 2246157
       },
       "dependents": "3612",
-      "updated": "2026-02-02T03:46:56.002Z",
-      "searchScore": 273.4575,
+      "updated": "2026-02-03T06:13:23.886Z",
+      "searchScore": 273.06992,
       "package": {
         "name": "vue-template-compiler",
         "keywords": ["vue", "compiler"],
@@ -635,7 +635,7 @@
         }
       },
       "score": {
-        "final": 273.4575,
+        "final": 273.06992,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -648,12 +648,12 @@
     },
     {
       "downloads": {
-        "monthly": 3893444,
-        "weekly": 976127
+        "monthly": 3873539,
+        "weekly": 987745
       },
       "dependents": "9",
-      "updated": "2026-02-02T03:47:08.104Z",
-      "searchScore": 272.98285,
+      "updated": "2026-02-03T06:13:19.290Z",
+      "searchScore": 272.59763,
       "package": {
         "name": "@vue/reactivity-transform",
         "keywords": ["vue"],
@@ -680,7 +680,7 @@
         }
       },
       "score": {
-        "final": 272.98285,
+        "final": 272.59763,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -697,8 +697,8 @@
         "weekly": 1170387
       },
       "dependents": "384",
-      "updated": "2026-02-02T03:49:44.320Z",
-      "searchScore": 272.34106,
+      "updated": "2026-02-03T06:13:00.644Z",
+      "searchScore": 271.83838,
       "package": {
         "name": "@floating-ui/vue",
         "keywords": ["tooltip", "popover", "dropdown", "menu", "popup", "positioning", "vue"],
@@ -738,7 +738,7 @@
         }
       },
       "score": {
-        "final": 272.34106,
+        "final": 271.83838,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -751,12 +751,12 @@
     },
     {
       "downloads": {
-        "monthly": 11025927,
-        "weekly": 2931089
+        "monthly": 11456183,
+        "weekly": 2907075
       },
       "dependents": 0,
-      "updated": "2026-02-02T03:51:56.485Z",
-      "searchScore": 268.70966,
+      "updated": "2026-02-03T06:19:22.563Z",
+      "searchScore": 268.9851,
       "package": {
         "name": "@vue/compiler-vue2",
         "keywords": ["vue", "compiler"],
@@ -823,7 +823,7 @@
         }
       },
       "score": {
-        "final": 268.70966,
+        "final": 268.9851,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -836,12 +836,12 @@
     },
     {
       "downloads": {
-        "monthly": 679318,
-        "weekly": 178437
+        "monthly": 678937,
+        "weekly": 180692
       },
       "dependents": "63",
-      "updated": "2026-02-02T03:48:18.322Z",
-      "searchScore": 266.31757,
+      "updated": "2026-02-03T06:14:30.773Z",
+      "searchScore": 266.72534,
       "package": {
         "name": "@vue/compat",
         "keywords": ["vue"],
@@ -877,7 +877,7 @@
         }
       },
       "score": {
-        "final": 266.31757,
+        "final": 266.72534,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -890,12 +890,12 @@
     },
     {
       "downloads": {
-        "monthly": 23191825,
-        "weekly": 6044066
+        "monthly": 23105149,
+        "weekly": 6033167
       },
-      "dependents": "1279",
-      "updated": "2026-02-02T03:47:13.315Z",
-      "searchScore": 265.65,
+      "dependents": "1278",
+      "updated": "2026-02-03T06:13:13.035Z",
+      "searchScore": 265.0626,
       "package": {
         "name": "vue-eslint-parser",
         "keywords": [],
@@ -931,7 +931,7 @@
         }
       },
       "score": {
-        "final": 265.65,
+        "final": 265.0626,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -944,12 +944,12 @@
     },
     {
       "downloads": {
-        "monthly": 11594594,
-        "weekly": 3074651
+        "monthly": 11559010,
+        "weekly": 3081074
       },
       "dependents": "314",
-      "updated": "2026-02-02T03:46:56.611Z",
-      "searchScore": 263.6936,
+      "updated": "2026-02-03T06:13:18.569Z",
+      "searchScore": 262.9169,
       "package": {
         "name": "vue-tsc",
         "keywords": [],
@@ -989,7 +989,7 @@
         }
       },
       "score": {
-        "final": 263.6936,
+        "final": 262.9169,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1006,8 +1006,8 @@
         "weekly": 4797318
       },
       "dependents": "1197",
-      "updated": "2026-02-02T11:00:04.795Z",
-      "searchScore": 261.95444,
+      "updated": "2026-02-03T06:13:20.929Z",
+      "searchScore": 262.33282,
       "package": {
         "name": "@vitejs/plugin-vue",
         "keywords": ["vite", "vite-plugin", "vue"],
@@ -1059,7 +1059,7 @@
         }
       },
       "score": {
-        "final": 261.95444,
+        "final": 262.33282,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1072,12 +1072,12 @@
     },
     {
       "downloads": {
-        "monthly": 1764068,
-        "weekly": 475626
+        "monthly": 1834327,
+        "weekly": 467054
       },
       "dependents": "8",
-      "updated": "2026-02-02T03:51:15.586Z",
-      "searchScore": 260.29083,
+      "updated": "2026-02-03T06:18:27.891Z",
+      "searchScore": 260.76526,
       "package": {
         "name": "@intlify/vue-i18n-extensions",
         "keywords": [
@@ -1115,7 +1115,7 @@
         }
       },
       "score": {
-        "final": 260.29083,
+        "final": 260.76526,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1128,12 +1128,12 @@
     },
     {
       "downloads": {
-        "monthly": 8814496,
-        "weekly": 2231764
+        "monthly": 9106779,
+        "weekly": 2254132
       },
       "dependents": "3292",
-      "updated": "2026-02-02T03:47:26.915Z",
-      "searchScore": 258.1195,
+      "updated": "2026-02-03T06:15:28.277Z",
+      "searchScore": 259.07452,
       "package": {
         "name": "vue-loader",
         "keywords": [],
@@ -1164,7 +1164,7 @@
         }
       },
       "score": {
-        "final": 258.1195,
+        "final": 259.07452,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1177,12 +1177,12 @@
     },
     {
       "downloads": {
-        "monthly": 883202,
-        "weekly": 231228
+        "monthly": 879460,
+        "weekly": 233835
       },
       "dependents": "196",
-      "updated": "2026-02-02T03:47:08.053Z",
-      "searchScore": 256.75928,
+      "updated": "2026-02-03T06:13:19.832Z",
+      "searchScore": 257.38367,
       "package": {
         "name": "vue-jest",
         "keywords": [
@@ -1233,7 +1233,7 @@
         }
       },
       "score": {
-        "final": 256.75928,
+        "final": 257.38367,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1246,12 +1246,12 @@
     },
     {
       "downloads": {
-        "monthly": 2103612,
-        "weekly": 574262
+        "monthly": 2100758,
+        "weekly": 578304
       },
-      "dependents": "477",
-      "updated": "2026-02-02T03:47:03.833Z",
-      "searchScore": 256.66125,
+      "dependents": "478",
+      "updated": "2026-02-03T06:13:14.263Z",
+      "searchScore": 257.2773,
       "package": {
         "name": "@tiptap/vue-3",
         "keywords": ["tiptap", "tiptap vue components"],
@@ -1307,7 +1307,7 @@
         }
       },
       "score": {
-        "final": 256.66125,
+        "final": 257.2773,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1320,12 +1320,12 @@
     },
     {
       "downloads": {
-        "monthly": 9864143,
-        "weekly": 2597995
+        "monthly": 9819774,
+        "weekly": 2591428
       },
       "dependents": "339",
-      "updated": "2026-02-02T03:48:25.886Z",
-      "searchScore": 256.617,
+      "updated": "2026-02-03T06:14:09.551Z",
+      "searchScore": 256.03546,
       "package": {
         "name": "@vue/test-utils",
         "keywords": [],
@@ -1368,7 +1368,7 @@
         }
       },
       "score": {
-        "final": 256.617,
+        "final": 256.03546,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1385,8 +1385,8 @@
         "weekly": 969217
       },
       "dependents": "2",
-      "updated": "2026-02-02T03:51:08.936Z",
-      "searchScore": 255.44722,
+      "updated": "2026-02-03T06:13:28.069Z",
+      "searchScore": 255.17896,
       "package": {
         "name": "@cspell/dict-vue",
         "keywords": ["cspell", "cspell-ext", "vue", "dictionary", "spelling"],
@@ -1418,7 +1418,7 @@
         }
       },
       "score": {
-        "final": 255.44722,
+        "final": 255.17896,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1430,6 +1430,6 @@
       }
     }
   ],
-  "total": 151211,
-  "time": "2026-02-03T00:16:53.588Z"
+  "total": 151262,
+  "time": "2026-02-03T13:10:00.030Z"
 }

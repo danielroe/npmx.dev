@@ -25,29 +25,30 @@ const NPM_API = 'https://api.npmjs.org'
 
 /**
  * Packages required by E2E tests.
- * These are the packages that tests navigate to or expect data from.
+ * Keep this list minimal - only add packages that are directly used in tests.
+ *
+ * To find what's needed, check:
+ * - goto() calls in test/e2e/*.spec.ts
+ * - API endpoint tests (badges, vulnerabilities)
+ * - create-command tests (need create-* packages)
  */
 const REQUIRED_PACKAGES = [
-  // Unscoped packages
-  'nuxt',
-  'vue',
-  'lodash',
-  'vite',
-  'next',
-  'color',
-  'ufo',
-  'is-odd',
-  'date-fns',
+  // Core packages for various tests
+  'vue', // search, badges, vulnerabilities, version test (3.5.27)
+  'nuxt', // org tests, badges, create-command
+  'vite', // create-command test
+  'next', // create-command test
+  '@nuxt/kit', // scoped package tests, version test (3.20.0)
+  '@types/node', // scoped package tests
+  // Docs page tests
+  'ufo', // docs test with version 1.6.3
+  'is-odd', // docs test (3.0.1), install copy test, "no create" test, hyphen-in-name test
+  // Edge case: package name with dots
   'lodash.merge',
-  // Create packages (checked via relationship from main packages)
+  // Create-command feature (checks if create-* package exists)
   'create-vite',
   'create-next-app',
   'create-nuxt',
-  // Scoped packages
-  '@nuxt/kit',
-  '@vitejs/plugin-vue',
-  '@babel/core',
-  '@types/node',
 ] as const
 
 /**
@@ -62,8 +63,9 @@ const REQUIRED_ORGS = ['nuxt'] as const
 
 /**
  * Users whose package lists are needed.
+ * Use users with few packages to keep fixtures small.
  */
-const REQUIRED_USERS = ['sindresorhus'] as const
+const REQUIRED_USERS = ['qwerzl'] as const
 
 // ============================================================================
 // Utility Functions

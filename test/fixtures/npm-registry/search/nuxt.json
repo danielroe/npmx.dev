@@ -2,12 +2,12 @@
   "objects": [
     {
       "downloads": {
-        "monthly": 4438596,
-        "weekly": 1167426
+        "monthly": 4431434,
+        "weekly": 1174646
       },
       "dependents": "747",
-      "updated": "2026-02-02T03:46:58.170Z",
-      "searchScore": 1949.2489,
+      "updated": "2026-02-03T06:13:28.573Z",
+      "searchScore": 1846.1357,
       "package": {
         "name": "nuxt",
         "keywords": [],
@@ -43,7 +43,7 @@
         }
       },
       "score": {
-        "final": 1949.2489,
+        "final": 1846.1357,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -56,66 +56,12 @@
     },
     {
       "downloads": {
-        "monthly": 5397647,
-        "weekly": 1422369
-      },
-      "dependents": "111",
-      "updated": "2026-02-02T03:47:00.174Z",
-      "searchScore": 434.50958,
-      "package": {
-        "name": "@nuxt/schema",
-        "keywords": [],
-        "version": "4.3.0",
-        "description": "Nuxt types and default configuration",
-        "sanitized_name": "@nuxt/schema",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "danielroe",
-            "type": "user",
-            "email": "daniel@roe.dev"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:4c63ab48-f200-42e8-a90c-33eb9e9eb701",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "nuxtbot@roe.dev",
-            "username": "nuxtbot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-22T23:02:23.006Z",
-        "links": {
-          "homepage": "https://nuxt.com",
-          "repository": "git+https://github.com/nuxt/nuxt.git",
-          "bugs": "https://github.com/nuxt/nuxt/issues",
-          "npm": "https://www.npmjs.com/package/@nuxt/schema"
-        }
-      },
-      "score": {
-        "final": 434.50958,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 3818655,
-        "weekly": 1005480
+        "monthly": 3814423,
+        "weekly": 1011799
       },
       "dependents": "23",
-      "updated": "2026-02-02T03:48:26.994Z",
-      "searchScore": 434.2851,
+      "updated": "2026-02-03T06:14:27.463Z",
+      "searchScore": 435.5205,
       "package": {
         "name": "@nuxt/devtools",
         "keywords": [],
@@ -167,7 +113,7 @@
         }
       },
       "score": {
-        "final": 434.2851,
+        "final": 435.5205,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -180,169 +126,12 @@
     },
     {
       "downloads": {
-        "monthly": 2210351,
-        "weekly": 579847
-      },
-      "dependents": "270",
-      "updated": "2026-02-02T03:47:58.123Z",
-      "searchScore": 429.8862,
-      "package": {
-        "name": "@pinia/nuxt",
-        "keywords": ["pinia", "nuxt", "vue", "vuex", "store"],
-        "version": "0.11.3",
-        "description": "Nuxt Module for pinia",
-        "sanitized_name": "@pinia/nuxt",
-        "publisher": {
-          "email": "posva13@gmail.com",
-          "username": "posva"
-        },
-        "maintainers": [
-          {
-            "email": "posva13@gmail.com",
-            "username": "posva"
-          },
-          {
-            "email": "daniel@roe.dev",
-            "username": "danielroe"
-          }
-        ],
-        "license": "MIT",
-        "date": "2025-11-05T09:25:18.018Z",
-        "links": {
-          "homepage": "https://pinia.vuejs.org/ssr/nuxt.html",
-          "repository": "git+https://github.com/vuejs/pinia.git",
-          "bugs": "https://github.com/vuejs/pinia/issues",
-          "npm": "https://www.npmjs.com/package/@pinia/nuxt"
-        }
-      },
-      "score": {
-        "final": 429.8862,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 14301617,
-        "weekly": 3778790
-      },
-      "dependents": "2973",
-      "updated": "2026-02-02T03:47:29.492Z",
-      "searchScore": 427.08435,
-      "package": {
-        "name": "@nuxt/kit",
-        "keywords": [],
-        "version": "4.3.0",
-        "description": "Toolkit for authoring modules and interacting with Nuxt",
-        "sanitized_name": "@nuxt/kit",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "danielroe",
-            "type": "user",
-            "email": "daniel@roe.dev"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:ba131b18-fdae-4501-8d1e-723095f43235",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "nuxtbot@roe.dev",
-            "username": "nuxtbot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-22T23:01:53.501Z",
-        "links": {
-          "homepage": "https://nuxt.com/docs/4.x/api/kit",
-          "repository": "git+https://github.com/nuxt/nuxt.git",
-          "bugs": "https://github.com/nuxt/nuxt/issues",
-          "npm": "https://www.npmjs.com/package/@nuxt/kit"
-        }
-      },
-      "score": {
-        "final": 427.08435,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 1233022,
-        "weekly": 335983
-      },
-      "dependents": "230",
-      "updated": "2026-02-02T03:48:39.712Z",
-      "searchScore": 420.72168,
-      "package": {
-        "name": "@vueuse/nuxt",
-        "keywords": ["vue", "vueuse", "nuxt", "nuxt3", "nuxt-module"],
-        "version": "14.2.0",
-        "description": "VueUse Nuxt Module",
-        "sanitized_name": "@vueuse/nuxt",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "vueuse-bot",
-            "type": "user",
-            "email": "npm-vueuse@antfu.me"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:d63813ae-12cd-4fcd-b1af-688bc2afa4bd",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "npm-vueuse@antfu.me",
-            "username": "vueuse-bot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-31T06:25:53.625Z",
-        "links": {
-          "homepage": "https://github.com/vueuse/vueuse/tree/main/packages/nuxt#readme",
-          "repository": "git+https://github.com/vueuse/vueuse.git",
-          "bugs": "https://github.com/vueuse/vueuse/issues",
-          "npm": "https://www.npmjs.com/package/@vueuse/nuxt"
-        }
-      },
-      "score": {
-        "final": 420.72168,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 3933722,
-        "weekly": 1043479
+        "monthly": 4063211,
+        "weekly": 1029360
       },
       "dependents": "11",
-      "updated": "2026-02-02T03:47:26.872Z",
-      "searchScore": 420.56702,
+      "updated": "2026-02-03T06:32:42.495Z",
+      "searchScore": 435.45096,
       "package": {
         "name": "@nuxt/vite-builder",
         "keywords": [],
@@ -378,7 +167,218 @@
         }
       },
       "score": {
-        "final": 420.56702,
+        "final": 435.45096,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 1231872,
+        "weekly": 340045
+      },
+      "dependents": "230",
+      "updated": "2026-02-03T06:14:09.514Z",
+      "searchScore": 434.00882,
+      "package": {
+        "name": "@vueuse/nuxt",
+        "keywords": ["vue", "vueuse", "nuxt", "nuxt3", "nuxt-module"],
+        "version": "14.2.0",
+        "description": "VueUse Nuxt Module",
+        "sanitized_name": "@vueuse/nuxt",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "vueuse-bot",
+            "type": "user",
+            "email": "npm-vueuse@antfu.me"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:d63813ae-12cd-4fcd-b1af-688bc2afa4bd",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "npm-vueuse@antfu.me",
+            "username": "vueuse-bot"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-31T06:25:53.625Z",
+        "links": {
+          "homepage": "https://github.com/vueuse/vueuse/tree/main/packages/nuxt#readme",
+          "repository": "git+https://github.com/vueuse/vueuse.git",
+          "bugs": "https://github.com/vueuse/vueuse/issues",
+          "npm": "https://www.npmjs.com/package/@vueuse/nuxt"
+        }
+      },
+      "score": {
+        "final": 434.00882,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 5380622,
+        "weekly": 1430697
+      },
+      "dependents": "111",
+      "updated": "2026-02-03T06:13:32.299Z",
+      "searchScore": 433.7545,
+      "package": {
+        "name": "@nuxt/schema",
+        "keywords": [],
+        "version": "4.3.0",
+        "description": "Nuxt types and default configuration",
+        "sanitized_name": "@nuxt/schema",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "danielroe",
+            "type": "user",
+            "email": "daniel@roe.dev"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:4c63ab48-f200-42e8-a90c-33eb9e9eb701",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "nuxtbot@roe.dev",
+            "username": "nuxtbot"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-22T23:02:23.006Z",
+        "links": {
+          "homepage": "https://nuxt.com",
+          "repository": "git+https://github.com/nuxt/nuxt.git",
+          "bugs": "https://github.com/nuxt/nuxt/issues",
+          "npm": "https://www.npmjs.com/package/@nuxt/schema"
+        }
+      },
+      "score": {
+        "final": 433.7545,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 2202369,
+        "weekly": 581823
+      },
+      "dependents": "270",
+      "updated": "2026-02-03T06:12:43.975Z",
+      "searchScore": 430.9173,
+      "package": {
+        "name": "@pinia/nuxt",
+        "keywords": ["pinia", "nuxt", "vue", "vuex", "store"],
+        "version": "0.11.3",
+        "description": "Nuxt Module for pinia",
+        "sanitized_name": "@pinia/nuxt",
+        "publisher": {
+          "email": "posva13@gmail.com",
+          "username": "posva"
+        },
+        "maintainers": [
+          {
+            "email": "posva13@gmail.com",
+            "username": "posva"
+          },
+          {
+            "email": "daniel@roe.dev",
+            "username": "danielroe"
+          }
+        ],
+        "license": "MIT",
+        "date": "2025-11-05T09:25:18.018Z",
+        "links": {
+          "homepage": "https://pinia.vuejs.org/ssr/nuxt.html",
+          "repository": "git+https://github.com/vuejs/pinia.git",
+          "bugs": "https://github.com/vuejs/pinia/issues",
+          "npm": "https://www.npmjs.com/package/@pinia/nuxt"
+        }
+      },
+      "score": {
+        "final": 430.9173,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 14774020,
+        "weekly": 3744387
+      },
+      "dependents": "2971",
+      "updated": "2026-02-03T06:15:22.389Z",
+      "searchScore": 429.22473,
+      "package": {
+        "name": "@nuxt/kit",
+        "keywords": [],
+        "version": "4.3.0",
+        "description": "Toolkit for authoring modules and interacting with Nuxt",
+        "sanitized_name": "@nuxt/kit",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "danielroe",
+            "type": "user",
+            "email": "daniel@roe.dev"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:ba131b18-fdae-4501-8d1e-723095f43235",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "nuxtbot@roe.dev",
+            "username": "nuxtbot"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-22T23:01:53.501Z",
+        "links": {
+          "homepage": "https://nuxt.com/docs/4.x/api/kit",
+          "repository": "git+https://github.com/nuxt/nuxt.git",
+          "bugs": "https://github.com/nuxt/nuxt/issues",
+          "npm": "https://www.npmjs.com/package/@nuxt/kit"
+        }
+      },
+      "score": {
+        "final": 429.22473,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -395,8 +395,8 @@
         "weekly": 320177
       },
       "dependents": "146",
-      "updated": "2026-02-02T03:49:12.999Z",
-      "searchScore": 419.4892,
+      "updated": "2026-02-03T06:12:39.746Z",
+      "searchScore": 420.6606,
       "package": {
         "name": "@nuxt/image",
         "keywords": [],
@@ -427,7 +427,7 @@
         }
       },
       "score": {
-        "final": 419.4892,
+        "final": 420.6606,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -440,12 +440,61 @@
     },
     {
       "downloads": {
-        "monthly": 477882,
-        "weekly": 125288
+        "monthly": 1844821,
+        "weekly": 496932
+      },
+      "dependents": "3",
+      "updated": "2026-02-03T06:16:31.399Z",
+      "searchScore": 418.01666,
+      "package": {
+        "name": "@dxup/nuxt",
+        "keywords": [],
+        "version": "0.3.2",
+        "description": "TypeScript plugin for Nuxt",
+        "sanitized_name": "@dxup/nuxt",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:52475691-c56b-447d-86fd-332951f17c7a",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "mimorimaboroshi@gmail.com",
+            "username": "kazariex"
+          }
+        ],
+        "license": "MIT",
+        "date": "2025-12-14T15:41:23.448Z",
+        "links": {
+          "homepage": "https://github.com/KazariEX/dxup#readme",
+          "repository": "git+https://github.com/KazariEX/dxup.git",
+          "bugs": "https://github.com/KazariEX/dxup/issues",
+          "npm": "https://www.npmjs.com/package/@dxup/nuxt"
+        }
+      },
+      "score": {
+        "final": 418.01666,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 475376,
+        "weekly": 126131
       },
       "dependents": "80",
-      "updated": "2026-02-02T03:48:00.319Z",
-      "searchScore": 412.08484,
+      "updated": "2026-02-03T06:12:42.017Z",
+      "searchScore": 408.53308,
       "package": {
         "name": "@nuxt/types",
         "keywords": [],
@@ -488,7 +537,7 @@
         }
       },
       "score": {
-        "final": 412.08484,
+        "final": 408.53308,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -501,43 +550,48 @@
     },
     {
       "downloads": {
-        "monthly": 1774426,
-        "weekly": 496997
+        "monthly": 1360516,
+        "weekly": 371866
       },
-      "dependents": "3",
-      "updated": "2026-02-02T03:50:22.231Z",
-      "searchScore": 403.8023,
+      "dependents": "23",
+      "updated": "2026-02-03T06:14:14.075Z",
+      "searchScore": 402.82422,
       "package": {
-        "name": "@dxup/nuxt",
+        "name": "@nuxt/test-utils",
         "keywords": [],
-        "version": "0.3.2",
-        "description": "TypeScript plugin for Nuxt",
-        "sanitized_name": "@dxup/nuxt",
+        "version": "3.23.0",
+        "description": "Test utilities for Nuxt",
+        "sanitized_name": "@nuxt/test-utils",
         "publisher": {
           "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "danielroe",
+            "type": "user",
+            "email": "daniel@roe.dev"
+          },
           "trustedPublisher": {
-            "oidcConfigId": "oidc:52475691-c56b-447d-86fd-332951f17c7a",
+            "oidcConfigId": "oidc:e373741e-79cc-4eee-95c1-6d212aedfcb1",
             "id": "github"
           },
           "username": "GitHub Actions"
         },
         "maintainers": [
           {
-            "email": "mimorimaboroshi@gmail.com",
-            "username": "kazariex"
+            "email": "nuxtbot@roe.dev",
+            "username": "nuxtbot"
           }
         ],
         "license": "MIT",
-        "date": "2025-12-14T15:41:23.448Z",
+        "date": "2026-01-06T16:23:02.806Z",
         "links": {
-          "homepage": "https://github.com/KazariEX/dxup#readme",
-          "repository": "git+https://github.com/KazariEX/dxup.git",
-          "bugs": "https://github.com/KazariEX/dxup/issues",
-          "npm": "https://www.npmjs.com/package/@dxup/nuxt"
+          "homepage": "https://github.com/nuxt/test-utils#readme",
+          "repository": "git+https://github.com/nuxt/test-utils.git",
+          "bugs": "https://github.com/nuxt/test-utils/issues",
+          "npm": "https://www.npmjs.com/package/@nuxt/test-utils"
         }
       },
       "score": {
-        "final": 403.8023,
+        "final": 402.82422,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -550,12 +604,12 @@
     },
     {
       "downloads": {
-        "monthly": 1830408,
-        "weekly": 509255
+        "monthly": 1902252,
+        "weekly": 509340
       },
       "dependents": "2",
-      "updated": "2026-02-02T03:50:16.215Z",
-      "searchScore": 399.43036,
+      "updated": "2026-02-03T06:18:48.318Z",
+      "searchScore": 396.8385,
       "package": {
         "name": "@nuxt/nitro-server",
         "keywords": [],
@@ -586,7 +640,7 @@
         }
       },
       "score": {
-        "final": 399.43036,
+        "final": 396.8385,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -599,12 +653,12 @@
     },
     {
       "downloads": {
-        "monthly": 1707961,
-        "weekly": 457881
+        "monthly": 1706448,
+        "weekly": 460619
       },
       "dependents": "15",
-      "updated": "2026-02-02T03:47:58.886Z",
-      "searchScore": 396.45374,
+      "updated": "2026-02-03T06:12:42.785Z",
+      "searchScore": 395.76538,
       "package": {
         "name": "@nuxt/eslint-plugin",
         "keywords": [],
@@ -656,7 +710,7 @@
         }
       },
       "score": {
-        "final": 396.45374,
+        "final": 395.76538,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -669,66 +723,12 @@
     },
     {
       "downloads": {
-        "monthly": 1363727,
-        "weekly": 368564
-      },
-      "dependents": "23",
-      "updated": "2026-02-02T03:48:34.931Z",
-      "searchScore": 389.94644,
-      "package": {
-        "name": "@nuxt/test-utils",
-        "keywords": [],
-        "version": "3.23.0",
-        "description": "Test utilities for Nuxt",
-        "sanitized_name": "@nuxt/test-utils",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "danielroe",
-            "type": "user",
-            "email": "daniel@roe.dev"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:e373741e-79cc-4eee-95c1-6d212aedfcb1",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "nuxtbot@roe.dev",
-            "username": "nuxtbot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-06T16:23:02.806Z",
-        "links": {
-          "homepage": "https://github.com/nuxt/test-utils#readme",
-          "repository": "git+https://github.com/nuxt/test-utils.git",
-          "bugs": "https://github.com/nuxt/test-utils/issues",
-          "npm": "https://www.npmjs.com/package/@nuxt/test-utils"
-        }
-      },
-      "score": {
-        "final": 389.94644,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 3698280,
-        "weekly": 971602
+        "monthly": 3695121,
+        "weekly": 978031
       },
       "dependents": "18",
-      "updated": "2026-02-02T03:47:07.327Z",
-      "searchScore": 389.7597,
+      "updated": "2026-02-03T06:13:01.754Z",
+      "searchScore": 389.14587,
       "package": {
         "name": "@nuxt/cli",
         "keywords": [],
@@ -759,7 +759,7 @@
         }
       },
       "score": {
-        "final": 389.7597,
+        "final": 389.14587,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -772,82 +772,12 @@
     },
     {
       "downloads": {
-        "monthly": 1801486,
-        "weekly": 485378
-      },
-      "dependents": "55",
-      "updated": "2026-02-02T03:48:35.892Z",
-      "searchScore": 385.0114,
-      "package": {
-        "name": "@nuxt/eslint-config",
-        "keywords": [],
-        "version": "1.13.0",
-        "description": "ESLint config for Nuxt projects",
-        "sanitized_name": "@nuxt/eslint-config",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "antfu",
-            "type": "user",
-            "email": "anthonyfu117@hotmail.com"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:9a079df2-09e3-4f80-9f75-34f5432e281d",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "atinux@gmail.com",
-            "username": "atinux"
-          },
-          {
-            "email": "pyapar@gmail.com",
-            "username": "pi0"
-          },
-          {
-            "email": "anthonyfu117@hotmail.com",
-            "username": "antfu"
-          },
-          {
-            "email": "daniel@roe.dev",
-            "username": "danielroe"
-          },
-          {
-            "email": "nuxtbot@roe.dev",
-            "username": "nuxtbot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-23T11:37:03.425Z",
-        "links": {
-          "homepage": "https://github.com/nuxt/eslint#readme",
-          "repository": "git+https://github.com/nuxt/eslint.git",
-          "bugs": "https://github.com/nuxt/eslint/issues",
-          "npm": "https://www.npmjs.com/package/@nuxt/eslint-config"
-        }
-      },
-      "score": {
-        "final": 385.0114,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 1123311,
-        "weekly": 296539
+        "monthly": 1125697,
+        "weekly": 300238
       },
       "dependents": "97",
-      "updated": "2026-02-02T03:46:59.069Z",
-      "searchScore": 384.47028,
+      "updated": "2026-02-03T06:13:22.537Z",
+      "searchScore": 385.65964,
       "package": {
         "name": "@nuxt/icon",
         "keywords": [],
@@ -899,7 +829,7 @@
         }
       },
       "score": {
-        "final": 384.47028,
+        "final": 385.65964,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -912,12 +842,82 @@
     },
     {
       "downloads": {
-        "monthly": 1016017,
-        "weekly": 297170
+        "monthly": 1799930,
+        "weekly": 488738
+      },
+      "dependents": "55",
+      "updated": "2026-02-03T06:14:20.016Z",
+      "searchScore": 384.3293,
+      "package": {
+        "name": "@nuxt/eslint-config",
+        "keywords": [],
+        "version": "1.13.0",
+        "description": "ESLint config for Nuxt projects",
+        "sanitized_name": "@nuxt/eslint-config",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "antfu",
+            "type": "user",
+            "email": "anthonyfu117@hotmail.com"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:9a079df2-09e3-4f80-9f75-34f5432e281d",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "atinux@gmail.com",
+            "username": "atinux"
+          },
+          {
+            "email": "pyapar@gmail.com",
+            "username": "pi0"
+          },
+          {
+            "email": "anthonyfu117@hotmail.com",
+            "username": "antfu"
+          },
+          {
+            "email": "daniel@roe.dev",
+            "username": "danielroe"
+          },
+          {
+            "email": "nuxtbot@roe.dev",
+            "username": "nuxtbot"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-23T11:37:03.425Z",
+        "links": {
+          "homepage": "https://github.com/nuxt/eslint#readme",
+          "repository": "git+https://github.com/nuxt/eslint.git",
+          "bugs": "https://github.com/nuxt/eslint/issues",
+          "npm": "https://www.npmjs.com/package/@nuxt/eslint-config"
+        }
+      },
+      "score": {
+        "final": 384.3293,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 1017472,
+        "weekly": 300185
       },
       "dependents": "63",
-      "updated": "2026-02-02T03:47:17.138Z",
-      "searchScore": 379.7041,
+      "updated": "2026-02-03T06:13:20.551Z",
+      "searchScore": 380.06818,
       "package": {
         "name": "@nuxt/fonts",
         "keywords": [],
@@ -948,7 +948,7 @@
         }
       },
       "score": {
-        "final": 379.7041,
+        "final": 380.06818,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -961,12 +961,12 @@
     },
     {
       "downloads": {
-        "monthly": 1448913,
-        "weekly": 387510
+        "monthly": 1448082,
+        "weekly": 390401
       },
       "dependents": "62",
-      "updated": "2026-02-02T03:47:05.005Z",
-      "searchScore": 370.0526,
+      "updated": "2026-02-03T06:13:25.935Z",
+      "searchScore": 369.396,
       "package": {
         "name": "@nuxt/eslint",
         "keywords": [],
@@ -1018,7 +1018,7 @@
         }
       },
       "score": {
-        "final": 370.0526,
+        "final": 369.396,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1031,12 +1031,57 @@
     },
     {
       "downloads": {
-        "monthly": 4033804,
-        "weekly": 1065949
+        "monthly": 162282,
+        "weekly": 34911
+      },
+      "dependents": "23",
+      "updated": "2026-02-03T06:18:19.430Z",
+      "searchScore": 369.35483,
+      "package": {
+        "name": "nuxt-lodash",
+        "keywords": ["nuxt", "nuxt-module", "lodash", "lodash-es"],
+        "version": "2.5.3",
+        "description": "Lodash for Nuxt",
+        "sanitized_name": "nuxt-lodash",
+        "publisher": {
+          "email": "michalcipa@gmail.com",
+          "username": "cipami"
+        },
+        "maintainers": [
+          {
+            "email": "michalcipa@gmail.com",
+            "username": "cipami"
+          }
+        ],
+        "license": "MIT",
+        "date": "2023-10-22T17:49:48.856Z",
+        "links": {
+          "homepage": "https://github.com/cipami/nuxt-lodash#readme",
+          "repository": "git+https://github.com/cipami/nuxt-lodash.git",
+          "bugs": "https://github.com/cipami/nuxt-lodash/issues",
+          "npm": "https://www.npmjs.com/package/nuxt-lodash"
+        }
+      },
+      "score": {
+        "final": 369.35483,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 4028711,
+        "weekly": 1073204
       },
       "dependents": "20",
-      "updated": "2026-02-02T03:47:12.037Z",
-      "searchScore": 368.82562,
+      "updated": "2026-02-03T06:13:35.950Z",
+      "searchScore": 368.129,
       "package": {
         "name": "@nuxt/telemetry",
         "keywords": [],
@@ -1079,7 +1124,7 @@
         }
       },
       "score": {
-        "final": 368.82562,
+        "final": 368.129,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1092,12 +1137,12 @@
     },
     {
       "downloads": {
-        "monthly": 444941,
-        "weekly": 131114
+        "monthly": 445148,
+        "weekly": 131963
       },
       "dependents": "6",
-      "updated": "2026-02-02T03:47:11.261Z",
-      "searchScore": 361.5843,
+      "updated": "2026-02-03T06:13:21.643Z",
+      "searchScore": 362.6268,
       "package": {
         "name": "@sentry/nuxt",
         "keywords": [],
@@ -1129,7 +1174,68 @@
         }
       },
       "score": {
-        "final": 361.5843,
+        "final": 362.6268,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 158573,
+        "weekly": 41116
+      },
+      "dependents": "17",
+      "updated": "2026-02-03T06:18:32.287Z",
+      "searchScore": 358.26086,
+      "package": {
+        "name": "@nuxt/postcss8",
+        "keywords": [],
+        "version": "1.1.3",
+        "description": "Since [nuxt@2.15](https://github.com/nuxt/nuxt.js/releases/tag/v2.15.0) nuxt supports opting-in to use `postcss@8` (via [nuxt/nuxt.js#8546](https://github.com/nuxt/nuxt.js/pull/8546)).",
+        "sanitized_name": "@nuxt/postcss8",
+        "publisher": {
+          "email": "pyapar@gmail.com",
+          "username": "pi0"
+        },
+        "maintainers": [
+          {
+            "email": "atinux@gmail.com",
+            "username": "atinux"
+          },
+          {
+            "email": "pyapar@gmail.com",
+            "username": "pi0"
+          },
+          {
+            "email": "anthonyfu117@hotmail.com",
+            "username": "antfu"
+          },
+          {
+            "email": "daniel@roe.dev",
+            "username": "danielroe"
+          },
+          {
+            "email": "nuxtbot@roe.dev",
+            "username": "nuxtbot"
+          }
+        ],
+        "license": "MIT",
+        "date": "2021-03-10T14:38:26.102Z",
+        "links": {
+          "homepage": "https://github.com/nuxt/postcss8#readme",
+          "repository": "git+https://github.com/nuxt/postcss8.git",
+          "bugs": "https://github.com/nuxt/postcss8/issues",
+          "npm": "https://www.npmjs.com/package/@nuxt/postcss8"
+        }
+      },
+      "score": {
+        "final": 358.26086,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1146,12 +1252,12 @@
         "weekly": 100791
       },
       "dependents": "1",
-      "updated": "2026-02-02T18:37:30.049Z",
-      "searchScore": 358.80573,
+      "updated": "2026-02-03T06:13:41.593Z",
+      "searchScore": 355.48315,
       "package": {
         "name": "@workflow/nuxt",
         "keywords": [],
-        "version": "4.0.1-beta.35",
+        "version": "4.0.1-beta.36",
         "description": "Nuxt integration for Workflow DevKit",
         "sanitized_name": "@workflow/nuxt",
         "publisher": {
@@ -1213,7 +1319,7 @@
           }
         ],
         "license": "Apache-2.0",
-        "date": "2026-02-02T18:36:58.981Z",
+        "date": "2026-02-03T00:55:39.177Z",
         "links": {
           "homepage": "https://github.com/vercel/workflow#readme",
           "repository": "git+https://github.com/vercel/workflow.git",
@@ -1222,7 +1328,7 @@
         }
       },
       "score": {
-        "final": 358.80573,
+        "final": 355.48315,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1235,118 +1341,12 @@
     },
     {
       "downloads": {
-        "monthly": 158845,
-        "weekly": 46064
-      },
-      "dependents": "23",
-      "updated": "2026-01-31T06:01:21.611Z",
-      "searchScore": 357.68857,
-      "package": {
-        "name": "nuxt-lodash",
-        "keywords": ["nuxt", "nuxt-module", "lodash", "lodash-es"],
-        "version": "2.5.3",
-        "description": "Lodash for Nuxt",
-        "sanitized_name": "nuxt-lodash",
-        "publisher": {
-          "email": "michalcipa@gmail.com",
-          "username": "cipami"
-        },
-        "maintainers": [
-          {
-            "email": "michalcipa@gmail.com",
-            "username": "cipami"
-          }
-        ],
-        "license": "MIT",
-        "date": "2023-10-22T17:49:48.856Z",
-        "links": {
-          "homepage": "https://github.com/cipami/nuxt-lodash#readme",
-          "repository": "git+https://github.com/cipami/nuxt-lodash.git",
-          "bugs": "https://github.com/cipami/nuxt-lodash/issues",
-          "npm": "https://www.npmjs.com/package/nuxt-lodash"
-        }
-      },
-      "score": {
-        "final": 357.68857,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 153198,
-        "weekly": 41016
-      },
-      "dependents": "17",
-      "updated": "2026-02-02T03:51:45.645Z",
-      "searchScore": 357.16888,
-      "package": {
-        "name": "@nuxt/postcss8",
-        "keywords": [],
-        "version": "1.1.3",
-        "description": "Since [nuxt@2.15](https://github.com/nuxt/nuxt.js/releases/tag/v2.15.0) nuxt supports opting-in to use `postcss@8` (via [nuxt/nuxt.js#8546](https://github.com/nuxt/nuxt.js/pull/8546)).",
-        "sanitized_name": "@nuxt/postcss8",
-        "publisher": {
-          "email": "pyapar@gmail.com",
-          "username": "pi0"
-        },
-        "maintainers": [
-          {
-            "email": "atinux@gmail.com",
-            "username": "atinux"
-          },
-          {
-            "email": "pyapar@gmail.com",
-            "username": "pi0"
-          },
-          {
-            "email": "anthonyfu117@hotmail.com",
-            "username": "antfu"
-          },
-          {
-            "email": "daniel@roe.dev",
-            "username": "danielroe"
-          },
-          {
-            "email": "nuxtbot@roe.dev",
-            "username": "nuxtbot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2021-03-10T14:38:26.102Z",
-        "links": {
-          "homepage": "https://github.com/nuxt/postcss8#readme",
-          "repository": "git+https://github.com/nuxt/postcss8.git",
-          "bugs": "https://github.com/nuxt/postcss8/issues",
-          "npm": "https://www.npmjs.com/package/@nuxt/postcss8"
-        }
-      },
-      "score": {
-        "final": 357.16888,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 207278,
-        "weekly": 54138
+        "monthly": 207496,
+        "weekly": 55417
       },
       "dependents": "61",
-      "updated": "2026-02-02T03:48:12.166Z",
-      "searchScore": 355.28085,
+      "updated": "2026-02-03T06:12:35.758Z",
+      "searchScore": 354.80774,
       "package": {
         "name": "@unocss/nuxt",
         "keywords": ["unocss", "nuxt-module", "nuxt", "nuxt3"],
@@ -1386,7 +1386,7 @@
         }
       },
       "score": {
-        "final": 355.28085,
+        "final": 354.80774,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1399,12 +1399,12 @@
     },
     {
       "downloads": {
-        "monthly": 413830,
-        "weekly": 92347
+        "monthly": 428767,
+        "weekly": 92575
       },
       "dependents": "4",
-      "updated": "2026-02-02T03:47:25.988Z",
-      "searchScore": 355.1759,
+      "updated": "2026-02-03T06:16:31.414Z",
+      "searchScore": 353.01498,
       "package": {
         "name": "nuxt-csurf",
         "keywords": ["nuxt", "csrf", "module"],
@@ -1431,7 +1431,7 @@
         }
       },
       "score": {
-        "final": 355.1759,
+        "final": 353.01498,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1443,6 +1443,6 @@
       }
     }
   ],
-  "total": 9573,
-  "time": "2026-02-03T00:16:53.868Z"
+  "total": 9576,
+  "time": "2026-02-03T13:10:00.302Z"
 }

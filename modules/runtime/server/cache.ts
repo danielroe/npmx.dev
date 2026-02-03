@@ -124,7 +124,9 @@ async function handleFastNpmMeta(
   const fixturePath = getFixturePath('packument', packageName)
   const packument = await storage.getItem<any>(fixturePath)
 
-  if (!packument) return null
+  if (!packument) {
+    return { data: null }
+  }
 
   let version: string | undefined
   if (specifier === 'latest' || !specifier) {
@@ -172,6 +174,7 @@ function matchUrlToFixture(url: string): FixtureMatch | null {
         }
         return { type: 'search', name: query }
       }
+      return { type: 'search', name: '' }
     }
 
     // Org packages
@@ -272,9 +275,9 @@ export default defineNitroPlugin(nitroApp => {
       const data = await storage.getItem<T>(fixturePath)
 
       if (data === null) {
-        // For user searches, return empty results (valid behavior)
-        if (match.type === 'user') {
-          if (VERBOSE) process.stdout.write(`[test-fixtures] Empty user: ${match.name}\n`)
+        // For user searches or search queries without fixtures, return empty results
+        if (match.type === 'user' || match.type === 'search') {
+          if (VERBOSE) process.stdout.write(`[test-fixtures] Empty ${match.type}: ${match.name}\n`)
           return {
             data: { objects: [], total: 0, time: new Date().toISOString() } as T,
             isStale: false,

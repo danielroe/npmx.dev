@@ -2,12 +2,78 @@
   "objects": [
     {
       "downloads": {
-        "monthly": 244454617,
-        "weekly": 63787257
+        "monthly": 196062332,
+        "weekly": 53689019
       },
-      "dependents": "97407",
-      "updated": "2026-02-02T03:47:47.963Z",
-      "searchScore": 48.27785,
+      "dependents": "5345",
+      "updated": "2026-02-03T06:13:21.215Z",
+      "searchScore": 46.89331,
+      "package": {
+        "name": "vite",
+        "keywords": ["frontend", "framework", "hmr", "dev-server", "build-tool", "vite"],
+        "version": "7.3.1",
+        "description": "Native-ESM powered web dev build tool",
+        "sanitized_name": "vite",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "vitebot",
+            "type": "user",
+            "email": "vite@voidzero.dev"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:a2e674b1-239b-4e35-a07f-7b43debc0a8c",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "yyx990803@gmail.com",
+            "username": "yyx990803"
+          },
+          {
+            "email": "hey.patak@gmail.com",
+            "username": "patak"
+          },
+          {
+            "email": "anthonyfu117@hotmail.com",
+            "username": "antfu"
+          },
+          {
+            "email": "vite@voidzero.dev",
+            "username": "vitebot"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-07T06:07:43.726Z",
+        "links": {
+          "homepage": "https://vite.dev",
+          "repository": "git+https://github.com/vitejs/vite.git",
+          "bugs": "https://github.com/vitejs/vite/issues",
+          "npm": "https://www.npmjs.com/package/vite"
+        }
+      },
+      "score": {
+        "final": 46.89331,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 243995395,
+        "weekly": 64358082
+      },
+      "dependents": "97477",
+      "updated": "2026-02-03T06:12:30.925Z",
+      "searchScore": 46.385788,
       "package": {
         "name": "express",
         "keywords": [
@@ -61,7 +127,7 @@
         }
       },
       "score": {
-        "final": 48.27785,
+        "final": 46.385788,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -77,9 +143,9 @@
         "monthly": 95617428,
         "weekly": 23607292
       },
-      "dependents": "60108",
-      "updated": "2026-02-02T23:36:24.996Z",
-      "searchScore": 45.475864,
+      "dependents": "60110",
+      "updated": "2026-02-03T06:12:27.515Z",
+      "searchScore": 45.320477,
       "package": {
         "name": "next",
         "keywords": [
@@ -126,7 +192,7 @@
         }
       },
       "score": {
-        "final": 45.475864,
+        "final": 45.320477,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -139,78 +205,12 @@
     },
     {
       "downloads": {
-        "monthly": 195948345,
-        "weekly": 53000138
+        "monthly": 50253987,
+        "weekly": 14646104
       },
-      "dependents": "5340",
-      "updated": "2026-02-02T03:46:59.461Z",
-      "searchScore": 45.336926,
-      "package": {
-        "name": "vite",
-        "keywords": ["frontend", "framework", "hmr", "dev-server", "build-tool", "vite"],
-        "version": "7.3.1",
-        "description": "Native-ESM powered web dev build tool",
-        "sanitized_name": "vite",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "vitebot",
-            "type": "user",
-            "email": "vite@voidzero.dev"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:a2e674b1-239b-4e35-a07f-7b43debc0a8c",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "yyx990803@gmail.com",
-            "username": "yyx990803"
-          },
-          {
-            "email": "hey.patak@gmail.com",
-            "username": "patak"
-          },
-          {
-            "email": "anthonyfu117@hotmail.com",
-            "username": "antfu"
-          },
-          {
-            "email": "vite@voidzero.dev",
-            "username": "vitebot"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-07T06:07:43.726Z",
-        "links": {
-          "homepage": "https://vite.dev",
-          "repository": "git+https://github.com/vitejs/vite.git",
-          "bugs": "https://github.com/vitejs/vite/issues",
-          "npm": "https://www.npmjs.com/package/vite"
-        }
-      },
-      "score": {
-        "final": 45.336926,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 48409513,
-        "weekly": 14346846
-      },
-      "dependents": "1810",
-      "updated": "2026-02-02T03:47:23.185Z",
-      "searchScore": 43.70996,
+      "dependents": "1819",
+      "updated": "2026-02-03T06:15:31.800Z",
+      "searchScore": 43.78785,
       "package": {
         "name": "hono",
         "keywords": [
@@ -258,7 +258,7 @@
         }
       },
       "score": {
-        "final": 43.70996,
+        "final": 43.78785,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -271,65 +271,12 @@
     },
     {
       "downloads": {
-        "monthly": 38150149,
-        "weekly": 9776012
+        "monthly": 28069805,
+        "weekly": 7251309
       },
-      "dependents": "11168",
-      "updated": "2026-02-02T03:46:50.619Z",
-      "searchScore": 43.112858,
-      "package": {
-        "name": "socket.io",
-        "keywords": ["realtime", "framework", "websocket", "tcp", "events", "socket", "io"],
-        "version": "4.8.3",
-        "description": "node.js realtime framework server",
-        "sanitized_name": "socket-io",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:51c61f97-f8ff-4369-9032-84a98d5103a4",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "rauchg@gmail.com",
-            "username": "rauchg"
-          },
-          {
-            "email": "damien.arrachequesne@gmail.com",
-            "username": "darrachequesne"
-          }
-        ],
-        "license": "MIT",
-        "date": "2025-12-23T16:42:13.022Z",
-        "links": {
-          "homepage": "https://github.com/socketio/socket.io/tree/main/packages/socket.io#readme",
-          "repository": "git+https://github.com/socketio/socket.io.git",
-          "bugs": "https://github.com/socketio/socket.io/issues",
-          "npm": "https://www.npmjs.com/package/socket.io"
-        }
-      },
-      "score": {
-        "final": 43.112858,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 28194316,
-        "weekly": 7194077
-      },
-      "dependents": "11501",
-      "updated": "2026-02-02T03:46:56.711Z",
-      "searchScore": 42.923985,
+      "dependents": "11506",
+      "updated": "2026-02-03T06:13:37.170Z",
+      "searchScore": 43.058933,
       "package": {
         "name": "socket.io-client",
         "keywords": ["realtime", "framework", "websocket", "tcp", "events", "client"],
@@ -364,7 +311,7 @@
         }
       },
       "score": {
-        "final": 42.923985,
+        "final": 43.058933,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -377,12 +324,65 @@
     },
     {
       "downloads": {
-        "monthly": 44579675,
-        "weekly": 10779146
+        "monthly": 37955132,
+        "weekly": 9827668
+      },
+      "dependents": "11169",
+      "updated": "2026-02-03T06:13:01.691Z",
+      "searchScore": 42.952408,
+      "package": {
+        "name": "socket.io",
+        "keywords": ["realtime", "framework", "websocket", "tcp", "events", "socket", "io"],
+        "version": "4.8.3",
+        "description": "node.js realtime framework server",
+        "sanitized_name": "socket-io",
+        "publisher": {
+          "email": "npm-oidc-no-reply@github.com",
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:51c61f97-f8ff-4369-9032-84a98d5103a4",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
+        },
+        "maintainers": [
+          {
+            "email": "rauchg@gmail.com",
+            "username": "rauchg"
+          },
+          {
+            "email": "damien.arrachequesne@gmail.com",
+            "username": "darrachequesne"
+          }
+        ],
+        "license": "MIT",
+        "date": "2025-12-23T16:42:13.022Z",
+        "links": {
+          "homepage": "https://github.com/socketio/socket.io/tree/main/packages/socket.io#readme",
+          "repository": "git+https://github.com/socketio/socket.io.git",
+          "bugs": "https://github.com/socketio/socket.io/issues",
+          "npm": "https://www.npmjs.com/package/socket.io"
+        }
+      },
+      "score": {
+        "final": 42.952408,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 43025619,
+        "weekly": 10862267
       },
       "dependents": "2333",
-      "updated": "2026-02-02T03:46:57.211Z",
-      "searchScore": 41.76186,
+      "updated": "2026-02-03T06:13:20.581Z",
+      "searchScore": 41.794323,
       "package": {
         "name": "preact",
         "keywords": [
@@ -444,7 +444,7 @@
         }
       },
       "score": {
-        "final": 41.76186,
+        "final": 41.794323,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -457,12 +457,12 @@
     },
     {
       "downloads": {
-        "monthly": 39944184,
-        "weekly": 10368804
+        "monthly": 39755214,
+        "weekly": 10417149
       },
-      "dependents": "3129",
-      "updated": "2026-02-02T03:47:48.797Z",
-      "searchScore": 41.49086,
+      "dependents": "3130",
+      "updated": "2026-02-03T06:12:44.168Z",
+      "searchScore": 41.598637,
       "package": {
         "name": "connect",
         "keywords": ["framework", "web", "middleware", "connect", "rack"],
@@ -489,7 +489,7 @@
         }
       },
       "score": {
-        "final": 41.49086,
+        "final": 41.598637,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -502,12 +502,12 @@
     },
     {
       "downloads": {
-        "monthly": 20210878,
-        "weekly": 5147409
+        "monthly": 20941692,
+        "weekly": 5232665
       },
       "dependents": "14871",
-      "updated": "2026-02-02T03:50:01.226Z",
-      "searchScore": 41.464375,
+      "updated": "2026-02-03T06:15:22.418Z",
+      "searchScore": 41.53839,
       "package": {
         "name": "bootstrap",
         "keywords": ["css", "sass", "mobile-first", "responsive", "front-end", "framework", "web"],
@@ -547,7 +547,7 @@
         }
       },
       "score": {
-        "final": 41.464375,
+        "final": 41.53839,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -560,12 +560,12 @@
     },
     {
       "downloads": {
-        "monthly": 15260831,
-        "weekly": 4122787
+        "monthly": 15172362,
+        "weekly": 4136795
       },
       "dependents": "104",
-      "updated": "2026-02-02T03:48:31.369Z",
-      "searchScore": 41.323395,
+      "updated": "2026-02-03T06:14:34.734Z",
+      "searchScore": 41.449245,
       "package": {
         "name": "@envelop/core",
         "keywords": ["gql", "graphql", "server", "framework", "node", "nodejs", "typescript"],
@@ -605,7 +605,7 @@
         }
       },
       "score": {
-        "final": 41.323395,
+        "final": 41.449245,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -618,96 +618,12 @@
     },
     {
       "downloads": {
-        "monthly": 9860717,
-        "weekly": 2442418
-      },
-      "dependents": "12662",
-      "updated": "2026-02-02T08:08:52.746Z",
-      "searchScore": 40.184605,
-      "package": {
-        "name": "antd",
-        "keywords": [
-          "ant",
-          "component",
-          "components",
-          "design",
-          "framework",
-          "frontend",
-          "react",
-          "react-component",
-          "ui"
-        ],
-        "version": "6.2.3",
-        "description": "An enterprise-class UI design language and React components implementation",
-        "sanitized_name": "antd",
-        "publisher": {
-          "email": "afc163@gmail.com",
-          "actor": {
-            "name": "peachscript",
-            "type": "user",
-            "email": "scdzwyxst@gmail.com"
-          },
-          "username": "afc163"
-        },
-        "maintainers": [
-          {
-            "email": "afc163@gmail.com",
-            "username": "afc163"
-          },
-          {
-            "email": "scdzwyxst@gmail.com",
-            "username": "peachscript"
-          },
-          {
-            "email": "smith3816@gmail.com",
-            "username": "zombiej"
-          },
-          {
-            "email": "wasd2144@hotmail.com",
-            "username": "chenshuai2144"
-          },
-          {
-            "email": "xrkffgg@hotmail.com",
-            "username": "xrkffgg"
-          },
-          {
-            "email": "1075746765@qq.com",
-            "username": "madccc"
-          },
-          {
-            "email": "zoomdong07@gmail.com",
-            "username": "zoomdong07"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-02-02T08:08:20.553Z",
-        "links": {
-          "homepage": "https://ant.design",
-          "repository": "git+https://github.com/ant-design/ant-design.git",
-          "bugs": "https://github.com/ant-design/ant-design/issues",
-          "npm": "https://www.npmjs.com/package/antd"
-        }
-      },
-      "score": {
-        "final": 40.184605,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 22076125,
-        "weekly": 5811326
+        "monthly": 21936063,
+        "weekly": 5838565
       },
       "dependents": "7605",
-      "updated": "2026-02-02T03:48:41.828Z",
-      "searchScore": 39.957283,
+      "updated": "2026-02-03T06:14:12.419Z",
+      "searchScore": 41.311462,
       "package": {
         "name": "koa",
         "keywords": ["web", "app", "http", "application", "framework", "middleware", "rack"],
@@ -778,7 +694,148 @@
         }
       },
       "score": {
-        "final": 39.957283,
+        "final": 41.311462,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 9860717,
+        "weekly": 2442418
+      },
+      "dependents": "12665",
+      "updated": "2026-02-03T06:13:18.783Z",
+      "searchScore": 40.32178,
+      "package": {
+        "name": "antd",
+        "keywords": [
+          "ant",
+          "component",
+          "components",
+          "design",
+          "framework",
+          "frontend",
+          "react",
+          "react-component",
+          "ui"
+        ],
+        "version": "6.2.3",
+        "description": "An enterprise-class UI design language and React components implementation",
+        "sanitized_name": "antd",
+        "publisher": {
+          "email": "afc163@gmail.com",
+          "actor": {
+            "name": "peachscript",
+            "type": "user",
+            "email": "scdzwyxst@gmail.com"
+          },
+          "username": "afc163"
+        },
+        "maintainers": [
+          {
+            "email": "afc163@gmail.com",
+            "username": "afc163"
+          },
+          {
+            "email": "scdzwyxst@gmail.com",
+            "username": "peachscript"
+          },
+          {
+            "email": "smith3816@gmail.com",
+            "username": "zombiej"
+          },
+          {
+            "email": "wasd2144@hotmail.com",
+            "username": "chenshuai2144"
+          },
+          {
+            "email": "xrkffgg@hotmail.com",
+            "username": "xrkffgg"
+          },
+          {
+            "email": "1075746765@qq.com",
+            "username": "madccc"
+          },
+          {
+            "email": "zoomdong07@gmail.com",
+            "username": "zoomdong07"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-02-02T08:08:20.553Z",
+        "links": {
+          "homepage": "https://ant.design",
+          "repository": "git+https://github.com/ant-design/ant-design.git",
+          "bugs": "https://github.com/ant-design/ant-design/issues",
+          "npm": "https://www.npmjs.com/package/antd"
+        }
+      },
+      "score": {
+        "final": 40.32178,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 11352468,
+        "weekly": 2861714
+      },
+      "dependents": "2291",
+      "updated": "2026-02-03T06:12:34.093Z",
+      "searchScore": 39.632812,
+      "package": {
+        "name": "quill",
+        "keywords": [
+          "quill",
+          "editor",
+          "rich text",
+          "wysiwyg",
+          "operational transformation",
+          "ot",
+          "framework"
+        ],
+        "version": "2.0.3",
+        "description": "Your powerful, rich text editor",
+        "sanitized_name": "quill",
+        "publisher": {
+          "email": "i@zihua.li",
+          "username": "luin"
+        },
+        "maintainers": [
+          {
+            "email": "i@zihua.li",
+            "username": "luin"
+          },
+          {
+            "email": "jhchen7@gmail.com",
+            "username": "jhchen"
+          }
+        ],
+        "license": "BSD-3-Clause",
+        "date": "2024-11-30T12:19:39.819Z",
+        "links": {
+          "homepage": "https://quilljs.com",
+          "repository": "git+https://github.com/slab/quill.git",
+          "bugs": "https://github.com/slab/quill/issues",
+          "npm": "https://www.npmjs.com/package/quill"
+        }
+      },
+      "score": {
+        "final": 39.632812,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -795,8 +852,8 @@
         "weekly": 2571710
       },
       "dependents": "55",
-      "updated": "2026-02-02T03:51:18.545Z",
-      "searchScore": 39.689495,
+      "updated": "2026-02-03T06:12:17.275Z",
+      "searchScore": 39.55388,
       "package": {
         "name": "vitefu",
         "keywords": ["vite", "framework", "utilities"],
@@ -832,69 +889,7 @@
         }
       },
       "score": {
-        "final": 39.689495,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 9942018,
-        "weekly": 2601569
-      },
-      "dependents": "1812",
-      "updated": "2026-02-02T03:47:20.092Z",
-      "searchScore": 39.5177,
-      "package": {
-        "name": "svelte",
-        "keywords": ["svelte", "UI", "framework", "templates", "templating"],
-        "version": "5.49.1",
-        "description": "Cybernetically enhanced web apps",
-        "sanitized_name": "svelte",
-        "publisher": {
-          "email": "npm-oidc-no-reply@github.com",
-          "actor": {
-            "name": "svelte-admin",
-            "type": "user",
-            "email": "richard.a.harris+svelte@gmail.com"
-          },
-          "trustedPublisher": {
-            "oidcConfigId": "oidc:375c7e5b-4e4c-479a-b0f6-729eb69dcbb6",
-            "id": "github"
-          },
-          "username": "GitHub Actions"
-        },
-        "maintainers": [
-          {
-            "email": "richard.a.harris@gmail.com",
-            "username": "rich_harris"
-          },
-          {
-            "email": "npm@chor.date",
-            "username": "conduitry"
-          },
-          {
-            "email": "richard.a.harris+svelte@gmail.com",
-            "username": "svelte-admin"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-30T03:34:10.846Z",
-        "links": {
-          "homepage": "https://svelte.dev",
-          "repository": "git+https://github.com/sveltejs/svelte.git",
-          "bugs": "https://github.com/sveltejs/svelte/issues",
-          "npm": "https://www.npmjs.com/package/svelte"
-        }
-      },
-      "score": {
-        "final": 39.5177,
+        "final": 39.55388,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -910,9 +905,9 @@
         "monthly": 16916783,
         "weekly": 4717377
       },
-      "dependents": "3491",
-      "updated": "2026-02-02T18:23:49.671Z",
-      "searchScore": 39.370197,
+      "dependents": "3493",
+      "updated": "2026-02-03T06:12:32.584Z",
+      "searchScore": 39.483604,
       "package": {
         "name": "fastify",
         "keywords": ["web", "framework", "json", "schema", "open", "api"],
@@ -955,7 +950,7 @@
         }
       },
       "score": {
-        "final": 39.370197,
+        "final": 39.483604,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -968,12 +963,12 @@
     },
     {
       "downloads": {
-        "monthly": 5929195,
-        "weekly": 1468213
+        "monthly": 5854075,
+        "weekly": 1466906
       },
       "dependents": "458",
-      "updated": "2026-02-02T03:47:05.083Z",
-      "searchScore": 38.8292,
+      "updated": "2026-02-03T06:13:29.222Z",
+      "searchScore": 38.753387,
       "package": {
         "name": "@ckeditor/ckeditor5-core",
         "keywords": [
@@ -1023,7 +1018,7 @@
         }
       },
       "score": {
-        "final": 38.8292,
+        "final": 38.753387,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1036,12 +1031,12 @@
     },
     {
       "downloads": {
-        "monthly": 12575599,
-        "weekly": 3234727
+        "monthly": 12508977,
+        "weekly": 3268636
       },
-      "dependents": "3337",
-      "updated": "2026-02-02T03:48:28.122Z",
-      "searchScore": 38.638245,
+      "dependents": "3336",
+      "updated": "2026-02-03T06:14:26.413Z",
+      "searchScore": 38.736393,
       "package": {
         "name": "swiper",
         "keywords": [
@@ -1091,7 +1086,7 @@
         }
       },
       "score": {
-        "final": 38.638245,
+        "final": 38.736393,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1104,51 +1099,56 @@
     },
     {
       "downloads": {
-        "monthly": 11444682,
-        "weekly": 2879079
+        "monthly": 10215869,
+        "weekly": 2630878
       },
-      "dependents": "2289",
-      "updated": "2026-02-02T03:48:04.503Z",
-      "searchScore": 38.338547,
+      "dependents": "1812",
+      "updated": "2026-02-03T06:15:19.662Z",
+      "searchScore": 38.62011,
       "package": {
-        "name": "quill",
-        "keywords": [
-          "quill",
-          "editor",
-          "rich text",
-          "wysiwyg",
-          "operational transformation",
-          "ot",
-          "framework"
-        ],
-        "version": "2.0.3",
-        "description": "Your powerful, rich text editor",
-        "sanitized_name": "quill",
+        "name": "svelte",
+        "keywords": ["svelte", "UI", "framework", "templates", "templating"],
+        "version": "5.49.1",
+        "description": "Cybernetically enhanced web apps",
+        "sanitized_name": "svelte",
         "publisher": {
-          "email": "i@zihua.li",
-          "username": "luin"
+          "email": "npm-oidc-no-reply@github.com",
+          "actor": {
+            "name": "svelte-admin",
+            "type": "user",
+            "email": "richard.a.harris+svelte@gmail.com"
+          },
+          "trustedPublisher": {
+            "oidcConfigId": "oidc:375c7e5b-4e4c-479a-b0f6-729eb69dcbb6",
+            "id": "github"
+          },
+          "username": "GitHub Actions"
         },
         "maintainers": [
           {
-            "email": "i@zihua.li",
-            "username": "luin"
+            "email": "richard.a.harris@gmail.com",
+            "username": "rich_harris"
           },
           {
-            "email": "jhchen7@gmail.com",
-            "username": "jhchen"
+            "email": "npm@chor.date",
+            "username": "conduitry"
+          },
+          {
+            "email": "richard.a.harris+svelte@gmail.com",
+            "username": "svelte-admin"
           }
         ],
-        "license": "BSD-3-Clause",
-        "date": "2024-11-30T12:19:39.819Z",
+        "license": "MIT",
+        "date": "2026-01-30T03:34:10.846Z",
         "links": {
-          "homepage": "https://quilljs.com",
-          "repository": "git+https://github.com/slab/quill.git",
-          "bugs": "https://github.com/slab/quill/issues",
-          "npm": "https://www.npmjs.com/package/quill"
+          "homepage": "https://svelte.dev",
+          "repository": "git+https://github.com/sveltejs/svelte.git",
+          "bugs": "https://github.com/sveltejs/svelte/issues",
+          "npm": "https://www.npmjs.com/package/svelte"
         }
       },
       "score": {
-        "final": 38.338547,
+        "final": 38.62011,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1161,12 +1161,12 @@
     },
     {
       "downloads": {
-        "monthly": 4592911,
-        "weekly": 1168135
+        "monthly": 4741901,
+        "weekly": 1167690
       },
       "dependents": "710",
-      "updated": "2026-02-02T03:48:11.434Z",
-      "searchScore": 38.192326,
+      "updated": "2026-02-03T06:14:44.473Z",
+      "searchScore": 38.406227,
       "package": {
         "name": "@hapi/hapi",
         "keywords": ["framework", "http", "api", "web"],
@@ -1217,63 +1217,7 @@
         }
       },
       "score": {
-        "final": 38.192326,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 5161175,
-        "weekly": 1350741
-      },
-      "dependents": "90",
-      "updated": "2026-02-02T03:47:59.559Z",
-      "searchScore": 37.83745,
-      "package": {
-        "name": "rtlcss",
-        "keywords": [
-          "rtl",
-          "css",
-          "ltr",
-          "rtlcss",
-          "framework",
-          "style",
-          "mirror",
-          "flip",
-          "convert",
-          "transform"
-        ],
-        "version": "4.3.0",
-        "description": "Framework for transforming cascading style sheets (CSS) from left-to-right (LTR) to right-to-left (RTL)",
-        "sanitized_name": "rtlcss",
-        "publisher": {
-          "email": "myounes@gmail.com",
-          "username": "myounes"
-        },
-        "maintainers": [
-          {
-            "email": "myounes@gmail.com",
-            "username": "myounes"
-          }
-        ],
-        "license": "MIT",
-        "date": "2024-08-27T15:13:51.207Z",
-        "links": {
-          "homepage": "https://rtlcss.com/",
-          "repository": "git+https://github.com/MohammadYounes/rtlcss.git",
-          "bugs": "https://github.com/MohammadYounes/rtlcss/issues",
-          "npm": "https://www.npmjs.com/package/rtlcss"
-        }
-      },
-      "score": {
-        "final": 37.83745,
+        "final": 38.406227,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1290,8 +1234,8 @@
         "weekly": 873427
       },
       "dependents": "203",
-      "updated": "2026-02-02T23:35:52.809Z",
-      "searchScore": 37.383835,
+      "updated": "2026-02-03T06:12:44.494Z",
+      "searchScore": 37.342793,
       "package": {
         "name": "@sveltejs/kit",
         "keywords": ["framework", "official", "svelte", "sveltekit", "vite"],
@@ -1339,7 +1283,7 @@
         }
       },
       "score": {
-        "final": 37.383835,
+        "final": 37.342793,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1352,12 +1296,184 @@
     },
     {
       "downloads": {
-        "monthly": 5832119,
-        "weekly": 1440166
+        "monthly": 4089790,
+        "weekly": 1003159
+      },
+      "dependents": "122",
+      "updated": "2026-02-03T11:55:43.689Z",
+      "searchScore": 37.031006,
+      "package": {
+        "name": "@modern-js/utils",
+        "keywords": ["react", "framework", "modern", "modern.js"],
+        "version": "2.70.4",
+        "description": "A Progressive React Framework for modern web development.",
+        "sanitized_name": "@modern-js/utils",
+        "publisher": {
+          "email": "1057275848@qq.com",
+          "actor": {
+            "name": "caohuilin",
+            "type": "user",
+            "email": "1057275848@qq.com"
+          },
+          "username": "caohuilin"
+        },
+        "maintainers": [
+          {
+            "email": "bnpm@bytedance.com",
+            "username": "bytednpm"
+          },
+          {
+            "email": "870803309@qq.com",
+            "username": "kky_kongjiacong"
+          },
+          {
+            "email": "1057275848@qq.com",
+            "username": "caohuilin"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-28T23:34:40.510Z",
+        "links": {
+          "homepage": "https://modernjs.dev",
+          "repository": "git+https://github.com/web-infra-dev/modern.js.git",
+          "bugs": "https://github.com/web-infra-dev/modern.js/issues",
+          "npm": "https://www.npmjs.com/package/@modern-js/utils"
+        }
+      },
+      "score": {
+        "final": 37.031006,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 5152313,
+        "weekly": 1376641
+      },
+      "dependents": "90",
+      "updated": "2026-02-03T06:14:38.662Z",
+      "searchScore": 36.908676,
+      "package": {
+        "name": "rtlcss",
+        "keywords": [
+          "rtl",
+          "css",
+          "ltr",
+          "rtlcss",
+          "framework",
+          "style",
+          "mirror",
+          "flip",
+          "convert",
+          "transform"
+        ],
+        "version": "4.3.0",
+        "description": "Framework for transforming cascading style sheets (CSS) from left-to-right (LTR) to right-to-left (RTL)",
+        "sanitized_name": "rtlcss",
+        "publisher": {
+          "email": "myounes@gmail.com",
+          "username": "myounes"
+        },
+        "maintainers": [
+          {
+            "email": "myounes@gmail.com",
+            "username": "myounes"
+          }
+        ],
+        "license": "MIT",
+        "date": "2024-08-27T15:13:51.207Z",
+        "links": {
+          "homepage": "https://rtlcss.com/",
+          "repository": "git+https://github.com/MohammadYounes/rtlcss.git",
+          "bugs": "https://github.com/MohammadYounes/rtlcss/issues",
+          "npm": "https://www.npmjs.com/package/rtlcss"
+        }
+      },
+      "score": {
+        "final": 36.908676,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 3895311,
+        "weekly": 981269
+      },
+      "dependents": "6",
+      "updated": "2026-02-03T06:13:40.346Z",
+      "searchScore": 36.906845,
+      "package": {
+        "name": "@modern-js/node-bundle-require",
+        "keywords": ["react", "framework", "modern", "modern.js"],
+        "version": "2.70.4",
+        "description": "A Progressive React Framework for modern web development.",
+        "sanitized_name": "@modern-js/node-bundle-require",
+        "publisher": {
+          "email": "1057275848@qq.com",
+          "actor": {
+            "name": "caohuilin",
+            "type": "user",
+            "email": "1057275848@qq.com"
+          },
+          "username": "caohuilin"
+        },
+        "maintainers": [
+          {
+            "email": "bnpm@bytedance.com",
+            "username": "bytednpm"
+          },
+          {
+            "email": "870803309@qq.com",
+            "username": "kky_kongjiacong"
+          },
+          {
+            "email": "1057275848@qq.com",
+            "username": "caohuilin"
+          }
+        ],
+        "license": "MIT",
+        "date": "2026-01-28T23:35:01.742Z",
+        "links": {
+          "homepage": "https://modernjs.dev",
+          "repository": "git+https://github.com/web-infra-dev/modern.js.git",
+          "bugs": "https://github.com/web-infra-dev/modern.js/issues",
+          "npm": "https://www.npmjs.com/package/@modern-js/node-bundle-require"
+        }
+      },
+      "score": {
+        "final": 36.906845,
+        "detail": {
+          "popularity": 1,
+          "quality": 1,
+          "maintenance": 1
+        }
+      },
+      "flags": {
+        "insecure": 0
+      }
+    },
+    {
+      "downloads": {
+        "monthly": 5963220,
+        "weekly": 1483080
       },
       "dependents": "227",
-      "updated": "2026-02-02T03:47:18.505Z",
-      "searchScore": 36.7417,
+      "updated": "2026-02-03T06:15:38.318Z",
+      "searchScore": 36.90256,
       "package": {
         "name": "@ckeditor/ckeditor5-engine",
         "keywords": [
@@ -1407,7 +1523,7 @@
         }
       },
       "score": {
-        "final": 36.7417,
+        "final": 36.90256,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1420,12 +1536,12 @@
     },
     {
       "downloads": {
-        "monthly": 4582289,
-        "weekly": 1157025
+        "monthly": 4690726,
+        "weekly": 1189938
       },
       "dependents": "299",
-      "updated": "2026-02-02T03:47:21.071Z",
-      "searchScore": 36.146404,
+      "updated": "2026-02-03T06:15:33.972Z",
+      "searchScore": 36.30842,
       "package": {
         "name": "ckeditor5",
         "keywords": [
@@ -1473,146 +1589,7 @@
         }
       },
       "score": {
-        "final": 36.146404,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 3935947,
-        "weekly": 993366
-      },
-      "dependents": "122",
-      "updated": "2026-02-02T16:09:39.437Z",
-      "searchScore": 35.70861,
-      "package": {
-        "name": "@modern-js/utils",
-        "keywords": ["react", "framework", "modern", "modern.js"],
-        "version": "2.70.4",
-        "description": "A Progressive React Framework for modern web development.",
-        "sanitized_name": "@modern-js/utils",
-        "publisher": {
-          "email": "1057275848@qq.com",
-          "actor": {
-            "name": "caohuilin",
-            "type": "user",
-            "email": "1057275848@qq.com"
-          },
-          "username": "caohuilin"
-        },
-        "maintainers": [
-          {
-            "email": "bnpm@bytedance.com",
-            "username": "bytednpm"
-          },
-          {
-            "email": "870803309@qq.com",
-            "username": "kky_kongjiacong"
-          },
-          {
-            "email": "1057275848@qq.com",
-            "username": "caohuilin"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-01-28T23:34:40.510Z",
-        "links": {
-          "homepage": "https://modernjs.dev",
-          "repository": "git+https://github.com/web-infra-dev/modern.js.git",
-          "bugs": "https://github.com/web-infra-dev/modern.js/issues",
-          "npm": "https://www.npmjs.com/package/@modern-js/utils"
-        }
-      },
-      "score": {
-        "final": 35.70861,
-        "detail": {
-          "popularity": 1,
-          "quality": 1,
-          "maintenance": 1
-        }
-      },
-      "flags": {
-        "insecure": 0
-      }
-    },
-    {
-      "downloads": {
-        "monthly": 2237459,
-        "weekly": 571374
-      },
-      "dependents": "314",
-      "updated": "2026-02-02T23:00:56.988Z",
-      "searchScore": 35.695316,
-      "package": {
-        "name": "daisyui",
-        "keywords": [
-          "daisyui",
-          "tailwind",
-          "tailwindcss",
-          "tailwind css",
-          "tailwind react",
-          "tailwind vue",
-          "tailwind plugin",
-          "tailwind component",
-          "tailwind next",
-          "tailwind nuxt",
-          "tailwind svelte",
-          "tailwind css plugin",
-          "tailwind astro",
-          "tailwind laravel",
-          "tailwind rails",
-          "react",
-          "css",
-          "ui",
-          "vue",
-          "component",
-          "framework",
-          "nextjs",
-          "front-end",
-          "laravel",
-          "theme",
-          "nuxt",
-          "svelte",
-          "astro",
-          "component library",
-          "css library"
-        ],
-        "version": "5.5.17",
-        "description": "daisyUI 5 - The Tailwind CSS Component Library",
-        "sanitized_name": "daisyui",
-        "publisher": {
-          "email": "pouya.saadeghi@gmail.com",
-          "actor": {
-            "name": "saadeghi",
-            "type": "user",
-            "email": "pouya.saadeghi@gmail.com"
-          },
-          "username": "saadeghi"
-        },
-        "maintainers": [
-          {
-            "email": "pouya.saadeghi@gmail.com",
-            "username": "saadeghi"
-          }
-        ],
-        "license": "MIT",
-        "date": "2026-02-02T23:00:25.909Z",
-        "links": {
-          "homepage": "https://daisyui.com",
-          "repository": "git+https://github.com/saadeghi/daisyui.git",
-          "bugs": "https://github.com/saadeghi/daisyui/issues",
-          "npm": "https://www.npmjs.com/package/daisyui"
-        }
-      },
-      "score": {
-        "final": 35.695316,
+        "final": 36.30842,
         "detail": {
           "popularity": 1,
           "quality": 1,
@@ -1624,6 +1601,6 @@
       }
     }
   ],
-  "total": 35228,
-  "time": "2026-02-03T00:16:54.119Z"
+  "total": 35203,
+  "time": "2026-02-03T13:10:00.784Z"
 }

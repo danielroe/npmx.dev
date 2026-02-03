@@ -1,18 +1,18 @@
 {
   "_id": "vite",
-  "_rev": "756-56e3616d2856917aad8e2649811023e8",
+  "_rev": "757-bf54035889aeac2515a0c85f684b60e4",
   "name": "vite",
   "description": "Native-ESM powered web dev build tool",
   "dist-tags": {
     "alpha": "6.0.0-alpha.24",
     "previous": "5.4.21",
     "latest": "7.3.1",
-    "beta": "8.0.0-beta.11"
+    "beta": "8.0.0-beta.12"
   },
   "versions": {
-    "8.0.0-beta.11": {
+    "8.0.0-beta.12": {
       "name": "vite",
-      "version": "8.0.0-beta.11",
+      "version": "8.0.0-beta.12",
       "type": "module",
       "license": "MIT",
       "author": {
@@ -72,7 +72,7 @@
         "fsevents": "~2.3.3"
       },
       "devDependencies": {
-        "@babel/parser": "^7.28.6",
+        "@babel/parser": "^7.29.0",
         "@jridgewell/remapping": "^2.3.5",
         "@jridgewell/trace-mapping": "^0.3.31",
         "@oxc-project/types": "0.111.0",
@@ -85,7 +85,7 @@
         "@types/escape-html": "^1.0.4",
         "@types/pnpapi": "^0.0.5",
         "artichokie": "^0.4.2",
-        "baseline-browser-mapping": "^2.9.18",
+        "baseline-browser-mapping": "^2.9.19",
         "cac": "^6.7.14",
         "chokidar": "^3.6.0",
         "connect": "^3.7.0",
@@ -117,7 +117,7 @@
         "postcss-modules": "^6.0.1",
         "premove": "^4.0.0",
         "resolve.exports": "^2.0.3",
-        "rolldown-plugin-dts": "^0.21.6",
+        "rolldown-plugin-dts": "^0.21.8",
         "rollup": "^4.43.0",
         "rollup-plugin-license": "^3.6.0",
         "sass": "^1.97.3",
@@ -190,20 +190,20 @@
         "generate-target": "tsx scripts/generateTarget.ts"
       },
       "readmeFilename": "README.md",
-      "_id": "vite@8.0.0-beta.11",
-      "_integrity": "sha512-WkVbiYlZ5V4fuS2vjrqIC6+T1dzLHAp+horFVt0zm/Rb1KDMandGkTQJlk7Oo3ozeMQdOpE35j45s3NwxUccYQ==",
-      "_resolved": "/tmp/304d7a6584a2df6ce7d5237f8353c52e/vite-8.0.0-beta.11.tgz",
-      "_from": "file:vite-8.0.0-beta.11.tgz",
+      "_id": "vite@8.0.0-beta.12",
+      "_integrity": "sha512-qW5a0fFhcprMTPmVNtvBdSoIDiUygIAwU6zSpd7Y67nOt+Mc/xrMw/kJXxIM8EMrjMTDpiqRtGjk8pGiKDlRNg==",
+      "_resolved": "/tmp/2698ef0d85d79692c263384a10b02fb5/vite-8.0.0-beta.12.tgz",
+      "_from": "file:vite-8.0.0-beta.12.tgz",
       "_nodeVersion": "24.13.0",
       "_npmVersion": "11.8.0",
       "dist": {
-        "integrity": "sha512-WkVbiYlZ5V4fuS2vjrqIC6+T1dzLHAp+horFVt0zm/Rb1KDMandGkTQJlk7Oo3ozeMQdOpE35j45s3NwxUccYQ==",
-        "shasum": "8483fb1fa1b0fba4e9c8e7aff1ec9fce0c8103c2",
-        "tarball": "https://registry.npmjs.org/vite/-/vite-8.0.0-beta.11.tgz",
+        "integrity": "sha512-qW5a0fFhcprMTPmVNtvBdSoIDiUygIAwU6zSpd7Y67nOt+Mc/xrMw/kJXxIM8EMrjMTDpiqRtGjk8pGiKDlRNg==",
+        "shasum": "d2ebf86e2b05b21f1052ed068a93a05b8723738e",
+        "tarball": "https://registry.npmjs.org/vite/-/vite-8.0.0-beta.12.tgz",
         "fileCount": 37,
-        "unpackedSize": 2202623,
+        "unpackedSize": 2204580,
         "attestations": {
-          "url": "https://registry.npmjs.org/-/npm/v1/attestations/vite@8.0.0-beta.11",
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/vite@8.0.0-beta.12",
           "provenance": {
             "predicateType": "https://slsa.dev/provenance/v1"
           }
@@ -211,7 +211,7 @@
         "signatures": [
           {
             "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
-            "sig": "MEUCIGrGbZBb0yvzi1XlgSBd+xrNCE253FKHNHllW6+Oxj69AiEA58skwXuDCO9ozP37JDePEocb2VBeoKjZBZh6TKLSgDI="
+            "sig": "MEUCIQDahUhVbqYEQkLKL1APsxrnwO9G8d4qMnZaGA4QMcnxrwIgOZ8KW+x3q99t3tvaqXtHCvgfBEudkaJrpTutfxjpD9E="
           }
         ]
       },
@@ -244,9 +244,247 @@
       ],
       "_npmOperationalInternal": {
         "host": "s3://npm-registry-packages-npm-production",
-        "tmp": "tmp/vite_8.0.0-beta.11_1769657023272_0.4692679112854776"
+        "tmp": "tmp/vite_8.0.0-beta.12_1770098369279_0.3620215980029198"
       },
       "_hasShrinkwrap": false
+    },
+    "8.0.0-beta.11": {
+      "name": "vite",
+      "version": "8.0.0-beta.11",
+      "keywords": ["frontend", "framework", "hmr", "dev-server", "build-tool", "vite"],
+      "author": {
+        "name": "Evan You"
+      },
+      "license": "MIT",
+      "_id": "vite@8.0.0-beta.11",
+      "maintainers": [
+        {
+          "name": "yyx990803",
+          "email": "yyx990803@gmail.com"
+        },
+        {
+          "name": "patak",
+          "email": "hey.patak@gmail.com"
+        },
+        {
+          "name": "antfu",
+          "email": "anthonyfu117@hotmail.com"
+        },
+        {
+          "name": "vitebot",
+          "email": "vite@voidzero.dev"
+        }
+      ],
+      "homepage": "https://vite.dev",
+      "bugs": {
+        "url": "https://github.com/vitejs/vite/issues"
+      },
+      "//": "READ CONTRIBUTING.md to understand what to put under deps vs. devDeps!",
+      "bin": {
+        "vite": "bin/vite.js"
+      },
+      "dist": {
+        "shasum": "8483fb1fa1b0fba4e9c8e7aff1ec9fce0c8103c2",
+        "tarball": "https://registry.npmjs.org/vite/-/vite-8.0.0-beta.11.tgz",
+        "fileCount": 37,
+        "integrity": "sha512-WkVbiYlZ5V4fuS2vjrqIC6+T1dzLHAp+horFVt0zm/Rb1KDMandGkTQJlk7Oo3ozeMQdOpE35j45s3NwxUccYQ==",
+        "signatures": [
+          {
+            "sig": "MEUCIGrGbZBb0yvzi1XlgSBd+xrNCE253FKHNHllW6+Oxj69AiEA58skwXuDCO9ozP37JDePEocb2VBeoKjZBZh6TKLSgDI=",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "attestations": {
+          "url": "https://registry.npmjs.org/-/npm/v1/attestations/vite@8.0.0-beta.11",
+          "provenance": {
+            "predicateType": "https://slsa.dev/provenance/v1"
+          }
+        },
+        "unpackedSize": 2202623
+      },
+      "type": "module",
+      "_from": "file:vite-8.0.0-beta.11.tgz",
+      "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+      },
+      "exports": {
+        ".": "./dist/node/index.js",
+        "./client": {
+          "types": "./client.d.ts"
+        },
+        "./types/*": {
+          "types": "./types/*"
+        },
+        "./internal": "./dist/node/internal.js",
+        "./package.json": "./package.json",
+        "./dist/client/*": "./dist/client/*",
+        "./module-runner": "./dist/node/module-runner.js",
+        "./types/internal/*": null
+      },
+      "funding": "https://github.com/vitejs/vite?sponsor=1",
+      "imports": {
+        "#types/*": "./types/*.d.ts",
+        "#dep-types/*": "./src/types/*.d.ts",
+        "#module-sync-enabled": {
+          "default": "./misc/false.js",
+          "module-sync": "./misc/true.js"
+        }
+      },
+      "scripts": {
+        "dev": "premove dist && pnpm build-bundle -w",
+        "lint": "eslint --cache --ext .ts src/**",
+        "build": "premove dist && pnpm build-bundle && pnpm build-types",
+        "format": "prettier --write --cache --parser typescript \"src/**/*.ts\"",
+        "typecheck": "tsc && tsc -p src/node && tsc -p src/module-runner && tsc -p src/shared && tsc -p src/node/__tests_dts__",
+        "build-types": "pnpm build-types-roll && pnpm build-types-check",
+        "build-bundle": "rolldown --config rolldown.config.ts",
+        "generate-target": "tsx scripts/generateTarget.ts",
+        "build-types-roll": "rolldown --config rolldown.dts.config.ts",
+        "build-types-check": "tsc --project tsconfig.check.json"
+      },
+      "_npmUser": {
+        "name": "GitHub Actions",
+        "email": "npm-oidc-no-reply@github.com",
+        "trustedPublisher": {
+          "id": "github",
+          "oidcConfigId": "oidc:a2e674b1-239b-4e35-a07f-7b43debc0a8c"
+        }
+      },
+      "_resolved": "/tmp/304d7a6584a2df6ce7d5237f8353c52e/vite-8.0.0-beta.11.tgz",
+      "_integrity": "sha512-WkVbiYlZ5V4fuS2vjrqIC6+T1dzLHAp+horFVt0zm/Rb1KDMandGkTQJlk7Oo3ozeMQdOpE35j45s3NwxUccYQ==",
+      "repository": {
+        "url": "git+https://github.com/vitejs/vite.git",
+        "type": "git",
+        "directory": "packages/vite"
+      },
+      "_npmVersion": "11.8.0",
+      "description": "Native-ESM powered web dev build tool",
+      "directories": {},
+      "_nodeVersion": "24.13.0",
+      "dependencies": {
+        "fdir": "^6.5.0",
+        "postcss": "^8.5.6",
+        "rolldown": "1.0.0-rc.2",
+        "picomatch": "^4.0.3",
+        "tinyglobby": "^0.2.15",
+        "lightningcss": "^1.31.1",
+        "@oxc-project/runtime": "0.111.0"
+      },
+      "_hasShrinkwrap": false,
+      "readmeFilename": "README.md",
+      "devDependencies": {
+        "ws": "^8.19.0",
+        "cac": "^6.7.14",
+        "ufo": "^1.6.3",
+        "cors": "^2.8.6",
+        "etag": "^1.8.1",
+        "mlly": "^1.8.0",
+        "obug": "^1.0.2",
+        "open": "^10.2.0",
+        "sass": "^1.97.3",
+        "sirv": "^3.0.2",
+        "pathe": "^2.0.3",
+        "dotenv": "^17.2.3",
+        "mrmime": "^2.0.1",
+        "nanoid": "^5.1.6",
+        "parse5": "^8.0.0",
+        "rollup": "^4.43.0",
+        "terser": "^5.46.0",
+        "connect": "^3.7.0",
+        "esbuild": "^0.27.2",
+        "premove": "^4.0.0",
+        "chokidar": "^3.6.0",
+        "tsconfck": "^3.1.6",
+        "artichokie": "^0.4.2",
+        "periscopic": "^4.0.2",
+        "picocolors": "^1.1.1",
+        "cross-spawn": "^7.0.6",
+        "escape-html": "^1.0.3",
+        "http-proxy-3": "^1.23.2",
+        "magic-string": "^0.30.21",
+        "@babel/parser": "^7.28.6",
+        "@types/pnpapi": "^0.0.5",
+        "dotenv-expand": "^12.0.3",
+        "estree-walker": "^3.0.3",
+        "sass-embedded": "^1.97.3",
+        "strip-literal": "^3.1.0",
+        "postcss-import": "^16.1.1",
+        "es-module-lexer": "^1.7.0",
+        "postcss-modules": "^6.0.1",
+        "resolve.exports": "^2.0.3",
+        "@oxc-project/types": "0.111.0",
+        "@polka/compression": "^1.0.0-next.25",
+        "@types/escape-html": "^1.0.4",
+        "convert-source-map": "^2.0.0",
+        "@rollup/pluginutils": "^5.3.0",
+        "postcss-load-config": "^6.0.1",
+        "rolldown-plugin-dts": "^0.21.6",
+        "@rollup/plugin-alias": "^5.1.1",
+        "@jridgewell/remapping": "^2.3.5",
+        "@rolldown/pluginutils": "1.0.0-rc.2",
+        "rollup-plugin-license": "^3.6.0",
+        "@rollup/plugin-commonjs": "^29.0.0",
+        "baseline-browser-mapping": "^2.9.18",
+        "launch-editor-middleware": "^2.12.0",
+        "@jridgewell/trace-mapping": "^0.3.31",
+        "host-validation-middleware": "^0.1.2",
+        "@rollup/plugin-dynamic-import-vars": "2.1.4"
+      },
+      "peerDependencies": {
+        "tsx": "^4.8.1",
+        "jiti": ">=1.21.0",
+        "less": "^4.0.0",
+        "sass": "^1.70.0",
+        "yaml": "^2.4.2",
+        "stylus": ">=0.54.8",
+        "terser": "^5.16.0",
+        "esbuild": "^0.27.0",
+        "sugarss": "^5.0.0",
+        "@types/node": "^20.19.0 || >=22.12.0",
+        "sass-embedded": "^1.70.0"
+      },
+      "optionalDependencies": {
+        "fsevents": "~2.3.3"
+      },
+      "peerDependenciesMeta": {
+        "tsx": {
+          "optional": true
+        },
+        "jiti": {
+          "optional": true
+        },
+        "less": {
+          "optional": true
+        },
+        "sass": {
+          "optional": true
+        },
+        "yaml": {
+          "optional": true
+        },
+        "stylus": {
+          "optional": true
+        },
+        "terser": {
+          "optional": true
+        },
+        "esbuild": {
+          "optional": true
+        },
+        "sugarss": {
+          "optional": true
+        },
+        "@types/node": {
+          "optional": true
+        },
+        "sass-embedded": {
+          "optional": true
+        }
+      },
+      "_npmOperationalInternal": {
+        "tmp": "tmp/vite_8.0.0-beta.11_1769657023272_0.4692679112854776",
+        "host": "s3://npm-registry-packages-npm-production"
+      }
     },
     "8.0.0-beta.10": {
       "name": "vite",
@@ -2156,244 +2394,6 @@
         "host": "s3://npm-registry-packages-npm-production"
       }
     },
-    "8.0.0-beta.3": {
-      "name": "vite",
-      "version": "8.0.0-beta.3",
-      "keywords": ["frontend", "framework", "hmr", "dev-server", "build-tool", "vite"],
-      "author": {
-        "name": "Evan You"
-      },
-      "license": "MIT",
-      "_id": "vite@8.0.0-beta.3",
-      "maintainers": [
-        {
-          "name": "yyx990803",
-          "email": "yyx990803@gmail.com"
-        },
-        {
-          "name": "patak",
-          "email": "hey.patak@gmail.com"
-        },
-        {
-          "name": "antfu",
-          "email": "anthonyfu117@hotmail.com"
-        },
-        {
-          "name": "vitebot",
-          "email": "vite@voidzero.dev"
-        }
-      ],
-      "homepage": "https://vite.dev",
-      "bugs": {
-        "url": "https://github.com/vitejs/vite/issues"
-      },
-      "//": "READ CONTRIBUTING.md to understand what to put under deps vs. devDeps!",
-      "bin": {
-        "vite": "bin/vite.js"
-      },
-      "dist": {
-        "shasum": "1aeca64188444b1618103b79f962ee428e4de3a2",
-        "tarball": "https://registry.npmjs.org/vite/-/vite-8.0.0-beta.3.tgz",
-        "fileCount": 42,
-        "integrity": "sha512-hsc59mETwVSFQj8KYpmLGwGDKoFYrQLolt2TZUy74Y0bkyF9veYolNgJH+R6loC0Ki35wEblXSMTJ6nfhDqkiQ==",
-        "signatures": [
-          {
-            "sig": "MEYCIQDH+pxP9UwHdLF6dCkHs29kQcREwseumTf4kQiVu8OfhgIhALeYRF0XciqtLVUznC/sDobPVxrUVoeJKARgpNdOffSl",
-            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
-          }
-        ],
-        "attestations": {
-          "url": "https://registry.npmjs.org/-/npm/v1/attestations/vite@8.0.0-beta.3",
-          "provenance": {
-            "predicateType": "https://slsa.dev/provenance/v1"
-          }
-        },
-        "unpackedSize": 2228787
-      },
-      "type": "module",
-      "_from": "file:vite-8.0.0-beta.3.tgz",
-      "engines": {
-        "node": "^20.19.0 || >=22.12.0"
-      },
-      "exports": {
-        ".": "./dist/node/index.js",
-        "./client": {
-          "types": "./client.d.ts"
-        },
-        "./types/*": {
-          "types": "./types/*"
-        },
-        "./internal": "./dist/node/internal.js",
-        "./package.json": "./package.json",
-        "./dist/client/*": "./dist/client/*",
-        "./module-runner": "./dist/node/module-runner.js",
-        "./types/internal/*": null
-      },
-      "funding": "https://github.com/vitejs/vite?sponsor=1",
-      "imports": {
-        "#types/*": "./types/*.d.ts",
-        "#dep-types/*": "./src/types/*.d.ts",
-        "#module-sync-enabled": {
-          "default": "./misc/false.js",
-          "module-sync": "./misc/true.js"
-        }
-      },
-      "scripts": {
-        "dev": "premove dist && pnpm build-bundle -w",
-        "lint": "eslint --cache --ext .ts src/**",
-        "build": "premove dist && pnpm build-bundle && pnpm build-types",
-        "format": "prettier --write --cache --parser typescript \"src/**/*.ts\"",
-        "typecheck": "tsc && tsc -p src/node && tsc -p src/module-runner && tsc -p src/shared && tsc -p src/node/__tests_dts__",
-        "build-types": "pnpm build-types-roll && pnpm build-types-check",
-        "build-bundle": "rolldown --config rolldown.config.ts",
-        "generate-target": "tsx scripts/generateTarget.ts",
-        "build-types-roll": "rolldown --config rolldown.dts.config.ts",
-        "build-types-check": "tsc --project tsconfig.check.json"
-      },
-      "_npmUser": {
-        "name": "GitHub Actions",
-        "email": "npm-oidc-no-reply@github.com",
-        "trustedPublisher": {
-          "id": "github",
-          "oidcConfigId": "oidc:a2e674b1-239b-4e35-a07f-7b43debc0a8c"
-        }
-      },
-      "_resolved": "/tmp/2910674a3b82e8536418f0704d99fd18/vite-8.0.0-beta.3.tgz",
-      "_integrity": "sha512-hsc59mETwVSFQj8KYpmLGwGDKoFYrQLolt2TZUy74Y0bkyF9veYolNgJH+R6loC0Ki35wEblXSMTJ6nfhDqkiQ==",
-      "repository": {
-        "url": "git+https://github.com/vitejs/vite.git",
-        "type": "git",
-        "directory": "packages/vite"
-      },
-      "_npmVersion": "11.7.0",
-      "description": "Native-ESM powered web dev build tool",
-      "directories": {},
-      "_nodeVersion": "24.12.0",
-      "dependencies": {
-        "fdir": "^6.5.0",
-        "postcss": "^8.5.6",
-        "rolldown": "1.0.0-beta.55",
-        "picomatch": "^4.0.3",
-        "tinyglobby": "^0.2.15",
-        "lightningcss": "^1.30.2",
-        "@oxc-project/runtime": "0.103.0"
-      },
-      "_hasShrinkwrap": false,
-      "readmeFilename": "README.md",
-      "devDependencies": {
-        "ws": "^8.18.3",
-        "cac": "^6.7.14",
-        "ufo": "^1.6.1",
-        "cors": "^2.8.5",
-        "etag": "^1.8.1",
-        "mlly": "^1.8.0",
-        "obug": "^1.0.2",
-        "open": "^10.2.0",
-        "sass": "^1.96.0",
-        "sirv": "^3.0.2",
-        "pathe": "^2.0.3",
-        "dotenv": "^17.2.3",
-        "mrmime": "^2.0.1",
-        "nanoid": "^5.1.6",
-        "parse5": "^8.0.0",
-        "rollup": "^4.43.0",
-        "terser": "^5.44.1",
-        "connect": "^3.7.0",
-        "esbuild": "^0.25.0",
-        "premove": "^4.0.0",
-        "chokidar": "^3.6.0",
-        "tsconfck": "^3.1.6",
-        "artichokie": "^0.4.2",
-        "periscopic": "^4.0.2",
-        "picocolors": "^1.1.1",
-        "cross-spawn": "^7.0.6",
-        "escape-html": "^1.0.3",
-        "http-proxy-3": "^1.23.2",
-        "magic-string": "^0.30.21",
-        "@babel/parser": "^7.28.5",
-        "@types/pnpapi": "^0.0.5",
-        "dotenv-expand": "^12.0.3",
-        "estree-walker": "^3.0.3",
-        "sass-embedded": "^1.96.0",
-        "strip-literal": "^3.1.0",
-        "postcss-import": "^16.1.1",
-        "es-module-lexer": "^1.7.0",
-        "postcss-modules": "^6.0.1",
-        "resolve.exports": "^2.0.3",
-        "@oxc-project/types": "0.103.0",
-        "@polka/compression": "^1.0.0-next.25",
-        "@types/escape-html": "^1.0.4",
-        "convert-source-map": "^2.0.0",
-        "@rollup/pluginutils": "^5.3.0",
-        "postcss-load-config": "^6.0.1",
-        "rolldown-plugin-dts": "^0.18.3",
-        "@rollup/plugin-alias": "^5.1.1",
-        "@jridgewell/remapping": "^2.3.5",
-        "@rolldown/pluginutils": "1.0.0-beta.55",
-        "rollup-plugin-license": "^3.6.0",
-        "@rollup/plugin-commonjs": "^29.0.0",
-        "baseline-browser-mapping": "^2.9.7",
-        "launch-editor-middleware": "^2.12.0",
-        "@jridgewell/trace-mapping": "^0.3.31",
-        "host-validation-middleware": "^0.1.2",
-        "@rollup/plugin-dynamic-import-vars": "2.1.4"
-      },
-      "peerDependencies": {
-        "tsx": "^4.8.1",
-        "jiti": ">=1.21.0",
-        "less": "^4.0.0",
-        "sass": "^1.70.0",
-        "yaml": "^2.4.2",
-        "stylus": ">=0.54.8",
-        "terser": "^5.16.0",
-        "esbuild": "^0.25.0",
-        "sugarss": "^5.0.0",
-        "@types/node": "^20.19.0 || >=22.12.0",
-        "sass-embedded": "^1.70.0"
-      },
-      "optionalDependencies": {
-        "fsevents": "~2.3.3"
-      },
-      "peerDependenciesMeta": {
-        "tsx": {
-          "optional": true
-        },
-        "jiti": {
-          "optional": true
-        },
-        "less": {
-          "optional": true
-        },
-        "sass": {
-          "optional": true
-        },
-        "yaml": {
-          "optional": true
-        },
-        "stylus": {
-          "optional": true
-        },
-        "terser": {
-          "optional": true
-        },
-        "esbuild": {
-          "optional": true
-        },
-        "sugarss": {
-          "optional": true
-        },
-        "@types/node": {
-          "optional": true
-        },
-        "sass-embedded": {
-          "optional": true
-        }
-      },
-      "_npmOperationalInternal": {
-        "tmp": "tmp/vite_8.0.0-beta.3_1766022449175_0.9525626713845965",
-        "host": "s3://npm-registry-packages-npm-production"
-      }
-    },
     "6.0.0-alpha.24": {
       "name": "vite",
       "version": "6.0.0-alpha.24",
@@ -2861,8 +2861,9 @@
     }
   },
   "time": {
-    "modified": "2026-01-29T03:23:43.803Z",
+    "modified": "2026-02-03T05:59:29.730Z",
     "created": "2020-04-21T05:05:15.476Z",
+    "8.0.0-beta.12": "2026-02-03T05:59:29.440Z",
     "8.0.0-beta.11": "2026-01-29T03:23:43.484Z",
     "8.0.0-beta.10": "2026-01-24T09:28:40.846Z",
     "8.0.0-beta.9": "2026-01-22T12:50:54.525Z",
@@ -2872,7 +2873,6 @@
     "7.3.1": "2026-01-07T06:07:43.726Z",
     "8.0.0-beta.5": "2025-12-25T02:03:04.781Z",
     "8.0.0-beta.4": "2025-12-22T06:29:27.672Z",
-    "8.0.0-beta.3": "2025-12-18T01:47:29.388Z",
     "6.0.0-alpha.24": "2024-09-04T09:15:20.820Z",
     "5.4.21": "2025-10-20T05:32:04.015Z"
   },

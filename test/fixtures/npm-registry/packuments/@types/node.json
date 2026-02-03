@@ -1,17 +1,17 @@
 {
   "_id": "@types/node",
-  "_rev": "13473-67c872c0113474b8a43e0967c41a92cf",
+  "_rev": "13476-15f78552b6d1cc4c1338021e266bd99c",
   "name": "@types/node",
   "description": "TypeScript definitions for node",
   "dist-tags": {
-    "ts2.5": "12.12.6",
-    "ts2.6": "12.12.6",
     "ts2.0": "12.12.6",
+    "ts2.6": "12.12.6",
     "ts2.1": "12.12.6",
-    "ts2.2": "12.12.6",
-    "ts2.4": "12.12.6",
-    "ts2.3": "12.12.6",
+    "ts2.5": "12.12.6",
     "ts2.7": "12.12.6",
+    "ts2.3": "12.12.6",
+    "ts2.4": "12.12.6",
+    "ts2.2": "12.12.6",
     "ts2.8": "13.13.4",
     "ts2.9": "14.0.1",
     "ts3.0": "14.6.0",
@@ -27,8 +27,8 @@
     "ts4.0": "18.7.14",
     "ts4.1": "18.11.9",
     "ts4.2": "18.15.3",
-    "ts4.3": "20.6.0",
     "ts4.4": "20.6.0",
+    "ts4.3": "20.6.0",
     "ts4.5": "20.10.0",
     "ts4.6": "20.11.25",
     "ts4.7": "20.14.8",
@@ -36,18 +36,544 @@
     "ts4.9": "22.9.3",
     "ts5.0": "22.13.14",
     "ts5.1": "24.1.0",
-    "ts6.0": "25.2.0",
-    "ts5.7": "25.2.0",
-    "latest": "25.2.0",
-    "ts5.4": "25.2.0",
-    "ts5.9": "25.2.0",
-    "ts5.3": "25.2.0",
+    "ts5.8": "25.2.0",
     "ts5.2": "25.2.0",
+    "ts5.3": "25.2.0",
+    "ts5.4": "25.2.0",
+    "ts6.0": "25.2.0",
     "ts5.6": "25.2.0",
     "ts5.5": "25.2.0",
-    "ts5.8": "25.2.0"
+    "ts5.9": "25.2.0",
+    "ts5.7": "25.2.0",
+    "latest": "25.2.0",
+    "undefined": "20.19.31"
   },
   "versions": {
+    "20.19.31": {
+      "name": "@types/node",
+      "version": "20.19.31",
+      "description": "TypeScript definitions for node",
+      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
+      "license": "MIT",
+      "contributors": [
+        {
+          "name": "Microsoft TypeScript",
+          "githubUsername": "Microsoft",
+          "url": "https://github.com/Microsoft"
+        },
+        {
+          "name": "Alberto Schiabel",
+          "githubUsername": "jkomyno",
+          "url": "https://github.com/jkomyno"
+        },
+        {
+          "name": "Andrew Makarov",
+          "githubUsername": "r3nya",
+          "url": "https://github.com/r3nya"
+        },
+        {
+          "name": "Benjamin Toueg",
+          "githubUsername": "btoueg",
+          "url": "https://github.com/btoueg"
+        },
+        {
+          "name": "David Junger",
+          "githubUsername": "touffy",
+          "url": "https://github.com/touffy"
+        },
+        {
+          "name": "Mohsen Azimi",
+          "githubUsername": "mohsen1",
+          "url": "https://github.com/mohsen1"
+        },
+        {
+          "name": "Nikita Galkin",
+          "githubUsername": "galkin",
+          "url": "https://github.com/galkin"
+        },
+        {
+          "name": "Sebastian Silbermann",
+          "githubUsername": "eps1lon",
+          "url": "https://github.com/eps1lon"
+        },
+        {
+          "name": "Wilco Bakker",
+          "githubUsername": "WilcoBakker",
+          "url": "https://github.com/WilcoBakker"
+        },
+        {
+          "name": "Marcin Kopacz",
+          "githubUsername": "chyzwar",
+          "url": "https://github.com/chyzwar"
+        },
+        {
+          "name": "Trivikram Kamat",
+          "githubUsername": "trivikr",
+          "url": "https://github.com/trivikr"
+        },
+        {
+          "name": "Junxiao Shi",
+          "githubUsername": "yoursunny",
+          "url": "https://github.com/yoursunny"
+        },
+        {
+          "name": "Ilia Baryshnikov",
+          "githubUsername": "qwelias",
+          "url": "https://github.com/qwelias"
+        },
+        {
+          "name": "ExE Boss",
+          "githubUsername": "ExE-Boss",
+          "url": "https://github.com/ExE-Boss"
+        },
+        {
+          "name": "Piotr Błażejewicz",
+          "githubUsername": "peterblazejewicz",
+          "url": "https://github.com/peterblazejewicz"
+        },
+        {
+          "name": "Anna Henningsen",
+          "githubUsername": "addaleax",
+          "url": "https://github.com/addaleax"
+        },
+        {
+          "name": "Victor Perin",
+          "githubUsername": "victorperin",
+          "url": "https://github.com/victorperin"
+        },
+        {
+          "name": "NodeJS Contributors",
+          "githubUsername": "NodeJS",
+          "url": "https://github.com/NodeJS"
+        },
+        {
+          "name": "Linus Unnebäck",
+          "githubUsername": "LinusU",
+          "url": "https://github.com/LinusU"
+        },
+        {
+          "name": "wafuwafu13",
+          "githubUsername": "wafuwafu13",
+          "url": "https://github.com/wafuwafu13"
+        },
+        {
+          "name": "Matteo Collina",
+          "githubUsername": "mcollina",
+          "url": "https://github.com/mcollina"
+        },
+        {
+          "name": "Dmitry Semigradsky",
+          "githubUsername": "Semigradsky",
+          "url": "https://github.com/Semigradsky"
+        }
+      ],
+      "main": "",
+      "types": "index.d.ts",
+      "typesVersions": {
+        "<=5.6": {
+          "*": ["ts5.6/*"]
+        }
+      },
+      "repository": {
+        "type": "git",
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "directory": "types/node"
+      },
+      "scripts": {},
+      "dependencies": {
+        "undici-types": "~6.21.0"
+      },
+      "peerDependencies": {},
+      "typesPublisherContentHash": "6b76fd3d6f6f16b56eaf79b7fc5a2cd76c42efdcedc45180d2d20ad0098da2c8",
+      "typeScriptVersion": "5.2",
+      "_nodeVersion": "24.13.0",
+      "_id": "@types/node@20.19.31",
+      "dist": {
+        "integrity": "sha512-5jsi0wpncvTD33Sh1UCgacK37FFwDn+EG7wCmEvs62fCvBL+n8/76cAYDok21NF6+jaVWIqKwCZyX7Vbu8eB3A==",
+        "shasum": "762ddf4088b3ac2389077cf1fb5336800a1fb4d5",
+        "tarball": "https://registry.npmjs.org/@types/node/-/node-20.19.31.tgz",
+        "fileCount": 79,
+        "unpackedSize": 2282558,
+        "signatures": [
+          {
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U",
+            "sig": "MEUCICUv0t4otSf63j5ThYwEBLaYZYgmsPkOuWtXaORW/cMkAiEA7l2pJMPjNuRq0dHS/gbaO7DtaZJAIxSqO3Vl/FTmDsM="
+          }
+        ]
+      },
+      "_npmUser": {
+        "name": "types",
+        "email": "ts-npm-types@microsoft.com"
+      },
+      "directories": {},
+      "maintainers": [
+        {
+          "name": "types",
+          "email": "ts-npm-types@microsoft.com"
+        }
+      ],
+      "_npmOperationalInternal": {
+        "host": "s3://npm-registry-packages-npm-production",
+        "tmp": "tmp/node_20.19.31_1770108281282_0.17567449409751967"
+      },
+      "_hasShrinkwrap": false
+    },
+    "22.19.8": {
+      "name": "@types/node",
+      "version": "22.19.8",
+      "license": "MIT",
+      "_id": "@types/node@22.19.8",
+      "maintainers": [
+        {
+          "name": "types",
+          "email": "ts-npm-types@microsoft.com"
+        }
+      ],
+      "contributors": [
+        {
+          "url": "https://github.com/Microsoft",
+          "name": "Microsoft TypeScript",
+          "githubUsername": "Microsoft"
+        },
+        {
+          "url": "https://github.com/jkomyno",
+          "name": "Alberto Schiabel",
+          "githubUsername": "jkomyno"
+        },
+        {
+          "url": "https://github.com/r3nya",
+          "name": "Andrew Makarov",
+          "githubUsername": "r3nya"
+        },
+        {
+          "url": "https://github.com/btoueg",
+          "name": "Benjamin Toueg",
+          "githubUsername": "btoueg"
+        },
+        {
+          "url": "https://github.com/touffy",
+          "name": "David Junger",
+          "githubUsername": "touffy"
+        },
+        {
+          "url": "https://github.com/mohsen1",
+          "name": "Mohsen Azimi",
+          "githubUsername": "mohsen1"
+        },
+        {
+          "url": "https://github.com/galkin",
+          "name": "Nikita Galkin",
+          "githubUsername": "galkin"
+        },
+        {
+          "url": "https://github.com/eps1lon",
+          "name": "Sebastian Silbermann",
+          "githubUsername": "eps1lon"
+        },
+        {
+          "url": "https://github.com/WilcoBakker",
+          "name": "Wilco Bakker",
+          "githubUsername": "WilcoBakker"
+        },
+        {
+          "url": "https://github.com/chyzwar",
+          "name": "Marcin Kopacz",
+          "githubUsername": "chyzwar"
+        },
+        {
+          "url": "https://github.com/trivikr",
+          "name": "Trivikram Kamat",
+          "githubUsername": "trivikr"
+        },
+        {
+          "url": "https://github.com/yoursunny",
+          "name": "Junxiao Shi",
+          "githubUsername": "yoursunny"
+        },
+        {
+          "url": "https://github.com/qwelias",
+          "name": "Ilia Baryshnikov",
+          "githubUsername": "qwelias"
+        },
+        {
+          "url": "https://github.com/ExE-Boss",
+          "name": "ExE Boss",
+          "githubUsername": "ExE-Boss"
+        },
+        {
+          "url": "https://github.com/peterblazejewicz",
+          "name": "Piotr Błażejewicz",
+          "githubUsername": "peterblazejewicz"
+        },
+        {
+          "url": "https://github.com/addaleax",
+          "name": "Anna Henningsen",
+          "githubUsername": "addaleax"
+        },
+        {
+          "url": "https://github.com/victorperin",
+          "name": "Victor Perin",
+          "githubUsername": "victorperin"
+        },
+        {
+          "url": "https://github.com/NodeJS",
+          "name": "NodeJS Contributors",
+          "githubUsername": "NodeJS"
+        },
+        {
+          "url": "https://github.com/LinusU",
+          "name": "Linus Unnebäck",
+          "githubUsername": "LinusU"
+        },
+        {
+          "url": "https://github.com/wafuwafu13",
+          "name": "wafuwafu13",
+          "githubUsername": "wafuwafu13"
+        },
+        {
+          "url": "https://github.com/mcollina",
+          "name": "Matteo Collina",
+          "githubUsername": "mcollina"
+        },
+        {
+          "url": "https://github.com/Semigradsky",
+          "name": "Dmitry Semigradsky",
+          "githubUsername": "Semigradsky"
+        },
+        {
+          "url": "https://github.com/Renegade334",
+          "name": "René",
+          "githubUsername": "Renegade334"
+        }
+      ],
+      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
+      "dist": {
+        "shasum": "b0c7812df8a98a001570950f4275f0c10fcad101",
+        "tarball": "https://registry.npmjs.org/@types/node/-/node-22.19.8.tgz",
+        "fileCount": 83,
+        "integrity": "sha512-ebO/Yl+EAvVe8DnMfi+iaAyIqYdK0q/q0y0rw82INWEKJOBe6b/P3YWE8NW7oOlF/nXFNrHwhARrN/hdgDkraA==",
+        "signatures": [
+          {
+            "sig": "MEQCIEMbWX2Yfvup31PJS1rFD0LcHOCfoyGSvsRRwkZmvpBUAiArSdMjpChDq6tkxLXzpCx4UW/lp4/G3B/BVs6rsBZiIg==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 2420738
+      },
+      "main": "",
+      "types": "index.d.ts",
+      "scripts": {},
+      "_npmUser": {
+        "name": "types",
+        "email": "ts-npm-types@microsoft.com"
+      },
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/node"
+      },
+      "description": "TypeScript definitions for node",
+      "directories": {},
+      "_nodeVersion": "24.13.0",
+      "dependencies": {
+        "undici-types": "~6.21.0"
+      },
+      "typesVersions": {
+        "<=5.6": {
+          "*": ["ts5.6/*"]
+        }
+      },
+      "_hasShrinkwrap": false,
+      "peerDependencies": {},
+      "typeScriptVersion": "5.2",
+      "_npmOperationalInternal": {
+        "tmp": "tmp/node_22.19.8_1770108278051_0.16713191787537407",
+        "host": "s3://npm-registry-packages-npm-production"
+      },
+      "typesPublisherContentHash": "aa576af52f093dfcb32f174b4eae6e9bfb5c57d6101185d217d2c8a983a64ecd"
+    },
+    "24.10.10": {
+      "name": "@types/node",
+      "version": "24.10.10",
+      "license": "MIT",
+      "_id": "@types/node@24.10.10",
+      "maintainers": [
+        {
+          "name": "types",
+          "email": "ts-npm-types@microsoft.com"
+        }
+      ],
+      "contributors": [
+        {
+          "url": "https://github.com/Microsoft",
+          "name": "Microsoft TypeScript",
+          "githubUsername": "Microsoft"
+        },
+        {
+          "url": "https://github.com/jkomyno",
+          "name": "Alberto Schiabel",
+          "githubUsername": "jkomyno"
+        },
+        {
+          "url": "https://github.com/r3nya",
+          "name": "Andrew Makarov",
+          "githubUsername": "r3nya"
+        },
+        {
+          "url": "https://github.com/btoueg",
+          "name": "Benjamin Toueg",
+          "githubUsername": "btoueg"
+        },
+        {
+          "url": "https://github.com/touffy",
+          "name": "David Junger",
+          "githubUsername": "touffy"
+        },
+        {
+          "url": "https://github.com/mohsen1",
+          "name": "Mohsen Azimi",
+          "githubUsername": "mohsen1"
+        },
+        {
+          "url": "https://github.com/galkin",
+          "name": "Nikita Galkin",
+          "githubUsername": "galkin"
+        },
+        {
+          "url": "https://github.com/eps1lon",
+          "name": "Sebastian Silbermann",
+          "githubUsername": "eps1lon"
+        },
+        {
+          "url": "https://github.com/WilcoBakker",
+          "name": "Wilco Bakker",
+          "githubUsername": "WilcoBakker"
+        },
+        {
+          "url": "https://github.com/chyzwar",
+          "name": "Marcin Kopacz",
+          "githubUsername": "chyzwar"
+        },
+        {
+          "url": "https://github.com/trivikr",
+          "name": "Trivikram Kamat",
+          "githubUsername": "trivikr"
+        },
+        {
+          "url": "https://github.com/yoursunny",
+          "name": "Junxiao Shi",
+          "githubUsername": "yoursunny"
+        },
+        {
+          "url": "https://github.com/qwelias",
+          "name": "Ilia Baryshnikov",
+          "githubUsername": "qwelias"
+        },
+        {
+          "url": "https://github.com/ExE-Boss",
+          "name": "ExE Boss",
+          "githubUsername": "ExE-Boss"
+        },
+        {
+          "url": "https://github.com/peterblazejewicz",
+          "name": "Piotr Błażejewicz",
+          "githubUsername": "peterblazejewicz"
+        },
+        {
+          "url": "https://github.com/addaleax",
+          "name": "Anna Henningsen",
+          "githubUsername": "addaleax"
+        },
+        {
+          "url": "https://github.com/victorperin",
+          "name": "Victor Perin",
+          "githubUsername": "victorperin"
+        },
+        {
+          "url": "https://github.com/NodeJS",
+          "name": "NodeJS Contributors",
+          "githubUsername": "NodeJS"
+        },
+        {
+          "url": "https://github.com/LinusU",
+          "name": "Linus Unnebäck",
+          "githubUsername": "LinusU"
+        },
+        {
+          "url": "https://github.com/wafuwafu13",
+          "name": "wafuwafu13",
+          "githubUsername": "wafuwafu13"
+        },
+        {
+          "url": "https://github.com/mcollina",
+          "name": "Matteo Collina",
+          "githubUsername": "mcollina"
+        },
+        {
+          "url": "https://github.com/Semigradsky",
+          "name": "Dmitry Semigradsky",
+          "githubUsername": "Semigradsky"
+        },
+        {
+          "url": "https://github.com/Renegade334",
+          "name": "René",
+          "githubUsername": "Renegade334"
+        },
+        {
+          "url": "https://github.com/anonrig",
+          "name": "Yagiz Nizipli",
+          "githubUsername": "anonrig"
+        }
+      ],
+      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
+      "dist": {
+        "shasum": "ea4813a65368ca7a98dfd75c84d748831b63e1cf",
+        "tarball": "https://registry.npmjs.org/@types/node/-/node-24.10.10.tgz",
+        "fileCount": 88,
+        "integrity": "sha512-+0/4J266CBGPUq/ELg7QUHhN25WYjE0wYTPSQJn1xeu8DOlIOPxXxrNGiLmfAWl7HMMgWFWXpt9IDjMWrF5Iow==",
+        "signatures": [
+          {
+            "sig": "MEQCIHSZA822w/8Xe4zVmgikqXLKSPbLhRNnjg6B0W59uo9IAiAwiPFVvM3jdqimeI5S/nqQihQuhxlbFiJE7TsAWACIGA==",
+            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
+          }
+        ],
+        "unpackedSize": 2520674
+      },
+      "main": "",
+      "types": "index.d.ts",
+      "scripts": {},
+      "_npmUser": {
+        "name": "types",
+        "email": "ts-npm-types@microsoft.com"
+      },
+      "repository": {
+        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
+        "type": "git",
+        "directory": "types/node"
+      },
+      "description": "TypeScript definitions for node",
+      "directories": {},
+      "_nodeVersion": "24.13.0",
+      "dependencies": {
+        "undici-types": "~7.16.0"
+      },
+      "typesVersions": {
+        "<=5.6": {
+          "*": ["ts5.6/*"]
+        },
+        "<=5.7": {
+          "*": ["ts5.7/*"]
+        }
+      },
+      "_hasShrinkwrap": false,
+      "peerDependencies": {},
+      "typeScriptVersion": "5.2",
+      "_npmOperationalInternal": {
+        "tmp": "tmp/node_24.10.10_1770108274402_0.011526233842142464",
+        "host": "s3://npm-registry-packages-npm-production"
+      },
+      "typesPublisherContentHash": "018f24ffff9a0682721732f56507c8a72f32bad353b77c63cafe1f744f3ac548"
+    },
     "25.2.0": {
       "name": "@types/node",
       "version": "25.2.0",
@@ -1293,528 +1819,6 @@
         "host": "s3://npm-registry-packages-npm-production"
       },
       "typesPublisherContentHash": "1122b0405703a8c7b9a40408f6b1401d45c2c6c13ee013c7ce558360f750f770"
-    },
-    "20.19.29": {
-      "name": "@types/node",
-      "version": "20.19.29",
-      "license": "MIT",
-      "_id": "@types/node@20.19.29",
-      "maintainers": [
-        {
-          "name": "types",
-          "email": "ts-npm-types@microsoft.com"
-        }
-      ],
-      "contributors": [
-        {
-          "url": "https://github.com/Microsoft",
-          "name": "Microsoft TypeScript",
-          "githubUsername": "Microsoft"
-        },
-        {
-          "url": "https://github.com/jkomyno",
-          "name": "Alberto Schiabel",
-          "githubUsername": "jkomyno"
-        },
-        {
-          "url": "https://github.com/r3nya",
-          "name": "Andrew Makarov",
-          "githubUsername": "r3nya"
-        },
-        {
-          "url": "https://github.com/btoueg",
-          "name": "Benjamin Toueg",
-          "githubUsername": "btoueg"
-        },
-        {
-          "url": "https://github.com/touffy",
-          "name": "David Junger",
-          "githubUsername": "touffy"
-        },
-        {
-          "url": "https://github.com/mohsen1",
-          "name": "Mohsen Azimi",
-          "githubUsername": "mohsen1"
-        },
-        {
-          "url": "https://github.com/galkin",
-          "name": "Nikita Galkin",
-          "githubUsername": "galkin"
-        },
-        {
-          "url": "https://github.com/eps1lon",
-          "name": "Sebastian Silbermann",
-          "githubUsername": "eps1lon"
-        },
-        {
-          "url": "https://github.com/WilcoBakker",
-          "name": "Wilco Bakker",
-          "githubUsername": "WilcoBakker"
-        },
-        {
-          "url": "https://github.com/chyzwar",
-          "name": "Marcin Kopacz",
-          "githubUsername": "chyzwar"
-        },
-        {
-          "url": "https://github.com/trivikr",
-          "name": "Trivikram Kamat",
-          "githubUsername": "trivikr"
-        },
-        {
-          "url": "https://github.com/yoursunny",
-          "name": "Junxiao Shi",
-          "githubUsername": "yoursunny"
-        },
-        {
-          "url": "https://github.com/qwelias",
-          "name": "Ilia Baryshnikov",
-          "githubUsername": "qwelias"
-        },
-        {
-          "url": "https://github.com/ExE-Boss",
-          "name": "ExE Boss",
-          "githubUsername": "ExE-Boss"
-        },
-        {
-          "url": "https://github.com/peterblazejewicz",
-          "name": "Piotr Błażejewicz",
-          "githubUsername": "peterblazejewicz"
-        },
-        {
-          "url": "https://github.com/addaleax",
-          "name": "Anna Henningsen",
-          "githubUsername": "addaleax"
-        },
-        {
-          "url": "https://github.com/victorperin",
-          "name": "Victor Perin",
-          "githubUsername": "victorperin"
-        },
-        {
-          "url": "https://github.com/NodeJS",
-          "name": "NodeJS Contributors",
-          "githubUsername": "NodeJS"
-        },
-        {
-          "url": "https://github.com/LinusU",
-          "name": "Linus Unnebäck",
-          "githubUsername": "LinusU"
-        },
-        {
-          "url": "https://github.com/wafuwafu13",
-          "name": "wafuwafu13",
-          "githubUsername": "wafuwafu13"
-        },
-        {
-          "url": "https://github.com/mcollina",
-          "name": "Matteo Collina",
-          "githubUsername": "mcollina"
-        },
-        {
-          "url": "https://github.com/Semigradsky",
-          "name": "Dmitry Semigradsky",
-          "githubUsername": "Semigradsky"
-        }
-      ],
-      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
-      "dist": {
-        "shasum": "49e9857d3e3f3220508d37904eb47cb3434d5b17",
-        "tarball": "https://registry.npmjs.org/@types/node/-/node-20.19.29.tgz",
-        "fileCount": 79,
-        "integrity": "sha512-YrT9ArrGaHForBaCNwFjoqJWmn8G1Pr7+BH/vwyLHciA9qT/wSiuOhxGCT50JA5xLvFBd6PIiGkE3afxcPE1nw==",
-        "signatures": [
-          {
-            "sig": "MEUCIQDRLbYx34ppz91tdrbUVG7OCwr9thi1RCwYEWqQEUvwqAIgJARtrY4xLbJYhQSBXY2hpdd9pc8nNaPWQsdRsxtCB4M=",
-            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
-          }
-        ],
-        "unpackedSize": 2282534
-      },
-      "main": "",
-      "types": "index.d.ts",
-      "scripts": {},
-      "_npmUser": {
-        "name": "types",
-        "email": "ts-npm-types@microsoft.com"
-      },
-      "repository": {
-        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
-        "type": "git",
-        "directory": "types/node"
-      },
-      "description": "TypeScript definitions for node",
-      "directories": {},
-      "dependencies": {
-        "undici-types": "~6.21.0"
-      },
-      "typesVersions": {
-        "<=5.6": {
-          "*": ["ts5.6/*"]
-        }
-      },
-      "_hasShrinkwrap": false,
-      "peerDependencies": {},
-      "typeScriptVersion": "5.2",
-      "_npmOperationalInternal": {
-        "tmp": "tmp/node_20.19.29_1768316652084_0.4504236423834378",
-        "host": "s3://npm-registry-packages-npm-production"
-      },
-      "typesPublisherContentHash": "068fe0da6cbb8e61eaae9887c49ba5486bfe414c2b825576eda7333dfecd9d6e"
-    },
-    "22.19.6": {
-      "name": "@types/node",
-      "version": "22.19.6",
-      "license": "MIT",
-      "_id": "@types/node@22.19.6",
-      "maintainers": [
-        {
-          "name": "types",
-          "email": "ts-npm-types@microsoft.com"
-        }
-      ],
-      "contributors": [
-        {
-          "url": "https://github.com/Microsoft",
-          "name": "Microsoft TypeScript",
-          "githubUsername": "Microsoft"
-        },
-        {
-          "url": "https://github.com/jkomyno",
-          "name": "Alberto Schiabel",
-          "githubUsername": "jkomyno"
-        },
-        {
-          "url": "https://github.com/r3nya",
-          "name": "Andrew Makarov",
-          "githubUsername": "r3nya"
-        },
-        {
-          "url": "https://github.com/btoueg",
-          "name": "Benjamin Toueg",
-          "githubUsername": "btoueg"
-        },
-        {
-          "url": "https://github.com/touffy",
-          "name": "David Junger",
-          "githubUsername": "touffy"
-        },
-        {
-          "url": "https://github.com/mohsen1",
-          "name": "Mohsen Azimi",
-          "githubUsername": "mohsen1"
-        },
-        {
-          "url": "https://github.com/galkin",
-          "name": "Nikita Galkin",
-          "githubUsername": "galkin"
-        },
-        {
-          "url": "https://github.com/eps1lon",
-          "name": "Sebastian Silbermann",
-          "githubUsername": "eps1lon"
-        },
-        {
-          "url": "https://github.com/WilcoBakker",
-          "name": "Wilco Bakker",
-          "githubUsername": "WilcoBakker"
-        },
-        {
-          "url": "https://github.com/chyzwar",
-          "name": "Marcin Kopacz",
-          "githubUsername": "chyzwar"
-        },
-        {
-          "url": "https://github.com/trivikr",
-          "name": "Trivikram Kamat",
-          "githubUsername": "trivikr"
-        },
-        {
-          "url": "https://github.com/yoursunny",
-          "name": "Junxiao Shi",
-          "githubUsername": "yoursunny"
-        },
-        {
-          "url": "https://github.com/qwelias",
-          "name": "Ilia Baryshnikov",
-          "githubUsername": "qwelias"
-        },
-        {
-          "url": "https://github.com/ExE-Boss",
-          "name": "ExE Boss",
-          "githubUsername": "ExE-Boss"
-        },
-        {
-          "url": "https://github.com/peterblazejewicz",
-          "name": "Piotr Błażejewicz",
-          "githubUsername": "peterblazejewicz"
-        },
-        {
-          "url": "https://github.com/addaleax",
-          "name": "Anna Henningsen",
-          "githubUsername": "addaleax"
-        },
-        {
-          "url": "https://github.com/victorperin",
-          "name": "Victor Perin",
-          "githubUsername": "victorperin"
-        },
-        {
-          "url": "https://github.com/NodeJS",
-          "name": "NodeJS Contributors",
-          "githubUsername": "NodeJS"
-        },
-        {
-          "url": "https://github.com/LinusU",
-          "name": "Linus Unnebäck",
-          "githubUsername": "LinusU"
-        },
-        {
-          "url": "https://github.com/wafuwafu13",
-          "name": "wafuwafu13",
-          "githubUsername": "wafuwafu13"
-        },
-        {
-          "url": "https://github.com/mcollina",
-          "name": "Matteo Collina",
-          "githubUsername": "mcollina"
-        },
-        {
-          "url": "https://github.com/Semigradsky",
-          "name": "Dmitry Semigradsky",
-          "githubUsername": "Semigradsky"
-        },
-        {
-          "url": "https://github.com/Renegade334",
-          "name": "René",
-          "githubUsername": "Renegade334"
-        }
-      ],
-      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
-      "dist": {
-        "shasum": "0e9d80ebcd2dfce03265768c17a1212d4eb07e82",
-        "tarball": "https://registry.npmjs.org/@types/node/-/node-22.19.6.tgz",
-        "fileCount": 83,
-        "integrity": "sha512-qm+G8HuG6hOHQigsi7VGuLjUVu6TtBo/F05zvX04Mw2uCg9Dv0Qxy3Qw7j41SidlTcl5D/5yg0SEZqOB+EqZnQ==",
-        "signatures": [
-          {
-            "sig": "MEQCIAnrJwWNjscfQQt8wuzkAtxa7AaUIOFXnyoubIHNOmxeAiAoG3cBtGsHETZYOvFKiKuhIWk7Osd/W5L1pN8xeCdvtw==",
-            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
-          }
-        ],
-        "unpackedSize": 2420714
-      },
-      "main": "",
-      "types": "index.d.ts",
-      "scripts": {},
-      "_npmUser": {
-        "name": "types",
-        "email": "ts-npm-types@microsoft.com"
-      },
-      "repository": {
-        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
-        "type": "git",
-        "directory": "types/node"
-      },
-      "description": "TypeScript definitions for node",
-      "directories": {},
-      "dependencies": {
-        "undici-types": "~6.21.0"
-      },
-      "typesVersions": {
-        "<=5.6": {
-          "*": ["ts5.6/*"]
-        }
-      },
-      "_hasShrinkwrap": false,
-      "peerDependencies": {},
-      "typeScriptVersion": "5.2",
-      "_npmOperationalInternal": {
-        "tmp": "tmp/node_22.19.6_1768316647081_0.5169524420040119",
-        "host": "s3://npm-registry-packages-npm-production"
-      },
-      "typesPublisherContentHash": "2c34fbfb2434c188f32b6207dea51fa3ffc96a1d6c16f9f909ecab2652fe9a02"
-    },
-    "24.10.8": {
-      "name": "@types/node",
-      "version": "24.10.8",
-      "license": "MIT",
-      "_id": "@types/node@24.10.8",
-      "maintainers": [
-        {
-          "name": "types",
-          "email": "ts-npm-types@microsoft.com"
-        }
-      ],
-      "contributors": [
-        {
-          "url": "https://github.com/Microsoft",
-          "name": "Microsoft TypeScript",
-          "githubUsername": "Microsoft"
-        },
-        {
-          "url": "https://github.com/jkomyno",
-          "name": "Alberto Schiabel",
-          "githubUsername": "jkomyno"
-        },
-        {
-          "url": "https://github.com/r3nya",
-          "name": "Andrew Makarov",
-          "githubUsername": "r3nya"
-        },
-        {
-          "url": "https://github.com/btoueg",
-          "name": "Benjamin Toueg",
-          "githubUsername": "btoueg"
-        },
-        {
-          "url": "https://github.com/touffy",
-          "name": "David Junger",
-          "githubUsername": "touffy"
-        },
-        {
-          "url": "https://github.com/mohsen1",
-          "name": "Mohsen Azimi",
-          "githubUsername": "mohsen1"
-        },
-        {
-          "url": "https://github.com/galkin",
-          "name": "Nikita Galkin",
-          "githubUsername": "galkin"
-        },
-        {
-          "url": "https://github.com/eps1lon",
-          "name": "Sebastian Silbermann",
-          "githubUsername": "eps1lon"
-        },
-        {
-          "url": "https://github.com/WilcoBakker",
-          "name": "Wilco Bakker",
-          "githubUsername": "WilcoBakker"
-        },
-        {
-          "url": "https://github.com/chyzwar",
-          "name": "Marcin Kopacz",
-          "githubUsername": "chyzwar"
-        },
-        {
-          "url": "https://github.com/trivikr",
-          "name": "Trivikram Kamat",
-          "githubUsername": "trivikr"
-        },
-        {
-          "url": "https://github.com/yoursunny",
-          "name": "Junxiao Shi",
-          "githubUsername": "yoursunny"
-        },
-        {
-          "url": "https://github.com/qwelias",
-          "name": "Ilia Baryshnikov",
-          "githubUsername": "qwelias"
-        },
-        {
-          "url": "https://github.com/ExE-Boss",
-          "name": "ExE Boss",
-          "githubUsername": "ExE-Boss"
-        },
-        {
-          "url": "https://github.com/peterblazejewicz",
-          "name": "Piotr Błażejewicz",
-          "githubUsername": "peterblazejewicz"
-        },
-        {
-          "url": "https://github.com/addaleax",
-          "name": "Anna Henningsen",
-          "githubUsername": "addaleax"
-        },
-        {
-          "url": "https://github.com/victorperin",
-          "name": "Victor Perin",
-          "githubUsername": "victorperin"
-        },
-        {
-          "url": "https://github.com/NodeJS",
-          "name": "NodeJS Contributors",
-          "githubUsername": "NodeJS"
-        },
-        {
-          "url": "https://github.com/LinusU",
-          "name": "Linus Unnebäck",
-          "githubUsername": "LinusU"
-        },
-        {
-          "url": "https://github.com/wafuwafu13",
-          "name": "wafuwafu13",
-          "githubUsername": "wafuwafu13"
-        },
-        {
-          "url": "https://github.com/mcollina",
-          "name": "Matteo Collina",
-          "githubUsername": "mcollina"
-        },
-        {
-          "url": "https://github.com/Semigradsky",
-          "name": "Dmitry Semigradsky",
-          "githubUsername": "Semigradsky"
-        },
-        {
-          "url": "https://github.com/Renegade334",
-          "name": "René",
-          "githubUsername": "Renegade334"
-        },
-        {
-          "url": "https://github.com/anonrig",
-          "name": "Yagiz Nizipli",
-          "githubUsername": "anonrig"
-        }
-      ],
-      "homepage": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node",
-      "dist": {
-        "shasum": "9b529d32e7e5adb74b13d1fc9b83615e9a12a701",
-        "tarball": "https://registry.npmjs.org/@types/node/-/node-24.10.8.tgz",
-        "fileCount": 88,
-        "integrity": "sha512-r0bBaXu5Swb05doFYO2kTWHMovJnNVbCsII0fhesM8bNRlLhXIuckley4a2DaD+vOdmm5G+zGkQZAPZsF80+YQ==",
-        "signatures": [
-          {
-            "sig": "MEUCIQDYHdjXxA1mHei5pkDMUI7JtZtZvhVylwdYihDXckMaiwIgPtcoLiVo0JKOP9Xh4KKn8okoTH5xk/NDC2v05ugzxj8=",
-            "keyid": "SHA256:DhQ8wR5APBvFHLF/+Tc+AYvPOdTpcIDqOhxsBHRwC7U"
-          }
-        ],
-        "unpackedSize": 2520649
-      },
-      "main": "",
-      "types": "index.d.ts",
-      "scripts": {},
-      "_npmUser": {
-        "name": "types",
-        "email": "ts-npm-types@microsoft.com"
-      },
-      "repository": {
-        "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git",
-        "type": "git",
-        "directory": "types/node"
-      },
-      "description": "TypeScript definitions for node",
-      "directories": {},
-      "dependencies": {
-        "undici-types": "~7.16.0"
-      },
-      "typesVersions": {
-        "<=5.6": {
-          "*": ["ts5.6/*"]
-        },
-        "<=5.7": {
-          "*": ["ts5.7/*"]
-        }
-      },
-      "_hasShrinkwrap": false,
-      "peerDependencies": {},
-      "typeScriptVersion": "5.2",
-      "_npmOperationalInternal": {
-        "tmp": "tmp/node_24.10.8_1768316642007_0.5676089050679143",
-        "host": "s3://npm-registry-packages-npm-production"
-      },
-      "typesPublisherContentHash": "56fd83fda971b33504b67e5c98596ca7c5d4a28d3b7ff29522643cc4f1db7eea"
     },
     "12.12.6": {
       "name": "@types/node",
@@ -8026,8 +8030,11 @@
     }
   },
   "time": {
-    "modified": "2026-02-01T15:39:08.871Z",
+    "modified": "2026-02-03T08:44:41.599Z",
     "created": "2016-05-17T18:26:38.670Z",
+    "20.19.31": "2026-02-03T08:44:41.502Z",
+    "22.19.8": "2026-02-03T08:44:38.216Z",
+    "24.10.10": "2026-02-03T08:44:34.645Z",
     "25.2.0": "2026-02-01T15:38:51.767Z",
     "25.1.0": "2026-01-28T16:44:08.425Z",
     "25.0.10": "2026-01-21T23:30:16.947Z",
@@ -8035,9 +8042,6 @@
     "22.19.7": "2026-01-15T17:09:44.127Z",
     "24.10.9": "2026-01-15T17:09:33.778Z",
     "25.0.9": "2026-01-15T17:09:04.681Z",
-    "20.19.29": "2026-01-13T15:04:12.459Z",
-    "22.19.6": "2026-01-13T15:04:07.309Z",
-    "24.10.8": "2026-01-13T15:04:02.216Z",
     "12.12.6": "2019-11-05T21:05:33.547Z",
     "13.13.4": "2020-04-26T17:42:47.069Z",
     "14.0.1": "2020-05-13T00:32:15.269Z",
@@ -8076,6 +8080,6 @@
     "type": "git",
     "directory": "types/node"
   },
-  "readme": "[object Object]",
+  "readme": "",
   "readmeFilename": ""
 }

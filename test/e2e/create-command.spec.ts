@@ -45,31 +45,16 @@ test.describe('Create Command', () => {
       await expect(createCommandSection.locator('code')).toContainText(/create nuxt/i)
     })
 
-    test('/color - should NOT show create command (different maintainers)', async ({
+    test('/is-odd - should NOT show create command (no create-is-odd exists)', async ({
       page,
       goto,
     }) => {
-      await goto('/package/color', { waitUntil: 'domcontentloaded' })
+      await goto('/package/is-odd', { waitUntil: 'domcontentloaded' })
 
       // Wait for package to load
-      await expect(page.locator('h1').filter({ hasText: 'color' })).toBeVisible()
+      await expect(page.locator('h1').filter({ hasText: 'is-odd' })).toBeVisible()
 
-      // Create command section should NOT be visible (different maintainers)
-      // Use .first() for consistency, though none should exist
-      const createCommandSection = page.locator('.group\\/createcmd').first()
-      await expect(createCommandSection).not.toBeVisible()
-    })
-
-    test('/lodash - should NOT show create command (no create-lodash exists)', async ({
-      page,
-      goto,
-    }) => {
-      await goto('/package/lodash', { waitUntil: 'domcontentloaded' })
-
-      // Wait for package to load
-      await expect(page.locator('h1').filter({ hasText: 'lodash' })).toBeVisible()
-
-      // Create command section should NOT be visible (no create-lodash exists)
+      // Create command section should NOT be visible (no create-is-odd exists)
       // Use .first() for consistency, though none should exist
       const createCommandSection = page.locator('.group\\/createcmd').first()
       await expect(createCommandSection).not.toBeVisible()
@@ -139,7 +124,7 @@ test.describe('Create Command', () => {
 
   test.describe('Install Command Copy', () => {
     test('hovering install command shows copy button', async ({ page, goto }) => {
-      await goto('/package/lodash', { waitUntil: 'hydration' })
+      await goto('/package/is-odd', { waitUntil: 'hydration' })
 
       // Find the install command container
       const installCommandContainer = page.locator('.group\\/installcmd').first()
@@ -164,7 +149,7 @@ test.describe('Create Command', () => {
       // Grant clipboard permissions
       await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 
-      await goto('/package/lodash', { waitUntil: 'hydration' })
+      await goto('/package/is-odd', { waitUntil: 'hydration' })
 
       // Find and hover over the install command container
       const installCommandContainer = page.locator('.group\\/installcmd').first()
@@ -179,7 +164,7 @@ test.describe('Create Command', () => {
 
       // Verify clipboard content contains the install command
       const clipboardContent = await page.evaluate(() => navigator.clipboard.readText())
-      expect(clipboardContent).toMatch(/install lodash|add lodash/i)
+      expect(clipboardContent).toMatch(/install is-odd|add is-odd/i)
 
       await expect(copyButton).toContainText(/copy/i, { timeout: 5000 })
       await expect(copyButton).not.toContainText(/copied/i)

@@ -75,11 +75,11 @@ test.describe('npmjs.com URL Compatibility', () => {
   })
 
   test.describe('User Profile Pages', () => {
-    test('/~sindresorhus → user profile', async ({ page, goto }) => {
-      await goto('/~sindresorhus', { waitUntil: 'hydration' })
+    test('/~qwerzl → user profile', async ({ page, goto }) => {
+      await goto('/~qwerzl', { waitUntil: 'hydration' })
 
       // Should show username
-      await expect(page.locator('h1')).toContainText('~sindresorhus')
+      await expect(page.locator('h1')).toContainText('~qwerzl')
 
       await expect(page.locator('text=/\\d+\\s+public\\s+package/i').first()).toBeVisible({
         timeout: 15000,
@@ -121,10 +121,10 @@ test.describe('npmjs.com URL Compatibility', () => {
       await expect(page.locator('h1')).toContainText('lodash.merge')
     })
 
-    test('package name with hyphens: /package/date-fns', async ({ page, goto }) => {
-      await goto('/package/date-fns', { waitUntil: 'domcontentloaded' })
+    test('package name with hyphens: /package/is-odd', async ({ page, goto }) => {
+      await goto('/package/is-odd', { waitUntil: 'domcontentloaded' })
 
-      await expect(page.locator('h1')).toContainText('date-fns')
+      await expect(page.locator('h1')).toContainText('is-odd')
     })
 
     test('scoped package with hyphens: /package/@types/node', async ({ page, goto }) => {
