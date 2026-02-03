@@ -4,6 +4,7 @@ import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
+import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
 
 const props = defineProps<{
   // For single package downloads history
@@ -56,9 +57,6 @@ const { colors } = useCssVariables(
     watchResize: false,
   },
 )
-
-// Listed frameworks have hardcoded colors
-const { getFrameworkColor, isListedFramework } = useFrameworks()
 
 watch(
   () => colorMode.value,
