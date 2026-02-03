@@ -131,7 +131,6 @@ describe('mapWithConcurrency', () => {
           expect(tooManyRunningTasksEncountered).toBe(false)
         },
       ),
-      { endOnFailure: true },
     )
   })
 })
