@@ -32,7 +32,6 @@ const config: KnipConfig = {
         '@voidzero-dev/vite-plus-core',
         'vite-plus!',
         'h3',
-        'puppeteer',
         /** Needs to be explicitly installed, even though it is not imported, to avoid type errors. */
         'unplugin-vue-router',
         'vite-plugin-pwa',
