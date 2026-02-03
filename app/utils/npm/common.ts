@@ -12,3 +12,8 @@ export const NPM_API = 'https://api.npmjs.org'
 export function buildScopeTeam(orgName: string, teamName: string): `@${string}:${string}` {
   return `@${orgName.replace(/^@/, '')}:${teamName}`
 }
+
+export function getDependencyCount(version: PackumentVersion | null): number {
+  if (!version?.dependencies) return 0
+  return Object.keys(version.dependencies).length
+}

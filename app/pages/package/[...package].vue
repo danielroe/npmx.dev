@@ -11,6 +11,7 @@ import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
 import { formatBytes } from '~/utils/formatters'
+import { getDependencyCount } from '~/utils/npm/common'
 import { NuxtLink } from '#components'
 
 definePageMeta({

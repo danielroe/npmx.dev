@@ -8,7 +8,7 @@ import type {
 import { encodePackageName } from '#shared/utils/npm'
 import type { PackageAnalysisResponse } from './usePackageAnalysis'
 import { isBinaryOnlyPackage } from '#shared/utils/binary-detection'
-import { getDependencyCount } from './useNpmRegistry'
+import { getDependencyCount } from '~/utils/npm/common'
 
 export interface PackageComparisonData {
   package: ComparisonPackage
