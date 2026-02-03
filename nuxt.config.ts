@@ -59,6 +59,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en-US' },
+      title: 'npmx',
       link: [
         {
           rel: 'search',
@@ -85,8 +86,10 @@ export default defineNuxtConfig({
   routeRules: {
     '/': { prerender: true },
     '/opensearch.xml': { isr: true },
-    '/**': { isr: 60 },
-    '/package/**': { isr: 60 },
+    '/**': { isr: getISRConfig(60, true) },
+    '/api/**': { isr: 60 },
+    '/200.html': { prerender: true },
+    '/package/**': { isr: getISRConfig(60, true) },
     '/:pkg/.well-known/skills/**': { isr: 3600 },
     '/:scope/:pkg/.well-known/skills/**': { isr: 3600 },
     // never cache
@@ -279,3 +282,15 @@ export default defineNuxtConfig({
     dirs: ['~/composables', '~/composables/*/*.ts'],
   },
 })
+
+function getISRConfig(expirationSeconds: number, fallback = false) {
+  if (fallback) {
+    return {
+      expiration: expirationSeconds,
+      fallback: 'spa.prerender-fallback.html',
+    } as { expiration: number }
+  }
+  return {
+    expiration: expirationSeconds,
+  }
+}
