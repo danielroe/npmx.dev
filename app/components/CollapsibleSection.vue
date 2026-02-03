@@ -76,7 +76,7 @@ useHead({
 
 <template>
   <section class="scroll-mt-20" :data-anchor-id="id">
-    <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center justify-between mb-3 px-1">
       <component
         :is="headingLevel"
         :id="headingId"
@@ -85,7 +85,7 @@ useHead({
         <button
           :id="buttonId"
           type="button"
-          class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 rounded"
+          class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
           :aria-expanded="isOpen"
           :aria-controls="contentId"
           :aria-label="ariaLabel"
