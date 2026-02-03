@@ -197,27 +197,15 @@ onKeyStroke(
       class="relative container min-h-14 flex items-center gap-2 z-1"
       :class="isOnHomePage ? 'justify-end' : 'justify-between'"
     >
-      <!-- Mobile: Logo (navigates home) + Search button (expands search) -->
-      <div
+      <!-- Mobile: Logo (navigates home) -->
+      <NuxtLink
         v-if="!isSearchExpanded && !isOnHomePage"
-        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2"
+        to="/"
+        :aria-label="$t('header.home')"
+        class="sm:hidden flex-shrink-0 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
       >
-        <NuxtLink
-          to="/"
-          :aria-label="$t('header.home')"
-          class="font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
-        >
-          <AppLogo class="w-8 h-8 rounded-lg" />
-        </NuxtLink>
-        <button
-          type="button"
-          class="p-1 -m-1 text-fg-subtle hover:text-fg transition-colors duration-200 focus-ring rounded"
-          :aria-label="$t('nav.tap_to_search')"
-          @click="expandMobileSearch"
-        >
-          <span class="i-carbon:search w-4 h-4" aria-hidden="true" />
-        </button>
-      </div>
+        <AppLogo class="w-8 h-8 rounded-lg" />
+      </NuxtLink>
 
       <!-- Desktop: Logo (navigates home) -->
       <div v-if="showLogo" class="hidden sm:flex flex-shrink-0 items-center">
@@ -282,7 +270,51 @@ onKeyStroke(
           {{ link.label }}
         </LinkBase>
 
-        <HeaderAccountMenu />
+        <!-- Desktop: Settings link -->
+        <NuxtLink
+          to="/settings"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          aria-keyshortcuts=","
+        >
+          {{ $t('nav.settings') }}
+          <kbd
+            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+            aria-hidden="true"
+          >
+            ,
+          </kbd>
+        </NuxtLink>
+
+        <!-- Desktop: Account menu -->
+        <div class="hidden sm:block">
+          <HeaderAccountMenu />
+        </div>
+
+        <!-- Mobile: Search button (expands search) -->
+        <button
+          v-if="!isSearchExpanded && !isOnHomePage"
+          type="button"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          :aria-label="$t('nav.tap_to_search')"
+          @click="expandMobileSearch"
+        >
+          <span class="i-carbon:search w-6 h-6" aria-hidden="true" />
+        </button>
+
+        <!-- Mobile: Menu button (always visible, toggles menu) -->
+        <button
+          type="button"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          :aria-label="showMobileMenu ? $t('common.close') : $t('nav.open_menu')"
+          :aria-expanded="showMobileMenu"
+          @click="showMobileMenu = !showMobileMenu"
+        >
+          <span
+            class="w-6 h-6 inline-block"
+            :class="showMobileMenu ? 'i-carbon:close' : 'i-carbon:menu'"
+            aria-hidden="true"
+          />
+        </button>
       </div>
 
       <!-- Mobile: Menu button (always visible, click to open menu) -->
