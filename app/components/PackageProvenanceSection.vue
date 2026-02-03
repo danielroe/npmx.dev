@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <section id="provenance" aria-labelledby="provenance-heading" class="scroll-mt-20">
+  <section aria-labelledby="provenance-heading" class="scroll-mt-20">
     <h2 id="provenance-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-3">
       <a
         href="#provenance"
@@ -27,13 +27,11 @@ defineProps<{
           class="i-solar-shield-check-outline w-4 h-4 shrink-0 text-emerald-500"
           aria-hidden="true"
         />
-        <span
-          v-html="
-            $t('package.provenance_section.built_and_signed_on', {
-              provider: `<b>${details.providerLabel}</b>`,
-            })
-          "
-        />
+        <i18n-t keypath="package.provenance_section.built_and_signed_on" tag="span">
+          <template #provider>
+            <strong>{{ details.providerLabel }}</strong>
+          </template>
+        </i18n-t>
       </p>
       <a
         v-if="details.buildSummaryUrl"
