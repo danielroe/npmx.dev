@@ -714,7 +714,7 @@ export default defineNitroPlugin(nitroApp => {
     const urlStr =
       typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
 
-    if (urlStr.startsWith('/') || urlStr.includes('woff')) {
+    if (urlStr.startsWith('/') || urlStr.includes('woff') || urlStr.includes('fonts')) {
       return await originalFetch(input, init)
     }
 
