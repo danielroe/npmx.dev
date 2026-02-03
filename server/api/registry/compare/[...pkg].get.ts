@@ -91,8 +91,8 @@ export default defineCachedEventHandler(
       try {
         // Fetch file trees and package.json for both versions in parallel
         const [fromTree, toTree, fromPkg, toPkg] = await Promise.all([
-          getPackageFileTree(packageName, fromVersion),
-          getPackageFileTree(packageName, toVersion),
+          getPackageFileTree(packageName, fromVersion, controller.signal),
+          getPackageFileTree(packageName, toVersion, controller.signal),
           fetchPackageJson(packageName, fromVersion, controller.signal),
           fetchPackageJson(packageName, toVersion, controller.signal),
         ])
