@@ -112,7 +112,7 @@ describe('mapWithConcurrency', () => {
   it('not run more than concurrency tasks in parallel', async () => {
     await fc.assert(
       fc.asyncProperty(
-        fc.array(fc.anything()), // TODO, support failing tasks too
+        fc.array(fc.anything()),
         fc.integer({ min: 1 }),
         fc.scheduler(),
         async (items, concurrency, s) => {
@@ -124,11 +124,7 @@ describe('mapWithConcurrency', () => {
               tooManyRunningTasksEncountered = true
             }
             const task = s.schedule(Promise.resolve(item))
-            task.then(
-              // not a finally as we want to handle failing tasks too in the future
-              () => currentlyRunning--,
-              () => currentlyRunning--,
-            )
+            task.then(() => currentlyRunning--) // this task always succeeds by construct
             return task
           }
           await s.waitFor(mapWithConcurrency(items, fn, concurrency))
