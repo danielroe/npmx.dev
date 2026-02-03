@@ -4,7 +4,7 @@ const model = defineModel()
 const props = defineProps<{
   disabled?: boolean
   /**
-   * type should never be used, because this will always be a button.
+   * type should never be used, because this will always be a radio button.
    *
    * If you want a link use `TagLink` instead.
    *  */
