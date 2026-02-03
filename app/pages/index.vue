@@ -36,7 +36,11 @@ const handleInput = isTouchDevice()
 
 useSeoMeta({
   title: () => $t('seo.home.title'),
+  ogTitle: () => $t('seo.home.title'),
+  twitterTitle: () => $t('seo.home.title'),
   description: () => $t('seo.home.description'),
+  ogDescription: () => $t('seo.home.description'),
+  twitterDescription: () => $t('seo.home.description'),
 })
 
 defineOgImageComponent('Default', {
