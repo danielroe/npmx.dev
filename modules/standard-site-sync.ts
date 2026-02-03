@@ -130,8 +130,5 @@ const syncFile = async (filePath: string, siteUrl: string, client: Client) => {
     rkey: tid.str,
   })
 
-  // TODO: Replace with real PDS push
-  console.log('[standard-site-sync] Pushing:', JSON.stringify(document, null, 2))
-
   syncedDocuments.set(data.path, hash)
 }

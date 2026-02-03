@@ -41,7 +41,7 @@ const postUrl = computed(() => data.value?.postUrl)
         </li>
         <li
           v-if="totalLikes > likes.length"
-          class="flex items-center text-fg-muted text-sm m-0 p-0 pl-2"
+          class="flex items-center text-fg-muted text-sm m-0 p-0 ps-2"
         >
           <a
             v-if="postUrl"
