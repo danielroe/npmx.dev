@@ -92,6 +92,7 @@ export default defineNuxtConfig({
     // never cache
     '/search': { isr: false, cache: false },
     '/api/auth/**': { isr: false, cache: false },
+    '/api/social/**': { isr: false, cache: false },
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/package-docs/:pkg/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },

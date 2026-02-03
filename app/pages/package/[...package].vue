@@ -365,13 +365,10 @@ const { user } = useAtproto()
 
 const authModal = useModal('auth-modal')
 
-const { data: likesData, status: likeStatus } = useFetch(
-  () => `/api/social/likes/${packageName.value}`,
-  {
-    default: () => ({ totalLikes: 0, userHasLiked: false }),
-    server: false,
-  },
-)
+const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.value}`, {
+  default: () => ({ totalLikes: 0, userHasLiked: false }),
+  server: false,
+})
 
 const isLikeActionPending = ref(false)
 
