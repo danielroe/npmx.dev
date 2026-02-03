@@ -37,6 +37,27 @@ jobs:
       - name: 🔠 Lint project
         run: node scripts/lint.ts
 
+  types:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: lts/*
+
+      - uses: pnpm/action-setup@1e1c8eafbd745f64b1ef30a7d7ed7965034c486c
+        name: Install pnpm
+        with:
+          cache: true
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 💪 Type check
+        run: pnpm test:types
+
   test:
     runs-on: ubuntu-latest
 
@@ -57,9 +78,6 @@ jobs:
 
       - name: 🌐 Install browser
         run: pnpm playwright install chromium-headless-shell
-
-      - name: 💪 Type check
-        run: pnpm test:types
 
       - name: 🧪 Unit and component tests
         run: pnpm vite test run --coverage
