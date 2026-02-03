@@ -9,8 +9,8 @@
  */
 const props = withDefaults(
   defineProps<{
-    /** The datetime value (ISO string or Date) */
-    datetime: string | Date
+    /** The datetime value (ISO string or Date or timestamp) */
+    datetime: string | Date | number
     /** Override title (defaults to datetime) */
     title?: string
     /** Date style for absolute display */
@@ -32,7 +32,6 @@ const props = withDefaults(
 const { locale } = useI18n()
 
 const { settings } = useSettings()
-const relativeDates = useRelativeDates()
 
 const dateFormatter = new Intl.DateTimeFormat(locale.value, {
   month: 'short',
@@ -49,21 +48,34 @@ const titleValue = computed(() => {
   const date = typeof props.datetime === 'string' ? new Date(props.datetime) : props.datetime
   return dateFormatter.format(date)
 })
+
+function toggleRelativeDates() {
+  settings.value.relativeDates = !settings.value.relativeDates
+}
 </script>
 
 <template>
-  <button @click="settings.relativeDates = !settings.relativeDates">
-    <span>
-      <ClientOnly>
+  <button @click="toggleRelativeDates">
+    <ClientOnly>
+      <NuxtTime
+        v-if="settings.relativeDates"
+        :datetime="datetime"
+        :title="titleValue"
+        relative
+        :locale="locale"
+      />
+      <NuxtTime
+        v-else
+        :datetime="datetime"
+        :title="titleValue"
+        :date-style="dateStyle"
+        :year="year"
+        :month="month"
+        :day="day"
+        :locale="locale"
+      />
+      <template #fallback>
         <NuxtTime
-          v-if="relativeDates"
-          :datetime="datetime"
-          :title="titleValue"
-          relative
-          :locale="locale"
-        />
-        <NuxtTime
-          v-else
           :datetime="datetime"
           :title="titleValue"
           :date-style="dateStyle"
@@ -72,18 +84,7 @@ const titleValue = computed(() => {
           :day="day"
           :locale="locale"
         />
-        <template #fallback>
-          <NuxtTime
-            :datetime="datetime"
-            :title="titleValue"
-            :date-style="dateStyle"
-            :year="year"
-            :month="month"
-            :day="day"
-            :locale="locale"
-          />
-        </template>
-      </ClientOnly>
-    </span>
+      </template>
+    </ClientOnly>
   </button>
 </template>
