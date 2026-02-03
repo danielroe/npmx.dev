@@ -1,11 +1,9 @@
-import type { PublicUserSession } from '#shared/schemas/publicUserSession'
-
 export function useAtproto() {
   const {
     data: user,
     pending,
     clear,
-  } = useFetch<PublicUserSession | null>('/api/auth/session', {
+  } = useFetch('/api/auth/session', {
     server: false,
     immediate: !import.meta.test,
   })
