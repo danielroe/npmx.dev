@@ -5,6 +5,9 @@
       "description": "優れたnpmレジストリブラウザ。モダンなインターフェイスでパッケージの検索、閲覧、探索が可能です。"
     }
   },
+  "version": "Version",
+  "built_at": "built {0}",
+  "alt_logo": "npmx logo",
   "tagline": "優れたnpmレジストリブラウザ",
   "non_affiliation_disclaimer": "npm, Inc.とは関係ありません。",
   "trademark_disclaimer": "npmはnpm, Inc.の登録商標です。当サイトはnpm, Inc.とは関係ありません。",
@@ -24,6 +27,7 @@
     "found_packages": "{count} 個のパッケージが見つかりました",
     "updating": "（更新中...）",
     "no_results": "\"{query}\" に一致するパッケージは見つかりませんでした",
+    "title": "search",
     "not_taken": "{name} は使用可能です",
     "claim_prompt": "このパッケージ名をnpmで取得する",
     "claim_button": "\"{name}\" を取得",
@@ -42,7 +46,13 @@
     "popular_packages": "人気のパッケージ",
     "search": "検索",
     "settings": "設定",
-    "back": "戻る"
+    "compare": "compare",
+    "back": "戻る",
+    "menu": "Menu",
+    "mobile_menu": "Navigation menu",
+    "open_menu": "Open menu",
+    "links": "Links",
+    "tap_to_search": "Tap to search"
   },
   "settings": {
     "title": "設定",
@@ -67,7 +77,8 @@
     "help_translate": "npmxの翻訳に協力する",
     "accent_colors": "アクセントカラー",
     "clear_accent": "アクセントカラーをクリア",
-    "translation_progress": "翻訳の進捗状況"
+    "translation_progress": "翻訳の進捗状況",
+    "background_themes": "Background shade"
   },
   "i18n": {
     "missing_keys": "{count} 件の未翻訳 | {count} 件の未翻訳",
@@ -94,6 +105,7 @@
     "go_back_home": "ホームへ戻る",
     "view_on_npm": "npmで表示",
     "per_week": "/ 週",
+    "vanity_downloads_hint": "Vanity number: no packages displayed | Vanity number: for the displayed package | Vanity number: Sum of {count} displayed packages",
     "sort": {
       "name": "名前",
       "role": "役割",
@@ -110,23 +122,54 @@
     "verified_provenance": "検証済みプロバナンス",
     "view_permalink": "このバージョンのパーマリンクを表示",
     "navigation": "パッケージナビゲーション",
+    "copy_name": "Copy package name",
     "deprecation": {
       "package": "このパッケージは非推奨になりました。",
       "version": "このバージョンは非推奨になりました。",
       "no_reason": "理由は提供されていません"
     },
-    "replacement": {},
+    "replacement": {
+      "title": "You might not need this dependency.",
+      "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
+      "simple": "The {community} has flagged this package as redundant, with the advice: {replacement}.",
+      "documented": "The {community} has flagged this package as having more performant alternatives.",
+      "none": "This package has been flagged as no longer needed, and its functionality is likely available natively in all engines.",
+      "learn_more": "Learn more",
+      "mdn": "MDN",
+      "community": "community"
+    },
     "stats": {
       "license": "ライセンス",
       "deps": "依存関係",
       "install_size": "インストールサイズ",
       "vulns": "脆弱性",
+      "published": "Published",
+      "published_tooltip": "Date {package}{'@'}{version} was published",
+      "skills": "Skills",
       "view_dependency_graph": "依存関係グラフを表示",
       "inspect_dependency_tree": "依存関係ツリーを検査",
-      "size_tooltip": {}
+      "size_tooltip": {
+        "unpacked": "{size} unpacked size (this package)",
+        "total": "{size} total unpacked size (including all {count} dependencies for linux-x64)"
+      }
     },
     "skills": {
-      "file_counts": {}
+      "title": "Agent Skills",
+      "skills_available": "{count} skill available | {count} skills available",
+      "view": "View",
+      "compatible_with": "Compatible with {tool}",
+      "install": "Install",
+      "installation_method": "Installation method",
+      "learn_more": "Learn more",
+      "available_skills": "Available Skills",
+      "click_to_expand": "Click to expand",
+      "no_description": "No description",
+      "file_counts": {
+        "scripts": "{count} script | {count} scripts",
+        "refs": "{count} ref | {count} refs",
+        "assets": "{count} asset | {count} assets"
+      },
+      "view_source": "View source"
     },
     "links": {
       "repo": "リポジトリ",
@@ -135,7 +178,8 @@
       "jsr": "jsr",
       "code": "コード",
       "docs": "ドキュメント",
-      "fund": "資金援助"
+      "fund": "資金援助",
+      "compare": "compare"
     },
     "docs": {
       "not_available": "ドキュメントは利用できません",
@@ -149,7 +193,8 @@
     },
     "create": {
       "title": "新しいプロジェクトを作成",
-      "copy_command": "作成コマンドをコピー"
+      "copy_command": "作成コマンドをコピー",
+      "view": "{packageName} has the same maintainer. Click for more details."
     },
     "run": {
       "title": "実行",
@@ -158,12 +203,14 @@
     "readme": {
       "title": "Readme",
       "no_readme": "READMEはありません。",
-      "view_on_github": "GitHubで表示"
+      "view_on_github": "GitHubで表示",
+      "toc_title": "Outline"
     },
     "keywords_title": "キーワード",
     "compatibility": "互換性",
     "card": {
       "publisher": "パブリッシャー",
+      "published": "Published",
       "weekly_downloads": "週間ダウンロード数",
       "keywords": "キーワード",
       "license": "ライセンス"
@@ -179,14 +226,18 @@
       "other_versions": "他のバージョン",
       "more_tagged": "他 {count} 個のタグ付き",
       "all_covered": "すべてのバージョンが上記のタグに含まれています",
-      "deprecated_title": "{version}（非推奨）"
+      "deprecated_title": "{version}（非推奨）",
+      "view_all": "View {count} version | View all {count} versions"
     },
     "dependencies": {
       "title": "依存関係（{count}）",
       "list_label": "パッケージの依存関係",
       "show_all": "全 {count} 個の依存関係を表示",
       "optional": "オプション",
-      "view_vulnerabilities": "脆弱性情報を表示"
+      "view_vulnerabilities": "脆弱性情報を表示",
+      "outdated_major": "{count} major version behind (latest: {latest}) | {count} major versions behind (latest: {latest})",
+      "outdated_minor": "{count} minor version behind (latest: {latest}) | {count} minor versions behind (latest: {latest})",
+      "outdated_patch": "Patch update available (latest: {latest})"
     },
     "peer_dependencies": {
       "title": "ピア依存関係（{count}）",
@@ -245,12 +296,14 @@
       "esm": "ESモジュール対応",
       "cjs": "CommonJS対応",
       "no_esm": "ESモジュール非対応",
+      "types_label": "Types",
       "types_included": "型定義同梱",
       "types_available": "{package} 経由で型定義を利用可能",
       "no_types": "TypeScript型定義なし"
     },
     "license": {
-      "view_spdx": "SPDXでライセンス条文を表示"
+      "view_spdx": "SPDXでライセンス条文を表示",
+      "none": "None"
     },
     "vulnerabilities": {
       "no_description": "説明はありません",
@@ -317,6 +370,8 @@
       "weekly": "週間",
       "size": "サイズ",
       "deps": "依存関係",
+      "published": "Published",
+      "get_started": "Get started",
       "readme": "Readme",
       "maintainers": "メンテナ",
       "keywords": "キーワード",
@@ -325,6 +380,7 @@
     },
     "sort": {
       "downloads": "ダウンロード数順",
+      "published": "Recently published",
       "name_asc": "名前順（A-Z）",
       "name_desc": "名前順（Z-A）"
     }
@@ -342,7 +398,11 @@
     },
     "modal": {
       "title": "ローカルコネクタ",
+      "contributor_badge": "Contributors only",
+      "contributor_notice": "The connector is not yet published to npm. See the {link} for how to run locally.",
+      "contributor_link": "contributing guide",
       "connected": "接続済み",
+      "connected_as_user": "Connected as ~{user}",
       "connected_hint": "Web UIからパッケージとOrganizationを管理できるようになりました。",
       "disconnect": "切断",
       "run_hint": "管理機能を有効にするには、ローカル環境でコネクタを実行してください。",
@@ -538,7 +598,8 @@
     "markdown_view_mode": {
       "preview": "プレビュー",
       "code": "コード"
-    }
+    },
+    "file_path": "File path"
   },
   "badges": {
     "provenance": {
@@ -552,9 +613,55 @@
     }
   },
   "filters": {
-    "download_range": {},
-    "updated": {},
-    "security_options": {},
+    "title": "Filters",
+    "search": "Search",
+    "search_scope": "Search scope",
+    "search_placeholder_name": "Filter by package name...",
+    "search_placeholder_description": "Filter by description...",
+    "search_placeholder_keywords": "Filter by keywords...",
+    "search_placeholder_all": "Search all or use name: desc: kw:",
+    "scope_name": "Name",
+    "scope_name_description": "Search package names only",
+    "scope_description": "Description",
+    "scope_description_description": "Search descriptions only",
+    "scope_keywords": "Keywords",
+    "scope_keywords_description": "Search keywords only",
+    "scope_all": "All",
+    "scope_all_description": "Search all fields, supports name: desc: kw: operators",
+    "weekly_downloads": "Weekly downloads",
+    "updated_within": "Updated within",
+    "security": "Security",
+    "keywords": "Keywords",
+    "more_keywords": "+{count} more",
+    "clear_all": "Clear all",
+    "remove_filter": "Remove {label} filter",
+    "chips": {
+      "search": "Search",
+      "downloads": "Downloads",
+      "keyword": "Keyword",
+      "security": "Security",
+      "updated": "Updated"
+    },
+    "download_range": {
+      "any": "Any",
+      "lt100": "< 100",
+      "100_1k": "100 - 1K",
+      "1k_10k": "1K - 10K",
+      "10k_100k": "10K - 100K",
+      "gt100k": "> 100K"
+    },
+    "updated": {
+      "any": "Any time",
+      "week": "Past week",
+      "month": "Past month",
+      "quarter": "Past 3 months",
+      "year": "Past year"
+    },
+    "security_options": {
+      "all": "All packages",
+      "secure": "Without warnings",
+      "insecure": "With warnings"
+    },
     "sort": {
       "label": "パッケージ一覧を並び替える",
       "toggle_direction": "並び順を切り替える",
@@ -565,17 +672,58 @@
       "downloads_day": "ダウンロード数/日",
       "downloads_month": "ダウンロード数/月",
       "downloads_year": "ダウンロード数/年",
+      "published": "Last Published",
       "name": "パッケージ名",
       "quality": "品質",
       "popularity": "人気度",
       "maintenance": "メンテナンス",
       "score": "スコア"
     },
-    "columns": {},
-    "view_mode": {},
-    "pagination": {},
-    "count": {},
-    "table": {}
+    "columns": {
+      "title": "Columns",
+      "show": "Show columns",
+      "reset": "Reset to defaults",
+      "coming_soon": "Coming soon",
+      "name": "Name",
+      "version": "Version",
+      "description": "Description",
+      "downloads": "Downloads/wk",
+      "published": "Last Published",
+      "maintainers": "Maintainers",
+      "keywords": "Keywords",
+      "quality_score": "Quality score",
+      "popularity_score": "Popularity score",
+      "maintenance_score": "Maintenance score",
+      "combined_score": "Combined score",
+      "security": "Security"
+    },
+    "view_mode": {
+      "label": "View mode",
+      "cards": "Card view",
+      "table": "Table view"
+    },
+    "pagination": {
+      "mode_label": "Pagination mode",
+      "infinite": "Infinite",
+      "paginated": "Paginated",
+      "items_per_page": "Items per page",
+      "per_page": "{count} / page",
+      "all_yolo": "All (YOLO)",
+      "showing": "{start}-{end} of {total}",
+      "previous": "Previous page",
+      "next": "Next page",
+      "nav_label": "Pagination"
+    },
+    "count": {
+      "showing_filtered": "{filtered} of {count} package | {filtered} of {count} packages",
+      "showing_all": "{count} package | {count} packages",
+      "showing_paginated": "{pageSize} of {count} package | {pageSize} of {count} packages"
+    },
+    "table": {
+      "security_warning": "Security warning",
+      "secure": "Secure",
+      "no_packages": "No packages found"
+    }
   },
   "about": {
     "title": "npmxについて",
@@ -631,9 +779,33 @@
       }
     }
   },
-  "account_menu": {},
+  "account_menu": {
+    "connect": "connect",
+    "account": "Account",
+    "npm_cli": "npm CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "Manage packages & orgs",
+    "atmosphere_desc": "Social features & identity",
+    "connect_npm_cli": "Connect to npm CLI",
+    "connect_atmosphere": "Connect to Atmosphere",
+    "connecting": "Connecting...",
+    "ops": "{count} op | {count} ops",
+    "disconnect": "Disconnect"
+  },
   "auth": {
-    "modal": {}
+    "modal": {
+      "title": "Atmosphere",
+      "connected_as": "Connected as {'@'}{handle}",
+      "disconnect": "Disconnect",
+      "connect_prompt": "Connect with your Atmosphere account",
+      "handle_label": "Handle",
+      "handle_placeholder": "alice.npmx.social",
+      "connect": "Connect",
+      "create_account": "Create a new account",
+      "connect_bluesky": "Connect with Bluesky",
+      "what_is_atmosphere": "What is an Atmosphere account?",
+      "atmosphere_explanation": "{npmx} uses the {atproto} to power many of its social features, allowing users to own their data and use one account for all compatible applications. Once you create an account, you can use other apps like {bluesky} and {tangled} with the same account."
+    }
   },
   "header": {
     "home": "ホーム",
@@ -656,10 +828,108 @@
     }
   },
   "compare": {
-    "packages": {},
-    "selector": {},
+    "packages": {
+      "title": "compare packages",
+      "tagline": "compare npm packages side-by-side to help you choose the right one.",
+      "meta_title": "Compare {packages} - npmx",
+      "meta_title_empty": "Compare Packages - npmx",
+      "meta_description": "Side-by-side comparison of {packages}",
+      "meta_description_empty": "Compare npm packages side-by-side",
+      "section_packages": "Packages",
+      "section_facets": "Facets",
+      "section_comparison": "Comparison",
+      "loading": "Loading package data...",
+      "error": "Failed to load package data. Please try again.",
+      "empty_title": "Select packages to compare",
+      "empty_description": "Search and add at least 2 packages above to see a side-by-side comparison of their metrics."
+    },
+    "selector": {
+      "search_label": "Search for packages",
+      "search_first": "Search for a package...",
+      "search_add": "Add another package...",
+      "searching": "Searching...",
+      "remove_package": "Remove {package}",
+      "packages_selected": "{count}/{max} packages selected.",
+      "add_hint": "Add at least 2 packages to compare.",
+      "loading_versions": "Loading versions...",
+      "select_version": "Select version"
+    },
     "facets": {
-      "categories": {}
+      "group_label": "Comparison facets",
+      "all": "all",
+      "none": "none",
+      "coming_soon": "Coming soon",
+      "select_all": "Select all facets",
+      "deselect_all": "Deselect all facets",
+      "select_category": "Select all {category} facets",
+      "deselect_category": "Deselect all {category} facets",
+      "binary_only_tooltip": "This package exposes binaries and no exports",
+      "categories": {
+        "performance": "Performance",
+        "health": "Health",
+        "compatibility": "Compatibility",
+        "security": "Security & Compliance"
+      },
+      "items": {
+        "packageSize": {
+          "label": "Package Size",
+          "description": "Size of the package itself (unpacked)"
+        },
+        "installSize": {
+          "label": "Install Size",
+          "description": "Total install size including all dependencies"
+        },
+        "dependencies": {
+          "label": "Direct Deps",
+          "description": "Number of direct dependencies"
+        },
+        "totalDependencies": {
+          "label": "Total Deps",
+          "description": "Total number of dependencies including transitive"
+        },
+        "downloads": {
+          "label": "Downloads/wk",
+          "description": "Weekly download count"
+        },
+        "lastUpdated": {
+          "label": "Published",
+          "description": "When this version was published"
+        },
+        "deprecated": {
+          "label": "Deprecated?",
+          "description": "Whether the package is deprecated"
+        },
+        "engines": {
+          "label": "Engines",
+          "description": "Node.js version requirements"
+        },
+        "types": {
+          "label": "Types",
+          "description": "TypeScript type definitions"
+        },
+        "moduleFormat": {
+          "label": "Module Format",
+          "description": "ESM/CJS support"
+        },
+        "license": {
+          "label": "License",
+          "description": "Package license"
+        },
+        "vulnerabilities": {
+          "label": "Vulnerabilities",
+          "description": "Known security vulnerabilities"
+        }
+      },
+      "values": {
+        "any": "Any",
+        "none": "None",
+        "unknown": "Unknown",
+        "deprecated": "Deprecated",
+        "not_deprecated": "No",
+        "types_included": "Included",
+        "types_none": "None",
+        "vulnerabilities_summary": "{count} ({critical}C/{high}H)"
+      }
     }
   }
 }
