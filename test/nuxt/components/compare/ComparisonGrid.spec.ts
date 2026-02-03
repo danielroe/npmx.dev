@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import ComparisonGrid from '~/components/Compare/ComparisonGrid.vue'
+import ComparisonGrid from '~/components/compare/ComparisonGrid.vue'
 
 describe('ComparisonGrid', () => {
   describe('header rendering', () => {
