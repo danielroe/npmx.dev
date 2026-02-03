@@ -4,7 +4,7 @@ import { NodeOAuthClient } from '@atproto/oauth-client-node'
 import { parse } from 'valibot'
 import { getOAuthLock } from '#server/utils/atproto/lock'
 import { useOAuthStorage } from '#server/utils/atproto/storage'
-import { LIKES_SCOPE, UNSET_NUXT_SESSION_PASSWORD } from '#shared/utils/constants'
+import { LIKES_SCOPE } from '#shared/utils/constants'
 import { OAuthMetadataSchema } from '#shared/schemas/oauth'
 // @ts-expect-error virtual file from oauth module
 import { clientUri } from '#oauth/config'
