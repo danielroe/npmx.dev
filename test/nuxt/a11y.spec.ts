@@ -1,9 +1,9 @@
-import type { AxeResults, RunOptions } from 'axe-core'
-import type { VueWrapper } from '@vue/test-utils'
 import type { ColumnConfig, FilterChip } from '#shared/types/preferences'
-import 'axe-core'
-import { afterEach, describe, expect, it } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
+import type { VueWrapper } from '@vue/test-utils'
+import 'axe-core'
+import type { AxeResults, RunOptions } from 'axe-core'
+import { afterEach, describe, expect, it } from 'vitest'
 
 // axe-core is a UMD module that exposes itself as window.axe in the browser
 declare const axe: {
@@ -58,7 +58,6 @@ import {
   AppFooter,
   AppHeader,
   BaseCard,
-  UserAvatar,
   BuildEnvironment,
   CallToAction,
   CodeDirectoryListing,
@@ -67,30 +66,33 @@ import {
   CodeViewer,
   CollapsibleSection,
   ColumnPicker,
+  CompareComparisonGrid,
   CompareFacetCard,
   CompareFacetRow,
   CompareFacetSelector,
-  CompareComparisonGrid,
   ComparePackageSelector,
   DateTime,
   DependencyPathPopup,
   FilterChips,
   FilterPanel,
   HeaderAccountMenu,
+  HeaderConnectorModal,
+  HeaderSearchBox,
   LicenseDisplay,
   LoadingSpinner,
-  PackageChartModal,
-  PackageClaimPackageModal,
-  HeaderConnectorModal,
   OrgMembersPanel,
   OrgOperationsQueue,
   OrgTeamsPanel,
   PackageAccessControls,
   PackageCard,
+  PackageChartModal,
+  PackageClaimPackageModal,
+  PackageCompatibility,
   PackageDependencies,
   PackageDeprecatedTree,
   PackageDownloadAnalytics,
   PackageInstallScripts,
+  PackageKeywords,
   PackageList,
   PackageListControls,
   PackageListToolbar,
@@ -108,16 +110,18 @@ import {
   PaginationControls,
   ProvenanceBadge,
   Readme,
+  SearchSuggestionCard,
   SettingsAccentColorPicker,
   SettingsBgThemePicker,
   SettingsToggle,
+  TagStatic,
+  TagClickable,
   TerminalExecute,
   TerminalInstall,
   TooltipAnnounce,
   TooltipApp,
   TooltipBase,
-  HeaderSearchBox,
-  SearchSuggestionCard,
+  UserAvatar,
   VersionSelector,
   ViewModeToggle,
 } from '#components'
@@ -226,6 +230,44 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(BaseCard, {
         props: { isExactMatch: true },
         slots: { default: '<p>Exact match content</p>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('TagStatic', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(TagStatic, {
+        slots: { default: 'Tag content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('TagClickable', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(TagClickable, {
+        slots: { default: 'Tag content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violationst for active state', async () => {
+      const component = await mountSuspended(TagClickable, {
+        props: { status: 'active' },
+        slots: { default: 'Tag content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violationst for disabled state', async () => {
+      const component = await mountSuspended(TagClickable, {
+        props: { disabled: true },
+        slots: { default: 'Tag content' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -610,6 +652,49 @@ describe('component accessibility audits', () => {
     })
   })
 
+  describe('PackageCompatibility', () => {
+    it('should have no accessibility violations without engines', async () => {
+      const component = await mountSuspended(PackageCompatibility, {
+        props: {},
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with engines', async () => {
+      const component = await mountSuspended(PackageCompatibility, {
+        props: {
+          engines: {
+            node: '>=14',
+            npm: '>=10',
+          },
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('PackageKeywords', () => {
+    it('should have no accessibility violations without keywords', async () => {
+      const component = await mountSuspended(PackageKeywords, {
+        props: {},
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with keywords', async () => {
+      const component = await mountSuspended(PackageKeywords, {
+        props: {
+          keywords: ['keyword1', 'keyword2'],
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
   describe('CodeViewer', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(CodeViewer, {
@@ -926,9 +1011,9 @@ describe('component accessibility audits', () => {
 
   describe('ColumnPicker', () => {
     const mockColumns: ColumnConfig[] = [
-      { id: 'name', label: 'Name', visible: true, sortable: true },
-      { id: 'version', label: 'Version', visible: true, sortable: false },
-      { id: 'downloads', label: 'Downloads', visible: false, sortable: true },
+      { id: 'name', visible: true, sortable: true },
+      { id: 'version', visible: true, sortable: false },
+      { id: 'downloads', visible: false, sortable: true },
     ]
 
     it('should have no accessibility violations', async () => {
@@ -1006,8 +1091,8 @@ describe('component accessibility audits', () => {
     }
 
     const mockColumns: ColumnConfig[] = [
-      { id: 'name', label: 'Name', visible: true, sortable: true },
-      { id: 'version', label: 'Version', visible: true, sortable: false },
+      { id: 'name', visible: true, sortable: true },
+      { id: 'version', visible: true, sortable: false },
     ]
 
     it('should have no accessibility violations', async () => {
@@ -1088,15 +1173,10 @@ describe('component accessibility audits', () => {
     ]
 
     const mockColumns: ColumnConfig[] = [
-      { id: 'name', label: 'Name', visible: true, sortable: true },
-      { id: 'version', label: 'Version', visible: true, sortable: false },
-      {
-        id: 'description',
-        label: 'Description',
-        visible: true,
-        sortable: false,
-      },
-      { id: 'downloads', label: 'Downloads', visible: true, sortable: true },
+      { id: 'name', visible: true, sortable: true },
+      { id: 'version', visible: true, sortable: false },
+      { id: 'description', visible: true, sortable: false },
+      { id: 'downloads', visible: true, sortable: true },
     ]
 
     it('should have no accessibility violations', async () => {
@@ -1156,14 +1236,9 @@ describe('component accessibility audits', () => {
     }
 
     const mockColumns: ColumnConfig[] = [
-      { id: 'name', label: 'Name', visible: true, sortable: true },
-      { id: 'version', label: 'Version', visible: true, sortable: false },
-      {
-        id: 'description',
-        label: 'Description',
-        visible: true,
-        sortable: false,
-      },
+      { id: 'name', visible: true, sortable: true },
+      { id: 'version', visible: true, sortable: false },
+      { id: 'description', visible: true, sortable: false },
     ]
 
     it('should have no accessibility violations', async () => {
@@ -1504,7 +1579,11 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with custom heading level', async () => {
       const component = await mountSuspended(CollapsibleSection, {
-        props: { title: 'Section Title', id: 'test-section', headingLevel: 'h3' },
+        props: {
+          title: 'Section Title',
+          id: 'test-section',
+          headingLevel: 'h3',
+        },
         slots: { default: '<p>Section content</p>' },
       })
       const results = await runAxe(component)
@@ -1760,7 +1839,10 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with description', async () => {
       const component = await mountSuspended(ToggleServer, {
-        props: { label: 'Enable feature', description: 'This enables the feature' },
+        props: {
+          label: 'Enable feature',
+          description: 'This enables the feature',
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -1778,7 +1860,10 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with description', async () => {
       const component = await mountSuspended(SettingsToggle, {
-        props: { label: 'Enable feature', description: 'This enables the feature' },
+        props: {
+          label: 'Enable feature',
+          description: 'This enables the feature',
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -1860,6 +1945,12 @@ describe('component accessibility audits', () => {
   })
 })
 
+function applyTheme(colorMode: string, bgTheme: string | null) {
+  document.documentElement.dataset.theme = colorMode
+  document.documentElement.classList.add(colorMode)
+  if (bgTheme) document.documentElement.dataset.bgTheme = bgTheme
+}
+
 describe('background theme accessibility', () => {
   const pairs = [
     ['light', 'neutral'],
@@ -1873,12 +1964,6 @@ describe('background theme accessibility', () => {
     ['light', 'black'],
     ['dark', 'black'],
   ] as const
-
-  function applyTheme(colorMode: string, bgTheme: string | null) {
-    document.documentElement.dataset.theme = colorMode
-    document.documentElement.classList.add(colorMode)
-    if (bgTheme) document.documentElement.dataset.bgTheme = bgTheme
-  }
 
   afterEach(() => {
     document.documentElement.removeAttribute('data-theme')
@@ -1896,7 +1981,10 @@ describe('background theme accessibility', () => {
       links: {},
       publisher: { username: 'evan' },
     },
-    score: { final: 0.9, detail: { quality: 0.9, popularity: 0.9, maintenance: 0.9 } },
+    score: {
+      final: 0.9,
+      detail: { quality: 0.9, popularity: 0.9, maintenance: 0.9 },
+    },
     searchScore: 100000,
   }
 
@@ -1911,9 +1999,14 @@ describe('background theme accessibility', () => {
     {
       name: 'SettingsToggle',
       mount: () =>
-        mountSuspended(SettingsToggle, { props: { label: 'Feature', description: 'Desc' } }),
+        mountSuspended(SettingsToggle, {
+          props: { label: 'Feature', description: 'Desc' },
+        }),
     },
-    { name: 'SettingsBgThemePicker', mount: () => mountSuspended(SettingsBgThemePicker) },
+    {
+      name: 'SettingsBgThemePicker',
+      mount: () => mountSuspended(SettingsBgThemePicker),
+    },
     {
       name: 'ProvenanceBadge',
       mount: () =>
@@ -1931,7 +2024,10 @@ describe('background theme accessibility', () => {
     },
     {
       name: 'DateTime',
-      mount: () => mountSuspended(DateTime, { props: { datetime: '2024-01-15T12:00:00.000Z' } }),
+      mount: () =>
+        mountSuspended(DateTime, {
+          props: { datetime: '2024-01-15T12:00:00.000Z' },
+        }),
     },
     {
       name: 'ViewModeToggle',
@@ -1978,7 +2074,7 @@ describe('background theme accessibility', () => {
         it(`${colorMode}/${bgTheme}`, async () => {
           applyTheme(colorMode, bgTheme)
           const results = await runAxe(await mount())
-          await new Promise(resolve => setTimeout(resolve, 2000))
+          await nextTick()
           expect(results.violations).toEqual([])
         })
       }
