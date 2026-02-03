@@ -42,6 +42,7 @@ We want to create 'a fast, modern browser for the npm registry.' This means, amo
   - [Unit tests](#unit-tests)
   - [Component accessibility tests](#component-accessibility-tests)
   - [End to end tests](#end-to-end-tests)
+  - [Test fixtures (mocking external APIs)](#test-fixtures-mocking-external-apis)
 - [Submitting changes](#submitting-changes)
   - [Before submitting](#before-submitting)
   - [Pull request process](#pull-request-process)
@@ -481,6 +482,69 @@ pnpm test:browser:ui     # Run with Playwright UI
 ```
 
 Make sure to read about [Playwright best practices](https://playwright.dev/docs/best-practices) and don't rely on classes/IDs but try to follow user-replicable behaviour (like selecting an element based on text content instead).
+
+### Test fixtures (mocking external APIs)
+
+E2E tests use a fixture system to mock external API requests, ensuring tests are deterministic and don't hit real APIs. This is handled at two levels:
+
+**Server-side mocking** (`modules/fixtures.ts` + `modules/runtime/server/cache.ts`):
+
+- Intercepts all `$fetch` calls during SSR
+- Serves pre-recorded fixture data from `test/fixtures/`
+- Enabled via `NUXT_TEST_FIXTURES=true` or Nuxt test mode
+
+**Client-side mocking** (`test/e2e/test-utils.ts`):
+
+- Uses Playwright's route interception to mock browser requests
+- All test files import from `./test-utils` instead of `@nuxt/test-utils/playwright`
+- Throws a clear error if an unmocked external request is detected
+
+#### Fixture files
+
+Fixtures are stored in `test/fixtures/` with this structure:
+
+```
+test/fixtures/
+├── npm-registry/
+│   ├── packuments/       # Package metadata (vue.json, @nuxt/kit.json)
+│   ├── search/           # Search results (vue.json, nuxt.json)
+│   └── orgs/             # Org package lists (nuxt.json)
+├── npm-api/
+│   └── downloads/        # Download stats
+└── users/                # User package lists
+```
+
+#### Adding new fixtures
+
+1. **Generate fixtures** using the script:
+
+   ```bash
+   pnpm generate:fixtures vue lodash @nuxt/kit
+   ```
+
+2. **Or manually create** a JSON file in the appropriate directory
+
+#### Environment variables
+
+| Variable                          | Purpose                            |
+| --------------------------------- | ---------------------------------- |
+| `NUXT_TEST_FIXTURES=true`         | Enable server-side fixture mocking |
+| `NUXT_TEST_FIXTURES_VERBOSE=true` | Enable detailed fixture logging    |
+
+#### When tests fail due to missing fixtures
+
+If a test fails with an error like:
+
+```
+UNMOCKED EXTERNAL API REQUEST DETECTED
+API:  npm registry
+URL:  https://registry.npmjs.org/some-package
+```
+
+You need to either:
+
+1. Add a fixture file for that package/endpoint
+2. Update the mock handlers in `test/e2e/test-utils.ts` (client) or `modules/runtime/server/cache.ts` (server)
 
 ## Submitting changes
 
