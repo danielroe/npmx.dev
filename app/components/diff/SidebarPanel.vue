@@ -180,31 +180,31 @@ function handleFileSelect(file: FileChange) {
           <span class="i-carbon-document w-3.5 h-3.5" />
           {{ $t('compare.file_changes') }}
         </span>
-        <span class="flex items-center gap-2">
-          <select
-            v-model="fileFilter"
-            class="text-[10px] px-2 py-1 bg-bg-subtle border border-border rounded font-mono cursor-pointer hover:border-border-hover transition-colors"
-          >
-            <option value="all">
-              {{ $t('compare.file_filter_option.all', { count: allChanges.length }) }}
-            </option>
-            <option value="added">
-              {{ $t('compare.file_filter_option.added', { count: compare.stats.filesAdded }) }}
-            </option>
-            <option value="removed">
-              {{ $t('compare.file_filter_option.removed', { count: compare.stats.filesRemoved }) }}
-            </option>
-            <option value="modified">
-              {{
-                $t('compare.file_filter_option.modified', { count: compare.stats.filesModified })
-              }}
-            </option>
-          </select>
-          <span
-            class="i-carbon-chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90"
-          />
-        </span>
+        <span
+          class="i-carbon-chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90"
+        />
       </summary>
+
+      <div class="border-b border-border px-3 py-2 shrink-0 flex items-center justify-end">
+        <select
+          v-model="fileFilter"
+          :aria-label="$t('compare.filter_files_label')"
+          class="text-[10px] px-2 py-1 bg-bg-subtle border border-border rounded font-mono cursor-pointer hover:border-border-hover transition-colors"
+        >
+          <option value="all">
+            {{ $t('compare.file_filter_option.all', { count: allChanges.length }) }}
+          </option>
+          <option value="added">
+            {{ $t('compare.file_filter_option.added', { count: compare.stats.filesAdded }) }}
+          </option>
+          <option value="removed">
+            {{ $t('compare.file_filter_option.removed', { count: compare.stats.filesRemoved }) }}
+          </option>
+          <option value="modified">
+            {{ $t('compare.file_filter_option.modified', { count: compare.stats.filesModified }) }}
+          </option>
+        </select>
+      </div>
 
       <div class="flex-1 overflow-y-auto min-h-0">
         <div v-if="filteredChanges.length === 0" class="p-8 text-center text-xs text-fg-muted">

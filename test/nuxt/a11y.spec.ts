@@ -2713,13 +2713,6 @@ describe('component accessibility audits', () => {
       ],
     ])
 
-    // DiffSidebarPanel has a known a11y issue: <select> nested inside <summary>
-    // This causes 'nested-interactive' violation. TODO: Fix the component to move
-    // the select outside of summary or use a different UI pattern.
-    function filterKnownViolations(results: AxeResults) {
-      return results.violations.filter(v => v.id !== 'nested-interactive')
-    }
-
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(DiffSidebarPanel, {
         props: {
@@ -2729,7 +2722,7 @@ describe('component accessibility audits', () => {
         },
       })
       const results = await runAxe(component)
-      expect(filterKnownViolations(results)).toEqual([])
+      expect(results.violations).toEqual([])
     })
 
     it('should have no accessibility violations with selected file', async () => {
@@ -2742,7 +2735,7 @@ describe('component accessibility audits', () => {
         },
       })
       const results = await runAxe(component)
-      expect(filterKnownViolations(results)).toEqual([])
+      expect(results.violations).toEqual([])
     })
 
     it('should have no accessibility violations with file filter', async () => {
@@ -2755,7 +2748,7 @@ describe('component accessibility audits', () => {
         },
       })
       const results = await runAxe(component)
-      expect(filterKnownViolations(results)).toEqual([])
+      expect(results.violations).toEqual([])
     })
 
     it('should have no accessibility violations with warnings', async () => {
@@ -2771,7 +2764,7 @@ describe('component accessibility audits', () => {
         },
       })
       const results = await runAxe(component)
-      expect(filterKnownViolations(results)).toEqual([])
+      expect(results.violations).toEqual([])
     })
 
     it('should have no accessibility violations with no dependency changes', async () => {
@@ -2787,7 +2780,7 @@ describe('component accessibility audits', () => {
         },
       })
       const results = await runAxe(component)
-      expect(filterKnownViolations(results)).toEqual([])
+      expect(results.violations).toEqual([])
     })
   })
 
@@ -2818,12 +2811,6 @@ describe('component accessibility audits', () => {
       { path: 'changed.ts', type: 'modified' as const, oldSize: 200, newSize: 250 },
     ]
 
-    // DiffMobileSidebarDrawer uses DiffSidebarPanel which has a known a11y issue:
-    // <select> nested inside <summary>. See DiffSidebarPanel tests for details.
-    function filterKnownViolations(results: AxeResults) {
-      return results.violations.filter(v => v.id !== 'nested-interactive')
-    }
-
     it('should have no accessibility violations when closed', async () => {
       const component = await mountSuspended(DiffMobileSidebarDrawer, {
         props: {
@@ -2847,7 +2834,7 @@ describe('component accessibility audits', () => {
         },
       })
       const results = await runAxe(component)
-      expect(filterKnownViolations(results)).toEqual([])
+      expect(results.violations).toEqual([])
     })
   })
 
