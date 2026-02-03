@@ -8,6 +8,7 @@ import type {
 import { encodePackageName } from '#shared/utils/npm'
 import type { PackageAnalysisResponse } from './usePackageAnalysis'
 import { isBinaryOnlyPackage } from '#shared/utils/binary-detection'
+import { formatBytes } from '~/utils/formatters'
 import { getDependencyCount } from '~/utils/npm/dependency-count'
 
 export interface PackageComparisonData {
@@ -15,7 +16,7 @@ export interface PackageComparisonData {
   downloads?: number
   /** Package's own unpacked size (from dist.unpackedSize) */
   packageSize?: number
-  /** Direct dependencies count */
+  /** Number of direct dependencies */
   directDeps: number | null
   /** Install size data (fetched lazily) */
   installSize?: {
@@ -365,8 +366,8 @@ function computeFacetValue(
       }
     }
     case 'dependencies': {
-      if (data.directDeps == null) return null
       const depCount = data.directDeps
+      if (depCount === null) return null
       return {
         raw: depCount,
         display: String(depCount),
@@ -397,12 +398,6 @@ function computeFacetValue(
       return null
     }
   }
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 function isStale(date: Date): boolean {
