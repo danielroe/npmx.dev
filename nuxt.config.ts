@@ -59,6 +59,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en-US' },
+      title: 'npmx',
       link: [
         {
           rel: 'search',
@@ -188,7 +189,6 @@ export default defineNuxtConfig({
 
   htmlValidator: {
     failOnError: true,
-    ignore: [/200\.html/],
   },
 
   ogImage: {
