@@ -20,6 +20,7 @@ const { current, ...props } = defineProps<
 </script>
 
 <template>
+  <!-- This is only a placeholder implementation yet. It will probably need some additional styling, but note: A disabled link is just text. -->
   <span v-if="disabled" class="opacity-50"><slot /></span>
   <NuxtLink
     v-else
