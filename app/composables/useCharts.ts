@@ -45,12 +45,6 @@ export type PackageDownloadEvolutionOptions =
 
 type DailyDownloadsResponse = { downloads: Array<{ day: string; downloads: number }> }
 
-declare function fetchNpmDownloadsRange(
-  packageName: string,
-  startIso: string,
-  endIso: string,
-): Promise<DailyDownloadsResponse>
-
 function toIsoDateString(date: Date): string {
   return date.toISOString().slice(0, 10)
 }
