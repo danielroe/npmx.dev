@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import { ref } from 'vue'
 import type { ComparisonFacet } from '#shared/types/comparison'
-import { DEFAULT_FACETS, FACETS_BY_CATEGORY } from '#shared/types/comparison'
+import { DEFAULT_FACETS, FACET_INFO, FACETS_BY_CATEGORY } from '#shared/types/comparison'
 import type { FacetInfoWithLabels } from '~/composables/useFacetSelection'
 
 // Mock useRouteQuery - needs to be outside of the helper to persist across calls
@@ -113,15 +113,21 @@ describe('useFacetSelection', () => {
     expect(isFacetSelected('types')).toBe(true)
   })
 
-  it('filters out comingSoon facets from query', async () => {
-    mockRouteQuery.value = 'downloads,totalDependencies,types'
+  it.runIf((Object.keys(FACET_INFO) as ComparisonFacet[]).some(f => FACET_INFO[f].comingSoon))(
+    'filters out comingSoon facets from query',
+    async () => {
+      const comingSoonFacet = (Object.keys(FACET_INFO) as ComparisonFacet[]).find(
+        f => FACET_INFO[f].comingSoon,
+      )!
+      mockRouteQuery.value = `downloads,${comingSoonFacet},types`
 
-    const { isFacetSelected } = await useFacetSelectionInComponent()
+      const { isFacetSelected } = await useFacetSelectionInComponent()
 
-    expect(isFacetSelected('downloads')).toBe(true)
-    expect(isFacetSelected('types')).toBe(true)
-    expect(isFacetSelected('totalDependencies')).toBe(false)
-  })
+      expect(isFacetSelected('downloads')).toBe(true)
+      expect(isFacetSelected('types')).toBe(true)
+      expect(isFacetSelected(comingSoonFacet)).toBe(false)
+    },
+  )
 
   it('falls back to DEFAULT_FACETS if all parsed facets are invalid', async () => {
     mockRouteQuery.value = 'invalidFacet1,invalidFacet2'
@@ -225,7 +231,7 @@ describe('useFacetSelection', () => {
       selectCategory('performance')
 
       const performanceFacets = FACETS_BY_CATEGORY.performance.filter(
-        f => f !== 'totalDependencies', // comingSoon facet
+        f => !FACET_INFO[f].comingSoon,
       )
       for (const facet of performanceFacets) {
         expect(isFacetSelected(facet)).toBe(true)
