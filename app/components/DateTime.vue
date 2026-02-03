@@ -55,7 +55,7 @@ function toggleRelativeDates() {
 </script>
 
 <template>
-  <button @click="toggleRelativeDates">
+  <button type="button" @click="toggleRelativeDates">
     <ClientOnly>
       <NuxtTime
         v-if="settings.relativeDates"
