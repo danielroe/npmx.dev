@@ -4,20 +4,20 @@ import type { PackageFileTree, DependencyChange, FileChange, CompareResponse } f
 /** Maximum number of files to include in comparison */
 const MAX_FILES_COMPARE = 1000
 
+function traverse(nodes: PackageFileTree[], result: Map<string, PackageFileTree>) {
+  for (const node of nodes) {
+    result.set(node.path, node)
+    if (node.children) {
+      traverse(node.children, result)
+    }
+  }
+}
+
 /** Flatten a file tree into a map of path -> node */
 export function flattenTree(tree: PackageFileTree[]): Map<string, PackageFileTree> {
   const result = new Map<string, PackageFileTree>()
 
-  function traverse(nodes: PackageFileTree[]) {
-    for (const node of nodes) {
-      result.set(node.path, node)
-      if (node.children) {
-        traverse(node.children)
-      }
-    }
-  }
-
-  traverse(tree)
+  traverse(tree, result)
   return result
 }
 
@@ -98,7 +98,7 @@ export function compareFileTrees(
   for (const [path, fromNode] of fromFiles) {
     if (fromNode.type === 'directory') continue
 
-    if (added.length + removed.length + modified.length >= MAX_FILES_COMPARE) {
+    if (overLimit()) {
       truncated = true
       break
     }
