@@ -131,6 +131,9 @@ importers:
       focus-trap:
         specifier: ^7.8.0
         version: 7.8.0
+      globby:
+        specifier: 16.1.0
+        version: 16.1.0
       marked:
         specifier: 17.0.1
         version: 17.0.1

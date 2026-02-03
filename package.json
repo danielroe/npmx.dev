@@ -76,6 +76,7 @@
     "defu": "6.1.4",
     "fast-npm-meta": "1.0.0",
     "focus-trap": "^7.8.0",
+    "globby": "16.1.0",
     "marked": "17.0.1",
     "module-replacements": "2.11.0",
     "nuxt": "4.3.0",
