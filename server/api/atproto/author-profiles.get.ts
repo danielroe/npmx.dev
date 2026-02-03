@@ -81,7 +81,7 @@ export default defineCachedEventHandler(
     maxAge: CACHE_MAX_AGE_ONE_DAY,
     getKey: event => {
       const { authors } = getQuery(event)
-      return `author-profiles:${authors}`
+      return `author-profiles:${authors ?? ''}`
     },
   },
 )
