@@ -31,7 +31,7 @@
     "test:browser": "pnpm build:playwright && pnpm test:browser:prebuilt",
     "test:browser:prebuilt": "playwright test",
     "test:browser:ui": "pnpm build:playwright && pnpm test:browser:prebuilt --ui",
-    "test:browser:update": "playwright test --update-snapshots",
+    "test:browser:update": "pnpm build:playwright && pnpm test:browser:prebuilt --update-snapshots",
     "test:nuxt": "vite test --project nuxt",
     "test:types": "nuxt prepare && vue-tsc -b --noEmit && pnpm --filter npmx-connector test:types",
     "test:unit": "vite test --project unit",
