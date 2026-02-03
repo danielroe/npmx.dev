@@ -92,6 +92,7 @@ export default defineNuxtConfig({
     // never cache
     '/search': { isr: false, cache: false },
     '/api/auth/**': { isr: false, cache: false },
+    '/api/social/**': { isr: false, cache: false },
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/package-docs/:pkg/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -150,6 +151,10 @@ export default defineNuxtConfig({
       'fetch-cache': {
         driver: 'fsLite',
         base: './.cache/fetch',
+      },
+      'atproto': {
+        driver: 'fsLite',
+        base: './.cache/atproto',
       },
     },
     typescript: {
@@ -253,6 +258,11 @@ export default defineNuxtConfig({
         'virtua/vue',
         'semver',
         'validate-npm-package-name',
+        '@atproto/lex',
+        '@atproto/lex-data',
+        '@atproto/lex-json',
+        '@atproto/lex-schema',
+        '@atproto/lex-client',
       ],
     },
   },
