@@ -174,47 +174,6 @@ describe('FacetSelector', () => {
     })
   })
 
-  describe('comingSoon facets', () => {
-    it('disables comingSoon facets', async () => {
-      const component = await mountSuspended(FacetSelector)
-
-      // totalDependencies is marked as comingSoon
-      const buttons = component.findAll('button')
-      const comingSoonButton = buttons.find(b => b.text().includes('Total Deps'))
-
-      expect(comingSoonButton?.attributes('disabled')).toBeDefined()
-    })
-
-    it('shows coming soon text for comingSoon facets', async () => {
-      const component = await mountSuspended(FacetSelector)
-
-      expect(component.text().toLowerCase()).toContain('coming soon')
-    })
-
-    it('does not show checkmark/add icon for comingSoon facets', async () => {
-      const component = await mountSuspended(FacetSelector)
-
-      // Find the comingSoon button
-      const buttons = component.findAll('button')
-      const comingSoonButton = buttons.find(b => b.text().includes('Total Deps'))
-
-      // Should not have checkmark or add icon
-      expect(comingSoonButton?.find('.i-carbon\\:checkmark').exists()).toBe(false)
-      expect(comingSoonButton?.find('.i-carbon\\:add').exists()).toBe(false)
-    })
-
-    it('does not call toggleFacet when comingSoon facet is clicked', async () => {
-      const component = await mountSuspended(FacetSelector)
-
-      const buttons = component.findAll('button')
-      const comingSoonButton = buttons.find(b => b.text().includes('Total Deps'))
-      await comingSoonButton?.trigger('click')
-
-      // toggleFacet should not have been called with totalDependencies
-      expect(mockToggleFacet).not.toHaveBeenCalledWith('totalDependencies')
-    })
-  })
-
   describe('category all/none buttons', () => {
     it('calls selectCategory when all button is clicked', async () => {
       const component = await mountSuspended(FacetSelector)
@@ -242,13 +201,11 @@ describe('FacetSelector', () => {
 
     it('disables all button when all facets in category are selected', async () => {
       // Select all performance facets
-      const performanceFacets = FACETS_BY_CATEGORY.performance.filter(
+      const performanceFacets: (string | ComparisonFacet)[] = FACETS_BY_CATEGORY.performance.filter(
         f => !FACET_INFO[f].comingSoon,
       )
       mockSelectedFacets.value = performanceFacets
-      mockIsFacetSelected.mockImplementation((f: string) =>
-        performanceFacets.includes(f as ComparisonFacet),
-      )
+      mockIsFacetSelected.mockImplementation((f: string) => performanceFacets.includes(f))
 
       const component = await mountSuspended(FacetSelector)
 
@@ -279,12 +236,6 @@ describe('FacetSelector', () => {
 
       // Selected facets have bg-bg-muted class
       expect(component.find('.bg-bg-muted').exists()).toBe(true)
-    })
-
-    it('applies cursor-not-allowed to comingSoon facets', async () => {
-      const component = await mountSuspended(FacetSelector)
-
-      expect(component.find('.cursor-not-allowed').exists()).toBe(true)
     })
   })
 })

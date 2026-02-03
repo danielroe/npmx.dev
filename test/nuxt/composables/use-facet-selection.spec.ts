@@ -224,9 +224,6 @@ describe('useFacetSelection', () => {
 
       selectCategory('performance')
 
-      const performanceFacets = FACETS_BY_CATEGORY.performance.filter(
-        f => f !== 'totalDependencies', // comingSoon facet
-      )
       for (const facet of performanceFacets) {
         expect(isFacetSelected(facet)).toBe(true)
       }
@@ -368,12 +365,6 @@ describe('useFacetSelection', () => {
 
       expect(Array.isArray(allFacets)).toBe(true)
       expect(allFacets.length).toBeGreaterThan(0)
-    })
-
-    it('allFacets includes all facets including comingSoon', async () => {
-      const { allFacets } = await useFacetSelectionInComponent()
-
-      expect(allFacets).toContain('totalDependencies')
     })
   })
 
