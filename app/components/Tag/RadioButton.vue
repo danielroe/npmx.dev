@@ -33,7 +33,7 @@ const onChange = () => {
       :checked="checked"
       :disabled="props.disabled ? true : undefined"
       @change="onChange"
-      class="peer"
+      class="peer sr-only"
     />
     <label
       class="bg-bg-muted text-fg-muted border-border hover:(text-fg border-border-hover) inline-flex items-center px-2 py-0.5 text-xs font-mono border rounded transition-colors duration-200 peer-focus:ring-2 peer-focus:ring-fg border-none peer-checked:(bg-fg text-bg border-fg hover:(text-text-bg/50)) peer-disabled:(opacity-50 pointer-events-none)"
@@ -43,18 +43,3 @@ const onChange = () => {
     </label>
   </div>
 </template>
-
-<style scoped>
-input[type='radio'] {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-</style>
