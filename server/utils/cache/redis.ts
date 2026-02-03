@@ -3,7 +3,7 @@ import type { Redis } from '@upstash/redis'
 /**
  * Redis cache storage with TTL handled by redis for use in production
  */
-export class RedisCacheAdatper implements CacheAdapter {
+export class RedisCacheAdapter implements CacheAdapter {
   private readonly redis: Redis
   private readonly prefix: string
 

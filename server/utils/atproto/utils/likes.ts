@@ -30,7 +30,7 @@ export class PackageLikesUtils {
         return { data, isStale: false, cachedAt: null }
       },
     )
-    this.cache = getCacheAdatper('generic')
+    this.cache = getCacheAdapter('generic')
   }
 
   /**
