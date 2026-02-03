@@ -545,6 +545,7 @@ const chartData = computed<{ dataset: VueUiXyDatasetItem[] | null; dates: number
     if (isListedFramework(pkg)) {
       item.color = getFrameworkColor(pkg)
     }
+    // Other packages default to built-in palette
     return item
   })
 
@@ -570,18 +571,24 @@ const datetimeFormatterOptions = computed(() => {
   }[selectedGranularity.value]
 })
 
+const sanitise = (value: string) =>
+  value
+    .replace(/^@/, '')
+    .replace(/[\\/:"*?<>|]/g, '-')
+    .replace(/\//g, '-')
+
 function buildExportFilename(extension: string): string {
   const g = selectedGranularity.value
   const range = `${startDate.value}_${endDate.value}`
 
   if (!isMultiPackageMode.value) {
     const name = effectivePackageNames.value[0] ?? props.packageName ?? 'package'
-    return `${name}-${g}_${range}.${extension}`
+    return `${sanitise(name)}-${g}_${range}.${extension}`
   }
 
   const names = effectivePackageNames.value
   const label = names.length === 1 ? names[0] : names.join('_')
-  return `${label}-${g}_${range}.${extension}`
+  return `${sanitise(label ?? '')}-${g}_${range}.${extension}`
 }
 
 const config = computed(() => {
@@ -635,7 +642,7 @@ const config = computed(() => {
             yLabel: $t('package.downloads.y_axis_label', {
               granularity: $t(`package.downloads.granularity_${selectedGranularity.value}`),
             }),
-            xLabel: props.packageNames ? '' : xAxisLabel.value, // for multiple series, names are displayed in the chart's legend
+            xLabel: isMultiPackageMode.value ? '' : xAxisLabel.value, // for multiple series, names are displayed in the chart's legend
             yLabelOffsetX: 12,
             fontSize: isMobile.value ? 32 : 24,
           },
