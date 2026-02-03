@@ -192,8 +192,8 @@ importers:
         specifier: 3.5.27
         version: 3.5.27(typescript@5.9.3)
       vue-data-ui:
-        specifier: 3.14.3
-        version: 3.14.3(vue@3.5.27(typescript@5.9.3))
+        specifier: 3.14.5
+        version: 3.14.5(vue@3.5.27(typescript@5.9.3))
     devDependencies:
       '@intlify/core-base':
         specifier: 11.2.8
@@ -5956,6 +5956,7 @@ packages:
   glob@11.1.0:
     resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
     engines: {node: 20 || >=22}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
 
   glob@13.0.0:
@@ -9275,8 +9276,8 @@ packages:
   vue-component-type-helpers@3.2.4:
     resolution: {integrity: sha512-05lR16HeZDcDpB23ku5b5f1fBOoHqFnMiKRr2CiEvbG5Ux4Yi0McmQBOET0dR0nxDXosxyVqv67q6CzS3AK8rw==}
 
-  vue-data-ui@3.14.3:
-    resolution: {integrity: sha512-cpRxBWVKep8sfFGDh88lsdRMirEher2661NZQm/W0Jlsox0sGSJWITyj8+rlQrYi822oVDdVnWq8l8cJ7g/0BA==}
+  vue-data-ui@3.14.5:
+    resolution: {integrity: sha512-VjRJAHvnb0NFqrz/hB8cG4bNnOVzO0J3kJ1lE9Ir3dMFKA37R1lEriu7Q4tlgkoFLmsvhV/wfan2iiLFCBYKWA==}
     peerDependencies:
       jspdf: '>=3.0.1'
       vue: '>=3.3.0'
@@ -20702,7 +20703,7 @@ snapshots:
 
   vue-component-type-helpers@3.2.4: {}
 
-  vue-data-ui@3.14.3(vue@3.5.27(typescript@5.9.3)):
+  vue-data-ui@3.14.5(vue@3.5.27(typescript@5.9.3)):
     dependencies:
       vue: 3.5.27(typescript@5.9.3)
 
