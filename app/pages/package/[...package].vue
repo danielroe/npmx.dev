@@ -365,10 +365,13 @@ const { user } = useAtproto()
 
 const authModal = useModal('auth-modal')
 
-const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.value}`, {
-  default: () => ({ totalLikes: 0, userHasLiked: false }),
-  server: false,
-})
+const { data: likesData, status: likeStatus } = useFetch(
+  () => `/api/social/likes/${packageName.value}`,
+  {
+    default: () => ({ totalLikes: 0, userHasLiked: false }),
+    server: false,
+  },
+)
 
 const isLikeActionPending = ref(false)
 
@@ -548,31 +551,34 @@ defineOgImageComponent('Package', {
               :is-binary="isBinaryOnly"
               class="self-baseline ms-1 sm:ms-2"
             />
+
+            <!-- Package likes -->
+            <button
+              @click="likeAction"
+              type="button"
+              class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
+              :title="$t('package.links.like')"
+            >
+              <span
+                :class="
+                  likesData?.userHasLiked
+                    ? 'i-lucide-heart-minus text-red-500'
+                    : 'i-lucide-heart-plus'
+                "
+                class="w-4 h-4"
+                aria-hidden="true"
+              />
+              <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
+            </button>
+
             <template #fallback>
               <div class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
                 <SkeletonBlock class="w-8 h-5 rounded" />
                 <SkeletonBlock class="w-12 h-5 rounded" />
+                <SkeletonBlock class="w-5 h-5 rounded" />
               </div>
             </template>
           </ClientOnly>
-
-          <button
-            @click="likeAction"
-            type="button"
-            class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
-            :title="$t('package.links.like')"
-          >
-            <span
-              :class="
-                likesData?.userHasLiked
-                  ? 'i-lucide-heart-minus text-red-500'
-                  : 'i-lucide-heart-plus'
-              "
-              class="w-4 h-4"
-              aria-hidden="true"
-            />
-            <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
-          </button>
 
           <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
           <nav
