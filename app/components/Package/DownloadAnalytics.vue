@@ -829,7 +829,7 @@ const config = computed(() => {
               <!-- TODO:  a11y -->
               <button
                 v-for="datapoint in legend"
-                :key="legend.id"
+                :key="datapoint"
                 class="flex gap-1 place-items-center"
                 @click="datapoint.segregate()"
               >
