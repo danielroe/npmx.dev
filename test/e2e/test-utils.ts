@@ -17,9 +17,49 @@ function readFixture(relativePath: string): unknown | null {
   }
 }
 
+/**
+ * Parse a scoped package name into its components.
+ * Handles formats like: @scope/name, @scope/name@version, name, name@version
+ */
+function parseScopedPackage(input: string): { name: string; version?: string } {
+  if (input.startsWith('@')) {
+    // Scoped package: @scope/name or @scope/name@version
+    const slashIndex = input.indexOf('/')
+    if (slashIndex === -1) {
+      // Invalid format like just "@scope"
+      return { name: input }
+    }
+    const afterSlash = input.slice(slashIndex + 1)
+    const atIndex = afterSlash.indexOf('@')
+    if (atIndex === -1) {
+      // @scope/name (no version)
+      return { name: input }
+    }
+    // @scope/name@version
+    return {
+      name: input.slice(0, slashIndex + 1 + atIndex),
+      version: afterSlash.slice(atIndex + 1),
+    }
+  }
+
+  // Unscoped package: name or name@version
+  const atIndex = input.indexOf('@')
+  if (atIndex === -1) {
+    return { name: input }
+  }
+  return {
+    name: input.slice(0, atIndex),
+    version: input.slice(atIndex + 1),
+  }
+}
+
 function packageToFixturePath(packageName: string): string {
   if (packageName.startsWith('@')) {
     const [scope, name] = packageName.slice(1).split('/')
+    if (!name) {
+      // Guard against invalid scoped package format like just "@scope"
+      return `npm-registry/packuments/${packageName}.json`
+    }
     return `npm-registry/packuments/@${scope}/${name}.json`
   }
   return `npm-registry/packuments/${packageName}.json`
@@ -294,12 +334,13 @@ async function handleJsdelivrDataApi(route: Route): Promise<boolean> {
   // Package file listing: /v1/packages/npm/{package}@{version}
   const packageMatch = pathname.match(/^\/v1\/packages\/npm\/(.+)$/)
   if (packageMatch?.[1]) {
+    const parsed = parseScopedPackage(packageMatch[1])
     // Return a minimal file tree
     await route.fulfill({
       json: {
         type: 'npm',
-        name: packageMatch[1].split('@')[0],
-        version: packageMatch[1].split('@')[1] || 'latest',
+        name: parsed.name,
+        version: parsed.version || 'latest',
         files: [
           { name: 'package.json', hash: 'abc123', size: 1000 },
           { name: 'index.js', hash: 'def456', size: 500 },
@@ -324,7 +365,7 @@ async function handleGravatarApi(route: Route): Promise<boolean> {
 
 /**
  * Handle GitHub API requests.
- * Returns mock contributor data for the contributors endpoint.
+ * Returns mock contributor data from fixtures for the contributors endpoint.
  */
 async function handleGitHubApi(route: Route): Promise<boolean> {
   const url = new URL(route.request().url())
@@ -333,30 +374,9 @@ async function handleGitHubApi(route: Route): Promise<boolean> {
   // Contributors endpoint: /repos/{owner}/{repo}/contributors
   const contributorsMatch = pathname.match(/^\/repos\/([^/]+)\/([^/]+)\/contributors$/)
   if (contributorsMatch) {
+    const fixture = readFixture('github/contributors.json')
     await route.fulfill({
-      json: [
-        {
-          login: 'danielroe',
-          id: 28706372,
-          avatar_url: 'https://avatars.githubusercontent.com/u/28706372?v=4',
-          html_url: 'https://github.com/danielroe',
-          contributions: 150,
-        },
-        {
-          login: 'antfu',
-          id: 11247099,
-          avatar_url: 'https://avatars.githubusercontent.com/u/11247099?v=4',
-          html_url: 'https://github.com/antfu',
-          contributions: 120,
-        },
-        {
-          login: 'pi0',
-          id: 5158436,
-          avatar_url: 'https://avatars.githubusercontent.com/u/5158436?v=4',
-          html_url: 'https://github.com/pi0',
-          contributions: 100,
-        },
-      ],
+      json: fixture || [],
     })
     return true
   }

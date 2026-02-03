@@ -332,6 +332,14 @@ async function generateEsmTypesFixture(packageName: string, version: string): Pr
   try {
     // First, get the types URL from the header
     const headResponse = await fetch(baseUrl, { method: 'HEAD' })
+
+    if (!headResponse.ok) {
+      console.log(
+        `    esm.sh HEAD request failed for ${packageName}@${version}: HTTP ${headResponse.status}`,
+      )
+      return
+    }
+
     const typesUrl = headResponse.headers.get('x-typescript-types')
 
     if (!typesUrl) {
