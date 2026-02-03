@@ -66,7 +66,7 @@ defineOgImageComponent('Default', {
         </h1>
 
         <p
-          class="text-fg-muted text-7xl max-w-md mb-12 motion-safe:animate-slide-up motion-safe:animate-fill-both"
+          class="text-fg-muted text-lg sm:text-xl max-w-md mb-12 motion-safe:animate-slide-up motion-safe:animate-fill-both"
           style="animation-delay: 0.1s"
         >
           {{ $t('tagline') }}
