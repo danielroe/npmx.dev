@@ -500,44 +500,27 @@ defineOgImageComponent('Package', {
             <span v-else>v{{ resolvedVersion }}</span>
 
             <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
-              <div class="relative inline-flex">
-                <AppPopover :label="$t('package.verified_provenance')" position="bottom">
-                  <template #content>
-                    <p class="flex items-center gap-2 text-fg m-0">
-                      <span
-                        class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0 text-emerald-500"
-                        aria-hidden="true"
-                      />
-                      <span>{{
-                        provenanceData && provenanceStatus !== 'pending'
-                          ? $t('package.provenance_section.built_and_signed_on', {
-                              provider: provenanceData.providerLabel,
-                            })
-                          : $t('package.verified_provenance')
-                      }}</span>
-                    </p>
-                    <a href="#provenance" class="block mt-1.5 link font-medium">
-                      {{ $t('package.provenance_section.view_more_details') }}
-                    </a>
-                  </template>
-                  <template #default="{ popoverVisible, popoverId }">
-                    <a
-                      href="#provenance"
-                      :aria-label="$t('package.provenance_section.view_more_details')"
-                      :aria-expanded="popoverVisible"
-                      aria-haspopup="true"
-                      :aria-controls="popoverVisible ? popoverId : undefined"
-                      class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-emerald-500 transition-colors duration-200 min-w-6 min-h-6"
-                      :class="popoverVisible && 'text-emerald-500'"
-                    >
-                      <span
-                        class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0"
-                        aria-hidden="true"
-                      />
-                    </a>
-                  </template>
-                </AppPopover>
-              </div>
+              <TooltipApp
+                :text="
+                  provenanceData && provenanceStatus !== 'pending'
+                    ? $t('package.provenance_section.built_and_signed_on', {
+                        provider: provenanceData.providerLabel,
+                      })
+                    : $t('package.verified_provenance')
+                "
+                position="bottom"
+              >
+                <a
+                  href="#provenance"
+                  :aria-label="$t('package.provenance_section.view_more_details')"
+                  class="inline-flex items-center justify-center gap-1.5 text-fg-muted hover:text-emerald-500 transition-colors duration-200 min-w-6 min-h-6"
+                >
+                  <span
+                    class="i-solar:shield-check-outline w-3.5 h-3.5 shrink-0"
+                    aria-hidden="true"
+                  />
+                </a>
+              </TooltipApp>
             </template>
             <span
               v-if="requestedVersion && latestVersion && resolvedVersion !== latestVersion.version"

@@ -61,7 +61,6 @@ afterEach(() => {
 import {
   AppFooter,
   AppHeader,
-  AppPopover,
   BaseCard,
   BuildEnvironment,
   CallToAction,
@@ -219,44 +218,6 @@ describe('component accessibility audits', () => {
   describe('AppFooter', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(AppFooter)
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-  })
-
-  describe('AppPopover', () => {
-    it('should have no accessibility violations when closed', async () => {
-      const component = await mountSuspended(AppPopover, {
-        slots: {
-          default: '<button type="button">Trigger</button>',
-          content: '<p>Popover content</p>',
-        },
-      })
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-
-    it('should have no accessibility violations when open', async () => {
-      const component = await mountSuspended(AppPopover, {
-        props: { label: 'Popover' },
-        slots: {
-          default: '<button type="button">Trigger</button>',
-          content: '<p>Popover content</p>',
-        },
-      })
-      await component.find('.relative').trigger('focusin')
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-
-    it('should have no accessibility violations with position prop', async () => {
-      const component = await mountSuspended(AppPopover, {
-        props: { position: 'top' },
-        slots: {
-          default: '<button type="button">Trigger</button>',
-          content: '<p>Popover content</p>',
-        },
-      })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
