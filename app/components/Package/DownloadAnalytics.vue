@@ -835,7 +835,7 @@ const config = computed(() => {
               >
                 <div class="h-3 w-3">
                   <svg viewBox="0 0 2 2" class="w-full">
-                    <rect x="0" y="0" width="2" height="2" :fill="datapoint.color" />
+                    <rect x="0" y="0" width="2" height="2" rx="0.3" :fill="datapoint.color" />
                   </svg>
                 </div>
                 <span
