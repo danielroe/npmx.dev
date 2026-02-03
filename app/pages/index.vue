@@ -4,18 +4,7 @@ import { debounce } from 'perfect-debounce'
 const searchQuery = shallowRef('')
 const searchInputRef = useTemplateRef('searchInputRef')
 const { focused: isSearchFocused } = useFocus(searchInputRef)
-const frameworks = ref([
-  { name: 'nuxt', package: 'nuxt' },
-  { name: 'vue', package: 'vue' },
-  { name: 'nitro', package: 'nitro' },
-  { name: 'react', package: 'react' },
-  { name: 'svelte', package: 'svelte' },
-  { name: 'vite', package: 'vite' },
-  { name: 'next', package: 'next' },
-  { name: 'astro', package: 'astro' },
-  { name: 'typescript', package: 'typescript' },
-  { name: 'angular', package: '@angular/core' },
-])
+const { frameworks } = useFrameworks()
 
 async function search() {
   const query = searchQuery.value.trim()
