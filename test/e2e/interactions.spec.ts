@@ -1,4 +1,4 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './test-utils'
 
 test.describe('Search Pages', () => {
   test('/search?q=vue → keyboard navigation (arrow keys + enter)', async ({ page, goto }) => {

@@ -1,4 +1,4 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './test-utils'
 
 test.describe('Create Command', () => {
   test.describe('Visibility', () => {

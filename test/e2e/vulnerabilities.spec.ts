@@ -1,4 +1,4 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './test-utils'
 
 function toLocalUrl(baseURL: string | undefined, path: string): string {
   if (!baseURL) return path
