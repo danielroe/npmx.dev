@@ -11,6 +11,7 @@ import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
 import { formatBytes } from '~/utils/formatters'
+import { getDependencyCount } from '~/utils/npm/dependency-count'
 import { NuxtLink } from '#components'
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
@@ -298,11 +299,6 @@ function normalizeGitUrl(url: string): string {
     .replace(/\.git$/, '')
     .replace(/^ssh:\/\/git@github\.com/, 'https://github.com')
     .replace(/^git@github\.com:/, 'https://github.com/')
-}
-
-function getDependencyCount(version: PackumentVersion | null): number {
-  if (!version?.dependencies) return 0
-  return Object.keys(version.dependencies).length
 }
 
 // Check if a version has provenance/attestations
@@ -861,11 +857,9 @@ defineOgImageComponent('Package', {
           <div class="space-y-1 sm:col-span-3">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
               {{ $t('package.stats.install_size') }}
-              <span
-                class="i-carbon:information w-3 h-3 text-fg-subtle"
-                aria-hidden="true"
-                :title="sizeTooltip"
-              />
+              <TooltipApp :text="sizeTooltip">
+                <span class="i-carbon:information w-3 h-3 text-fg-subtle" aria-hidden="true" />
+              </TooltipApp>
             </dt>
             <dd class="font-mono text-sm text-fg">
               <!-- Package size (greyed out) -->
@@ -1042,11 +1036,11 @@ defineOgImageComponent('Package', {
 
       <!-- README -->
       <section id="readme" class="area-readme min-w-0 scroll-mt-20">
-        <div class="flex flex-wrap items-center justify-between mb-4">
+        <div class="flex flex-wrap items-center justify-between mb-3">
           <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
             <a
               href="#readme"
-              class="inline-flex py-4 px-2 items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+              class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
             >
               {{ $t('package.readme.title') }}
               <span

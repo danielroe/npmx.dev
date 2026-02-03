@@ -88,7 +88,7 @@ function handleClick(event: MouseEvent) {
   color: var(--fg);
   @apply font-mono;
   font-weight: 500;
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
   line-height: 1.3;
 
