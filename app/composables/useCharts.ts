@@ -1,6 +1,5 @@
 import type { MaybeRefOrGetter } from 'vue'
 import { toValue } from 'vue'
-import { fetchNpmDownloadsRange } from '~/utils/npm/api'
 
 export type PackumentLikeForTime = {
   time?: Record<string, string>
@@ -45,6 +44,12 @@ export type PackageDownloadEvolutionOptions =
   | PackageDownloadEvolutionOptionsYear
 
 type DailyDownloadsResponse = { downloads: Array<{ day: string; downloads: number }> }
+
+declare function fetchNpmDownloadsRange(
+  packageName: string,
+  startIso: string,
+  endIso: string,
+): Promise<DailyDownloadsResponse>
 
 function toIsoDateString(date: Date): string {
   return date.toISOString().slice(0, 10)

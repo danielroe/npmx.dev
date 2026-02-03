@@ -277,6 +277,6 @@ export default defineNuxtConfig({
   },
 
   imports: {
-    dirs: ['~/composables', '~/composables/*/*.ts'],
+    dirs: ['~/composables', '~/composables/*/*.ts', '~/utils', '~/utils/*/*.ts'],
   },
 })
