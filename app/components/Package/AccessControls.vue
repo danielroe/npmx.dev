@@ -250,7 +250,7 @@ watch(
             id="grant-team-select"
             v-model="selectedTeam"
             name="grant-team"
-            class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+            class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover"
             :disabled="isLoadingTeams"
           >
             <option value="" disabled>
@@ -273,7 +273,7 @@ watch(
             id="grant-permission-select"
             v-model="permission"
             name="grant-permission"
-            class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+            class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover"
           >
             <option value="read-only">{{ $t('package.access.permission.read_only') }}</option>
             <option value="read-write">{{ $t('package.access.permission.read_write') }}</option>

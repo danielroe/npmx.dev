@@ -324,7 +324,7 @@ watch(lastExecutionTime, () => {
           name="members-search"
           :placeholder="$t('org.members.filter_placeholder')"
           v-bind="noCorrect"
-          class="w-full ps-7 pe-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+          class="w-full ps-7 pe-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover"
         />
       </div>
       <div
@@ -352,7 +352,7 @@ watch(lastExecutionTime, () => {
           id="team-filter"
           v-model="filterTeam"
           name="team-filter"
-          class="px-2 py-1 font-mono text-xs bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+          class="px-2 py-1 font-mono text-xs bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover"
         >
           <option :value="null">{{ $t('org.members.all_teams') }}</option>
           <option v-for="team in teamNames" :key="team" :value="team">
@@ -451,7 +451,7 @@ watch(lastExecutionTime, () => {
               :id="`role-${member.name}`"
               :value="member.role"
               :name="`role-${member.name}`"
-              class="px-1.5 py-0.5 font-mono text-xs bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70 cursor-pointer"
+              class="px-1.5 py-0.5 font-mono text-xs bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover"
               @change="
                 handleChangeRole(
                   member.name,
@@ -517,7 +517,7 @@ watch(lastExecutionTime, () => {
               id="new-member-role"
               v-model="newRole"
               name="new-member-role"
-              class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+              class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover"
             >
               <option value="developer">{{ $t('org.members.role.developer') }}</option>
               <option value="admin">{{ $t('org.members.role.admin') }}</option>
@@ -529,7 +529,7 @@ watch(lastExecutionTime, () => {
               id="new-member-team"
               v-model="newTeam"
               name="new-member-team"
-              class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+              class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover"
             >
               <option value="">{{ $t('org.members.no_team') }}</option>
               <option v-for="team in teamNames" :key="team" :value="team">

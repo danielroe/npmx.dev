@@ -107,7 +107,7 @@ defineOgImageComponent('Default', {
                   autofocus
                   :placeholder="$t('search.placeholder')"
                   v-bind="noCorrect"
-                  class="w-full bg-bg-subtle border border-border rounded-lg ps-8 pe-24 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-border-color duration-300 focus:border-accent focus-visible:outline-accent/70"
+                  class="w-full bg-bg-subtle border border-border rounded-lg ps-8 pe-24 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-border-color duration-300 focus:border-accent"
                   @input="handleInput"
                 />
 
