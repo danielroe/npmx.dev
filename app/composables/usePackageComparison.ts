@@ -8,6 +8,8 @@ import type {
 import { encodePackageName } from '#shared/utils/npm'
 import type { PackageAnalysisResponse } from './usePackageAnalysis'
 import { isBinaryOnlyPackage } from '#shared/utils/binary-detection'
+import { formatBytes } from '~/utils/formatters'
+import { getDependencyCount } from '~/utils/npm/dependency-count'
 
 /** Special identifier for the "What Would James Do?" comparison column */
 export const NO_DEPENDENCY_ID = '__no_dependency__'
@@ -28,10 +30,13 @@ export interface PackageComparisonData {
   downloads?: number
   /** Package's own unpacked size (from dist.unpackedSize) */
   packageSize?: number
+  /** Number of direct dependencies */
+  directDeps: number | null
   /** Install size data (fetched lazily) */
   installSize?: {
     selfSize: number
     totalSize: number
+    /** Total dependency count */
     dependencyCount: number
   }
   analysis?: PackageAnalysisResponse
@@ -162,6 +167,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               },
               downloads: downloads?.downloads,
               packageSize,
+              directDeps: versionData ? getDependencyCount(versionData) : null,
               installSize: undefined, // Will be filled in second pass
               analysis: analysis ?? undefined,
               vulnerabilities: {
@@ -253,7 +259,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   function isFacetLoading(facet: ComparisonFacet): boolean {
     if (!installSizeLoading.value) return false
     // These facets depend on install-size API
-    return facet === 'installSize' || facet === 'dependencies'
+    return facet === 'installSize' || facet === 'totalDependencies'
   }
 
   // Check if a specific column (package) is loading
@@ -289,6 +295,7 @@ function createNoDependencyData(): PackageComparisonData {
     isNoDependency: true,
     downloads: undefined,
     packageSize: 0,
+    directDeps: 0,
     installSize: {
       selfSize: 0,
       totalSize: 0,
@@ -329,7 +336,7 @@ function computeFacetValue(
   const { isNoDependency } = data
 
   switch (facet) {
-    case 'downloads':
+    case 'downloads': {
       if (data.downloads === undefined) {
         if (isNoDependency) return { raw: 0, display: '–', status: 'neutral' }
         return null
@@ -339,24 +346,24 @@ function computeFacetValue(
         display: formatCompactNumber(data.downloads),
         status: 'neutral',
       }
-
-    case 'packageSize':
-      if (data.packageSize === undefined) return null
+    }
+    case 'packageSize': {
+      if (!data.packageSize) return null
       return {
         raw: data.packageSize,
         display: formatBytes(data.packageSize),
         status: data.packageSize > 5 * 1024 * 1024 ? 'warning' : 'neutral',
       }
-
-    case 'installSize':
+    }
+    case 'installSize': {
       if (!data.installSize) return null
       return {
         raw: data.installSize.totalSize,
         display: formatBytes(data.installSize.totalSize),
         status: data.installSize.totalSize > 50 * 1024 * 1024 ? 'warning' : 'neutral',
       }
-
-    case 'moduleFormat':
+    }
+    case 'moduleFormat': {
       if (!data.analysis) {
         if (isNoDependency) return { raw: 'up-to-you', display: 'Up to you!', status: 'good' }
         return null
@@ -367,8 +374,8 @@ function computeFacetValue(
         display: format === 'dual' ? 'ESM + CJS' : format.toUpperCase(),
         status: format === 'esm' || format === 'dual' ? 'good' : 'neutral',
       }
-
-    case 'types':
+    }
+    case 'types': {
       if (data.isBinaryOnly) {
         return {
           raw: 'binary',
@@ -392,8 +399,8 @@ function computeFacetValue(
               : t('compare.facets.values.types_none'),
         status: types.kind === 'included' ? 'good' : types.kind === '@types' ? 'info' : 'bad',
       }
-
-    case 'engines':
+    }
+    case 'engines': {
       const engines = data.metadata?.engines
       if (!engines?.node) {
         if (isNoDependency) return { raw: 'up-to-you', display: 'Up to you!', status: 'good' }
@@ -408,8 +415,8 @@ function computeFacetValue(
         display: `Node ${engines.node}`,
         status: 'neutral',
       }
-
-    case 'vulnerabilities':
+    }
+    case 'vulnerabilities': {
       if (!data.vulnerabilities) {
         if (isNoDependency) return { raw: 'up-to-you', display: 'Up to you!', status: 'good' }
         return null
@@ -428,7 +435,7 @@ function computeFacetValue(
               }),
         status: count === 0 ? 'good' : sev.critical > 0 || sev.high > 0 ? 'bad' : 'warning',
       }
-
+    }
     case 'lastUpdated': {
       const lastUpdated = data.metadata?.lastUpdated
       const resolved = lastUpdated ? resolveNoDependencyDisplay(lastUpdated) : null
@@ -442,7 +449,6 @@ function computeFacetValue(
         type: 'date',
       }
     }
-
     case 'license': {
       const license = data.metadata?.license
       const resolved = license ? resolveNoDependencyDisplay(license) : null
@@ -461,17 +467,16 @@ function computeFacetValue(
         status: 'neutral',
       }
     }
-
-    case 'dependencies':
-      if (!data.installSize) return null
-      const depCount = data.installSize.dependencyCount
+    case 'dependencies': {
+      const depCount = data.directDeps
+      if (depCount === null) return null
       return {
         raw: depCount,
         display: String(depCount),
-        status: depCount > 50 ? 'warning' : 'neutral',
+        status: depCount > 10 ? 'warning' : 'neutral',
       }
-
-    case 'deprecated':
+    }
+    case 'deprecated': {
       const isDeprecated = !!data.metadata?.deprecated
       return {
         raw: isDeprecated,
@@ -480,20 +485,21 @@ function computeFacetValue(
           : t('compare.facets.values.not_deprecated'),
         status: isDeprecated ? 'bad' : 'good',
       }
-
+    }
     // Coming soon facets
-    case 'totalDependencies':
+    case 'totalDependencies': {
+      if (!data.installSize) return null
+      const totalDepCount = data.installSize.dependencyCount
+      return {
+        raw: totalDepCount,
+        display: String(totalDepCount),
+        status: totalDepCount > 50 ? 'warning' : 'neutral',
+      }
+    }
+    default: {
       return null
-
-    default:
-      return null
+    }
   }
-}
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} kB`
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 function isStale(date: Date): boolean {
