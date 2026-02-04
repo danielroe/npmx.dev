@@ -27,9 +27,9 @@ const scoreMetrics = computed(() => {
 })
 
 function getScoreColor(percentage: number): string {
-  if (percentage < 40) return 'oklch(0.55 0.12 25)'
-  if (percentage < 70) return 'oklch(0.6 0.1 85)'
-  return 'oklch(0.55 0.1 145)'
+  // Interpolate hue from red (25) to green (145) based on percentage
+  const hue = 25 + (percentage / 100) * (145 - 25)
+  return `oklch(0.55 0.12 ${hue})`
 }
 </script>
 
