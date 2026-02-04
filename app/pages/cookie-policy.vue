@@ -41,14 +41,14 @@ defineOgImageComponent('Default', {
         </p>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_1.title') }}
           </h2>
           <p>{{ $t('cookie_policy.section_1.p1') }}</p>
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_2.title') }}
           </h2>
           <p class="mb-4">
@@ -60,17 +60,24 @@ defineOgImageComponent('Default', {
           </p>
           <ul class="list-disc ps-5 space-y-2">
             <li>
-              <i18n-t keypath="cookie_policy.section_2.li1" tag="span" scope="global">
-                <template #bold>
-                  <strong class="text-fg">{{ $t('cookie_policy.section_2.li1_bold') }}</strong>
-                </template>
-              </i18n-t>
+              <strong class="text-fg font-mono text-sm">{{
+                $t('cookie_policy.section_2.cookie_vdpl')
+              }}</strong
+              >:
+              {{ $t('cookie_policy.section_2.cookie_vdpl_desc') }}
+            </li>
+            <li>
+              <strong class="text-fg font-mono text-sm">{{
+                $t('cookie_policy.section_2.cookie_h3')
+              }}</strong
+              >:
+              {{ $t('cookie_policy.section_2.cookie_h3_desc') }}
             </li>
           </ul>
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_3.title') }}
           </h2>
           <p class="mb-4">
@@ -98,7 +105,7 @@ defineOgImageComponent('Default', {
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_4.title') }}
           </h2>
           <p>
@@ -114,7 +121,7 @@ defineOgImageComponent('Default', {
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_5.title') }}
           </h2>
           <p class="mb-4">
@@ -134,7 +141,7 @@ defineOgImageComponent('Default', {
                 class="flex justify-between items-center gap-1 p-3"
               >
                 {{ $t('cookie_policy.section_5.chrome') }}
-                <span class="i-carbon:launch rtl-flip w-3 h-3" aria-hidden="true"></span>
+                <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
               </a>
             </li>
             <li>
@@ -145,7 +152,7 @@ defineOgImageComponent('Default', {
                 class="flex justify-between items-center gap-1 p-3"
               >
                 {{ $t('cookie_policy.section_5.firefox') }}
-                <span class="i-carbon:launch rtl-flip w-3 h-3" aria-hidden="true"></span>
+                <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
               </a>
             </li>
             <li>
@@ -156,14 +163,14 @@ defineOgImageComponent('Default', {
                 class="flex justify-between items-center gap-1 p-3"
               >
                 {{ $t('cookie_policy.section_5.edge') }}
-                <span class="i-carbon:launch rtl-flip w-3 h-3" aria-hidden="true"></span>
+                <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
               </a>
             </li>
           </ul>
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_6.title') }}
           </h2>
           <p>
@@ -184,7 +191,7 @@ defineOgImageComponent('Default', {
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4">
+          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
             {{ $t('cookie_policy.section_7.title') }}
           </h2>
           <p>{{ $t('cookie_policy.section_7.p1') }}</p>
