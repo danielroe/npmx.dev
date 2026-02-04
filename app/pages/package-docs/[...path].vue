@@ -253,6 +253,7 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
 /* Individual symbol articles */
 .docs-content .docs-symbol {
   @apply mb-10 pb-10 border-b border-border/30 last:border-0;
+  word-break: break-word;
 }
 
 .docs-content .docs-symbol:target {
