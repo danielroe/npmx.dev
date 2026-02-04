@@ -111,13 +111,10 @@ defineOgImageComponent('Default', {
                   @input="handleInput"
                 />
 
-                <button
-                  type="submit"
-                  class="absolute inset-ie-2 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-[background-color,transform] duration-200 hover:bg-fg/90 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-                >
+                <ButtonBase type="submit" variant="primary" class="absolute inset-ie-2">
                   <span class="i-carbon:search align-middle w-4 h-4" aria-hidden="true"></span>
                   {{ $t('search.button') }}
-                </button>
+                </ButtonBase>
               </div>
             </div>
           </form>

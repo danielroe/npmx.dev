@@ -1,13 +1,15 @@
 <script setup lang="ts">
-const props = defineProps<{
-  disabled?: boolean
-  /**
-   * type should never be used, because this will always be a button.
-   *
-   * If you want a link use `TagLink` instead.
-   *  */
-  type?: never
-}>()
+const props = withDefaults(
+  defineProps<{
+    disabled?: boolean
+    type?: 'button' | 'submit'
+    variant?: 'primary' | 'secondary'
+  }>(),
+  {
+    type: 'button',
+    variant: 'secondary',
+  },
+)
 
 const el = ref<HTMLButtonElement | null>(null)
 
@@ -19,11 +21,16 @@ defineExpose({
 <template>
   <button
     ref="el"
-    class="inline-flex items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md bg-transparent text-fg transition-all duration-200 hover:(bg-fg hover:text-bg border-fg) focus-ring active:scale-98 disabled:(opacity-40 cursor-not-allowed hover:bg-transparent hover:text-fg)"
-    :class="{
-      'opacity-50 cursor-not-allowed': disabled,
-    }"
-    type="button"
+    class="inline-flex gap-x-1 items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md transition-all duration-200 focus-ring active:scale-98 disabled:(opacity-40 cursor-not-allowed hover:bg-transparent hover:text-fg)"
+    :class="[
+      variant === 'primary'
+        ? 'text-bg bg-fg hover:bg-fg/90'
+        : 'bg-transparent text-fg hover:(bg-fg hover:text-bg border-fg)',
+      {
+        'opacity-50 cursor-not-allowed': disabled,
+      },
+    ]"
+    :type="props.type"
     :disabled="disabled ? true : undefined"
   >
     <slot />
