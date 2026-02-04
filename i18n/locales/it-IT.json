@@ -353,7 +353,8 @@
         "high": "alta",
         "moderate": "moderata",
         "low": "bassa"
-      }
+      },
+      "fixed_in_title": "Corretto nella versione {version}"
     },
     "deprecated": {
       "label": "Deprecato",

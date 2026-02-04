@@ -306,7 +306,8 @@
         "high": "tinggi",
         "moderate": "sedang",
         "low": "rendah"
-      }
+      },
+      "fixed_in_title": "Diperbaiki di versi {version}"
     },
     "deprecated": {
       "label": "Usang",

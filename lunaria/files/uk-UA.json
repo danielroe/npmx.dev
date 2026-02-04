@@ -288,7 +288,8 @@
         "high": "висока",
         "moderate": "середня",
         "low": "низька"
-      }
+      },
+      "fixed_in_title": "Виправлено у версії {version}"
     },
     "deprecated": {
       "label": "Припинено",

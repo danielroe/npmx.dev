@@ -334,7 +334,8 @@
         "high": "alta",
         "moderate": "moderada",
         "low": "baja"
-      }
+      },
+      "fixed_in_title": "Corregido en la versión {version}"
     },
     "deprecated": {
       "label": "Obsoleto",

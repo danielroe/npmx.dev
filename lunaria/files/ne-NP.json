@@ -306,7 +306,8 @@
         "high": "उच्च",
         "moderate": "मध्यम",
         "low": "कम"
-      }
+      },
+      "fixed_in_title": "संस्करण {version} मा समाधान गरियो"
     },
     "deprecated": {
       "label": "अप्रचलित",

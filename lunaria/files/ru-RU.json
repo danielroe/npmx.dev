@@ -285,7 +285,8 @@
         "high": "высокая",
         "moderate": "средняя",
         "low": "низкая"
-      }
+      },
+      "fixed_in_title": "Исправлено в версии {version}"
     },
     "deprecated": {
       "label": "Устаревшие",

@@ -323,7 +323,8 @@
         "high": "उच्च",
         "moderate": "मध्यम",
         "low": "निम्न"
-      }
+      },
+      "fixed_in_title": "संस्करण {version} में ठीक किया गया"
     },
     "deprecated": {
       "label": "डेप्रीकेटेड",

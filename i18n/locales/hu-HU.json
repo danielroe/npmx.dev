@@ -287,7 +287,8 @@
         "high": "magas",
         "moderate": "közepes",
         "low": "alacsony"
-      }
+      },
+      "fixed_in_title": "Javítva a(z) {version} verzióban"
     },
     "deprecated": {
       "label": "Elavult",

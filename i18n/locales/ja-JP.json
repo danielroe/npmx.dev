@@ -353,7 +353,8 @@
         "high": "高",
         "moderate": "中",
         "low": "低"
-      }
+      },
+      "fixed_in_title": "バージョン {version} で修正済み"
     },
     "deprecated": {
       "label": "非推奨",

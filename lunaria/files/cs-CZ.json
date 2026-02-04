@@ -328,7 +328,8 @@
         "high": "vysoká",
         "moderate": "střední",
         "low": "nízká"
-      }
+      },
+      "fixed_in_title": "Opraveno ve verzi {version}"
     },
     "deprecated": {
       "label": "Zastaralé",

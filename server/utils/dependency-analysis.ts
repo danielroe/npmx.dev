@@ -8,6 +8,7 @@ import type {
   PackageVulnerabilityInfo,
   VulnerabilityTreeResult,
   DeprecatedPackageInfo,
+  OsvAffected,
 } from '#shared/types/dependency-analysis'
 import { mapWithConcurrency } from '#shared/utils/async'
 import { resolveDependencyTree } from './dependency-resolver'
@@ -115,6 +116,7 @@ async function queryOsvDetails(pkg: PackageQueryInfo): Promise<PackageVulnerabil
         severity,
         aliases: vuln.aliases || [],
         url: getVulnerabilityUrl(vuln),
+        fixedIn: getFixedVersion(vuln.affected, pkg.name),
       })
     }
 
@@ -142,6 +144,34 @@ function getVulnerabilityUrl(vuln: OsvVulnerability): string {
     return `https://nvd.nist.gov/vuln/detail/${cveAlias}`
   }
   return `https://osv.dev/vulnerability/${vuln.id}`
+}
+
+/**
+ * Extract the earliest fixed version for a specific package from vulnerability data.
+ * Returns the first 'fixed' event found in the affected ranges for the given package.
+ */
+function getFixedVersion(
+  affected: OsvAffected[] | undefined,
+  packageName: string,
+): string | undefined {
+  if (!affected) return undefined
+
+  // Find the affected entry for this specific package
+  const packageAffected = affected.find(
+    a => a.package.ecosystem === 'npm' && a.package.name === packageName,
+  )
+  if (!packageAffected?.ranges) return undefined
+
+  // Look through ranges to find a 'fixed' event
+  for (const range of packageAffected.ranges) {
+    for (const event of range.events) {
+      if (event.fixed) {
+        return event.fixed
+      }
+    }
+  }
+
+  return undefined
 }
 
 function getSeverityLevel(vuln: OsvVulnerability): OsvSeverityLevel {

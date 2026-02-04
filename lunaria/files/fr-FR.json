@@ -332,7 +332,8 @@
         "high": "élevée",
         "moderate": "modérée",
         "low": "faible"
-      }
+      },
+      "fixed_in_title": "Corrigé dans la version {version}"
     },
     "deprecated": {
       "label": "Obsolète",

@@ -357,7 +357,8 @@
         "high": "高",
         "moderate": "中等",
         "low": "低"
-      }
+      },
+      "fixed_in_title": "已在版本 {version} 中修复"
     },
     "deprecated": {
       "label": "已弃用",
