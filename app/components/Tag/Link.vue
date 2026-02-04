@@ -24,7 +24,7 @@ const props = defineProps<
   <span v-if="disabled" class="opacity-50"><slot /></span>
   <NuxtLink
     v-else
-    class="inline-flex items-center px-2 py-0.5 text-xs font-mono border rounded transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+    class="inline-flex gap-x-1 items-center justify-center px-2 py-0.5 text-xs font-mono border rounded transition-colors duration-200"
     :class="
       current
         ? 'bg-fg text-bg border-fg hover:(text-text-bg/50)'

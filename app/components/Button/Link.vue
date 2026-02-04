@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from '#app'
 
-const props = defineProps<
-  {
-    /** Disabled links will be displayed as plain text */
-    disabled?: boolean
-    /**
-     * `type` should never be used, because this will always be a link.
-     *
-     * If you want a button use `TagButton` instead.
-     * */
-    type?: never
-  } &
-    /** This makes sure the link always has either `to` or `href` */
-    (Required<Pick<NuxtLinkProps, 'to'>> | Required<Pick<NuxtLinkProps, 'href'>>) &
-    NuxtLinkProps
->()
+const props = withDefaults(
+  defineProps<
+    {
+      /** Disabled links will be displayed as plain text */
+      disabled?: boolean
+      /**
+       * `type` should never be used, because this will always be a link.
+       *
+       * If you want a button use `TagButton` instead.
+       * */
+      type?: never
+      variant?: 'primary' | 'secondary'
+    } &
+      /** This makes sure the link always has either `to` or `href` */
+      (Required<Pick<NuxtLinkProps, 'to'>> | Required<Pick<NuxtLinkProps, 'href'>>) &
+      NuxtLinkProps
+  >(),
+  { variant: 'secondary' },
+)
 </script>
 
 <template>
@@ -23,12 +27,12 @@ const props = defineProps<
   <span v-if="disabled" class="opacity-50"><slot /></span>
   <NuxtLink
     v-else
-    class="inline-flex items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md bg-transparent text-fg transition-all duration-200 hover:(bg-fg hover:text-bg border-fg) focus-ring active:scale-98 disabled:(opacity-40 cursor-not-allowed hover:bg-transparent hover:text-fg)"
-    :class="
-      {
-        'opacity-50 cursor-not-allowed': disabled,
-      }
-    "
+    class="inline-flex gap-x-1 items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md transition-all duration-200"
+    :class="[
+      variant === 'primary'
+        ? 'text-bg bg-fg hover:enabled:(bg-fg/90)'
+        : 'bg-transparent text-fg hover:enabled:(bg-fg text-bg border-fg)',
+    ]"
   >
     <slot />
   </NuxtLink>
