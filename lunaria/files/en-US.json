@@ -208,7 +208,14 @@
       "title": "Readme",
       "no_readme": "No README available.",
       "view_on_github": "View on GitHub",
-      "toc_title": "Outline"
+      "toc_title": "Outline",
+      "callout": {
+        "note": "Note",
+        "tip": "Tip",
+        "important": "Important",
+        "warning": "Warning",
+        "caution": "Caution"
+      }
     },
     "provenance_section": {
       "title": "Provenance",
