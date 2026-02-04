@@ -33,7 +33,7 @@ if (
 }
 
 const { data: downloads, refresh: refreshDownloads } = usePackageDownloads(name, 'last-week')
-const { data: pkg, refresh: refreshPkg } = usePackage(name, resolvedVersion.value ?? version)
+const { data: pkg, refresh: refreshPkg } = usePackage(name, resolvedVersion.value ?? version.value)
 const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
 
 const repositoryUrl = computed(() => {
