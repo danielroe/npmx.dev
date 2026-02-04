@@ -1076,7 +1076,9 @@ defineOgImageComponent('Package', {
 
       <div class="area-sidebar">
         <!-- Sidebar -->
-        <div class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 xl:(top-22 pt-2)">
+        <div
+          class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pr-2.5 hover:pr-0.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)])"
+        >
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
@@ -1225,20 +1227,9 @@ defineOgImageComponent('Package', {
   grid-area: sidebar;
 }
 
-/* Keep sidebar scrollable inside viewport when hovered/focused. */
-.sidebar-scroll {
-  overflow-y: auto;
-  padding-right: 10px;
-}
-
-.sidebar-scroll:hover {
-  padding-right: 2px;
-}
-
+/* Sidebar scrollbar: hidden by default, shown on hover/focus */
 @media (min-width: 1024px) {
   .sidebar-scroll {
-    max-height: calc(100dvh - 8.5rem);
-    overscroll-behavior: contain;
     scrollbar-gutter: stable;
     scrollbar-width: none;
   }
@@ -1268,12 +1259,6 @@ defineOgImageComponent('Package', {
   .sidebar-scroll:hover::-webkit-scrollbar-track,
   .sidebar-scroll:focus-within::-webkit-scrollbar-track {
     background: transparent;
-  }
-}
-
-@media (min-width: 1280px) {
-  .sidebar-scroll {
-    max-height: calc(100dvh - 6rem);
   }
 }
 
