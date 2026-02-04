@@ -854,7 +854,7 @@ const config = computed(() => {
       <div>
         <VueUiXy :dataset="chartData.dataset" :config="config" class="[direction:ltr]">
           <!-- Custom legend for multiple series -->
-          <template v-if="packageNames?.length" #legend="{ legend }">
+          <template v-if="isMultiPackageMode" #legend="{ legend }">
             <div class="flex gap-4 flex-wrap justify-center">
               <!-- TODO:  a11y -->
               <button
@@ -991,6 +991,7 @@ const config = computed(() => {
   box-shadow: none !important;
 }
 
+/* Override default placement of the refresh button to have it to the minimap's side */
 @media screen and (min-width: 767px) {
   #download-analytics .vue-data-ui-refresh-button {
     top: -0.6rem !important;
