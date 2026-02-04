@@ -43,22 +43,33 @@ type EventHandlerWithOAuthSession<T extends EventHandlerRequest, D> = (
 ) => Promise<D>
 
 async function getOAuthSession(event: H3Event): Promise<OAuthSession | undefined> {
-  const clientMetadata = getOauthClientMetadata()
-  const serverSession = await useServerSession(event)
-  const { stateStore, sessionStore } = useOAuthStorage(serverSession)
+  try {
+    const clientMetadata = getOauthClientMetadata()
+    const serverSession = await useServerSession(event)
+    const { stateStore, sessionStore } = useOAuthStorage(serverSession)
 
-  const client = new NodeOAuthClient({
-    stateStore,
-    sessionStore,
-    clientMetadata,
-    requestLock: getOAuthLock(),
-  })
+    const client = new NodeOAuthClient({
+      stateStore,
+      sessionStore,
+      clientMetadata,
+      requestLock: getOAuthLock(),
+    })
 
-  const currentSession = await sessionStore.get()
-  if (!currentSession) return undefined
+    const currentSession = await sessionStore.get()
+    if (!currentSession) return undefined
 
-  // restore using the subject
-  return await client.restore(currentSession.tokenSet.sub)
+    // restore using the subject
+    return await client.restore(currentSession.tokenSet.sub)
+  } catch (error) {
+    // Log error safely without using util.inspect on potentially problematic objects
+    // The @atproto library creates error objects with getters that crash Node's util.inspect
+    // eslint-disable-next-line no-console
+    console.error(
+      '[oauth] Failed to get session:',
+      error instanceof Error ? error.message : 'Unknown error',
+    )
+    return undefined
+  }
 }
 
 /**
