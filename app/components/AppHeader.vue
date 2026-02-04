@@ -91,13 +91,12 @@ onKeyStroke(
       class="container min-h-14 flex items-center gap-2"
       :class="isOnHomePage ? 'justify-end' : 'justify-between'"
     >
-      <!-- Mobile: Logo + search button (expands search, doesn't navigate) -->
-      <button
+      <!-- Mobile: Logo (navigates home) -->
+      <NuxtLink
         v-if="!isSearchExpanded && !isOnHomePage"
-        type="button"
-        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
-        :aria-label="$t('nav.tap_to_search')"
-        @click="expandMobileSearch"
+        to="/"
+        :aria-label="$t('header.home')"
+        class="sm:hidden flex-shrink-0 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
       >
         <img
           aria-hidden="true"
@@ -107,8 +106,7 @@ onKeyStroke(
           height="96"
           class="w-8 h-8 rounded-lg"
         />
-        <span class="i-carbon:search w-4 h-4 text-fg-subtle" aria-hidden="true" />
-      </button>
+      </NuxtLink>
 
       <!-- Desktop: Logo (navigates home) -->
       <div v-if="showLogo" class="hidden sm:flex flex-shrink-0 items-center">
@@ -198,6 +196,17 @@ onKeyStroke(
         <div class="hidden sm:block">
           <HeaderAccountMenu />
         </div>
+
+        <!-- Mobile: Search button (expands search) -->
+        <button
+          v-if="!isSearchExpanded && !isOnHomePage"
+          type="button"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          :aria-label="$t('nav.tap_to_search')"
+          @click="expandMobileSearch"
+        >
+          <span class="i-carbon:search w-6 h-6" aria-hidden="true" />
+        </button>
 
         <!-- Mobile: Menu button (always visible, toggles menu) -->
         <button
