@@ -40,21 +40,30 @@ export default defineEventHandler(async event => {
   })
 
   if (!query.code) {
-    const handle = query.handle?.toString()
-    const create = query.create?.toString()
+    try {
+      const handle = query.handle?.toString()
+      const create = query.create?.toString()
 
-    if (!handle) {
-      throw createError({
-        status: 400,
-        message: 'Handle not provided in query',
+      if (!handle) {
+        throw createError({
+          statusCode: 401,
+          message: 'Handle not provided in query',
+        })
+      }
+
+      const redirectUrl = await atclient.authorize(handle, {
+        scope,
+        prompt: create ? 'create' : undefined,
+      })
+      return sendRedirect(event, redirectUrl.toString())
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Authentication failed.'
+
+      return handleApiError(error, {
+        statusCode: 401,
+        message: `${message}. Please login and try again.`,
       })
     }
-
-    const redirectUrl = await atclient.authorize(handle, {
-      scope,
-      prompt: create ? 'create' : undefined,
-    })
-    return sendRedirect(event, redirectUrl.toString())
   }
 
   const { session: authSession } = await atclient.callback(
