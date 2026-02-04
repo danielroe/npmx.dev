@@ -24,7 +24,7 @@ defineProps<{
         >
           <NuxtLink
             :to="`/package/${header}`"
-            class="font-mono text-sm font-medium text-fg truncate"
+            class="link-subtle font-mono text-sm font-medium text-fg truncate"
             :title="header"
           >
             {{ header }}
