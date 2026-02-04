@@ -20,7 +20,9 @@ export function generateSparkline(data: number[]): string {
   return data
     .map(val => {
       const normalized = (val - min) / range
-      const index = Math.round(normalized * (SPARKLINE_CHARS.length - 1))
+      // Clamp index to valid bounds to prevent floating-point edge cases
+      const rawIndex = Math.round(normalized * (SPARKLINE_CHARS.length - 1))
+      const index = Math.min(SPARKLINE_CHARS.length - 1, Math.max(0, rawIndex))
       return SPARKLINE_CHARS[index]
     })
     .join('')
@@ -64,17 +66,24 @@ function isHttpUrl(url: string): boolean {
   }
 }
 
-function getRepositoryUrl(repository?: {
-  type?: string
-  url?: string
-  directory?: string
-}): string | null {
-  if (!repository?.url) return null
-  let url = normalizeGitUrl(repository.url)
+function getRepositoryUrl(
+  repository?:
+    | {
+        type?: string
+        url?: string
+        directory?: string
+      }
+    | string,
+): string | null {
+  if (!repository) return null
+  // Handle both string and object forms of repository field
+  const repoUrl = typeof repository === 'string' ? repository : repository.url
+  if (!repoUrl) return null
+  let url = normalizeGitUrl(repoUrl)
   // Skip non-HTTP URLs after normalization
   if (!isHttpUrl(url)) return null
-  // Append directory for monorepo packages
-  if (repository.directory) {
+  // Append directory for monorepo packages (only available in object form)
+  if (typeof repository !== 'string' && repository.directory) {
     url = joinURL(`${url}/tree/HEAD`, repository.directory)
   }
   return url

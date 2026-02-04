@@ -179,6 +179,40 @@ describe('markdown utils', () => {
       )
     })
 
+    it('handles string repository URL', () => {
+      const pkg = createMockPkg({
+        repository: 'https://github.com/user/repo' as any,
+      })
+      const version = createMockVersion()
+
+      const result = generatePackageMarkdown({ pkg, version })
+
+      expect(result).toContain('- [Repository](https://github.com/user/repo)')
+    })
+
+    it('normalizes string repository with git+ prefix', () => {
+      const pkg = createMockPkg({
+        repository: 'git+https://github.com/user/repo.git' as any,
+      })
+      const version = createMockVersion()
+
+      const result = generatePackageMarkdown({ pkg, version })
+
+      expect(result).toContain('- [Repository](https://github.com/user/repo)')
+    })
+
+    it('handles GitHub shorthand string repository', () => {
+      const pkg = createMockPkg({
+        repository: 'github:user/repo' as any,
+      })
+      const version = createMockVersion()
+
+      const result = generatePackageMarkdown({ pkg, version })
+
+      // github: shorthand is not a valid HTTP URL, so should be skipped
+      expect(result).not.toContain('- [Repository]')
+    })
+
     it('includes homepage link when different from repo', () => {
       const pkg = createMockPkg({
         repository: { url: 'https://github.com/user/repo' },
