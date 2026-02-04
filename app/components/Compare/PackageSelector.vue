@@ -101,7 +101,7 @@ function handleBlur() {
               ? $t('compare.selector.search_first')
               : $t('compare.selector.search_add')
           "
-          class="w-full bg-bg-subtle border border-border rounded-lg ps-10 pe-4 py-2.5 font-mono text-sm text-fg placeholder:text-fg-subtle motion-reduce:transition-none duration-200 focus:border-accent focus-visible:outline-accent/70"
+          class="w-full bg-bg-subtle border border-border rounded-lg ps-10 pe-4 py-2.5 font-mono text-sm text-fg placeholder:text-fg-subtle motion-reduce:transition-none duration-200 focus:border-accent focus-visible:(outline-2 outline-accent/70)"
           aria-autocomplete="list"
           @focus="isInputFocused = true"
           @blur="handleBlur"
