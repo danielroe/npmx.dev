@@ -786,7 +786,6 @@ const config = computed(() => {
             <select
               id="granularity"
               v-model="selectedGranularity"
-              class="w-full bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none"
               :disabled="pending"
               class="w-full px-2.5 py-1.75 bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none focus-visible:outline-accent/70"
             >
