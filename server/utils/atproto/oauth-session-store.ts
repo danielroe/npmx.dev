@@ -27,6 +27,7 @@ export class OAuthSessionStore implements NodeSavedSessionStore {
         '[oauth session store] Failed to set session:',
         error instanceof Error ? error.message : 'Unknown error',
       )
+      throw error
     }
   }
 
