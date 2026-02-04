@@ -600,23 +600,35 @@ onKeyStroke(
               />
 
               <!-- Package likes -->
-              <button
-                @click="likeAction"
-                type="button"
-                class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
-                :title="$t('package.links.like')"
+              <TooltipApp
+                :text="
+                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                "
+                position="bottom"
               >
-                <span
-                  :class="
-                    likesData?.userHasLiked
-                      ? 'i-lucide-heart-minus text-red-500'
-                      : 'i-lucide-heart-plus'
+                <button
+                  @click="likeAction"
+                  type="button"
+                  :title="$t('package.likes.like')"
+                  class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
+                  :aria-label="
+                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                   "
-                  class="w-4 h-4"
-                  aria-hidden="true"
-                />
-                <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
-              </button>
+                >
+                  <span
+                    :class="
+                      likesData?.userHasLiked
+                        ? 'i-lucide-heart-minus text-red-500'
+                        : 'i-lucide-heart-plus'
+                    "
+                    class="w-4 h-4"
+                    aria-hidden="true"
+                  />
+                  <span>{{
+                    formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 })
+                  }}</span>
+                </button>
+              </TooltipApp>
               <template #fallback>
                 <div
                   class="flex items-center gap-1.5 list-none m-0 p-0 relative top-[5px] self-baseline ms-1 sm:ms-2"

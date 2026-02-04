@@ -183,7 +183,12 @@
       "code": "code",
       "docs": "docs",
       "fund": "fund",
-      "compare": "compare"
+      "compare": "compare",
+      "like": "like"
+    },
+    "likes": {
+      "like": "Like this package",
+      "unlike": "Unlike this package"
     },
     "docs": {
       "not_available": "Docs not available",
