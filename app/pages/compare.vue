@@ -5,6 +5,8 @@ definePageMeta({
   name: 'compare',
 })
 
+const router = useRouter()
+
 // Sync packages with URL query param (stable ref - doesn't change on other query changes)
 const packagesParam = useRouteQuery<string>('packages', '', { mode: 'replace' })
 
@@ -61,9 +63,19 @@ useSeoMeta({
   <main class="container flex-1 py-12 sm:py-16 w-full">
     <div class="max-w-2xl mx-auto">
       <header class="mb-12">
-        <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4">
-          {{ $t('compare.packages.title') }}
-        </h1>
+        <div class="flex items-baseline justify-between gap-4 mb-4">
+          <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4">
+            {{ $t('compare.packages.title') }}
+          </h1>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+            @click="router.back()"
+          >
+            <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
+            <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+          </button>
+        </div>
         <p class="text-fg-muted text-lg">
           {{ $t('compare.packages.tagline') }}
         </p>
@@ -170,7 +182,10 @@ useSeoMeta({
       </section>
 
       <!-- Empty state -->
-      <section v-else class="text-center py-16 border border-dashed border-border rounded-lg">
+      <section
+        v-else
+        class="text-center px-1.5 py-16 border border-dashed border-border rounded-lg"
+      >
         <div class="i-carbon:compare w-12 h-12 text-fg-subtle mx-auto mb-4" aria-hidden="true" />
         <h2 class="font-mono text-lg text-fg-muted mb-2">
           {{ $t('compare.packages.empty_title') }}
