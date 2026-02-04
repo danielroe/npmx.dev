@@ -1,16 +1,18 @@
 import { Agent } from '@atproto/api'
 import { NodeOAuthClient } from '@atproto/oauth-client-node'
 import { createError, getQuery, sendRedirect } from 'h3'
+import { getOAuthLock } from '#server/utils/atproto/lock'
 import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { SLINGSHOT_HOST } from '#shared/utils/constants'
-import type { UserSession } from '#shared/schemas/userSession'
+import { useServerSession } from '#server/utils/server-session'
+import type { PublicUserSession } from '#shared/schemas/publicUserSession'
 
 export default defineEventHandler(async event => {
   const config = useRuntimeConfig(event)
   if (!config.sessionPassword) {
     throw createError({
       status: 500,
-      message: 'NUXT_SESSION_PASSWORD not set',
+      message: UNSET_NUXT_SESSION_PASSWORD,
     })
   }
 
@@ -28,12 +30,14 @@ export default defineEventHandler(async event => {
   })
 
   const clientMetadata = getOauthClientMetadata()
-  const { stateStore, sessionStore } = useOAuthStorage(event)
+  const session = await useServerSession(event)
+  const { stateStore, sessionStore } = useOAuthStorage(session)
 
   const atclient = new NodeOAuthClient({
     stateStore,
     sessionStore,
     clientMetadata,
+    requestLock: getOAuthLock(),
   })
 
   if (!query.code) {
@@ -60,17 +64,16 @@ export default defineEventHandler(async event => {
   const agent = new Agent(authSession)
   event.context.agent = agent
 
-  const session = await useSession(event, {
-    password: config.sessionPassword,
-  })
-
   const response = await fetch(
     `https://${SLINGSHOT_HOST}/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${agent.did}`,
     { headers: { 'User-Agent': 'npmx' } },
   )
-  const miniDoc = (await response.json()) as UserSession
-
-  await session.update(miniDoc)
+  if (response.ok) {
+    const miniDoc: PublicUserSession = await response.json()
+    await session.update({
+      public: miniDoc,
+    })
+  }
 
   const returnToURL = getCookie(event, 'auth_return_to') || '/'
   deleteCookie(event, 'auth_return_to')

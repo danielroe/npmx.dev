@@ -213,6 +213,30 @@ export interface NpmVersionDist {
 }
 
 /**
+ * Parsed provenance details for display (from attestation bundle SLSA predicate).
+ * Used by the provenance API and PackageProvenanceSection.
+ * @public
+ */
+export interface ProvenanceDetails {
+  /** Provider ID (e.g. "github", "gitlab") */
+  provider: string
+  /** Human-readable provider label (e.g. "GitHub Actions") */
+  providerLabel: string
+  /** Link to build run summary (e.g. GitHub Actions run URL) */
+  buildSummaryUrl?: string
+  /** Link to source commit in repository */
+  sourceCommitUrl?: string
+  /** Source commit SHA (short or full) */
+  sourceCommitSha?: string
+  /** Link to workflow/build config file in repo */
+  buildFileUrl?: string
+  /** Workflow path (e.g. ".github/workflows/release.yml") */
+  buildFilePath?: string
+  /** Link to transparency log entry (e.g. Sigstore search) */
+  publicLedgerUrl?: string
+}
+
+/**
  * Download counts API response
  * From https://api.npmjs.org/downloads/
  * Note: Not covered by @npm/types
@@ -341,4 +365,17 @@ export interface PackageFileContentResponse {
   html: string
   lines: number
   markdownHtml?: ReadmeResponse
+}
+
+/**
+ * Minimal packument data needed for package cards
+ */
+export interface MinimalPackument {
+  'name': string
+  'description'?: string
+  'keywords'?: string[]
+  // `dist-tags` can be missing in some later unpublished packages
+  'dist-tags'?: Record<string, string>
+  'time': Record<string, string>
+  'maintainers'?: NpmPerson[]
 }
