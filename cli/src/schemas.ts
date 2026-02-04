@@ -25,6 +25,7 @@ export const PackageNameSchema = v.pipe(
 /**
  * Validates an npm package name for new packages only
  * Stricter than PackageNameSchema - rejects legacy formats (uppercase, etc.)
+ * @internal
  */
 export const NewPackageNameSchema = v.pipe(
   v.string(),
@@ -76,6 +77,7 @@ export const ScopeTeamSchema = v.pipe(
 
 /**
  * Validates org roles
+ * @internal
  */
 export const OrgRoleSchema = v.picklist(
   ['developer', 'admin', 'owner'],
@@ -84,6 +86,7 @@ export const OrgRoleSchema = v.picklist(
 
 /**
  * Validates access permissions
+ * @internal
  */
 export const PermissionSchema = v.picklist(
   ['read-only', 'read-write'],
@@ -111,6 +114,7 @@ export const OperationTypeSchema = v.picklist([
 
 /**
  * Validates OTP (6-digit code)
+ * @internal
  */
 export const OtpSchema = v.optional(
   v.pipe(v.string(), v.regex(/^\d{6}$/, 'OTP must be a 6-digit code')),
@@ -118,6 +122,7 @@ export const OtpSchema = v.optional(
 
 /**
  * Validates a hex token (like session tokens and operation IDs)
+ * @internal
  */
 export const HexTokenSchema = v.pipe(
   v.string(),
@@ -127,6 +132,7 @@ export const HexTokenSchema = v.pipe(
 
 /**
  * Validates operation ID (16-char hex)
+ * @internal
  */
 export const OperationIdSchema = v.pipe(
   v.string(),
@@ -177,6 +183,7 @@ export const BatchOperationsBodySchema = v.array(CreateOperationBodySchema)
 // Type-specific Operation Params Schemas
 // ============================================================================
 
+/** @internal */
 export const OrgAddUserParamsSchema = v.object({
   org: OrgNameSchema,
   user: UsernameSchema,
@@ -206,6 +213,7 @@ const TeamRemoveUserParamsSchema = v.object({
   user: UsernameSchema,
 })
 
+/** @internal */
 export const AccessGrantParamsSchema = v.object({
   permission: PermissionSchema,
   scopeTeam: ScopeTeamSchema,
@@ -227,6 +235,7 @@ const OwnerRemoveParamsSchema = v.object({
   pkg: PackageNameSchema,
 })
 
+/** @internal */
 export const PackageInitParamsSchema = v.object({
   name: NewPackageNameSchema,
   author: v.optional(UsernameSchema),

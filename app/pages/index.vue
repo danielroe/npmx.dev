@@ -14,7 +14,7 @@ const frameworks = ref([
   { name: 'next', package: 'next' },
   { name: 'astro', package: 'astro' },
   { name: 'typescript', package: 'typescript' },
-  { name: 'Angular', package: '@angular/core' },
+  { name: 'angular', package: '@angular/core' },
 ])
 
 async function search() {
@@ -36,7 +36,12 @@ const handleInput = isTouchDevice()
 
 useSeoMeta({
   title: () => $t('seo.home.title'),
+  ogTitle: () => $t('seo.home.title'),
+  twitterTitle: () => $t('seo.home.title'),
+  twitterCard: 'summary_large_image',
   description: () => $t('seo.home.description'),
+  ogDescription: () => $t('seo.home.description'),
+  twitterDescription: () => $t('seo.home.description'),
 })
 
 defineOgImageComponent('Default', {
