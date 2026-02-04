@@ -205,7 +205,7 @@ const copyCreateCommand = () => copyCreate(getFullCreateCommand())
             >
               <NuxtLink
                 :to="`/package/${createPackageInfo.packageName}`"
-                class="inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 text-fg-muted hover:text-fg text-xs transition-colors focus-visible:outline focus-visible:outline-accent/70 rounded"
+                class="inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 text-fg-muted hover:text-fg text-xs transition-colors focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
               >
                 <span class="i-carbon:information w-3 h-3" aria-hidden="true" />
                 <span class="sr-only">{{
