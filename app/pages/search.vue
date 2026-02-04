@@ -566,6 +566,14 @@ function handleResultsKeydown(e: KeyboardEvent) {
   }
 
   if (e.key === 'Enter') {
+    // If the active element is an input and there are results, navigate to the first result
+    if (document.activeElement?.tagName === 'INPUT' && displayResults.value?.length) {
+      return router.push({
+        name: 'package',
+        params: { package: displayResults.value?.[0]?.package.name.split('/') },
+      })
+    }
+
     // Browser handles Enter on focused links naturally, but handle for non-link elements
     if (document.activeElement && elements.includes(document.activeElement as HTMLElement)) {
       const el = document.activeElement as HTMLElement
