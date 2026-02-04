@@ -1343,7 +1343,7 @@ onKeyStroke(
 
   .sidebar-scroll:hover::-webkit-scrollbar-thumb,
   .sidebar-scroll:focus-within::-webkit-scrollbar-thumb {
-    background-color: #cecece;
+    background-color: var(--border);
     border-radius: 9999px;
   }
 
