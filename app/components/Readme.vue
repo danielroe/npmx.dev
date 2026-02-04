@@ -62,11 +62,13 @@ function handleClick(event: MouseEvent) {
   <article
     class="readme prose prose-invert max-w-[70ch] lg:max-w-none px-1"
     v-html="html"
-    :data-i18n-note="$t('package.readme.callout.note')"
-    :data-i18n-tip="$t('package.readme.callout.tip')"
-    :data-i18n-important="$t('package.readme.callout.important')"
-    :data-i18n-warning="$t('package.readme.callout.warning')"
-    :data-i18n-caution="$t('package.readme.callout.caution')"
+    :style="{
+      '--i18n-note': '\'' + $t('package.readme.callout.note') + '\'',
+      '--i18n-tip': '\'' + $t('package.readme.callout.tip') + '\'',
+      '--i18n-important': '\'' + $t('package.readme.callout.important') + '\'',
+      '--i18n-warning': '\'' + $t('package.readme.callout.warning') + '\'',
+      '--i18n-caution': '\'' + $t('package.readme.callout.caution') + '\'',
+    }"
     @click="handleClick"
   />
 </template>
@@ -74,11 +76,6 @@ function handleClick(event: MouseEvent) {
 <style scoped>
 /* README prose styling */
 .readme {
-  --i18n-note: attr(data-i18n-note);
-  --i18n-tip: attr(data-i18n-tip);
-  --i18n-important: attr(data-i18n-important);
-  --i18n-warning: attr(data-i18n-warning);
-  --i18n-caution: attr(data-i18n-caution);
   color: var(--fg-muted);
   line-height: 1.75;
   /* Prevent horizontal overflow on mobile */
@@ -343,7 +340,7 @@ function handleClick(event: MouseEvent) {
   background: rgba(59, 130, 246, 0.05);
 }
 .readme :deep(blockquote[data-callout='note']::before) {
-  content: var(--i18n-note);
+  content: var(--i18n-note, 'Note');
   color: #3b82f6;
 }
 .readme :deep(blockquote[data-callout='note']::after) {
@@ -358,7 +355,7 @@ function handleClick(event: MouseEvent) {
   background: rgba(34, 197, 94, 0.05);
 }
 .readme :deep(blockquote[data-callout='tip']::before) {
-  content: var(--i18n-tip);
+  content: var(--i18n-tip, 'Tip');
   color: #22c55e;
 }
 .readme :deep(blockquote[data-callout='tip']::after) {
@@ -373,7 +370,7 @@ function handleClick(event: MouseEvent) {
   background: rgba(168, 85, 247, 0.05);
 }
 .readme :deep(blockquote[data-callout='important']::before) {
-  content: var(--i18n-important);
+  content: var(--i18n-important, 'Important');
   color: var(--syntax-fn);
 }
 .readme :deep(blockquote[data-callout='important']::after) {
@@ -388,7 +385,7 @@ function handleClick(event: MouseEvent) {
   background: rgba(234, 179, 8, 0.05);
 }
 .readme :deep(blockquote[data-callout='warning']::before) {
-  content: var(--i18n-warning);
+  content: var(--i18n-warning, 'Warning');
   color: #eab308;
 }
 .readme :deep(blockquote[data-callout='warning']::after) {
@@ -403,7 +400,7 @@ function handleClick(event: MouseEvent) {
   background: rgba(239, 68, 68, 0.05);
 }
 .readme :deep(blockquote[data-callout='caution']::before) {
-  content: var(--i18n-caution);
+  content: var(--i18n-caution, 'Caution');
   color: #ef4444;
 }
 .readme :deep(blockquote[data-callout='caution']::after) {
