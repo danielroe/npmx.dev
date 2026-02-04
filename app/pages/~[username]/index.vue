@@ -224,7 +224,7 @@ defineOgImageComponent('Default', {
       <p class="text-fg-muted mb-4">
         {{ error?.message ?? $t('user.page.failed_to_load') }}
       </p>
-      <LinkBase to="/">{{ $t('common.go_back_home') }}</LinkBase>
+      <LinkBase variant="button-secondary" to="/">{{ $t('common.go_back_home') }}</LinkBase>
     </div>
 
     <!-- Package list -->
