@@ -12,7 +12,7 @@ const props = withDefaults(
        * If you want a button use `TagButton` instead.
        * */
       type?: never
-      variant?: 'primary' | 'secondary'
+      variant?: 'primary' | 'secondary' | 'tag'
     } &
       /** This makes sure the link always has either `to` or `href` */
       (Required<Pick<NuxtLinkProps, 'to'>> | Required<Pick<NuxtLinkProps, 'href'>>) &
@@ -23,16 +23,28 @@ const props = withDefaults(
 </script>
 
 <template>
-  <!-- This is only a placeholder implementation yet. It will probably need some additional styling, but note: A disabled link is just text. -->
-  <span v-if="disabled" class="opacity-50"><slot /></span>
+  <span
+    v-if="disabled"
+    class="opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border border-border rounded-md"
+    :class="{
+      'text-sm px-4 py-2': variant !== 'tag',
+      'text-xs px-2 py-0.5': variant === 'tag',
+      'bg-bg-muted text-fg-muted': variant === 'tag',
+      'text-bg bg-fg': variant === 'primary',
+      'bg-transparent text-fg': variant === 'secondary',
+    }"
+    ><slot
+  /></span>
   <NuxtLink
     v-else
-    class="inline-flex gap-x-1 items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md transition-all duration-200"
-    :class="[
-      variant === 'primary'
-        ? 'text-bg bg-fg hover:enabled:(bg-fg/90)'
-        : 'bg-transparent text-fg hover:enabled:(bg-fg text-bg border-fg)',
-    ]"
+    class="cursor-pointer inline-flex gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 aria-current:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))"
+    :class="{
+      'text-sm px-4 py-2': variant !== 'tag',
+      'text-xs px-2 py-0.5': variant === 'tag',
+      'bg-bg-muted text-fg-muted hover:(text-fg border-border-hover)': variant === 'tag',
+      'text-bg bg-fg hover:(bg-fg/90)': variant === 'primary',
+      'bg-transparent text-fg hover:(bg-fg text-bg border-fg)': variant === 'secondary',
+    }"
   >
     <slot />
   </NuxtLink>
