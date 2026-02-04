@@ -36,6 +36,14 @@ useHead({
     'lang': () => locale.value,
     'dir': () => localeMap[locale.value] ?? 'ltr',
     'data-kbd-hints': () => showKbdHints.value,
+    /**
+     * npmx default theme is dark. But on initial load we don't know the user's preference yet.
+     * Without this attribute being set here, no theme gets loaded, regardless of user's preference,
+     * and a white page flashes before the correct theme is applied. Setting it to 'light' here
+     * doesn't prevent the flash of white page for dark mode users, but at least the page doesn't
+     * look broken while loading and white mode users get the correct theme immediately.
+     */
+    'data-theme': () => 'light',
   },
   titleTemplate: titleChunk => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
