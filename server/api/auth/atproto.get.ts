@@ -6,6 +6,7 @@ import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { SLINGSHOT_HOST } from '#shared/utils/constants'
 import { useServerSession } from '#server/utils/server-session'
 import type { PublicUserSession } from '#shared/schemas/publicUserSession'
+import { handleResolver } from '#server/utils/atproto/oauth'
 
 interface ProfileRecord {
   avatar?: {
@@ -35,6 +36,7 @@ export default defineEventHandler(async event => {
     sessionStore,
     clientMetadata,
     requestLock: getOAuthLock(),
+    handleResolver,
   })
 
   if (!query.code) {
@@ -96,6 +98,16 @@ export default defineEventHandler(async event => {
       public: {
         ...miniDoc,
         avatar,
+      },
+    })
+  } else {
+    //If slingshot fails we still want to set some key info we need.
+    const pdsBase = (await authSession.getTokenInfo()).aud
+    await session.update({
+      public: {
+        did: authSession.did,
+        handle: 'Not available',
+        pds: pdsBase,
       },
     })
   }
