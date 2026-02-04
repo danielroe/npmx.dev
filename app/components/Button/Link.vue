@@ -45,6 +45,8 @@ const props = withDefaults(
       'text-bg bg-fg hover:(bg-fg/90)': variant === 'primary',
       'bg-transparent text-fg hover:(bg-fg text-bg border-fg)': variant === 'secondary',
     }"
+    :to="to"
+    :href="href"
   >
     <slot />
   </NuxtLink>
