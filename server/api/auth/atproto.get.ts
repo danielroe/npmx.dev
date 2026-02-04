@@ -19,7 +19,8 @@ export default defineEventHandler(async event => {
   const query = getQuery(event)
   const rawReturnTo = query.returnTo?.toString() || '/'
   // Validate returnTo is a safe relative path (prevent open redirect)
-  const isRelativePath = rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//') && !rawReturnTo.includes(':')
+  const isRelativePath =
+    rawReturnTo.startsWith('/') && !rawReturnTo.startsWith('//') && !rawReturnTo.includes(':')
   const returnTo = isRelativePath ? rawReturnTo : '/'
 
   setCookie(event, 'auth_return_to', returnTo, {
