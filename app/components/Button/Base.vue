@@ -21,14 +21,11 @@ defineExpose({
 <template>
   <button
     ref="el"
-    class="inline-flex gap-x-1 items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md transition-all duration-200 focus-ring active:scale-98 disabled:(opacity-40 cursor-not-allowed hover:bg-transparent hover:text-fg)"
+    class="inline-flex gap-x-1 items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md transition-all duration-200 focus-ring active:scale-98 disabled:(opacity-40 cursor-not-allowed)"
     :class="[
       variant === 'primary'
-        ? 'text-bg bg-fg hover:bg-fg/90'
-        : 'bg-transparent text-fg hover:(bg-fg hover:text-bg border-fg)',
-      {
-        'opacity-50 cursor-not-allowed': disabled,
-      },
+        ? 'text-bg bg-fg hover:enabled:(bg-fg/90)'
+        : 'bg-transparent text-fg hover:enabled:(bg-fg text-bg border-fg)',
     ]"
     :type="props.type"
     :disabled="disabled ? true : undefined"

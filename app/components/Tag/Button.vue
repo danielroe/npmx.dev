@@ -13,14 +13,11 @@ const props = defineProps<{
 
 <template>
   <button
-    class="inline-flex items-center px-2 py-0.5 text-xs font-mono border rounded transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+    class="inline-flex items-center px-2 py-0.5 text-xs font-mono border rounded transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1 disabled:(opacity-50 cursor-not-allowed)"
     :class="[
       pressed
-        ? 'bg-fg text-bg border-fg hover:(text-text-bg/50)'
-        : 'bg-bg-muted text-fg-muted border-border hover:(text-fg border-border-hover)',
-      {
-        'opacity-50 cursor-not-allowed': disabled,
-      },
+        ? 'bg-fg text-bg border-fg hover:enabled:(text-text-bg/50)'
+        : 'bg-bg-muted text-fg-muted border-border hover:enabled:(text-fg border-border-hover)',
     ]"
     type="button"
     :disabled="disabled ? true : undefined"
