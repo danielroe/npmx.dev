@@ -332,7 +332,7 @@ export default defineCachedEventHandler(
     }
   },
   {
-    maxAge: 0,
+    maxAge: CACHE_MAX_AGE_ONE_HOUR,
     swr: true,
     getKey: event => {
       const type = getRouterParam(event, 'type') ?? 'version'
