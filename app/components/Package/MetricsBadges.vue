@@ -12,7 +12,7 @@ const { data: analysis, status } = usePackageAnalysis(
   () => props.version,
 )
 
-const isLoading = computed(() => status.value === 'pending')
+const isLoading = computed(() => status.value !== 'error' && !analysis.value)
 
 // ESM support
 const hasEsm = computed(() => {
