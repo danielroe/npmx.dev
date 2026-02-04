@@ -118,14 +118,17 @@ useHead({
       </component>
 
       <!-- Actions slot for buttons or other elements -->
-      <slot name="actions" />
+      <div class="pe-1">
+        <slot name="actions" />
+      </div>
     </div>
 
     <div
       :id="contentId"
       class="grid ms-6 transition-[grid-template-rows] duration-200 ease-in-out collapsible-content overflow-hidden"
+      :inert="!isOpen"
     >
-      <div class="min-h-0 min-w-0">
+      <div class="min-h-0 min-w-0 p-1">
         <slot />
       </div>
     </div>

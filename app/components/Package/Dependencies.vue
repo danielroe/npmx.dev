@@ -75,7 +75,7 @@ const sortedOptionalDependencies = computed(() => {
       id="dependencies"
       :title="$t('package.dependencies.title', { count: sortedDependencies.length })"
     >
-      <ul class="space-y-1 list-none m-0 px-1" :aria-label="$t('package.dependencies.list_label')">
+      <ul class="space-y-1 list-none m-0" :aria-label="$t('package.dependencies.list_label')">
         <li
           v-for="[dep, version] in sortedDependencies.slice(0, depsExpanded ? undefined : 10)"
           :key="dep"
@@ -166,10 +166,7 @@ const sortedOptionalDependencies = computed(() => {
         })
       "
     >
-      <ul
-        class="space-y-1 list-none m-0 p-0"
-        :aria-label="$t('package.peer_dependencies.list_label')"
-      >
+      <ul class="space-y-1 list-none m-0" :aria-label="$t('package.peer_dependencies.list_label')">
         <li
           v-for="peer in sortedPeerDependencies.slice(0, peerDepsExpanded ? undefined : 10)"
           :key="peer.name"
@@ -230,7 +227,7 @@ const sortedOptionalDependencies = computed(() => {
       "
     >
       <ul
-        class="space-y-1 list-none m-0 p-0"
+        class="space-y-1 list-none m-0"
         :aria-label="$t('package.optional_dependencies.list_label')"
       >
         <li

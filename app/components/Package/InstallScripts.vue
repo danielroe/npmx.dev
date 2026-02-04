@@ -31,7 +31,7 @@ const isExpanded = shallowRef(false)
         <dt class="font-mono text-xs text-fg-muted">{{ scriptName }}</dt>
         <dd
           tabindex="0"
-          class="font-mono text-sm text-fg-subtle m-0 truncate focus:whitespace-normal focus:overflow-visible cursor-help rounded focus-visible:outline-accent/70"
+          class="font-mono text-sm text-fg-subtle m-0 truncate focus:whitespace-normal focus:overflow-visible cursor-help rounded focus-visible:(outline-2 outline-accent outline-offset-2)"
           :title="installScripts.content?.[scriptName]"
         >
           {{ installScripts.content?.[scriptName] || $t('package.install_scripts.script_label') }}

@@ -311,7 +311,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
         :href="`https://majors.nullvoxpopuli.com/q?packages=${packageName}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1"
+        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
         :title="$t('package.downloads.community_distribution')"
       >
         <span class="i-carbon:load-balancer-network w-3.5 h-3.5" aria-hidden="true" />

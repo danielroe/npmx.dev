@@ -202,7 +202,7 @@ const config = computed(() => {
         <button
           type="button"
           @click="openChartModal"
-          class="link-subtle font-mono text-sm inline-flex items-center gap-1.5 ms-auto shrink-0 self-center focus-visible:outline-accent/70 rounded"
+          class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
           :title="$t('package.downloads.analyze')"
         >
           <span class="i-carbon:data-analytics w-4 h-4" aria-hidden="true" />
