@@ -140,3 +140,6 @@ jobs:
 
       - name: 🔍 Check for unused code
         run: pnpm knip
+
+      - name: 🧹 Check for unused production code
+        run: pnpm knip --production
