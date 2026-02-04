@@ -6,17 +6,16 @@
  * @see https://github.com/npm/registry/blob/main/docs/REGISTRY-API.md
  */
 
-import type { PackumentVersion } from '@npm/types'
+import type { Packument as PackumentWithLicenceBug, PackumentVersion } from '@npm/types'
 import type { ReadmeResponse } from './readme'
 
 // Re-export official npm types for packument/manifest
-export type {
-  Packument,
-  PackumentVersion,
-  Manifest,
-  ManifestVersion,
-  PackageJSON,
-} from '@npm/types'
+export type { PackumentVersion, Manifest, ManifestVersion, PackageJSON } from '@npm/types'
+
+export type Packument = Omit<PackumentWithLicenceBug, 'license'> & {
+  // Fix for license field being incorrectly typed in @npm/types
+  license?: string | { type: string; url?: string }
+}
 
 /** Install scripts info (preinstall, install, postinstall) */
 export interface InstallScriptsInfo {
