@@ -769,7 +769,7 @@ const config = computed(() => {
 </script>
 
 <template>
-  <div class="w-full relative" id="download-analytics">
+  <div class="w-full relative" id="download-analytics" :aria-busy="pending ? 'true' : 'false'">
     <div class="w-full mb-4 flex flex-col gap-3">
       <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-end">
         <div class="flex flex-col gap-1 sm:shrink-0">
@@ -787,6 +787,7 @@ const config = computed(() => {
               id="granularity"
               v-model="selectedGranularity"
               class="w-full bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none"
+              :disabled="pending"
             >
               <option value="daily">{{ $t('package.downloads.granularity_daily') }}</option>
               <option value="weekly">{{ $t('package.downloads.granularity_weekly') }}</option>
@@ -811,6 +812,7 @@ const config = computed(() => {
               <input
                 id="startDate"
                 v-model="startDate"
+                :disabled="pending"
                 type="date"
                 class="w-full min-w-0 bg-transparent font-mono text-sm text-fg outline-none [color-scheme:light] dark:[color-scheme:dark]"
               />
@@ -831,6 +833,7 @@ const config = computed(() => {
               <input
                 id="endDate"
                 v-model="endDate"
+                :disabled="pending"
                 type="date"
                 class="w-full min-w-0 bg-transparent font-mono text-sm text-fg outline-none [color-scheme:light] dark:[color-scheme:dark]"
               />
@@ -850,113 +853,121 @@ const config = computed(() => {
       </div>
     </div>
 
-    <ClientOnly v-if="chartData.dataset">
-      <div>
-        <VueUiXy :dataset="chartData.dataset" :config="config" class="[direction:ltr]">
-          <!-- Custom legend for multiple series -->
-          <template v-if="isMultiPackageMode" #legend="{ legend }">
-            <div class="flex gap-4 flex-wrap justify-center">
-              <!-- TODO:  a11y -->
-              <button
-                v-for="datapoint in legend"
-                :key="datapoint"
-                class="flex gap-1 place-items-center"
-                @click="datapoint.segregate()"
-              >
-                <div class="h-3 w-3">
-                  <svg viewBox="0 0 2 2" class="w-full">
-                    <rect x="0" y="0" width="2" height="2" rx="0.3" :fill="datapoint.color" />
-                  </svg>
-                </div>
-                <span
-                  :style="{
-                    textDecoration: datapoint.isSegregated ? 'line-through' : undefined,
-                  }"
+    <h2 id="download-analytics-title" class="sr-only">
+      {{ $t('package.downloads.title') }}
+    </h2>
+
+    <div role="region" aria-labelledby="download-analytics-title">
+      <ClientOnly v-if="chartData.dataset">
+        <div>
+          <VueUiXy :dataset="chartData.dataset" :config="config" class="[direction:ltr]">
+            <!-- Custom legend for multiple series -->
+            <template v-if="isMultiPackageMode" #legend="{ legend }">
+              <div class="flex gap-4 flex-wrap justify-center">
+                <button
+                  v-for="datapoint in legend"
+                  :key="datapoint.name"
+                  :aria-pressed="datapoint.isSegregated"
+                  :arial-label="datapoint.name"
+                  type="button"
+                  class="flex gap-1 place-items-center"
+                  @click="datapoint.segregate()"
                 >
-                  {{ datapoint.name }}
-                </span>
-              </button>
-            </div>
-          </template>
+                  <div class="h-3 w-3">
+                    <svg viewBox="0 0 2 2" class="w-full">
+                      <rect x="0" y="0" width="2" height="2" rx="0.3" :fill="datapoint.color" />
+                    </svg>
+                  </div>
+                  <span
+                    :style="{
+                      textDecoration: datapoint.isSegregated ? 'line-through' : undefined,
+                    }"
+                  >
+                    {{ datapoint.name }}
+                  </span>
+                </button>
+              </div>
+            </template>
 
-          <template #menuIcon="{ isOpen }">
-            <span v-if="isOpen" class="i-carbon:close w-6 h-6" aria-hidden="true" />
-            <span v-else class="i-carbon:overflow-menu-vertical w-6 h-6" aria-hidden="true" />
-          </template>
-          <template #optionCsv>
-            <span
-              class="i-carbon:csv w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-          <template #optionImg>
-            <span
-              class="i-carbon:png w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-          <template #optionSvg>
-            <span
-              class="i-carbon:svg w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
+            <template #menuIcon="{ isOpen }">
+              <span v-if="isOpen" class="i-carbon:close w-6 h-6" aria-hidden="true" />
+              <span v-else class="i-carbon:overflow-menu-vertical w-6 h-6" aria-hidden="true" />
+            </template>
+            <template #optionCsv>
+              <span
+                class="i-carbon:csv w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #optionImg>
+              <span
+                class="i-carbon:png w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #optionSvg>
+              <span
+                class="i-carbon:svg w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
 
-          <template #annotator-action-close>
-            <span
-              class="i-carbon:close w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-          <template #annotator-action-color="{ color }">
-            <span class="i-carbon:color-palette w-6 h-6" :style="{ color }" aria-hidden="true" />
-          </template>
-          <template #annotator-action-undo>
-            <span
-              class="i-carbon:undo w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-          <template #annotator-action-redo>
-            <span
-              class="i-carbon:redo w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-          <template #annotator-action-delete>
-            <span
-              class="i-carbon:trash-can w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-          <template #optionAnnotator="{ isAnnotator }">
-            <span
-              v-if="isAnnotator"
-              class="i-carbon:edit-off w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-            <span
-              v-else
-              class="i-carbon:edit w-6 h-6 text-fg-subtle"
-              style="pointer-events: none"
-              aria-hidden="true"
-            />
-          </template>
-        </VueUiXy>
-      </div>
+            <template #annotator-action-close>
+              <span
+                class="i-carbon:close w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #annotator-action-color="{ color }">
+              <span class="i-carbon:color-palette w-6 h-6" :style="{ color }" aria-hidden="true" />
+            </template>
+            <template #annotator-action-undo>
+              <span
+                class="i-carbon:undo w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #annotator-action-redo>
+              <span
+                class="i-carbon:redo w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #annotator-action-delete>
+              <span
+                class="i-carbon:trash-can w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #optionAnnotator="{ isAnnotator }">
+              <span
+                v-if="isAnnotator"
+                class="i-carbon:edit-off w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+              <span
+                v-else
+                class="i-carbon:edit w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+          </VueUiXy>
+        </div>
 
-      <template #fallback>
-        <div class="min-h-[260px]" />
-      </template>
-    </ClientOnly>
+        <template #fallback>
+          <div class="min-h-[260px]" />
+        </template>
+      </ClientOnly>
+    </div>
 
     <div
       v-if="shouldFetch && !chartData.dataset && !pending"
