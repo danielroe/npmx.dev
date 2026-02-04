@@ -1,3 +1,9 @@
+export type ShowcasedFramework = {
+  name: string
+  package: string
+  color: string
+}
+
 export const SHOWCASED_FRAMEWORKS = [
   {
     name: 'nuxt',
@@ -47,12 +53,12 @@ export const SHOWCASED_FRAMEWORKS = [
   },
 ]
 
-export type ShowcasedFramework = (typeof SHOWCASED_FRAMEWORKS)[number]['package']
+export type FrameworkPackageName = (typeof SHOWCASED_FRAMEWORKS)[number]['package']
 
-export function getFrameworkColor(framework: ShowcasedFramework): string {
+export function getFrameworkColor(framework: FrameworkPackageName): string {
   return SHOWCASED_FRAMEWORKS.find(f => f.package === framework)!.color
 }
 
-export function isListedFramework(name: string): name is ShowcasedFramework {
+export function isListedFramework(name: string): name is FrameworkPackageName {
   return SHOWCASED_FRAMEWORKS.some(f => f.package === name)
 }
