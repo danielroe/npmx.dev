@@ -80,7 +80,7 @@ jobs:
         run: pnpm install
 
       - name: 🧪 Unit tests
-        run: pnpm test:unit --project unit run --coverage
+        run: pnpm test:unit run --coverage --reporter=junit --outputFile=test-report.junit.xml
 
   test:
     name: 🧪 Component tests
@@ -105,7 +105,7 @@ jobs:
         run: pnpm playwright install chromium-headless-shell
 
       - name: 🧪 Component tests
-        run: pnpm vite test --project nuxt run --coverage
+        run: pnpm test:nuxt run --coverage --reporter=junit --outputFile=test-report.junit.xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5

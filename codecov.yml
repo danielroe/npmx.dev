@@ -1,0 +1,15 @@
+coverage:
+  status:
+    project:
+      default:
+        # Set to false to make this check informational only (won't fail)
+        informational: true
+    patch:
+      default:
+        # Set to false to make this check informational only (won't fail)
+        informational: true
+
+comment:
+  layout: 'reach,diff,flags,tree,components,tests,build'
+  behavior: default
+  require_changes: false
