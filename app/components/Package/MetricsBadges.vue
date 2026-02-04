@@ -54,13 +54,13 @@ const typesHref = computed(() => {
 <template>
   <ul v-if="analysis" class="flex items-center gap-1.5 list-none m-0 p-0">
     <!-- TypeScript types badge -->
-    <li v-if="!props.isBinary">
+    <li v-if="!props.isBinary" class="contents">
       <TooltipApp :text="typesTooltip">
         <component
           :is="typesHref ? NuxtLink : 'span'"
           :to="typesHref"
           :tabindex="!typesHref ? 0 : undefined"
-          class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded transition-colors duration-200 focus-visible:(outline-2 outline-accent)"
+          class="flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded transition-colors duration-200 focus-visible:(outline-2 outline-accent)"
           :class="[
             hasTypes
               ? 'text-fg-muted bg-bg-muted border border-border'
@@ -81,11 +81,11 @@ const typesHref = computed(() => {
     </li>
 
     <!-- ESM badge (show with X if missing) -->
-    <li>
+    <li class="contents">
       <TooltipApp :text="hasEsm ? $t('package.metrics.esm') : $t('package.metrics.no_esm')">
         <span
           tabindex="0"
-          class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded transition-colors duration-200 focus-visible:(outline-2 outline-accent)"
+          class="flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded transition-colors duration-200 focus-visible:(outline-2 outline-accent)"
           :class="
             hasEsm
               ? 'text-fg-muted bg-bg-muted border border-border'
@@ -103,11 +103,11 @@ const typesHref = computed(() => {
     </li>
 
     <!-- CJS badge (only show if present) -->
-    <li v-if="hasCjs">
+    <li v-if="hasCjs" class="contents">
       <TooltipApp :text="$t('package.metrics.cjs')">
         <span
           tabindex="0"
-          class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs text-fg-muted bg-bg-muted border border-border rounded transition-colors duration-200 focus-visible:(outline-2 outline-accent)"
+          class="flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs text-fg-muted bg-bg-muted border border-border rounded transition-colors duration-200 focus-visible:(outline-2 outline-accent)"
         >
           <span class="i-carbon-checkmark w-3 h-3" aria-hidden="true" />
           CJS
