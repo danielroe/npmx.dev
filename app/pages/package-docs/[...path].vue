@@ -274,7 +274,6 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
 
 .docs-content .docs-symbol-name {
   @apply font-mono text-lg font-semibold text-fg m-0;
-  word-break: break-word;
 }
 
 /* Badges */
@@ -472,6 +471,11 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
 
 .docs-content .docs-members pre code {
   @apply text-fg-muted;
-  overflow-x: auto;
+}
+
+.docs-content .docs-symbol-name,
+.docs-content .docs-members dl dd,
+.docs-content .docs-members dl dt code {
+  word-break: break-all;
 }
 </style>
