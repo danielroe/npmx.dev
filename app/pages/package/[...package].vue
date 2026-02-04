@@ -609,7 +609,9 @@ onKeyStroke(
                 <button
                   @click="likeAction"
                   type="button"
-                  :title="$t('package.likes.like')"
+                  :title="
+                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                  "
                   class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
                   :aria-label="
                     likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')

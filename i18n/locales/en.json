@@ -183,8 +183,7 @@
       "code": "code",
       "docs": "docs",
       "fund": "fund",
-      "compare": "compare",
-      "like": "like"
+      "compare": "compare"
     },
     "likes": {
       "like": "Like this package",
