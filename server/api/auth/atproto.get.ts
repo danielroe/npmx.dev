@@ -15,6 +15,15 @@ export default defineEventHandler(async event => {
   }
 
   const query = getQuery(event)
+  const returnTo = query.returnTo?.toString() || '/'
+
+  setCookie(event, 'auth_return_to', returnTo, {
+    maxAge: 60 * 5,
+    httpOnly: true,
+    // secure only if NOT in dev mode
+    secure: !import.meta.dev,
+  })
+
   const clientMetadata = getOauthClientMetadata()
   const { stateStore, sessionStore } = useOAuthStorage(event)
 
@@ -60,5 +69,8 @@ export default defineEventHandler(async event => {
 
   await session.update(miniDoc)
 
-  return sendRedirect(event, '/')
+  const returnToURL = getCookie(event, 'auth_return_to') || '/'
+  deleteCookie(event, 'auth_return_to')
+
+  return sendRedirect(event, returnToURL)
 })
