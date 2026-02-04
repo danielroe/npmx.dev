@@ -218,7 +218,8 @@
       "build_file": "Build File",
       "public_ledger": "Public Ledger",
       "transparency_log_entry": "Transparency log entry",
-      "view_more_details": "View more details"
+      "view_more_details": "View more details",
+      "error_loading": "Failed to load provenance details"
     },
     "keywords_title": "Keywords",
     "compatibility": "Compatibility",

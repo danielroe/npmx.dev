@@ -176,11 +176,15 @@ const {
   },
 )
 if (import.meta.client) {
-  watchEffect(() => {
-    if (displayVersion.value && hasProvenance(displayVersion.value)) {
-      fetchProvenance()
-    }
-  })
+  watch(
+    displayVersion,
+    v => {
+      if (v && hasProvenance(v) && provenanceStatus.value === 'idle') {
+        fetchProvenance()
+      }
+    },
+    { immediate: true },
+  )
 }
 
 const provenanceBadgeMounted = shallowRef(false)
@@ -1148,6 +1152,14 @@ defineOgImageComponent('Package', {
         </section>
       </section>
 
+      <!-- Error state: provenance exists but details failed to load -->
+      <div
+        v-else-if="provenanceStatus === 'error'"
+        class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
+      >
+        <span class="i-carbon:warning w-4 h-4" aria-hidden="true" />
+        <span>{{ $t('package.provenance_section.error_loading') }}</span>
+      </div>
       <div class="area-sidebar">
         <!-- Sidebar -->
         <div class="sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-hidden xl:(top-22) pt-1">
