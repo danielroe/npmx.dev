@@ -421,19 +421,28 @@ const likeAction = async () => {
 
   isLikeActionPending.value = true
 
-  const result = await togglePackageLike(packageName.value, currentlyLiked, user.value?.handle)
+  try {
+    const result = await togglePackageLike(packageName.value, currentlyLiked, user.value?.handle)
 
-  isLikeActionPending.value = false
+    isLikeActionPending.value = false
 
-  if (result.success) {
-    // Update with server response
-    likesData.value = result.data
-  } else {
+    if (result.success) {
+      // Update with server response
+      likesData.value = result.data
+    } else {
+      // Revert on error
+      likesData.value = {
+        totalLikes: currentLikes,
+        userHasLiked: currentlyLiked,
+      }
+    }
+  } catch {
     // Revert on error
     likesData.value = {
       totalLikes: currentLikes,
       userHasLiked: currentlyLiked,
     }
+    isLikeActionPending.value = false
   }
 }
 
