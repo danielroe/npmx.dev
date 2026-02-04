@@ -34,14 +34,14 @@ defineExpose({
         <h2 :id="modalTitleId" class="font-mono text-lg font-medium">
           {{ modalTitle }}
         </h2>
-        <button
+        <ButtonBase
           type="button"
           class="text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
           :aria-label="$t('common.close')"
           @click="handleModalClose"
         >
           <span class="i-carbon-close w-5 h-5" aria-hidden="true" />
-        </button>
+        </ButtonBase>
       </div>
       <!-- Modal body content -->
       <slot />
