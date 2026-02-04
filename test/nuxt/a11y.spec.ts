@@ -63,6 +63,8 @@ import {
   AppHeader,
   BaseCard,
   BuildEnvironment,
+  ButtonBase,
+  ButtonLink,
   CallToAction,
   CodeDirectoryListing,
   CodeFileTree,
@@ -281,6 +283,25 @@ describe('component accessibility audits', () => {
     })
   })
 
+  describe('ButtonBase', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(ButtonBase, {
+        slots: { default: 'Button content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations for disabled state', async () => {
+      const component = await mountSuspended(ButtonBase, {
+        props: { disabled: true },
+        slots: { default: 'Button content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
   describe('TagLink', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(TagLink, {
@@ -304,6 +325,35 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(TagLink, {
         props: { href: 'http://example.com', disabled: true },
         slots: { default: 'Tag content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('ButtonLink', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(ButtonLink, {
+        props: { href: 'http://example.com' },
+        slots: { default: 'Button link content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it("should have no accessibility violations when it's the current link", async () => {
+      const component = await mountSuspended(ButtonLink, {
+        props: { href: 'http://example.com', current: true },
+        slots: { default: 'Button link content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations when disabled (plain text)', async () => {
+      const component = await mountSuspended(ButtonLink, {
+        props: { href: 'http://example.com', disabled: true },
+        slots: { default: 'Button link content' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
