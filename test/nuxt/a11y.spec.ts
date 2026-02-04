@@ -3,7 +3,7 @@ import { mountSuspended } from '@nuxt/test-utils/runtime'
 import type { VueWrapper } from '@vue/test-utils'
 import 'axe-core'
 import type { AxeResults, RunOptions } from 'axe-core'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 // axe-core is a UMD module that exposes itself as window.axe in the browser
 declare const axe: {
@@ -56,6 +56,23 @@ afterEach(() => {
   mountedContainers.length = 0
 })
 
+// VueUiXy is imported directly in <script setup>, so global stubs cannot override it.
+// We mock the module itself to prevent vue-data-ui from mounting charts during tests
+// (it relies on DOM measurements and causes runtime errors in Vitest / Playwright).
+// This render-function stub avoids the Vue runtime-compiler warning and keeps slots working.
+vi.mock('vue-data-ui/vue-ui-xy', () => {
+  return {
+    VueUiXy: defineComponent({
+      name: 'VueUiXy',
+      inheritAttrs: false,
+      setup(_, { attrs, slots }) {
+        return () =>
+          h('div', { ...attrs, 'data-test-id': 'vue-ui-xy-stub' }, slots.default?.() ?? [])
+      },
+    }),
+  }
+})
+
 // Import components from #components where possible
 // For server/client variants, we need to import directly to test the specific variant
 import {
@@ -95,7 +112,6 @@ import {
   PackageCompatibility,
   PackageDependencies,
   PackageDeprecatedTree,
-  PackageDownloadAnalytics,
   PackageInstallScripts,
   PackageKeywords,
   PackageList,
@@ -138,6 +154,7 @@ import {
 // The #components import automatically provides the client variant
 import HeaderAccountMenuServer from '~/components/Header/AccountMenu.server.vue'
 import ToggleServer from '~/components/Settings/Toggle.server.vue'
+import PackageDownloadAnalytics from '~/components/Package/DownloadAnalytics.vue'
 
 describe('component accessibility audits', () => {
   describe('DateTime', () => {
@@ -518,8 +535,7 @@ describe('component accessibility audits', () => {
     ]
 
     it('should have no accessibility violations (non-modal)', async () => {
-      // Test only non-modal mode to avoid vue-data-ui chart rendering issues
-      const component = await mountSuspended(PackageDownloadAnalytics, {
+      const wrapper = await mountSuspended(PackageDownloadAnalytics, {
         props: {
           weeklyDownloads: mockWeeklyDownloads,
           packageName: 'vue',
@@ -527,12 +543,13 @@ describe('component accessibility audits', () => {
           inModal: false,
         },
       })
-      const results = await runAxe(component)
+
+      const results = await runAxe(wrapper)
       expect(results.violations).toEqual([])
     })
 
     it('should have no accessibility violations with empty data', async () => {
-      const component = await mountSuspended(PackageDownloadAnalytics, {
+      const wrapper = await mountSuspended(PackageDownloadAnalytics, {
         props: {
           weeklyDownloads: [],
           packageName: 'vue',
@@ -540,12 +557,10 @@ describe('component accessibility audits', () => {
           inModal: false,
         },
       })
-      const results = await runAxe(component)
+
+      const results = await runAxe(wrapper)
       expect(results.violations).toEqual([])
     })
-
-    // Note: Modal mode tests with inModal: true are skipped because vue-data-ui VueUiXy
-    // component has issues in the test environment (requires DOM measurements).
   })
 
   describe('PackagePlaygrounds', () => {
@@ -1452,6 +1467,13 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations with no packages', async () => {
       const component = await mountSuspended(CompareLineChart, {
         props: { packages: [] },
+        global: {
+          stubs: {
+            DownloadAnalytics: {
+              template: '<div data-test-id="download-analytics-stub"></div>',
+            },
+          },
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -1460,6 +1482,13 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations with packages selected', async () => {
       const component = await mountSuspended(CompareLineChart, {
         props: { packages: ['vue', 'react'] },
+        global: {
+          stubs: {
+            DownloadAnalytics: {
+              template: '<div data-test-id="download-analytics-stub"></div>',
+            },
+          },
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
