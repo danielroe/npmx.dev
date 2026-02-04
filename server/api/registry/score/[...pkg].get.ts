@@ -1,8 +1,6 @@
 import * as v from 'valibot'
 import { PackageRouteParamsSchema } from '#shared/schemas/package'
-import { CACHE_MAX_AGE_ONE_HOUR } from '#shared/utils/constants'
-
-const NPMS_API = 'https://api.npms.io/v2/package'
+import { CACHE_MAX_AGE_ONE_HOUR, NPMS_API } from '#shared/utils/constants'
 
 export interface NpmsScore {
   final: number

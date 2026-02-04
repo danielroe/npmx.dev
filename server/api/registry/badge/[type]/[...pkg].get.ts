@@ -1,7 +1,7 @@
 import * as v from 'valibot'
 import { createError, getRouterParam, getQuery, setHeader } from 'h3'
 import { PackageRouteParamsSchema } from '#shared/schemas/package'
-import { CACHE_MAX_AGE_ONE_HOUR, ERROR_NPM_FETCH_FAILED } from '#shared/utils/constants'
+import { CACHE_MAX_AGE_ONE_HOUR, ERROR_NPM_FETCH_FAILED, NPMS_API } from '#shared/utils/constants'
 import { fetchNpmPackage } from '#server/utils/npm'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { handleApiError } from '#server/utils/error-handler'
@@ -9,7 +9,6 @@ import { handleApiError } from '#server/utils/error-handler'
 const NPM_DOWNLOADS_API = 'https://api.npmjs.org/downloads/point'
 const OSV_QUERY_API = 'https://api.osv.dev/v1/query'
 const BUNDLEPHOBIA_API = 'https://bundlephobia.com/api/size'
-const NPMS_API = 'https://api.npms.io/v2/package'
 
 const QUERY_SCHEMA = v.object({
   color: v.optional(v.string()),
