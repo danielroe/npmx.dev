@@ -495,7 +495,7 @@ defineOgImageComponent('Package', {
               :class="
                 copiedPkgName ? 'text-accent bg-accent/10' : 'text-fg-muted bg-bg border-border'
               "
-              :aria-label="$t('package.copy_name')"
+              :aria-label="copiedPkgName ? $t('common.copied') : $t('package.copy_name')"
             >
               <span
                 :class="copiedPkgName ? 'i-carbon:checkmark' : 'i-carbon:copy'"
