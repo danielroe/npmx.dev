@@ -125,16 +125,6 @@ export default defineConfig({
     // Focus states - subtle but accessible
     ['focus-ring', 'outline-none focus-visible:(ring-2 ring-fg/10 ring-offset-2)'],
 
-    // Buttons
-    [
-      'btn',
-      'inline-flex items-center justify-center px-4 py-2 font-mono text-sm border border-border rounded-md bg-transparent text-fg transition-all duration-200 hover:(bg-fg hover:text-bg border-fg) focus-ring active:scale-98 disabled:(opacity-40 cursor-not-allowed hover:bg-transparent hover:text-fg)',
-    ],
-    [
-      'btn-ghost',
-      'inline-flex items-center justify-center px-3 py-1.5 font-mono text-sm text-fg-muted bg-transparent transition-all duration-200 hover:text-fg focus-ring',
-    ],
-
     // Links
     [
       'link',
