@@ -1,5 +1,4 @@
 import type { Packument, PackumentVersion } from '#shared/types'
-import type { RepositoryInfo } from '#shared/utils/git-providers'
 import { joinURL } from 'ufo'
 
 const SPARKLINE_CHARS = [' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'] as const
@@ -126,19 +125,10 @@ export interface PackageMarkdownOptions {
   weeklyDownloads?: number
   dailyDownloads?: Array<{ day: string; downloads: number }>
   installSize?: number
-  repoInfo?: RepositoryInfo
 }
 
 export function generatePackageMarkdown(options: PackageMarkdownOptions): string {
-  const {
-    pkg,
-    version,
-    readme,
-    weeklyDownloads,
-    dailyDownloads,
-    installSize,
-    repoInfo: _repoInfo,
-  } = options
+  const { pkg, version, readme, weeklyDownloads, dailyDownloads, installSize } = options
 
   const lines: string[] = []
 
