@@ -620,7 +620,7 @@ defineOgImageComponent('Package', {
                   <SkeletonBlock class="w-16 h-5.5 rounded" />
                   <SkeletonBlock class="w-13 h-5.5 rounded" />
                   <SkeletonBlock class="w-13 h-5.5 rounded" />
-                  <div class="w-13 h5.5" />
+                  <SkeletonBlock class="w-13 h-5.5 rounded bg-bg-subtle" />
                 </div>
               </template>
             </ClientOnly>
