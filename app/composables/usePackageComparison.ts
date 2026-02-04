@@ -16,7 +16,7 @@ export interface PackageComparisonData {
   package: ComparisonPackage
   downloads?: number
   /** Total likes from atproto */
-  totalLikes: number
+  totalLikes?: number
   /** Package's own unpacked size (from dist.unpackedSize) */
   packageSize?: number
   /** Number of direct dependencies */
@@ -115,10 +115,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               $fetch<VulnerabilityTreeResult>(`/api/registry/vulnerabilities/${name}`).catch(
                 () => null,
               ),
-              $fetch<PackageLikes>(`/api/social/likes/${name}`).catch(() => ({
-                totalLikes: 0,
-                userHasLiked: false,
-              })),
+              $fetch<PackageLikes>(`/api/social/likes/${name}`).catch(() => null),
             ])
             const versionData = pkgData.versions[latestVersion]
             const packageSize = versionData?.dist?.unpackedSize
@@ -166,7 +163,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
                 deprecated: versionData?.deprecated,
               },
               isBinaryOnly: isBinary,
-              totalLikes: likes.totalLikes,
+              totalLikes: likes?.totalLikes,
             }
           } catch {
             return null
