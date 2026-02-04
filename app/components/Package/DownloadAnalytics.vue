@@ -620,13 +620,11 @@ const config = computed(() => {
             {{ $t('package.downloads.granularity') }}
           </label>
 
-          <div
-            class="flex items-center px-2.5 py-1.75 bg-bg-subtle border border-border rounded-md focus-within:(border-border-hover ring-2 ring-accent/70)"
-          >
+          <div class="flex items-center bg-bg-subtle border border-border rounded-md">
             <select
               id="granularity"
               v-model="selectedGranularity"
-              class="w-full bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none"
+              class="w-full px-2.5 py-1.75 bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none focus-visible:outline-accent/70"
             >
               <option value="daily">{{ $t('package.downloads.granularity_daily') }}</option>
               <option value="weekly">{{ $t('package.downloads.granularity_weekly') }}</option>
