@@ -5,7 +5,6 @@ import { NPM_MISSING_README_SENTINEL, ERROR_NPM_FETCH_FAILED } from '#shared/uti
 
 // Cache TTL matches the ISR config for /raw/** routes (60 seconds)
 const CACHE_MAX_AGE = 60
-import { parseRepositoryInfo } from '#shared/utils/git-providers'
 
 const NPM_API = 'https://api.npmjs.org'
 
@@ -212,15 +211,12 @@ export default defineEventHandler(async event => {
     fetchDownloadRange(packageName, 12),
   ])
 
-  const repoInfo = parseRepositoryInfo(packageData.repository)
-
   const markdown = generatePackageMarkdown({
     pkg: packageData,
     version: versionData,
     readme: readmeContent && readmeContent !== NPM_MISSING_README_SENTINEL ? readmeContent : null,
     weeklyDownloads: weeklyDownloadsData?.downloads,
     dailyDownloads: dailyDownloads ?? undefined,
-    repoInfo,
   })
 
   setHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
