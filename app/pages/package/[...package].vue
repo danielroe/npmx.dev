@@ -585,32 +585,34 @@ defineOgImageComponent('Package', {
 
           <!-- Package metrics (module format, types) -->
           <ClientOnly>
-            <PackageMetricsBadges
-              v-if="resolvedVersion"
-              :package-name="pkg.name"
-              :version="resolvedVersion"
-              :is-binary="isBinaryOnly"
-              class="self-baseline ms-1 sm:ms-2"
-            />
-
-            <!-- Package likes -->
-            <button
-              @click="likeAction"
-              type="button"
-              class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
-              :title="$t('package.links.like')"
-            >
-              <span
-                :class="
-                  likesData?.userHasLiked
-                    ? 'i-lucide-heart-minus text-red-500'
-                    : 'i-lucide-heart-plus'
-                "
-                class="w-4 h-4"
-                aria-hidden="true"
+            <div class="flex gap-2 sm:gap-3 flex-wrap">
+              <PackageMetricsBadges
+                v-if="resolvedVersion"
+                :package-name="pkg.name"
+                :version="resolvedVersion"
+                :is-binary="isBinaryOnly"
+                class="self-baseline ms-1 sm:ms-2"
               />
-              <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
-            </button>
+
+              <!-- Package likes -->
+              <button
+                @click="likeAction"
+                type="button"
+                class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
+                :title="$t('package.links.like')"
+              >
+                <span
+                  :class="
+                    likesData?.userHasLiked
+                      ? 'i-lucide-heart-minus text-red-500'
+                      : 'i-lucide-heart-plus'
+                  "
+                  class="w-4 h-4"
+                  aria-hidden="true"
+                />
+                <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
+              </button>
+            </div>
 
             <template #fallback>
               <div class="flex items-center gap-1.5 self-baseline ms-1 sm:ms-2">
