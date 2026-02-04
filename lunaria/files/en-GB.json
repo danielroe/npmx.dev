@@ -935,6 +935,9 @@
         "vulnerabilities": {
           "label": "Vulnerabilities",
           "description": "Known security vulnerabilities"
+        },
+        "totalLikes": {
+          "label": "Likes"
         }
       },
       "values": {

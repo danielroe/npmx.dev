@@ -44,6 +44,8 @@ export interface PackageComparisonData {
   }
   /** Whether this is a binary-only package (CLI without library entry points) */
   isBinaryOnly?: boolean
+  /** Total likes from atproto */
+  totalLikes: number
 }
 
 /**
@@ -104,7 +106,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
             if (!latestVersion) return null
 
             // Fetch fast additional data in parallel (optional - failures are ok)
-            const [downloads, analysis, vulns] = await Promise.all([
+            const [downloads, analysis, vulns, likes] = await Promise.all([
               $fetch<{ downloads: number }>(
                 `https://api.npmjs.org/downloads/point/last-week/${encodePackageName(name)}`,
               ).catch(() => null),
@@ -112,8 +114,11 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               $fetch<VulnerabilityTreeResult>(`/api/registry/vulnerabilities/${name}`).catch(
                 () => null,
               ),
+              $fetch<PackageLikes>(`/api/social/likes/${name}`).catch(() => ({
+                totalLikes: 0,
+                userHasLiked: false,
+              })),
             ])
-
             const versionData = pkgData.versions[latestVersion]
             const packageSize = versionData?.dist?.unpackedSize
 
@@ -160,6 +165,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
                 deprecated: versionData?.deprecated,
               },
               isBinaryOnly: isBinary,
+              totalLikes: likes.totalLikes,
             }
           } catch {
             return null
@@ -382,6 +388,14 @@ function computeFacetValue(
           ? t('compare.facets.values.deprecated')
           : t('compare.facets.values.not_deprecated'),
         status: isDeprecated ? 'bad' : 'good',
+      }
+    }
+    case 'totalLikes': {
+      if (data.totalLikes === undefined) return null
+      return {
+        raw: data.totalLikes,
+        display: formatCompactNumber(data.totalLikes),
+        status: 'neutral',
       }
     }
     // Coming soon facets
