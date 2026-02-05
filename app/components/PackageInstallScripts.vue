@@ -1,12 +1,20 @@
 <script setup lang="ts">
+import { getInstallScriptFilePath } from '~/utils/install-scripts'
+
 const props = defineProps<{
   packageName: string
+  version: string
   installScripts: {
     scripts: ('preinstall' | 'install' | 'postinstall')[]
     content?: Record<string, string>
     npxDependencies: Record<string, string>
   }
 }>()
+
+function getCodeLink(scriptContent: string): string {
+  const filePath = getInstallScriptFilePath(scriptContent)
+  return `/code/${props.packageName}/v/${props.version}/${filePath}`
+}
 
 const outdatedNpxDeps = useOutdatedDependencies(() => props.installScripts.npxDependencies)
 const hasNpxDeps = computed(() => Object.keys(props.installScripts.npxDependencies).length > 0)
@@ -32,11 +40,17 @@ const isExpanded = shallowRef(false)
       <div v-for="scriptName in installScripts.scripts" :key="scriptName">
         <dt class="font-mono text-xs text-fg-muted">{{ scriptName }}</dt>
         <dd
-          tabindex="0"
-          class="font-mono text-sm text-fg-subtle m-0 truncate focus:whitespace-normal focus:overflow-visible cursor-help rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="font-mono text-sm text-fg-subtle m-0 truncate rounded"
           :title="installScripts.content?.[scriptName]"
         >
-          {{ installScripts.content?.[scriptName] || $t('package.install_scripts.script_label') }}
+          <NuxtLink
+            v-if="installScripts.content?.[scriptName]"
+            :to="getCodeLink(installScripts.content[scriptName])"
+            class="hover:text-fg transition-colors duration-200 focus:whitespace-normal focus:overflow-visible focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          >
+            {{ installScripts.content[scriptName] }}
+          </NuxtLink>
+          <span v-else>{{ $t('package.install_scripts.script_label') }}</span>
         </dd>
       </div>
     </dl>
