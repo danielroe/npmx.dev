@@ -882,26 +882,28 @@ onKeyStroke(
               <span class="text-fg-muted">{{ getDependencyCount(displayVersion) }}</span>
 
               <!-- Separator and total transitive deps -->
-              <span class="text-fg-subtle mx-1">/</span>
+              <template v-if="getDependencyCount(displayVersion) > 0">
+                <span class="text-fg-subtle mx-1">/</span>
 
-              <ClientOnly>
-                <span
-                  v-if="
-                    vulnTreeStatus === 'pending' || (installSizeStatus === 'pending' && !vulnTree)
-                  "
-                  class="inline-flex items-center gap-1 text-fg-subtle"
-                >
+                <ClientOnly>
                   <span
-                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                    aria-hidden="true"
-                  />
-                </span>
-                <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
-                <span v-else class="text-fg-subtle">-</span>
-                <template #fallback>
-                  <span class="text-fg-subtle">-</span>
-                </template>
-              </ClientOnly>
+                    v-if="
+                      vulnTreeStatus === 'pending' || (installSizeStatus === 'pending' && !vulnTree)
+                    "
+                    class="inline-flex items-center gap-1 text-fg-subtle"
+                  >
+                    <span
+                      class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
+                  <span v-else class="text-fg-subtle">-</span>
+                  <template #fallback>
+                    <span class="text-fg-subtle">-</span>
+                  </template>
+                </ClientOnly>
+              </template>
 
               <a
                 v-if="getDependencyCount(displayVersion) > 0"
@@ -951,21 +953,23 @@ onKeyStroke(
               </span>
 
               <!-- Separator and install size -->
-              <span class="text-fg-subtle mx-1">/</span>
+              <template v-if="getDependencyCount(displayVersion) > 0">
+                <span class="text-fg-subtle mx-1">/</span>
 
-              <span
-                v-if="installSizeStatus === 'pending'"
-                class="inline-flex items-center gap-1 text-fg-subtle"
-              >
                 <span
-                  class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
-              </span>
-              <span v-else-if="installSize?.totalSize">
-                {{ formatBytes(installSize.totalSize) }}
-              </span>
-              <span v-else class="text-fg-subtle">-</span>
+                  v-if="installSizeStatus === 'pending'"
+                  class="inline-flex items-center gap-1 text-fg-subtle"
+                >
+                  <span
+                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                    aria-hidden="true"
+                  />
+                </span>
+                <span v-else-if="installSize?.totalSize">
+                  {{ formatBytes(installSize.totalSize) }}
+                </span>
+                <span v-else class="text-fg-subtle">-</span>
+              </template>
             </dd>
           </div>
 
