@@ -77,7 +77,7 @@ function openAuthModal() {
           :alt="npmUser || $t('account_menu.npm_cli')"
           width="24"
           height="24"
-          class="w-6 h-6 rounded-full ring-2 ring-bg"
+          class="w-6 h-6 rounded-full ring-2 ring-bg object-cover"
         />
         <span
           v-else-if="isNpmConnected"
@@ -93,7 +93,7 @@ function openAuthModal() {
           :alt="atprotoUser.handle"
           width="24"
           height="24"
-          class="w-6 h-6 rounded-full ring-2 ring-bg"
+          class="w-6 h-6 rounded-full ring-2 ring-bg object-cover"
           :class="hasBothConnections ? 'relative z-10' : ''"
         />
         <span
@@ -153,7 +153,7 @@ function openAuthModal() {
                 :alt="npmUser"
                 width="32"
                 height="32"
-                class="w-8 h-8 rounded-full"
+                class="w-8 h-8 rounded-full object-cover"
               />
               <span
                 v-else
@@ -196,7 +196,7 @@ function openAuthModal() {
                 :alt="atprotoUser.handle"
                 width="32"
                 height="32"
-                class="w-8 h-8 rounded-full"
+                class="w-8 h-8 rounded-full object-cover"
               />
               <span
                 v-else

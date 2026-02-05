@@ -243,7 +243,7 @@ onUnmounted(deactivate)
                   :alt="npmUser"
                   width="20"
                   height="20"
-                  class="w-5 h-5 rounded-full"
+                  class="w-5 h-5 rounded-full object-cover"
                 />
                 <span
                   v-else
@@ -262,7 +262,18 @@ onUnmounted(deactivate)
                 class="w-full flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200 text-start"
                 @click="handleShowAuth"
               >
-                <span class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center">
+                <img
+                  v-if="atprotoUser.avatar"
+                  :src="atprotoUser.avatar"
+                  :alt="atprotoUser.handle"
+                  width="20"
+                  height="20"
+                  class="w-5 h-5 rounded-full object-cover"
+                />
+                <span
+                  v-else
+                  class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center"
+                >
                   <span class="i-carbon-cloud w-3 h-3 text-fg-muted" aria-hidden="true" />
                 </span>
                 <span class="flex-1 truncate">@{{ atprotoUser.handle }}</span>
