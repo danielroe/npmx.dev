@@ -882,26 +882,28 @@ onKeyStroke(
               <span class="text-fg-muted">{{ getDependencyCount(displayVersion) }}</span>
 
               <!-- Separator and total transitive deps -->
-              <span class="text-fg-subtle mx-1">/</span>
+              <template v-if="getDependencyCount(displayVersion) !== totalDepsCount">
+                <span class="text-fg-subtle mx-1">/</span>
 
-              <ClientOnly>
-                <span
-                  v-if="
-                    vulnTreeStatus === 'pending' || (installSizeStatus === 'pending' && !vulnTree)
-                  "
-                  class="inline-flex items-center gap-1 text-fg-subtle"
-                >
+                <ClientOnly>
                   <span
-                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                    aria-hidden="true"
-                  />
-                </span>
-                <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
-                <span v-else class="text-fg-subtle">-</span>
-                <template #fallback>
-                  <span class="text-fg-subtle">-</span>
-                </template>
-              </ClientOnly>
+                    v-if="
+                      vulnTreeStatus === 'pending' || (installSizeStatus === 'pending' && !vulnTree)
+                    "
+                    class="inline-flex items-center gap-1 text-fg-subtle"
+                  >
+                    <span
+                      class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
+                  <span v-else class="text-fg-subtle">-</span>
+                  <template #fallback>
+                    <span class="text-fg-subtle">-</span>
+                  </template>
+                </ClientOnly>
+              </template>
 
               <a
                 v-if="getDependencyCount(displayVersion) > 0"
@@ -951,21 +953,23 @@ onKeyStroke(
               </span>
 
               <!-- Separator and install size -->
-              <span class="text-fg-subtle mx-1">/</span>
+              <template v-if="getDependencyCount(displayVersion) > 0">
+                <span class="text-fg-subtle mx-1">/</span>
 
-              <span
-                v-if="installSizeStatus === 'pending'"
-                class="inline-flex items-center gap-1 text-fg-subtle"
-              >
                 <span
-                  class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
-              </span>
-              <span v-else-if="installSize?.totalSize">
-                {{ formatBytes(installSize.totalSize) }}
-              </span>
-              <span v-else class="text-fg-subtle">-</span>
+                  v-if="installSizeStatus === 'pending'"
+                  class="inline-flex items-center gap-1 text-fg-subtle"
+                >
+                  <span
+                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                    aria-hidden="true"
+                  />
+                </span>
+                <span v-else-if="installSize?.totalSize">
+                  {{ formatBytes(installSize.totalSize) }}
+                </span>
+                <span v-else class="text-fg-subtle">-</span>
+              </template>
             </dd>
           </div>
 
@@ -1188,16 +1192,10 @@ onKeyStroke(
         <div
           class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)])"
         >
-          <!-- Maintainers (with admin actions when connected) -->
-          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
-
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
             <PackageAccessControls :package-name="pkg.name" />
           </ClientOnly>
-
-          <!-- Keywords -->
-          <PackageKeywords :keywords="displayVersion?.keywords" />
 
           <!-- Agent Skills -->
           <ClientOnly>
@@ -1246,6 +1244,12 @@ onKeyStroke(
             :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
             :optional-dependencies="displayVersion.optionalDependencies"
           />
+
+          <!-- Keywords -->
+          <PackageKeywords :keywords="displayVersion?.keywords" />
+
+          <!-- Maintainers (with admin actions when connected) -->
+          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
         </div>
       </div>
     </article>

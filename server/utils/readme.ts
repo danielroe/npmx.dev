@@ -265,6 +265,14 @@ function resolveImageUrl(url: string, packageName: string, repoInfo?: Repository
   return resolved
 }
 
+// Helper to prefix id attributes with 'user-content-'
+const prefixId = (tagName: string, attribs: sanitizeHtml.Attributes) => {
+  if (attribs.id && !attribs.id.startsWith('user-content-')) {
+    attribs.id = `user-content-${attribs.id.toLowerCase()}`
+  }
+  return { tagName, attribs }
+}
+
 export async function renderReadmeHtml(
   content: string,
   packageName: string,
@@ -398,14 +406,6 @@ ${html}
   marked.setOptions({ renderer })
 
   const rawHtml = marked.parse(content) as string
-
-  // Helper to prefix id attributes with 'user-content-'
-  const prefixId = (tagName: string, attribs: sanitizeHtml.Attributes) => {
-    if (attribs.id && !attribs.id.startsWith('user-content-')) {
-      attribs.id = `user-content-${attribs.id.toLowerCase()}`
-    }
-    return { tagName, attribs }
-  }
 
   const sanitized = sanitizeHtml(rawHtml, {
     allowedTags: ALLOWED_TAGS,
