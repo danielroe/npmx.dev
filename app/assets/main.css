@@ -255,7 +255,7 @@ select:focus-visible {
 /* Scrollbar styling for Firefox */
 @supports not selector(::-webkit-scrollbar) {
   * {
-    scrollbar-width: 8px;
+    scrollbar-width: thin;
   }
 }
 
