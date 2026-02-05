@@ -20,7 +20,7 @@ const { locale } = useI18n()
 <template>
   <main class="container flex-1 py-12 sm:py-16 w-full">
     <article class="max-w-3xl mx-auto">
-      <header class="mb-8 pb-8 border-b border-border">
+      <header class="mb-12">
         <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4 lowercase">
           {{ $t('cookie_policy.title') }}
         </h1>
@@ -46,14 +46,14 @@ const { locale } = useI18n()
         </p>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_1.title') }}
           </h2>
           <p>{{ $t('cookie_policy.section_1.p1') }}</p>
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_2.title') }}
           </h2>
           <p class="mb-4">
@@ -82,7 +82,7 @@ const { locale } = useI18n()
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_3.title') }}
           </h2>
           <p class="mb-4">
@@ -93,7 +93,7 @@ const { locale } = useI18n()
               <template #settings>
                 <NuxtLink
                   to="/settings"
-                  class="link-subtle font-mono text-xs min-h-11 inline-flex items-center gap-1 lowercase"
+                  class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
                 >
                   {{ $t('cookie_policy.section_3.settings') }}
                 </NuxtLink>
@@ -110,7 +110,7 @@ const { locale } = useI18n()
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_4.title') }}
           </h2>
           <p>
@@ -126,7 +126,7 @@ const { locale } = useI18n()
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_5.title') }}
           </h2>
           <p class="mb-4">
@@ -143,10 +143,17 @@ const { locale } = useI18n()
                 href="https://support.google.com/chrome/answer/95647?hl=en"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex justify-between items-center gap-1 p-3"
+                class="flex justify-start items-center gap-2 p-3"
               >
-                {{ $t('cookie_policy.section_5.chrome') }}
-                <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
+                <span aria-hidden="true" class="text-fg-subtle shrink-0">—</span>
+                <span class="flex justify-between items-center flex-grow-1">
+                  <span
+                    class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
+                  >
+                    {{ $t('cookie_policy.section_5.chrome') }}
+                  </span>
+                  <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
+                </span>
               </a>
             </li>
             <li>
@@ -154,10 +161,17 @@ const { locale } = useI18n()
                 href="https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex justify-between items-center gap-1 p-3"
+                class="flex justify-start items-center gap-2 p-3"
               >
-                {{ $t('cookie_policy.section_5.firefox') }}
-                <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
+                <span aria-hidden="true" class="text-fg-subtle shrink-0">—</span>
+                <span class="flex justify-between items-center flex-grow-1">
+                  <span
+                    class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
+                  >
+                    {{ $t('cookie_policy.section_5.firefox') }}
+                  </span>
+                  <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
+                </span>
               </a>
             </li>
             <li>
@@ -165,17 +179,24 @@ const { locale } = useI18n()
                 href="https://support.microsoft.com/en-us/windows/manage-cookies-in-microsoft-edge-view-allow-block-delete-and-use-168dab11-0753-043d-7c16-ede5947fc64d"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex justify-between items-center gap-1 p-3"
+                class="flex justify-start items-center gap-2 p-3"
               >
-                {{ $t('cookie_policy.section_5.edge') }}
-                <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
+                <span aria-hidden="true" class="text-fg-subtle shrink-0">—</span>
+                <span class="flex justify-between items-center flex-grow-1">
+                  <span
+                    class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
+                  >
+                    {{ $t('cookie_policy.section_5.edge') }}
+                  </span>
+                  <span class="i-carbon:launch rtl-flip w-5 h-5" aria-hidden="true"></span>
+                </span>
               </a>
             </li>
           </ul>
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_6.title') }}
           </h2>
           <p>
@@ -187,8 +208,11 @@ const { locale } = useI18n()
                   rel="noopener noreferrer"
                   class="inline-flex items-center gap-1"
                 >
-                  <span>{{ $t('cookie_policy.section_6.link') }}</span>
-                  <span class="i-carbon:launch rtl-flip w-3 h-3" aria-hidden="true"></span>
+                  <span
+                    class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
+                    >{{ $t('cookie_policy.section_6.link') }}</span
+                  >
+                  <span class="i-carbon:launch rtl-flip w-4 h-4" aria-hidden="true"></span>
                 </a>
               </template>
             </i18n-t>
@@ -196,7 +220,7 @@ const { locale } = useI18n()
         </section>
 
         <section class="mt-8">
-          <h2 class="text-xl font-medium text-fg mb-4 lowercase">
+          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('cookie_policy.section_7.title') }}
           </h2>
           <p>{{ $t('cookie_policy.section_7.p1') }}</p>
