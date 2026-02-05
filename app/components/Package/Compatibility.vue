@@ -23,16 +23,21 @@ function getName(engine: string): string {
 function getIcon(engine: string): string {
   return engineIcons[engine] || 'i-carbon:code'
 }
+
+const sortedEngines = computed(() => {
+  const entries = Object.entries(props.engines ?? {})
+  return entries.sort(([a], [b]) => a.localeCompare(b))
+})
 </script>
 <template>
   <CollapsibleSection
-    v-if="engines && Object.keys(engines).length"
+    v-if="sortedEngines.length"
     :title="$t('package.compatibility')"
     id="compatibility"
   >
     <dl class="space-y-2">
       <div
-        v-for="(version, engine) in engines"
+        v-for="[engine, version] in sortedEngines"
         :key="engine"
         class="flex justify-between gap-4 py-1"
       >
