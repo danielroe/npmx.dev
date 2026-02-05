@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import AppFooter from '~/components/AppFooter.vue'
 
-/* check [build-env module](./modules/build-env.ts)*/
+/* check nuxt module at modules/build-env.ts */
 describe('AppFooter', () => {
   it('BuildEnvironment is properly displayed at settings', async () => {
     const buildInfo = useAppConfig().buildInfo
