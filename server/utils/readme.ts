@@ -190,8 +190,9 @@ function slugify(text: string): string {
 function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
   if (!url) return url
   if (url.startsWith('#')) {
-    // Prefix anchor links to match heading IDs (avoids collision with page IDs)
-    return `#user-content-${url.slice(1)}`
+    // Prefix anchor links and lowercase to match heading IDs
+    // (slugify uses toLowerCase, and prefix avoids collision with page IDs)
+    return `#user-content-${url.slice(1).toLowerCase()}`
   }
   if (hasProtocol(url, { acceptRelative: true })) {
     try {

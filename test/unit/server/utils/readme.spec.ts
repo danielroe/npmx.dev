@@ -274,6 +274,21 @@ describe('Markdown File URL Resolution', () => {
 
       expect(result.html).toContain('href="#user-content-installation"')
     })
+
+    it('lowercases anchor links to match heading slugs', async () => {
+      const markdown = `[Jump to Installation](#Installation)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      // Anchor links should be lowercased to match heading IDs (slugify uses toLowerCase)
+      expect(result.html).toContain('href="#user-content-installation"')
+    })
+
+    it('lowercases mixed-case anchor links', async () => {
+      const markdown = `[Jump to Getting Started](#Getting-Started)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('href="#user-content-getting-started"')
+    })
   })
 
   describe('different git providers', () => {

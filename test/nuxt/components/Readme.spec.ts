@@ -1,13 +1,6 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import Readme from '~/components/Readme.vue'
-
-// Mock scrollToAnchor
-vi.mock('~/utils/scrollToAnchor', () => ({
-  scrollToAnchor: vi.fn(),
-}))
-
-import { scrollToAnchor } from '~/utils/scrollToAnchor'
 
 describe('Readme', () => {
   describe('rendering', () => {
@@ -20,27 +13,18 @@ describe('Readme', () => {
   })
 
   describe('hash link click handling', () => {
-    it('intercepts hash link clicks and calls scrollToAnchor with lowercase ID', async () => {
+    it('allows native browser handling for hash links (does not prevent default)', async () => {
       const component = await mountSuspended(Readme, {
         props: { html: '<a href="#Installation">Installation</a>' },
       })
 
       const link = component.find('a')
-      await link.trigger('click')
+      const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true })
+      link.element.dispatchEvent(clickEvent)
 
-      expect(scrollToAnchor).toHaveBeenCalledWith('installation')
-    })
-
-    it('handles user-content prefixed hash links', async () => {
-      vi.mocked(scrollToAnchor).mockClear()
-      const component = await mountSuspended(Readme, {
-        props: { html: '<a href="#user-content-getting-started">Getting Started</a>' },
-      })
-
-      const link = component.find('a')
-      await link.trigger('click')
-
-      expect(scrollToAnchor).toHaveBeenCalledWith('user-content-getting-started')
+      // Hash links should NOT have default prevented - browser handles them natively
+      // (Case normalization happens server-side when generating the href)
+      expect(clickEvent.defaultPrevented).toBe(false)
     })
   })
 })
