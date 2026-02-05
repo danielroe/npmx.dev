@@ -81,7 +81,7 @@ export default defineEventHandler(async event => {
         scope,
         prompt: create ? 'create' : undefined,
       })
-      return sendRedirect(event, redirectUrl.toString())
+      return redirectUrl
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Authentication failed.'
 
