@@ -5,7 +5,6 @@ import { debounce } from 'perfect-debounce'
 
 definePageMeta({
   name: 'org',
-  alias: ['/org/:org()'],
 })
 
 const route = useRoute('org')

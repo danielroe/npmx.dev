@@ -18,11 +18,6 @@ import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
 
-definePageMeta({
-  name: 'package',
-  alias: ['/:package(.*)*'],
-})
-
 defineOgImageComponent('Package', {
   name: () => packageName.value,
   version: () => requestedVersion.value ?? '',
@@ -564,7 +559,7 @@ onKeyStroke(
 
             <NuxtLink
               v-if="requestedVersion && resolvedVersion !== requestedVersion"
-              :to="{ name: 'package', params: { package: [pkg.name, 'v', resolvedVersion] } }"
+              :to="packageRoute(pkg.name, resolvedVersion)"
               :title="$t('package.view_permalink')"
               >{{ resolvedVersion }}</NuxtLink
             >

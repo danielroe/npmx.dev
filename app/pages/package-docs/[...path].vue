@@ -132,7 +132,7 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
           <div class="flex items-center gap-3 min-w-0">
             <NuxtLink
               v-if="packageName"
-              :to="{ name: 'package', params: { package: [packageName] } }"
+              :to="packageRoute(packageName)"
               class="font-mono text-lg sm:text-xl font-semibold text-fg hover:text-fg-muted transition-colors truncate"
             >
               {{ packageName }}
@@ -191,7 +191,7 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
             <div class="flex gap-4 mt-4">
               <NuxtLink
                 v-if="packageName"
-                :to="{ name: 'package', params: { package: [packageName] } }"
+                :to="packageRoute(packageName)"
                 class="link-subtle font-mono text-sm"
               >
                 View package

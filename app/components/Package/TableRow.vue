@@ -34,7 +34,7 @@ function isColumnVisible(id: string): boolean {
   return props.columns.find(c => c.id === id)?.visible ?? false
 }
 
-const packageUrl = computed(() => `/package/${pkg.value.name}`)
+const packageUrl = computed(() => packageRoute(pkg.value.name))
 
 const allMaintainersText = computed(() => {
   if (!pkg.value.maintainers?.length) return ''

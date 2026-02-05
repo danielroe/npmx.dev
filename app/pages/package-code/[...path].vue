@@ -212,15 +212,6 @@ const orgName = computed(() => {
   return match ? match[1] : null
 })
 
-// Build route object for package link (with optional version)
-function packageRoute(ver?: string | null) {
-  const segments = packageName.value.split('/')
-  if (ver) {
-    segments.push('v', ver)
-  }
-  return { name: 'package' as const, params: { package: segments } }
-}
-
 // Line number click handler - update URL hash without scrolling
 function handleLineClick(lineNum: number, event: MouseEvent) {
   let newHash: string
@@ -321,7 +312,7 @@ defineOgImageComponent('Default', {
         <!-- Package info and navigation -->
         <div class="flex items-center gap-2 mb-3 flex-wrap min-w-0">
           <NuxtLink
-            :to="packageRoute(version)"
+            :to="packageRoute(packageName, version)"
             class="font-mono text-lg font-medium hover:text-fg transition-colors min-w-0 truncate max-w-[60vw] sm:max-w-none"
             :title="packageName"
           >
@@ -379,7 +370,9 @@ defineOgImageComponent('Default', {
     <!-- Error: no version -->
     <div v-if="!version" class="container py-20 text-center">
       <p class="text-fg-muted mb-4">{{ $t('code.version_required') }}</p>
-      <NuxtLink :to="packageRoute()" class="btn">{{ $t('code.go_to_package') }}</NuxtLink>
+      <NuxtLink :to="packageRoute(packageName)" class="btn">{{
+        $t('code.go_to_package')
+      }}</NuxtLink>
     </div>
 
     <!-- Loading state -->
@@ -391,7 +384,9 @@ defineOgImageComponent('Default', {
     <!-- Error state -->
     <div v-else-if="treeStatus === 'error'" class="container py-20 text-center" role="alert">
       <p class="text-fg-muted mb-4">{{ $t('code.failed_to_load_tree') }}</p>
-      <NuxtLink :to="packageRoute(version)" class="btn">{{ $t('code.back_to_package') }}</NuxtLink>
+      <NuxtLink :to="packageRoute(packageName, version)" class="btn">{{
+        $t('code.back_to_package')
+      }}</NuxtLink>
     </div>
 
     <!-- Main content: file tree + file viewer -->
