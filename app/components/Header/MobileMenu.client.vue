@@ -4,7 +4,7 @@ import { useAtproto } from '~/composables/atproto/useAtproto'
 
 const isOpen = defineModel<boolean>('open', { default: false })
 
-const { isConnected, npmUser, avatar: npmAvatar } = useConnector()
+const { isConnected, isConnecting, npmUser, avatar: npmAvatar } = useConnector()
 const { user: atprotoUser } = useAtproto()
 
 const navRef = useTemplateRef('navRef')
@@ -253,6 +253,30 @@ onUnmounted(deactivate)
                 </span>
                 <span class="flex-1">~{{ npmUser }}</span>
                 <span class="w-2 h-2 rounded-full bg-green-500" aria-hidden="true" />
+              </button>
+
+              <!-- Connect npm CLI button (show if not connected) -->
+              <button
+                v-else
+                type="button"
+                class="w-full flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200 text-start"
+                @click="handleShowConnector"
+              >
+                <span class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center">
+                  <span
+                    v-if="isConnecting"
+                    class="i-carbon-circle-dash w-3 h-3 text-yellow-500 animate-spin"
+                    aria-hidden="true"
+                  />
+                  <span v-else class="i-carbon-terminal w-3 h-3 text-fg-muted" aria-hidden="true" />
+                </span>
+                <span class="flex-1">
+                  {{
+                    isConnecting
+                      ? $t('account_menu.connecting')
+                      : $t('account_menu.connect_npm_cli')
+                  }}
+                </span>
               </button>
 
               <!-- Atmosphere connection status -->
