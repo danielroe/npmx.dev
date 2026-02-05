@@ -85,6 +85,8 @@ function handleClick(event: MouseEvent) {
   /* Contain all children */
   overflow: hidden;
   min-width: 0;
+  /* Contain all children z-index values inside this container */
+  isolation: isolate;
 }
 
 /* README headings - styled by visual level (data-level), not semantic level */
@@ -402,6 +404,8 @@ function handleClick(event: MouseEvent) {
   display: revert-layer;
   border-radius: 8px;
   margin: 1rem 0;
+  position: relative;
+  z-index: 1;
 }
 
 .readme :deep(video) {
