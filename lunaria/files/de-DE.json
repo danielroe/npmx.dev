@@ -29,7 +29,7 @@
     "no_results": "Keine Pakete gefunden für \"{query}\"",
     "title": "Suche",
     "title_search": "Suche: {search}",
-    "title_packages": "Suche Packete",
+    "title_packages": "Suche Pakete",
     "meta_description": "Suchergebnisse für '{search}'",
     "meta_description_packages": "Suche nach npm-Paketen",
     "not_taken": "{name} ist noch frei",
