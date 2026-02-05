@@ -53,7 +53,8 @@ function handleClick(event: MouseEvent) {
   // Handle hash links for internal README navigation (e.g., Table of Contents)
   if (href.startsWith('#')) {
     event.preventDefault()
-    const id = href.slice(1) // Remove the leading '#'
+    // Lowercase the ID to match heading slugs (generated with toLowerCase in slugify)
+    const id = href.slice(1).toLowerCase()
     scrollToAnchor(id)
     return
   }
