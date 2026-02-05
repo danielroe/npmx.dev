@@ -45,7 +45,7 @@ export default defineEventHandler(async event => {
         //Get counts of records that reference this repo in the atmosphere using constellation
         const { data: allLinks } = await constellation.getAllLinks(atUri)
         stars = allLinks.links['sh.tangled.feed.star']?.['.subject']?.distinct_dids ?? stars
-        forks = allLinks.links['sh.tangled.repo']?.['.source']?.distinct_dids ?? stars
+        forks = allLinks.links['sh.tangled.repo']?.['.source']?.distinct_dids ?? 0
       } catch {
         //failing silently since this is just an enhancement to the information already showing
       }
