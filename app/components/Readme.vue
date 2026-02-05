@@ -409,6 +409,19 @@ function handleClick(event: MouseEvent) {
   display: revert-layer;
 }
 
+/* Override HTML align attribute float behavior on images and containers.
+   Matches npm registry behavior: display as block instead of floating. */
+.readme :deep(img[align='right']),
+.readme :deep(img[align='left']) {
+  float: none;
+}
+
+.readme :deep(div[align='right']),
+.readme :deep(div[align='left']) {
+  float: none;
+  text-align: start;
+}
+
 .readme :deep(hr) {
   border: none;
   border-top: 1px solid var(--border);
