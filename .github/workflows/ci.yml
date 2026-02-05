@@ -36,8 +36,13 @@ jobs:
         with:
           cache: true
 
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+
       - name: 📦 Install dependencies (root only, no scripts)
-        run: pnpm install --filter . --ignore-scripts
+        run: pnpm install --ignore-scripts
 
       - name: 🔠 Lint project
         run: pnpm lint
@@ -57,6 +62,11 @@ jobs:
         name: 🟧 Install pnpm
         with:
           cache: true
+
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 📦 Install dependencies
         run: pnpm install
@@ -79,6 +89,11 @@ jobs:
         name: 🟧 Install pnpm
         with:
           cache: true
+
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 📦 Install dependencies
         run: pnpm install
@@ -107,6 +122,11 @@ jobs:
         name: 🟧 Install pnpm
         with:
           cache: true
+
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 📦 Install dependencies
         run: pnpm install
@@ -146,6 +166,11 @@ jobs:
         with:
           cache: true
 
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+
       - name: 📦 Install dependencies
         run: pnpm install
 
@@ -174,6 +199,11 @@ jobs:
         with:
           cache: true
 
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+
       - name: 📦 Install dependencies
         run: pnpm install
 
@@ -201,6 +231,11 @@ jobs:
         name: 🟧 Install pnpm
         with:
           cache: true
+
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
+        with:
+          path: node_modules
+          key: node-modules-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
 
       - name: 📦 Install dependencies
         run: pnpm install
