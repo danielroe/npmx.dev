@@ -108,6 +108,8 @@ export default defineNuxtConfig({
       },
     },
     // pages
+    '/package/:name': { isr: getISRConfig(60, true) },
+    '/package/:name/v/:version': { isr: getISRConfig(60, true) },
     '/package/:org/:name': { isr: getISRConfig(60, true) },
     '/package/:org/:name/v/:version': { isr: getISRConfig(60, true) },
     // infinite cache (versioned - doesn't change)
