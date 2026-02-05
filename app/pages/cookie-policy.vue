@@ -12,6 +12,9 @@ defineOgImageComponent('Default', {
   title: () => $t('cookie_policy.title'),
   description: () => $t('cookie_policy.welcome', { app: 'npmx' }),
 })
+
+const buildInfo = useAppConfig().buildInfo
+const { locale } = useI18n()
 </script>
 
 <template>
@@ -21,14 +24,16 @@ defineOgImageComponent('Default', {
         <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4 lowercase">
           {{ $t('cookie_policy.title') }}
         </h1>
-        <p class="text-fg-muted">
-          {{
-            $t('cookie_policy.last_updated', {
-              date: '', // Placeholder, NuxtTime handles the date
-            })
-          }}
-          <NuxtTime :datetime="new Date('2025-07-03')" date-style="long" />
-        </p>
+        <i18n-t keypath="cookie_policy.last_updated" tag="p" scope="global" class="text-fg-muted">
+          <template #date>
+            <NuxtTime
+              :locale
+              :datetime="buildInfo.cookiePolicyDate"
+              date-style="long"
+              time-style="medium"
+            />
+          </template>
+        </i18n-t>
       </header>
 
       <div class="prose prose-invert max-w-none text-fg-muted">
