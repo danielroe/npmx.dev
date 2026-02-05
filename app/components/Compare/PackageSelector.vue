@@ -75,7 +75,7 @@ function handleBlur() {
           :aria-label="$t('compare.selector.remove_package', { package: pkg })"
           @click="removePackage(pkg)"
         >
-          <span class="i-carbon:close w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-carbon:close flex items-center w-3.5 h-3.5" aria-hidden="true" />
         </button>
       </div>
     </div>
