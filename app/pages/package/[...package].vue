@@ -72,7 +72,7 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
 
 //copy README file as Markdown
 const { copied: copiedReadme, copy: copyReadme } = useClipboard({
-  source: readmeData.value?.md ?? '',
+  source: () => readmeData.value?.md?.trim() ?? '',
   copiedDuring: 2000,
 })
 
@@ -1140,7 +1140,7 @@ onKeyStroke(
               <!-- Copy readme as Markdown button -->
               <TooltipApp
                 v-if="readmeData?.md"
-                :text="copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')"
+                :text="$t('package.readme.copy_as_markdown')"
                 position="bottom"
               >
                 <button
