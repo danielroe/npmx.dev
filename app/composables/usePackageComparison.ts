@@ -12,6 +12,20 @@ import { isBinaryOnlyPackage } from '#shared/utils/binary-detection'
 import { formatBytes } from '~/utils/formatters'
 import { getDependencyCount } from '~/utils/npm/dependency-count'
 
+/** Special identifier for the "What Would James Do?" comparison column */
+export const NO_DEPENDENCY_ID = '__no_dependency__'
+
+/**
+ * Special display values for the "no dependency" column.
+ * These are explicit markers that get special rendering treatment.
+ */
+export const NoDependencyDisplay = {
+  /** Display as "–" (en-dash) */
+  DASH: '__display_dash__',
+  /** Display as "Up to you!" with good status */
+  UP_TO_YOU: '__display_up_to_you__',
+} as const
+
 export interface PackageComparisonData {
   package: ComparisonPackage
   downloads?: number
@@ -47,6 +61,8 @@ export interface PackageComparisonData {
   }
   /** Whether this is a binary-only package (CLI without library entry points) */
   isBinaryOnly?: boolean
+  /** Marks this as the "no dependency" column for special display */
+  isNoDependency?: boolean
 }
 
 /**
@@ -79,8 +95,15 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
       return
     }
 
-    // Only fetch packages not already cached
-    const namesToFetch = names.filter(name => !cache.value.has(name))
+    // Handle "no dependency" column - add to cache immediately
+    if (names.includes(NO_DEPENDENCY_ID) && !cache.value.has(NO_DEPENDENCY_ID)) {
+      const newCache = new Map(cache.value)
+      newCache.set(NO_DEPENDENCY_ID, createNoDependencyData())
+      cache.value = newCache
+    }
+
+    // Only fetch packages not already cached (excluding "no dep" which has no remote data)
+    const namesToFetch = names.filter(name => name !== NO_DEPENDENCY_ID && !cache.value.has(name))
 
     if (namesToFetch.length === 0) {
       status.value = 'success'
@@ -111,10 +134,12 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               $fetch<{ downloads: number }>(
                 `https://api.npmjs.org/downloads/point/last-week/${encodePackageName(name)}`,
               ).catch(() => null),
-              $fetch<PackageAnalysisResponse>(`/api/registry/analysis/${name}`).catch(() => null),
-              $fetch<VulnerabilityTreeResult>(`/api/registry/vulnerabilities/${name}`).catch(
-                () => null,
-              ),
+              $fetch<PackageAnalysisResponse>(
+                `/api/registry/analysis/${encodePackageName(name)}`,
+              ).catch(() => null),
+              $fetch<VulnerabilityTreeResult>(
+                `/api/registry/vulnerabilities/${encodePackageName(name)}`,
+              ).catch(() => null),
               $fetch<PackageLikes>(`/api/social/likes/${name}`).catch(() => null),
             ])
             const versionData = pkgData.versions[latestVersion]
@@ -155,7 +180,10 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
                 severity: vulnsSeverity,
               },
               metadata: {
-                license: pkgData.license,
+                license:
+                  typeof pkgData.license === 'object' && 'type' in pkgData.license
+                    ? pkgData.license.type
+                    : pkgData.license,
                 // Use version-specific publish time, NOT time.modified (which can be
                 // updated by metadata changes like maintainer additions)
                 lastUpdated: pkgData.time?.[latestVersion],
@@ -192,7 +220,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               selfSize: number
               totalSize: number
               dependencyCount: number
-            }>(`/api/registry/install-size/${name}`)
+            }>(`/api/registry/install-size/${encodePackageName(name)}`)
 
             // Update cache with install size
             const existing = cache.value.get(name)
@@ -259,14 +287,70 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   }
 }
 
+/**
+ * Creates mock data for the "What Would James Do?" comparison column.
+ * This represents the baseline of having no dependency at all.
+ *
+ * Uses explicit display markers (NoDependencyDisplay) instead of undefined
+ * to clearly indicate intentional special values vs missing data.
+ */
+function createNoDependencyData(): PackageComparisonData {
+  return {
+    package: {
+      name: NO_DEPENDENCY_ID,
+      version: '',
+      description: undefined,
+    },
+    isNoDependency: true,
+    downloads: undefined,
+    packageSize: 0,
+    directDeps: 0,
+    installSize: {
+      selfSize: 0,
+      totalSize: 0,
+      dependencyCount: 0,
+    },
+    analysis: undefined,
+    vulnerabilities: undefined,
+    metadata: {
+      license: NoDependencyDisplay.DASH,
+      lastUpdated: NoDependencyDisplay.UP_TO_YOU,
+      engines: undefined,
+      deprecated: undefined,
+    },
+  }
+}
+
+/**
+ * Converts a special display marker to its FacetValue representation.
+ */
+function resolveNoDependencyDisplay(
+  marker: string,
+  t: (key: string) => string,
+): { display: string; status: FacetValue['status'] } | null {
+  switch (marker) {
+    case NoDependencyDisplay.DASH:
+      return { display: '–', status: 'neutral' }
+    case NoDependencyDisplay.UP_TO_YOU:
+      return { display: t('compare.facets.values.up_to_you'), status: 'good' }
+    default:
+      return null
+  }
+}
+
 function computeFacetValue(
   facet: ComparisonFacet,
   data: PackageComparisonData,
   t: (key: string, params?: Record<string, unknown>) => string,
 ): FacetValue | null {
+  const { isNoDependency } = data
+
   switch (facet) {
     case 'downloads': {
-      if (data.downloads === undefined) return null
+      if (data.downloads === undefined) {
+        if (isNoDependency) return { raw: 0, display: '–', status: 'neutral' }
+        return null
+      }
       return {
         raw: data.downloads,
         display: formatCompactNumber(data.downloads),
@@ -282,7 +366,8 @@ function computeFacetValue(
       }
     }
     case 'packageSize': {
-      if (!data.packageSize) return null
+      // A size of zero is valid
+      if (data.packageSize == null) return null
       return {
         raw: data.packageSize,
         display: formatBytes(data.packageSize),
@@ -290,7 +375,8 @@ function computeFacetValue(
       }
     }
     case 'installSize': {
-      if (!data.installSize) return null
+      // A size of zero is valid
+      if (data.installSize == null) return null
       return {
         raw: data.installSize.totalSize,
         display: formatBytes(data.installSize.totalSize),
@@ -298,7 +384,15 @@ function computeFacetValue(
       }
     }
     case 'moduleFormat': {
-      if (!data.analysis) return null
+      if (!data.analysis) {
+        if (isNoDependency)
+          return {
+            raw: 'up-to-you',
+            display: t('compare.facets.values.up_to_you'),
+            status: 'good',
+          }
+        return null
+      }
       const format = data.analysis.moduleFormat
       return {
         raw: format,
@@ -315,7 +409,15 @@ function computeFacetValue(
           tooltip: t('compare.facets.binary_only_tooltip'),
         }
       }
-      if (!data.analysis) return null
+      if (!data.analysis) {
+        if (isNoDependency)
+          return {
+            raw: 'up-to-you',
+            display: t('compare.facets.values.up_to_you'),
+            status: 'good',
+          }
+        return null
+      }
       const types = data.analysis.types
       return {
         raw: types.kind,
@@ -331,16 +433,34 @@ function computeFacetValue(
     case 'engines': {
       const engines = data.metadata?.engines
       if (!engines?.node) {
-        return { raw: null, display: t('compare.facets.values.any'), status: 'neutral' }
+        if (isNoDependency)
+          return {
+            raw: 'up-to-you',
+            display: t('compare.facets.values.up_to_you'),
+            status: 'good',
+          }
+        return {
+          raw: null,
+          display: t('compare.facets.values.any'),
+          status: 'neutral',
+        }
       }
       return {
         raw: engines.node,
-        display: `Node ${engines.node}`,
+        display: `Node.js ${engines.node}`,
         status: 'neutral',
       }
     }
     case 'vulnerabilities': {
-      if (!data.vulnerabilities) return null
+      if (!data.vulnerabilities) {
+        if (isNoDependency)
+          return {
+            raw: 'up-to-you',
+            display: t('compare.facets.values.up_to_you'),
+            status: 'good',
+          }
+        return null
+      }
       const count = data.vulnerabilities.count
       const sev = data.vulnerabilities.severity
       return {
@@ -357,19 +477,29 @@ function computeFacetValue(
       }
     }
     case 'lastUpdated': {
-      if (!data.metadata?.lastUpdated) return null
-      const date = new Date(data.metadata.lastUpdated)
+      const lastUpdated = data.metadata?.lastUpdated
+      const resolved = lastUpdated ? resolveNoDependencyDisplay(lastUpdated, t) : null
+      if (resolved) return { raw: 0, ...resolved }
+      if (!lastUpdated) return null
+      const date = new Date(lastUpdated)
       return {
         raw: date.getTime(),
-        display: data.metadata.lastUpdated,
+        display: lastUpdated,
         status: isStale(date) ? 'warning' : 'neutral',
         type: 'date',
       }
     }
     case 'license': {
       const license = data.metadata?.license
+      const resolved = license ? resolveNoDependencyDisplay(license, t) : null
+      if (resolved) return { raw: null, ...resolved }
       if (!license) {
-        return { raw: null, display: t('compare.facets.values.unknown'), status: 'warning' }
+        if (isNoDependency) return { raw: null, display: '–', status: 'neutral' }
+        return {
+          raw: null,
+          display: t('compare.facets.values.unknown'),
+          status: 'warning',
+        }
       }
       return {
         raw: license,
@@ -379,7 +509,7 @@ function computeFacetValue(
     }
     case 'dependencies': {
       const depCount = data.directDeps
-      if (depCount === null) return null
+      if (depCount == null) return null
       return {
         raw: depCount,
         display: String(depCount),
@@ -396,7 +526,6 @@ function computeFacetValue(
         status: isDeprecated ? 'bad' : 'good',
       }
     }
-    // Coming soon facets
     case 'totalDependencies': {
       if (!data.installSize) return null
       const totalDepCount = data.installSize.dependencyCount
