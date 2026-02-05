@@ -408,7 +408,7 @@ See how `es`, `es-ES`, and `es-419` are configured in [config/i18n.ts](./config/
    <p>{{ $t('greeting', { name: userName }) }}</p>
    ```
 
-4. Don't concatenate string messages in the vue templates, some languages can have different word order. Use placeholders instead.
+4. Don't concatenate string messages in the Vue templates, some languages can have different word order. Use placeholders instead.
 
    **Bad:**
 
