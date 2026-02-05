@@ -1,16 +1,16 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
-import PackageVersions from '~/components/PackageVersions.vue'
-import type { PackumentVersion } from '#shared/types'
+import PackageVersions from '~/components/Package/Versions.vue'
+import type { SlimVersion } from '#shared/types'
 
 // Mock the fetchAllPackageVersions function
 const mockFetchAllPackageVersions = vi.fn()
-vi.mock('~/composables/useNpmRegistry', () => ({
+vi.mock('~/utils/npm/api', () => ({
   fetchAllPackageVersions: (...args: unknown[]) => mockFetchAllPackageVersions(...args),
 }))
 
 /**
- * Helper to create a minimal PackumentVersion for testing
+ * Helper to create a minimal SlimVersion for testing
  */
 function createVersion(
   version: string,
@@ -18,22 +18,13 @@ function createVersion(
     deprecated?: string
     hasProvenance?: boolean
   } = {},
-): PackumentVersion {
-  const dist: Record<string, unknown> = {
-    tarball: `https://registry.npmjs.org/test-package/-/test-package-${version}.tgz`,
-    shasum: 'abc123',
-  }
-  if (options.hasProvenance) {
-    dist.attestations = { url: 'https://example.com', provenance: { predicateType: 'test' } }
-  }
+): SlimVersion {
   return {
-    _id: `test-package@${version}`,
-    _npmVersion: '10.0.0',
-    name: 'test-package',
     version,
-    dist,
     deprecated: options.deprecated,
-  } as unknown as PackumentVersion
+    tags: undefined,
+    ...(options.hasProvenance ? { hasProvenance: true } : {}),
+  } as SlimVersion
 }
 
 describe('PackageVersions', () => {
@@ -82,10 +73,10 @@ describe('PackageVersions', () => {
         },
       })
 
-      // Find version links (exclude anchor links that start with #)
+      // Find version links (exclude anchor links that start with # and external links)
       const versionLinks = component
         .findAll('a')
-        .filter(a => !a.attributes('href')?.startsWith('#'))
+        .filter(a => !a.attributes('href')?.startsWith('#') && a.attributes('target') !== '_blank')
       expect(versionLinks.length).toBeGreaterThan(0)
       expect(versionLinks[0]?.text()).toBe('2.0.0')
     })
@@ -102,10 +93,10 @@ describe('PackageVersions', () => {
         },
       })
 
-      // Find version links (exclude anchor links that start with #)
+      // Find version links (exclude anchor links that start with # and external links)
       const versionLinks = component
         .findAll('a')
-        .filter(a => !a.attributes('href')?.startsWith('#'))
+        .filter(a => !a.attributes('href')?.startsWith('#') && a.attributes('target') !== '_blank')
       expect(versionLinks.length).toBeGreaterThan(0)
       expect(versionLinks[0]?.text()).toBe('1.0.0')
     })
@@ -196,10 +187,10 @@ describe('PackageVersions', () => {
         },
       })
 
-      // Find version links (exclude anchor links that start with #)
+      // Find version links (exclude anchor links that start with # and external links)
       const versionLinks = component
         .findAll('a')
-        .filter(a => !a.attributes('href')?.startsWith('#'))
+        .filter(a => !a.attributes('href')?.startsWith('#') && a.attributes('target') !== '_blank')
       const versions = versionLinks.map(l => l.text())
       // Should be sorted by version descending
       expect(versions[0]).toBe('2.0.0')
@@ -219,10 +210,10 @@ describe('PackageVersions', () => {
         },
       })
 
-      // Find version links (exclude anchor links that start with #)
+      // Find version links (exclude anchor links that start with # and external links)
       const versionLinks = component
         .findAll('a')
-        .filter(a => !a.attributes('href')?.startsWith('#'))
+        .filter(a => !a.attributes('href')?.startsWith('#') && a.attributes('target') !== '_blank')
       expect(versionLinks.length).toBeGreaterThan(0)
       expect(versionLinks[0]?.classes()).toContain('text-red-400')
     })
@@ -239,10 +230,10 @@ describe('PackageVersions', () => {
         },
       })
 
-      // Find version links (exclude anchor links that start with #)
+      // Find version links (exclude anchor links that start with # and external links)
       const versionLinks = component
         .findAll('a')
-        .filter(a => !a.attributes('href')?.startsWith('#'))
+        .filter(a => !a.attributes('href')?.startsWith('#') && a.attributes('target') !== '_blank')
       expect(versionLinks.length).toBeGreaterThan(0)
       expect(versionLinks[0]?.attributes('title')).toContain('deprecated')
     })
@@ -459,7 +450,7 @@ describe('PackageVersions', () => {
 
     it('shows count of hidden tagged versions', async () => {
       // Create more than MAX_VISIBLE_TAGS (10) dist-tags
-      const versions: Record<string, PackumentVersion> = {}
+      const versions: Record<string, SlimVersion> = {}
       const distTags: Record<string, string> = {}
       const time: Record<string, string> = {}
 
@@ -551,7 +542,7 @@ describe('PackageVersions', () => {
   describe('MAX_VISIBLE_TAGS limit', () => {
     it('limits visible tag rows to 10', async () => {
       // Create 15 dist-tags
-      const versions: Record<string, PackumentVersion> = {}
+      const versions: Record<string, SlimVersion> = {}
       const distTags: Record<string, string> = {}
       const time: Record<string, string> = {}
 
@@ -571,10 +562,10 @@ describe('PackageVersions', () => {
         },
       })
 
-      // Count visible version links (excluding anchor links that start with #)
+      // Count visible version links (excluding anchor links that start with # and external links)
       const visibleLinks = component
         .findAll('a')
-        .filter(a => !a.attributes('href')?.startsWith('#'))
+        .filter(a => !a.attributes('href')?.startsWith('#') && a.attributes('target') !== '_blank')
       // Should have max 10 visible links in the main section
       expect(visibleLinks.length).toBeLessThanOrEqual(10)
     })

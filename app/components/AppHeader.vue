@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isEditableElement } from '~/utils/input'
+
 withDefaults(
   defineProps<{
     showLogo?: boolean
@@ -17,9 +19,10 @@ const showMobileMenu = shallowRef(false)
 const route = useRoute()
 const isMobile = useIsMobile()
 const isSearchExpandedManually = shallowRef(false)
-const searchBoxRef = shallowRef<{ focus: () => void } | null>(null)
+const searchBoxRef = useTemplateRef('searchBoxRef')
 
 // On search page, always show search expanded on mobile
+const isOnHomePage = computed(() => route.name === 'index')
 const isOnSearchPage = computed(() => route.name === 'search')
 const isSearchExpanded = computed(() => isOnSearchPage.value || isSearchExpandedManually.value)
 
@@ -59,16 +62,23 @@ function handleSearchFocus() {
 }
 
 onKeyStroke(
-  ',',
+  e => isKeyWithoutModifiers(e, ',') && !isEditableElement(e.target),
   e => {
-    // Don't trigger if user is typing in an input
-    const target = e.target as HTMLElement
-    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
-      return
-    }
-
     e.preventDefault()
     navigateTo('/settings')
+  },
+  { dedupe: true },
+)
+
+onKeyStroke(
+  e =>
+    isKeyWithoutModifiers(e, 'c') &&
+    !isEditableElement(e.target) &&
+    // Allow more specific handlers to take precedence
+    !e.defaultPrevented,
+  e => {
+    e.preventDefault()
+    navigateTo('/compare')
   },
   { dedupe: true },
 )
@@ -78,24 +88,18 @@ onKeyStroke(
   <header class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border">
     <nav
       :aria-label="$t('nav.main_navigation')"
-      class="container min-h-14 flex items-center justify-between gap-2"
+      class="container min-h-14 flex items-center gap-2"
+      :class="isOnHomePage ? 'justify-end' : 'justify-between'"
     >
       <!-- Mobile: Logo + search button (expands search, doesn't navigate) -->
       <button
-        v-if="!isSearchExpanded"
+        v-if="!isSearchExpanded && !isOnHomePage"
         type="button"
-        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 rounded"
         :aria-label="$t('nav.tap_to_search')"
         @click="expandMobileSearch"
       >
-        <img
-          aria-hidden="true"
-          :alt="$t('alt_logo')"
-          src="/logo.svg"
-          width="96"
-          height="96"
-          class="w-8 h-8 rounded-lg"
-        />
+        <AppLogo class="w-8 h-8 rounded-lg" />
         <span class="i-carbon:search w-4 h-4 text-fg-subtle" aria-hidden="true" />
       </button>
 
@@ -105,16 +109,9 @@ onKeyStroke(
           to="/"
           :aria-label="$t('header.home')"
           dir="ltr"
-          class="inline-flex items-center gap-2 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+          class="inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded"
         >
-          <img
-            aria-hidden="true"
-            :alt="$t('alt_logo')"
-            src="/logo.svg"
-            width="96"
-            height="96"
-            class="w-8 h-8 rounded-lg"
-          />
+          <AppLogo class="w-8 h-8 rounded-lg" />
           <span>npmx</span>
         </NuxtLink>
       </div>
@@ -127,7 +124,7 @@ onKeyStroke(
         :class="{ 'hidden sm:flex': !isSearchExpanded }"
       >
         <!-- Search bar (hidden on mobile unless expanded) -->
-        <SearchBox
+        <HeaderSearchBox
           ref="searchBoxRef"
           :inputClass="isSearchExpanded ? 'w-full' : ''"
           :class="{ 'max-w-md': !isSearchExpanded }"
@@ -135,7 +132,7 @@ onKeyStroke(
           @blur="handleSearchBlur"
         />
         <ul
-          v-if="!isSearchExpanded"
+          v-if="!isSearchExpanded && isConnected && npmUser"
           :class="{ hidden: showFullSearch }"
           class="hidden sm:flex items-center gap-4 sm:gap-6 list-none m-0 p-0"
         >
@@ -152,20 +149,26 @@ onKeyStroke(
       </div>
 
       <!-- End: Desktop nav items + Mobile menu button -->
-      <div class="flex-shrink-0 flex items-center gap-4 sm:gap-6">
+      <div class="flex-shrink-0 flex items-center gap-0.5 sm:gap-2">
         <!-- Desktop: Compare link -->
         <NuxtLink
           to="/compare"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+          aria-keyshortcuts="c"
         >
-          <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
           {{ $t('nav.compare') }}
+          <kbd
+            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+            aria-hidden="true"
+          >
+            c
+          </kbd>
         </NuxtLink>
 
         <!-- Desktop: Settings link -->
         <NuxtLink
           to="/settings"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts=","
         >
           {{ $t('nav.settings') }}
@@ -185,7 +188,7 @@ onKeyStroke(
         <!-- Mobile: Menu button (always visible, toggles menu) -->
         <button
           type="button"
-          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
           :aria-label="showMobileMenu ? $t('common.close') : $t('nav.open_menu')"
           :aria-expanded="showMobileMenu"
           @click="showMobileMenu = !showMobileMenu"
@@ -200,6 +203,6 @@ onKeyStroke(
     </nav>
 
     <!-- Mobile menu -->
-    <MobileMenu v-model:open="showMobileMenu" />
+    <HeaderMobileMenu v-model:open="showMobileMenu" />
   </header>
 </template>

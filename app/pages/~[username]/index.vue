@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { debounce } from 'perfect-debounce'
+import { normalizeSearchParam } from '#shared/utils/url'
 
 const route = useRoute('~username')
 const router = useRouter()
@@ -13,7 +14,7 @@ const currentPage = shallowRef(1)
 
 // Get initial page from URL (for scroll restoration on reload)
 const initialPage = computed(() => {
-  const p = Number.parseInt(route.query.page as string, 10)
+  const p = Number.parseInt(normalizeSearchParam(route.query.page), 10)
   return Number.isNaN(p) ? 1 : Math.max(1, p)
 })
 
@@ -32,18 +33,16 @@ const updateUrl = debounce((updates: { page?: number; filter?: string; sort?: st
 type SortOption = 'downloads' | 'updated' | 'name-asc' | 'name-desc'
 
 // Filter and sort state (from URL)
-const filterText = shallowRef(
-  (Array.isArray(route.query.q) ? route.query.q[0] : route.query.q) ?? '',
-)
+const filterText = shallowRef(normalizeSearchParam(route.query.q))
 const sortOption = shallowRef<SortOption>(
-  ((Array.isArray(route.query.sort) ? route.query.sort[0] : route.query.sort) as SortOption) ||
-    'downloads',
+  (normalizeSearchParam(route.query.sort) as SortOption) || 'downloads',
 )
 
 // Track if we've loaded all results (one-way flag, doesn't reset)
 // Initialize to true if URL already has filter/sort params
 const hasLoadedAll = shallowRef(
-  Boolean(route.query.q) || (route.query.sort && route.query.sort !== 'downloads'),
+  Boolean(route.query.q) ||
+    (route.query.sort && normalizeSearchParam(route.query.sort) !== 'downloads'),
 )
 
 // Update URL when filter/sort changes (debounced)
@@ -175,19 +174,11 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <main class="container flex-1 py-8 sm:py-12 w-full">
+  <main class="container flex-1 flex flex-col py-8 sm:py-12 w-full">
     <!-- Header -->
     <header class="mb-8 pb-8 border-b border-border">
-      <div class="flex flex-wrap items-end gap-4">
-        <!-- Avatar placeholder -->
-        <div
-          class="size-16 shrink-0 rounded-full bg-bg-muted border border-border flex items-center justify-center"
-          aria-hidden="true"
-        >
-          <span class="text-2xl text-fg-subtle font-mono">{{
-            username.charAt(0).toUpperCase()
-          }}</span>
-        </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <UserAvatar :username="username" />
         <div>
           <h1 class="font-mono text-2xl sm:text-3xl font-medium">~{{ username }}</h1>
           <p v-if="results?.total" class="text-fg-muted text-sm mt-1">
@@ -236,16 +227,8 @@ defineOgImageComponent('Default', {
       <NuxtLink to="/" class="btn">{{ $t('common.go_back_home') }}</NuxtLink>
     </div>
 
-    <!-- Empty state -->
-    <div v-else-if="results && results.total === 0" class="py-12 text-center">
-      <p class="text-fg-muted font-mono">
-        {{ $t('user.page.no_packages') }} <span class="text-fg">~{{ username }}</span>
-      </p>
-      <p class="text-fg-subtle text-sm mt-2">{{ $t('user.page.no_packages_hint') }}</p>
-    </div>
-
     <!-- Package list -->
-    <section v-else-if="results && packages.length > 0">
+    <section v-else-if="packages.length > 0">
       <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
         {{ $t('user.page.packages_title') }}
       </h2>
@@ -254,7 +237,7 @@ defineOgImageComponent('Default', {
       <PackageListControls
         v-model:filter="filterText"
         v-model:sort="sortOption"
-        :placeholder="$t('user.page.filter_placeholder', { count: results.total })"
+        :placeholder="$t('user.page.filter_placeholder', { count: results?.total ?? 0 })"
         :total-count="packageCount"
         :filtered-count="filteredCount"
       />
@@ -278,5 +261,15 @@ defineOgImageComponent('Default', {
         @page-change="handlePageChange"
       />
     </section>
+
+    <!-- Empty state (no packages found for user) -->
+    <div v-else-if="status === 'success'" class="flex-1 flex items-center justify-center">
+      <div class="text-center">
+        <p class="text-fg-muted font-mono">
+          {{ $t('user.page.no_packages') }} <span class="text-fg">~{{ username }}</span>
+        </p>
+        <p class="text-fg-subtle text-sm mt-2">{{ $t('user.page.no_packages_hint') }}</p>
+      </div>
+    </div>
   </main>
 </template>

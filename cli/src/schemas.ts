@@ -25,6 +25,7 @@ export const PackageNameSchema = v.pipe(
 /**
  * Validates an npm package name for new packages only
  * Stricter than PackageNameSchema - rejects legacy formats (uppercase, etc.)
+ * @internal
  */
 export const NewPackageNameSchema = v.pipe(
   v.string(),
@@ -58,17 +59,6 @@ export const OrgNameSchema = v.pipe(
 )
 
 /**
- * Validates a team name (without scope prefix)
- * @public
- */
-export const TeamNameSchema = v.pipe(
-  v.string(),
-  v.nonEmpty('Team name is required'),
-  v.maxLength(50, 'Team name is too long'),
-  v.regex(NPM_USERNAME_RE, 'Invalid team name format'),
-)
-
-/**
  * Validates a scope:team format (e.g., @myorg:developers)
  */
 export const ScopeTeamSchema = v.pipe(
@@ -87,6 +77,7 @@ export const ScopeTeamSchema = v.pipe(
 
 /**
  * Validates org roles
+ * @internal
  */
 export const OrgRoleSchema = v.picklist(
   ['developer', 'admin', 'owner'],
@@ -95,6 +86,7 @@ export const OrgRoleSchema = v.picklist(
 
 /**
  * Validates access permissions
+ * @internal
  */
 export const PermissionSchema = v.picklist(
   ['read-only', 'read-write'],
@@ -120,19 +112,8 @@ export const OperationTypeSchema = v.picklist([
 ])
 
 /**
- * Validates operation status
- */
-export const OperationStatusSchema = v.picklist([
-  'pending',
-  'approved',
-  'running',
-  'completed',
-  'failed',
-  'cancelled',
-])
-
-/**
  * Validates OTP (6-digit code)
+ * @internal
  */
 export const OtpSchema = v.optional(
   v.pipe(v.string(), v.regex(/^\d{6}$/, 'OTP must be a 6-digit code')),
@@ -140,6 +121,7 @@ export const OtpSchema = v.optional(
 
 /**
  * Validates a hex token (like session tokens and operation IDs)
+ * @internal
  */
 export const HexTokenSchema = v.pipe(
   v.string(),
@@ -149,6 +131,7 @@ export const HexTokenSchema = v.pipe(
 
 /**
  * Validates operation ID (16-char hex)
+ * @internal
  */
 export const OperationIdSchema = v.pipe(
   v.string(),
@@ -178,7 +161,7 @@ export const ExecuteBodySchema = v.object({
  * Schema for operation params based on type
  * Validates the params object for each operation type
  */
-export const OperationParamsSchema = v.record(v.string(), v.string())
+const OperationParamsSchema = v.record(v.string(), v.string())
 
 /**
  * Schema for single operation request body
@@ -199,56 +182,59 @@ export const BatchOperationsBodySchema = v.array(CreateOperationBodySchema)
 // Type-specific Operation Params Schemas
 // ============================================================================
 
+/** @internal */
 export const OrgAddUserParamsSchema = v.object({
   org: OrgNameSchema,
   user: UsernameSchema,
   role: OrgRoleSchema,
 })
 
-export const OrgRemoveUserParamsSchema = v.object({
+const OrgRemoveUserParamsSchema = v.object({
   org: OrgNameSchema,
   user: UsernameSchema,
 })
 
-export const TeamCreateParamsSchema = v.object({
+const TeamCreateParamsSchema = v.object({
   scopeTeam: ScopeTeamSchema,
 })
 
-export const TeamDestroyParamsSchema = v.object({
+const TeamDestroyParamsSchema = v.object({
   scopeTeam: ScopeTeamSchema,
 })
 
-export const TeamAddUserParamsSchema = v.object({
-  scopeTeam: ScopeTeamSchema,
-  user: UsernameSchema,
-})
-
-export const TeamRemoveUserParamsSchema = v.object({
+const TeamAddUserParamsSchema = v.object({
   scopeTeam: ScopeTeamSchema,
   user: UsernameSchema,
 })
 
+const TeamRemoveUserParamsSchema = v.object({
+  scopeTeam: ScopeTeamSchema,
+  user: UsernameSchema,
+})
+
+/** @internal */
 export const AccessGrantParamsSchema = v.object({
   permission: PermissionSchema,
   scopeTeam: ScopeTeamSchema,
   pkg: PackageNameSchema,
 })
 
-export const AccessRevokeParamsSchema = v.object({
+const AccessRevokeParamsSchema = v.object({
   scopeTeam: ScopeTeamSchema,
   pkg: PackageNameSchema,
 })
 
-export const OwnerAddParamsSchema = v.object({
+const OwnerAddParamsSchema = v.object({
   user: UsernameSchema,
   pkg: PackageNameSchema,
 })
 
-export const OwnerRemoveParamsSchema = v.object({
+const OwnerRemoveParamsSchema = v.object({
   user: UsernameSchema,
   pkg: PackageNameSchema,
 })
 
+/** @internal */
 export const PackageInitParamsSchema = v.object({
   name: NewPackageNameSchema,
   author: v.optional(UsernameSchema),
@@ -326,32 +312,3 @@ export function safeParse<T extends v.GenericSchema>(
     error: path ? `${path}: ${message}` : message,
   }
 }
-
-// ============================================================================
-// Type Exports
-// ============================================================================
-
-/** @public */
-export type PackageName = v.InferOutput<typeof PackageNameSchema>
-/** @public */
-export type NewPackageName = v.InferOutput<typeof NewPackageNameSchema>
-/** @public */
-export type Username = v.InferOutput<typeof UsernameSchema>
-/** @public */
-export type OrgName = v.InferOutput<typeof OrgNameSchema>
-/** @public */
-export type ScopeTeam = v.InferOutput<typeof ScopeTeamSchema>
-/** @public */
-export type OrgRole = v.InferOutput<typeof OrgRoleSchema>
-/** @public */
-export type Permission = v.InferOutput<typeof PermissionSchema>
-/** @public */
-export type OperationType = v.InferOutput<typeof OperationTypeSchema>
-/** @public */
-export type OperationStatus = v.InferOutput<typeof OperationStatusSchema>
-/** @public */
-export type ConnectBody = v.InferOutput<typeof ConnectBodySchema>
-/** @public */
-export type ExecuteBody = v.InferOutput<typeof ExecuteBodySchema>
-/** @public */
-export type CreateOperationBody = v.InferOutput<typeof CreateOperationBodySchema>

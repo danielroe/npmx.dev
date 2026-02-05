@@ -30,6 +30,10 @@ export type SlimPackumentVersion = PackumentVersion & {
   installScripts?: InstallScriptsInfo
 }
 
+export type SlimVersion = Pick<SlimPackumentVersion, 'version' | 'deprecated' | 'tags'> & {
+  hasProvenance?: true
+}
+
 /**
  * Slimmed down Packument for client-side use.
  * Strips unnecessary fields to reduce payload size.
@@ -43,7 +47,19 @@ export interface SlimPackument {
   'name': string
   'description'?: string
   'dist-tags': { latest?: string } & Record<string, string>
-  /** Only includes time for dist-tag versions + modified/created */
+  /**
+   * Timestamps for package versions.
+   *
+   * **IMPORTANT**: Use `time[version]` to get the publish date of a specific version.
+   *
+   * **DO NOT use `time.modified`** - it can be updated by metadata changes (e.g., maintainer
+   * additions/removals) without any code being published, making it misleading for users
+   * trying to assess package maintenance activity.
+   *
+   * - `time[version]` - When that specific version was published (use this!)
+   * - `time.created` - When the package was first created
+   * - `time.modified` - Last metadata change (misleading - avoid using)
+   */
   'time': { modified?: string; created?: string } & Record<string, string>
   'maintainers'?: NpmPerson[]
   'author'?: NpmPerson
@@ -52,8 +68,10 @@ export interface SlimPackument {
   'keywords'?: string[]
   'repository'?: { type?: string; url?: string; directory?: string }
   'bugs'?: { url?: string; email?: string }
+  /** current version */
+  'requestedVersion': SlimPackumentVersion | null
   /** Only includes dist-tag versions (with installScripts info added per version) */
-  'versions': Record<string, SlimPackumentVersion>
+  'versions': Record<string, SlimVersion>
 }
 
 /**
@@ -195,6 +213,30 @@ export interface NpmVersionDist {
 }
 
 /**
+ * Parsed provenance details for display (from attestation bundle SLSA predicate).
+ * Used by the provenance API and PackageProvenanceSection.
+ * @public
+ */
+export interface ProvenanceDetails {
+  /** Provider ID (e.g. "github", "gitlab") */
+  provider: string
+  /** Human-readable provider label (e.g. "GitHub Actions") */
+  providerLabel: string
+  /** Link to build run summary (e.g. GitHub Actions run URL) */
+  buildSummaryUrl?: string
+  /** Link to source commit in repository */
+  sourceCommitUrl?: string
+  /** Source commit SHA (short or full) */
+  sourceCommitSha?: string
+  /** Link to workflow/build config file in repo */
+  buildFileUrl?: string
+  /** Workflow path (e.g. ".github/workflows/release.yml") */
+  buildFilePath?: string
+  /** Link to transparency log entry (e.g. Sigstore search) */
+  publicLedgerUrl?: string
+}
+
+/**
  * Download counts API response
  * From https://api.npmjs.org/downloads/
  * Note: Not covered by @npm/types
@@ -206,7 +248,6 @@ export interface NpmDownloadCount {
   package: string
 }
 
-/** @public */
 export interface NpmDownloadRange {
   downloads: Array<{
     downloads: number
@@ -221,21 +262,18 @@ export interface NpmDownloadRange {
  * Organization API types
  * These require authentication
  * Note: Not covered by @npm/types
- * @public
  */
 export interface NpmOrgMember {
   user: string
   role: 'developer' | 'admin' | 'owner'
 }
 
-/** @public */
 export interface NpmTeam {
   name: string
   description?: string
   members?: string[]
 }
 
-/** @public */
 export interface NpmPackageAccess {
   permissions: 'read-only' | 'read-write'
 }
@@ -243,7 +281,6 @@ export interface NpmPackageAccess {
 /**
  * Trusted Publishing types
  * Note: Not covered by @npm/types
- * @public
  */
 export interface NpmTrustedPublisher {
   type: 'github-actions' | 'gitlab-ci'
@@ -328,4 +365,17 @@ export interface PackageFileContentResponse {
   html: string
   lines: number
   markdownHtml?: ReadmeResponse
+}
+
+/**
+ * Minimal packument data needed for package cards
+ */
+export interface MinimalPackument {
+  'name': string
+  'description'?: string
+  'keywords'?: string[]
+  // `dist-tags` can be missing in some later unpublished packages
+  'dist-tags'?: Record<string, string>
+  'time': Record<string, string>
+  'maintainers'?: NpmPerson[]
 }

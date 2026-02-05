@@ -4,13 +4,12 @@ import { onClickOutside } from '@vueuse/core'
 import { compare } from 'semver'
 import {
   buildVersionToTagsMap,
-  parseVersion,
   getPrereleaseChannel,
   getVersionGroupKey,
   getVersionGroupLabel,
   isSameVersionGroup,
 } from '~/utils/versions'
-import { fetchAllPackageVersions } from '~/composables/useNpmRegistry'
+import { fetchAllPackageVersions } from '~/utils/npm/api'
 
 const props = defineProps<{
   packageName: string
@@ -511,7 +510,7 @@ watch(
         @keydown="handleListboxKeydown"
       >
         <!-- Version groups -->
-        <div v-for="(group, groupIndex) in versionGroups" :key="group.id">
+        <div v-for="group in versionGroups" :key="group.id">
           <!-- Group header (primary version) -->
           <div
             :id="`version-${group.primaryVersion.version}`"
@@ -547,7 +546,7 @@ watch(
               <span
                 v-else
                 class="w-3 h-3 transition-transform duration-200 rtl-flip"
-                :class="group.isExpanded ? 'i:carbon:chevron-down' : 'i-carbon:chevron-right'"
+                :class="group.isExpanded ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
                 aria-hidden="true"
               />
             </button>
@@ -580,7 +579,7 @@ watch(
             v-if="group.isExpanded && group.versions.length > 1"
             class="ms-6 border-is border-border"
           >
-            <template v-for="(v, vIndex) in group.versions.slice(1)" :key="v.version">
+            <template v-for="v in group.versions.slice(1)" :key="v.version">
               <NuxtLink
                 :id="`version-${v.version}`"
                 :to="getVersionUrl(v.version)"
@@ -621,7 +620,7 @@ watch(
         <!-- Link to package page for full version list -->
         <div class="border-t border-border mt-1 pt-1 px-3 py-2">
           <NuxtLink
-            :to="`/${packageName}`"
+            :to="`/package/${packageName}`"
             class="text-xs text-fg-subtle hover:text-fg transition-[color] focus-visible:outline-none focus-visible:text-fg"
             @click="isOpen = false"
           >
