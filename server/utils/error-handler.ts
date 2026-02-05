@@ -7,10 +7,14 @@ import type { ErrorOptions } from '#shared/types/error'
  * Handles H3 errors, Valibot, and fallbacks in that order
  */
 export function handleApiError(error: unknown, fallback: ErrorOptions): never {
-  // If already a known Nuxt/H3 Error, apply fallback status/message and re-throw
+  // If already a known Nuxt/H3 Error, apply fallback only when the error has a generic 500 status
   if (isError(error)) {
-    error.statusCode = fallback.statusCode ?? error.statusCode
-    error.statusMessage = fallback.statusMessage ?? error.statusMessage
+    if (error.statusCode === 500 && fallback.statusCode) {
+      error.statusCode = fallback.statusCode
+    }
+    if (error.statusMessage === 'Server Error' && fallback.statusMessage) {
+      error.statusMessage = fallback.statusMessage
+    }
     throw error
   }
 
