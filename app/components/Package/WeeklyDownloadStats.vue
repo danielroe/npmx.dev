@@ -12,17 +12,6 @@ const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
 const isChartModalOpen = shallowRef(false)
 
-async function openChartModal() {
-  if (!hasWeeklyDownloads.value) return
-
-  isChartModalOpen.value = true
-  hasChartModalTransitioned.value = false
-  // ensure the component renders before opening the dialog
-  await nextTick()
-  await nextTick()
-  chartModal.open()
-}
-
 function handleModalClose() {
   isChartModalOpen.value = false
   hasChartModalTransitioned.value = false
@@ -98,8 +87,19 @@ const pulseColor = computed(() => {
 })
 
 const weeklyDownloads = shallowRef<WeeklyDownloadPoint[]>([])
-const isLoadingWeeklyDownloads = shallowRef(false)
+const isLoadingWeeklyDownloads = shallowRef(true)
 const hasWeeklyDownloads = computed(() => weeklyDownloads.value.length > 0)
+
+async function openChartModal() {
+  if (!hasWeeklyDownloads.value) return
+
+  isChartModalOpen.value = true
+  hasChartModalTransitioned.value = false
+  // ensure the component renders before opening the dialog
+  await nextTick()
+  await nextTick()
+  chartModal.open()
+}
 
 async function loadWeeklyDownloads() {
   if (!import.meta.client) return
