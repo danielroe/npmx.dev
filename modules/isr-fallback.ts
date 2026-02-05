@@ -16,6 +16,7 @@ export default defineNuxtModule({
       nitro.hooks.hook('compiled', () => {
         const spaTemplate = readFileSync(nitro.options.output.publicDir + '/200.html', 'utf-8')
         for (const path of [
+          'package/[org]',
           'package/[org]/[name]',
           'package/[org]/[name]/v',
           'package/[org]/[name]/v/[version]',

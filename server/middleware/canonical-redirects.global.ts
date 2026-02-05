@@ -20,7 +20,7 @@ const pages = [
   '/settings',
 ]
 export default defineEventHandler(async event => {
-  const path = event.path
+  const path = event.path.split('?')[0]!
 
   // username
   if (path.startsWith('~')) {
