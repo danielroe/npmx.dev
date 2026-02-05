@@ -415,7 +415,7 @@
   "connector": {
     "status": {
       "connecting": "連線中…",
-      "connected_as": "已連線為 {'@'}{user}",
+      "connected_as": "已連線為 ~{user}",
       "connected": "已連線",
       "connect_cli": "連線本機 CLI",
       "aria_connecting": "正在連線到本機連線器",
@@ -429,7 +429,7 @@
       "contributor_notice": "連線器尚未發布到 npm。請參閱 {link} 了解如何在本機執行。",
       "contributor_link": "貢獻指南",
       "connected": "已連線",
-      "connected_as_user": "已連線為 {'@'}{user}",
+      "connected_as_user": "已連線為 ~{user}",
       "connected_hint": "現在你可以透過 Web UI 管理套件與組織。",
       "disconnect": "中斷連線",
       "run_hint": "在你的機器上執行連線器以啟用管理功能。",
@@ -782,7 +782,7 @@
       }
     },
     "contributors": {
-      "title": "貢獻者",
+      "title": "{count} 位貢獻者",
       "description": "npmx 完全開源，由令人驚豔的社群貢獻者共同打造。",
       "loading": "正在載入貢獻者…",
       "error": "無法載入貢獻者",
