@@ -34,7 +34,7 @@ async function handleLogin() {
         </div>
       </div>
       <button
-        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
         @click="logout"
       >
         {{ $t('auth.modal.disconnect') }}
@@ -59,15 +59,14 @@ async function handleLogin() {
             type="text"
             name="handle"
             :placeholder="$t('auth.modal.handle_placeholder')"
-            autocomplete="off"
-            spellcheck="false"
-            class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            v-bind="noCorrect"
+            class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-accent focus-visible:(outline-2 outline-accent/70)"
           />
         </div>
 
         <details class="text-sm">
           <summary
-            class="text-fg-subtle cursor-pointer hover:text-fg-muted transition-colors duration-200"
+            class="text-fg-subtle cursor-pointer hover:text-fg-muted transition-colors duration-200 focus-visible:(outline-2 outline-accent/70)"
           >
             {{ $t('auth.modal.what_is_atmosphere') }}
           </summary>
@@ -102,7 +101,7 @@ async function handleLogin() {
       <ButtonBase type="button" variant="primary" class="w-full" @click="handleCreateAccount">
         {{ $t('auth.modal.create_account') }}
       </ButtonBase>
-      <hr />
+      <hr class="color-border" />
       <ButtonBase
         type="button"
         variant="primary"

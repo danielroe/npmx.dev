@@ -169,6 +169,7 @@ const pkgDescription = useMarkdown(() => ({
         :key="keyword"
         :aria-pressed="props.filters?.keywords.includes(keyword)"
         :title="`Filter by ${keyword}`"
+        :data-result-index="index"
         @click.stop="emit('clickKeyword', keyword)"
       >
         {{ keyword }}
