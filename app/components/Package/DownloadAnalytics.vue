@@ -785,15 +785,15 @@ function buildExportFilename(extension: string): string {
   return `${sanitise(label ?? '')}-${g}_${range}.${extension}`
 }
 
-const granularityLabels = {
+const granularityLabels = computed(() => ({
   daily: $t('package.downloads.granularity_daily'),
   weekly: $t('package.downloads.granularity_weekly'),
   monthly: $t('package.downloads.granularity_monthly'),
   yearly: $t('package.downloads.granularity_yearly'),
-}
+}))
 
 function getGranularityLabel(granularity: ChartTimeGranularity) {
-  return granularityLabels[granularity]
+  return granularityLabels.value[granularity]
 }
 
 // VueUiXy chart component configuration

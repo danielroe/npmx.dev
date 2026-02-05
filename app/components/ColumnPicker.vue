@@ -37,7 +37,7 @@ useEventListener('keydown', event => {
 const toggleableColumns = computed(() => props.columns.filter(col => col.id !== 'name'))
 
 // Map column IDs to i18n keys
-const columnLabelKey: Record<string, string> = {
+const columnLabelKey = computed(() => ({
   name: $t('filters.columns.name'),
   version: $t('filters.columns.version'),
   description: $t('filters.columns.description'),
@@ -50,10 +50,10 @@ const columnLabelKey: Record<string, string> = {
   maintenanceScore: $t('filters.columns.maintenance_score'),
   combinedScore: $t('filters.columns.combined_score'),
   security: $t('filters.columns.security'),
-}
+}))
 
-function getColumnLabel(id: string): string {
-  const key = columnLabelKey[id]
+function getColumnLabel(id: ColumnId): string {
+  const key = columnLabelKey.value[id]
   return key ?? id
 }
 

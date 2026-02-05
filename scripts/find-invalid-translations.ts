@@ -89,4 +89,7 @@ async function run(): Promise<void> {
   }
 }
 
-run()
+run().catch((error: unknown) => {
+  console.error(colors.red('\n❌ Unexpected error:'), error)
+  process.exit(1)
+})

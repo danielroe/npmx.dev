@@ -23,10 +23,10 @@ export interface FacetInfoWithLabels extends Omit<FacetInfo, 'id'> {
 export function useFacetSelection(queryParam = 'facets') {
   const { t } = useI18n()
 
-  const facetLabels = {
+  const facetLabels = computed(() => ({
     downloads: {
       label: t(`compare.facets.items.downloads.label`),
-      description: t(`compare.facets.items.downloads.label`),
+      description: t(`compare.facets.items.downloads.description`),
     },
     packageSize: {
       label: t(`compare.facets.items.packageSize.label`),
@@ -72,15 +72,15 @@ export function useFacetSelection(queryParam = 'facets') {
       label: t(`compare.facets.items.deprecated.label`),
       description: t(`compare.facets.items.deprecated.description`),
     },
-  }
+  }))
 
   // Helper to build facet info with i18n labels
   function buildFacetInfo(facet: ComparisonFacet): FacetInfoWithLabels {
     return {
       id: facet,
       ...FACET_INFO[facet],
-      label: facetLabels[facet].label,
-      description: facetLabels[facet].description,
+      label: facetLabels.value[facet].label,
+      description: facetLabels.value[facet].description,
     }
   }
 

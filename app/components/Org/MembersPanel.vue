@@ -262,15 +262,15 @@ function getRoleBadgeClass(role: string): string {
   }
 }
 
-const roleLabels = {
+const roleLabels = computed(() => ({
   owner: $t('org.members.role.owner'),
   admin: $t('org.members.role.admin'),
   developer: $t('org.members.role.developer'),
   all: $t('org.members.role.all'),
-}
+}))
 
 function getRoleLabel(role: MemberRoleFilter): string {
-  return roleLabels[role]
+  return roleLabels.value[role]
 }
 
 // Click on team badge to switch to teams tab and highlight
@@ -473,9 +473,9 @@ watch(lastExecutionTime, () => {
                 )
               "
             >
-              <option value="developer">{{ $t('org.members.role.developer') }}</option>
-              <option value="admin">{{ $t('org.members.role.admin') }}</option>
-              <option value="owner">{{ $t('org.members.role.owner') }}</option>
+              <option value="developer">{{ getRoleLabel('developer') }}</option>
+              <option value="admin">{{ getRoleLabel('admin') }}</option>
+              <option value="owner">{{ getRoleLabel('owner') }}</option>
             </select>
             <!-- Remove button -->
             <button
