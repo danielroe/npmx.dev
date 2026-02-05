@@ -28,16 +28,16 @@
     "updating": "(aggiornando...)",
     "no_results": "Nessun pacchetto trovato per \"{query}\"",
     "title": "cerca",
+    "title_search": "cerca: {search}",
+    "title_packages": "cerca pacchetti",
+    "meta_description": "Risultati di ricerca per '{search}'",
+    "meta_description_packages": "Cerca pacchetti npm",
     "not_taken": "{name} è disponibile",
     "claim_prompt": "Ottieni il nome di questo pacchetto su npm",
     "claim_button": "Ottieni \"{name}\"",
     "want_to_claim": "Vuoi ottenere il nome di questo pacchetto?",
     "start_typing": "Inizia a scrivere per cercare i pacchetti",
     "exact_match": "esatto",
-    "title_search": "cerca: {search}",
-    "title_packages": "cerca pacchetti",
-    "meta_description": "Risultati di ricerca per '{search}'",
-    "meta_description_packages": "Cerca pacchetti npm",
     "suggestion": {
       "user": "utente",
       "org": "organizzazione",
@@ -48,7 +48,6 @@
   "nav": {
     "main_navigation": "Principale",
     "popular_packages": "Pacchetti popolari",
-    "blog": "blog",
     "search": "cerca",
     "settings": "impostazioni",
     "compare": "confronta",
@@ -61,7 +60,8 @@
   },
   "blog": {
     "title": "Blog",
-    "description": "Approfondimenti e aggiornamenti dalla comunità npmx"
+    "description": "Approfondimenti e aggiornamenti dalla comunità npmx",
+    "author": {}
   },
   "settings": {
     "title": "impostazioni",
@@ -190,6 +190,11 @@
       "fund": "finanzia",
       "compare": "confronta"
     },
+    "likes": {},
+    "docs": {
+      "not_available": "Documenti non disponibili",
+      "not_available_detail": "Non abbiamo potuto generare i documenti per questa versione."
+    },
     "get_started": {
       "title": "Inizia",
       "pm_label": "Gestore di pacchetti",
@@ -228,10 +233,6 @@
       "transparency_log_entry": "Voce del registro di trasparenza",
       "view_more_details": "Visualizza più dettagli",
       "error_loading": "Impossibile caricare i dettagli della provenienza"
-    },
-    "docs": {
-      "not_available": "Documenti non disponibili",
-      "not_available_detail": "Non abbiamo potuto generare i documenti per questa versione."
     },
     "keywords_title": "Keywords",
     "compatibility": "Compatibilità",
@@ -629,6 +630,18 @@
     },
     "file_path": "Percorso del file"
   },
+  "badges": {
+    "provenance": {
+      "verified": "verificato",
+      "verified_title": "Provenienza verificata",
+      "verified_via": "Verificato: pubblicato tramite {provider}",
+      "view_more_details": "Visualizza più dettagli"
+    },
+    "jsr": {
+      "title": "disponibile anche su JSR",
+      "label": "jsr"
+    }
+  },
   "filters": {
     "title": "Filtri",
     "search": "Cerca",
@@ -740,18 +753,6 @@
       "security_warning": "Avviso di sicurezza",
       "secure": "Sicuro",
       "no_packages": "Nessun pacchetto trovato"
-    }
-  },
-  "badges": {
-    "provenance": {
-      "verified": "verificato",
-      "verified_title": "Provenienza verificata",
-      "verified_via": "Verificato: pubblicato tramite {provider}",
-      "view_more_details": "Visualizza più dettagli"
-    },
-    "jsr": {
-      "title": "disponibile anche su JSR",
-      "label": "jsr"
     }
   },
   "about": {
@@ -883,6 +884,7 @@
       "loading_versions": "Caricamento versioni...",
       "select_version": "Seleziona versione"
     },
+    "no_dependency": {},
     "facets": {
       "group_label": "Sfaccettature di confronto",
       "all": "tutto",
@@ -960,5 +962,19 @@
         "vulnerabilities_summary": "{count} ({critical}C/{high}H)"
       }
     }
+  },
+  "privacy_policy": {
+    "cookies": {
+      "what_are": {},
+      "types": {},
+      "local_storage": {},
+      "management": {}
+    },
+    "analytics": {},
+    "authenticated": {},
+    "data_retention": {},
+    "your_rights": {},
+    "contact": {},
+    "changes": {}
   }
 }
