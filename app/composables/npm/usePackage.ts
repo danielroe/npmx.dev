@@ -12,7 +12,10 @@ const RECENT_VERSIONS_COUNT = 5
  * - Including only: 5 most recent versions + one version per dist-tag + requested version
  * - Stripping unnecessary fields from version objects
  */
-function transformPackument(pkg: Packument, requestedVersion?: string | null): SlimPackument {
+export function transformPackument(
+  pkg: Packument,
+  requestedVersion?: string | null,
+): SlimPackument {
   // Get versions pointed to by dist-tags
   const distTagVersions = new Set(Object.values(pkg['dist-tags'] ?? {}))
 
@@ -53,7 +56,9 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
         }
       }
       filteredVersions[v] = {
-        ...((version?.dist as { attestations?: unknown }) ? { hasProvenance: true } : {}),
+        ...((version?.dist as { attestations?: unknown } | undefined)?.attestations
+          ? { hasProvenance: true }
+          : {}),
         version: version.version,
         deprecated: version.deprecated,
         tags: version.tags as string[],

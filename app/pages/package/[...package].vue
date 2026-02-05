@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {
   NpmVersionDist,
+  PackageVersionInfo,
   PackumentVersion,
   ProvenanceDetails,
   ReadmeResponse,
@@ -13,7 +14,6 @@ import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
 import { formatBytes } from '~/utils/formatters'
 import { getDependencyCount } from '~/utils/npm/dependency-count'
-import { fetchAllPackageVersions } from '~/utils/npm/api'
 import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-security'
 import { NuxtLink } from '#components'
 import { useModal } from '~/composables/useModal'
@@ -126,15 +126,6 @@ const {
   error: versionError,
 } = await useResolvedVersion(packageName, requestedVersion)
 
-const { data: allVersionMetadata } = useLazyAsyncData(
-  () => `package:version-meta:${packageName.value}`,
-  () => fetchAllPackageVersions(packageName.value),
-  {
-    default: () => [],
-    server: false,
-  },
-)
-
 if (
   versionStatus.value === 'error' &&
   versionError.value?.statusCode &&
@@ -154,6 +145,16 @@ const {
   error,
 } = usePackage(packageName, resolvedVersion.value ?? requestedVersion.value)
 const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
+const versionSecurityMetadata = computed<PackageVersionInfo[]>(() => {
+  if (!pkg.value) return []
+
+  return Object.entries(pkg.value.versions).map(([version, metadata]) => ({
+    version,
+    time: pkg.value?.time?.[version],
+    hasProvenance: !!metadata.hasProvenance,
+    deprecated: metadata.deprecated,
+  }))
+})
 
 // Process package description
 const pkgDescription = useMarkdown(() => ({
@@ -239,7 +240,7 @@ const deprecationNoticeMessage = useMarkdown(() => ({
 const publishSecurityDowngrade = computed(() => {
   const currentVersion = displayVersion.value?.version
   if (!currentVersion) return null
-  return detectPublishSecurityDowngradeForVersion(allVersionMetadata.value ?? [], currentVersion)
+  return detectPublishSecurityDowngradeForVersion(versionSecurityMetadata.value, currentVersion)
 })
 
 const installVersionOverride = computed(() => {
