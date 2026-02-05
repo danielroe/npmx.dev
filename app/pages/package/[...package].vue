@@ -399,10 +399,16 @@ const { user } = useAtproto()
 
 const authModal = useModal('auth-modal')
 
-const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.value}`, {
-  default: () => ({ totalLikes: 0, userHasLiked: false }),
-  server: false,
-})
+const { data: likesData, status: likeStatus } = useFetch(
+  () => `/api/social/likes/${packageName.value}`,
+  {
+    default: () => ({ totalLikes: 0, userHasLiked: false }),
+    server: false,
+  },
+)
+const isLoadingLikeData = computed(
+  () => likeStatus.value !== 'error' && likeStatus.value !== 'success',
+)
 
 const isLikeActionPending = ref(false)
 
@@ -609,8 +615,15 @@ onKeyStroke(
                   likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                 "
                 position="bottom"
+                class="items-center"
               >
+                <span
+                  v-if="isLoadingLikeData"
+                  class="i-carbon-circle-dash w-3 h-3 motion-safe:animate-spin"
+                  aria-hidden="true"
+                />
                 <button
+                  v-else
                   @click="likeAction"
                   type="button"
                   :title="
