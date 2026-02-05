@@ -13,6 +13,8 @@ import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
 import { formatBytes } from '~/utils/formatters'
 import { getDependencyCount } from '~/utils/npm/dependency-count'
+import { fetchAllPackageVersions } from '~/utils/npm/api'
+import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-security'
 import { NuxtLink } from '#components'
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
@@ -124,6 +126,15 @@ const {
   error: versionError,
 } = await useResolvedVersion(packageName, requestedVersion)
 
+const { data: allVersionMetadata } = useLazyAsyncData(
+  () => `package:version-meta:${packageName.value}`,
+  () => fetchAllPackageVersions(packageName.value),
+  {
+    default: () => [],
+    server: false,
+  },
+)
+
 if (
   versionStatus.value === 'error' &&
   versionError.value?.statusCode &&
@@ -224,6 +235,17 @@ const deprecationNotice = computed(() => {
 const deprecationNoticeMessage = useMarkdown(() => ({
   text: deprecationNotice.value?.message ?? '',
 }))
+
+const publishSecurityDowngrade = computed(() => {
+  const currentVersion = displayVersion.value?.version
+  if (!currentVersion) return null
+  return detectPublishSecurityDowngradeForVersion(allVersionMetadata.value ?? [], currentVersion)
+})
+
+const installVersionOverride = computed(() => {
+  if (!publishSecurityDowngrade.value) return null
+  return publishSecurityDowngrade.value?.trustedVersion ?? null
+})
 
 const sizeTooltip = computed(() => {
   const chunks = [
@@ -1088,9 +1110,30 @@ onKeyStroke(
           :id="`pm-panel-${activePmId}`"
           :aria-labelledby="`pm-tab-${activePmId}`"
         >
+          <div
+            v-if="publishSecurityDowngrade"
+            role="alert"
+            class="mb-4 rounded-lg border border-red-600/40 bg-red-500/10 px-4 py-3 text-red-800 dark:text-red-300"
+          >
+            <h3 class="m-0 flex items-center gap-2 font-mono text-sm font-semibold tracking-wide">
+              <span class="i-carbon-warning-filled w-4 h-4 shrink-0" aria-hidden="true" />
+              {{ $t('package.security_downgrade.title') }}
+            </h3>
+            <p class="mt-2 mb-0 text-sm">
+              {{ $t('package.security_downgrade.description') }}
+            </p>
+            <p class="mt-2 mb-0 text-sm">
+              {{
+                $t('package.security_downgrade.fallback_install', {
+                  version: publishSecurityDowngrade.trustedVersion,
+                })
+              }}
+            </p>
+          </div>
           <TerminalInstall
             :package-name="pkg.name"
             :requested-version="requestedVersion"
+            :install-version-override="installVersionOverride"
             :jsr-info="jsrInfo"
             :types-package-name="typesPackageName"
             :executable-info="executableInfo"
