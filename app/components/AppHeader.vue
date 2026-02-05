@@ -151,34 +151,36 @@ onKeyStroke(
       <!-- End: Desktop nav items + Mobile menu button -->
       <div class="flex-shrink-0 flex items-center gap-0.5 sm:gap-2">
         <!-- Desktop: Compare link -->
-        <NuxtLink
+        <LinkBase
+          variant="button-secondary"
           to="/compare"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+          class="inline-flex items-center gap-2"
           aria-keyshortcuts="c"
         >
           {{ $t('nav.compare') }}
           <kbd
-            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded no-underline"
             aria-hidden="true"
           >
             c
           </kbd>
-        </NuxtLink>
+        </LinkBase>
 
         <!-- Desktop: Settings link -->
-        <NuxtLink
+        <LinkBase
+          variant="button-secondary"
           to="/settings"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+          class="inline-flex items-center gap-2"
           aria-keyshortcuts=","
         >
           {{ $t('nav.settings') }}
           <kbd
-            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded"
+            class="inline-flex items-center justify-center w-5 h-5 text-xs bg-bg-muted border border-border rounded no-underline"
             aria-hidden="true"
           >
             ,
           </kbd>
-        </NuxtLink>
+        </LinkBase>
 
         <!-- Desktop: Account menu -->
         <div class="hidden sm:block">
@@ -186,14 +188,15 @@ onKeyStroke(
         </div>
 
         <!-- Mobile: Menu button (always visible, click to open menu) -->
-        <button
+        <ButtonBase
           type="button"
-          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
+          class="sm:hidden flex"
           :aria-label="$t('nav.open_menu')"
-          @click="showMobileMenu = true"
+          :aria-expanded="showMobileMenu"
+          @click="showMobileMenu = !showMobileMenu"
         >
           <span class="w-6 h-6 inline-block i-carbon:menu" aria-hidden="true" />
-        </button>
+        </ButtonBase>
       </div>
     </nav>
 

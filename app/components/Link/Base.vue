@@ -12,22 +12,23 @@ const props = withDefaults(
        * If you want a button use `TagButton` instead.
        * */
       type?: never
-      variant?: 'button-primary' | 'button-secondary' | 'tag'
+      variant?: 'button-primary' | 'button-secondary' | 'tag' | 'link'
     } &
       /** This makes sure the link always has either `to` or `href` */
       (Required<Pick<NuxtLinkProps, 'to'>> | Required<Pick<NuxtLinkProps, 'href'>>) &
       NuxtLinkProps
   >(),
-  { variant: 'button-secondary' },
+  { variant: 'link' },
 )
 </script>
 
 <template>
   <span
     v-if="disabled"
-    class="opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border border-transparent rounded-md"
     :class="{
-      'text-sm px-4 py-2': variant !== 'tag',
+      'opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border border-transparent rounded-md':
+        variant !== 'link',
+      'text-sm px-4 py-2': variant !== 'tag' && variant !== 'link',
       'text-xs px-2 py-0.5': variant === 'tag',
       'bg-bg-muted text-fg-muted': variant === 'tag',
       'text-bg bg-fg': variant === 'button-primary',
@@ -37,9 +38,12 @@ const props = withDefaults(
   /></span>
   <NuxtLink
     v-else
-    class="cursor-pointer inline-flex gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 aria-current:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))"
     :class="{
-      'text-sm px-4 py-2': variant !== 'tag',
+      'text-fg underline-offset-4 underline decoration-fg/50 hover:(no-underline text-fg/80) transition-colors duration-200':
+        variant === 'link',
+      'gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 aria-current:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))':
+        variant !== 'link',
+      'text-sm px-4 py-2': variant !== 'tag' && variant !== 'link',
       'text-xs px-2 py-0.5': variant === 'tag',
       'bg-bg-muted text-fg-muted hover:(text-fg border-border-hover)': variant === 'tag',
       'text-bg bg-fg hover:(bg-fg/90)': variant === 'button-primary',

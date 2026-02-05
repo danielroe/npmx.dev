@@ -98,7 +98,7 @@ defineOgImageComponent('Default', {
 
                 <ButtonBase type="submit" variant="primary" class="absolute inset-ie-2">
                   <span class="i-carbon:search align-middle w-4 h-4" aria-hidden="true"></span>
-                  
+
                   <span class="sr-only sm:not-sr-only">
                     {{ $t('search.button') }}
                   </span>
@@ -118,15 +118,15 @@ defineOgImageComponent('Default', {
       >
         <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 list-none m-0 p-0">
           <li v-for="framework in SHOWCASED_FRAMEWORKS" :key="framework.name">
-            <NuxtLink
+            <LinkBase
               :to="{ name: 'package', params: { package: [framework.package] } }"
-              class="link-subtle font-mono text-sm inline-flex items-center gap-2 group"
+              class="inline-flex items-center gap-2 group"
             >
               <span
                 class="w-1 h-1 rounded-full bg-accent group-hover:bg-fg transition-colors duration-200"
               />
               {{ framework.name }}
-            </NuxtLink>
+            </LinkBase>
           </li>
         </ul>
       </nav>

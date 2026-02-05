@@ -126,11 +126,6 @@ export default defineConfig({
     // Focus states - subtle but accessible
     ['focus-ring', 'outline-none focus-visible:(ring-2 ring-fg/50 ring-offset-2)'],
 
-    // Links
-    [
-      'link',
-      'text-fg underline-offset-4 decoration-border hover:(decoration-fg underline) transition-colors duration-200 focus-ring',
-    ],
     ['link-subtle', 'text-fg-muted hover:text-fg transition-colors duration-200 focus-ring'],
 
     // badges
