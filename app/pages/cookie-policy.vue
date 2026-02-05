@@ -13,18 +13,35 @@ defineOgImageComponent('Default', {
   description: () => $t('cookie_policy.welcome', { app: 'npmx' }),
 })
 
+const router = useRouter()
 const buildInfo = useAppConfig().buildInfo
 const { locale } = useI18n()
 </script>
 
 <template>
-  <main class="container flex-1 py-12 sm:py-16 w-full">
-    <article class="max-w-3xl mx-auto">
+  <main class="container flex-1 py-12 sm:py-16 w-full overflow-x-hidden">
+    <article class="max-w-2xl mx-auto">
       <header class="mb-12">
-        <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4">
-          {{ $t('cookie_policy.title') }}
-        </h1>
-        <i18n-t keypath="cookie_policy.last_updated" tag="p" scope="global" class="text-fg-muted">
+        <div class="flex items-baseline justify-between gap-4 mb-4">
+          <h1 class="font-mono text-3xl sm:text-4xl font-medium">
+            {{ $t('cookie_policy.title') }}
+          </h1>
+          <button
+            type="button"
+            :title="$t('nav.back')"
+            class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+            @click="router.back()"
+          >
+            <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
+            <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+          </button>
+        </div>
+        <i18n-t
+          keypath="cookie_policy.last_updated"
+          tag="p"
+          scope="global"
+          class="text-fg-muted text-lg"
+        >
           <template #date>
             <NuxtTime
               :locale
@@ -63,20 +80,38 @@ const { locale } = useI18n()
               </template>
             </i18n-t>
           </p>
-          <ul class="list-disc ps-5 space-y-2">
-            <li>
-              <strong class="text-fg font-mono text-sm">{{
-                $t('cookie_policy.section_2.cookie_vdpl')
-              }}</strong
-              >:
-              {{ $t('cookie_policy.section_2.cookie_vdpl_desc') }}
+          <ul class="list-none ps-5 space-y-2">
+            <li class="flex justify-start items-start gap-2">
+              <span aria-hidden="true" class="text-fg-subtle shrink-0">—</span>
+              <i18n-t keypath="cookie_policy.section_2.li1" tag="span">
+                <template #li11>
+                  <strong class="text-fg font-mono text-sm">
+                    <bdi>{{ $t('cookie_policy.section_2.cookie_vdpl') }}</bdi>
+                  </strong>
+                </template>
+                <template #separator>
+                  <bdi>{{ $t('cookie_policy.section_2.separator') }}</bdi>
+                </template>
+                <template #li12>
+                  <bdi>{{ $t('cookie_policy.section_2.cookie_vdpl_desc') }}</bdi>
+                </template>
+              </i18n-t>
             </li>
-            <li>
-              <strong class="text-fg font-mono text-sm">{{
-                $t('cookie_policy.section_2.cookie_h3')
-              }}</strong
-              >:
-              {{ $t('cookie_policy.section_2.cookie_h3_desc') }}
+            <li class="flex justify-start items-start gap-2">
+              <span aria-hidden="true" class="text-fg-subtle shrink-0">—</span>
+              <i18n-t keypath="cookie_policy.section_2.li2" tag="span">
+                <template #li21>
+                  <strong class="text-fg font-mono text-sm">
+                    <bdi>{{ $t('cookie_policy.section_2.cookie_h3') }}</bdi>
+                  </strong>
+                </template>
+                <template #separator>
+                  <bdi>{{ $t('cookie_policy.section_2.separator') }}</bdi>
+                </template>
+                <template #li22>
+                  <bdi>{{ $t('cookie_policy.section_2.cookie_h3_desc') }}</bdi>
+                </template>
+              </i18n-t>
             </li>
           </ul>
         </section>
