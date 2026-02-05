@@ -57,7 +57,16 @@ function addPackage(name: string) {
   if (packages.value.length >= maxPackages.value) return
   if (packages.value.includes(name)) return
 
-  packages.value = [...packages.value, name]
+  // Keep NO_DEPENDENCY_ID always last
+  if (name === NO_DEPENDENCY_ID) {
+    packages.value = [...packages.value, name]
+  } else if (packages.value.includes(NO_DEPENDENCY_ID)) {
+    // Insert before the no-dep entry
+    const withoutNoDep = packages.value.filter(p => p !== NO_DEPENDENCY_ID)
+    packages.value = [...withoutNoDep, name, NO_DEPENDENCY_ID]
+  } else {
+    packages.value = [...packages.value, name]
+  }
   inputValue.value = ''
 }
 

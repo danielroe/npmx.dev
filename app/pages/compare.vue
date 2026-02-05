@@ -43,9 +43,10 @@ const showNoDependency = computed(() => packages.value.includes(NO_DEPENDENCY_ID
 // Build column definitions for real packages only (no-dep is handled separately by the grid)
 const gridColumns = computed(() =>
   packages.value
-    .filter(pkg => pkg !== NO_DEPENDENCY_ID)
-    .map((pkg, i) => {
-      const data = packagesData.value?.[i]
+    .map((pkg, i) => ({ pkg, originalIndex: i }))
+    .filter(({ pkg }) => pkg !== NO_DEPENDENCY_ID)
+    .map(({ pkg, originalIndex }) => {
+      const data = packagesData.value?.[originalIndex]
       const header = data
         ? data.package.version
           ? `${data.package.name}@${data.package.version}`
