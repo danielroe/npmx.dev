@@ -106,7 +106,7 @@ function handleBlur() {
         </template>
         <NuxtLink
           v-else
-          :to="`/package/${pkg}`"
+          :to="{ name: 'package', params: { package: [pkg] } }"
           class="font-mono text-sm text-fg hover:text-accent transition-colors"
         >
           {{ pkg }}

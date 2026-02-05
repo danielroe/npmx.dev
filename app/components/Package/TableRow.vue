@@ -106,7 +106,10 @@ const allMaintainersText = computed(() => {
           :key="maintainer.username || maintainer.email"
         >
           <NuxtLink
-            :to="`/~${maintainer.username || maintainer.name}`"
+            :to="{
+              name: '~username',
+              params: { username: maintainer.username || maintainer.name || '' },
+            }"
             class="hover:text-accent-fallback transition-colors duration-200"
             @click.stop
             >{{ maintainer.username || maintainer.name || maintainer.email }}</NuxtLink

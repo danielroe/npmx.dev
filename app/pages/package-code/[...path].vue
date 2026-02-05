@@ -198,6 +198,12 @@ function getCodeUrl(path?: string): string {
   return path ? `${base}/${path}` : base
 }
 
+// Base path segments for route objects (e.g., ['nuxt', 'v', '4.2.0'] or ['@nuxt', 'kit', 'v', '1.0.0'])
+const basePath = computed(() => {
+  const segments = packageName.value.split('/')
+  return [...segments, 'v', version.value ?? '']
+})
+
 // Extract org name from scoped package
 const orgName = computed(() => {
   const name = packageName.value
@@ -398,6 +404,7 @@ defineOgImageComponent('Default', {
           :tree="fileTree.tree"
           :current-path="filePath ?? ''"
           :base-url="getCodeUrl()"
+          :base-path="basePath"
         />
       </aside>
 
@@ -557,6 +564,7 @@ defineOgImageComponent('Default', {
             :tree="fileTree.tree"
             :current-path="filePath ?? ''"
             :base-url="getCodeUrl()"
+            :base-path="basePath"
           />
         </template>
       </div>
@@ -570,6 +578,7 @@ defineOgImageComponent('Default', {
           :tree="fileTree.tree"
           :current-path="filePath ?? ''"
           :base-url="getCodeUrl()"
+          :base-path="basePath"
         />
       </Teleport>
     </ClientOnly>

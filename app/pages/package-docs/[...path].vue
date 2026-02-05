@@ -46,8 +46,12 @@ if (import.meta.server && !requestedVersion.value && packageName.value) {
   const version = await fetchLatestVersion(packageName.value)
   if (version) {
     setResponseHeader(useRequestEvent()!, 'Cache-Control', 'no-cache')
+    const pathSegments = [...packageName.value.split('/'), 'v', version]
     app.runWithContext(() =>
-      navigateTo('/package-docs/' + packageName.value + '/v/' + version, { redirectCode: 302 }),
+      navigateTo(
+        { name: 'docs', params: { path: pathSegments as [string, ...string[]] } },
+        { redirectCode: 302 },
+      ),
     )
   }
 }
@@ -56,7 +60,8 @@ watch(
   [requestedVersion, latestVersion, packageName],
   ([version, latest, name]) => {
     if (!version && latest && name) {
-      router.replace(`/package-docs/${name}/v/${latest}`)
+      const pathSegments = [...name.split('/'), 'v', latest]
+      router.replace({ name: 'docs', params: { path: pathSegments as [string, ...string[]] } })
     }
   },
   { immediate: true },
