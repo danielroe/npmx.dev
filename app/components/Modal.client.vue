@@ -26,6 +26,7 @@ function handleModalClose() {
 function onDialogTransitionEnd(event: TransitionEvent) {
   const el = dialogRef.value
   if (!el) return
+  if (!el.open) return
   if (event.target !== el) return
   if (event.propertyName !== 'opacity') return
   emit('transitioned')
