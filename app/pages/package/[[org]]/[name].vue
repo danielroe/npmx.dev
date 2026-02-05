@@ -1234,6 +1234,7 @@ const showSkeleton = shallowRef(false)
             :requested-version="requestedVersion"
             :install-version-override="installVersionOverride"
             :jsr-info="jsrInfo"
+            :readme-html="readmeData?.html"
             :types-package-name="typesPackageName"
             :executable-info="executableInfo"
             :create-package-info="createPackageInfo"
