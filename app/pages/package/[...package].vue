@@ -399,10 +399,13 @@ const { user } = useAtproto()
 
 const authModal = useModal('auth-modal')
 
-const { data: likesData } = useFetch(() => `/api/social/likes/${packageName.value}`, {
-  default: () => ({ totalLikes: 0, userHasLiked: false }),
-  server: false,
-})
+const { data: likesData, status: likesStatus } = useFetch(
+  () => `/api/social/likes/${packageName.value}`,
+  {
+    default: () => ({ totalLikes: 0, userHasLiked: false }),
+    server: false,
+  },
+)
 
 const isLikeActionPending = ref(false)
 
@@ -414,12 +417,12 @@ const likeAction = async () => {
 
   if (isLikeActionPending.value) return
 
-  const currentlyLiked = likesData.value?.userHasLiked ?? false
-  const currentLikes = likesData.value?.totalLikes ?? 0
+  const currentlyLiked = likesData.value.userHasLiked
+  const currentLikes = likesData.value.totalLikes
 
   // Optimistic update
   likesData.value = {
-    totalLikes: currentlyLiked ? currentLikes - 1 : currentLikes + 1,
+    totalLikes: currentLikes + (currentlyLiked ? -1 : 1),
     userHasLiked: !currentlyLiked,
   }
 
@@ -605,7 +608,6 @@ onKeyStroke(
 
               <!-- Package likes -->
               <TooltipApp
-                v-if="likesData"
                 :text="
                   likesData.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                 "
@@ -631,7 +633,9 @@ onKeyStroke(
                     class="w-4 h-4"
                     aria-hidden="true"
                   />
-                  <span>{{ formatCompactNumber(likesData.totalLikes, { decimals: 1 }) }}</span>
+                  <span v-if="likesStatus !== 'pending'">{{
+                    formatCompactNumber(likesData.totalLikes, { decimals: 1 })
+                  }}</span>
                 </button>
               </TooltipApp>
               <template #fallback>
