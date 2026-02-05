@@ -7,23 +7,11 @@ const route = useRoute()
 const { user, logout } = useAtproto()
 
 async function handleBlueskySignIn() {
-  await navigateTo(
-    {
-      path: '/api/auth/atproto',
-      query: { handle: 'https://bsky.social', returnTo: route.fullPath },
-    },
-    { external: true },
-  )
+  await authRedirect('https://bsky.social', { redirectTo: route.fullPath })
 }
 
 async function handleCreateAccount() {
-  await navigateTo(
-    {
-      path: '/api/auth/atproto',
-      query: { handle: 'https://npmx.social', create: 'true', returnTo: route.fullPath },
-    },
-    { external: true },
-  )
+  await authRedirect('https://npmx.social', { create: true, redirectTo: route.fullPath })
 }
 
 async function handleLogin() {
