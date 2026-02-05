@@ -167,12 +167,13 @@ const config = computed(() => {
         pulse: {
           show: true,
           loop: true, // runs only once if false
-          radius: 2,
+          radius: 1.5,
           color: pulseColor.value,
           easing: 'ease-in-out',
           trail: {
             show: true,
-            length: 6,
+            length: 20,
+            opacity: 0.75,
           },
         },
       },
