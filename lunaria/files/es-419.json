@@ -228,8 +228,8 @@
       "built_and_signed_on": "Construido y firmado en {provider}",
       "view_build_summary": "Ver resumen de construcción",
       "source_commit": "Commit fuente",
-      "build_file": "Archivo de construcción",
-      "public_ledger": "Libro mayor público",
+      "build_file": "Archivo de compilación",
+      "public_ledger": "Registro público",
       "transparency_log_entry": "Entrada de registro de transparencia",
       "view_more_details": "Ver más detalles",
       "error_loading": "Error al cargar detalles de procedencia"
@@ -412,6 +412,10 @@
       "published": "Recientemente publicado",
       "name_asc": "Nombre (A-Z)",
       "name_desc": "Nombre (Z-A)"
+    },
+    "no_dependency": {
+      "typeahead_description": "¡Compara versus no usar una dependencia! Aprobado por e18e.",
+      "tooltip_description": "¡Compara versus no usar una dependencia! La {link} mantiene una lista de paquetes que pueden ser reemplazados con APIs nativas o alternativas más simples."
     }
   },
   "connector": {
@@ -1003,7 +1007,7 @@
         "settings": "configuraciones"
       },
       "management": {
-        "title": "Administración de cookies",
+        "title": "Gestión de cookies",
         "p1": "Puedes configurar tu navegador para aceptar, rechazar o eliminar cookies según tus preferencias. Sin embargo, ten en cuenta que {bold}.",
         "bold": "rechazar cookies esenciales puede impedir el acceso completo a la aplicación",
         "p2": "A continuación se muestran enlaces con instrucciones para la administración de cookies en los navegadores más utilizados:",

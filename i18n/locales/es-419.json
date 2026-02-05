@@ -19,6 +19,11 @@
     }
   },
   "package": {
+    "no_dependency": {
+      "typeahead_description": "¡Compara versus no usar una dependencia! Aprobado por e18e.",
+      "tooltip_description": "¡Compara versus no usar una dependencia! La {link} mantiene una lista de paquetes que pueden ser reemplazados con APIs nativas o alternativas más simples."
+    },
+
     "readme": {
       "title": "Léame"
     },
@@ -37,7 +42,6 @@
         "settings": "configuraciones"
       },
       "management": {
-        "title": "Administración de cookies",
         "p2": "A continuación se muestran enlaces con instrucciones para la administración de cookies en los navegadores más utilizados:"
       }
     },

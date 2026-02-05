@@ -228,8 +228,8 @@
       "built_and_signed_on": "Construido y firmado en {provider}",
       "view_build_summary": "Ver resumen de construcción",
       "source_commit": "Commit fuente",
-      "build_file": "Archivo de construcción",
-      "public_ledger": "Libro mayor público",
+      "build_file": "Archivo de compilación",
+      "public_ledger": "Registro público",
       "transparency_log_entry": "Entrada de registro de transparencia",
       "view_more_details": "Ver más detalles",
       "error_loading": "Error al cargar detalles de procedencia"
