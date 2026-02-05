@@ -11,6 +11,6 @@ const props = withDefaults(
     class="bg-bg-muted text-fg-muted inline-flex gap-x-1 items-center justify-center font-mono border border-transparent rounded-md text-xs px-2 py-0.5"
     :class="{ 'opacity-40': variant === 'disabled' }"
   >
-    <slot />!
+    <slot />
   </component>
 </template>
