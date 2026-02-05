@@ -30,9 +30,7 @@ const oxlintVersion = getDependencyVersion('oxlint')
 const oxfmtVersion = getDependencyVersion('oxfmt')
 const e18eVersion = getDependencyVersion('@e18e/eslint-plugin')
 
-runCommand('pnpx', [
-  `--package=@e18e/eslint-plugin@${e18eVersion}`,
-  `--package=oxlint@${oxlintVersion}`,
-  'oxlint',
-])
+// Peers of the lint config
+runCommand('pnpm', ['i', '-g', `@e18e/eslint-plugin@${e18eVersion}`])
+runCommand('pnpx', [`--package=oxlint@${oxlintVersion}`, 'oxlint'])
 runCommand('pnpx', [`oxfmt@${oxfmtVersion}`, '--check'])
