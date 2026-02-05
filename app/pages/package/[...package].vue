@@ -1344,23 +1344,23 @@ onKeyStroke(
 @media (min-width: 1024px) {
   .sidebar-scroll {
     scrollbar-gutter: stable;
-    scrollbar-width: none;
+    scrollbar-width: 8px;
+    scrollbar-color: transparent transparent;
   }
 
   .sidebar-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 8px;
+    height: 8px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track,
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
   }
 
   .sidebar-scroll:hover,
   .sidebar-scroll:focus-within {
-    scrollbar-width: auto;
-  }
-
-  .sidebar-scroll:hover::-webkit-scrollbar,
-  .sidebar-scroll:focus-within::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    scrollbar-color: var(--border) transparent;
   }
 
   .sidebar-scroll:hover::-webkit-scrollbar-thumb,
