@@ -303,6 +303,7 @@ function createNoDependencyData(): PackageComparisonData {
     },
     isNoDependency: true,
     downloads: undefined,
+    totalLikes: undefined,
     packageSize: 0,
     directDeps: 0,
     installSize: {
