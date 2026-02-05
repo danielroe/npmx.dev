@@ -396,7 +396,7 @@
   "connector": {
     "status": {
       "connecting": "łączenie...",
-      "connected_as": "połączono jako {'@'}{user}",
+      "connected_as": "połączono jako ~{user}",
       "connected": "połączono",
       "connect_cli": "połącz lokalne CLI",
       "aria_connecting": "Łączenie z lokalnym konektorem",

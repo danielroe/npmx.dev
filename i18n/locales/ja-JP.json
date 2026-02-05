@@ -388,7 +388,7 @@
   "connector": {
     "status": {
       "connecting": "接続中...",
-      "connected_as": "{'@'}{user} として接続済み",
+      "connected_as": "~{user} として接続済み",
       "connected": "接続済み",
       "connect_cli": "ローカルCLIに接続",
       "aria_connecting": "ローカルコネクタに接続中",
