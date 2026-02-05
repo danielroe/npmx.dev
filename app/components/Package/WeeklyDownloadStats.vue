@@ -277,7 +277,7 @@ const config = computed(() => {
     <!-- Avoids CLS when the dialog has transitioned -->
     <div
       v-if="!hasChartModalTransitioned"
-      class="w-full aspect-[390/634.5] sm:aspect-[718/622.797] skeleton"
+      class="w-full aspect-[390/634.5] sm:aspect-[718/622.797]"
     />
   </PackageChartModal>
 </template>
