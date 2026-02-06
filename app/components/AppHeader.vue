@@ -150,7 +150,7 @@ onKeyStroke(
       </div>
 
       <!-- End: Desktop nav items + Mobile menu button -->
-      <ButtonGroup class="hidden sm:flex flex-shrink-0">
+      <ButtonGroup as="div" class="hidden sm:flex flex-shrink-0">
         <!-- Desktop: Compare link -->
         <LinkBase variant="button-secondary" to="/compare" keyshortcut="c">
           {{ $t('nav.compare') }}
