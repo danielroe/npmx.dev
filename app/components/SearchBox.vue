@@ -13,7 +13,7 @@ const searchQuery = defineModel<string>({
   default: '',
 })
 
-function handleSubmit(): void {
+function handleSubmit() {
   emit('submit', searchQuery.value)
 }
 
@@ -38,7 +38,7 @@ defineExpose({
 <template>
   <search class="w-full @container">
     <form method="GET" action="/search" class="relative" @submit.prevent="handleSubmit">
-      <label for="home-search" class="sr-only">
+      <label for="search-box" class="sr-only">
         {{ $t('search.label') }}
       </label>
 
@@ -55,12 +55,11 @@ defineExpose({
           </span>
 
           <input
-            id="home-search"
+            id="search-box"
             ref="inputRef"
             v-model.trim="searchQuery"
             type="search"
             name="q"
-            autofocus
             :placeholder="$t('search.placeholder')"
             v-bind="noCorrect"
             class="w-full bg-bg-subtle border border-border font-mono text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 motion-reduce:transition-none hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
