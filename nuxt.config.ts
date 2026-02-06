@@ -97,7 +97,7 @@ export default defineNuxtConfig({
     '/__og-image__/**': { isr: getISRConfig(60) },
     '/_avatar/**': { isr: 3600, proxy: 'https://www.gravatar.com/avatar/**' },
     '/opensearch.xml': { isr: true },
-    '/oauth-client-metadata.json': { prerender: true },
+    '/oauth-client-metadata.json': { isr: getISRConfig(60, true), prerender: true },
     // never cache
     '/api/auth/**': { isr: false, cache: false },
     '/api/social/**': { isr: false, cache: false },
