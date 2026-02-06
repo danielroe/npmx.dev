@@ -10,6 +10,8 @@ import { handleResolver } from '#server/utils/atproto/oauth'
 import { Client } from '@atproto/lex'
 import * as app from '#shared/types/lexicons/app'
 import { ensureValidAtIdentifier } from '@atproto/syntax'
+// @ts-expect-error virtual file from oauth module
+import { clientUri } from '#oauth/config'
 
 /**
  * Fetch the user's profile record to get their avatar blob reference
@@ -66,6 +68,25 @@ export default defineEventHandler(async event => {
   })
 
   if (!query.code) {
+    // Validate returnTo is a safe relative path (prevent open redirect)
+    // Only set cookie on initial auth request, not the callback
+    let redirectPath = '/'
+    try {
+      const clientOrigin = new URL(clientUri).origin
+      const returnToUrl = new URL(query.returnTo?.toString() || '/', clientUri)
+      if (returnToUrl.origin === clientOrigin) {
+        redirectPath = returnToUrl.pathname + returnToUrl.search + returnToUrl.hash
+      }
+    } catch {
+      // Invalid URL, fall back to root
+    }
+
+    setCookie(event, 'auth_return_to', redirectPath, {
+      maxAge: 60 * 5,
+      httpOnly: true,
+      // secure only if NOT in dev mode
+      secure: !import.meta.dev,
+    })
     try {
       const handle = query.handle?.toString()
       const create = query.create?.toString()
@@ -126,5 +147,9 @@ export default defineEventHandler(async event => {
       },
     })
   }
-  return sendRedirect(event, '/')
+
+  const returnToURL = getCookie(event, 'auth_return_to') || '/'
+  deleteCookie(event, 'auth_return_to')
+
+  return sendRedirect(event, returnToURL)
 })
