@@ -59,16 +59,15 @@ const parentPath = computed(() => {
           v-if="parentPath !== null"
           class="border-b border-border hover:bg-bg-subtle transition-colors"
         >
-          <td class="py-2 px-4">
+          <td colspan="2">
             <NuxtLink
               :to="parentPath ? `${baseUrl}/${parentPath}` : baseUrl"
-              class="flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors"
+              class="flex items-center gap-2 py-2 px-4 font-mono text-sm text-fg-muted hover:text-fg transition-colors"
             >
               <span class="i-carbon:folder w-4 h-4 text-yellow-600" />
               <span>..</span>
             </NuxtLink>
           </td>
-          <td />
         </tr>
 
         <!-- Directory/file rows -->
@@ -77,10 +76,10 @@ const parentPath = computed(() => {
           :key="node.path"
           class="border-b border-border hover:bg-bg-subtle transition-colors"
         >
-          <td class="py-2 px-4">
+          <td colspan="2">
             <NuxtLink
               :to="`${baseUrl}/${node.path}`"
-              class="flex items-center gap-2 font-mono text-sm hover:text-fg transition-colors"
+              class="flex items-center gap-2 py-2 px-4 font-mono text-sm hover:text-fg transition-colors"
               :class="node.type === 'directory' ? 'text-fg' : 'text-fg-muted'"
             >
               <span
@@ -88,13 +87,14 @@ const parentPath = computed(() => {
                 class="i-carbon:folder w-4 h-4 text-yellow-600"
               />
               <span v-else class="w-4 h-4" :class="getFileIcon(node.name)" />
-              <span>{{ node.name }}</span>
+              <span class="flex-1">{{ node.name }}</span>
+              <span
+                v-if="node.type === 'file' && node.size"
+                class="text-end font-mono text-xs text-fg-subtle"
+              >
+                {{ formatBytes(node.size) }}
+              </span>
             </NuxtLink>
-          </td>
-          <td class="py-2 px-4 text-end font-mono text-xs text-fg-subtle">
-            <span v-if="node.type === 'file' && node.size">
-              {{ formatBytes(node.size) }}
-            </span>
           </td>
         </tr>
       </tbody>
