@@ -76,7 +76,7 @@ function handleClick(event: MouseEvent) {
 <style scoped>
 /* README prose styling */
 .readme {
-  color: var(--fg-muted-light);
+  color: var(--fg-muted);
   line-height: 1.75;
   /* Prevent horizontal overflow on mobile */
   overflow-wrap: break-word;

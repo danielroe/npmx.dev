@@ -14,7 +14,6 @@
 
   /* text colors */
   --fg: oklch(0.982 0 0);
-  --fg-muted-light: oklch(0.832 0 0);
   --fg-muted: oklch(0.749 0 0);
   --fg-subtle: oklch(0.673 0 0);
 
@@ -79,9 +78,6 @@
   --bg-elevated: var(--bg-elevated-color, oklch(0.94 0.002 287.29));
 
   --fg: oklch(0.146 0 0);
-  --fg-muted-light: oklch(
-    0.284 0 0
-  ); /* TODO fix palette names to match bg - core > subtle > muted > elevated */
   --fg-muted: oklch(0.398 0 0);
   --fg-subtle: oklch(0.48 0 0);
 

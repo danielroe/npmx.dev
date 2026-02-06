@@ -49,10 +49,9 @@ export default defineConfig({
         elevated: 'var(--bg-elevated)',
       },
       fg: {
-        'DEFAULT': 'var(--fg)',
-        'muted': 'var(--fg-muted)',
-        'muted-light': 'var(--fg-muted-light)',
-        'subtle': 'var(--fg-subtle)',
+        DEFAULT: 'var(--fg)',
+        muted: 'var(--fg-muted)',
+        subtle: 'var(--fg-subtle)',
       },
       border: {
         DEFAULT: 'var(--border)',
