@@ -973,9 +973,9 @@
     }
   },
   "privacy_policy": {
-    "title": "Policy sulla privacy",
+    "title": "Informativa sulla privacy",
     "last_updated": "Ultimo aggiornamento: {date}",
-    "welcome": "Benvenuti su {app}. Ci impegniamo a proteggere la tua privacy. Questa policy spiega quali dati raccogliamo, come li utilizziamo e i tuoi diritti riguardo alle tue informazioni.",
+    "welcome": "Benvenuti su {app}. Ci impegniamo a proteggere la tua privacy. Questa informativa spiega quali dati raccogliamo, come li utilizziamo e i tuoi diritti riguardo alle tue informazioni.",
     "cookies": {
       "title": "Cookies",
       "what_are": {
@@ -1049,7 +1049,7 @@
       "link": "repository GitHub"
     },
     "changes": {
-      "title": "Modifiche a queste policy",
+      "title": "Modifiche a questa informativa sulla privacy",
       "p1": "Potremmo aggiornare questa informativa sulla privacy di tanto in tanto. Eventuali modifiche saranno pubblicate su questa pagina con una data di revisione aggiornata."
     }
   }
