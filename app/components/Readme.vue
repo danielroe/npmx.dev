@@ -63,7 +63,6 @@ function handleClick(event: MouseEvent) {
     class="readme prose prose-invert max-w-[70ch] lg:max-w-none px-1"
     dir="auto"
     v-html="html"
-    dir="auto"
     :style="{
       '--i18n-note': '\'' + $t('package.readme.callout.note') + '\'',
       '--i18n-tip': '\'' + $t('package.readme.callout.tip') + '\'',
