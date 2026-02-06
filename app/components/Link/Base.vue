@@ -76,7 +76,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
     class="group inline-flex gap-x-1 items-center justify-center"
     :class="{
       'underline-offset-[0.2rem] underline decoration-1 decoration-fg/50': !isLinkAnchor && isLink,
-      'text-fg hover:(no-underline text-fg/50) focus-visible:(no-underline text-fg/50) transition-colors duration-200':
+      'font-mono text-fg hover:(no-underline text-fg/50) focus-visible:(no-underline text-fg/50) transition-colors duration-200':
         isLink,
       'font-mono border border-border rounded-md transition-all duration-200': isButton,
       'text-sm px-4 py-2': isButtonMedium,
