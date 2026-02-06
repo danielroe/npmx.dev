@@ -1122,11 +1122,11 @@ onKeyStroke(
 
       <!-- README -->
       <section id="readme" class="area-readme min-w-0 scroll-mt-20">
-        <div class="flex flex-wrap items-center justify-between mb-4 px-1">
+        <div class="flex flex-wrap items-center justify-between mb-3 px-1">
           <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
             <a
               href="#readme"
-              class="inline-flex py-4 px-2 items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline mt-1"
+              class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline mt-1"
             >
               {{ $t('package.readme.title') }}
               <span
@@ -1346,23 +1346,23 @@ onKeyStroke(
 @media (min-width: 1024px) {
   .sidebar-scroll {
     scrollbar-gutter: stable;
-    scrollbar-width: none;
+    scrollbar-width: 8px;
+    scrollbar-color: transparent transparent;
   }
 
   .sidebar-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 8px;
+    height: 8px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track,
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
   }
 
   .sidebar-scroll:hover,
   .sidebar-scroll:focus-within {
-    scrollbar-width: auto;
-  }
-
-  .sidebar-scroll:hover::-webkit-scrollbar,
-  .sidebar-scroll:focus-within::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    scrollbar-color: var(--border) transparent;
   }
 
   .sidebar-scroll:hover::-webkit-scrollbar-thumb,

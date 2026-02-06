@@ -266,12 +266,15 @@ export default defineNuxtConfig({
     optimizeDeps: {
       include: [
         '@vueuse/core',
+        '@vueuse/integrations/useFocusTrap',
         'vue-data-ui/vue-ui-sparkline',
         'vue-data-ui/vue-ui-xy',
         'virtua/vue',
         'semver',
         'validate-npm-package-name',
         '@atproto/lex',
+        'fast-npm-meta',
+        '@floating-ui/vue',
       ],
     },
   },
