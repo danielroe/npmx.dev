@@ -37,7 +37,7 @@ defineExpose({
 
 <template>
   <search class="w-full @container">
-    <form method="GET" action="/search" class="relative" @submit.prevent.trim="handleSubmit">
+    <form method="GET" action="/search" class="relative" @submit.prevent="handleSubmit">
       <label for="home-search" class="sr-only">
         {{ $t('search.label') }}
       </label>
