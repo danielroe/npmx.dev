@@ -33,9 +33,10 @@ defineExpose({
     :class="{
       'text-sm px-4 py-2': variant !== 'tag',
       'text-xs px-2 py-0.5': variant === 'tag',
-      'bg-transparent text-fg hover:enabled:(bg-accent/30 border-fg)':
+      'bg-transparent text-fg hover:enabled:(bg-accent/30 border-fg) focus-visible:enabled:(bg-accent/30 border-fg)':
         variant === 'tag' || variant === 'secondary',
-      'text-bg bg-accent hover:enabled:(bg-accent/50)': variant === 'primary',
+      'text-bg bg-accent hover:enabled:(bg-accent/50) focus-visible:enabled:(bg-accent/50)':
+        variant === 'primary',
     }"
     :type="props.type"
     :disabled="disabled ? true : undefined"
