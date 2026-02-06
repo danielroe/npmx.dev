@@ -23,6 +23,9 @@ const pages = [
   '/search',
   '/settings',
 ]
+
+const cacheControl = 's-maxage=3600, stale-while-revalidate=36000'
+
 export default defineEventHandler(async event => {
   const routeRules = getRouteRules(event)
   if (Object.keys(routeRules).length > 1) {
@@ -44,8 +47,8 @@ export default defineEventHandler(async event => {
   let pkgMatch = path.match(/^\/(?:(?<org>@[^/]+)\/)?(?<name>[^/@]+)$/)
   if (pkgMatch?.groups) {
     const args = [pkgMatch.groups.org, pkgMatch.groups.name].filter(Boolean).join('/')
-    setHeader(event, 'cache-control', 'stale-while-revalidate=31536000, public')
-    return sendRedirect(event, `/package/${args}`)
+    setHeader(event, 'cache-control', cacheControl)
+    return sendRedirect(event, `/package/${args}`, 301)
   }
 
   // /@org/pkg/v/version or /@org/pkg@version → /package/org/pkg/v/version
@@ -56,14 +59,14 @@ export default defineEventHandler(async event => {
 
   if (pkgVersionMatch?.groups) {
     const args = [pkgVersionMatch.groups.org, pkgVersionMatch.groups.name].filter(Boolean).join('/')
-    setHeader(event, 'cache-control', 'stale-while-revalidate=31536000, public')
+    setHeader(event, 'cache-control', cacheControl)
     return sendRedirect(event, `/package/${args}/v/${pkgVersionMatch.groups.version}`)
   }
 
   // /@org → /org/org
   const orgMatch = path.match(/^\/@(?<org>[^/]+)$/)
   if (orgMatch?.groups) {
-    setHeader(event, 'cache-control', 'stale-while-revalidate=31536000, public')
+    setHeader(event, 'cache-control', cacheControl)
     return sendRedirect(event, `/org/${orgMatch.groups.org}`)
   }
 })
