@@ -139,8 +139,10 @@
       "documented": "{community} は、このパッケージによりパフォーマンスの高い代替手段があると報告しています。",
       "none": "このパッケージは不要になったとフラグが立てられています。その機能はすべてのエンジンでネイティブに利用できる可能性があります。",
       "learn_more": "詳細はこちら",
+      "learn_more_above": "EN TEXT TO REPLACE: Learn more above.",
       "mdn": "MDN",
-      "community": "コミュニティ"
+      "community": "コミュニティ",
+      "consider_no_dep": "EN TEXT TO REPLACE: + Consider no dep?"
     },
     "stats": {
       "license": "ライセンス",
@@ -184,6 +186,10 @@
       "docs": "ドキュメント",
       "fund": "資金援助",
       "compare": "比較"
+    },
+    "likes": {
+      "like": "EN TEXT TO REPLACE: Like this package",
+      "unlike": "EN TEXT TO REPLACE: Unlike this package"
     },
     "docs": {
       "not_available": "ドキュメントは利用できません",
@@ -878,6 +884,15 @@
       "loading_versions": "バージョンを読み込み中...",
       "select_version": "バージョンを選択"
     },
+    "no_dependency": {
+      "label": "EN TEXT TO REPLACE: (No dependency)",
+      "typeahead_title": "EN TEXT TO REPLACE: What Would James Do?",
+      "typeahead_description": "EN TEXT TO REPLACE: Compare against not using a dependency! e18e approved.",
+      "tooltip_title": "EN TEXT TO REPLACE: You might not need a dependency",
+      "tooltip_description": "EN TEXT TO REPLACE: Compare against not using a dependency! The {link} maintains a list of packages that can be replaced with native APIs or simpler alternatives.",
+      "e18e_community": "EN TEXT TO REPLACE: e18e community",
+      "add_column": "EN TEXT TO REPLACE: Add no dependency column to comparison"
+    },
     "facets": {
       "group_label": "比較項目",
       "all": "すべて",
@@ -952,8 +967,90 @@
         "not_deprecated": "いいえ",
         "types_included": "同梱",
         "types_none": "なし",
-        "vulnerabilities_summary": "{count} 件 ({critical}C/{high}H)"
+        "vulnerabilities_summary": "{count} 件 ({critical}C/{high}H)",
+        "up_to_you": "EN TEXT TO REPLACE: Up to you!"
       }
+    }
+  },
+  "privacy_policy": {
+    "title": "EN TEXT TO REPLACE: privacy policy",
+    "last_updated": "EN TEXT TO REPLACE: Last updated: {date}",
+    "welcome": "EN TEXT TO REPLACE: Welcome to {app}. We are committed to protecting your privacy. This policy explains what data we collect, how we use it, and your rights regarding your information.",
+    "cookies": {
+      "title": "EN TEXT TO REPLACE: Cookies",
+      "what_are": {
+        "title": "EN TEXT TO REPLACE: What are cookies?",
+        "p1": "EN TEXT TO REPLACE: Cookies are small text files stored on your device when you visit a website. Their purpose is to enhance your browsing experience by remembering certain preferences and settings."
+      },
+      "types": {
+        "title": "EN TEXT TO REPLACE: What cookies do we use?",
+        "p1": "EN TEXT TO REPLACE: We only use {bold} for purposes strictly necessary for the site's functionality. We do not use third-party or advertising cookies.",
+        "bold": "EN TEXT TO REPLACE: essential technical cookies",
+        "li1": "EN TEXT TO REPLACE: {li11}{separator} {li12}",
+        "li2": "EN TEXT TO REPLACE: {li21}{separator} {li22}",
+        "separator": "EN TEXT TO REPLACE: :",
+        "cookie_vdpl": "EN TEXT TO REPLACE: __vdpl",
+        "cookie_vdpl_desc": "EN TEXT TO REPLACE: This cookie is used by our hosting provider (Vercel) for skew protection. It ensures you fetch assets from the correct deployment version if a new update is released while you are browsing. It does not track you.",
+        "cookie_h3": "EN TEXT TO REPLACE: h3",
+        "cookie_h3_desc": "EN TEXT TO REPLACE: This is our secure session cookie. It stores the OAuth access token when you connect your Atmosphere account. It is essential for maintaining your authenticated session."
+      },
+      "local_storage": {
+        "title": "EN TEXT TO REPLACE: Local storage",
+        "p1": "EN TEXT TO REPLACE: In addition to session cookies, we use your browser's {bold} to save your display preferences. This allows us to remember the theme (light/dark) and some other {settings} you have selected, so you don't have to reconfigure them on each visit.",
+        "bold": "EN TEXT TO REPLACE: Local Storage",
+        "p2": "EN TEXT TO REPLACE: This information is purely functional, stored only on your device, and {bold2}. We use it exclusively to improve your experience on our website.",
+        "bold2": "EN TEXT TO REPLACE: contains no personal data nor is it used to track you",
+        "settings": "EN TEXT TO REPLACE: settings"
+      },
+      "management": {
+        "title": "EN TEXT TO REPLACE: Managing cookies",
+        "p1": "EN TEXT TO REPLACE: You can configure your browser to accept, reject, or delete cookies according to your preferences. However, please note that {bold}.",
+        "bold": "EN TEXT TO REPLACE: rejecting essential cookies may prevent full access to the application",
+        "p2": "EN TEXT TO REPLACE: Below are links with instructions for cookie management in the most commonly used browsers:",
+        "chrome": "EN TEXT TO REPLACE: Google Chrome (opens in a new window)",
+        "firefox": "EN TEXT TO REPLACE: Mozilla Firefox (opens in a new window)",
+        "edge": "EN TEXT TO REPLACE: Microsoft Edge (opens in a new window)"
+      }
+    },
+    "analytics": {
+      "title": "EN TEXT TO REPLACE: Analytics",
+      "p1": "EN TEXT TO REPLACE: We use {bold} to understand how visitors use our website. This helps us improve the user experience and identify issues.",
+      "bold": "EN TEXT TO REPLACE: Vercel Web Analytics",
+      "p2": "EN TEXT TO REPLACE: Vercel Analytics is designed with privacy in mind:",
+      "li1": "EN TEXT TO REPLACE: It does not use cookies",
+      "li2": "EN TEXT TO REPLACE: It does not collect personal identifiers",
+      "li3": "EN TEXT TO REPLACE: It does not track users across websites",
+      "li4": "EN TEXT TO REPLACE: All data is aggregated and anonymised",
+      "p3": "EN TEXT TO REPLACE: The only information collected includes: page URLs, referrer, country/region, device type, browser, and operating system. This data cannot be used to identify individual users."
+    },
+    "authenticated": {
+      "title": "EN TEXT TO REPLACE: Authenticated users",
+      "p1": "EN TEXT TO REPLACE: When you connect your {bold} account to npmx, we store your OAuth access token in a secure, HTTP-only session cookie. This token is used solely to authenticate requests on your behalf.",
+      "bold": "EN TEXT TO REPLACE: Atmosphere",
+      "p2": "EN TEXT TO REPLACE: We do not store your credentials, and we do not access any data beyond what is necessary to provide the features you use. You can disconnect your account at any time from the {settings} page.",
+      "settings": "EN TEXT TO REPLACE: settings"
+    },
+    "data_retention": {
+      "title": "EN TEXT TO REPLACE: Data retention",
+      "p1": "EN TEXT TO REPLACE: Session cookies are automatically deleted when you close your browser or after a period of inactivity. Local storage preferences remain on your device until you clear your browser data. Analytics data is retained in aggregate form and cannot be linked to individual users."
+    },
+    "your_rights": {
+      "title": "EN TEXT TO REPLACE: Your rights",
+      "p1": "EN TEXT TO REPLACE: You have the right to:",
+      "li1": "EN TEXT TO REPLACE: Access information about what data we collect",
+      "li2": "EN TEXT TO REPLACE: Clear your local storage and cookies at any time",
+      "li3": "EN TEXT TO REPLACE: Disconnect your authenticated session",
+      "li4": "EN TEXT TO REPLACE: Request information about our data practices",
+      "p2": "EN TEXT TO REPLACE: Since we do not collect personal data, there is typically no personal information to delete or export."
+    },
+    "contact": {
+      "title": "EN TEXT TO REPLACE: Contact us",
+      "p1": "EN TEXT TO REPLACE: For any questions or concerns about this privacy policy, you can contact us by opening an issue on our {link}.",
+      "link": "EN TEXT TO REPLACE: GitHub repository"
+    },
+    "changes": {
+      "title": "EN TEXT TO REPLACE: Changes to this policy",
+      "p1": "EN TEXT TO REPLACE: We may update this privacy policy from time to time. Any changes will be published on this page with an updated revision date."
     }
   }
 }
