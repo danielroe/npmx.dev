@@ -39,9 +39,9 @@ const props = withDefaults(
   <NuxtLink
     v-else
     :class="{
-      'text-fg underline-offset-4 underline decoration-fg/50 hover:(no-underline text-fg/80) transition-colors duration-200':
+      'text-fg underline-offset-4 underline decoration-1 decoration-fg/50 hover:(no-underline text-fg/80) transition-colors duration-200':
         variant === 'link',
-      'gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 aria-current:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))':
+      'gap-x-1 inline-flex gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 aria-current:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))':
         variant !== 'link',
       'text-sm px-4 py-2': variant !== 'tag' && variant !== 'link',
       'text-xs px-2 py-0.5': variant === 'tag',
