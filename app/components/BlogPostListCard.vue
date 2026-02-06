@@ -35,7 +35,7 @@ const emit = defineEmits<{
       @mouseenter="index != null && emit('focus', index)"
     >
       <!-- Text Content -->
-      <div class="flex-1 min-w-0 text-left">
+      <div class="flex-1 min-w-0 text-left gap-2">
         <span class="text-xs text-fg-muted font-mono">{{ published }}</span>
         <h2
           class="font-mono text-xl font-medium text-fg group-hover:text-primary transition-colors hover:underline"
@@ -45,13 +45,13 @@ const emit = defineEmits<{
         <p v-if="excerpt" class="text-fg-muted leading-relaxed line-clamp-2 no-underline">
           {{ excerpt }}
         </p>
-        <div class="flex flex-wrap items-center gap-2 text-xs text-fg-muted font-mono">
+        <div class="flex flex-wrap items-center gap-2 text-xs text-fg-muted font-mono mt-4">
           <AuthorList :authors="authors" />
         </div>
       </div>
 
       <span
-        class="i-carbon:arrow-right w-4 h-4 text-fg-subtle group-hover:text-fg transition-colors shrink-0"
+        class="i-carbon:arrow-right w-4 h-4 text-fg-subtle group-hover:text-fg relative inset-is-0 group-hover:inset-is-1 transition-all duration-200 shrink-0"
         aria-hidden="true"
       />
     </NuxtLink>
