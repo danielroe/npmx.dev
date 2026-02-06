@@ -81,7 +81,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
       'font-mono border border-border rounded-md transition-all duration-200': isButton,
       'text-sm px-4 py-2': isButtonMedium,
       'text-xs px-2 py-0.5': isButtonSmall,
-      'bg-transparent text-fg hover:(bg-fg/30) focus-visible:(bg-fg/30)':
+      'bg-transparent text-fg hover:(bg-fg/10) focus-visible:(bg-fg/10)':
         variant === 'button-secondary',
       'text-bg bg-fg hover:(bg-fg/50) focus-visible:(bg-fg/50)': variant === 'button-primary',
     }"
