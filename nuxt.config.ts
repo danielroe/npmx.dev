@@ -1,6 +1,9 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
 
+// log node env
+console.log(`Running Nuxt in ${process.env.NODE_ENV} mode`)
+
 export default defineNuxtConfig({
   modules: [
     // Workaround for Nuxt 4.3.0 regression: https://github.com/nuxt/nuxt/issues/34140
@@ -18,7 +21,7 @@ export default defineNuxtConfig({
       })
     },
     '@unocss/nuxt',
-    '@nuxtjs/html-validator',
+    process.env.NODE_ENV === 'test' ? null : '@nuxtjs/html-validator',
     '@nuxt/scripts',
     '@nuxt/a11y',
     '@nuxt/fonts',

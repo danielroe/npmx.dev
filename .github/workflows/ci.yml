@@ -150,7 +150,7 @@ jobs:
         run: pnpm install
 
       - name: 🏗️ Build project
-        run: pnpm build:playwright
+        run: NODE_ENV=test pnpm build
 
       - name: 🖥️ Test project (browser)
         run: pnpm test:browser:prebuilt
