@@ -623,7 +623,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                         class="i-carbon-warning-hex w-3 h-3 shrink-0"
                         aria-hidden="true"
                       />
-                      {{ group.versions[0]?.version }}
+                      <span dir="ltr">
+                        {{ group.versions[0]?.version }}
+                      </span>
                     </NuxtLink>
                   </div>
                   <div class="flex items-center gap-2 shrink-0 pe-2">
