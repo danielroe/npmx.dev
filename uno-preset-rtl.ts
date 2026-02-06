@@ -19,6 +19,15 @@ export function resetRtlWarnings() {
   warnedClasses.clear()
 }
 
+function reportWarning(match: string, suggestedClass: string, checker?: CollectorChecker) {
+  const message = `${checker ? 'a' : 'A'}void using '${match}', use '${suggestedClass}' instead.`
+  if (checker) {
+    checker(message, match)
+  } else {
+    warnOnce(`[RTL] ${message}`, match)
+  }
+}
+
 const directionMap: Record<string, string[]> = {
   'l': ['-left'],
   'r': ['-right'],
@@ -54,11 +63,8 @@ function directionSizeRTL(
     const suggestedBase = match.replace(`${prefix}${direction!}`, `${prefix}${replacement}`)
     const suggestedClass = fullClass.replace(match, suggestedBase)
 
-    if (checker) {
-      checker(`avoid using '${fullClass}', use '${suggestedClass}' instead.`, fullClass)
-    } else {
-      warnOnce(`[RTL] Avoid using '${fullClass}'. Use '${suggestedClass}' instead.`, fullClass)
-    }
+    reportWarning(fullClass, suggestedClass, checker)
+
     return matcher([match, replacement, size], context)
   }
 }
@@ -90,6 +96,10 @@ function handlerBorderSize([, a = '', b = '1']: string[]): CSSEntries | undefine
 export function presetRtl(checker?: CollectorChecker): Preset {
   return {
     name: 'rtl-preset',
+    shortcuts: [
+      ['text-left', 'text-start x-rtl-start'],
+      ['text-right', 'text-end x-rtl-end'],
+    ],
     rules: [
       // RTL overrides
       // We need to move the dash out of the capturing group to avoid capturing it in the direction
@@ -116,36 +126,29 @@ export function presetRtl(checker?: CollectorChecker): Preset {
           const suggestedBase = `${replacement}-${size}`
           const suggestedClass = fullClass.replace(match, suggestedBase)
 
-          if (checker) {
-            checker(`avoid using '${fullClass}', use '${suggestedClass}' instead.`, fullClass)
-          } else {
-            warnOnce(
-              `[RTL] Avoid using '${fullClass}'. Use '${suggestedClass}' instead.`,
-              fullClass,
-            )
-          }
+          reportWarning(fullClass, suggestedClass, checker)
+
           return directionSize('inset')(['', direction === 'left' ? 'is' : 'ie', size], context)
         },
         { autocomplete: '(left|right)-<num>' },
       ],
       [
-        /^text-(left|right)$/,
+        /^x-rtl-(start|end)$/,
         ([match, direction], context) => {
-          const replacement = direction === 'left' ? 'start' : 'end'
+          const originalClass = context.rawSelector || match
 
-          const fullClass = context.rawSelector || match
-          const suggestedBase = match.replace(`text-${direction!}`, `text-${replacement}`)
-          const suggestedClass = fullClass.replace(match, suggestedBase)
+          const suggestedClass = originalClass.replace(
+            direction === 'start' ? 'left' : 'right',
+            direction!,
+          )
 
-          if (checker) {
-            checker(`avoid using '${fullClass}', use '${suggestedClass}' instead.`, fullClass)
-          } else {
-            warnOnce(
-              `[RTL] Avoid using '${fullClass}'. Use '${suggestedClass}' instead.`,
-              fullClass,
-            )
+          reportWarning(originalClass, suggestedClass, checker)
+
+          // Return a cssvar with the warning message to satisfy UnoCSS
+          // and avoid "unmatched utility" warning.
+          return {
+            [`--x-rtl-${direction!}`]: `"${originalClass} -> ${suggestedClass}"`,
           }
-          return { 'text-align': replacement }
         },
         { autocomplete: 'text-(left|right)' },
       ],
@@ -164,14 +167,8 @@ export function presetRtl(checker?: CollectorChecker): Preset {
           const suggestedBase = match.replace(`rounded-${direction!}`, `rounded-${replacement}`)
           const suggestedClass = fullClass.replace(match, suggestedBase)
 
-          if (checker) {
-            checker(`avoid using '${fullClass}', use '${suggestedClass}' instead.`, fullClass)
-          } else {
-            warnOnce(
-              `[RTL] Avoid using '${fullClass}'. Use '${suggestedClass}' instead.`,
-              fullClass,
-            )
-          }
+          reportWarning(fullClass, suggestedClass, checker)
+
           return handlerRounded(['', replacement, size ?? 'DEFAULT'], context)
         },
       ],
@@ -184,14 +181,8 @@ export function presetRtl(checker?: CollectorChecker): Preset {
           const suggestedBase = match.replace(`border-${direction!}`, `border-${replacement}`)
           const suggestedClass = fullClass.replace(match, suggestedBase)
 
-          if (checker) {
-            checker(`avoid using '${fullClass}', use '${suggestedClass}' instead.`, fullClass)
-          } else {
-            warnOnce(
-              `[RTL] Avoid using '${fullClass}'. Use '${suggestedClass}' instead.`,
-              fullClass,
-            )
-          }
+          reportWarning(fullClass, suggestedClass, checker)
+
           return handlerBorderSize(['', replacement, size || '1'])
         },
       ],
