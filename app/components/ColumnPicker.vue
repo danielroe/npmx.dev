@@ -71,14 +71,13 @@ function handleReset() {
   <div class="relative">
     <ButtonBase
       ref="buttonRef"
-      class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border rounded-md hover:border-border-hover focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
       :aria-expanded="isOpen"
       aria-haspopup="true"
       :aria-controls="menuId"
       @click.stop="isOpen = !isOpen"
+      classicon="i-carbon-column"
     >
-      <span class="i-carbon-column w-4 h-4" aria-hidden="true" />
-      <span class="font-mono text-sm">{{ $t('filters.columns.title') }}</span>
+      {{ $t('filters.columns.title') }}
     </ButtonBase>
 
     <Transition name="dropdown">
