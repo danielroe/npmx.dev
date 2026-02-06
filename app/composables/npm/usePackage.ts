@@ -5,6 +5,24 @@ import { extractInstallScriptsInfo } from '~/utils/install-scripts'
 /** Number of recent versions to include in initial payload */
 const RECENT_VERSIONS_COUNT = 5
 
+function hasAttestations(version: Packument['versions'][string]): boolean {
+  return Boolean(version.dist.attestations)
+}
+
+function hasTrustedPublisher(version: Packument['versions'][string]): boolean {
+  return Boolean(version._npmUser?.trustedPublisher)
+}
+
+function hasPublishTrustEvidence(version: Packument['versions'][string]): boolean {
+  return hasAttestations(version) || hasTrustedPublisher(version)
+}
+
+function getTrustLevel(version: Packument['versions'][string]): SlimVersion['trustLevel'] {
+  if (hasAttestations(version)) return 'provenance'
+  if (hasTrustedPublisher(version)) return 'trustedPublisher'
+  return 'none'
+}
+
 /**
  * Transform a full Packument into a slimmed version for client-side use.
  * Reduces payload size by:
@@ -38,6 +56,17 @@ export function transformPackument(
     includedVersions.add(requestedVersion)
   }
 
+  const securityVersions = Object.entries(pkg.versions).map(([version, metadata]) => {
+    const trustLevel = getTrustLevel(metadata)
+    return {
+      version,
+      time: pkg.time[version],
+      hasProvenance: trustLevel !== 'none',
+      trustLevel,
+      deprecated: metadata.deprecated,
+    }
+  })
+
   // Build filtered versions object with install scripts info per version
   const filteredVersions: Record<string, SlimVersion> = {}
   let versionData: SlimPackumentVersion | null = null
@@ -55,10 +84,12 @@ export function transformPackument(
           installScripts: installScripts ?? undefined,
         }
       }
+      const hasProvenance = hasPublishTrustEvidence(version)
+      const trustLevel = getTrustLevel(version)
+
       filteredVersions[v] = {
-        ...((version?.dist as { attestations?: unknown } | undefined)?.attestations
-          ? { hasProvenance: true }
-          : {}),
+        hasProvenance,
+        trustLevel,
         version: version.version,
         deprecated: version.deprecated,
         tags: version.tags as string[],
@@ -96,6 +127,7 @@ export function transformPackument(
     'bugs': pkg.bugs,
     'requestedVersion': versionData,
     'versions': filteredVersions,
+    'securityVersions': securityVersions,
   }
 }
 

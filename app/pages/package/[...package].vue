@@ -147,11 +147,13 @@ const {
 const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
 const versionSecurityMetadata = computed<PackageVersionInfo[]>(() => {
   if (!pkg.value) return []
+  if (pkg.value.securityVersions?.length) return pkg.value.securityVersions
 
   return Object.entries(pkg.value.versions).map(([version, metadata]) => ({
     version,
     time: pkg.value?.time?.[version],
     hasProvenance: !!metadata.hasProvenance,
+    trustLevel: metadata.trustLevel,
     deprecated: metadata.deprecated,
   }))
 })

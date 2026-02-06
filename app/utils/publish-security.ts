@@ -1,4 +1,4 @@
-import type { PackageVersionInfo } from '#shared/types'
+import type { PackageVersionInfo, PublishTrustLevel } from '#shared/types'
 import { compare } from 'semver'
 
 export interface PublishSecurityDowngrade {
@@ -11,6 +11,18 @@ export interface PublishSecurityDowngrade {
 type VersionWithIndex = PackageVersionInfo & {
   index: number
   timestamp: number
+  trustRank: number
+}
+
+const TRUST_RANK: Record<PublishTrustLevel, number> = {
+  none: 0,
+  trustedPublisher: 1,
+  provenance: 2,
+}
+
+function getTrustRank(version: PackageVersionInfo): number {
+  if (version.trustLevel) return TRUST_RANK[version.trustLevel]
+  return version.hasProvenance ? TRUST_RANK.provenance : TRUST_RANK.none
 }
 
 function toTimestamp(time?: string): number {
@@ -50,20 +62,27 @@ export function detectPublishSecurityDowngrade(
       ...version,
       index,
       timestamp: toTimestamp(version.time),
+      trustRank: getTrustRank(version),
     }))
     .sort(sortByRecency)
 
   const latest = sorted.at(0)
-  if (!latest || latest.hasProvenance) return null
+  if (!latest) return null
 
-  const latestTrusted = sorted.find(version => version.hasProvenance)
-  if (!latestTrusted) return null
+  let strongestOlder: VersionWithIndex | null = null
+  for (const version of sorted.slice(1)) {
+    if (!strongestOlder || version.trustRank > strongestOlder.trustRank) {
+      strongestOlder = version
+    }
+  }
+
+  if (!strongestOlder || strongestOlder.trustRank <= latest.trustRank) return null
 
   return {
     downgradedVersion: latest.version,
     downgradedPublishedAt: latest.time,
-    trustedVersion: latestTrusted.version,
-    trustedPublishedAt: latestTrusted.time,
+    trustedVersion: strongestOlder.version,
+    trustedPublishedAt: strongestOlder.time,
   }
 }
 
@@ -83,6 +102,7 @@ export function detectPublishSecurityDowngradeForVersion(
       ...version,
       index,
       timestamp: toTimestamp(version.time),
+      trustRank: getTrustRank(version),
     }))
     .sort(sortByRecency)
 
@@ -90,15 +110,21 @@ export function detectPublishSecurityDowngradeForVersion(
   if (currentIndex === -1) return null
 
   const current = sorted.at(currentIndex)
-  if (!current || current.hasProvenance) return null
+  if (!current) return null
 
-  const trustedOlder = sorted.slice(currentIndex + 1).find(version => version.hasProvenance)
-  if (!trustedOlder) return null
+  let strongestOlder: VersionWithIndex | null = null
+  for (const version of sorted.slice(currentIndex + 1)) {
+    if (!strongestOlder || version.trustRank > strongestOlder.trustRank) {
+      strongestOlder = version
+    }
+  }
+
+  if (!strongestOlder || strongestOlder.trustRank <= current.trustRank) return null
 
   return {
     downgradedVersion: current.version,
     downgradedPublishedAt: current.time,
-    trustedVersion: trustedOlder.version,
-    trustedPublishedAt: trustedOlder.time,
+    trustedVersion: strongestOlder.version,
+    trustedPublishedAt: strongestOlder.time,
   }
 }
