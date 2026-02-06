@@ -68,6 +68,12 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
     if (pkg.time[v]) filteredTime[v] = pkg.time[v]
   }
 
+  // Normalize license field
+  let license = pkg.license
+  if (license && typeof license === 'object' && 'type' in license) {
+    license = license.type
+  }
+
   return {
     '_id': pkg._id,
     '_rev': pkg._rev,
@@ -77,7 +83,7 @@ function transformPackument(pkg: Packument, requestedVersion?: string | null): S
     'time': filteredTime,
     'maintainers': pkg.maintainers,
     'author': pkg.author,
-    'license': pkg.license,
+    'license': license,
     'homepage': pkg.homepage,
     'keywords': pkg.keywords,
     'repository': pkg.repository,

@@ -2,7 +2,7 @@ import { marked, type Tokens } from 'marked'
 import sanitizeHtml from 'sanitize-html'
 import { hasProtocol } from 'ufo'
 import type { ReadmeResponse, TocItem } from '#shared/types/readme'
-import { convertBlobToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
+import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
 import { highlightCodeSync } from './shiki'
 import { convertToEmoji } from '#shared/utils/emoji'
 
@@ -139,23 +139,24 @@ const ALLOWED_TAGS = [
 ]
 
 const ALLOWED_ATTR: Record<string, string[]> = {
-  a: ['href', 'title', 'target', 'rel'],
-  img: ['src', 'alt', 'title', 'width', 'height', 'align'],
-  source: ['src', 'srcset', 'type', 'media'],
-  button: ['class', 'title', 'type', 'aria-label', 'data-copy'],
-  th: ['colspan', 'rowspan', 'align'],
-  td: ['colspan', 'rowspan', 'align'],
-  h3: ['id', 'data-level', 'align'],
-  h4: ['id', 'data-level', 'align'],
-  h5: ['id', 'data-level', 'align'],
-  h6: ['id', 'data-level', 'align'],
-  blockquote: ['data-callout'],
-  details: ['open'],
-  code: ['class'],
-  pre: ['class', 'style'],
-  span: ['class', 'style'],
-  div: ['class', 'style', 'align'],
-  p: ['align'],
+  '*': ['id'], // Allow id on all tags
+  'a': ['href', 'title', 'target', 'rel'],
+  'img': ['src', 'alt', 'title', 'width', 'height', 'align'],
+  'source': ['src', 'srcset', 'type', 'media'],
+  'button': ['class', 'title', 'type', 'aria-label', 'data-copy'],
+  'th': ['colspan', 'rowspan', 'align'],
+  'td': ['colspan', 'rowspan', 'align'],
+  'h3': ['data-level', 'align'],
+  'h4': ['data-level', 'align'],
+  'h5': ['data-level', 'align'],
+  'h6': ['data-level', 'align'],
+  'blockquote': ['data-callout'],
+  'details': ['open'],
+  'code': ['class'],
+  'pre': ['class', 'style'],
+  'span': ['class', 'style'],
+  'div': ['class', 'style', 'align'],
+  'p': ['align'],
 }
 
 // GitHub-style callout types
@@ -258,9 +259,17 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
 function resolveImageUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
   const resolved = resolveUrl(url, packageName, repoInfo)
   if (repoInfo?.provider) {
-    return convertBlobToRawUrl(resolved, repoInfo.provider)
+    return convertBlobOrFileToRawUrl(resolved, repoInfo.provider)
   }
   return resolved
+}
+
+// Helper to prefix id attributes with 'user-content-'
+function prefixId(tagName: string, attribs: sanitizeHtml.Attributes) {
+  if (attribs.id && !attribs.id.startsWith('user-content-')) {
+    attribs.id = `user-content-${attribs.id}`
+  }
+  return { tagName, attribs }
 }
 
 export async function renderReadmeHtml(
@@ -436,6 +445,11 @@ ${html}
         }
         return { tagName, attribs }
       },
+      div: prefixId,
+      p: prefixId,
+      span: prefixId,
+      section: prefixId,
+      article: prefixId,
     },
   })
 
