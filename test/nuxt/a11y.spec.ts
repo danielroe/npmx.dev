@@ -310,7 +310,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations as primary button', async () => {
       const component = await mountSuspended(ButtonBase, {
-        props: { disabled: true, variant: 'primary' },
+        props: { variant: 'primary' },
         slots: { default: 'Button content' },
       })
       const results = await runAxe(component)
@@ -319,7 +319,7 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations as tag', async () => {
       const component = await mountSuspended(ButtonBase, {
-        props: { disabled: true, variant: 'tag' },
+        props: { variant: 'tag' },
         slots: { default: 'Button content' },
       })
       const results = await runAxe(component)
