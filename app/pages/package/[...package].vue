@@ -644,10 +644,10 @@ onKeyStroke(
           </div>
 
           <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
-          <nav
+          <ButtonGroup
             v-if="resolvedVersion"
             :aria-label="$t('package.navigation')"
-            class="hidden sm:flex items-center gap-0.5 p-0.5 bg-bg-subtle border border-border-subtle rounded-md shrink-0 ms-auto self-center"
+            class="hidden sm:flex"
           >
             <LinkBase
               variant="button-secondary"
@@ -674,7 +674,7 @@ onKeyStroke(
             >
               {{ $t('package.links.compare') }}
             </LinkBase>
-          </nav>
+          </ButtonGroup>
         </div>
       </header>
 
