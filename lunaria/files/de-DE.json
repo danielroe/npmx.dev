@@ -139,8 +139,10 @@
       "documented": "Die {community} hat dieses Paket als eines mit leistungsstärkeren Alternativen markiert.",
       "none": "Dieses Paket wurde als nicht mehr nötig markiert, und seine Funktionen sind wahrscheinlich in allen Engines nativ verfügbar.",
       "learn_more": "Mehr erfahren",
+      "learn_more_above": "Erfahre oben mehr.",
       "mdn": "MDN",
-      "community": "Community"
+      "community": "Community",
+      "consider_no_dep": "+ Vergleich ohne Abhängigkeit"
     },
     "stats": {
       "license": "Lizenz",
@@ -184,6 +186,10 @@
       "docs": "Doku",
       "fund": "Spenden",
       "compare": "Vergleichen"
+    },
+    "likes": {
+      "like": "Like dieses Paket",
+      "unlike": "Entferne deinen Like"
     },
     "docs": {
       "not_available": "Dokumentation nicht verfügbar",
@@ -878,6 +884,15 @@
       "loading_versions": "Versionen werden geladen...",
       "select_version": "Version auswählen"
     },
+    "no_dependency": {
+      "label": "Ohne Abhängigkeit",
+      "typeahead_title": "Was würde James machen?",
+      "typeahead_description": "Vergleiche ohne Abhängigkeit! e18e approved.",
+      "tooltip_title": "Du brauchst eventuell keine Abhängigkeit",
+      "tooltip_description": "Vergleiche ohne Abhängigkeit! Die {link} pflegt eine Liste von Paketen, die durch native APIs oder einfachere Alternativen ersetzt werden können.",
+      "e18e_community": "e18e Community",
+      "add_column": "Spalte ohne Abhängigkeit zum Vergleich hinzufügen"
+    },
     "facets": {
       "group_label": "Vergleichsfacetten",
       "all": "Alle",
@@ -952,7 +967,8 @@
         "not_deprecated": "Nein",
         "types_included": "Enthalten",
         "types_none": "Keine",
-        "vulnerabilities_summary": "{count} ({critical}C/{high}H)"
+        "vulnerabilities_summary": "{count} ({critical}C/{high}H)",
+        "up_to_you": "Entscheide selbst!"
       }
     }
   }
