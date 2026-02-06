@@ -25,7 +25,7 @@ const emit = defineEmits<{
 
 <template>
   <article
-    class="group relative focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-bg focus-within:ring-offset-2 focus-within:ring-fg/50"
+    class="group relative hover:bg-bg-subtle transition-colors duration-150 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-bg focus-within:ring-offset-2 focus-within:ring-fg/50 -mx-4 px-4 -my-2 py-2 sm:-mx-6 sm:px-6 sm:-my-3 sm:py-3 sm:rounded-md"
   >
     <NuxtLink
       :to="`/blog/${path}`"
