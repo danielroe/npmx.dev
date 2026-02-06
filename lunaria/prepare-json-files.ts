@@ -47,9 +47,9 @@ export async function mergeLocaleObject(locale: LocaleObject, copy = false) {
     if (copy) {
       await fs.cp(path.resolve(`${localesFolder}/${json}`), path.resolve(`${destFolder}/${json}`))
       return
-    } else {
-      return await loadJsonFile(json)
     }
+
+    return await loadJsonFile(json)
   }
 
   const firstFile = files[0]
