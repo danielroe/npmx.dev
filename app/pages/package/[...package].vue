@@ -393,6 +393,9 @@ const canonicalUrl = computed(() => {
   return requestedVersion.value ? `${base}/v/${requestedVersion.value}` : base
 })
 
+// Markdown alternate URL for AI/LLM consumption
+const markdownUrl = computed(() => `${canonicalUrl.value}.md`)
+
 //atproto
 // TODO: Maybe set this where it's not loaded here every load?
 const { user } = useAtproto()
@@ -451,7 +454,10 @@ const likeAction = async () => {
 }
 
 useHead({
-  link: [{ rel: 'canonical', href: canonicalUrl }],
+  link: [
+    { rel: 'canonical', href: canonicalUrl },
+    { rel: 'alternate', type: 'text/markdown', href: markdownUrl },
+  ],
 })
 
 useSeoMeta({

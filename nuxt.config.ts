@@ -91,6 +91,7 @@ export default defineNuxtConfig({
     '/__og-image__/**': { isr: getISRConfig(60) },
     '/api/**': { isr: 60 },
     '/200.html': { prerender: true },
+    '/raw/**': { isr: 60 },
     '/package/**': { isr: getISRConfig(60, true) },
     '/:pkg/.well-known/skills/**': { isr: 3600 },
     '/:scope/:pkg/.well-known/skills/**': { isr: 3600 },
