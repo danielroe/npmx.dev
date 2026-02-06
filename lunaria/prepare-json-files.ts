@@ -37,15 +37,7 @@ export async function prepareJsonFiles() {
   await Promise.all(currentLocales.map(l => mergeLocale(l)))
 }
 
-async function loadJsonFile(name: string) {
-  return JSON.parse(await fs.readFile(path.resolve(`${localesFolder}/${name}`), 'utf8'))
-}
-
-function getFileName(file: string | { path: string }): string {
-  return typeof file === 'string' ? file : file.path
-}
-
-async function mergeLocale(locale: LocaleObject) {
+export async function mergeLocaleObject(locale: LocaleObject) {
   const files = locale.files ?? []
   if (locale.file || files.length === 1) {
     const json = locale.file ?? (files[0] ? getFileName(files[0]) : undefined)
@@ -65,6 +57,19 @@ async function mergeLocale(locale: LocaleObject) {
     deepCopy(currentSource, source)
   }
 
+  return source
+}
+
+async function loadJsonFile(name: string) {
+  return JSON.parse(await fs.readFile(path.resolve(`${localesFolder}/${name}`), 'utf8'))
+}
+
+function getFileName(file: string | { path: string }): string {
+  return typeof file === 'string' ? file : file.path
+}
+
+async function mergeLocale(locale: LocaleObject) {
+  const source = await mergeLocaleObject(locale)
   await fs.writeFile(
     path.resolve(`${destFolder}/${locale.code}.json`),
     JSON.stringify(source, null, 2),
