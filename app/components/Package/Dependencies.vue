@@ -161,10 +161,7 @@ const sortedOptionalDependencies = computed(() => {
           class="flex items-center justify-between py-1 text-sm gap-1 min-w-0"
         >
           <div class="flex items-center gap-1 min-w-0 flex-1">
-            <LinkBase
-              :to="packageRoute(peer.name)"
-              class="truncate"
-            >
+            <LinkBase :to="packageRoute(peer.name)" class="truncate">
               {{ peer.name }}
             </LinkBase>
             <TagStatic v-if="peer.optional" :title="$t('package.dependencies.optional')">
@@ -219,11 +216,7 @@ const sortedOptionalDependencies = computed(() => {
           <LinkBase :to="packageRoute(dep)" class="truncate">
             {{ dep }}
           </LinkBase>
-          <LinkBase
-            :to="packageRoute(dep, version)"
-            class="truncate"
-            :title="version"
-          >
+          <LinkBase :to="packageRoute(dep, version)" class="truncate" :title="version">
             {{ version }}
           </LinkBase>
         </li>

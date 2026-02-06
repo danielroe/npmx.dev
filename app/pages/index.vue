@@ -121,10 +121,7 @@ defineOgImageComponent('Default', {
       >
         <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 list-none m-0 p-0">
           <li v-for="framework in SHOWCASED_FRAMEWORKS" :key="framework.name">
-            <LinkBase
-              :to="packageRoute(framework.package)"
-              class="gap-2"
-            >
+            <LinkBase :to="packageRoute(framework.package)" class="gap-2">
               <span
                 class="w-1 h-1 rounded-full bg-accent group-hover:bg-fg transition-colors duration-200"
               />
