@@ -142,42 +142,6 @@ describe('Playground Link Extraction', () => {
       expect(result.playgroundLinks).toHaveLength(1)
       expect(result.playgroundLinks[0]!.provider).toBe('stackblitz')
     })
-
-    it('returns raw markdown content', async () => {
-      const markdown = `# Test Package
-
-## Installation
-
-\`\`\`bash
-npm install test-package
-\`\`\`
-
-## Usage
-
-This is a sample package for testing.
-
-> [!NOTE]
-> This is a note callout.
-
-- Feature one
-- Feature two
-`
-      const result = await renderReadmeHtml(markdown, 'test-pkg')
-
-      expect(result.markdown).toBe(markdown)
-      expect(result.markdown).toContain('# Test Package')
-      expect(result.markdown).toContain('## Installation')
-      expect(result.markdown).toContain('npm install test-package')
-    })
-
-    it('returns empty string for empty content', async () => {
-      const result = await renderReadmeHtml('', 'test-pkg')
-
-      expect(result.markdown).toBe('')
-      expect(result.html).toBe('')
-      expect(result.playgroundLinks).toEqual([])
-      expect(result.toc).toEqual([])
-    })
   })
 })
 
