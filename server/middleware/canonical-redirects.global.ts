@@ -24,6 +24,11 @@ const pages = [
   '/settings',
 ]
 export default defineEventHandler(async event => {
+  const routeRules = getRouteRules(event)
+  if (Object.keys(routeRules).length > 1) {
+    return
+  }
+
   const path = event.path.split('?')[0]!
 
   // username
