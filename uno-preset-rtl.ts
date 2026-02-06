@@ -43,15 +43,15 @@ function directionSizeRTL(
   checker?: CollectorChecker,
 ): DynamicMatcher {
   const matcher = directionSize(propertyPrefix)
-  return (args, context) => {
-    const [match, direction, size] = args
+  return ([match, direction, size], context) => {
     if (!size) return undefined
     const defaultMap = { l: 'is', r: 'ie' }
     const map = prefixMap || defaultMap
     const replacement = map[direction as 'l' | 'r']
 
     const fullClass = context.rawSelector || match
-    const suggestedBase = match.replace(direction === 'l' ? 'l' : 'r', replacement)
+    const prefix = match.substring(0, 1) // 'p' or 'm'
+    const suggestedBase = match.replace(`${prefix}${direction!}`, `${prefix}${replacement}`)
     const suggestedClass = fullClass.replace(match, suggestedBase)
 
     if (checker) {
@@ -131,7 +131,7 @@ export function presetRtl(checker?: CollectorChecker): Preset {
           const replacement = direction === 'left' ? 'start' : 'end'
 
           const fullClass = context.rawSelector || match
-          const suggestedBase = match.replace(direction!, replacement)
+          const suggestedBase = match.replace(`text-${direction!}`, `text-${replacement}`)
           const suggestedClass = fullClass.replace(match, suggestedBase)
 
           if (checker) {
@@ -158,7 +158,7 @@ export function presetRtl(checker?: CollectorChecker): Preset {
           if (!replacement) return undefined
 
           const fullClass = context.rawSelector || match
-          const suggestedBase = match.replace(direction!, replacement)
+          const suggestedBase = match.replace(`rounded-${direction!}`, `rounded-${replacement}`)
           const suggestedClass = fullClass.replace(match, suggestedBase)
 
           if (checker) {
@@ -178,7 +178,7 @@ export function presetRtl(checker?: CollectorChecker): Preset {
           const replacement = direction === 'l' ? 'is' : 'ie'
 
           const fullClass = context.rawSelector || match
-          const suggestedBase = match.replace(direction!, replacement)
+          const suggestedBase = match.replace(`border-${direction!}`, `border-${replacement}`)
           const suggestedClass = fullClass.replace(match, suggestedBase)
 
           if (checker) {
