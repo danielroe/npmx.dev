@@ -78,7 +78,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
       'underline-offset-[0.2rem] underline decoration-1 decoration-fg/50': !isLinkAnchor && isLink,
       'text-fg hover:(no-underline text-accent) focus-visible:(no-underline text-accent) transition-colors duration-200':
         isLink,
-      'font-mono border border-border rounded-md transition-all duration-200 aria-current:(bg-fg text-bg border-fg hover:(text-bg/50)) bg-gradient-to-t dark:bg-gradient-to-b':
+      'font-mono border border-border rounded-md transition-all duration-200 bg-gradient-to-t dark:bg-gradient-to-b':
         isButton,
       'text-sm px-4 py-2': isButtonMedium,
       'text-xs px-2 py-0.5': isButtonSmall,
