@@ -13,6 +13,7 @@
  * - /docs/*         → /package-docs/*
  */
 const pages = [
+  '/200.html',
   '/about',
   '/compare',
   '/org',
