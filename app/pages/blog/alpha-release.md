@@ -12,7 +12,7 @@ excerpt: "npmx is an open-source project built by a rapidly growing community. I
 extension, everyone who works in the JavaScript ecosystem."
 date: "2026-03-03"
 slug: "alpha-release"
-description: "npmx is an open-source project stewarded by a rapidly growing community. It's built for open-source developers, and by
+description: "npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by
 extension, everyone who works in the JavaScript ecosystem."
 draft: false
 ---
@@ -21,7 +21,7 @@ draft: false
 
 Today we're announcing the alpha release of [npmx.dev](https://npmx.dev), a fast, modern browser for the npm registry.
 
-npmx is an open-source project stewarded by a rapidly growing community. It's built for open-source developers, and by
+npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by
 extension, everyone who works in the JavaScript ecosystem.
 
 npmx is about speed and simplicity: it's a suite of tools to make package management quicker and easier. It also
