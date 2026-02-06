@@ -56,7 +56,6 @@
   },
   "blog": {
     "title": "Blog",
-    "description": "Perspectives et actualités de la communauté npmx",
     "author": {}
   },
   "settings": {
