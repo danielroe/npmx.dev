@@ -270,12 +270,7 @@ watch(
           />
         </form>
       </div>
-      <ButtonBase
-        v-else
-        type="button"
-        class="w-full px-3 py-1.5 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
-        @click="showAddOwner = true"
-      >
+      <ButtonBase v-else type="button" @click="showAddOwner = true">
         {{ $t('package.maintainers.add_owner') }}
       </ButtonBase>
     </div>
