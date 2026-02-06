@@ -1,6 +1,5 @@
 <script setup lang="ts">
 defineProps<{
-  searchQuery: string
   compact?: boolean
 }>()
 
@@ -10,7 +9,7 @@ const emit = defineEmits<{
   (e: 'focus'): void
 }>()
 
-const searchQuery = defineModel<string>('searchQuery', {
+const searchQuery = defineModel<string>({
   default: '',
 })
 

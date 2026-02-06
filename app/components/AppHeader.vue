@@ -147,7 +147,7 @@ onKeyStroke(
           class="max-w-sm"
           :class="{ 'max-w-md': !isSearchExpanded }"
           compact
-          v-model:search-query="searchQuery"
+          v-model="searchQuery"
           @submit="handleSearchSubmit"
           @focus="handleSearchFocus"
           @blur="handleSearchBlur"
