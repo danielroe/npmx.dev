@@ -22,16 +22,16 @@ const blueskyPostUri = computed(() => blueskyLink.value?.postUri ?? null)
 
 <template>
   <main class="container w-full py-8">
-    <article class="max-w-prose mx-auto p-2 border-b border-borde prose dark:prose-invert mx-autor">
+    <div v-if="frontmatter.authors" class="mb-12 max-w-prose mx-auto">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <AuthorList :authors="frontmatter.authors" variant="expanded" />
+      </div>
+    </div>
+    <article class="max-w-prose mx-auto p-2 prose dark:prose-invert mx-auto">
       <div class="text-sm text-fg-muted font-mono mb-4">
         <DateTime :datetime="frontmatter.date" year="numeric" month="short" day="numeric" />
       </div>
       <slot />
-    </article>
-    <article v-if="frontmatter.authors" class="mt-12 max-w-prose mx-auto">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <AuthorList :authors="frontmatter.authors" variant="expanded" />
-      </div>
     </article>
 
     <!--

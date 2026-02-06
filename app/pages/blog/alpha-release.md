@@ -37,9 +37,9 @@ source.
 On January 22nd 2026, Daniel Roe, open-source maintainer and founder, and leader of the [Nuxt](https://nuxt.com/) core
 team, had an idea, and made
 [the first commit to the npmx repository](https://github.com/npmx-dev/npmx.dev/commit/e39e56c08fd1e7bdb556c8565c6b11b3c34c8934).
-The next day, [Daniel posted on Bluesky](https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r) to ask about people's
-frustrations with the npm experience on the web and the CLI. The question resonated deeply with the community as they
-voiced frustrations with the user experience including code browsing, missing data and trust signals including surfacing
+The next day, [Daniel posted on Bluesky](https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r) to ask about
+people's frustrations with the npm experience on the web and the CLI. The question resonated deeply with the community
+as they voiced frustrations with the user experience including code browsing, missing data, trust signals, surfacing
 dependencies, and the friction surrounding the publishing experience.
 
 It was clear there was a huge opportunity to build a fast, modern browser for the npm registry with an improved
