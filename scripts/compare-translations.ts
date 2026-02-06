@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import type { LocaleObject } from '@nuxtjs/i18n'
 import * as process from 'node:process'
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
@@ -29,6 +30,7 @@ interface LocaleInfo {
 }
 
 const countries = new Map<string, Map<string, LocaleInfo>>()
+const availableLocales = new Map<string, LocaleObject>()
 
 const extractLocalInfo = (
   filePath: string,
@@ -54,6 +56,10 @@ const populateLocaleCountries = (): void => {
         countries.get(lang)!.set(variant.code, extractLocalInfo(variant.code, false, true))
       }
     }
+  }
+
+  for (const localeData of currentLocales) {
+    availableLocales.set(localeData.code, localeData)
   }
 }
 
@@ -107,7 +113,7 @@ const loadJson = async ({ filePath, mergeLocale, locale }: LocaleInfo): Promise<
     return JSON.parse(readFileSync(filePath, 'utf-8')) as NestedObject
   }
 
-  const localeObject = currentLocales.find(l => l.code === locale)
+  const localeObject = availableLocales.get(locale)
   if (!localeObject) {
     console.error(
       `${COLORS.red}Error: Locale "${locale}" not found in currentLocales${COLORS.reset}`,
