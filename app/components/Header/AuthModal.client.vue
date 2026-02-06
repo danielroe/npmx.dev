@@ -3,15 +3,15 @@ import { useAtproto } from '~/composables/atproto/useAtproto'
 import { authRedirect } from '~/utils/atproto/helpers'
 
 const handleInput = shallowRef('')
-
+const route = useRoute()
 const { user, logout } = useAtproto()
 
 async function handleBlueskySignIn() {
-  await authRedirect('https://bsky.social')
+  await authRedirect('https://bsky.social', { redirectTo: route.fullPath })
 }
 
 async function handleCreateAccount() {
-  await authRedirect('https://npmx.social', true)
+  await authRedirect('https://npmx.social', { create: true, redirectTo: route.fullPath })
 }
 
 async function handleLogin() {

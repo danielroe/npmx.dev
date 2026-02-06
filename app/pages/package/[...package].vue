@@ -1186,16 +1186,10 @@ onKeyStroke(
         <div
           class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)])"
         >
-          <!-- Maintainers (with admin actions when connected) -->
-          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
-
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
             <PackageAccessControls :package-name="pkg.name" />
           </ClientOnly>
-
-          <!-- Keywords -->
-          <PackageKeywords :keywords="displayVersion?.keywords" />
 
           <!-- Agent Skills -->
           <ClientOnly>
@@ -1244,6 +1238,12 @@ onKeyStroke(
             :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
             :optional-dependencies="displayVersion.optionalDependencies"
           />
+
+          <!-- Keywords -->
+          <PackageKeywords :keywords="displayVersion?.keywords" />
+
+          <!-- Maintainers (with admin actions when connected) -->
+          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
         </div>
       </div>
     </article>
@@ -1338,23 +1338,23 @@ onKeyStroke(
 @media (min-width: 1024px) {
   .sidebar-scroll {
     scrollbar-gutter: stable;
-    scrollbar-width: none;
+    scrollbar-width: 8px;
+    scrollbar-color: transparent transparent;
   }
 
   .sidebar-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 8px;
+    height: 8px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track,
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
   }
 
   .sidebar-scroll:hover,
   .sidebar-scroll:focus-within {
-    scrollbar-width: auto;
-  }
-
-  .sidebar-scroll:hover::-webkit-scrollbar,
-  .sidebar-scroll:focus-within::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    scrollbar-color: var(--border) transparent;
   }
 
   .sidebar-scroll:hover::-webkit-scrollbar-thumb,

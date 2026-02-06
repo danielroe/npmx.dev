@@ -156,6 +156,7 @@ html {
   text-rendering: optimizeLegibility;
   scroll-padding-top: 5rem;
   /* Offset for fixed header - otherwise anchor headers are cutted */
+  scrollbar-gutter: stable;
 }
 
 /*
@@ -192,6 +193,10 @@ dd {
 }
 
 /* Scrollbar styling */
+* {
+  scrollbar-color: var(--border) var(--bg);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -207,14 +212,13 @@ dd {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #404040;
+  background: var(--border-hover);
 }
 
 /* Scrollbar styling for Firefox */
 @supports not selector(::-webkit-scrollbar) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--border) var(--bg);
   }
 }
 
