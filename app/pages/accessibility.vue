@@ -81,7 +81,6 @@ const router = useRouter()
               src="/wcag2.1AA.svg"
               width="88"
               height="32"
-              aria-hidden="true"
               :alt="$t('a11y.compliance.wcag_alt')"
             />
           </a>
