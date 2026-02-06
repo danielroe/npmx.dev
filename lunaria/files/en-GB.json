@@ -1076,7 +1076,8 @@
       "li3": "The design is responsive and allows for magnification (zoom) up to 250% without loss of content or functionality, exceeding the 200% minimum required by WCAG 2.1.",
       "li4": "The color palette meets Level AA contrast ratios in its standard themes.",
       "li5": "Keyboard navigation is logical and predictable.",
-      "li6": "Animations and transitions are reduced or eliminated for users who have requested reduced motion in their operating system or browser preferences."
+      "li6": "Animations and transitions are reduced or eliminated for users who have requested reduced motion in their operating system or browser preferences.",
+      "li7": "The site employs progressive enhancement, ensuring essential content remains accessible without JavaScript, although some personalization features may require it."
     },
     "contact": {
       "title": "Contact and Feedback",

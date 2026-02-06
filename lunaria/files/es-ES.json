@@ -959,7 +959,8 @@
       "li3": "El diseño es responsivo y permite una ampliación (zoom) de hasta el 250% sin pérdida de contenido o funcionalidad, superando el mínimo del 200% requerido por WCAG 2.1.",
       "li4": "La paleta de colores cumple con los ratios de contraste de Nivel AA en sus temas estándar.",
       "li5": "La navegación por teclado es lógica y predecible.",
-      "li6": "Las animaciones y transiciones se reducen o eliminan para los usuarios que han solicitado movimiento reducido en las preferencias de su sistema operativo o del navegador."
+      "li6": "Las animaciones y transiciones se reducen o eliminan para los usuarios que han solicitado movimiento reducido en las preferencias de su sistema operativo o del navegador.",
+      "li7": "El sitio web emplea mejora progresiva, asegurando que el contenido esencial permanezca accesible sin JavaScript, aunque algunas funciones de personalización pueden requerirlo."
     },
     "contact": {
       "title": "Contacto y Comentarios",
