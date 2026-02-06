@@ -2,13 +2,13 @@
   "seo": {
     "home": {
       "title": "npmx - Paket-Browser für die npm Registry",
-      "description": "Ein besserer Browser für die npm Registry. Pakete suchen, durchstöbern und erkunden mit einer modernen Oberfläche."
+      "description": "Ein schnellerer, modernerer Browser für die npm Registry. Pakete suchen, durchstöbern und erkunden mit einer modernen Oberfläche."
     }
   },
   "version": "Version",
   "built_at": "erstellt {0}",
   "alt_logo": "npmx Logo",
-  "tagline": "ein besserer Browser für die npm Registry",
+  "tagline": "ein schnellerer, modernerer Browser für die npm Registry",
   "non_affiliation_disclaimer": "nicht verbunden mit npm, Inc.",
   "trademark_disclaimer": "npm ist eine eingetragene Marke von npm, Inc. Diese Seite ist nicht mit npm, Inc. verbunden.",
   "footer": {
@@ -771,7 +771,7 @@
       "title": "Was wir nicht sind",
       "not_package_manager": "Kein Paketmanager.",
       "not_registry": "Keine Registry.",
-      "registry_description": "Wir hosten keine Pakete. Wir sind nur ein besserer Weg, sie zu durchstöbern.",
+      "registry_description": "Wir hosten keine Pakete. Wir sind nur ein schnellerer, modernerer Weg, sie zu durchstöbern.",
       "package_managers_exist": "{already} {people} {building} {really} {cool} {package} {managers}.",
       "words": {
         "already": "Es gibt",
