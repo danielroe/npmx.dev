@@ -32,7 +32,7 @@ export default defineEventHandler(async event => {
     return
   }
 
-  const path = event.path.split('?')[0]!
+  const [path = '/', query] = event.path.split('?')
 
   // username
   if (path.startsWith('/~') || path.startsWith('/_')) {
@@ -48,7 +48,7 @@ export default defineEventHandler(async event => {
   if (pkgMatch?.groups) {
     const args = [pkgMatch.groups.org, pkgMatch.groups.name].filter(Boolean).join('/')
     setHeader(event, 'cache-control', cacheControl)
-    return sendRedirect(event, `/package/${args}`, 301)
+    return sendRedirect(event, `/package/${args}` + (query ? '?' + query : ''), 301)
   }
 
   // /@org/pkg/v/version or /@org/pkg@version → /package/org/pkg/v/version
@@ -60,13 +60,17 @@ export default defineEventHandler(async event => {
   if (pkgVersionMatch?.groups) {
     const args = [pkgVersionMatch.groups.org, pkgVersionMatch.groups.name].filter(Boolean).join('/')
     setHeader(event, 'cache-control', cacheControl)
-    return sendRedirect(event, `/package/${args}/v/${pkgVersionMatch.groups.version}`)
+    return sendRedirect(
+      event,
+      `/package/${args}/v/${pkgVersionMatch.groups.version}` + (query ? '?' + query : ''),
+      301,
+    )
   }
 
   // /@org → /org/org
   const orgMatch = path.match(/^\/@(?<org>[^/]+)$/)
   if (orgMatch?.groups) {
     setHeader(event, 'cache-control', cacheControl)
-    return sendRedirect(event, `/org/${orgMatch.groups.org}`)
+    return sendRedirect(event, `/org/${orgMatch.groups.org}` + (query ? '?' + query : ''), 301)
   }
 })
