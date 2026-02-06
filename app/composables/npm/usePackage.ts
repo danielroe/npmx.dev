@@ -1,23 +1,26 @@
-import type { Packument, SlimPackument, SlimVersion, SlimPackumentVersion } from '#shared/types'
+import type {
+  Packument,
+  SlimPackument,
+  SlimVersion,
+  SlimPackumentVersion,
+  PackumentVersion,
+  PublishTrustLevel,
+} from '#shared/types'
 import { NPM_REGISTRY } from '~/utils/npm/common'
 import { extractInstallScriptsInfo } from '~/utils/install-scripts'
 
 /** Number of recent versions to include in initial payload */
 const RECENT_VERSIONS_COUNT = 5
 
-function hasAttestations(version: Packument['versions'][string]): boolean {
+function hasAttestations(version: PackumentVersion): boolean {
   return Boolean(version.dist.attestations)
 }
 
-function hasTrustedPublisher(version: Packument['versions'][string]): boolean {
+function hasTrustedPublisher(version: PackumentVersion): boolean {
   return Boolean(version._npmUser?.trustedPublisher)
 }
 
-function hasPublishTrustEvidence(version: Packument['versions'][string]): boolean {
-  return hasAttestations(version) || hasTrustedPublisher(version)
-}
-
-function getTrustLevel(version: Packument['versions'][string]): SlimVersion['trustLevel'] {
+function getTrustLevel(version: PackumentVersion): PublishTrustLevel {
   if (hasAttestations(version)) return 'provenance'
   if (hasTrustedPublisher(version)) return 'trustedPublisher'
   return 'none'
@@ -84,8 +87,8 @@ export function transformPackument(
           installScripts: installScripts ?? undefined,
         }
       }
-      const hasProvenance = hasPublishTrustEvidence(version)
       const trustLevel = getTrustLevel(version)
+      const hasProvenance = trustLevel !== 'none'
 
       filteredVersions[v] = {
         hasProvenance,

@@ -31,59 +31,23 @@ function toTimestamp(time?: string): number {
 }
 
 function sortByRecency(a: VersionWithIndex, b: VersionWithIndex): number {
-  const aValid = Number.isFinite(a.timestamp)
-  const bValid = Number.isFinite(b.timestamp)
+  const aValid = !Number.isNaN(a.timestamp)
+  const bValid = !Number.isNaN(b.timestamp)
 
-  if (aValid && bValid && a.timestamp !== b.timestamp) {
-    return b.timestamp - a.timestamp
+  if (!aValid && !bValid) {
+    // Fall back to semver comparison if no valid timestamps
+    const semverOrder = compare(b.version, a.version)
+    if (semverOrder !== 0) return semverOrder
+
+    // If semver is also equal, maintain original order
+    return a.index - b.index
   }
 
   if (aValid !== bValid) {
     return aValid ? -1 : 1
   }
 
-  const semverOrder = compare(b.version, a.version)
-  if (semverOrder !== 0) return semverOrder
-
-  return a.index - b.index
-}
-
-/**
- * Detects a security downgrade where the newest publish is not trusted,
- * but an older publish was trusted (e.g. OIDC/provenance -> manual publish).
- */
-export function detectPublishSecurityDowngrade(
-  versions: PackageVersionInfo[],
-): PublishSecurityDowngrade | null {
-  if (versions.length < 2) return null
-
-  const sorted = versions
-    .map((version, index) => ({
-      ...version,
-      index,
-      timestamp: toTimestamp(version.time),
-      trustRank: getTrustRank(version),
-    }))
-    .sort(sortByRecency)
-
-  const latest = sorted.at(0)
-  if (!latest) return null
-
-  let strongestOlder: VersionWithIndex | null = null
-  for (const version of sorted.slice(1)) {
-    if (!strongestOlder || version.trustRank > strongestOlder.trustRank) {
-      strongestOlder = version
-    }
-  }
-
-  if (!strongestOlder || strongestOlder.trustRank <= latest.trustRank) return null
-
-  return {
-    downgradedVersion: latest.version,
-    downgradedPublishedAt: latest.time,
-    trustedVersion: strongestOlder.version,
-    trustedPublishedAt: strongestOlder.time,
-  }
+  return b.timestamp - a.timestamp
 }
 
 /**

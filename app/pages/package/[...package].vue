@@ -245,10 +245,9 @@ const publishSecurityDowngrade = computed(() => {
   return detectPublishSecurityDowngradeForVersion(versionSecurityMetadata.value, currentVersion)
 })
 
-const installVersionOverride = computed(() => {
-  if (!publishSecurityDowngrade.value) return null
-  return publishSecurityDowngrade.value.trustedVersion
-})
+const installVersionOverride = computed(
+  () => publishSecurityDowngrade.value?.trustedVersion ?? null,
+)
 
 const sizeTooltip = computed(() => {
   const chunks = [
