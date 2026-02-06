@@ -142,8 +142,6 @@ import {
   SettingsBgThemePicker,
   SettingsToggle,
   TagStatic,
-  TagButton,
-  TagLink,
   TagRadioButton,
   TerminalExecute,
   TerminalInstall,
@@ -292,34 +290,6 @@ describe('component accessibility audits', () => {
     })
   })
 
-  describe('TagButton', () => {
-    it('should have no accessibility violations', async () => {
-      const component = await mountSuspended(TagButton, {
-        slots: { default: 'Tag content' },
-      })
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-
-    it('should have no accessibility violations when pressed', async () => {
-      const component = await mountSuspended(TagButton, {
-        props: { pressed: true },
-        slots: { default: 'Tag content' },
-      })
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-
-    it('should have no accessibility violations for disabled state', async () => {
-      const component = await mountSuspended(TagButton, {
-        props: { disabled: true },
-        slots: { default: 'Tag content' },
-      })
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-  })
-
   describe('ButtonBase', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(ButtonBase, {
@@ -337,31 +307,20 @@ describe('component accessibility audits', () => {
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
-  })
 
-  describe('TagLink', () => {
-    it('should have no accessibility violations', async () => {
-      const component = await mountSuspended(TagLink, {
-        props: { href: 'http://example.com' },
-        slots: { default: 'Tag content' },
+    it('should have no accessibility violations as primary button', async () => {
+      const component = await mountSuspended(ButtonBase, {
+        props: { disabled: true, variant: 'primary' },
+        slots: { default: 'Button content' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
 
-    it("should have no accessibility violations when it's the current link", async () => {
-      const component = await mountSuspended(TagLink, {
-        props: { href: 'http://example.com', current: true },
-        slots: { default: 'Tag content' },
-      })
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-
-    it('should have no accessibility violations when disabled (plain text)', async () => {
-      const component = await mountSuspended(TagLink, {
-        props: { href: 'http://example.com', disabled: true },
-        slots: { default: 'Tag content' },
+    it('should have no accessibility violations as tag', async () => {
+      const component = await mountSuspended(ButtonBase, {
+        props: { disabled: true, variant: 'tag' },
+        slots: { default: 'Button content' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -390,6 +349,33 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations when disabled (plain text)', async () => {
       const component = await mountSuspended(LinkBase, {
         props: { href: 'http://example.com', disabled: true },
+        slots: { default: 'Button link content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations as secondary button', async () => {
+      const component = await mountSuspended(LinkBase, {
+        props: { href: 'http://example.com', disabled: true, variant: 'button-secondary' },
+        slots: { default: 'Button link content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations as primary button', async () => {
+      const component = await mountSuspended(LinkBase, {
+        props: { href: 'http://example.com', disabled: true, variant: 'button-primary' },
+        slots: { default: 'Button link content' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations as tag', async () => {
+      const component = await mountSuspended(LinkBase, {
+        props: { href: 'http://example.com', disabled: true, variant: 'tag' },
         slots: { default: 'Button link content' },
       })
       const results = await runAxe(component)
