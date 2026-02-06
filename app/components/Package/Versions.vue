@@ -309,7 +309,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
         :href="`https://majors.nullvoxpopuli.com/q?packages=${packageName}`"
         target="_blank"
         rel="noopener noreferrer"
-        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
+        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 rounded"
         :title="$t('package.downloads.community_distribution')"
       >
         <span class="i-carbon:load-balancer-network w-3.5 h-3.5" aria-hidden="true" />
@@ -360,7 +360,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
               <div class="flex items-center gap-2">
                 <NuxtLink
                   :to="versionRoute(row.primaryVersion.version)"
-                  class="block font-mono text-sm transition-colors duration-200 truncate inline-flex items-center gap-1 focus-visible:outline-none focus-visible:text-accent after:absolute after:inset-0 after:content-['']"
+                  class="block font-mono text-sm transition-colors duration-200 truncate inline-flex items-center gap-1 focus-visible:text-accent after:absolute after:inset-0 after:content-['']"
                   :class="
                     row.primaryVersion.deprecated
                       ? 'text-red-400 group-hover/version-row:text-red-300'
@@ -612,7 +612,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                   <div class="flex items-center gap-2 min-w-0">
                     <button
                       type="button"
-                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 focus-visible:outline-accent/70 rounded-sm relative z-10"
+                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 rounded-sm relative z-10"
                       :aria-expanded="expandedMajorGroups.has(group.groupKey)"
                       :aria-label="
                         expandedMajorGroups.has(group.groupKey)
