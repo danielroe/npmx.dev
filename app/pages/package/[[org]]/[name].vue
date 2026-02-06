@@ -62,8 +62,14 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', playgroundLinks: [], toc: [] }) },
+  { default: () => ({ html: '', md: '', playgroundLinks: [], toc: [] }) },
 )
+
+//copy README file as Markdown
+const { copied: copiedReadme, copy: copyReadme } = useClipboard({
+  source: () => readmeData.value?.md ?? '',
+  copiedDuring: 2000,
+})
 
 // Track active TOC item based on scroll position
 const tocItems = computed(() => readmeData.value?.toc ?? [])
@@ -515,6 +521,7 @@ onKeyStroke(
             <h1
               class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
               :title="pkg.name"
+              dir="ltr"
             >
               <NuxtLink
                 v-if="orgName"
@@ -553,7 +560,7 @@ onKeyStroke(
           >
             <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
             <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
-              <span class="font-mono text-fg-muted text-sm">{{ requestedVersion }}</span>
+              <span class="font-mono text-fg-muted text-sm" dir="ltr">{{ requestedVersion }}</span>
               <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
             </template>
 
@@ -561,9 +568,10 @@ onKeyStroke(
               v-if="requestedVersion && resolvedVersion !== requestedVersion"
               :to="packageRoute(pkg.name, resolvedVersion)"
               :title="$t('package.view_permalink')"
+              dir="ltr"
               >{{ resolvedVersion }}</NuxtLink
             >
-            <span v-else>v{{ resolvedVersion }}</span>
+            <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
 
             <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
               <TooltipApp
@@ -945,7 +953,7 @@ onKeyStroke(
             </dt>
             <dd class="font-mono text-sm text-fg">
               <!-- Package size (greyed out) -->
-              <span class="text-fg-muted">
+              <span class="text-fg-muted" dir="ltr">
                 <span v-if="displayVersion?.dist?.unpackedSize">
                   {{ formatBytes(displayVersion.dist.unpackedSize) }}
                 </span>
@@ -965,7 +973,7 @@ onKeyStroke(
                     aria-hidden="true"
                   />
                 </span>
-                <span v-else-if="installSize?.totalSize">
+                <span v-else-if="installSize?.totalSize" dir="ltr">
                   {{ formatBytes(installSize.totalSize) }}
                 </span>
                 <span v-else class="text-fg-subtle">-</span>
@@ -1134,25 +1142,52 @@ onKeyStroke(
             </a>
           </h2>
           <ClientOnly>
-            <ReadmeTocDropdown
-              v-if="readmeData?.toc && readmeData.toc.length > 1"
-              :toc="readmeData.toc"
-              :active-id="activeTocId"
-              :scroll-to-heading="scrollToHeading"
-            />
+            <div class="flex items-center gap-2">
+              <!-- Copy readme as Markdown button -->
+              <TooltipApp
+                v-if="readmeData?.md"
+                :text="$t('package.readme.copy_as_markdown')"
+                position="bottom"
+              >
+                <button
+                  type="button"
+                  @click="copyReadme()"
+                  class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 inline-flex items-center gap-1.5"
+                  :class="
+                    copiedReadme ? 'text-accent bg-accent/10' : 'text-fg-subtle bg-bg hover:text-fg'
+                  "
+                  :aria-label="
+                    copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
+                  "
+                >
+                  <span
+                    :class="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
+                    class="size-3"
+                    aria-hidden="true"
+                  />
+                  {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
+                </button>
+              </TooltipApp>
+              <ReadmeTocDropdown
+                v-if="readmeData?.toc && readmeData.toc.length > 1"
+                :toc="readmeData.toc"
+                :active-id="activeTocId"
+                :scroll-to-heading="scrollToHeading"
+              />
+            </div>
           </ClientOnly>
         </div>
 
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
         <Readme v-if="readmeData?.html" :html="readmeData.html" />
-        <p v-else class="text-fg-subtle italic">
+        <p v-else class="text-fg-muted italic">
           {{ $t('package.readme.no_readme') }}
           <a
             v-if="repositoryUrl"
             :href="repositoryUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="link"
+            class="link text-fg underline underline-offset-4 decoration-fg-subtle hover:(decoration-fg text-fg) transition-colors duration-200"
             >{{ $t('package.readme.view_on_github') }}</a
           >
         </p>
