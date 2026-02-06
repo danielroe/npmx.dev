@@ -21,7 +21,7 @@
   "search": {
     "label": "Cerca i pacchetti npm",
     "placeholder": "cerca i pacchetti...",
-    "button": "carca",
+    "button": "cerca",
     "clear": "Cancella ricerca",
     "searching": "Cercando...",
     "found_packages": "Trovati {count} pacchetti",
@@ -33,7 +33,7 @@
     "claim_button": "Ottieni \"{name}\"",
     "want_to_claim": "Vuoi ottenere il nome di questo pacchetto?",
     "start_typing": "Inizia a scrivere per cercare i pacchetti",
-    "exact_match": "esatto",
+    "exact_match": "ricerca esatta",
     "title_search": "cerca: {search}",
     "title_packages": "cerca pacchetti",
     "meta_description": "Risultati di ricerca per '{search}'",
