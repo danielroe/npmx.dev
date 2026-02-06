@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Directions } from '@nuxtjs/i18n'
-import { useEventListener } from '@vueuse/core'
+import { useEventListener, onKeyDown, onKeyUp } from '@vueuse/core'
 import { isEditableElement } from '~/utils/input'
 
 const route = useRoute()
@@ -21,6 +21,16 @@ const localeMap = locales.value.reduce(
   {} as Record<string, Directions>,
 )
 
+const darkMode = usePreferredDark()
+const colorMode = useColorMode()
+const colorScheme = computed(() => {
+  return {
+    system: darkMode ? 'dark light' : 'light dark',
+    light: 'only light',
+    dark: 'only dark',
+  }[colorMode.preference]
+})
+
 const commandBarRef = useTemplateRef('commandBarRef')
 
 useHead({
@@ -32,27 +42,19 @@ useHead({
   titleTemplate: titleChunk => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
   },
+  meta: [{ name: 'color-scheme', content: colorScheme }],
 })
 
 if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
-// Global keyboard shortcut:
-// "/" focuses search or navigates to search page
-// "?" highlights all keyboard shortcut elements
-function handleGlobalKeydown(e: KeyboardEvent) {
-  if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-    e.preventDefault()
-    commandBarRef.value?.toggle()
-  }
-
-  if (isEditableElement(e.target)) return
-
-  if (isKeyWithoutModifiers(e, '/')) {
+onKeyDown(
+  '/',
+  e => {
+    if (isEditableElement(e.target)) return
     e.preventDefault()
 
-    // Try to find and focus search input on current page
     const searchInput = document.querySelector<HTMLInputElement>(
       'input[type="search"], input[name="q"]',
     )
@@ -63,32 +65,68 @@ function handleGlobalKeydown(e: KeyboardEvent) {
     }
 
     router.push('/search')
-  }
+  },
+  { dedupe: true },
+)
 
-  if (isKeyWithoutModifiers(e, '?')) {
+onKeyDown(
+  '?',
+  e => {
+    if (isEditableElement(e.target)) return
     e.preventDefault()
     showKbdHints.value = true
-  }
-}
+  },
+  { dedupe: true },
+)
 
-function handleGlobalKeyup() {
-  showKbdHints.value = false
-}
+onKeyDown(
+  'k',
+  e => {
+    if (!(e.metaKey || e.ctrlKey)) return
+    e.preventDefault()
+    commandBarRef.value?.toggle()
+  },
+  { dedupe: true },
+)
 
-/* A hack to get light dismiss to work in safari because it does not support closedby="any" yet */
+onKeyUp(
+  '?',
+  e => {
+    if (isEditableElement(e.target)) return
+    e.preventDefault()
+    showKbdHints.value = false
+  },
+  { dedupe: true },
+)
+
+// Light dismiss fallback for browsers that don't support closedby="any" (Safari + old Chrome/Firefox)
 // https://codepen.io/paramagicdev/pen/gbYompq
 // see: https://github.com/npmx-dev/npmx.dev/pull/522#discussion_r2749978022
 function handleModalLightDismiss(e: MouseEvent) {
   const target = e.target as HTMLElement
   if (target.tagName === 'DIALOG' && target.hasAttribute('open')) {
+    const rect = target.getBoundingClientRect()
+    const isOutside =
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+
+    if (!isOutside) return
     ;(target as HTMLDialogElement).close()
   }
 }
 
 if (import.meta.client) {
-  useEventListener(document, 'keydown', handleGlobalKeydown)
-  useEventListener(document, 'keyup', handleGlobalKeyup)
-  useEventListener(document, 'click', handleModalLightDismiss)
+  // Feature check for native light dismiss support via closedby="any"
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#closedby
+  const supportsClosedBy =
+    typeof HTMLDialogElement !== 'undefined' &&
+    typeof HTMLDialogElement.prototype === 'object' &&
+    'closedBy' in HTMLDialogElement.prototype
+  if (!supportsClosedBy) {
+    useEventListener(document, 'click', handleModalLightDismiss)
+  }
 }
 </script>
 
@@ -128,6 +166,7 @@ if (import.meta.client) {
   color: var(--bg);
   text-decoration: underline;
 }
+
 .skip-link:focus {
   top: 0;
 }

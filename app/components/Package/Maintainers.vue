@@ -168,20 +168,15 @@ watch(
 </script>
 
 <template>
-  <section id="maintainers" v-if="maintainers?.length" class="scroll-mt-20">
-    <h2 id="maintainers-heading" class="group text-xs text-fg-subtle uppercase tracking-wider mb-3">
-      <a
-        href="#maintainers"
-        class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-      >
-        {{ $t('package.maintainers.title') }}
-        <span
-          class="i-carbon-link w-3 h-3 block opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-          aria-hidden="true"
-        />
-      </a>
-    </h2>
-    <ul class="space-y-2 list-none m-0 p-0" :aria-label="$t('package.maintainers.list_label')">
+  <CollapsibleSection
+    v-if="maintainers?.length"
+    id="maintainers"
+    :title="$t('package.maintainers.title')"
+  >
+    <ul
+      class="space-y-2 list-none m-0 p-0 my-1 px-1"
+      :aria-label="$t('package.maintainers.list_label')"
+    >
       <li
         v-for="maintainer in visibleMaintainers"
         :key="maintainer.name ?? maintainer.email"
@@ -222,7 +217,7 @@ watch(
         <button
           v-if="canManageOwners && maintainer.name && maintainer.name !== npmUser"
           type="button"
-          class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 shrink-0 rounded focus-visible:outline-accent/70"
           :aria-label="
             $t('package.maintainers.remove_owner', {
               name: maintainer.name,
@@ -230,7 +225,7 @@ watch(
           "
           @click="handleRemoveOwner(maintainer.name)"
         >
-          <span class="i-carbon-close block w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-carbon-close w-3.5 h-3.5" aria-hidden="true" />
         </button>
       </li>
     </ul>
@@ -239,7 +234,7 @@ watch(
     <button
       v-if="!canManageOwners && hiddenMaintainersCount > 0"
       type="button"
-      class="mt-2 text-xs text-fg-muted hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+      class="mt-2 text-xs text-fg-muted hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
       @click="showAllMaintainers = !showAllMaintainers"
     >
       {{
@@ -265,33 +260,33 @@ watch(
             name="add-owner-username"
             :placeholder="$t('package.maintainers.username_placeholder')"
             v-bind="noCorrect"
-            class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
           />
           <button
             type="submit"
             :disabled="!newOwnerUsername.trim() || isAdding"
-            class="px-2 py-1 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="px-2 py-1 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
           >
             {{ isAdding ? '…' : $t('package.maintainers.add_button') }}
           </button>
           <button
             type="button"
-            class="p-1 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-1 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('package.maintainers.cancel_add')"
             @click="showAddOwner = false"
           >
-            <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
+            <span class="i-carbon-close w-4 h-4" aria-hidden="true" />
           </button>
         </form>
       </div>
       <button
         v-else
         type="button"
-        class="w-full px-3 py-1.5 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="w-full px-3 py-1.5 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
         @click="showAddOwner = true"
       >
         {{ $t('package.maintainers.add_owner') }}
       </button>
     </div>
-  </section>
+  </CollapsibleSection>
 </template>

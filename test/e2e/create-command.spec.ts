@@ -1,12 +1,9 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './test-utils'
 
 test.describe('Create Command', () => {
-  // TODO: these tests depend on external npm registry API - we should add data fixtures
-  test.describe.configure({ retries: 2 })
-
   test.describe('Visibility', () => {
     test('/vite - should show create command (same maintainers)', async ({ page, goto }) => {
-      await goto('/vite', { waitUntil: 'domcontentloaded' })
+      await goto('/package/vite', { waitUntil: 'domcontentloaded' })
 
       // Create command section should be visible (SSR)
       // Use specific container to avoid matching README code blocks
@@ -15,14 +12,14 @@ test.describe('Create Command', () => {
       await expect(createCommandSection.locator('code')).toContainText(/create vite/i)
 
       // Link to create-vite should be present (uses sr-only text, so check attachment not visibility)
-      await expect(page.locator('a[href="/create-vite"]').first()).toBeAttached()
+      await expect(page.locator('a[href="/package/create-vite"]').first()).toBeAttached()
     })
 
     test('/next - should show create command (shared maintainer, same repo)', async ({
       page,
       goto,
     }) => {
-      await goto('/next', { waitUntil: 'domcontentloaded' })
+      await goto('/package/next', { waitUntil: 'domcontentloaded' })
 
       // Create command section should be visible (SSR)
       // Use specific container to avoid matching README code blocks
@@ -31,14 +28,14 @@ test.describe('Create Command', () => {
       await expect(createCommandSection.locator('code')).toContainText(/create next-app/i)
 
       // Link to create-next-app should be present (uses sr-only text, so check attachment not visibility)
-      await expect(page.locator('a[href="/create-next-app"]').first()).toBeAttached()
+      await expect(page.locator('a[href="/package/create-next-app"]').first()).toBeAttached()
     })
 
     test('/nuxt - should show create command (same maintainer, same org)', async ({
       page,
       goto,
     }) => {
-      await goto('/nuxt', { waitUntil: 'domcontentloaded' })
+      await goto('/package/nuxt', { waitUntil: 'domcontentloaded' })
 
       // Create command section should be visible (SSR)
       // nuxt has create-nuxt package, so command is "npm create nuxt"
@@ -48,31 +45,16 @@ test.describe('Create Command', () => {
       await expect(createCommandSection.locator('code')).toContainText(/create nuxt/i)
     })
 
-    test('/color - should NOT show create command (different maintainers)', async ({
+    test('/is-odd - should NOT show create command (no create-is-odd exists)', async ({
       page,
       goto,
     }) => {
-      await goto('/color', { waitUntil: 'domcontentloaded' })
+      await goto('/package/is-odd', { waitUntil: 'domcontentloaded' })
 
       // Wait for package to load
-      await expect(page.locator('h1').filter({ hasText: 'color' })).toBeVisible()
+      await expect(page.locator('h1').filter({ hasText: 'is-odd' })).toBeVisible()
 
-      // Create command section should NOT be visible (different maintainers)
-      // Use .first() for consistency, though none should exist
-      const createCommandSection = page.locator('.group\\/createcmd').first()
-      await expect(createCommandSection).not.toBeVisible()
-    })
-
-    test('/lodash - should NOT show create command (no create-lodash exists)', async ({
-      page,
-      goto,
-    }) => {
-      await goto('/lodash', { waitUntil: 'domcontentloaded' })
-
-      // Wait for package to load
-      await expect(page.locator('h1').filter({ hasText: 'lodash' })).toBeVisible()
-
-      // Create command section should NOT be visible (no create-lodash exists)
+      // Create command section should NOT be visible (no create-is-odd exists)
       // Use .first() for consistency, though none should exist
       const createCommandSection = page.locator('.group\\/createcmd').first()
       await expect(createCommandSection).not.toBeVisible()
@@ -81,7 +63,7 @@ test.describe('Create Command', () => {
 
   test.describe('Copy Functionality', () => {
     test('hovering create command shows copy button', async ({ page, goto }) => {
-      await goto('/vite', { waitUntil: 'hydration' })
+      await goto('/package/vite', { waitUntil: 'hydration' })
 
       await expect(page.locator('h1')).toContainText('vite', { timeout: 15000 })
 
@@ -112,7 +94,7 @@ test.describe('Create Command', () => {
       // Grant clipboard permissions
       await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 
-      await goto('/vite', { waitUntil: 'hydration' })
+      await goto('/package/vite', { waitUntil: 'hydration' })
       await expect(page.locator('h1')).toContainText('vite', { timeout: 15000 })
 
       await expect(page.locator('main header').locator('text=/v\\d+\\.\\d+/')).toBeVisible({
@@ -142,7 +124,7 @@ test.describe('Create Command', () => {
 
   test.describe('Install Command Copy', () => {
     test('hovering install command shows copy button', async ({ page, goto }) => {
-      await goto('/lodash', { waitUntil: 'hydration' })
+      await goto('/package/is-odd', { waitUntil: 'hydration' })
 
       // Find the install command container
       const installCommandContainer = page.locator('.group\\/installcmd').first()
@@ -167,7 +149,7 @@ test.describe('Create Command', () => {
       // Grant clipboard permissions
       await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 
-      await goto('/lodash', { waitUntil: 'hydration' })
+      await goto('/package/is-odd', { waitUntil: 'hydration' })
 
       // Find and hover over the install command container
       const installCommandContainer = page.locator('.group\\/installcmd').first()
@@ -182,7 +164,7 @@ test.describe('Create Command', () => {
 
       // Verify clipboard content contains the install command
       const clipboardContent = await page.evaluate(() => navigator.clipboard.readText())
-      expect(clipboardContent).toMatch(/install lodash|add lodash/i)
+      expect(clipboardContent).toMatch(/install is-odd|add is-odd/i)
 
       await expect(copyButton).toContainText(/copy/i, { timeout: 5000 })
       await expect(copyButton).not.toContainText(/copied/i)

@@ -9,7 +9,7 @@ import {
   getVersionGroupLabel,
   isSameVersionGroup,
 } from '~/utils/versions'
-import { fetchAllPackageVersions } from '~/composables/useNpmRegistry'
+import { fetchAllPackageVersions } from '~/utils/npm/api'
 
 const props = defineProps<{
   packageName: string
@@ -546,7 +546,7 @@ watch(
               <span
                 v-else
                 class="w-3 h-3 transition-transform duration-200 rtl-flip"
-                :class="group.isExpanded ? 'i:carbon:chevron-down' : 'i-carbon:chevron-right'"
+                :class="group.isExpanded ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
                 aria-hidden="true"
               />
             </button>
@@ -620,7 +620,7 @@ watch(
         <!-- Link to package page for full version list -->
         <div class="border-t border-border mt-1 pt-1 px-3 py-2">
           <NuxtLink
-            :to="`/${packageName}`"
+            :to="`/package/${packageName}`"
             class="text-xs text-fg-subtle hover:text-fg transition-[color] focus-visible:outline-none focus-visible:text-fg"
             @click="isOpen = false"
           >

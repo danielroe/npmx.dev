@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { PackageVersionInfo, PackumentVersion } from '#shared/types'
+import type { PackageVersionInfo, SlimVersion } from '#shared/types'
 import { compare } from 'semver'
 import type { RouteLocationRaw } from 'vue-router'
-import { fetchAllPackageVersions } from '~/composables/useNpmRegistry'
+import { fetchAllPackageVersions } from '~/utils/npm/api'
 import {
   buildVersionToTagsMap,
   filterExcludedTags,
@@ -14,7 +14,7 @@ import {
 
 const props = defineProps<{
   packageName: string
-  versions: Record<string, PackumentVersion>
+  versions: Record<string, SlimVersion>
   distTags: Record<string, string>
   time: Record<string, string>
 }>()
@@ -29,13 +29,6 @@ interface VersionDisplay {
   tags?: string[]
   hasProvenance: boolean
   deprecated?: string
-}
-
-// Check if a version has provenance/attestations
-function hasProvenance(version: PackumentVersion | undefined): boolean {
-  if (!version?.dist) return false
-  const dist = version.dist as { attestations?: unknown }
-  return !!dist.attestations
 }
 
 // Build route object for package version link
@@ -53,10 +46,7 @@ const versionToTags = computed(() => buildVersionToTagsMap(props.distTags))
 // Deduplicates so each version appears only once, with all its tags
 const allTagRows = computed(() => {
   // Group tags by version with their metadata
-  const versionMap = new Map<
-    string,
-    { tags: string[]; versionData: PackumentVersion | undefined }
-  >()
+  const versionMap = new Map<string, { tags: string[]; versionData: SlimVersion | undefined }>()
   for (const [tag, version] of Object.entries(props.distTags)) {
     const existing = versionMap.get(version)
     if (existing) {
@@ -88,7 +78,7 @@ const allTagRows = computed(() => {
         version,
         time: props.time[version],
         tags,
-        hasProvenance: hasProvenance(versionData),
+        hasProvenance: versionData?.hasProvenance,
         deprecated: versionData?.deprecated,
       } as VersionDisplay,
     }))
@@ -316,18 +306,30 @@ function getTagVersions(tag: string): VersionDisplay[] {
     :title="$t('package.versions.title')"
     id="versions"
   >
+    <template #actions>
+      <a
+        :href="`https://majors.nullvoxpopuli.com/q?packages=${packageName}`"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
+        :title="$t('package.downloads.community_distribution')"
+      >
+        <span class="i-carbon:load-balancer-network w-3.5 h-3.5" aria-hidden="true" />
+        <span class="sr-only">{{ $t('package.downloads.community_distribution') }}</span>
+      </a>
+    </template>
     <div class="space-y-0.5 min-w-0">
       <!-- Dist-tag rows (limited to MAX_VISIBLE_TAGS) -->
       <div v-for="row in visibleTagRows" :key="row.id">
         <div
-          class="flex items-center gap-2 pe-2"
+          class="flex items-center gap-2 pe-2 px-1"
           :class="row.tag === 'latest' ? 'bg-bg-subtle rounded-lg' : ''"
         >
           <!-- Expand button (only if there are more versions to show) -->
           <button
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-muted focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-sm"
+            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
             :aria-expanded="expandedTags.has(row.tag)"
             :aria-label="
               expandedTags.has(row.tag)
@@ -360,7 +362,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
               <div>
                 <NuxtLink
                   :to="versionRoute(row.primaryVersion.version)"
-                  class="block font-mono text-sm transition-colors duration-200 truncate inline-flex items-center gap-1"
+                  class="block font-mono text-sm transition-colors duration-200 truncate inline-flex items-center gap-1 focus-visible:outline-none focus-visible:text-accent"
                   :class="
                     row.primaryVersion.deprecated
                       ? 'text-red-400 hover:text-red-300'
@@ -475,10 +477,10 @@ function getTagVersions(tag: string): VersionDisplay[] {
       </div>
 
       <!-- Other versions section -->
-      <div class="pt-1">
+      <div class="p-1">
         <button
           type="button"
-          class="flex items-center gap-2 text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-muted focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-sm"
+          class="flex items-center gap-2 text-start rounded-sm"
           :aria-expanded="otherVersionsExpanded"
           :aria-label="
             otherVersionsExpanded
@@ -577,7 +579,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                   <div class="flex items-center gap-2 min-w-0">
                     <button
                       type="button"
-                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg-muted focus-visible:ring-offset-1 focus-visible:ring-offset-bg rounded-sm"
+                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 focus-visible:outline-accent/70 rounded-sm"
                       :aria-expanded="expandedMajorGroups.has(group.groupKey)"
                       :aria-label="
                         expandedMajorGroups.has(group.groupKey)

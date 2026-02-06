@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ColumnConfig, ColumnId } from '#shared/types/preferences'
+import { onKeyDown } from '@vueuse/core'
 
 const props = defineProps<{
   columns: ColumnConfig[]
@@ -26,13 +27,16 @@ onClickOutside(
   },
 )
 
-// Close on Escape key
-useEventListener('keydown', event => {
-  if (event.key === 'Escape' && isOpen.value) {
+onKeyDown(
+  'Escape',
+  e => {
+    if (!isOpen.value) return
     isOpen.value = false
     buttonRef.value?.focus()
-  }
-})
+  },
+  { dedupe: true },
+)
+
 // Columns that can be toggled (name is always visible)
 const toggleableColumns = computed(() => props.columns.filter(col => col.id !== 'name'))
 
@@ -42,7 +46,7 @@ const columnLabelKey: Record<string, string> = {
   version: 'filters.columns.version',
   description: 'filters.columns.description',
   downloads: 'filters.columns.downloads',
-  updated: 'filters.columns.updated',
+  updated: 'filters.columns.published',
   maintainers: 'filters.columns.maintainers',
   keywords: 'filters.columns.keywords',
   qualityScore: 'filters.columns.quality_score',

@@ -8,11 +8,59 @@ Thank you for your interest in contributing! ❤️ This document provides guide
 
 ## Goals
 
-We want to create 'a fast, modern browser for the npm registry.' This means, among other things:
+The goal of [npmx.dev](https://npmx.dev) is to build a fast, modern and open-source browser for the npm registry, prioritizing speed, simplicity and a community-driven developer experience.
 
-- We don't aim to replace the [npmjs.com](https://www.npmjs.com/) registry, just provide a better UI and DX.
-- Layout shift, flakiness, slowness is The Worst. We need to continually iterate to create the most performant, best DX possible.
-- We want to provide information in the best way. We don't want noise, cluttered display, or confusing UI. If in doubt: choose simplicity.
+### Core values
+
+- Speed
+- Simplicity
+- Community-first
+
+### Target audience
+
+npmx is built for open-source developers, by open-source developers.
+
+Our goal is to create tools and capabilities that solve real problems for package maintainers and power users, while also providing a great developer experience for everyone who works in the JavaScript ecosystem.
+
+This focus helps guide our project decisions as a community and what we choose to build.
+
+## Table of Contents
+
+- [Getting started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Setup](#setup)
+- [Development workflow](#development-workflow)
+  - [Available commands](#available-commands)
+  - [Project structure](#project-structure)
+  - [Local connector CLI](#local-connector-cli)
+- [Code style](#code-style)
+  - [TypeScript](#typescript)
+  - [Server API patterns](#server-api-patterns)
+  - [Import order](#import-order)
+  - [Naming conventions](#naming-conventions)
+  - [Vue components](#vue-components)
+- [RTL Support](#rtl-support)
+- [Localization (i18n)](#localization-i18n)
+  - [Approach](#approach)
+  - [Adding a new locale](#adding-a-new-locale)
+  - [Update translation](#update-translation)
+  - [Adding translations](#adding-translations)
+  - [Translation key conventions](#translation-key-conventions)
+  - [Using i18n-ally (recommended)](#using-i18n-ally-recommended)
+  - [Formatting numbers and dates](#formatting-numbers-and-dates)
+- [Testing](#testing)
+  - [Unit tests](#unit-tests)
+  - [Component accessibility tests](#component-accessibility-tests)
+  - [End to end tests](#end-to-end-tests)
+  - [Test fixtures (mocking external APIs)](#test-fixtures-mocking-external-apis)
+- [Submitting changes](#submitting-changes)
+  - [Before submitting](#before-submitting)
+  - [Pull request process](#pull-request-process)
+  - [Commit messages and PR titles](#commit-messages-and-pr-titles)
+- [Pre-commit hooks](#pre-commit-hooks)
+- [Using AI](#using-ai)
+- [Questions](#questions)
+- [License](#license)
 
 ## Getting started
 
@@ -111,7 +159,11 @@ To help with this, the project uses `oxfmt` to handle formatting via a pre-commi
 
 If you want to get ahead of any formatting issues, you can also run `pnpm lint:fix` before committing to fix formatting across the whole project.
 
-### Typescript
+### npmx name
+
+When displaying the project name anywhere in the UI, use `npmx` in all lowercase letters.
+
+### TypeScript
 
 - We care about good types &ndash; never cast things to `any` 💪
 - Validate rather than just assert
@@ -187,7 +239,7 @@ import { hasProtocol } from 'ufo'
 
 | Type             | Convention               | Example                        |
 | ---------------- | ------------------------ | ------------------------------ |
-| Vue components   | PascalCase               | `MarkdownText.vue`             |
+| Vue components   | PascalCase               | `DateTime.vue`                 |
 | Pages            | kebab-case               | `search.vue`, `[...name].vue`  |
 | Composables      | camelCase + `use` prefix | `useNpmRegistry.ts`            |
 | Server routes    | kebab-case + method      | `search.get.ts`                |
@@ -288,12 +340,12 @@ To add a new locale:
 5. If the language is `right-to-left`, add `dir: 'rtl'` (see `ar-EG` in config for example)
 6. If the language requires special pluralization rules, add a `pluralRule` callback (see `ar-EG` or `ru-RU` in config for examples)
 
-Check [Pluralization rule callback](https://vue-i18n.intlify.dev/guide/essentials/pluralization.html#custom-pluralization) for more info.
+Check [Pluralization rule callback](https://vue-i18n.intlify.dev/guide/essentials/pluralization#custom-pluralization) and [Plural Rules](https://cldr.unicode.org/index/cldr-spec/plural-rules#TOC-Determining-Plural-Categories) for more info.
 
 ### Update translation
 
 We track the current progress of translations with [Lunaria](https://lunaria.dev/) on this site: https://i18n.npmx.dev/
-If you see any outdated translations in your language, feel free to update the keys to match then English version.
+If you see any outdated translations in your language, feel free to update the keys to match the English version.
 
 In order to make sure you have everything up-to-date, you can run:
 
@@ -356,6 +408,43 @@ See how `es`, `es-ES`, and `es-419` are configured in [config/i18n.ts](./config/
    <p>{{ $t('greeting', { name: userName }) }}</p>
    ```
 
+4. Don't concatenate string messages in the Vue templates, some languages can have different word order. Use placeholders instead.
+
+   **Bad:**
+
+   ```vue
+   <p>{{ $t('hello') }} {{ userName }}</p>
+   ```
+
+   **Good:**
+
+   ```vue
+   <p>{{ $t('greeting', { name: userName }) }}</p>
+   ```
+
+   **Complex content:**
+
+   If you need to include HTML or components inside the translation, use [`i18n-t`](https://vue-i18n.intlify.dev/guide/advanced/component.html) component. This is especially useful when the order of elements might change between languages.
+
+   ```json
+   {
+     "agreement": "I accept the {terms} and {privacy}.",
+     "terms_link": "Terms of Service",
+     "privacy_policy": "Privacy Policy"
+   }
+   ```
+
+   ```vue
+   <i18n-t keypath="agreement" tag="p">
+     <template #terms>
+       <NuxtLink to="/terms">{{ $t('terms_link') }}</NuxtLink>
+     </template>
+     <template #privacy>
+       <strong>{{ $t('privacy_policy') }}</strong>
+     </template>
+   </i18n-t>
+   ```
+
 ### Translation key conventions
 
 - Use dot notation for hierarchy: `section.subsection.key`
@@ -363,6 +452,7 @@ See how `es`, `es-ES`, and `es-419` are configured in [config/i18n.ts](./config/
 - Group related keys together
 - Use `common.*` for shared strings (loading, retry, close, etc.)
 - Use component-specific prefixes: `package.card.*`, `settings.*`, `nav.*`
+- Do not use dashes (`-`) in translation keys; always use underscore (`_`): e.g., `privacy_policy` instead of `privacy-policy`
 
 ### Using i18n-ally (recommended)
 
@@ -445,6 +535,69 @@ pnpm test:browser:ui     # Run with Playwright UI
 
 Make sure to read about [Playwright best practices](https://playwright.dev/docs/best-practices) and don't rely on classes/IDs but try to follow user-replicable behaviour (like selecting an element based on text content instead).
 
+### Test fixtures (mocking external APIs)
+
+E2E tests use a fixture system to mock external API requests, ensuring tests are deterministic and don't hit real APIs. This is handled at two levels:
+
+**Server-side mocking** (`modules/fixtures.ts` + `modules/runtime/server/cache.ts`):
+
+- Intercepts all `$fetch` calls during SSR
+- Serves pre-recorded fixture data from `test/fixtures/`
+- Enabled via `NUXT_TEST_FIXTURES=true` or Nuxt test mode
+
+**Client-side mocking** (`test/e2e/test-utils.ts`):
+
+- Uses Playwright's route interception to mock browser requests
+- All test files import from `./test-utils` instead of `@nuxt/test-utils/playwright`
+- Throws a clear error if an unmocked external request is detected
+
+#### Fixture files
+
+Fixtures are stored in `test/fixtures/` with this structure:
+
+```
+test/fixtures/
+├── npm-registry/
+│   ├── packuments/       # Package metadata (vue.json, @nuxt/kit.json)
+│   ├── search/           # Search results (vue.json, nuxt.json)
+│   └── orgs/             # Org package lists (nuxt.json)
+├── npm-api/
+│   └── downloads/        # Download stats
+└── users/                # User package lists
+```
+
+#### Adding new fixtures
+
+1. **Generate fixtures** using the script:
+
+   ```bash
+   pnpm generate:fixtures vue lodash @nuxt/kit
+   ```
+
+2. **Or manually create** a JSON file in the appropriate directory
+
+#### Environment variables
+
+| Variable                          | Purpose                            |
+| --------------------------------- | ---------------------------------- |
+| `NUXT_TEST_FIXTURES=true`         | Enable server-side fixture mocking |
+| `NUXT_TEST_FIXTURES_VERBOSE=true` | Enable detailed fixture logging    |
+
+#### When tests fail due to missing fixtures
+
+If a test fails with an error like:
+
+```
+UNMOCKED EXTERNAL API REQUEST DETECTED
+API:  npm registry
+URL:  https://registry.npmjs.org/some-package
+```
+
+You need to either:
+
+1. Add a fixture file for that package/endpoint
+2. Update the mock handlers in `test/e2e/test-utils.ts` (client) or `modules/runtime/server/cache.ts` (server)
+
 ## Submitting changes
 
 ### Before submitting
@@ -484,6 +637,31 @@ Format: `type(scope): description`
 
 > [!NOTE]
 > The subject must start with a lowercase letter. Individual commit messages within your PR don't need to follow this format since they'll be squashed.
+
+### PR descriptions
+
+If your pull request directly addresses an open issue, use the following inside your PR description.
+
+```text
+Resolves | Fixes | Closes: #xxx
+```
+
+Replace `#xxx` with either a URL to the issue, or the number of the issue. For example:
+
+```text
+Fixes #123
+```
+
+or
+
+```text
+Closes https://github.com/npmx-dev/npmx.dev/issues/123
+```
+
+This provides the following benefits:
+
+- it links the pull request to the issue (the merge icon will appear in the issue), so everybody can see there is an open PR
+- when the pull request is merged, the linked issue is automatically closed
 
 ## Pre-commit hooks
 

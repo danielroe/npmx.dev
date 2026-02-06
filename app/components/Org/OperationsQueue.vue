@@ -129,7 +129,7 @@ watch(isExecuting, executing => {
         <button
           v-if="hasOperations"
           type="button"
-          class="px-2 py-1 font-mono text-xs text-fg-muted hover:text-fg bg-bg-subtle border border-border rounded transition-colors duration-200 hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="px-2 py-1 font-mono text-xs text-fg-muted hover:text-fg bg-bg-subtle border border-border rounded transition-colors duration-200 hover:border-border-hover focus-visible:outline-accent/70"
           :aria-label="$t('operations.queue.clear_all')"
           @click="handleClearAll"
         >
@@ -137,11 +137,11 @@ watch(isExecuting, executing => {
         </button>
         <button
           type="button"
-          class="p-1 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="p-1 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
           :aria-label="$t('operations.queue.refresh')"
           @click="refreshState"
         >
-          <span class="i-carbon:renew block w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon:renew w-4 h-4" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -209,20 +209,20 @@ watch(isExecuting, executing => {
           <button
             v-if="op.status === 'pending'"
             type="button"
-            class="p-1 text-fg-muted hover:text-green-400 transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-1 text-fg-muted hover:text-green-400 transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('operations.queue.approve_operation')"
             @click="approveOperation(op.id)"
           >
-            <span class="i-carbon:checkmark block w-4 h-4" aria-hidden="true" />
+            <span class="i-carbon:checkmark w-4 h-4" aria-hidden="true" />
           </button>
           <button
             v-if="op.status !== 'running'"
             type="button"
-            class="p-1 text-fg-muted hover:text-red-400 transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-1 text-fg-muted hover:text-red-400 transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('operations.queue.remove_operation')"
             @click="removeOperation(op.id)"
           >
-            <span class="i-carbon-close block w-4 h-4" aria-hidden="true" />
+            <span class="i-carbon-close w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </li>
@@ -235,7 +235,7 @@ watch(isExecuting, executing => {
       role="alert"
     >
       <div class="flex items-center gap-2 mb-2">
-        <span class="i-carbon:locked block w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+        <span class="i-carbon:locked w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
         <span class="font-mono text-sm text-amber-400">
           {{ $t('operations.queue.otp_prompt') }}
         </span>
@@ -252,7 +252,7 @@ watch(isExecuting, executing => {
           :placeholder="$t('operations.queue.otp_placeholder')"
           autocomplete="one-time-code"
           spellcheck="false"
-          class="flex-1 px-3 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="flex-1 px-3 py-1.5 font-mono text-sm bg-bg border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
         />
         <button
           type="submit"
@@ -269,7 +269,7 @@ watch(isExecuting, executing => {
       <button
         v-if="hasPendingOperations"
         type="button"
-        class="flex-1 px-4 py-2 font-mono text-sm text-fg bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="flex-1 px-4 py-2 font-mono text-sm text-fg bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:border-border-hover focus-visible:outline-accent/70"
         @click="handleApproveAll"
       >
         {{ $t('operations.queue.approve_all') }} ({{ pendingOperations.length }})
@@ -278,7 +278,7 @@ watch(isExecuting, executing => {
         v-if="hasApprovedOperations && !hasOtpFailures"
         type="button"
         :disabled="isExecuting"
-        class="flex-1 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        class="flex-1 px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
         @click="handleExecute()"
       >
         {{
@@ -295,7 +295,7 @@ watch(isExecuting, executing => {
         class="flex items-center gap-2 font-mono text-xs text-fg-muted cursor-pointer hover:text-fg transition-colors duration-200 select-none"
       >
         <span
-          class="i-carbon:chevron-right rtl-flip block w-3 h-3 transition-transform duration-200 [[open]>&]:rotate-90"
+          class="i-carbon:chevron-right rtl-flip w-3 h-3 transition-transform duration-200 [[open]>&]:rotate-90"
           aria-hidden="true"
         />
         {{ $t('operations.queue.log') }} ({{ completedOperations.length }})
@@ -327,11 +327,11 @@ watch(isExecuting, executing => {
           </div>
           <button
             type="button"
-            class="p-0.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-0.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('operations.queue.remove_from_log')"
             @click="removeOperation(op.id)"
           >
-            <span class="i-carbon:close block w-3 h-3" aria-hidden="true" />
+            <span class="i-carbon:close w-3 h-3" aria-hidden="true" />
           </button>
         </li>
       </ul>

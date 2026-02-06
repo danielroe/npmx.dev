@@ -1,8 +1,55 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './test-utils'
+
+test.describe('Compare Page', () => {
+  test('no-dep column renders separately from package columns', async ({ page, goto }) => {
+    await goto('/compare?packages=vue,__no_dependency__', { waitUntil: 'hydration' })
+
+    const grid = page.locator('.comparison-grid')
+    await expect(grid).toBeVisible({ timeout: 15000 })
+
+    // Should have the no-dep column with special styling
+    const noDepColumn = grid.locator('.comparison-cell-nodep')
+    await expect(noDepColumn).toBeVisible()
+
+    // The no-dep column should not contain a link
+    await expect(noDepColumn.locator('a')).toHaveCount(0)
+  })
+
+  test('no-dep column is always last even when packages are added after', async ({
+    page,
+    goto,
+  }) => {
+    // Start with vue and no-dep
+    await goto('/compare?packages=vue,__no_dependency__', { waitUntil: 'hydration' })
+
+    const grid = page.locator('.comparison-grid')
+    await expect(grid).toBeVisible({ timeout: 15000 })
+
+    // Add another package via the input
+    const input = page.locator('#package-search')
+    await input.fill('nuxt')
+
+    // Wait for search results and click on nuxt
+    const nuxtOption = page.locator('button:has-text("nuxt")').first()
+    await expect(nuxtOption).toBeVisible({ timeout: 10000 })
+    await nuxtOption.click()
+
+    // URL should have no-dep at the end, not in the middle
+    await expect(page).toHaveURL(/packages=vue,nuxt,__no_dependency__/)
+
+    // Verify column order in the grid: vue, nuxt, then no-dep
+    const headerLinks = grid.locator('.comparison-cell-header a.truncate')
+    await expect(headerLinks).toHaveCount(2)
+    await expect(headerLinks.nth(0)).toContainText('vue')
+    await expect(headerLinks.nth(1)).toContainText('nuxt')
+
+    // No-dep should still be visible as the last column
+    const noDepColumn = grid.locator('.comparison-cell-nodep')
+    await expect(noDepColumn).toBeVisible()
+  })
+})
 
 test.describe('Search Pages', () => {
-  // TODO: these tests depend on external npm registry API - we should add data fixtures
-  test.describe.configure({ retries: 2 })
   test('/search?q=vue → keyboard navigation (arrow keys + enter)', async ({ page, goto }) => {
     await goto('/search?q=vue', { waitUntil: 'hydration' })
 
@@ -21,9 +68,9 @@ test.describe('Search Pages', () => {
     await page.keyboard.press('ArrowUp')
 
     // Enter navigates to the selected result
-    // URL is /vue not /package/vue (cleaner URLs)
+    // URL is /package/vue not /vue
     await page.keyboard.press('Enter')
-    await expect(page).toHaveURL(/\/vue/)
+    await expect(page).toHaveURL(/\/package\/vue/)
   })
 
   test('/search?q=vue → "/" focuses the search input from results', async ({ page, goto }) => {
@@ -109,7 +156,7 @@ test.describe('Keyboard Shortcuts', () => {
     page,
     goto,
   }) => {
-    await goto('/vue', { waitUntil: 'hydration' })
+    await goto('/package/vue', { waitUntil: 'hydration' })
 
     await page.keyboard.press('c')
 
@@ -136,7 +183,7 @@ test.describe('Keyboard Shortcuts', () => {
     page,
     goto,
   }) => {
-    await goto('/vue', { waitUntil: 'hydration' })
+    await goto('/package/vue', { waitUntil: 'hydration' })
 
     await page.keyboard.press('Shift+c')
     await expect(page).toHaveURL(/\/vue/)

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FilterChip, SortOption } from '#shared/types/preferences'
+import { normalizeSearchParam } from '#shared/utils/url'
 import { debounce } from 'perfect-debounce'
 
 definePageMeta({
@@ -14,16 +15,23 @@ const orgName = computed(() => route.params.org)
 
 const { isConnected } = useConnector()
 
-// Fetch all packages in this org using the org packages API
-const { data: results, status, error } = await useOrgPackages(orgName)
+// Fetch all packages in this org using the org packages API (lazy to not block navigation)
+const { data: results, status, error } = useOrgPackages(orgName)
 
-if (status.value === 'error' && error.value?.statusCode === 404) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: $t('org.page.not_found'),
-    message: $t('org.page.not_found_message', { name: orgName.value }),
-  })
-}
+// Handle 404 errors reactively (since we're not awaiting)
+watch(
+  [status, error],
+  ([newStatus, newError]) => {
+    if (newStatus === 'error' && newError?.statusCode === 404) {
+      showError({
+        statusCode: 404,
+        statusMessage: $t('org.page.not_found'),
+        message: $t('org.page.not_found_message', { name: orgName.value }),
+      })
+    }
+  },
+  { immediate: true },
+)
 
 const packages = computed(() => results.value?.objects ?? [])
 const packageCount = computed(() => packages.value.length)
@@ -51,9 +59,9 @@ const {
 } = useStructuredFilters({
   packages,
   initialFilters: {
-    text: (route.query.q as string) ?? '',
+    ...parseSearchOperators(normalizeSearchParam(route.query.q)),
   },
-  initialSort: (route.query.sort as SortOption) ?? 'updated-desc',
+  initialSort: (normalizeSearchParam(route.query.sort) as SortOption) ?? 'updated-desc',
 })
 
 // Pagination state
@@ -90,9 +98,15 @@ const updateUrl = debounce((updates: { filter?: string; sort?: string }) => {
 }, 300)
 
 // Update URL when filter/sort changes (debounced)
-watch([() => filters.value.text, sortOption], ([filter, sort]) => {
-  updateUrl({ filter, sort })
-})
+watch(
+  [() => filters.value.text, () => filters.value.keywords, () => sortOption.value] as const,
+  ([text, keywords, sort]) => {
+    const filter = [text, ...keywords.map(keyword => `keyword:${keyword}`)]
+      .filter(Boolean)
+      .join(' ')
+    updateUrl({ filter, sort })
+  },
+)
 
 const filteredCount = computed(() => sortedPackages.value.length)
 
@@ -124,7 +138,11 @@ useHead({
 
 useSeoMeta({
   title: () => `@${orgName.value} - npmx`,
+  ogTitle: () => `@${orgName.value} - npmx`,
+  twitterTitle: () => `@${orgName.value} - npmx`,
   description: () => `npm packages published by the ${orgName.value} organization`,
+  ogDescription: () => `npm packages published by the ${orgName.value} organization`,
+  twitterDescription: () => `npm packages published by the ${orgName.value} organization`,
 })
 
 defineOgImageComponent('Default', {
@@ -281,6 +299,7 @@ defineOgImageComponent('Default', {
           :results="sortedPackages"
           :view-mode="viewMode"
           :columns="columns"
+          :filters="filters"
           v-model:sort-option="sortOption"
           :pagination-mode="paginationMode"
           :page-size="pageSize"

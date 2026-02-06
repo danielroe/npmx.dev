@@ -292,10 +292,10 @@ describe('install command generation', () => {
       it.each([
         ['npm', ['npx', 'eslint']],
         ['pnpm', ['pnpm', 'exec', 'eslint']],
-        ['yarn', ['yarn', 'eslint']],
+        ['yarn', ['npx', 'eslint']],
         ['bun', ['bunx', 'eslint']],
         ['deno', ['deno', 'run', 'npm:eslint']],
-        ['vlt', ['vlt', 'x', 'eslint']],
+        ['vlt', ['vlx', 'eslint']],
       ] as const)('%s → %s', (pm, expected) => {
         expect(
           getExecuteCommandParts({
@@ -314,7 +314,7 @@ describe('install command generation', () => {
         ['yarn', ['yarn', 'dlx', 'degit']],
         ['bun', ['bunx', 'degit']],
         ['deno', ['deno', 'run', 'npm:degit']],
-        ['vlt', ['vlt', 'x', 'degit']],
+        ['vlt', ['vlx', 'degit']],
       ] as const)('%s → %s', (pm, expected) => {
         expect(
           getExecuteCommandParts({
@@ -333,7 +333,7 @@ describe('install command generation', () => {
         ['yarn', ['yarn', 'create', 'vite']],
         ['bun', ['bun', 'create', 'vite']],
         ['deno', ['deno', 'run', 'vite']],
-        ['vlt', ['vlt', 'x', 'vite']],
+        ['vlt', ['vlx', 'vite']],
       ] as const)('%s → %s', (pm, expected) => {
         expect(
           getExecuteCommandParts({

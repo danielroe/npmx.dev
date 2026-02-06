@@ -3,9 +3,8 @@ import {
   getExecutableInfo,
   getRunCommand,
   getRunCommandParts,
-  isBinaryOnlyPackage,
-  isCreatePackage,
 } from '../../../../app/utils/run-command'
+import { isBinaryOnlyPackage, isCreatePackage } from '../../../../shared/utils/binary-detection'
 import type { JsrPackageInfo } from '../../../../shared/types/jsr'
 
 describe('executable detection and run commands', () => {
@@ -82,10 +81,10 @@ describe('executable detection and run commands', () => {
     it.each([
       ['npm', ['npx', 'eslint']],
       ['pnpm', ['pnpm', 'exec', 'eslint']],
-      ['yarn', ['yarn', 'eslint']],
+      ['yarn', ['npx', 'eslint']],
       ['bun', ['bunx', 'eslint']],
       ['deno', ['deno', 'run', 'npm:eslint']],
-      ['vlt', ['vlt', 'x', 'eslint']],
+      ['vlt', ['vlx', 'eslint']],
     ] as const)('%s (local) → %s', (pm, expected) => {
       expect(
         getRunCommandParts({
@@ -103,7 +102,7 @@ describe('executable detection and run commands', () => {
       ['yarn', ['yarn', 'dlx', 'create-vite']],
       ['bun', ['bunx', 'create-vite']],
       ['deno', ['deno', 'run', 'npm:create-vite']],
-      ['vlt', ['vlt', 'x', 'create-vite']],
+      ['vlt', ['vlx', 'create-vite']],
     ] as const)('%s (remote) → %s', (pm, expected) => {
       expect(
         getRunCommandParts({

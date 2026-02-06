@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NewOperation } from '~/composables/useConnector'
-import { buildScopeTeam } from '~/utils/npm'
+import { buildScopeTeam } from '~/utils/npm/common'
 
 const props = defineProps<{
   orgName: string
@@ -266,13 +266,13 @@ watch(lastExecutionTime, () => {
       <span aria-hidden="true" class="flex-shrink-1 flex-grow-1" />
       <button
         type="button"
-        class="p-1.5 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="p-1.5 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
         :aria-label="$t('org.teams.refresh')"
         :disabled="isLoadingTeams"
         @click="loadTeams"
       >
         <span
-          class="i-carbon:renew block w-4 h-4"
+          class="i-carbon:renew w-4 h-4"
           :class="{ 'animate-spin': isLoadingTeams }"
           aria-hidden="true"
         />
@@ -294,7 +294,7 @@ watch(lastExecutionTime, () => {
           name="teams-search"
           :placeholder="$t('org.teams.filter_placeholder')"
           v-bind="noCorrect"
-          class="w-full ps-7 pe-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="w-full ps-7 pe-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-accent focus-visible:(outline-2 outline-accent/70)"
         />
       </div>
       <div
@@ -304,7 +304,7 @@ watch(lastExecutionTime, () => {
       >
         <button
           type="button"
-          class="px-2 py-1 font-mono rounded transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="px-2 py-1 font-mono rounded transition-colors duration-200 focus-visible:outline-accent/70"
           :class="sortBy === 'name' ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:text-fg'"
           :aria-pressed="sortBy === 'name'"
           @click="toggleSort('name')"
@@ -314,7 +314,7 @@ watch(lastExecutionTime, () => {
         </button>
         <button
           type="button"
-          class="px-2 py-1 font-mono rounded transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="px-2 py-1 font-mono rounded transition-colors duration-200 focus-visible:outline-accent/70"
           :class="sortBy === 'members' ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:text-fg'"
           :aria-pressed="sortBy === 'members'"
           @click="toggleSort('members')"
@@ -328,7 +328,7 @@ watch(lastExecutionTime, () => {
     <!-- Loading state -->
     <div v-if="isLoadingTeams && teams.length === 0" class="p-8 text-center">
       <span
-        class="i-carbon:rotate-180 block w-5 h-5 text-fg-muted motion-safe:animate-spin mx-auto"
+        class="i-carbon:rotate-180 w-5 h-5 text-fg-muted motion-safe:animate-spin mx-auto"
         aria-hidden="true"
       />
       <p class="font-mono text-sm text-fg-muted mt-2">{{ $t('org.teams.loading') }}</p>
@@ -341,7 +341,7 @@ watch(lastExecutionTime, () => {
       </p>
       <button
         type="button"
-        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
         @click="loadTeams"
       >
         {{ $t('common.try_again') }}
@@ -362,7 +362,7 @@ watch(lastExecutionTime, () => {
         >
           <button
             type="button"
-            class="flex-1 flex items-center gap-2 text-start rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="flex-1 flex items-center gap-2 text-start rounded focus-visible:outline-accent/70"
             :aria-expanded="expandedTeams.has(teamName)"
             :aria-controls="`team-${teamName}-members`"
             @click="toggleTeam(teamName)"
@@ -394,11 +394,11 @@ watch(lastExecutionTime, () => {
           <span aria-hidden="true" class="flex-shrink-1 flex-grow-1" />
           <button
             type="button"
-            class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('org.teams.delete_team', { name: teamName })"
             @click.stop="handleDestroyTeam(teamName)"
           >
-            <span class="i-carbon:trash-can block w-4 h-4" aria-hidden="true" />
+            <span class="i-carbon:trash-can w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -428,11 +428,11 @@ watch(lastExecutionTime, () => {
               <span class="font-mono text-sm text-fg">{{ teamName }}</span>
               <button
                 type="button"
-                class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 rounded focus-visible:outline-accent/70"
                 :aria-label="$t('org.teams.remove_user', { user })"
                 @click="handleRemoveUser(teamName, user)"
               >
-                <span class="i-carbon:close block w-3.5 h-3.5" aria-hidden="true" />
+                <span class="i-carbon:close w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </li>
           </ul>
@@ -453,29 +453,29 @@ watch(lastExecutionTime, () => {
                 :name="`add-user-${teamName}`"
                 :placeholder="$t('org.teams.username_placeholder')"
                 v-bind="noCorrect"
-                class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
               />
               <button
                 type="submit"
                 :disabled="!newUserUsername.trim() || isAddingUser"
-                class="px-2 py-1 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                class="px-2 py-1 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
               >
                 {{ isAddingUser ? '…' : $t('org.teams.add_button') }}
               </button>
               <button
                 type="button"
-                class="p-1 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+                class="p-1 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
                 :aria-label="$t('org.teams.cancel_add_user')"
                 @click="showAddUserFor = null"
               >
-                <span class="i-carbon:close block w-4 h-4" aria-hidden="true" />
+                <span class="i-carbon:close w-4 h-4" aria-hidden="true" />
               </button>
             </form>
           </div>
           <button
             v-else
             type="button"
-            class="mt-2 px-2 py-1 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="mt-2 px-2 py-1 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
             @click="showAddUserFor = teamName"
           >
             {{ $t('org.teams.add_member') }}
@@ -509,30 +509,30 @@ watch(lastExecutionTime, () => {
               name="new-team-name"
               :placeholder="$t('org.teams.team_name_placeholder')"
               v-bind="noCorrect"
-              class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded-ie text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+              class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg border border-border rounded-ie text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
             />
           </div>
           <button
             type="submit"
             :disabled="!newTeamName.trim() || isCreatingTeam"
-            class="px-3 py-1.5 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="px-3 py-1.5 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
           >
             {{ isCreatingTeam ? '…' : $t('org.teams.create_button') }}
           </button>
           <button
             type="button"
-            class="p-1.5 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-1.5 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('org.teams.cancel_create')"
             @click="showCreateTeam = false"
           >
-            <span class="i-carbon:close block w-4 h-4" aria-hidden="true" />
+            <span class="i-carbon:close w-4 h-4" aria-hidden="true" />
           </button>
         </form>
       </div>
       <button
         v-else
         type="button"
-        class="w-full px-3 py-2 font-mono text-sm text-fg-muted bg-bg border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="w-full px-3 py-2 font-mono text-sm text-fg-muted bg-bg border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
         @click="showCreateTeam = true"
       >
         {{ $t('org.teams.create_team') }}

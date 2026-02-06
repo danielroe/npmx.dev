@@ -2,10 +2,76 @@
 defineProps<{
   html: string
 }>()
+
+const router = useRouter()
+const { copy } = useClipboard()
+
+// Combined click handler for:
+// 1. Intercepting npmjs.com links to route internally
+// 2. Copy button functionality for code blocks
+function handleClick(event: MouseEvent) {
+  const target = event.target as HTMLElement | undefined
+  if (!target) return
+
+  // Handle copy button clicks
+  const copyTarget = target.closest('[data-copy]')
+  if (copyTarget) {
+    const wrapper = copyTarget.closest('.readme-code-block')
+    if (!wrapper) return
+
+    const pre = wrapper.querySelector('pre')
+    if (!pre?.textContent) return
+
+    copy(pre.textContent)
+
+    const icon = copyTarget.querySelector('span')
+    if (!icon) return
+
+    const originalIcon = 'i-carbon:copy'
+    const successIcon = 'i-carbon:checkmark'
+
+    icon.classList.remove(originalIcon)
+    icon.classList.add(successIcon)
+
+    setTimeout(() => {
+      icon.classList.remove(successIcon)
+      icon.classList.add(originalIcon)
+    }, 2000)
+    return
+  }
+
+  // Handle npmjs.com link clicks - route internally
+  const anchor = target.closest('a')
+  if (!anchor) return
+
+  const href = anchor.getAttribute('href')
+  if (!href) return
+
+  const match = href.match(/^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)(\/.+)$/)
+  if (!match || !match[1]) return
+
+  const route = router.resolve(match[1])
+  if (route) {
+    event.preventDefault()
+    router.push(route)
+  }
+}
 </script>
 
 <template>
-  <article class="readme prose prose-invert max-w-[70ch]" v-html="html" />
+  <article
+    class="readme prose prose-invert max-w-[70ch] lg:max-w-none px-1"
+    dir="auto"
+    v-html="html"
+    :style="{
+      '--i18n-note': '\'' + $t('package.readme.callout.note') + '\'',
+      '--i18n-tip': '\'' + $t('package.readme.callout.tip') + '\'',
+      '--i18n-important': '\'' + $t('package.readme.callout.important') + '\'',
+      '--i18n-warning': '\'' + $t('package.readme.callout.warning') + '\'',
+      '--i18n-caution': '\'' + $t('package.readme.callout.caution') + '\'',
+    }"
+    @click="handleClick"
+  />
 </template>
 
 <style scoped>
@@ -20,6 +86,8 @@ defineProps<{
   /* Contain all children */
   overflow: hidden;
   min-width: 0;
+  /* Contain all children z-index values inside this container */
+  isolation: isolate;
 }
 
 /* README headings - styled by visual level (data-level), not semantic level */
@@ -30,7 +98,7 @@ defineProps<{
   color: var(--fg);
   @apply font-mono;
   font-weight: 500;
-  margin-top: 2rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
   line-height: 1.3;
 
@@ -97,6 +165,49 @@ defineProps<{
   /* Fix horizontal overflow */
   max-width: 100%;
   box-sizing: border-box;
+}
+
+.readme :deep(.readme-code-block) {
+  @apply bg-bg-subtle;
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+.readme :deep(.readme-copy-button) {
+  position: absolute;
+  top: 0.4rem;
+  inset-inline-end: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--bg-subtle) 80%, transparent);
+  border: 1px solid var(--border);
+  color: var(--fg-subtle);
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.readme :deep(.readme-code-block:hover .readme-copy-button),
+.readme :deep(.readme-copy-button:focus-visible) {
+  opacity: 1;
+}
+
+.readme :deep(.readme-copy-button:hover) {
+  color: var(--fg);
+  border-color: var(--border-hover);
+}
+
+.readme :deep(.readme-copy-button > span) {
+  width: 1.05rem;
+  height: 1.05rem;
+  display: inline-block;
+  pointer-events: none;
 }
 
 .readme :deep(pre code),
@@ -191,7 +302,7 @@ defineProps<{
   background: rgba(59, 130, 246, 0.05);
 }
 .readme :deep(blockquote[data-callout='note']::before) {
-  content: 'Note';
+  content: var(--i18n-note, 'Note');
   color: #3b82f6;
 }
 .readme :deep(blockquote[data-callout='note']::after) {
@@ -206,7 +317,7 @@ defineProps<{
   background: rgba(34, 197, 94, 0.05);
 }
 .readme :deep(blockquote[data-callout='tip']::before) {
-  content: 'Tip';
+  content: var(--i18n-tip, 'Tip');
   color: #22c55e;
 }
 .readme :deep(blockquote[data-callout='tip']::after) {
@@ -221,7 +332,7 @@ defineProps<{
   background: rgba(168, 85, 247, 0.05);
 }
 .readme :deep(blockquote[data-callout='important']::before) {
-  content: 'Important';
+  content: var(--i18n-important, 'Important');
   color: var(--syntax-fn);
 }
 .readme :deep(blockquote[data-callout='important']::after) {
@@ -236,7 +347,7 @@ defineProps<{
   background: rgba(234, 179, 8, 0.05);
 }
 .readme :deep(blockquote[data-callout='warning']::before) {
-  content: 'Warning';
+  content: var(--i18n-warning, 'Warning');
   color: #eab308;
 }
 .readme :deep(blockquote[data-callout='warning']::after) {
@@ -251,7 +362,7 @@ defineProps<{
   background: rgba(239, 68, 68, 0.05);
 }
 .readme :deep(blockquote[data-callout='caution']::before) {
-  content: 'Caution';
+  content: var(--i18n-caution, 'Caution');
   color: #ef4444;
 }
 .readme :deep(blockquote[data-callout='caution']::after) {
@@ -290,9 +401,17 @@ defineProps<{
 
 .readme :deep(img) {
   max-width: 100%;
-  height: auto;
+  height: revert-layer;
+  display: revert-layer;
   border-radius: 8px;
   margin: 1rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.readme :deep(video) {
+  height: revert-layer;
+  display: revert-layer;
 }
 
 .readme :deep(hr) {
@@ -307,5 +426,18 @@ defineProps<{
   display: inline-block;
   margin: 0 0.25rem 0.25rem 0;
   border-radius: 4px;
+}
+
+/* Screen reader only text */
+.readme :deep(.sr-only) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 </style>
