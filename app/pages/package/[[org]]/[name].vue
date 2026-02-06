@@ -18,11 +18,6 @@ import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
 
-definePageMeta({
-  name: 'package',
-  alias: ['/:package(.*)*'],
-})
-
 defineOgImageComponent('Package', {
   name: () => packageName.value,
   version: () => requestedVersion.value ?? '',
@@ -67,8 +62,14 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', playgroundLinks: [], toc: [] }) },
+  { default: () => ({ html: '', md: '', playgroundLinks: [], toc: [] }) },
 )
+
+//copy README file as Markdown
+const { copied: copiedReadme, copy: copyReadme } = useClipboard({
+  source: () => readmeData.value?.md ?? '',
+  copiedDuring: 2000,
+})
 
 // Track active TOC item based on scroll position
 const tocItems = computed(() => readmeData.value?.toc ?? [])
@@ -318,7 +319,12 @@ const homepageUrl = computed(() => {
 const docsLink = computed(() => {
   if (!resolvedVersion.value) return null
 
-  return `/package-docs/${pkg.value!.name}/v/${resolvedVersion.value}`
+  return {
+    name: 'docs' as const,
+    params: {
+      path: [pkg.value!.name, 'v', resolvedVersion.value] satisfies [string, string, string],
+    },
+  }
 })
 
 const fundingUrl = computed(() => {
@@ -499,7 +505,7 @@ onKeyStroke(
   e => {
     if (!pkg.value) return
     e.preventDefault()
-    router.push({ path: '/compare', query: { packages: pkg.value.name } })
+    router.push({ name: 'compare', query: { packages: pkg.value.name } })
   },
 )
 </script>
@@ -521,6 +527,7 @@ onKeyStroke(
             <h1
               class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
               :title="pkg.name"
+              dir="ltr"
             >
               <NuxtLink
                 v-if="orgName"
@@ -559,17 +566,18 @@ onKeyStroke(
           >
             <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
             <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
-              <span class="font-mono text-fg-muted text-sm">{{ requestedVersion }}</span>
+              <span class="font-mono text-fg-muted text-sm" dir="ltr">{{ requestedVersion }}</span>
               <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
             </template>
 
             <NuxtLink
               v-if="requestedVersion && resolvedVersion !== requestedVersion"
-              :to="`/package/${pkg.name}/v/${resolvedVersion}`"
+              :to="packageRoute(pkg.name, resolvedVersion)"
               :title="$t('package.view_permalink')"
+              dir="ltr"
               >{{ resolvedVersion }}</NuxtLink
             >
-            <span v-else>v{{ resolvedVersion }}</span>
+            <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
 
             <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
               <TooltipApp
@@ -683,7 +691,7 @@ onKeyStroke(
               </kbd>
             </NuxtLink>
             <NuxtLink
-              :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
+              :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }"
               class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border inline-flex items-center gap-1.5"
               aria-keyshortcuts="."
             >
@@ -697,7 +705,7 @@ onKeyStroke(
               </kbd>
             </NuxtLink>
             <NuxtLink
-              :to="{ path: '/compare', query: { packages: pkg.name } }"
+              :to="{ name: 'compare', query: { packages: pkg.name } }"
               class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 border border-transparent text-fg-subtle hover:text-fg hover:bg-bg hover:shadow hover:border-border inline-flex items-center gap-1.5"
               aria-keyshortcuts="c"
             >
@@ -834,7 +842,7 @@ onKeyStroke(
             </li>
             <li v-if="resolvedVersion" class="sm:hidden">
               <NuxtLink
-                :to="`/package-code/${pkg.name}/v/${resolvedVersion}`"
+                :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon:code w-4 h-4" aria-hidden="true" />
@@ -843,7 +851,7 @@ onKeyStroke(
             </li>
             <li class="sm:hidden">
               <NuxtLink
-                :to="{ path: '/compare', query: { packages: pkg.name } }"
+                :to="{ name: 'compare', query: { packages: pkg.name } }"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-carbon:compare w-4 h-4" aria-hidden="true" />
@@ -895,26 +903,28 @@ onKeyStroke(
               <span class="text-fg-muted">{{ getDependencyCount(displayVersion) }}</span>
 
               <!-- Separator and total transitive deps -->
-              <span class="text-fg-subtle mx-1">/</span>
+              <template v-if="getDependencyCount(displayVersion) !== totalDepsCount">
+                <span class="text-fg-subtle mx-1">/</span>
 
-              <ClientOnly>
-                <span
-                  v-if="
-                    vulnTreeStatus === 'pending' || (installSizeStatus === 'pending' && !vulnTree)
-                  "
-                  class="inline-flex items-center gap-1 text-fg-subtle"
-                >
+                <ClientOnly>
                   <span
-                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                    aria-hidden="true"
-                  />
-                </span>
-                <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
-                <span v-else class="text-fg-subtle">-</span>
-                <template #fallback>
-                  <span class="text-fg-subtle">-</span>
-                </template>
-              </ClientOnly>
+                    v-if="
+                      vulnTreeStatus === 'pending' || (installSizeStatus === 'pending' && !vulnTree)
+                    "
+                    class="inline-flex items-center gap-1 text-fg-subtle"
+                  >
+                    <span
+                      class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
+                  <span v-else class="text-fg-subtle">-</span>
+                  <template #fallback>
+                    <span class="text-fg-subtle">-</span>
+                  </template>
+                </ClientOnly>
+              </template>
 
               <a
                 v-if="getDependencyCount(displayVersion) > 0"
@@ -956,7 +966,7 @@ onKeyStroke(
             </dt>
             <dd class="font-mono text-sm text-fg">
               <!-- Package size (greyed out) -->
-              <span class="text-fg-muted">
+              <span class="text-fg-muted" dir="ltr">
                 <span v-if="displayVersion?.dist?.unpackedSize">
                   {{ formatBytes(displayVersion.dist.unpackedSize) }}
                 </span>
@@ -964,21 +974,23 @@ onKeyStroke(
               </span>
 
               <!-- Separator and install size -->
-              <span class="text-fg-subtle mx-1">/</span>
+              <template v-if="getDependencyCount(displayVersion) > 0">
+                <span class="text-fg-subtle mx-1">/</span>
 
-              <span
-                v-if="installSizeStatus === 'pending'"
-                class="inline-flex items-center gap-1 text-fg-subtle"
-              >
                 <span
-                  class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
-              </span>
-              <span v-else-if="installSize?.totalSize">
-                {{ formatBytes(installSize.totalSize) }}
-              </span>
-              <span v-else class="text-fg-subtle">-</span>
+                  v-if="installSizeStatus === 'pending'"
+                  class="inline-flex items-center gap-1 text-fg-subtle"
+                >
+                  <span
+                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                    aria-hidden="true"
+                  />
+                </span>
+                <span v-else-if="installSize?.totalSize" dir="ltr">
+                  {{ formatBytes(installSize.totalSize) }}
+                </span>
+                <span v-else class="text-fg-subtle">-</span>
+              </template>
             </dd>
           </div>
 
@@ -1129,11 +1141,11 @@ onKeyStroke(
 
       <!-- README -->
       <section id="readme" class="area-readme min-w-0 scroll-mt-20">
-        <div class="flex flex-wrap items-center justify-between mb-4 px-1">
+        <div class="flex flex-wrap items-center justify-between mb-3 px-1">
           <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
             <a
               href="#readme"
-              class="inline-flex py-4 px-2 items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline mt-1"
+              class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline mt-1"
             >
               {{ $t('package.readme.title') }}
               <span
@@ -1143,25 +1155,52 @@ onKeyStroke(
             </a>
           </h2>
           <ClientOnly>
-            <ReadmeTocDropdown
-              v-if="readmeData?.toc && readmeData.toc.length > 1"
-              :toc="readmeData.toc"
-              :active-id="activeTocId"
-              :scroll-to-heading="scrollToHeading"
-            />
+            <div class="flex items-center gap-2">
+              <!-- Copy readme as Markdown button -->
+              <TooltipApp
+                v-if="readmeData?.md"
+                :text="$t('package.readme.copy_as_markdown')"
+                position="bottom"
+              >
+                <button
+                  type="button"
+                  @click="copyReadme()"
+                  class="px-2 py-1.5 font-mono text-xs rounded transition-colors duration-150 inline-flex items-center gap-1.5"
+                  :class="
+                    copiedReadme ? 'text-accent bg-accent/10' : 'text-fg-subtle bg-bg hover:text-fg'
+                  "
+                  :aria-label="
+                    copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
+                  "
+                >
+                  <span
+                    :class="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
+                    class="size-3"
+                    aria-hidden="true"
+                  />
+                  {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
+                </button>
+              </TooltipApp>
+              <ReadmeTocDropdown
+                v-if="readmeData?.toc && readmeData.toc.length > 1"
+                :toc="readmeData.toc"
+                :active-id="activeTocId"
+                :scroll-to-heading="scrollToHeading"
+              />
+            </div>
           </ClientOnly>
         </div>
 
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
         <Readme v-if="readmeData?.html" :html="readmeData.html" />
-        <p v-else class="text-fg-subtle italic">
+        <p v-else class="text-fg-muted italic">
           {{ $t('package.readme.no_readme') }}
           <a
             v-if="repositoryUrl"
             :href="repositoryUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="link"
+            class="link text-fg underline underline-offset-4 decoration-fg-subtle hover:(decoration-fg text-fg) transition-colors duration-200"
             >{{ $t('package.readme.view_on_github') }}</a
           >
         </p>
@@ -1199,18 +1238,12 @@ onKeyStroke(
       <div class="area-sidebar">
         <!-- Sidebar -->
         <div
-          class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 hover:pe-0.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)])"
+          class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)])"
         >
-          <!-- Maintainers (with admin actions when connected) -->
-          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
-
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
             <PackageAccessControls :package-name="pkg.name" />
           </ClientOnly>
-
-          <!-- Keywords -->
-          <PackageKeywords :keywords="displayVersion?.keywords" />
 
           <!-- Agent Skills -->
           <ClientOnly>
@@ -1259,6 +1292,12 @@ onKeyStroke(
             :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
             :optional-dependencies="displayVersion.optionalDependencies"
           />
+
+          <!-- Keywords -->
+          <PackageKeywords :keywords="displayVersion?.keywords" />
+
+          <!-- Maintainers (with admin actions when connected) -->
+          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
         </div>
       </div>
     </article>
@@ -1275,7 +1314,7 @@ onKeyStroke(
       <p class="text-fg-muted mb-8">
         {{ error?.message ?? $t('package.not_found_message') }}
       </p>
-      <NuxtLink to="/" class="btn">{{ $t('common.go_back_home') }}</NuxtLink>
+      <NuxtLink :to="{ name: 'index' }" class="btn">{{ $t('common.go_back_home') }}</NuxtLink>
     </div>
   </main>
 </template>
@@ -1353,23 +1392,23 @@ onKeyStroke(
 @media (min-width: 1024px) {
   .sidebar-scroll {
     scrollbar-gutter: stable;
-    scrollbar-width: none;
+    scrollbar-width: 8px;
+    scrollbar-color: transparent transparent;
   }
 
   .sidebar-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+    width: 8px;
+    height: 8px;
+  }
+
+  .sidebar-scroll::-webkit-scrollbar-track,
+  .sidebar-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
   }
 
   .sidebar-scroll:hover,
   .sidebar-scroll:focus-within {
-    scrollbar-width: auto;
-  }
-
-  .sidebar-scroll:hover::-webkit-scrollbar,
-  .sidebar-scroll:focus-within::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    scrollbar-color: var(--border) transparent;
   }
 
   .sidebar-scroll:hover::-webkit-scrollbar-thumb,
