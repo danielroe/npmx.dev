@@ -234,6 +234,11 @@
       "view_more_details": "View more details",
       "error_loading": "Failed to load provenance details"
     },
+    "security_downgrade": {
+      "title": "Security downgrade detected",
+      "description": "This package has been released using a stronger, more secure publishing method before. The version you are viewing was published using a weaker or less trusted method. Treat this as a potential supply-chain compromise until verified.",
+      "fallback_install": "Install commands below are pinned to trusted version {version} by default."
+    },
     "keywords_title": "Keywords",
     "compatibility": "Compatibility",
     "card": {
