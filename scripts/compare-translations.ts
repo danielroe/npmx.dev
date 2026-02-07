@@ -24,14 +24,18 @@ interface LocaleInfo {
 const countries = new Map<string, Map<string, LocaleInfo>>()
 const availableLocales = new Map<string, LocaleObject>()
 
-const extractLocalInfo = (
-  filePath: string,
-  forCountry: boolean = false,
-  mergeLocale: boolean = false,
-): LocaleInfo => {
+function extractLocalInfo(filePath: string): LocaleInfo {
   const locale = basename(filePath, '.json')
   const [lang, country] = locale.split('-')
-  return { filePath, locale, lang, country, forCountry, mergeLocale }
+  return { filePath, locale, lang, country }
+}
+
+function createVariantInfo(
+  code: string,
+  options: { forCountry: boolean; mergeLocale: boolean },
+): LocaleInfo {
+  const [lang, country] = code.split('-')
+  return { filePath: '', locale: code, lang, country, ...options }
 }
 
 const populateLocaleCountries = (): void => {
@@ -42,10 +46,22 @@ const populateLocaleCountries = (): void => {
         countries.set(lang, new Map())
       }
       if (variant.country) {
-        countries.get(lang)!.set(lang, extractLocalInfo(lang, true))
-        countries.get(lang)!.set(variant.code, extractLocalInfo(variant.code, true, true))
+        countries
+          .get(lang)!
+          .set(lang, createVariantInfo(lang, { forCountry: true, mergeLocale: false }))
+        countries
+          .get(lang)!
+          .set(
+            variant.code,
+            createVariantInfo(variant.code, { forCountry: true, mergeLocale: true }),
+          )
       } else {
-        countries.get(lang)!.set(variant.code, extractLocalInfo(variant.code, false, true))
+        countries
+          .get(lang)!
+          .set(
+            variant.code,
+            createVariantInfo(variant.code, { forCountry: false, mergeLocale: true }),
+          )
       }
     }
   }
@@ -117,7 +133,7 @@ const loadJson = async ({ filePath, mergeLocale, locale }: LocaleInfo): Promise<
     console.error(`${COLORS.red}Error: Failed to merge locale "${locale}"${COLORS.reset}`)
     process.exit(1)
   }
-  return merged as NestedObject
+  return merged
 }
 
 type SyncStats = {
@@ -146,8 +162,9 @@ const syncLocaleData = (
     if (isNested(refValue)) {
       const nextTarget = isNested(target[key]) ? target[key] : {}
       const data = syncLocaleData(refValue, nextTarget, stats, fix, propertyPath)
-      // don't add empty objects: --fix will prevent this
-      if (Object.keys(data).length === 0) {
+      // When fixing, empty objects won't occur since missing keys get placeholders.
+      // Without --fix, keep empty objects to preserve structural parity with the reference.
+      if (fix && Object.keys(data).length === 0) {
         delete result[key]
       } else {
         result[key] = data
@@ -359,4 +376,4 @@ const run = async (): Promise<void> => {
   }
 }
 
-run()
+await run()

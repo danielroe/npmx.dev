@@ -37,27 +37,30 @@ export async function prepareJsonFiles(): Promise<void> {
   await Promise.all(currentLocales.map(l => mergeLocale(l)))
 }
 
+type NestedObject = Record<string, unknown>
+
 export async function mergeLocaleObject(
   locale: LocaleObject,
-  copy = false,
-): Promise<void | unknown> {
+  options: { copy?: boolean } = {},
+): Promise<NestedObject | undefined> {
+  const { copy = false } = options
   const files = locale.files ?? []
   if (locale.file || files.length === 1) {
     const json =
       (locale.file ? getFileName(locale.file) : undefined) ??
       (files[0] ? getFileName(files[0]) : undefined)
-    if (!json) return
+    if (!json) return undefined
     if (copy) {
       await fs.cp(path.resolve(`${localesFolder}/${json}`), path.resolve(`${destFolder}/${json}`))
-      return
+      return undefined
     }
 
-    return await loadJsonFile(json)
+    return await loadJsonFile<NestedObject>(json)
   }
 
   const firstFile = files[0]
-  if (!firstFile) return
-  const source = await loadJsonFile(getFileName(firstFile))
+  if (!firstFile) return undefined
+  const source = await loadJsonFile<NestedObject>(getFileName(firstFile))
   let currentSource: unknown
   for (let i = 1; i < files.length; i++) {
     const file = files[i]
@@ -69,7 +72,7 @@ export async function mergeLocaleObject(
   return source
 }
 
-async function loadJsonFile(name: string): Promise<unknown> {
+async function loadJsonFile<T = unknown>(name: string): Promise<T> {
   return JSON.parse(await fs.readFile(path.resolve(`${localesFolder}/${name}`), 'utf8'))
 }
 
@@ -78,7 +81,7 @@ function getFileName(file: string | { path: string }): string {
 }
 
 async function mergeLocale(locale: LocaleObject): Promise<void> {
-  const source = await mergeLocaleObject(locale, true)
+  const source = await mergeLocaleObject(locale, { copy: true })
   if (!source) {
     return
   }
