@@ -52,6 +52,7 @@ This focus helps guide our project decisions as a community and what we choose t
 - [Testing](#testing)
   - [Unit tests](#unit-tests)
   - [Component accessibility tests](#component-accessibility-tests)
+  - [Lighthouse accessibility tests](#lighthouse-accessibility-tests)
   - [End to end tests](#end-to-end-tests)
   - [Test fixtures (mocking external APIs)](#test-fixtures-mocking-external-apis)
 - [Submitting changes](#submitting-changes)
@@ -111,6 +112,7 @@ pnpm test             # Run all Vitest tests
 pnpm test:unit        # Unit tests only
 pnpm test:nuxt        # Nuxt component tests
 pnpm test:browser     # Playwright E2E tests
+pnpm test:a11y        # Lighthouse accessibility audits
 ```
 
 ### Project structure
@@ -598,6 +600,40 @@ A coverage test in `test/unit/a11y-component-coverage.spec.ts` ensures all compo
 > [!IMPORTANT]
 > Just because axe-core doesn't find any obvious issues, it does not mean a component is accessible. Please do additional checks and use best practices.
 
+### Lighthouse accessibility tests
+
+In addition to component-level axe audits, the project runs full-page accessibility audits using [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci). These test the rendered pages in both light and dark mode against Lighthouse's accessibility category, requiring a perfect score.
+
+#### How it works
+
+1. The project is built in test mode (`pnpm build:test`), which activates server-side fixture mocking
+2. Lighthouse CI starts a preview server and audits three URLs: `/`, `/search?q=nuxt`, and `/package/nuxt`
+3. A Puppeteer setup script (`lighthouse-setup.cjs`) runs before each audit to set the color mode and intercept client-side API requests using the same fixtures as the E2E tests
+
+#### Running locally
+
+```bash
+# Build + run both light and dark audits
+pnpm test:a11y
+
+# Or against an existing test build
+pnpm test:a11y:prebuilt
+
+# Or run a single color mode manually
+pnpm build:test
+LIGHTHOUSE_COLOR_MODE=dark ./scripts/lighthouse-a11y.sh
+```
+
+This requires Chrome or Chromium to be installed. The script will auto-detect common installation paths. Results are printed to the terminal and saved in `.lighthouseci/`.
+
+#### Configuration
+
+| File                         | Purpose                                                   |
+| ---------------------------- | --------------------------------------------------------- |
+| `.lighthouserc.cjs`          | Lighthouse CI config (URLs, assertions, Chrome path)      |
+| `lighthouse-setup.cjs`       | Puppeteer script for color mode + client-side API mocking |
+| `scripts/lighthouse-a11y.sh` | Shell wrapper that runs the audit for a given color mode  |
+
 ### End to end tests
 
 Write end-to-end tests using Playwright:
@@ -619,10 +655,12 @@ E2E tests use a fixture system to mock external API requests, ensuring tests are
 - Serves pre-recorded fixture data from `test/fixtures/`
 - Enabled via `NUXT_TEST_FIXTURES=true` or Nuxt test mode
 
-**Client-side mocking** (`test/e2e/test-utils.ts`):
+**Client-side mocking** (`test/fixtures/mock-routes.cjs`):
 
-- Uses Playwright's route interception to mock browser requests
-- All test files import from `./test-utils` instead of `@nuxt/test-utils/playwright`
+- Shared URL matching and response generation logic used by both Playwright E2E tests and Lighthouse CI
+- Playwright tests (`test/e2e/test-utils.ts`) use this via `page.route()` interception
+- Lighthouse tests (`lighthouse-setup.cjs`) use this via Puppeteer request interception
+- All E2E test files import from `./test-utils` instead of `@nuxt/test-utils/playwright`
 - Throws a clear error if an unmocked external request is detected
 
 #### Fixture files
@@ -670,7 +708,7 @@ URL:  https://registry.npmjs.org/some-package
 You need to either:
 
 1. Add a fixture file for that package/endpoint
-2. Update the mock handlers in `test/e2e/test-utils.ts` (client) or `modules/runtime/server/cache.ts` (server)
+2. Update the mock handlers in `test/fixtures/mock-routes.cjs` (client) or `modules/runtime/server/cache.ts` (server)
 
 ## Submitting changes
 
