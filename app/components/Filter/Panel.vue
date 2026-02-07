@@ -228,7 +228,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             :value="filters.text"
             :placeholder="searchPlaceholder"
             autocomplete="off"
-            class="w-full bg-bg-subtle border border-border rounded-md px-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-200 focus:(border-fg/40 outline-none ring-1 ring-fg/10)"
+            class="w-full bg-bg-subtle border border-border rounded-md px-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
             @input="handleTextInput"
           />
         </div>
@@ -307,14 +307,15 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             {{ $t('filters.keywords') }}
           </legend>
           <div class="flex flex-wrap gap-1.5" role="group" :aria-label="$t('filters.keywords')">
-            <TagButton
+            <ButtonBase
               v-for="keyword in displayedKeywords"
               :key="keyword"
-              :pressed="filters.keywords.includes(keyword)"
+              size="small"
+              :aria-pressed="filters.keywords.includes(keyword)"
               @click="emit('toggleKeyword', keyword)"
             >
               {{ keyword }}
-            </TagButton>
+            </ButtonBase>
             <button
               v-if="hasMoreKeywords"
               type="button"

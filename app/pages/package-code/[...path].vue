@@ -198,6 +198,12 @@ function getCodeUrl(path?: string): string {
   return path ? `${base}/${path}` : base
 }
 
+// Base path segments for route objects (e.g., ['nuxt', 'v', '4.2.0'] or ['@nuxt', 'kit', 'v', '1.0.0'])
+const basePath = computed(() => {
+  const segments = packageName.value.split('/')
+  return [...segments, 'v', version.value ?? '']
+})
+
 // Extract org name from scoped package
 const orgName = computed(() => {
   const name = packageName.value
@@ -205,15 +211,6 @@ const orgName = computed(() => {
   const match = name.match(/^@([^/]+)\//)
   return match ? match[1] : null
 })
-
-// Build route object for package link (with optional version)
-function packageRoute(ver?: string | null) {
-  const segments = packageName.value.split('/')
-  if (ver) {
-    segments.push('v', ver)
-  }
-  return { name: 'package' as const, params: { package: segments } }
-}
 
 // Line number click handler - update URL hash without scrolling
 function handleLineClick(lineNum: number, event: MouseEvent) {
@@ -283,7 +280,21 @@ useSeoMeta({
     }
     return `Code - ${packageName.value}@${version.value} - npmx`
   },
+  ogTitle: () => {
+    if (filePath.value) {
+      return `${filePath.value} - ${packageName.value}@${version.value} - npmx`
+    }
+    return `Code - ${packageName.value}@${version.value} - npmx`
+  },
+  twitterTitle: () => {
+    if (filePath.value) {
+      return `${filePath.value} - ${packageName.value}@${version.value} - npmx`
+    }
+    return `Code - ${packageName.value}@${version.value} - npmx`
+  },
   description: () => `Browse source code for ${packageName.value}@${version.value}`,
+  ogDescription: () => `Browse source code for ${packageName.value}@${version.value}`,
+  twitterDescription: () => `Browse source code for ${packageName.value}@${version.value}`,
 })
 
 defineOgImageComponent('Default', {
@@ -301,7 +312,7 @@ defineOgImageComponent('Default', {
         <!-- Package info and navigation -->
         <div class="flex items-center gap-2 mb-3 flex-wrap min-w-0">
           <NuxtLink
-            :to="packageRoute(version)"
+            :to="packageRoute(packageName, version)"
             class="font-mono text-lg font-medium hover:text-fg transition-colors min-w-0 truncate max-w-[60vw] sm:max-w-none"
             :title="packageName"
           >
@@ -325,13 +336,16 @@ defineOgImageComponent('Default', {
             v{{ version }}
           </span>
           <span class="text-fg-subtle shrink-0">/</span>
-          <span class="font-mono text-sm text-fg-muted shrink-0">code</span>
+          <span class="font-mono text-sm text-fg-muted shrink-0">{{
+            $t('package.links.code')
+          }}</span>
         </div>
 
         <!-- Breadcrumb navigation -->
         <nav
           :aria-label="$t('code.file_path')"
           class="flex items-center gap-1 font-mono text-sm overflow-x-auto"
+          dir="ltr"
         >
           <NuxtLink
             v-if="filePath"
@@ -359,7 +373,9 @@ defineOgImageComponent('Default', {
     <!-- Error: no version -->
     <div v-if="!version" class="container py-20 text-center">
       <p class="text-fg-muted mb-4">{{ $t('code.version_required') }}</p>
-      <NuxtLink :to="packageRoute()" class="btn">{{ $t('code.go_to_package') }}</NuxtLink>
+      <LinkBase variant="button-secondary" :to="packageRoute(packageName)">{{
+        $t('code.go_to_package')
+      }}</LinkBase>
     </div>
 
     <!-- Loading state -->
@@ -371,11 +387,13 @@ defineOgImageComponent('Default', {
     <!-- Error state -->
     <div v-else-if="treeStatus === 'error'" class="container py-20 text-center" role="alert">
       <p class="text-fg-muted mb-4">{{ $t('code.failed_to_load_tree') }}</p>
-      <NuxtLink :to="packageRoute(version)" class="btn">{{ $t('code.back_to_package') }}</NuxtLink>
+      <LinkBase variant="button-secondary" :to="packageRoute(packageName, version)">{{
+        $t('code.back_to_package')
+      }}</LinkBase>
     </div>
 
     <!-- Main content: file tree + file viewer -->
-    <div v-else-if="fileTree" class="flex flex-1">
+    <div v-else-if="fileTree" class="flex flex-1" dir="ltr">
       <!-- File tree sidebar - sticky with internal scroll -->
       <aside
         class="w-64 lg:w-72 border-ie border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
@@ -384,12 +402,13 @@ defineOgImageComponent('Default', {
           :tree="fileTree.tree"
           :current-path="filePath ?? ''"
           :base-url="getCodeUrl()"
+          :base-path="basePath"
         />
       </aside>
 
       <!-- File content / Directory listing - sticky with internal scroll on desktop -->
       <div
-        class="flex-1 min-w-0 md:sticky md:top-28 md:self-start md:h-[calc(100vh-7rem)] md:overflow-y-auto"
+        class="flex-1 min-w-0 overflow-x-hidden sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
       >
         <!-- File viewer -->
         <template v-if="isViewingFile && fileContent">
@@ -420,7 +439,7 @@ defineOgImageComponent('Default', {
                 </button>
               </div>
               <div class="flex items-center gap-3 text-sm">
-                <span class="text-fg-muted">{{
+                <span class="text-fg-muted" dir="auto">{{
                   $t('code.lines', { count: fileContent.lines })
                 }}</span>
                 <span v-if="currentNode?.size" class="text-fg-subtle">{{
@@ -472,15 +491,13 @@ defineOgImageComponent('Default', {
           <p class="text-fg-subtle text-sm mb-4">
             {{ $t('code.file_size_warning', { size: formatBytes(currentNode?.size ?? 0) }) }}
           </p>
-          <a
-            :href="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn inline-flex items-center gap-2"
+          <LinkBase
+            variant="button-secondary"
+            :to="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
+            class="inline-flex items-center gap-2"
           >
             {{ $t('code.view_raw') }}
-            <span class="i-carbon:launch w-4 h-4" />
-          </a>
+          </LinkBase>
         </div>
 
         <!-- Loading file content -->
@@ -526,15 +543,13 @@ defineOgImageComponent('Default', {
           <div class="i-carbon:warning-alt w-8 h-8 mx-auto text-fg-subtle mb-4" />
           <p class="text-fg-muted mb-2">{{ $t('code.failed_to_load') }}</p>
           <p class="text-fg-subtle text-sm mb-4">{{ $t('code.unavailable_hint') }}</p>
-          <a
-            :href="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn inline-flex items-center gap-2"
+          <LinkBase
+            variant="button-secondary"
+            :to="`https://cdn.jsdelivr.net/npm/${packageName}@${version}/${filePath}`"
+            class="inline-flex items-center gap-2"
           >
             {{ $t('code.view_raw') }}
-            <span class="i-carbon:launch w-4 h-4" />
-          </a>
+          </LinkBase>
         </div>
 
         <!-- Directory listing (when no file selected or viewing a directory) -->
@@ -543,6 +558,7 @@ defineOgImageComponent('Default', {
             :tree="fileTree.tree"
             :current-path="filePath ?? ''"
             :base-url="getCodeUrl()"
+            :base-path="basePath"
           />
         </template>
       </div>
@@ -556,6 +572,7 @@ defineOgImageComponent('Default', {
           :tree="fileTree.tree"
           :current-path="filePath ?? ''"
           :base-url="getCodeUrl()"
+          :base-path="basePath"
         />
       </Teleport>
     </ClientOnly>
