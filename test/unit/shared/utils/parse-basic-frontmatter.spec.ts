@@ -150,7 +150,7 @@ describe('parseBasicFrontmatter', () => {
   })
 
   it('should parse back every key-value pair from generated frontmatter', () => {
-    const keyArb = fc.stringMatching(/^[a-zA-Z][a-zA-Z0-9_]*$/)
+    const keyArb = fc.stringMatching(/^[a-z][a-z0-9_]*$/i)
     const singleValueArbs = (inArray: boolean) =>
       // for arrays: all values get parsed as strings and there should not be any comma in the value even for quoted strings
       [
