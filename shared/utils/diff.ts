@@ -183,6 +183,9 @@ export function parseUnifiedDiff(
   let oldLine = 0
   let newLine = 0
 
+  // Track old path from --- line to detect /dev/null (new/deleted files)
+  let lastOldPath = ''
+
   for (const line of lines) {
     if (line.startsWith('---')) {
       if (currentHunk && currentFile) {
@@ -190,12 +193,14 @@ export function parseUnifiedDiff(
         currentFile.hunks.push(hunk)
       }
       currentHunk = null
+      const oldMatch = line.match(/^--- (?:a\/)?(.*)/)
+      lastOldPath = oldMatch?.[1]?.trimEnd() ?? ''
       continue
     }
 
     if (line.startsWith('+++')) {
       const match = line.match(/^\+\+\+ (?:b\/)?(.*)/)
-      const path = match?.[1] ?? ''
+      const path = match?.[1]?.trimEnd() ?? ''
 
       if (currentFile && currentHunk) {
         const hunk = processHunk(currentHunk, opts)
@@ -205,13 +210,20 @@ export function parseUnifiedDiff(
         files.push(currentFile)
       }
 
+      // Determine file type from --- / +++ paths:
+      // /dev/null in the old path means a new file; in the new path means deleted
+      let fileType: FileDiff['type'] = 'modify'
+      if (lastOldPath === '/dev/null') fileType = 'add'
+      else if (path === '/dev/null') fileType = 'delete'
+
       currentFile = {
-        oldPath: path,
+        oldPath: lastOldPath === '/dev/null' ? path : lastOldPath || path,
         newPath: path,
-        type: 'modify',
+        type: fileType,
         hunks: [],
       }
       currentHunk = null
+      lastOldPath = ''
       continue
     }
 
@@ -277,19 +289,6 @@ export function parseUnifiedDiff(
   }
   if (currentFile) {
     files.push(currentFile)
-  }
-
-  for (const file of files) {
-    const hasAdds = file.hunks.some(
-      h => h.type === 'hunk' && h.lines.some(l => l.type === 'insert'),
-    )
-    const hasDels = file.hunks.some(
-      h => h.type === 'hunk' && h.lines.some(l => l.type === 'delete'),
-    )
-
-    if (hasAdds && !hasDels) file.type = 'add'
-    else if (hasDels && !hasAdds) file.type = 'delete'
-    else file.type = 'modify'
   }
 
   return files

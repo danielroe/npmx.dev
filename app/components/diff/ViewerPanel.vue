@@ -119,7 +119,11 @@ function computeDiff() {
     from: props.fromVersion,
     to: props.toVersion,
     path: props.file.path,
-    type: parsed.type,
+    // Use the type computed from file existence (modify/add/delete) rather than
+    // parsed.type which incorrectly classifies addition-only modifications as 'add'.
+    // This matters because DiffLine skips green background highlighting when
+    // fileStatus is 'add' (since for truly new files all lines are additions).
+    type,
     hunks: hunksWithSkips,
     stats,
     meta: {},
