@@ -13,7 +13,7 @@ const buildInfo = useAppConfig().buildInfo
     style="animation-delay: 0.05s"
   >
     <i18n-t keypath="built_at" scope="global">
-      <DateTime :datetime="buildInfo.time" />
+      <DateTimeButton :datetime="buildInfo.time" />
     </i18n-t>
     <span>&middot;</span>
     <NuxtLink
