@@ -713,7 +713,9 @@ onKeyStroke(
           </div>
 
           <!-- External links -->
-          <ul class="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:gap-4 list-none m-0 p-0 mt-3">
+          <ul
+            class="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:gap-4 list-none m-0 p-0 mt-3 text-sm"
+          >
             <li v-if="repositoryUrl">
               <LinkBase :to="repositoryUrl" :classicon="repoProviderIcon">
                 <span v-if="repoRef">
@@ -1070,7 +1072,7 @@ onKeyStroke(
             </LinkBase>
           </h2>
           <ClientOnly>
-            <div class="flex items-center gap-2">
+            <div class="flex gap-2">
               <!-- Copy readme as Markdown button -->
               <TooltipApp
                 v-if="readmeData?.md"
@@ -1145,7 +1147,7 @@ onKeyStroke(
       <div class="area-sidebar">
         <!-- Sidebar -->
         <div
-          class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)])"
+          class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)]) pt-1"
         >
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
