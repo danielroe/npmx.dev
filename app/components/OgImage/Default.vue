@@ -8,7 +8,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   primaryColor: '#60a5fa',
   title: 'npmx',
-  description: 'A better browser for the **npm registry**',
+  description: 'a fast, modern browser for the **npm registry**',
 })
 </script>
 
@@ -74,7 +74,7 @@ const props = withDefaults(defineProps<Props>(), {
     </div>
 
     <div
-      class="absolute -top-32 -right-32 w-[550px] h-[550px] rounded-full blur-3xl"
+      class="absolute -top-32 -inset-ie-32 w-[550px] h-[550px] rounded-full blur-3xl"
       :style="{ backgroundColor: props.primaryColor + '10' }"
     />
   </div>

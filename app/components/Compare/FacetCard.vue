@@ -75,12 +75,13 @@ function getShortName(header: string): string {
     <!-- Facet header -->
     <div class="flex items-center gap-1.5 px-3 py-2 bg-bg-subtle border-b border-border">
       <span class="text-xs text-fg-muted uppercase tracking-wider font-medium">{{ label }}</span>
-      <span
-        v-if="description"
-        class="i-carbon:information w-3 h-3 text-fg-subtle"
-        :title="description"
-        aria-hidden="true"
-      />
+      <TooltipApp v-if="description" :text="description" position="top">
+        <span
+          class="i-carbon:information w-3 h-3 text-fg-subtle"
+          :title="description"
+          aria-hidden="true"
+        />
+      </TooltipApp>
     </div>
 
     <!-- Package values -->
@@ -130,7 +131,9 @@ function getShortName(header: string): string {
                 :datetime="value.display"
                 date-style="medium"
               />
-              <template v-else>{{ value.display }}</template>
+              <template v-else>
+                <span dir="auto">{{ value.display }}</span>
+              </template>
             </span>
           </template>
         </span>

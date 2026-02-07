@@ -34,7 +34,7 @@ function isColumnVisible(id: string): boolean {
   return props.columns.find(c => c.id === id)?.visible ?? false
 }
 
-const packageUrl = computed(() => `/package/${pkg.value.name}`)
+const packageUrl = computed(() => packageRoute(pkg.value.name))
 
 const allMaintainersText = computed(() => {
   if (!pkg.value.maintainers?.length) return ''
@@ -53,6 +53,7 @@ const allMaintainersText = computed(() => {
       <NuxtLink
         :to="packageUrl"
         class="font-mono text-sm text-fg hover:text-accent-fallback transition-colors duration-200"
+        dir="ltr"
       >
         {{ pkg.name }}
       </NuxtLink>
@@ -60,7 +61,7 @@ const allMaintainersText = computed(() => {
 
     <!-- Version -->
     <td v-if="isColumnVisible('version')" class="py-2 px-3 font-mono text-xs text-fg-subtle">
-      {{ pkg.version }}
+      <span dir="ltr">{{ pkg.version }}</span>
     </td>
 
     <!-- Description -->
@@ -106,7 +107,10 @@ const allMaintainersText = computed(() => {
           :key="maintainer.username || maintainer.email"
         >
           <NuxtLink
-            :to="`/~${maintainer.username || maintainer.name}`"
+            :to="{
+              name: '~username',
+              params: { username: maintainer.username || maintainer.name || '' },
+            }"
             class="hover:text-accent-fallback transition-colors duration-200"
             @click.stop
             >{{ maintainer.username || maintainer.name || maintainer.email }}</NuxtLink
@@ -126,17 +130,16 @@ const allMaintainersText = computed(() => {
         class="flex flex-wrap gap-1 justify-end"
         :aria-label="$t('package.card.keywords')"
       >
-        <TagClickable
+        <TagButton
           v-for="keyword in pkg.keywords.slice(0, 3)"
           :key="keyword"
-          type="button"
-          :status="props.filters?.keywords.includes(keyword) ? 'active' : 'default'"
+          :pressed="props.filters?.keywords.includes(keyword)"
           :title="`Filter by ${keyword}`"
           @click.stop="emit('clickKeyword', keyword)"
           :class="{ 'group-hover:bg-bg-elevated': !props.filters?.keywords.includes(keyword) }"
         >
           {{ keyword }}
-        </TagClickable>
+        </TagButton>
         <span
           v-if="pkg.keywords.length > 3"
           class="text-fg-subtle text-xs"

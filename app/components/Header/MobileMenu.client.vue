@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
+import { useAtproto } from '~/composables/atproto/useAtproto'
 
 const isOpen = defineModel<boolean>('open', { default: false })
 
@@ -90,7 +91,7 @@ onUnmounted(deactivate)
               <span class="font-mono text-sm text-fg-muted">{{ $t('nav.menu') }}</span>
               <button
                 type="button"
-                class="p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+                class="p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
                 :aria-label="$t('common.close')"
                 @click="closeMenu"
               >
@@ -103,7 +104,7 @@ onUnmounted(deactivate)
               <!-- Main navigation -->
               <div class="px-2 py-2">
                 <NuxtLink
-                  to="/about"
+                  :to="{ name: 'about' }"
                   class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"
                   @click="closeMenu"
                 >
@@ -112,7 +113,16 @@ onUnmounted(deactivate)
                 </NuxtLink>
 
                 <NuxtLink
-                  to="/compare"
+                  :to="{ name: 'privacy' }"
+                  class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"
+                  @click="closeMenu"
+                >
+                  <span class="i-carbon:security w-5 h-5 text-fg-muted" aria-hidden="true" />
+                  {{ $t('privacy_policy.title') }}
+                </NuxtLink>
+
+                <NuxtLink
+                  :to="{ name: 'compare' }"
                   class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"
                   @click="closeMenu"
                 >
@@ -121,7 +131,7 @@ onUnmounted(deactivate)
                 </NuxtLink>
 
                 <NuxtLink
-                  to="/settings"
+                  :to="{ name: 'settings' }"
                   class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"
                   @click="closeMenu"
                 >
@@ -132,7 +142,7 @@ onUnmounted(deactivate)
                 <!-- Connected user links -->
                 <template v-if="isConnected && npmUser">
                   <NuxtLink
-                    :to="`/~${npmUser}`"
+                    :to="{ name: '~username', params: { username: npmUser } }"
                     class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"
                     @click="closeMenu"
                   >
@@ -141,7 +151,7 @@ onUnmounted(deactivate)
                   </NuxtLink>
 
                   <NuxtLink
-                    :to="`/~${npmUser}/orgs`"
+                    :to="{ name: '~username-orgs', params: { username: npmUser } }"
                     class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"
                     @click="closeMenu"
                   >
@@ -242,7 +252,7 @@ onUnmounted(deactivate)
                   :alt="npmUser"
                   width="20"
                   height="20"
-                  class="w-5 h-5 rounded-full"
+                  class="w-5 h-5 rounded-full object-cover"
                 />
                 <span
                   v-else
@@ -261,7 +271,18 @@ onUnmounted(deactivate)
                 class="w-full flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200 text-start"
                 @click="handleShowAuth"
               >
-                <span class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center">
+                <img
+                  v-if="atprotoUser.avatar"
+                  :src="atprotoUser.avatar"
+                  :alt="atprotoUser.handle"
+                  width="20"
+                  height="20"
+                  class="w-5 h-5 rounded-full object-cover"
+                />
+                <span
+                  v-else
+                  class="w-5 h-5 rounded-full bg-bg-muted flex items-center justify-center"
+                >
                   <span class="i-carbon-cloud w-3 h-3 text-fg-muted" aria-hidden="true" />
                 </span>
                 <span class="flex-1 truncate">@{{ atprotoUser.handle }}</span>
@@ -279,13 +300,6 @@ onUnmounted(deactivate)
                 </span>
                 <span class="flex-1">{{ $t('account_menu.connect_atmosphere') }}</span>
               </button>
-            </div>
-
-            <!-- Footer -->
-            <div class="p-4 border-t border-border mt-auto">
-              <p class="font-mono text-xs text-fg-subtle text-center">
-                {{ $t('non_affiliation_disclaimer') }}
-              </p>
             </div>
           </nav>
         </Transition>

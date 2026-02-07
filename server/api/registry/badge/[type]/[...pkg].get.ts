@@ -1,4 +1,5 @@
 import * as v from 'valibot'
+import { hash } from 'ohash'
 import { createError, getRouterParam, getQuery, setHeader } from 'h3'
 import { PackageRouteParamsSchema } from '#shared/schemas/package'
 import { CACHE_MAX_AGE_ONE_HOUR, ERROR_NPM_FETCH_FAILED } from '#shared/utils/constants'
@@ -11,9 +12,13 @@ const OSV_QUERY_API = 'https://api.osv.dev/v1/query'
 const BUNDLEPHOBIA_API = 'https://bundlephobia.com/api/size'
 const NPMS_API = 'https://api.npms.io/v2/package'
 
+const SafeStringSchema = v.pipe(v.string(), v.regex(/^[^<>"&]*$/, 'Invalid characters'))
+
 const QUERY_SCHEMA = v.object({
-  color: v.optional(v.string()),
+  color: v.optional(SafeStringSchema),
   name: v.optional(v.string()),
+  labelColor: v.optional(SafeStringSchema),
+  label: v.optional(SafeStringSchema),
 })
 
 const COLORS = {
@@ -29,8 +34,13 @@ const COLORS = {
   white: '#ffffff',
 }
 
-function measureTextWidth(text: string): number {
-  const charWidth = 7
+const DEFAULT_CHAR_WIDTH = 7
+const CHARS_WIDTH = {
+  engines: 5.5,
+}
+
+function measureTextWidth(text: string, charWidth?: number): number {
+  charWidth ??= DEFAULT_CHAR_WIDTH
   const paddingX = 8
   return Math.max(40, Math.round(text.length * charWidth) + paddingX * 2)
 }
@@ -263,7 +273,9 @@ export default defineCachedEventHandler(
 
       const queryParams = v.safeParse(QUERY_SCHEMA, query)
       const userColor = queryParams.success ? queryParams.output.color : undefined
+      const labelColor = queryParams.success ? queryParams.output.labelColor : undefined
       const showName = queryParams.success && queryParams.output.name === 'true'
+      const userLabel = queryParams.success ? queryParams.output.label : undefined
 
       const badgeTypeResult = v.safeParse(BadgeTypeSchema, typeParam)
       const strategyKey = badgeTypeResult.success ? badgeTypeResult.output : 'version'
@@ -274,14 +286,20 @@ export default defineCachedEventHandler(
       const pkgData = await fetchNpmPackage(packageName)
       const strategyResult = await strategy(pkgData, requestedVersion)
 
-      const finalLabel = showName ? packageName : strategyResult.label
+      const finalLabel = userLabel ? userLabel : showName ? packageName : strategyResult.label
       const finalValue = strategyResult.value
 
       const rawColor = userColor ?? strategyResult.color
       const finalColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor}`
 
-      const leftWidth = measureTextWidth(finalLabel)
-      const rightWidth = measureTextWidth(finalValue)
+      const rawLabelColor = labelColor ?? '#0a0a0a'
+      const finalLabelColor = rawLabelColor?.startsWith('#') ? rawLabelColor : `#${rawLabelColor}`
+
+      const leftWidth = finalLabel.trim().length === 0 ? 0 : measureTextWidth(finalLabel)
+      const rightWidth = measureTextWidth(
+        finalValue,
+        CHARS_WIDTH[strategyKey as keyof typeof CHARS_WIDTH],
+      )
       const totalWidth = leftWidth + rightWidth
       const height = 20
 
@@ -291,7 +309,7 @@ export default defineCachedEventHandler(
             <rect width="${totalWidth}" height="${height}" rx="3" fill="#fff"/>
           </clipPath>
           <g clip-path="url(#r)">
-            <rect width="${leftWidth}" height="${height}" fill="#0a0a0a"/>
+            <rect width="${leftWidth}" height="${height}" fill="${finalLabelColor}"/>
             <rect x="${leftWidth}" width="${rightWidth}" height="${height}" fill="${finalColor}"/>
           </g>
           <g text-anchor="middle" font-family="'Geist', system-ui, -apple-system, sans-serif" font-size="11">
@@ -323,7 +341,7 @@ export default defineCachedEventHandler(
       const type = getRouterParam(event, 'type') ?? 'version'
       const pkg = getRouterParam(event, 'pkg') ?? ''
       const query = getQuery(event)
-      return `badge:${type}:${pkg}:${JSON.stringify(query)}`
+      return `badge:${type}:${pkg}:${hash(query)}`
     },
   },
 )

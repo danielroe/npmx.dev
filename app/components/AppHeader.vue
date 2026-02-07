@@ -65,7 +65,7 @@ onKeyStroke(
   e => isKeyWithoutModifiers(e, ',') && !isEditableElement(e.target),
   e => {
     e.preventDefault()
-    navigateTo('/settings')
+    navigateTo({ name: 'settings' })
   },
   { dedupe: true },
 )
@@ -78,54 +78,41 @@ onKeyStroke(
     !e.defaultPrevented,
   e => {
     e.preventDefault()
-    navigateTo('/compare')
+    navigateTo({ name: 'compare' })
   },
   { dedupe: true },
 )
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md border-b border-border">
+  <header class="sticky top-0 z-50 border-b border-border">
+    <div class="absolute inset-0 bg-bg/80 backdrop-blur-md" />
     <nav
       :aria-label="$t('nav.main_navigation')"
-      class="container min-h-14 flex items-center gap-2"
+      class="relative container min-h-14 flex items-center gap-2 z-1"
       :class="isOnHomePage ? 'justify-end' : 'justify-between'"
     >
       <!-- Mobile: Logo + search button (expands search, doesn't navigate) -->
       <button
         v-if="!isSearchExpanded && !isOnHomePage"
         type="button"
-        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 rounded"
         :aria-label="$t('nav.tap_to_search')"
         @click="expandMobileSearch"
       >
-        <img
-          aria-hidden="true"
-          :alt="$t('alt_logo')"
-          src="/logo.svg"
-          width="96"
-          height="96"
-          class="w-8 h-8 rounded-lg"
-        />
+        <AppLogo class="w-8 h-8 rounded-lg" />
         <span class="i-carbon:search w-4 h-4 text-fg-subtle" aria-hidden="true" />
       </button>
 
       <!-- Desktop: Logo (navigates home) -->
       <div v-if="showLogo" class="hidden sm:flex flex-shrink-0 items-center">
         <NuxtLink
-          to="/"
+          :to="{ name: 'index' }"
           :aria-label="$t('header.home')"
           dir="ltr"
-          class="inline-flex items-center gap-2 header-logo font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring rounded"
+          class="inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded"
         >
-          <img
-            aria-hidden="true"
-            :alt="$t('alt_logo')"
-            src="/logo.svg"
-            width="96"
-            height="96"
-            class="w-8 h-8 rounded-lg"
-          />
+          <AppLogo class="w-8 h-8 rounded-lg" />
           <span>npmx</span>
         </NuxtLink>
       </div>
@@ -163,11 +150,11 @@ onKeyStroke(
       </div>
 
       <!-- End: Desktop nav items + Mobile menu button -->
-      <div class="flex-shrink-0 flex items-center gap-4 sm:gap-6">
+      <div class="flex-shrink-0 flex items-center gap-0.5 sm:gap-2">
         <!-- Desktop: Compare link -->
         <NuxtLink
-          to="/compare"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          :to="{ name: 'compare' }"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts="c"
         >
           {{ $t('nav.compare') }}
@@ -181,8 +168,8 @@ onKeyStroke(
 
         <!-- Desktop: Settings link -->
         <NuxtLink
-          to="/settings"
-          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
+          :to="{ name: 'settings' }"
+          class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           aria-keyshortcuts=","
         >
           {{ $t('nav.settings') }}
@@ -199,19 +186,14 @@ onKeyStroke(
           <HeaderAccountMenu />
         </div>
 
-        <!-- Mobile: Menu button (always visible, toggles menu) -->
+        <!-- Mobile: Menu button (always visible, click to open menu) -->
         <button
           type="button"
-          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 rounded"
-          :aria-label="showMobileMenu ? $t('common.close') : $t('nav.open_menu')"
-          :aria-expanded="showMobileMenu"
-          @click="showMobileMenu = !showMobileMenu"
+          class="sm:hidden flex items-center p-2 -m-2 text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
+          :aria-label="$t('nav.open_menu')"
+          @click="showMobileMenu = true"
         >
-          <span
-            class="w-6 h-6 inline-block"
-            :class="showMobileMenu ? 'i-carbon:close' : 'i-carbon:menu'"
-            aria-hidden="true"
-          />
+          <span class="w-6 h-6 inline-block i-carbon:menu" aria-hidden="true" />
         </button>
       </div>
     </nav>

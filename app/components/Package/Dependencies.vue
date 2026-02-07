@@ -75,19 +75,20 @@ const sortedOptionalDependencies = computed(() => {
       id="dependencies"
       :title="$t('package.dependencies.title', { count: sortedDependencies.length })"
     >
-      <ul class="space-y-1 list-none m-0 p-0" :aria-label="$t('package.dependencies.list_label')">
+      <ul class="space-y-1 list-none m-0" :aria-label="$t('package.dependencies.list_label')">
         <li
           v-for="[dep, version] in sortedDependencies.slice(0, depsExpanded ? undefined : 10)"
           :key="dep"
           class="flex items-center justify-between py-1 text-sm gap-2"
         >
           <NuxtLink
-            :to="{ name: 'package', params: { package: dep.split('/') } }"
+            :to="packageRoute(dep)"
             class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0 flex-1"
+            dir="ltr"
           >
             {{ dep }}
           </NuxtLink>
-          <span class="flex items-center gap-1 max-w-[40%]">
+          <span class="flex items-center gap-1 max-w-[40%]" dir="ltr">
             <span
               v-if="outdatedDeps[dep]"
               class="shrink-0"
@@ -99,10 +100,7 @@ const sortedOptionalDependencies = computed(() => {
             </span>
             <NuxtLink
               v-if="getVulnerableDepInfo(dep)"
-              :to="{
-                name: 'package',
-                params: { package: [...dep.split('/'), 'v', getVulnerableDepInfo(dep)!.version] },
-              }"
+              :to="packageRoute(dep, getVulnerableDepInfo(dep)!.version)"
               class="shrink-0"
               :class="SEVERITY_TEXT_COLORS[getHighestSeverity(getVulnerableDepInfo(dep)!.counts)]"
               :title="`${getVulnerableDepInfo(dep)!.counts.total} vulnerabilities`"
@@ -112,10 +110,7 @@ const sortedOptionalDependencies = computed(() => {
             </NuxtLink>
             <NuxtLink
               v-if="getDeprecatedDepInfo(dep)"
-              :to="{
-                name: 'package',
-                params: { package: [...dep.split('/'), 'v', getDeprecatedDepInfo(dep)!.version] },
-              }"
+              :to="packageRoute(dep, getDeprecatedDepInfo(dep)!.version)"
               class="shrink-0 text-purple-500"
               :title="getDeprecatedDepInfo(dep)!.message"
             >
@@ -123,10 +118,7 @@ const sortedOptionalDependencies = computed(() => {
               <span class="sr-only">{{ $t('package.deprecated.label') }}</span>
             </NuxtLink>
             <NuxtLink
-              :to="{
-                name: 'package',
-                params: { package: [...dep.split('/'), 'v', version] },
-              }"
+              :to="packageRoute(dep, version)"
               class="font-mono text-xs text-end truncate"
               :class="getVersionClass(outdatedDeps[dep])"
               :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep], $t) : version"
@@ -145,7 +137,7 @@ const sortedOptionalDependencies = computed(() => {
       <button
         v-if="sortedDependencies.length > 10 && !depsExpanded"
         type="button"
-        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="my-2 ms-1 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
         @click="depsExpanded = true"
       >
         {{
@@ -166,10 +158,7 @@ const sortedOptionalDependencies = computed(() => {
         })
       "
     >
-      <ul
-        class="space-y-1 list-none m-0 p-0"
-        :aria-label="$t('package.peer_dependencies.list_label')"
-      >
+      <ul class="space-y-1 list-none m-0" :aria-label="$t('package.peer_dependencies.list_label')">
         <li
           v-for="peer in sortedPeerDependencies.slice(0, peerDepsExpanded ? undefined : 10)"
           :key="peer.name"
@@ -177,11 +166,9 @@ const sortedOptionalDependencies = computed(() => {
         >
           <div class="flex items-center gap-1 min-w-0 flex-1">
             <NuxtLink
-              :to="{
-                name: 'package',
-                params: { package: peer.name.split('/') },
-              }"
+              :to="packageRoute(peer.name)"
               class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate"
+              dir="ltr"
             >
               {{ peer.name }}
             </NuxtLink>
@@ -194,12 +181,10 @@ const sortedOptionalDependencies = computed(() => {
             </span>
           </div>
           <NuxtLink
-            :to="{
-              name: 'package',
-              params: { package: [...peer.name.split('/'), 'v', peer.version] },
-            }"
+            :to="packageRoute(peer.name, peer.version)"
             class="font-mono text-xs text-fg-subtle max-w-[40%] truncate"
             :title="peer.version"
+            dir="ltr"
           >
             {{ peer.version }}
           </NuxtLink>
@@ -208,7 +193,7 @@ const sortedOptionalDependencies = computed(() => {
       <button
         v-if="sortedPeerDependencies.length > 10 && !peerDepsExpanded"
         type="button"
-        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
         @click="peerDepsExpanded = true"
       >
         {{
@@ -230,7 +215,7 @@ const sortedOptionalDependencies = computed(() => {
       "
     >
       <ul
-        class="space-y-1 list-none m-0 p-0"
+        class="space-y-1 list-none m-0"
         :aria-label="$t('package.optional_dependencies.list_label')"
       >
         <li
@@ -242,18 +227,17 @@ const sortedOptionalDependencies = computed(() => {
           class="flex items-center justify-between py-1 text-sm gap-2"
         >
           <NuxtLink
-            :to="{ name: 'package', params: { package: dep.split('/') } }"
+            :to="packageRoute(dep)"
             class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0 flex-1"
+            dir="ltr"
           >
             {{ dep }}
           </NuxtLink>
           <NuxtLink
-            :to="{
-              name: 'package',
-              params: { package: [...dep.split('/'), 'v', version] },
-            }"
+            :to="packageRoute(dep, version)"
             class="font-mono text-xs text-fg-subtle max-w-[40%] text-end truncate"
             :title="version"
+            dir="ltr"
           >
             {{ version }}
           </NuxtLink>
@@ -262,7 +246,7 @@ const sortedOptionalDependencies = computed(() => {
       <button
         v-if="sortedOptionalDependencies.length > 10 && !optionalDepsExpanded"
         type="button"
-        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
         @click="optionalDepsExpanded = true"
       >
         {{

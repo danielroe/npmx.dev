@@ -69,7 +69,7 @@ function handleScroll(event: Event) {
   }
   close()
 }
-useEventListener('scroll', handleScroll, true)
+useEventListener('scroll', handleScroll, { passive: true })
 
 // Generate unique ID for accessibility
 const inputId = useId()
@@ -148,7 +148,7 @@ function handleKeydown(event: KeyboardEvent) {
   <button
     ref="triggerRef"
     type="button"
-    class="flex items-center gap-1.5 px-2 py-2 font-mono text-xs text-fg-muted bg-bg-subtle border border-border-subtle border-solid rounded-md transition-colors duration-150 hover:(text-fg border-border-hover) active:scale-95 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 hover:text-fg"
+    class="flex items-center gap-1.5 px-2 py-2 font-mono text-xs text-fg-muted bg-bg-subtle border border-border-subtle border-solid rounded-md transition-colors duration-150 hover:(text-fg border-border-hover) active:scale-95 focus:border-border-hover focus-visible:outline-accent/70 hover:text-fg"
     :aria-expanded="isOpen"
     aria-haspopup="listbox"
     :aria-label="$t('package.readme.toc_title')"
@@ -198,6 +198,7 @@ function handleKeydown(event: KeyboardEvent) {
               activeId === node.id ? 'text-fg font-medium' : 'text-fg-muted',
               highlightedIndex === getIndex(node.id) ? 'bg-bg-elevated' : 'hover:bg-bg-elevated',
             ]"
+            dir="auto"
             @click="select(node.id)"
             @mouseenter="highlightedIndex = getIndex(node.id)"
           >
@@ -214,6 +215,7 @@ function handleKeydown(event: KeyboardEvent) {
                 activeId === child.id ? 'text-fg font-medium' : 'text-fg-subtle',
                 highlightedIndex === getIndex(child.id) ? 'bg-bg-elevated' : 'hover:bg-bg-elevated',
               ]"
+              dir="auto"
               @click="select(child.id)"
               @mouseenter="highlightedIndex = getIndex(child.id)"
             >
@@ -233,6 +235,7 @@ function handleKeydown(event: KeyboardEvent) {
                   ? 'bg-bg-elevated'
                   : 'hover:bg-bg-elevated',
               ]"
+              dir="auto"
               @click="select(grandchild.id)"
               @mouseenter="highlightedIndex = getIndex(grandchild.id)"
             >
