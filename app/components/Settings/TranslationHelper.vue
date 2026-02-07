@@ -71,7 +71,11 @@ ${template}`
       <div class="flex items-center justify-between">
         <h4 class="text-xs text-fg-muted font-medium">
           {{
-            $t('i18n.missing_keys', { count: numberFormatter.format(status.missingKeys.length) })
+            $t(
+              'i18n.missing_keys',
+              { count: numberFormatter.format(status.missingKeys.length) },
+              status.missingKeys.length,
+            )
           }}
         </h4>
         <button
@@ -95,7 +99,13 @@ ${template}`
         class="text-xs text-fg-muted hover:text-fg rounded focus-visible:outline-accent/70"
         @click="showAll = true"
       >
-        {{ $t('i18n.show_more_keys', { count: numberFormatter.format(remainingCount) }) }}
+        {{
+          $t(
+            'i18n.show_more_keys',
+            { count: numberFormatter.format(remainingCount) },
+            remainingCount,
+          )
+        }}
       </button>
     </div>
 
