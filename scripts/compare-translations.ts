@@ -217,23 +217,13 @@ const processLocale = async (
   const localeInfo = checkJsonName(filePath)
 
   if (fix) {
-    // prevent update
-    // country locale file: e.g. es or es-ES
-    if (localeInfo.forCountry) {
-      // prevent adding missing keys to target locale: e.g. es-ES
-      // in this case i18n will do the work for us, the target locale should be empty
-      if (localeInfo.mergeLocale) {
-        console.error(
-          `${COLORS.red}Error: Locale "${localeInfo.locale}" cannot be fixed, fix the ${localeInfo.lang} locale instead!${COLORS.reset}`,
-        )
-        process.exit(1)
-      }
-    }
-    // prevent fix country locale, i18n will merge lang file and the target locale:
-    // e.g. es-419: i18n will merge es and es-419 for us
-    else if (localeInfo.mergeLocale) {
+    // prevent updating wrong locale file:
+    // - language locale files at countries allowed: e.g. es.json
+    // - country locale file forbidden: e.g. es-ES.json
+    // - target locale file forbidden: e.g. es-419.json
+    if (localeInfo.mergeLocale) {
       console.error(
-        `${COLORS.red}Error: Locale "${localeInfo.locale}" cannot be fixed.!${COLORS.reset}`,
+        `${COLORS.red}Error: Locale "${localeInfo.locale}" cannot be fixed, fix the ${localeInfo.lang} locale instead!.${COLORS.reset}`,
       )
       process.exit(1)
     }
