@@ -40,6 +40,49 @@ export const isPreview =
   process.env.CONTEXT === 'dev' ||
   process.env.VERCEL_ENV === 'preview' ||
   process.env.VERCEL_ENV === 'development'
+export const isProduction =
+  process.env.CONTEXT === 'production' || process.env.VERCEL_ENV === 'production'
+
+/**
+ * Environment variable `URL` provided by Netlify.
+ * This is always the current deploy URL, regardless of env.
+ * @see {@link https://docs.netlify.com/build/functions/environment-variables/#functions}
+ *
+ * Environment variable `VERCEL_URL` provided by Vercel.
+ * This is always the current deploy URL, regardless of env.
+ * NOTE: Not a valid URL, as the protocol is omitted.
+ * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_URL}
+ *
+ * Preview URL for the current deployment, only available in preview environments.
+ */
+export const getPreviewUrl = () =>
+  isPreview
+    ? process.env.NUXT_ENV_URL
+      ? process.env.NUXT_ENV_URL
+      : process.env.NUXT_ENV_VERCEL_URL
+        ? `https://${process.env.NUXT_ENV_VERCEL_URL}`
+        : undefined
+    : undefined
+
+/**
+ * Environment variable `URL` provided by Netlify.
+ * This is always the current deploy URL, regardless of env.
+ * @see {@link https://docs.netlify.com/build/functions/environment-variables/#functions}
+ *
+ * Environment variable `VERCEL_PROJECT_PRODUCTION_URL` provided by Vercel.
+ * NOTE: Not a valid URL, as the protocol is omitted.
+ * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_PROJECT_PRODUCTION_URL}
+ *
+ * Production URL for the current deployment, only available in production environments.
+ */
+export const getProductionUrl = () =>
+  isProduction
+    ? process.env.NUXT_ENV_URL
+      ? process.env.NUXT_ENV_URL
+      : process.env.NUXTENV_VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL}`
+        : undefined
+    : undefined
 
 const git = Git()
 export async function getGitInfo() {
@@ -92,5 +135,14 @@ export async function getEnv(isDevelopment: boolean) {
       : branch === 'main'
         ? 'canary'
         : 'release'
-  return { commit, shortCommit, branch, env } as const
+  const previewUrl = getPreviewUrl()
+  const productionUrl = getProductionUrl()
+  return {
+    commit,
+    shortCommit,
+    branch,
+    env,
+    previewUrl,
+    productionUrl,
+  } as const
 }
