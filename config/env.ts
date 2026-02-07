@@ -83,7 +83,7 @@ export const getProductionUrl = () =>
   isProduction
     ? process.env.NUXT_ENV_URL
       ? process.env.NUXT_ENV_URL
-      : process.env.NUXTENV_VERCEL_PROJECT_PRODUCTION_URL
+      : process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL
         ? `https://${process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL}`
         : undefined
     : undefined
