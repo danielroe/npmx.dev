@@ -5,8 +5,7 @@
       "description": "متصفح أفضل لسجل npm. ابحث عن الحزم واستعرضها واستكشفها عبر واجهة حديثة."
     }
   },
-  "version": "الإصدار",
-  "built_at": "تم البناء في {0}",
+  "built_at": "تم البناء {0}",
   "alt_logo": "شعار npmx",
   "tagline": "متصفح أفضل لسجل npm",
   "non_affiliation_disclaimer": "غير مرتبط بشركة npm, Inc.",
@@ -20,12 +19,11 @@
   },
   "search": {
     "label": "ابحث عن حزم npm",
-    "placeholder": "ابحث عن الحزم...",
+    "placeholder": "ابحث عن الحزم…",
     "button": "بحث",
-    "clear": "مسح البحث",
-    "searching": "جارٍ البحث...",
+    "searching": "جارٍ البحث…",
     "found_packages": "تم العثور على {count} حزمة | تم العثور على حزمة واحدة | تم العثور على حزمتين | تم العثور على {count} حزم | تم العثور على {count} حزمة | تم العثور على {count} حزمة",
-    "updating": "(جارٍ التحديث...)",
+    "updating": "(جارٍ التحديث…)",
     "no_results": "لم يتم العثور على حزم لـ \"{query}\"",
     "title": "بحث",
     "title_search": "بحث: {search}",
@@ -48,7 +46,6 @@
   "nav": {
     "main_navigation": "الصفحة الرئيسية",
     "popular_packages": "الحزم الشائعة",
-    "search": "بحث",
     "settings": "الإعدادات",
     "compare": "مقارنة",
     "back": "عودة",
@@ -68,7 +65,6 @@
       "language": "اللغة"
     },
     "relative_dates": "تواريخ نسبية",
-    "relative_dates_description": "عرض التواريخ مثل \"منذ 3 أيام\" بدلًا من التاريخ كاملًا.",
     "include_types": "تضمين {'@'}types في التثبيت",
     "include_types_description": "إضافة حزمة {'@'}types إلى أوامر التثبيت للحزم غير المرفقة بأنواع TypeScript.",
     "hide_platform_packages": "إخفاء الحزم الخاصة بالمنصة في البحث",
@@ -87,15 +83,15 @@
   "i18n": {
     "missing_keys": "{count} ترجمات مفقودة | ترجمة واحدة مفقودة | ترجمتان مفقودتان | {count} ترجمات مفقودة | {count} ترجمة مفقودة | {count} ترجمة مفقودة",
     "copy_keys": "نسخ المفاتيح",
-    "show_more_keys": "عرض المزيد ({count})...",
+    "show_more_keys": "عرض المزيد ({count})…",
     "contribute_hint": "ساعد في تحسين هذه الترجمة عن طريق إضافة المفاتيح المفقودة.",
     "edit_on_github": "تعديل على GitHub",
     "view_guide": "دليل الترجمة"
   },
   "common": {
-    "loading": "جارٍ التحميل...",
-    "loading_more": "جارٍ تحميل المزيد...",
-    "loading_packages": "جارٍ تحميل الحزم...",
+    "loading": "جارٍ التحميل…",
+    "loading_more": "جارٍ تحميل المزيد…",
+    "loading_packages": "جارٍ تحميل الحزم…",
     "end_of_results": "نهاية النتائج",
     "try_again": "حاول مرة أخرى",
     "close": "إغلاق",
@@ -103,8 +99,6 @@
     "copy": "نسخ",
     "copied": "تم النسخ!",
     "skip_link": "تخطي إلى المحتوى الرئيسي",
-    "close_modal": "إغلاق النافذة",
-    "show_more": "عرض المزيد",
     "warnings": "تحذيرات:",
     "go_back_home": "العودة إلى الصفحة الرئيسية",
     "view_on_npm": "عرض على npm",
@@ -121,7 +115,6 @@
     "not_found": "لم يتم العثور على الحزمة",
     "not_found_message": "تعذّر العثور على الحزمة.",
     "no_description": "لا يوجد وصف",
-    "show_full_description": "عرض الوصف بالكامل",
     "not_latest": "(ليست الأحدث)",
     "verified_provenance": "مصدر موثّق",
     "view_permalink": "عرض الرابط الدائم لهذا الإصدار",
@@ -151,7 +144,6 @@
       "vulns": "الثغرات",
       "published": "تاريخ النشر",
       "published_tooltip": "تاريخ نشر {package}{'@'}{version}",
-      "skills": "المهارات",
       "view_dependency_graph": "عرض مخطط التبعيات",
       "inspect_dependency_tree": "فحص شجرة التبعيات",
       "size_tooltip": {
@@ -162,7 +154,6 @@
     "skills": {
       "title": "مهارات العميل (Agent Skills)",
       "skills_available": "{count} مهارة متاحة | مهارة واحدة متاحة | ترجمتان متاحتان | {count} مهارات متاحة | {count} مهارة متاحة | {count} مهارة متاحة",
-      "view": "عرض",
       "compatible_with": "متوافق مع {tool}",
       "install": "تثبيت",
       "installation_method": "طريقة التثبيت",
@@ -284,7 +275,7 @@
       "via": "عبر {teams}",
       "remove_owner": "إزالة {name} كمالك",
       "username_to_add": "اسم المستخدم لإضافته كمالك",
-      "username_placeholder": "اسم المستخدم...",
+      "username_placeholder": "اسم المستخدم…",
       "add_button": "إضافة",
       "cancel_add": "إلغاء إضافة المالك",
       "add_owner": "+ إضافة مالك",
@@ -306,7 +297,7 @@
       "start_date": "البداية",
       "end_date": "النهاية",
       "no_data": "لا تتوفر بيانات تنزيل",
-      "loading": "جارٍ التحميل...",
+      "loading": "جارٍ التحميل…",
       "y_axis_label": "تنزيلات {granularity}ة",
       "download_file": "تنزيل {fileType}",
       "toggle_annotator": "إظهار/إخفاء الشروح التوضيحية"
@@ -335,25 +326,12 @@
       "none": "لا شيء"
     },
     "vulnerabilities": {
-      "no_description": "لا يتوفر وصف",
-      "found": "تم العثور على {count} ثغرة | تم العثور على ثغرة واحدة | تم العثور على ثغرتين | تم العثور على {count} ثغرات | تم العثور على {count} ثغرة | تم العثور على {count} ثغرة",
-      "deps_found": "تم العثور على {count} ثغرة | تم العثور على ثغرة واحدة | تم العثور على ثغرتين | تم العثور على {count} ثغرات | تم العثور على {count} ثغرة | تم العثور على {count} ثغرة",
-      "deps_affected": "تأثرت {count} تبعية | تأثرت تبعية واحدة | تأثرت تبعيتان | تأثرت {count} تبعيات | تأثرت {count} تبعية | تأثرت {count} تبعية",
       "tree_found": "{vulns} ثغرة في {packages}/{total} حزمة | ثغرة واحدة في {packages}/{total} حزمة | ثغرتان في {packages}/{total} حزمة | {vulns} ثغرات في {packages}/{total} حزمة | {vulns} ثغرة في {packages}/{total} حزمة | {vulns} ثغرة في {packages}/{total} حزمة",
-      "scanning_tree": "جارٍ فحص شجرة التبعيات…",
       "show_all_packages": "عرض كل الحزم المتأثرة ({count})",
-      "no_summary": "لا يوجد ملخص",
-      "view_details": "عرض تفاصيل الثغرة",
       "path": "المسار",
       "more": "+{count} أخرى",
       "packages_failed": "تعذر فحص {count} حزمة | تعذر فحص الحزمة | تعذر فحص الحزمتين | تعذر فحص {count} حزم | تعذر فحص {count} حزمة | تعذر فحص {count} حزمة",
-      "no_known": "لا توجد ثغرات معروفة في {count} حزمة | لا توجد ثغرات معروفة في الحزمة | لا توجد ثغرات معروفة في الحزمتين | لا توجد ثغرات معروفة في {count} حزم | لا توجد ثغرات معروفة في {count} حزمة | لا توجد ثغرات معروفة في {count} حزمة",
       "scan_failed": "تعذر فحص الثغرات",
-      "depth": {
-        "root": "هذه الحزمة",
-        "direct": "تبعية مباشرة",
-        "transitive": "تبعية غير مباشرة"
-      },
       "severity": {
         "critical": "حرجة",
         "high": "عالية",
@@ -376,7 +354,7 @@
       "revoke_access": "سحب وصول {name}",
       "no_access": "لا يوجد وصول فريق مُعدّ",
       "select_team_label": "اختر فريقًا",
-      "loading_teams": "جارٍ تحميل الفرق...",
+      "loading_teams": "جارٍ تحميل الفرق…",
       "select_team": "اختر فريقًا",
       "permission_label": "مستوى الصلاحية",
       "permission": {
@@ -389,19 +367,13 @@
     },
     "list": {
       "filter_label": "فلترة الحزم",
-      "filter_placeholder": "فلتر الحزم...",
+      "filter_placeholder": "فلتر الحزم…",
       "sort_label": "ترتيب الحزم",
       "showing_count": "يعرض {filtered} من أصل {total} حزمة"
     },
     "skeleton": {
       "loading": "جارٍ تحميل تفاصيل الحزمة",
-      "license": "الترخيص",
       "weekly": "أسبوعيًا",
-      "size": "الحجم",
-      "deps": "التبعيات",
-      "published": "تاريخ النشر",
-      "get_started": "ابدأ",
-      "readme": "README",
       "maintainers": "المشرفون",
       "keywords": "الكلمات المفتاحية",
       "versions": "الإصدارات",
@@ -415,16 +387,6 @@
     }
   },
   "connector": {
-    "status": {
-      "connecting": "جارٍ الاتصال...",
-      "connected_as": "متصل كـ ~{user}",
-      "connected": "متصل",
-      "connect_cli": "ربط واجهة سطر الأوامر المحلية",
-      "aria_connecting": "جارٍ الاتصال بالموصل المحلي",
-      "aria_connected": "تم الاتصال بالموصل المحلي",
-      "aria_click_to_connect": "انقر للاتصال بالموصل المحلي",
-      "avatar_alt": "صورة {user} الرمزية"
-    },
     "modal": {
       "title": "الموصل المحلي",
       "contributor_badge": "للمساهمين فقط",
@@ -439,13 +401,13 @@
       "copied": "تم النسخ",
       "paste_token": "ثم الصق الرمز أدناه للاتصال:",
       "token_label": "الرمز",
-      "token_placeholder": "الصق الرمز هنا...",
+      "token_placeholder": "الصق الرمز هنا…",
       "advanced": "خيارات متقدمة",
       "port_label": "المنفذ",
       "warning": "تحذير!",
       "warning_text": "يسمح هذا لـ npmx بالوصول إلى npm CLI لديك. لا تتصل إلا بالمواقع التي تثق بها.",
       "connect": "اتصال",
-      "connecting": "جارٍ الاتصال..."
+      "connecting": "جارٍ الاتصال…"
     }
   },
   "operations": {
@@ -458,15 +420,15 @@
       "active_label": "العمليات النشطة",
       "otp_required": "رمز OTP مطلوب",
       "otp_prompt": "أدخل رمز OTP للمتابعة",
-      "otp_placeholder": "أدخل رمز OTP...",
+      "otp_placeholder": "أدخل رمز OTP…",
       "otp_label": "كلمة المرور وحيدة الاستخدام (OTP)",
       "retry_otp": "إعادة المحاولة باستخدام OTP",
-      "retrying": "جارٍ إعادة المحاولة...",
+      "retrying": "جارٍ إعادة المحاولة…",
       "approve_operation": "الموافقة على العملية",
       "remove_operation": "إزالة العملية",
       "approve_all": "الموافقة على الكل",
       "execute": "تنفيذ",
-      "executing": "جارٍ التنفيذ...",
+      "executing": "جارٍ التنفيذ…",
       "log": "السجل",
       "log_label": "سجل العمليات المكتملة",
       "remove_from_log": "إزالة من السجل"
@@ -477,9 +439,9 @@
       "title": "الفرق",
       "refresh": "تحديث الفرق",
       "filter_label": "فلترة الفرق",
-      "filter_placeholder": "فلتر الفرق...",
+      "filter_placeholder": "فلتر الفرق…",
       "sort_by": "الترتيب حسب",
-      "loading": "جارٍ تحميل الفرق...",
+      "loading": "جارٍ تحميل الفرق…",
       "no_teams": "لم يتم العثور على فرق",
       "list_label": "فرق المؤسسة",
       "delete_team": "حذف الفريق {name}",
@@ -488,12 +450,12 @@
       "no_members": "لا يوجد أعضاء",
       "remove_user": "إزالة {user} من الفريق",
       "username_to_add": "اسم المستخدم لإضافته إلى {team}",
-      "username_placeholder": "اسم المستخدم...",
+      "username_placeholder": "اسم المستخدم…",
       "add_button": "إضافة",
       "cancel_add_user": "إلغاء إضافة المستخدم",
       "add_member": "+ إضافة عضو",
       "team_name_label": "اسم الفريق",
-      "team_name_placeholder": "اسم الفريق...",
+      "team_name_placeholder": "اسم الفريق…",
       "create_button": "إنشاء",
       "no_match": "لا توجد فرق تطابق \"{query}\"",
       "cancel_create": "إلغاء إنشاء الفريق",
@@ -503,12 +465,12 @@
       "title": "الأعضاء",
       "refresh": "تحديث الأعضاء",
       "filter_label": "فلترة الأعضاء",
-      "filter_placeholder": "فلتر الأعضاء...",
+      "filter_placeholder": "فلتر الأعضاء…",
       "filter_by_role": "فلترة حسب الدور",
       "filter_by_team": "فلترة حسب الفريق",
       "all_teams": "كل الفرق",
       "sort_by": "الترتيب حسب",
-      "loading": "جارٍ تحميل الأعضاء...",
+      "loading": "جارٍ تحميل الأعضاء…",
       "no_members": "لم يتم العثور على أعضاء",
       "list_label": "أعضاء المؤسسة",
       "change_role_for": "تغيير الدور لـ {name}",
@@ -516,7 +478,7 @@
       "view_team": "عرض فريق {team}",
       "no_match": "لا يوجد أعضاء يطابقون عوامل الفلترة",
       "username_label": "اسم المستخدم",
-      "username_placeholder": "اسم المستخدم...",
+      "username_placeholder": "اسم المستخدم…",
       "role_label": "الدور",
       "role": {
         "all": "الكل",
@@ -540,15 +502,14 @@
       "failed_to_load": "فشل تحميل حزم المؤسسة",
       "no_match": "لا توجد حزم تطابق \"{query}\"",
       "not_found": "لم يتم العثور على المؤسسة",
-      "not_found_message": "المؤسسة \"{'@'}{name}\" غير موجودة على npm",
-      "filter_placeholder": "فلتر {count} حزمة..."
+      "not_found_message": "المؤسسة \"{'@'}{name}\" غير موجودة على npm"
     }
   },
   "user": {
     "combobox": {
       "add_to_org_hint": "(سيُضاف أيضًا إلى المؤسسة)",
       "press_enter_to_add": "اضغط Enter لإضافة {'@'}{username}",
-      "default_placeholder": "اسم المستخدم...",
+      "default_placeholder": "اسم المستخدم…",
       "suggestions_label": "اقتراحات المستخدمين"
     },
     "page": {
@@ -557,7 +518,7 @@
       "no_packages_hint": "قد لا يكون هذا المستخدم موجودًا أو قد لا يحتوي على حزم عامة.",
       "failed_to_load": "فشل تحميل حزم المستخدم",
       "no_match": "لا توجد حزم تطابق \"{query}\"",
-      "filter_placeholder": "فلتر {count} حزمة..."
+      "filter_placeholder": "فلتر {count} حزمة…"
     },
     "orgs_page": {
       "title": "المؤسسات",
@@ -567,7 +528,7 @@
       "connect_hint_suffix": "للبدء.",
       "own_orgs_only": "يمكنك عرض مؤسساتك أنت فقط.",
       "view_your_orgs": "عرض مؤسساتك",
-      "loading": "جارٍ تحميل المؤسسات...",
+      "loading": "جارٍ تحميل المؤسسات…",
       "empty": "لم يتم العثور على مؤسسات.",
       "empty_hint": "يتم اكتشاف المؤسسات من حزمك ذات النطاق (scoped).",
       "count": "{count} مؤسسة | مؤسسة واحدة | مؤسستان | {count} مؤسسات | {count} مؤسسة | {count} مؤسسة",
@@ -593,8 +554,8 @@
       "publish_hint": "سيؤدي هذا إلى نشر حزمة مصغرة كعنصر نائب (placeholder).",
       "preview_json": "معاينة package.json",
       "claim_button": "حجز اسم الحزمة",
-      "publishing": "جارٍ النشر...",
-      "checking": "جارٍ التحقق من التوفر...",
+      "publishing": "جارٍ النشر…",
+      "checking": "جارٍ التحقق من التوفر…",
       "failed_to_check": "فشل التحقق من توفر الاسم",
       "failed_to_claim": "فشل حجز الحزمة"
     }
@@ -602,7 +563,6 @@
   "code": {
     "files_label": "الملفات",
     "no_files": "لا توجد ملفات في هذا المجلد",
-    "select_version": "اختر إصدارًا",
     "root": "الجذر",
     "lines": "{count} سطر",
     "toggle_tree": "إظهار/إخفاء شجرة الملفات",
@@ -612,12 +572,11 @@
     "view_raw": "عرض الملف الخام (Raw)",
     "file_too_large": "الملف كبير جدًا للمعاينة",
     "file_size_warning": "{size} يتجاوز حد 500KB للتظليل النحوي (syntax highlighting)",
-    "load_anyway": "تحميل على أي حال",
     "failed_to_load": "فشل تحميل الملف",
     "unavailable_hint": "قد يكون الملف كبيرًا جدًا أو غير متاح",
     "version_required": "الإصدار مطلوب لتصفح الكود",
     "go_to_package": "الانتقال إلى الحزمة",
-    "loading_tree": "جارٍ تحميل شجرة الملفات...",
+    "loading_tree": "جارٍ تحميل شجرة الملفات…",
     "failed_to_load_tree": "فشل تحميل الملفات لهذا الإصدار من الحزمة",
     "back_to_package": "العودة إلى الحزمة",
     "table": {
@@ -634,21 +593,19 @@
     "provenance": {
       "verified": "موثّق",
       "verified_title": "مصدر موثّق",
-      "verified_via": "موثّق: تم النشر عبر {provider}",
-      "view_more_details": "عرض المزيد من التفاصيل"
+      "verified_via": "موثّق: تم النشر عبر {provider}"
     },
     "jsr": {
-      "title": "متوفر أيضًا على JSR",
-      "label": "jsr"
+      "title": "متوفر أيضًا على JSR"
     }
   },
   "filters": {
     "title": "فلاتر",
     "search": "بحث",
     "search_scope": "نطاق البحث",
-    "search_placeholder_name": "فلترة حسب اسم الحزمة...",
-    "search_placeholder_description": "فلترة حسب الوصف...",
-    "search_placeholder_keywords": "فلترة حسب الكلمات المفتاحية...",
+    "search_placeholder_name": "فلترة حسب اسم الحزمة…",
+    "search_placeholder_description": "فلترة حسب الوصف…",
+    "search_placeholder_keywords": "فلترة حسب الكلمات المفتاحية…",
     "search_placeholder_all": "فلتر حسب الكل أو استخدم name: desc: kw:",
     "scope_name": "الإسم",
     "scope_name_description": "بحث في أسماء الحزم فقط",
@@ -759,7 +716,6 @@
     "title": "حول",
     "heading": "حول",
     "meta_description": "npmx هو متصفح سريع وحديث لسجل npm. تجربة مستخدم أفضل لاستكشاف حزم npm.",
-    "back_home": "العودة إلى الصفحة الرئيسية",
     "what_we_are": {
       "title": "ما هو npmx",
       "better_ux_dx": "تجربة مستخدم/مطور أفضل",
@@ -786,7 +742,7 @@
     "contributors": {
       "title": "المساهمون",
       "description": "npmx هو مشروع مفتوح المصدر بالكامل، تم بناؤه بواسطة مجتمع مذهل من المساهمين.",
-      "loading": "جارٍ تحميل المساهمين...",
+      "loading": "جارٍ تحميل المساهمين…",
       "error": "فشل تحميل المساهمين",
       "view_profile": "عرض بروفايل {name} على GitHub"
     },
@@ -818,9 +774,8 @@
     "atmosphere_desc": "ميزات اجتماعية وهوية",
     "connect_npm_cli": "الاتصال بـ npm CLI",
     "connect_atmosphere": "الاتصال بـ Atmosphere",
-    "connecting": "جارٍ الاتصال...",
-    "ops": "{count} عملية | عملية واحدة | عمليتان | {count} عمليات | {count} عملية | {count} عملية",
-    "disconnect": "قطع الاتصال"
+    "connecting": "جارٍ الاتصال…",
+    "ops": "{count} عملية | عملية واحدة | عمليتان | {count} عمليات | {count} عملية | {count} عملية"
   },
   "auth": {
     "modal": {
@@ -839,11 +794,10 @@
   },
   "header": {
     "home": "الصفحة الرئيسية لـ npmx",
-    "github": "GitHub",
     "packages": "الحزم",
     "packages_dropdown": {
       "title": "حزمك",
-      "loading": "جارٍ التحميل...",
+      "loading": "جارٍ التحميل…",
       "error": "فشل تحميل الحزم",
       "empty": "لا توجد حزم",
       "view_all": "عرض الكل"
@@ -851,7 +805,7 @@
     "orgs": "المؤسسات",
     "orgs_dropdown": {
       "title": "مؤسساتك",
-      "loading": "جارٍ التحميل...",
+      "loading": "جارٍ التحميل…",
       "error": "فشل تحميل المؤسسات",
       "empty": "لا توجد مؤسسات",
       "view_all": "عرض الكل"
@@ -868,21 +822,19 @@
       "section_packages": "الحزم",
       "section_facets": "المحاور",
       "section_comparison": "المقارنة",
-      "loading": "جارٍ تحميل بيانات الحزم...",
+      "loading": "جارٍ تحميل بيانات الحزم…",
       "error": "فشل تحميل بيانات الحزم. الرجاء المحاولة مرة أخرى.",
       "empty_title": "اختر حزمًا للمقارنة",
       "empty_description": "ابحث وأضف حزمتين على الأقل أعلاه لعرض مقارنة جنبًا إلى جنب لمقاييسها."
     },
     "selector": {
       "search_label": "ابحث عن حزم",
-      "search_first": "ابحث عن حزمة...",
-      "search_add": "أضف حزمة أخرى...",
-      "searching": "جارٍ البحث...",
+      "search_first": "ابحث عن حزمة…",
+      "search_add": "أضف حزمة أخرى…",
+      "searching": "جارٍ البحث…",
       "remove_package": "إزالة {package}",
       "packages_selected": "{count}/{max} حزمة محددة.",
-      "add_hint": "أضف حزمتين على الأقل للمقارنة.",
-      "loading_versions": "جارٍ تحميل الإصدارات...",
-      "select_version": "اختر إصدارًا"
+      "add_hint": "أضف حزمتين على الأقل للمقارنة."
     },
     "no_dependency": {
       "label": "(بدون تبعية)",
@@ -977,7 +929,6 @@
     "last_updated": "آخر تحديث: {date}",
     "welcome": "مرحبًا بك في {app}. نحن ملتزمون بحماية خصوصيتك. تشرح هذه السياسة البيانات التي نجمعها، وكيف نستخدمها، وحقوقك المتعلقة بمعلوماتك.",
     "cookies": {
-      "title": "ملفات تعريف الارتباط (Cookies)",
       "what_are": {
         "title": "ما هي ملفات تعريف الارتباط؟",
         "p1": "ملفات تعريف الارتباط أو الكوكيز (Cookies) هي ملفات نصية صغيرة تُخزن على جهازك عند زيارة موقع ويب. الغرض منها هو تحسين تجربتك في التصفح من خلال تذكر بعض التفضيلات والإعدادات."

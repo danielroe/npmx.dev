@@ -53,6 +53,7 @@ const allMaintainersText = computed(() => {
       <NuxtLink
         :to="packageUrl"
         class="font-mono text-sm text-fg hover:text-accent-fallback transition-colors duration-200"
+        dir="ltr"
       >
         {{ pkg.name }}
       </NuxtLink>
@@ -60,7 +61,7 @@ const allMaintainersText = computed(() => {
 
     <!-- Version -->
     <td v-if="isColumnVisible('version')" class="py-2 px-3 font-mono text-xs text-fg-subtle">
-      {{ pkg.version }}
+      <span dir="ltr">{{ pkg.version }}</span>
     </td>
 
     <!-- Description -->
@@ -129,16 +130,17 @@ const allMaintainersText = computed(() => {
         class="flex flex-wrap gap-1 justify-end"
         :aria-label="$t('package.card.keywords')"
       >
-        <TagButton
+        <ButtonBase
           v-for="keyword in pkg.keywords.slice(0, 3)"
           :key="keyword"
-          :pressed="props.filters?.keywords.includes(keyword)"
+          size="small"
+          :aria-pressed="props.filters?.keywords.includes(keyword)"
           :title="`Filter by ${keyword}`"
           @click.stop="emit('clickKeyword', keyword)"
           :class="{ 'group-hover:bg-bg-elevated': !props.filters?.keywords.includes(keyword) }"
         >
           {{ keyword }}
-        </TagButton>
+        </ButtonBase>
         <span
           v-if="pkg.keywords.length > 3"
           class="text-fg-subtle text-xs"

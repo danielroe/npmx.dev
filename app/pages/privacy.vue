@@ -28,12 +28,12 @@ const { locale } = useI18n()
           </h1>
           <button
             type="button"
-            :title="$t('nav.back')"
             class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
             @click="router.back()"
+            v-show="router.options.history.state.back !== null"
           >
             <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
-            <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+            <span class="sr-only sm:not-sr-only">{{ $t('nav.back') }}</span>
           </button>
         </div>
         <i18n-t

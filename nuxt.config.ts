@@ -115,8 +115,7 @@ export default defineNuxtConfig({
     '/package/:org/:name/v/:version': { isr: getISRConfig(60, true) },
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/package-docs/:name/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/package-docs/:org/:name/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/package-docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     // static pages
     '/': { prerender: true },
     '/200.html': { prerender: true },
@@ -133,6 +132,7 @@ export default defineNuxtConfig({
 
   experimental: {
     entryImportMap: false,
+    typescriptPlugin: true,
     viteEnvironmentApi: true,
     viewTransition: true,
     typedPages: true,

@@ -174,6 +174,7 @@ function formatXyDataset(
           type: 'line',
           series: dataset.map(d => d.downloads),
           color: accent.value,
+          useArea: true,
         },
       ],
       dates: dataset.map(d => d.timestampEnd),
@@ -187,6 +188,7 @@ function formatXyDataset(
           type: 'line',
           series: dataset.map(d => d.downloads),
           color: accent.value,
+          useArea: true,
         },
       ],
       dates: dataset.map(d => d.timestamp),
@@ -200,6 +202,7 @@ function formatXyDataset(
           type: 'line',
           series: dataset.map(d => d.downloads),
           color: accent.value,
+          useArea: true,
         },
       ],
       dates: dataset.map(d => d.timestamp),
@@ -213,6 +216,7 @@ function formatXyDataset(
           type: 'line',
           series: dataset.map(d => d.downloads),
           color: accent.value,
+          useArea: true,
         },
       ],
       dates: dataset.map(d => d.timestamp),
@@ -746,8 +750,6 @@ const chartData = computed<{ dataset: VueUiXyDatasetItem[] | null; dates: number
   return { dataset, dates }
 })
 
-const formatter = ({ value }: { value: number }) => formatCompactNumber(value, { decimals: 1 })
-
 const loadFile = (link: string, filename: string) => {
   const a = document.createElement('a')
   a.href = link
@@ -795,6 +797,8 @@ const granularityLabels = computed(() => ({
 function getGranularityLabel(granularity: ChartTimeGranularity) {
   return granularityLabels.value[granularity]
 }
+
+const compactNumberFormatter = useCompactNumberFormatter()
 
 // VueUiXy chart component configuration
 const chartConfig = computed(() => {
@@ -863,7 +867,7 @@ const chartConfig = computed(() => {
             },
           },
           yAxis: {
-            formatter,
+            formatter: compactNumberFormatter.value.format,
             useNiceScale: true,
             gap: 24, // vertical gap between individual series in stacked mode
           },
@@ -895,7 +899,7 @@ const chartConfig = computed(() => {
             .map((d: any) => {
               const label = String(d?.name ?? '').trim()
               const raw = Number(d?.value ?? 0)
-              const v = formatter({ value: Number.isFinite(raw) ? raw : 0 })
+              const v = compactNumberFormatter.value.format(Number.isFinite(raw) ? raw : 0)
 
               if (!hasMultipleItems) {
                 // We don't need the name of the package in this case, since it is shown in the xAxis label
@@ -915,7 +919,7 @@ const chartConfig = computed(() => {
                   ${label}
                 </span>
 
-                <span class="text-base text-[var(--fg)] font-mono tabular-nums text-right">
+                <span class="text-base text-[var(--fg)] font-mono tabular-nums text-end">
                   ${v}
                 </span>
               </div>`
@@ -1044,6 +1048,14 @@ const chartConfig = computed(() => {
       <ClientOnly v-if="chartData.dataset">
         <div>
           <VueUiXy :dataset="chartData.dataset" :config="chartConfig" class="[direction:ltr]">
+            <!-- Subtle gradient applied for a unique series (chart modal) -->
+            <template #area-gradient="{ series: chartModalSeries, id: gradientId }">
+              <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" :stop-color="chartModalSeries.color" stop-opacity="0.2" />
+                <stop offset="100%" :stop-color="colors.bg" stop-opacity="0" />
+              </linearGradient>
+            </template>
+
             <!-- Custom legend for multiple series -->
             <template v-if="isMultiPackageMode" #legend="{ legend }">
               <div class="flex gap-4 flex-wrap justify-center">
