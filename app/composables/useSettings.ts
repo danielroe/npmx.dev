@@ -5,6 +5,7 @@ import { BACKGROUND_THEMES } from '#shared/utils/constants'
 import type { AccentColorId, BackgroundThemeId, AppSettings } from '#shared/schemas/app-settings'
 
 const DEFAULT_SETTINGS: AppSettings = {
+  theme: 'system',
   relativeDates: false,
   includeTypesInInstall: true,
   accentColorId: null,
@@ -116,7 +117,6 @@ export function useBackgroundTheme() {
       document.documentElement.removeAttribute('data-bg-theme')
     }
     settings.value.preferredBackgroundTheme = id
-    syncSettings(settings.value)
   }
 
   return {

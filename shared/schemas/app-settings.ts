@@ -11,6 +11,7 @@ const backgroundThemeIds = Object.keys(BACKGROUND_THEMES) as [
 ]
 
 export const AppSettingsSchema = v.object({
+  theme: v.picklist(['light', 'dark', 'system']),
   relativeDates: v.boolean(),
   includeTypesInInstall: v.boolean(),
   accentColorId: v.nullable(v.picklist(accentColorIds)),

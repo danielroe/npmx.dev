@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const router = useRouter()
+
 const { settings } = useSettings()
 const { locale, locales, setLocale: setNuxti18nLocale } = useI18n()
 const colorMode = useColorMode()
@@ -32,6 +33,8 @@ defineOgImageComponent('Default', {
   description: () => $t('settings.tagline'),
   primaryColor: '#60a5fa',
 })
+
+watch(settings.value, syncSettings)
 
 const setLocale: typeof setNuxti18nLocale = locale => {
   settings.value.selectedLocale = locale
@@ -78,7 +81,6 @@ const setLocale: typeof setNuxti18nLocale = locale => {
               </label>
               <select
                 id="theme-select"
-                :value="colorMode.preference"
                 class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg cursor-pointer duration-200 transition-colors hover:border-fg-subtle"
                 @change="
                   colorMode.preference = ($event.target as HTMLSelectElement).value as
@@ -86,6 +88,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
                     | 'dark'
                     | 'system'
                 "
+                v-model="settings.theme"
               >
                 <option value="system">
                   {{ $t('settings.theme_system') }}
