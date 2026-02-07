@@ -1011,7 +1011,9 @@
       "removed": "Removed ({count})",
       "modified": "Modified ({count})"
     },
+    "search_files_placeholder": "Search files...",
     "no_files_all": "No files",
+    "no_files_search": "No files matching \"{query}\"",
     "no_files_filtered": "No {filter} files",
     "filter": {
       "added": "added",

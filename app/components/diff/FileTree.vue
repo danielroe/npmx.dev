@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { FileChange } from '#shared/types'
-import { getFileIcon } from '~/utils/file-icons'
 
 interface DiffTreeNode {
   name: string
@@ -113,11 +112,11 @@ function isExpanded(path: string): boolean {
 function getChangeIcon(type: 'added' | 'removed' | 'modified') {
   switch (type) {
     case 'added':
-      return 'i-carbon-add-alt text-green-500'
+      return 'i-octicon-diff-added-16 text-green-500'
     case 'removed':
-      return 'i-carbon-subtract-alt text-red-500'
+      return 'i-octicon-diff-removed-16 text-red-500'
     case 'modified':
-      return 'i-carbon-edit text-yellow-500'
+      return 'i-octicon-diff-modified-16 text-yellow-500'
   }
 }
 
@@ -172,8 +171,7 @@ function handleFileClick(node: DiffTreeNode) {
           :style="{ paddingLeft: `${depth * 12 + 32}px` }"
           @click="handleFileClick(node)"
         >
-          <span class="w-4 h-4 shrink-0" :class="getFileIcon(node.name)" />
-          <span class="w-3 h-3 shrink-0" :class="getChangeIcon(node.changeType!)" />
+          <span class="w-4 h-4 shrink-0" :class="getChangeIcon(node.changeType!)" />
           <span class="truncate">{{ node.name }}</span>
         </button>
       </template>

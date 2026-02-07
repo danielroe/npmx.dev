@@ -39,9 +39,18 @@ const sectionList = computed(() => {
     .sort((a, b) => a.order - b.order)
 })
 
+const fileSearch = ref('')
+
 const filteredChanges = computed(() => {
-  if (fileFilter.value === 'all') return props.allChanges
-  return props.allChanges.filter(f => f.type === fileFilter.value)
+  let files = props.allChanges
+  if (fileFilter.value !== 'all') {
+    files = files.filter(f => f.type === fileFilter.value)
+  }
+  if (fileSearch.value.trim()) {
+    const query = fileSearch.value.trim().toLowerCase()
+    files = files.filter(f => f.path.toLowerCase().includes(query))
+  }
+  return files
 })
 
 function getSemverBadgeClass(semverDiff: string | null | undefined): string {
@@ -185,33 +194,51 @@ function handleFileSelect(file: FileChange) {
         />
       </summary>
 
-      <div class="border-b border-border px-3 py-2 shrink-0 flex items-center justify-end">
-        <select
-          v-model="fileFilter"
-          :aria-label="$t('compare.filter_files_label')"
-          class="text-[10px] px-2 py-1 bg-bg-subtle border border-border rounded font-mono cursor-pointer hover:border-border-hover transition-colors"
-        >
-          <option value="all">
-            {{ $t('compare.file_filter_option.all', { count: allChanges.length }) }}
-          </option>
-          <option value="added">
-            {{ $t('compare.file_filter_option.added', { count: compare.stats.filesAdded }) }}
-          </option>
-          <option value="removed">
-            {{ $t('compare.file_filter_option.removed', { count: compare.stats.filesRemoved }) }}
-          </option>
-          <option value="modified">
-            {{ $t('compare.file_filter_option.modified', { count: compare.stats.filesModified }) }}
-          </option>
-        </select>
+      <div class="border-b border-border px-3 py-2 shrink-0 space-y-2">
+        <div class="relative">
+          <span
+            class="absolute left-2 top-1/2 -translate-y-1/2 i-carbon-search w-3 h-3 text-fg-subtle pointer-events-none"
+          />
+          <input
+            v-model="fileSearch"
+            type="search"
+            :placeholder="$t('compare.search_files_placeholder')"
+            :aria-label="$t('compare.search_files_placeholder')"
+            class="w-full text-[11px] pl-6.5 pr-2 py-1 bg-bg-subtle border border-border rounded font-mono placeholder:text-fg-subtle transition-colors hover:border-border-hover focus:border-accent focus:outline-none"
+          />
+        </div>
+        <div class="flex items-center justify-end">
+          <select
+            v-model="fileFilter"
+            :aria-label="$t('compare.filter_files_label')"
+            class="text-[10px] px-2 py-1 bg-bg-subtle border border-border rounded font-mono cursor-pointer hover:border-border-hover transition-colors"
+          >
+            <option value="all">
+              {{ $t('compare.file_filter_option.all', { count: allChanges.length }) }}
+            </option>
+            <option value="added">
+              {{ $t('compare.file_filter_option.added', { count: compare.stats.filesAdded }) }}
+            </option>
+            <option value="removed">
+              {{ $t('compare.file_filter_option.removed', { count: compare.stats.filesRemoved }) }}
+            </option>
+            <option value="modified">
+              {{
+                $t('compare.file_filter_option.modified', { count: compare.stats.filesModified })
+              }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div class="flex-1 overflow-y-auto min-h-0">
         <div v-if="filteredChanges.length === 0" class="p-8 text-center text-xs text-fg-muted">
           {{
-            fileFilter === 'all'
-              ? $t('compare.no_files_all')
-              : $t('compare.no_files_filtered', { filter: $t(`compare.filter.${fileFilter}`) })
+            fileSearch.trim()
+              ? $t('compare.no_files_search', { query: fileSearch.trim() })
+              : fileFilter === 'all'
+                ? $t('compare.no_files_all')
+                : $t('compare.no_files_filtered', { filter: $t(`compare.filter.${fileFilter}`) })
           }}
         </div>
 
