@@ -301,8 +301,7 @@
       "no_data": "No {facet} data available",
       "y_axis_label": "{granularity} {facet}",
       "items": {
-        "downloads": "Downloads",
-        "likes": "Likes"
+        "downloads": "Downloads"
       }
     },
     "downloads": {
@@ -861,7 +860,6 @@
       "add_column": "Add no dependency column to comparison"
     },
     "facets": {
-      "facet": "Facet",
       "group_label": "Comparison facets",
       "all": "all",
       "none": "none",
