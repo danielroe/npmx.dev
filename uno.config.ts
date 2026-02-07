@@ -23,7 +23,7 @@ export default defineConfig({
     presetIcons({
       extraProperties: {
         'display': 'inline-block',
-        'forced-colors-adjust': 'preserve-parent-color',
+        'forced-color-adjust': 'preserve-parent-color',
       },
       warn: true,
       scale: 1.2,
