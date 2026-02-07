@@ -223,7 +223,7 @@ const processLocale = async (
   // - target locale file forbidden: e.g. es-419.json
   if (fix && localeInfo.mergeLocale && singleLocale) {
     console.error(
-      `${COLORS.red}Error: Locale "${localeInfo.locale}" cannot be fixed, fix the ${localeInfo.lang} locale instead!.${COLORS.reset}`,
+      `${COLORS.red}Error: Locale "${localeInfo.locale}" cannot be fixed, fix the ${localeInfo.lang} locale instead!${COLORS.reset}`,
     )
     process.exit(1)
   }
