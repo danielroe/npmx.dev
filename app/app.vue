@@ -31,6 +31,8 @@ const colorScheme = computed(() => {
   }[colorMode.preference]
 })
 
+const commandBarRef = useTemplateRef('commandBarRef')
+
 useHead({
   htmlAttrs: {
     'lang': () => locale.value,
@@ -73,6 +75,16 @@ onKeyDown(
     if (isEditableElement(e.target)) return
     e.preventDefault()
     showKbdHints.value = true
+  },
+  { dedupe: true },
+)
+
+onKeyDown(
+  'k',
+  e => {
+    if (!(e.metaKey || e.ctrlKey)) return
+    e.preventDefault()
+    commandBarRef.value?.toggle()
   },
   { dedupe: true },
 )
@@ -122,6 +134,7 @@ if (import.meta.client) {
   <div class="min-h-screen flex flex-col bg-bg text-fg">
     <NuxtPwaAssets />
     <a href="#main-content" class="skip-link font-mono">{{ $t('common.skip_link') }}</a>
+    <CommandBar ref="commandBarRef" />
 
     <AppHeader :show-logo="!isHomepage" />
 
@@ -153,6 +166,7 @@ if (import.meta.client) {
   color: var(--bg);
   text-decoration: underline;
 }
+
 .skip-link:focus {
   top: 0;
 }
