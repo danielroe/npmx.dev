@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 const ALL_ENV_VARS = [
   'CONTEXT',
   'VERCEL_ENV',
-  'NUXT_ENV_URL',
+  'URL',
   'NUXT_ENV_VERCEL_URL',
   'NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL',
 ]
@@ -31,7 +31,7 @@ describe('getPreviewUrl', () => {
   })
 
   it.each([
-    ['Netlify production', { CONTEXT: 'production', NUXT_ENV_URL: 'https://prod.example.com' }],
+    ['Netlify production', { CONTEXT: 'production', URL: 'https://prod.example.com' }],
     ['Vercel production', { VERCEL_ENV: 'production', NUXT_ENV_VERCEL_URL: 'prod.example.com' }],
   ])('%s environment returns `undefined`', async (_name, envVars) => {
     for (const [key, value] of Object.entries(envVars)) {
@@ -43,29 +43,25 @@ describe('getPreviewUrl', () => {
   })
 
   it.each([
-    [
-      'Netlify dev',
-      { CONTEXT: 'dev', NUXT_ENV_URL: 'https://dev.example.com' },
-      'https://dev.example.com',
-    ],
+    ['Netlify dev', { CONTEXT: 'dev', URL: 'https://dev.example.com' }, 'https://dev.example.com'],
     [
       'Netlify deploy-preview',
       {
         CONTEXT: 'deploy-preview',
-        NUXT_ENV_URL: 'https://preview.example.com',
+        URL: 'https://preview.example.com',
       },
       'https://preview.example.com',
     ],
     [
       'Netlify branch-deploy',
-      { CONTEXT: 'branch-deploy', NUXT_ENV_URL: 'https://beta.example.com' },
+      { CONTEXT: 'branch-deploy', URL: 'https://beta.example.com' },
       'https://beta.example.com',
     ],
     [
       'Netlify preview-server',
       {
         CONTEXT: 'branch-deploy',
-        NUXT_ENV_URL: 'https://my-feat--preview.example.com',
+        URL: 'https://my-feat--preview.example.com',
       },
       'https://my-feat--preview.example.com',
     ],
@@ -113,23 +109,20 @@ describe('getProductionUrl', () => {
   })
 
   it.each([
-    ['Netlify dev', { CONTEXT: 'dev', NUXT_ENV_URL: 'https://dev.example.com' }],
+    ['Netlify dev', { CONTEXT: 'dev', URL: 'https://dev.example.com' }],
     [
       'Netlify deploy-preview',
       {
         CONTEXT: 'deploy-preview',
-        NUXT_ENV_URL: 'https://preview.example.com',
+        URL: 'https://preview.example.com',
       },
     ],
-    [
-      'Netlify branch-deploy',
-      { CONTEXT: 'branch-deploy', NUXT_ENV_URL: 'https://beta.example.com' },
-    ],
+    ['Netlify branch-deploy', { CONTEXT: 'branch-deploy', URL: 'https://beta.example.com' }],
     [
       'Netlify preview-server',
       {
         CONTEXT: 'preview-server',
-        NUXT_ENV_URL: 'https://my-feat--preview.example.com',
+        URL: 'https://my-feat--preview.example.com',
       },
     ],
     [
@@ -158,7 +151,7 @@ describe('getProductionUrl', () => {
   it.each([
     [
       'Netlify production',
-      { CONTEXT: 'production', NUXT_ENV_URL: 'https://prod.example.com' },
+      { CONTEXT: 'production', URL: 'https://prod.example.com' },
       'https://prod.example.com',
     ],
     [

@@ -60,8 +60,8 @@ export const isProduction =
  */
 export const getPreviewUrl = () =>
   isPreview
-    ? process.env.NUXT_ENV_URL
-      ? process.env.NUXT_ENV_URL
+    ? process.env.URL
+      ? process.env.URL
       : process.env.NUXT_ENV_VERCEL_URL
         ? `https://${process.env.NUXT_ENV_VERCEL_URL}`
         : undefined
@@ -80,8 +80,8 @@ export const getPreviewUrl = () =>
  */
 export const getProductionUrl = () =>
   isProduction
-    ? process.env.NUXT_ENV_URL
-      ? process.env.NUXT_ENV_URL
+    ? process.env.URL
+      ? process.env.URL
       : process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL
         ? `https://${process.env.NUXT_ENV_VERCEL_PROJECT_PRODUCTION_URL}`
         : undefined
