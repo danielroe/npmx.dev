@@ -2,13 +2,13 @@
   "seo": {
     "home": {
       "title": "npmx - npmレジストリのためのパッケージブラウザ",
-      "description": "優れたnpmレジストリブラウザ。モダンなインターフェイスでパッケージの検索、閲覧、探索が可能です。"
+      "description": "高速でモダンなnpmレジストリブラウザ。モダンなインターフェイスでパッケージの検索、閲覧、探索が可能です。"
     }
   },
   "version": "バージョン",
   "built_at": "ビルド {0}",
   "alt_logo": "npmxロゴ",
-  "tagline": "優れたnpmレジストリブラウザ",
+  "tagline": "高速でモダンなnpmレジストリブラウザ",
   "non_affiliation_disclaimer": "npm, Inc.とは関係ありません。",
   "trademark_disclaimer": "npmはnpm, Inc.の登録商標です。当サイトはnpm, Inc.とは関係ありません。",
   "footer": {
@@ -222,7 +222,7 @@
         "warning": "警告",
         "caution": "注意"
       },
-      "copy_as_markdown": "EN TEXT TO REPLACE: Copy README as Markdown"
+      "copy_as_markdown": "READMEをMarkdownとしてコピーする"
     },
     "provenance_section": {
       "title": "Provenance",
@@ -932,8 +932,8 @@
           "description": "1週間のダウンロード数"
         },
         "totalLikes": {
-          "label": "EN TEXT TO REPLACE: Likes",
-          "description": "EN TEXT TO REPLACE: Number of likes"
+          "label": "いいね",
+          "description": "いいねの合計数"
         },
         "lastUpdated": {
           "label": "公開日",
