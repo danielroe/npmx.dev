@@ -22,7 +22,8 @@ export default defineConfig({
     presetWind4(),
     presetIcons({
       extraProperties: {
-        display: 'inline-block',
+        'display': 'inline-block',
+        'forced-colors-adjust': 'preserve-parent-color',
       },
       warn: true,
       scale: 1.2,

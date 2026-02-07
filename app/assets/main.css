@@ -155,6 +155,14 @@
   }
 }
 
+/* Keep icon masks visible when Windows forced colors overrides theme tokens. */
+@media (forced-colors: active) {
+  :where([class^='i-'], [class*=' i-']) {
+    forced-color-adjust: none;
+    color: CanvasText;
+  }
+}
+
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
