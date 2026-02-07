@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CompareResponse, FileChange } from '#shared/types'
+import { packageRoute } from '~/utils/router'
 
 const props = defineProps<{
   compare: CompareResponse
@@ -141,7 +142,7 @@ function handleFileSelect(file: FileChange) {
               />
 
               <NuxtLink
-                :to="`/${dep.name}`"
+                :to="packageRoute(dep.name)"
                 class="font-mono hover:text-fg transition-colors truncate min-w-0"
               >
                 {{ dep.name }}

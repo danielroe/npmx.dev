@@ -208,7 +208,7 @@ function formatBytes(bytes: number | undefined): string {
 
 // Build code browser URL
 function getCodeUrl(version: string): string {
-  return `/code/${props.packageName}/v/${version}/${props.file.path}`
+  return `/package-code/${props.packageName}/v/${version}/${props.file.path}`
 }
 </script>
 

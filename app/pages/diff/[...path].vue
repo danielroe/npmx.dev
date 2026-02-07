@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CompareResponse, FileChange } from '#shared/types'
+import { packageRoute } from '~/utils/router'
 
 definePageMeta({
   name: 'diff',
@@ -109,16 +110,6 @@ const toVersionUrlPattern = computed(() => {
   return `/diff/${packageName.value}/v/${fromVersion.value}...{version}`
 })
 
-function packageRoute(ver?: string | null) {
-  const segments = packageName.value.split('/')
-  const org = segments.length > 1 ? segments[0] : undefined
-  const name = segments.length > 1 ? segments[1]! : segments[0]!
-  if (ver) {
-    return { name: 'package-version' as const, params: { org, name, version: ver } }
-  }
-  return { name: 'package' as const, params: { org, name } }
-}
-
 useSeoMeta({
   title: () => {
     if (fromVersion.value && toVersion.value) {
@@ -139,7 +130,7 @@ useSeoMeta({
         <!-- Package info -->
         <div class="flex items-center gap-2 mb-3 flex-wrap min-w-0">
           <NuxtLink
-            :to="packageRoute()"
+            :to="packageRoute(packageName)"
             class="font-mono text-lg font-medium hover:text-fg transition-colors min-w-0 truncate"
           >
             {{ packageName }}
@@ -186,7 +177,7 @@ useSeoMeta({
       <p class="text-fg-muted mb-4">
         Invalid comparison URL. Use format: /diff/package/v/from...to
       </p>
-      <NuxtLink :to="packageRoute()" class="btn">Go to package</NuxtLink>
+      <NuxtLink :to="packageRoute(packageName)" class="btn">Go to package</NuxtLink>
     </div>
 
     <!-- Loading state -->
@@ -198,7 +189,7 @@ useSeoMeta({
     <!-- Error state -->
     <div v-else-if="compareStatus === 'error'" class="container py-20 text-center" role="alert">
       <p class="text-fg-muted mb-4">Failed to compare versions</p>
-      <NuxtLink :to="packageRoute()" class="btn">Back to package</NuxtLink>
+      <NuxtLink :to="packageRoute(packageName)" class="btn">Back to package</NuxtLink>
     </div>
 
     <!-- Comparison content -->
