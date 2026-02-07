@@ -1,3 +1,9 @@
 {
-  "recommendations": ["oxc.oxc-vscode", "Vue.volar", "lokalise.i18n-ally", "antfu.unocss"]
+  "recommendations": [
+    "oxc.oxc-vscode",
+    "Vue.volar",
+    "lokalise.i18n-ally",
+    "antfu.unocss",
+    "andywang.vscode-scriptmonkey"
+  ]
 }
