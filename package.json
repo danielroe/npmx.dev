@@ -67,7 +67,6 @@
     "@unocss/nuxt": "66.6.0",
     "@unocss/preset-wind4": "66.6.0",
     "@upstash/redis": "1.36.1",
-    "@vercel/kv": "3.0.0",
     "@vite-pwa/assets-generator": "1.0.2",
     "@vite-pwa/nuxt": "1.1.0",
     "@voidzero-dev/vite-plus-core": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",

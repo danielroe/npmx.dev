@@ -98,9 +98,6 @@ importers:
       '@upstash/redis':
         specifier: 1.36.1
         version: 1.36.1
-      '@vercel/kv':
-        specifier: 3.0.0
-        version: 3.0.0
       '@vite-pwa/assets-generator':
         specifier: 1.0.2
         version: 1.0.2
@@ -14051,6 +14048,7 @@ snapshots:
   '@vercel/kv@3.0.0':
     dependencies:
       '@upstash/redis': 1.36.1
+    optional: true
 
   '@vercel/nft@1.3.0(rollup@4.57.0)':
     dependencies:
