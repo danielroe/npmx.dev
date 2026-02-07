@@ -26,7 +26,7 @@ export default defineCachedEventHandler(
         `${NPM_REGISTRY}/${encodedName}${versionSuffix}`,
       )
 
-      return await detectHasChangelog(pkg)
+      return !!(await detectHasChangelog(pkg))
     } catch (error) {
       handleApiError(error, {
         statusCode: 502,

@@ -119,8 +119,6 @@ const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersi
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 const { data: hasChangelog } = usePackageHasChangelog(packageName, requestedVersion)
 
-watchEffect(() => console.log('hasChangelog', hasChangelog.value))
-
 const {
   data: resolvedVersion,
   status: versionStatus,
@@ -759,13 +757,15 @@ onKeyStroke(
                 {{ $t('package.links.issues') }}
               </a>
             </li>
-            <NuxtLink
-              v-if="hasChangelog"
-              class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-            >
-              <span class="i-carbon:catalog w-4 h-4" aria-hidden="true" />
-              {{ $t('package.links.changelog') }}
-            </NuxtLink>
+            <li>
+              <NuxtLink
+                v-if="hasChangelog"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-carbon:warning w-4 h-4" aria-hidden="true" />
+                {{ $t('package.links.changelog') }}
+              </NuxtLink>
+            </li>
             <li>
               <a
                 :href="`https://www.npmjs.com/package/${pkg.name}`"
