@@ -114,6 +114,8 @@ defineExpose({ focus })
             :placeholder="$t('search.placeholder')"
             noCorrect
             class="w-full min-w-25 ps-7"
+            @focus="isSearchFocused = true"
+            @blur="isSearchFocused = false"
           />
           <button type="submit" class="sr-only">{{ $t('search.button') }}</button>
         </div>

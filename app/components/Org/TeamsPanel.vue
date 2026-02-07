@@ -504,6 +504,7 @@ watch(lastExecutionTime, () => {
               {{ orgName }}:
             </span>
             <label for="new-team-name" class="sr-only">{{ $t('org.teams.team_name_label') }}</label>
+            <!-- rtl-check-ignore -->
             <InputBase
               id="new-team-name"
               v-model="newTeamName"
@@ -511,7 +512,7 @@ watch(lastExecutionTime, () => {
               name="new-team-name"
               :placeholder="$t('org.teams.team_name_placeholder')"
               noCorrect
-              class="flex-1 min-w-25 rounded-l-none"
+              class="flex-1 min-w-25 rounded-is-none"
               size="medium"
             />
           </div>
