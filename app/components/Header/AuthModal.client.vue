@@ -5,6 +5,22 @@ import { authRedirect } from '~/utils/atproto/helpers'
 const handleInput = shallowRef('')
 const route = useRoute()
 const { user, logout } = useAtproto()
+const { settings } = useSettings()
+
+// TODO probably need to work out some kind of hashing so it doesnt get -> post
+// TODO also need to figure out how to sync things like locale and theme
+watch(
+  user,
+  async loggedInUser => {
+    if (!loggedInUser) return
+
+    const remote = await $fetch('/api/auth/settings')
+    if (remote) {
+      Object.assign(settings.value, remote)
+    }
+  },
+  { immediate: true },
+)
 
 // https://atproto.com supports 4 locales as of 2026-02-07
 const { locale } = useI18n()

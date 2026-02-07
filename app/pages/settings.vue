@@ -5,6 +5,7 @@ const { settings } = useSettings()
 const { locale, locales, setLocale: setNuxti18nLocale } = useI18n()
 const colorMode = useColorMode()
 const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
+const { user } = useAtproto()
 
 // Escape to go back (but not when focused on form elements or modal is open)
 onKeyStroke(
@@ -34,7 +35,11 @@ defineOgImageComponent('Default', {
   primaryColor: '#60a5fa',
 })
 
-watch(settings.value, syncSettings)
+watch(settings.value, async () => {
+  if (!user.value) return
+
+  await syncSettings(settings.value)
+})
 
 const setLocale: typeof setNuxti18nLocale = locale => {
   settings.value.selectedLocale = locale
