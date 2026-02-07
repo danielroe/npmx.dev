@@ -117,7 +117,7 @@ function getColumnLabelKey(id: ColumnId): string {
             scope="col"
             class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
-              'cursor-pointer hover:text-fg transition-colors duration-200': isSortable('name'),
+              'hover:text-fg transition-colors duration-200': isSortable('name'),
             }"
             :aria-sort="
               isColumnSorted('name')
@@ -167,8 +167,7 @@ function getColumnLabelKey(id: ColumnId): string {
             scope="col"
             class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
-              'cursor-pointer hover:text-fg transition-colors duration-200':
-                isSortable('downloads'),
+              'hover:text-fg transition-colors duration-200': isSortable('downloads'),
             }"
             :aria-sort="
               isColumnSorted('downloads')
@@ -202,7 +201,7 @@ function getColumnLabelKey(id: ColumnId): string {
             scope="col"
             class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
-              'cursor-pointer hover:text-fg transition-colors duration-200': isSortable('updated'),
+              'hover:text-fg transition-colors duration-200': isSortable('updated'),
             }"
             :aria-sort="
               isColumnSorted('updated')
