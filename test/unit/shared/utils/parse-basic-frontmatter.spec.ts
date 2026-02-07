@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import fc from 'fast-check'
 import { parseBasicFrontmatter } from '../../../../shared/utils/parse-basic-frontmatter'
 
 describe('parseBasicFrontmatter', () => {
@@ -104,5 +105,110 @@ describe('parseBasicFrontmatter', () => {
       published: true,
       tags: ['a', 'b'],
     })
+  })
+
+  it.fails('handles string numerics as strings', () => {
+    const input = "---\nid: '42'\n---"
+    expect(parseBasicFrontmatter(input)).toEqual({ id: '42' })
+  })
+
+  it.fails('handles numbers using scientific notation', () => {
+    const input = '---\nprice: 1e+50\n---'
+    expect(parseBasicFrontmatter(input)).toEqual({ price: 1e50 })
+  })
+
+  it.fails('handles escaped double quote', () => {
+    const input = '---\nquote: "He said, \\"Hello\\""\n---'
+    expect(parseBasicFrontmatter(input)).toEqual({ quote: 'He said, "Hello"' })
+  })
+
+  it('strips leading and trailing whitespace', () => {
+    const input = '---\ntext:   Something to say    \n---'
+    expect(parseBasicFrontmatter(input)).toEqual({ text: 'Something to say' })
+  })
+
+  it.fails('handles numeric in arrays', () => {
+    const input = '---\ntags: [1, 2]\n---'
+    expect(parseBasicFrontmatter(input)).toEqual({ tags: [1, 2] })
+  })
+
+  it('handles strings with array like content', () => {
+    const input = '---\ntext: Read the content of this array [1, 2, 3]\n---'
+    expect(parseBasicFrontmatter(input)).toEqual({
+      text: 'Read the content of this array [1, 2, 3]',
+    })
+  })
+
+  it.fails('handles quoted strings with array as content', () => {
+    const input = '---\nvalue: "[123]"\n---'
+    expect(parseBasicFrontmatter(input)).toEqual({ value: '[123]' })
+  })
+
+  it.fails('handles string with commas when quoted in arrays', () => {
+    const input = '---\ntags: ["foo, bar", "baz"]\n---'
+    expect(parseBasicFrontmatter(input)).toEqual({ tags: ['foo, bar', 'baz'] })
+  })
+
+  it('should parse back every key-value pair from generated frontmatter', () => {
+    const keyArb = fc.stringMatching(/^[a-zA-Z][a-zA-Z0-9_]*$/)
+    const singleValueArbs = (inArray: boolean) =>
+      // for arrays: all values get parsed as strings and there should not be any comma in the value even for quoted strings
+      [
+        // For boolean values
+        fc.boolean().map(b => ({ raw: `${b}`, expected: inArray ? `${b}` : b })),
+        // For number values
+        fc
+          .oneof(
+            // no support for -0
+            fc.constant(0),
+            // no support for scientific notation
+            // anything <0.000001 will be displayed in scientific notation, and anything >999999999999999900000 too
+            fc.double({ min: 0.000001, max: 999999999999999900000, noNaN: true }),
+            fc.double({ min: -999999999999999900000, max: -0.000001, noNaN: true }),
+          )
+          .map(n => ({ raw: `${n}`, expected: inArray ? `${n}` : n })),
+        // For string values
+        fc.oneof(
+          fc
+            .stringMatching(inArray ? /^[^',]*$/ : /^[^']*$/) // single-quoted string
+            .filter(v => Number.isNaN(Number(v))) // numbers, even quoted ones, get parsed as numbers
+            .map(v => ({ raw: `'${v}'`, expected: v })),
+          fc
+            .stringMatching(inArray ? /^[^",]*$/ : /^[^"]*$/) // double-quoted string
+            .filter(v => Number.isNaN(Number(v)))
+            .map(v => ({ raw: `"${v}"`, expected: v })),
+          fc // need to forbid [, ', " or space as first character
+            .stringMatching(inArray ? /^[^,]+$/ : /^.+$/) // leading and trailing whitespace are ignored for unquoted strings
+            .filter(v => Number.isNaN(Number(v)))
+            .map(v => v.trim())
+            .map(v => ({ raw: `'${v}'`, expected: v })),
+        ),
+      ]
+    const valueArb = fc.oneof(
+      ...singleValueArbs(false),
+      fc
+        .array(fc.oneof(...singleValueArbs(true)), { minLength: 1 }) // all values get read as strings, no support to empty arrays
+        .map(arr => ({
+          raw: `[${arr.map(v => v.raw).join(', ')}]`,
+          expected: arr.map(v => v.expected),
+        })),
+    )
+    const frontmatterContentArb = fc.dictionary(keyArb, valueArb).map(dict => {
+      const entries = Object.entries(dict).map(([key, { raw, expected }]) => ({
+        key,
+        raw: `${key}: ${raw}`,
+        expected,
+      }))
+      return {
+        raw: `---\n${entries.map(e => e.raw).join('\n')}\n---\n`,
+        expected: Object.fromEntries(entries.map(e => [e.key, e.expected])),
+      }
+    })
+    fc.assert(
+      fc.property(frontmatterContentArb, ({ raw, expected }) => {
+        expect(parseBasicFrontmatter(raw)).toEqual(expected)
+      }),
+      { numRuns: 10000, endOnFailure: true },
+    )
   })
 })
