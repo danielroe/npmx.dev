@@ -1292,6 +1292,9 @@ onKeyStroke(
 
 .area-readme {
   grid-area: readme;
+}
+
+.area-readme > .readme {
   overflow-x: hidden;
 }
 
