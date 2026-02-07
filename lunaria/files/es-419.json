@@ -385,6 +385,11 @@
       "published": "Recientemente publicado",
       "name_asc": "Nombre (A-Z)",
       "name_desc": "Nombre (Z-A)"
+    },
+    "size": {
+      "b": "{size} B",
+      "kb": "{size} kB",
+      "mb": "{size} MB"
     }
   },
   "connector": {
@@ -835,9 +840,7 @@
       "searching": "Buscando...",
       "remove_package": "Eliminar {package}",
       "packages_selected": "{count}/{max} paquetes seleccionados.",
-      "add_hint": "Añade al menos 2 paquetes para comparar.",
-      "loading_versions": "Cargando versiones...",
-      "select_version": "Seleccionar versión"
+      "add_hint": "Añade al menos 2 paquetes para comparar."
     },
     "no_dependency": {
       "label": "(Sin dependencia)",
@@ -884,6 +887,10 @@
         "downloads": {
           "label": "Descargas/sem",
           "description": "Recuento de descargas semanales"
+        },
+        "totalLikes": {
+          "label": "Me gusta",
+          "description": "Número de me gusta"
         },
         "lastUpdated": {
           "label": "Publicado",
@@ -932,7 +939,6 @@
     "last_updated": "Última actualización: {date}",
     "welcome": "Bienvenido a {app}. Estamos comprometidos con la protección de tu privacidad. Esta política explica qué datos recopilamos, cómo los usamos y tus derechos con respecto a tu información.",
     "cookies": {
-      "title": "Cookies",
       "what_are": {
         "title": "¿Qué son las cookies?",
         "p1": "Las cookies son pequeños archivos de texto que se almacenan en tu dispositivo cuando visitas un sitio web. Su propósito es mejorar tu experiencia de navegación recordando ciertas preferencias y configuraciones."
