@@ -41,8 +41,9 @@ export default defineConfig({
       sans: "'Geist', system-ui, -apple-system, sans-serif",
     },
     text: {
-      // This should add to the existing Wind4 preset text sizes
-      xxs: { fontSize: '0.625rem' },
+      '2xs': { fontSize: '0.625rem' },
+      '3xs': { fontSize: '0.5625rem' },
+      '4xs': { fontSize: '0.5rem' },
     },
     colors: {
       // Minimal black & white palette with subtle grays
