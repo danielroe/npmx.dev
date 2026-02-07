@@ -124,7 +124,7 @@ watch(
 const dataset = computed(() =>
   weeklyDownloads.value.map(d => ({
     value: d?.downloads ?? 0,
-    period: $t('package.downloads.date_range', {
+    period: $t('package.trends.date_range', {
       start: d.weekStart ?? '-',
       end: d.weekEnd ?? '-',
     }),
