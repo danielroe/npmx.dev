@@ -6,17 +6,32 @@ const handleInput = shallowRef('')
 const route = useRoute()
 const { user, logout } = useAtproto()
 const { settings } = useSettings()
+const colorMode = useColorMode()
+const { setLocale, locales, locale } = useI18n()
 
-// TODO probably need to work out some kind of hashing so it doesnt get -> post
-// TODO also need to figure out how to sync things like locale and theme
+//TODO need to check them all and idk if this is the spot for it
 watch(
   user,
   async loggedInUser => {
     if (!loggedInUser) return
 
     const remote = await $fetch('/api/auth/settings')
-    if (remote) {
-      Object.assign(settings.value, remote)
+    if (!remote) return
+
+    Object.assign(settings.value, remote)
+
+    // Sync theme with colorMode
+    if (remote.theme) {
+      colorMode.preference = remote.theme
+    }
+
+    // Sync locale if it's valid and different from current
+    if (
+      remote.selectedLocale &&
+      remote.selectedLocale !== locale.value &&
+      locales.value.map(l => l.code).includes(remote.selectedLocale)
+    ) {
+      setLocale(remote.selectedLocale)
     }
   },
   { immediate: true },
