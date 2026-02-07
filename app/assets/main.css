@@ -159,8 +159,8 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  scroll-padding-top: 5rem;
   /* Offset for fixed header - otherwise anchor headers are cutted */
+  scroll-padding-top: 5rem;
   scrollbar-gutter: stable;
 }
 
