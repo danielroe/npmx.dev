@@ -81,13 +81,9 @@ const sortedOptionalDependencies = computed(() => {
           :key="dep"
           class="flex items-center justify-between py-1 text-sm gap-2"
         >
-          <NuxtLink
-            :to="packageRoute(dep)"
-            class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0 flex-1"
-            dir="ltr"
-          >
+          <LinkBase :to="packageRoute(dep)" dir="ltr">
             {{ dep }}
-          </NuxtLink>
+          </LinkBase>
           <span class="flex items-center gap-1 max-w-[40%]" dir="ltr">
             <span
               v-if="outdatedDeps[dep]"
@@ -98,33 +94,33 @@ const sortedOptionalDependencies = computed(() => {
             >
               <span class="i-carbon:warning-alt w-3 h-3" />
             </span>
-            <NuxtLink
+            <LinkBase
               v-if="getVulnerableDepInfo(dep)"
               :to="packageRoute(dep, getVulnerableDepInfo(dep)!.version)"
               class="shrink-0"
               :class="SEVERITY_TEXT_COLORS[getHighestSeverity(getVulnerableDepInfo(dep)!.counts)]"
               :title="`${getVulnerableDepInfo(dep)!.counts.total} vulnerabilities`"
+              classicon="i-carbon:security"
             >
-              <span class="i-carbon:security w-3 h-3" aria-hidden="true" />
               <span class="sr-only">{{ $t('package.dependencies.view_vulnerabilities') }}</span>
-            </NuxtLink>
-            <NuxtLink
+            </LinkBase>
+            <LinkBase
               v-if="getDeprecatedDepInfo(dep)"
               :to="packageRoute(dep, getDeprecatedDepInfo(dep)!.version)"
               class="shrink-0 text-purple-500"
               :title="getDeprecatedDepInfo(dep)!.message"
+              classicon="i-carbon:warning-hex"
             >
-              <span class="i-carbon-warning-hex w-3 h-3" aria-hidden="true" />
               <span class="sr-only">{{ $t('package.deprecated.label') }}</span>
-            </NuxtLink>
-            <NuxtLink
+            </LinkBase>
+            <LinkBase
               :to="packageRoute(dep, version)"
-              class="font-mono text-xs text-end truncate"
+              class="truncate"
               :class="getVersionClass(outdatedDeps[dep])"
               :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep], $t) : version"
             >
               {{ version }}
-            </NuxtLink>
+            </LinkBase>
             <span v-if="outdatedDeps[dep]" class="sr-only">
               ({{ getOutdatedTooltip(outdatedDeps[dep], $t) }})
             </span>
@@ -165,29 +161,21 @@ const sortedOptionalDependencies = computed(() => {
           class="flex items-center justify-between py-1 text-sm gap-1 min-w-0"
         >
           <div class="flex items-center gap-1 min-w-0 flex-1">
-            <NuxtLink
-              :to="packageRoute(peer.name)"
-              class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate"
-              dir="ltr"
-            >
+            <LinkBase :to="packageRoute(peer.name)" class="truncate" dir="ltr">
               {{ peer.name }}
-            </NuxtLink>
-            <span
-              v-if="peer.optional"
-              class="px-1 py-0.5 font-mono text-[10px] text-fg-subtle bg-bg-muted border border-border rounded shrink-0"
-              :title="$t('package.dependencies.optional')"
-            >
+            </LinkBase>
+            <TagStatic v-if="peer.optional" :title="$t('package.dependencies.optional')">
               {{ $t('package.dependencies.optional') }}
-            </span>
+            </TagStatic>
           </div>
-          <NuxtLink
+          <LinkBase
             :to="packageRoute(peer.name, peer.version)"
-            class="font-mono text-xs text-fg-subtle max-w-[40%] truncate"
+            class="truncate"
             :title="peer.version"
             dir="ltr"
           >
             {{ peer.version }}
-          </NuxtLink>
+          </LinkBase>
         </li>
       </ul>
       <button
@@ -226,27 +214,18 @@ const sortedOptionalDependencies = computed(() => {
           :key="dep"
           class="flex items-center justify-between py-1 text-sm gap-2"
         >
-          <NuxtLink
-            :to="packageRoute(dep)"
-            class="font-mono text-fg-muted hover:text-fg transition-colors duration-200 truncate min-w-0 flex-1"
-            dir="ltr"
-          >
+          <LinkBase :to="packageRoute(dep)" class="truncate" dir="ltr">
             {{ dep }}
-          </NuxtLink>
-          <NuxtLink
-            :to="packageRoute(dep, version)"
-            class="font-mono text-xs text-fg-subtle max-w-[40%] text-end truncate"
-            :title="version"
-            dir="ltr"
-          >
+          </LinkBase>
+          <LinkBase :to="packageRoute(dep, version)" class="truncate" :title="version" dir="ltr">
             {{ version }}
-          </NuxtLink>
+          </LinkBase>
         </li>
       </ul>
       <button
         v-if="sortedOptionalDependencies.length > 10 && !optionalDepsExpanded"
         type="button"
-        class="mt-2 font-mono text-xs text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
+        class="mt-2 truncate"
         @click="optionalDepsExpanded = true"
       >
         {{

@@ -211,15 +211,15 @@ const config = computed(() => {
   <div class="space-y-8">
     <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
       <template #actions>
-        <button
+        <ButtonBase
           type="button"
           @click="openChartModal"
           class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
           :title="$t('package.downloads.analyze')"
+          classicon="i-carbon:data-analytics"
         >
-          <span class="i-carbon:data-analytics w-4 h-4" aria-hidden="true" />
           <span class="sr-only">{{ $t('package.downloads.analyze') }}</span>
-        </button>
+        </ButtonBase>
       </template>
 
       <div class="w-full overflow-hidden">
