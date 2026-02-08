@@ -14,7 +14,7 @@ const props = withDefaults(
   <component
     :is="as"
     class="bg-bg-muted text-fg-muted inline-flex gap-x-1 items-center justify-center font-mono border border-gray-400 dark:border-gray-500 rounded-md text-xs px-2 py-0.5"
-    :class="{ 'opacity-80 border-style-dashed': variant === 'ghost' }"
+    :class="{ 'opacity-80 border-dashed': variant === 'ghost' }"
   >
     <span v-if="classicon" :class="['size-3', classicon]" aria-hidden="true" />
     <slot />
