@@ -12,6 +12,7 @@ const props = withDefaults(
       'type'?: never
       'variant'?: 'button-primary' | 'button-secondary' | 'link'
       'size'?: 'small' | 'medium'
+      'class'?: string
 
       'keyshortcut'?: string
 
@@ -62,7 +63,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
   <span
     v-if="disabled"
     :class="{
-      'opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border  border-red rounded-md':
+      'opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border  rounded-md':
         isButton,
       'text-sm px-4 py-2': isButtonMedium,
       'text-xs px-2 py-0.5': isButtonSmall,
@@ -88,7 +89,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
         'text-fg bg-transparent hover:(bg-fg/10 border-fg/10)': variant === 'button-secondary',
         'text-bg bg-fg border-fg hover:(bg-fg/80)': variant === 'button-primary',
       },
-      $attrs.class,
+      props.class,
     ]"
     :to="to"
     :aria-keyshortcuts="keyshortcut"
