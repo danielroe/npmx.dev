@@ -55,7 +55,7 @@ and opened 49 pull requests in a single day. And this showed no signs of slowing
 [community had contributed 1000 issues and PRs](https://github.com/npmx-dev/npmx.dev/issues/1000) to the project. The
 statistics tell a story of _one pull request or issue every 20 minutes_, around the clock, which equated to **over a
 million seconds of project activity in 14 days**. We don't know how the exact statistics compare, but with
-[ADD_NUMBER_HERE contributors](https://github.com/npmx-dev/npmx.dev/graphs/contributors) to npmx to date, and 1500 stars on the project in just 16 days, we hypothesise that this might be the most active early open-source
+[ADD_NUMBER_HERE contributors](https://github.com/npmx-dev/npmx.dev/graphs/contributors) to npmx to date, and 1500 stars on the project in just 16 days, we hypothesize that this might be the most active early open-source
 project yet.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=npmx-dev/npmx.dev&type=date&legend=top-left)](https://www.star-history.com/#npmx-dev/npmx.dev&type=date&legend=top-left)
