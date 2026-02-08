@@ -1,12 +1,14 @@
+import type { ChangelogReleaseInfo } from '~~/shared/types/changelog'
+import { type RepoRef, parseRepoUrl } from '~~/shared/utils/git-providers'
 import type { ExtendedPackageJson } from '~~/shared/utils/package-analysis'
-import { parseRepoUrl, type RepoRef } from '~~/shared/utils/git-providers'
+// ChangelogInfo
 
 /**
  * Detect whether changelogs/releases are available for this package
  *
  * first checks if releases are available and then changelog.md
  */
-export async function detectHasChangelog(
+export async function detectChangelog(
   pkg: ExtendedPackageJson,
   // packageName: string,
   // version: string,
@@ -20,18 +22,16 @@ export async function detectHasChangelog(
     return false
   }
 
-  if (await checkReleases(repoRef)) {
-    return true
-  }
+  const releaseInfo = await checkReleases(repoRef)
 
-  return checkChangelogFile(repoRef)
+  return releaseInfo || checkChangelogFile(repoRef)
 }
 
 /**
  * check whether releases are being used with this repo
  * @returns true if in use
  */
-async function checkReleases(ref: RepoRef): Promise<boolean> {
+async function checkReleases(ref: RepoRef): Promise<ChangelogReleaseInfo | false> {
   const checkUrls = getLatestReleaseUrl(ref)
 
   for (const checkUrl of checkUrls ?? []) {
@@ -45,7 +45,11 @@ async function checkReleases(ref: RepoRef): Promise<boolean> {
       .then(r => r.ok)
       .catch(() => false)
     if (exists) {
-      return true
+      return {
+        provider: ref.provider,
+        type: 'release',
+        repo: `${ref.owner}/${ref.repo}`,
+      }
     }
   }
   return false

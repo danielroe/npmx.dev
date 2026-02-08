@@ -118,7 +118,7 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
-const { data: hasChangelog } = usePackageHasChangelog(packageName, requestedVersion)
+const { data: hasChangelog } = usePackageChangelog(packageName, requestedVersion)
 
 const {
   data: resolvedVersion,
@@ -745,8 +745,11 @@ onKeyStroke(
                 {{ $t('package.links.issues') }}
               </LinkBase>
             </li>
-            <li v-if="hasChangelog">
-              <LinkBase classicon="i-carbon:warning">
+            <li v-if="!!hasChangelog && resolvedVersion">
+              <LinkBase
+                classicon="i-carbon:warning"
+                :to="{ name: 'changes', params: { path: [pkg.name, 'v', resolvedVersion] } }"
+              >
                 {{ $t('package.links.changelog') }}
               </LinkBase>
             </li>

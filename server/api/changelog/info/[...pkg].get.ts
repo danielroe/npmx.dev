@@ -1,12 +1,9 @@
 import type { ExtendedPackageJson } from '#shared/utils/package-analysis'
 import { PackageRouteParamsSchema } from '#shared/schemas/package'
-import {
-  ERROR_PACKAGE_HAS_CHANGELOG,
-  NPM_REGISTRY,
-  CACHE_MAX_AGE_ONE_DAY,
-} from '#shared/utils/constants'
+import { ERROR_PACKAGE_DETECT_CHANGELOG, NPM_REGISTRY } from '#shared/utils/constants'
 import * as v from 'valibot'
-import { detectHasChangelog } from '~~/server/utils/has-changelog'
+import { detectChangelog } from '~~/server/utils/changelog/detectChangelog'
+// CACHE_MAX_AGE_ONE_DAY,
 
 export default defineCachedEventHandler(
   async event => {
@@ -26,20 +23,20 @@ export default defineCachedEventHandler(
         `${NPM_REGISTRY}/${encodedName}${versionSuffix}`,
       )
 
-      return !!(await detectHasChangelog(pkg))
+      return await detectChangelog(pkg)
     } catch (error) {
       handleApiError(error, {
         statusCode: 502,
-        message: ERROR_PACKAGE_HAS_CHANGELOG,
+        message: ERROR_PACKAGE_DETECT_CHANGELOG,
       })
     }
   },
-  {
-    maxAge: CACHE_MAX_AGE_ONE_DAY, // 24 hours - analysis rarely changes
-    swr: true,
-    getKey: event => {
-      const pkg = getRouterParam(event, 'pkg') ?? ''
-      return `changelog:v1:${pkg.replace(/\/+$/, '').trim()}`
-    },
-  },
+  // {
+  //   maxAge: CACHE_MAX_AGE_ONE_DAY, // 24 hours - analysis rarely changes
+  //   swr: true,
+  //   getKey: event => {
+  //     const pkg = getRouterParam(event, 'pkg') ?? ''
+  //     return `changelog:v1:${pkg.replace(/\/+$/, '').trim()}`
+  //   },
+  // },
 )
