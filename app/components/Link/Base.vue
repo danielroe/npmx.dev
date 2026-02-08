@@ -12,7 +12,7 @@ const props = withDefaults(
       type?: never
       variant?: 'button-primary' | 'button-secondary' | 'link'
       size?: 'small' | 'medium'
-      'iconSize'?: 'sm' | 'md' | 'lg'
+      iconSize?: 'sm' | 'md' | 'lg'
 
       ariaKeyshortcuts?: string
 
