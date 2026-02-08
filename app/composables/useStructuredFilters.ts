@@ -118,6 +118,14 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
   const { t } = useI18n()
 
   const searchQuery = shallowRef(normalizeSearchParam(route.query.q))
+
+  // Filter state - must be declared before the watcher that uses it
+  const filters = ref<StructuredFilters>({
+    ...DEFAULT_FILTERS,
+    ...initialFilters,
+  })
+
+  // Watch route query changes and sync filter state
   watch(
     () => route.query.q,
     urlQuery => {
@@ -125,14 +133,20 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
       if (searchQuery.value !== value) {
         searchQuery.value = value
       }
-    },
-  )
 
-  // Filter state
-  const filters = ref<StructuredFilters>({
-    ...DEFAULT_FILTERS,
-    ...initialFilters,
-  })
+      // Sync filters with URL
+      // When URL changes (e.g. from search input or navigation),
+      // we need to update our local filter state to match
+      const parsed = parseSearchOperators(value)
+
+      filters.value.text = parsed.text ?? ''
+      filters.value.keywords = [...(parsed.keywords ?? [])]
+
+      // Note: We intentionally don't reset other filters (security, downloadRange, etc.)
+      // as those are not typically driven by the search query string structure
+    },
+    { immediate: true },
+  )
 
   // Sort state
   const sortOption = shallowRef<SortOption>(initialSort ?? 'updated-desc')
