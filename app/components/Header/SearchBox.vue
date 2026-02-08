@@ -28,39 +28,23 @@ const searchQuery = shallowRef(normalizeSearchParam(route.query.q))
 // Pages that have their own local filter using ?q
 const pagesWithLocalFilter = new Set(['~username', 'org'])
 
-// Debounced URL update for search query
 const updateUrlQuery = debounce((value: string) => {
-  // Don't navigate away from pages that use ?q for local filtering
-  if (pagesWithLocalFilter.has(route.name as string)) {
-    return
-  }
   if (route.name === 'search') {
     router.replace({ query: { q: value || undefined } })
-    return
   }
-  if (!value) {
-    return
-  }
-
-  router.push({
-    name: 'search',
-    query: {
-      q: value,
-    },
-  })
 }, 250)
 
-// Watch input and debounce URL updates
-watch(searchQuery, value => {
-  updateUrlQuery(value)
+watch(searchQuery, (value) => {
+  if (route.name === 'search') {
+    updateUrlQuery(value)
+  }
 })
 
 // Sync input with URL when navigating (e.g., back button)
 watch(
   () => route.query.q,
-  urlQuery => {
-    // Don't sync from pages that use ?q for local filtering
-    if (pagesWithLocalFilter.has(route.name as string)) {
+  (urlQuery) => {
+    if (pagesWithLocalFilter.has(route.name)) {
       return
     }
     const value = normalizeSearchParam(urlQuery)
@@ -80,15 +64,25 @@ function handleSearchFocus() {
 }
 
 function handleSubmit() {
-  if (pagesWithLocalFilter.has(route.name as string)) {
+  const query = searchQuery.value.trim()
+  if (pagesWithLocalFilter.has(route.name)) {
     router.push({
       name: 'search',
-      query: {
-        q: searchQuery.value,
-      },
+      query: { q: query },
     })
-  } else {
+    return
+  }
+
+  if (route.name === 'search') {
     updateUrlQuery.flush()
+    return
+  }
+
+  if (query) {
+    router.push({
+      name: 'search',
+      query: { q: query },
+    })
   }
 }
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
 import { SHOWCASED_FRAMEWORKS } from '~/utils/frameworks'
 
 const searchQuery = shallowRef('')
@@ -11,17 +10,9 @@ async function search() {
   if (!query) return
   await navigateTo({
     path: '/search',
-    query: query ? { q: query } : undefined,
+    query: { q: query },
   })
-  const newQuery = searchQuery.value.trim()
-  if (newQuery !== query) {
-    await search()
-  }
 }
-
-const handleInput = isTouchDevice()
-  ? search
-  : debounce(search, 250, { leading: true, trailing: true })
 
 useSeoMeta({
   title: () => $t('seo.home.title'),
@@ -93,7 +84,6 @@ defineOgImageComponent('Default', {
                   :placeholder="$t('search.placeholder')"
                   v-bind="noCorrect"
                   class="w-full bg-bg-subtle border border-border rounded-xl ps-8 pe-24 h-14 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 motion-reduce:transition-none hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
-                  @input="handleInput"
                 />
 
                 <ButtonBase
