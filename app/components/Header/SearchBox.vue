@@ -66,6 +66,7 @@ function handleSearchFocus() {
 function handleSubmit() {
   const query = searchQuery.value.trim()
   if (pagesWithLocalFilter.has(route.name)) {
+    if (!query) return
     router.push({
       name: 'search',
       query: { q: query },
