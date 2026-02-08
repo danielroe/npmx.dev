@@ -1,58 +1,23 @@
 import type { RemovableRef } from '@vueuse/core'
 import { useLocalStorage } from '@vueuse/core'
 import { ACCENT_COLORS } from '#shared/utils/constants'
-import type { LocaleObject } from '@nuxtjs/i18n'
 import { BACKGROUND_THEMES } from '#shared/utils/constants'
-
-type BackgroundThemeId = keyof typeof BACKGROUND_THEMES
-
-type AccentColorId = keyof typeof ACCENT_COLORS.light
-
-/**
- * Application settings stored in localStorage
- */
-export interface AppSettings {
-  /** Display dates as relative (e.g., "3 days ago") instead of absolute */
-  relativeDates: boolean
-  /** Include @types/* package in install command for packages without built-in types */
-  includeTypesInInstall: boolean
-  /** Accent color theme */
-  accentColorId: AccentColorId | null
-  /** Preferred background shade */
-  preferredBackgroundTheme: BackgroundThemeId | null
-  /** Hide platform-specific packages (e.g., @scope/pkg-linux-x64) from search results */
-  hidePlatformPackages: boolean
-  /** User-selected locale */
-  selectedLocale: LocaleObject['code'] | null
-  sidebar: {
-    collapsed: string[]
-  }
-}
-
-const DEFAULT_SETTINGS: AppSettings = {
-  relativeDates: false,
-  includeTypesInInstall: true,
-  accentColorId: null,
-  hidePlatformPackages: true,
-  selectedLocale: null,
-  preferredBackgroundTheme: null,
-  sidebar: {
-    collapsed: [],
-  },
-}
+import {
+  DEFAULT_USER_PREFERENCES,
+  type AccentColorId,
+  type BackgroundThemeId,
+  type UserPreferences,
+} from '#shared/schemas/userPreferences'
 
 const STORAGE_KEY = 'npmx-settings'
 
-// Shared settings instance (singleton per app)
-let settingsRef: RemovableRef<AppSettings> | null = null
+let settingsRef: RemovableRef<UserPreferences> | null = null
+let syncInitialized = false
 
-/**
- * Composable for managing application settings with localStorage persistence.
- * Settings are shared across all components that use this composable.
- */
+// TODO: After discussion with the team, this will be replaced with a proper persistent solution (LS + server sync)
 export function useSettings() {
   if (!settingsRef) {
-    settingsRef = useLocalStorage<AppSettings>(STORAGE_KEY, DEFAULT_SETTINGS, {
+    settingsRef = useLocalStorage<UserPreferences>(STORAGE_KEY, DEFAULT_USER_PREFERENCES, {
       mergeDefaults: true,
     })
   }
@@ -62,18 +27,72 @@ export function useSettings() {
   }
 }
 
-/**
- * Composable for accessing just the relative dates setting.
- * Useful for components that only need to read this specific setting.
- */
+// TODO: Name to be changed
+export function useSettingsSync() {
+  const { settings } = useSettings()
+  const {
+    isAuthenticated,
+    status,
+    lastSyncedAt,
+    error,
+    loadFromServer,
+    scheduleSync,
+    setupRouteGuard,
+    setupBeforeUnload,
+  } = useUserPreferencesSync()
+
+  const isSyncing = computed(() => status.value === 'syncing')
+  const isSynced = computed(() => status.value === 'synced')
+  const hasError = computed(() => status.value === 'error')
+
+  async function initializeSync(): Promise<void> {
+    if (syncInitialized || import.meta.server) return
+
+    setupRouteGuard(() => settings.value)
+    setupBeforeUnload(() => settings.value)
+
+    if (isAuthenticated.value) {
+      const serverPrefs = await loadFromServer()
+      Object.assign(settings.value, serverPrefs)
+    }
+
+    watch(
+      settings,
+      newSettings => {
+        if (isAuthenticated.value) {
+          scheduleSync(newSettings)
+        }
+      },
+      { deep: true },
+    )
+
+    watch(isAuthenticated, async newIsAuth => {
+      if (newIsAuth) {
+        const serverPrefs = await loadFromServer()
+        Object.assign(settings.value, serverPrefs)
+      }
+    })
+
+    syncInitialized = true
+  }
+
+  return {
+    settings,
+    isAuthenticated,
+    isSyncing,
+    isSynced,
+    hasError,
+    syncError: error,
+    lastSyncedAt,
+    initializeSync,
+  }
+}
+
 export function useRelativeDates() {
   const { settings } = useSettings()
   return computed(() => settings.value.relativeDates)
 }
 
-/**
- * Composable for managing accent color.
- */
 export function useAccentColor() {
   const { settings } = useSettings()
   const colorMode = useColorMode()
