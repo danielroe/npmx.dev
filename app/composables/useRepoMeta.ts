@@ -763,7 +763,7 @@ export function useRepoMeta(repositoryUrl: MaybeRefOrGetter<string | null | unde
     meta,
 
     // TODO(serhalp): Consider removing the zero fallback so callers can make a distinction between
-    // "unresoled data" and "zero value"
+    // "unresolved data" and "zero value"
     stars: computed(() => meta.value?.stars ?? 0),
     forks: computed(() => meta.value?.forks ?? 0),
     watchers: computed(() => meta.value?.watchers ?? 0),
