@@ -4,6 +4,8 @@
  * Resolves: https://github.com/npmx-dev/npmx.dev/issues/1138
  */
 
+import ipaddr from 'ipaddr.js'
+
 /** Trusted image domains that don't need proxying (first-party or well-known CDNs) */
 const TRUSTED_IMAGE_DOMAINS = [
   // First-party
@@ -56,6 +58,8 @@ export function isTrustedImageDomain(url: string): boolean {
 
 /**
  * Validate that a URL is a valid HTTP(S) image URL suitable for proxying.
+ * Blocks private/reserved IPs (SSRF protection) using ipaddr.js for comprehensive
+ * IPv4, IPv6, and IPv4-mapped IPv6 range detection.
  */
 export function isAllowedImageUrl(url: string): boolean {
   const parsed = URL.parse(url)
@@ -66,42 +70,22 @@ export function isAllowedImageUrl(url: string): boolean {
     return false
   }
 
-  // Block localhost / private IPs to prevent SSRF
   const hostname = parsed.hostname.toLowerCase()
-  if (
-    hostname === 'localhost' ||
-    hostname === '127.0.0.1' ||
-    hostname === '0.0.0.0' ||
-    hostname.startsWith('10.') ||
-    hostname.startsWith('192.168.') ||
-    // RFC 1918: 172.16.0.0 – 172.31.255.255
-    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
-    // Link-local (cloud metadata: 169.254.169.254)
-    hostname.startsWith('169.254.') ||
-    hostname.endsWith('.local') ||
-    hostname.endsWith('.internal') ||
-    // IPv6 loopback
-    hostname === '::1' ||
-    hostname === '[::1]' ||
-    // IPv6 link-local
-    hostname.startsWith('fe80:') ||
-    hostname.startsWith('[fe80:') ||
-    // IPv6 unique local (fc00::/7)
-    hostname.startsWith('fc') ||
-    hostname.startsWith('fd') ||
-    hostname.startsWith('[fc') ||
-    hostname.startsWith('[fd') ||
-    // IPv4-mapped IPv6 addresses
-    hostname.startsWith('::ffff:127.') ||
-    hostname.startsWith('::ffff:10.') ||
-    hostname.startsWith('::ffff:192.168.') ||
-    hostname.startsWith('::ffff:169.254.') ||
-    hostname.startsWith('[::ffff:127.') ||
-    hostname.startsWith('[::ffff:10.') ||
-    hostname.startsWith('[::ffff:192.168.') ||
-    hostname.startsWith('[::ffff:169.254.')
-  ) {
+
+  // Block non-IP hostnames that resolve to internal services
+  if (hostname === 'localhost' || hostname.endsWith('.local') || hostname.endsWith('.internal')) {
     return false
+  }
+
+  // For IP addresses, use ipaddr.js to check against all reserved ranges
+  // (loopback, private RFC 1918, link-local 169.254, IPv6 ULA fc00::/7, etc.)
+  // ipaddr.process() also unwraps IPv4-mapped IPv6 (e.g. ::ffff:127.0.0.1 → 127.0.0.1)
+  const bare = hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname
+  if (ipaddr.isValid(bare)) {
+    const addr = ipaddr.process(bare)
+    if (addr.range() !== 'unicast') {
+      return false
+    }
   }
 
   return true

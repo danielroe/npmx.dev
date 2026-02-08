@@ -1,7 +1,7 @@
 import { createError, getQuery, setResponseHeaders, sendStream } from 'h3'
 import { Readable } from 'node:stream'
 import { CACHE_MAX_AGE_ONE_DAY } from '#shared/utils/constants'
-import { isAllowedImageUrl } from '#shared/utils/image-proxy'
+import { isAllowedImageUrl } from '#server/utils/image-proxy'
 
 /**
  * Image proxy endpoint to prevent privacy leaks from README images.

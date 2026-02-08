@@ -3,7 +3,7 @@ import {
   isTrustedImageDomain,
   isAllowedImageUrl,
   toProxiedImageUrl,
-} from '../../../../shared/utils/image-proxy'
+} from '../../../../server/utils/image-proxy'
 
 describe('Image Proxy Utils', () => {
   describe('isTrustedImageDomain', () => {

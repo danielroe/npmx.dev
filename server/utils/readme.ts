@@ -5,7 +5,7 @@ import type { ReadmeResponse, TocItem } from '#shared/types/readme'
 import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
 import { highlightCodeSync } from './shiki'
 import { convertToEmoji } from '#shared/utils/emoji'
-import { toProxiedImageUrl } from '#shared/utils/image-proxy'
+import { toProxiedImageUrl } from '#server/utils/image-proxy'
 
 /**
  * Playground provider configuration
