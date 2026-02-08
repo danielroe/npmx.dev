@@ -100,6 +100,8 @@ export function useNpmSearch(
           size: opts.size ?? 25,
         })
 
+        opts.onSuccess?.({ query: q })
+
         if (q !== toValue(query)) {
           return emptySearchResponse
         }
@@ -130,6 +132,8 @@ export function useNpmSearch(
               signal,
             }),
           ])
+
+          opts.onSuccess?.({ query: q })
 
           if (!pkg) {
             return emptySearchResponse
@@ -166,6 +170,8 @@ export function useNpmSearch(
           60,
         )
 
+        opts.onSuccess?.({ query: q })
+
         // If query changed/outdated, return empty search response
         if (q !== toValue(query)) {
           return emptySearchResponse
@@ -180,8 +186,6 @@ export function useNpmSearch(
 
         // Success - clear rate limit flag
         isRateLimited.value = false
-
-        opts.onSuccess?.({ query: q })
 
         return { ...response, isStale }
       } catch (error: unknown) {
