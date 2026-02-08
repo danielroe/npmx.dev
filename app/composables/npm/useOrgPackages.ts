@@ -89,7 +89,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
 
   const asyncData = useLazyAsyncData(
     () => `org-packages:${searchProvider.value}:${toValue(orgName)}`,
-    async ({ $npmRegistry, $npmApi }, { signal }) => {
+    async ({ $npmRegistry, $npmApi, ssrContext }, { signal }) => {
       const org = toValue(orgName)
       if (!org) {
         return emptySearchResponse
@@ -120,11 +120,15 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
       } catch (err) {
         // Check if this is a 404 (org not found)
         if (err && typeof err === 'object' && 'statusCode' in err && err.statusCode === 404) {
-          throw createError({
+          const error = createError({
             statusCode: 404,
             statusMessage: 'Organization not found',
             message: `The organization "@${org}" does not exist on npm`,
           })
+          if (import.meta.server) {
+            ssrContext!.payload.error = error
+          }
+          throw error
         }
         // For other errors (network, etc.), return empty array to be safe
         packageNames = []
