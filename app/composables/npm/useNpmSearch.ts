@@ -42,7 +42,7 @@ export function packumentToSearchResult(
 export interface NpmSearchOptions {
   /** Number of results to fetch */
   size?: number
-  onSuccess?: (result: { query: string }) => void
+  onResponse?: (result: { query: string }) => void
 }
 
 export const emptySearchResponse = {
@@ -100,7 +100,7 @@ export function useNpmSearch(
           size: opts.size ?? 25,
         })
 
-        opts.onSuccess?.({ query: q })
+        opts.onResponse?.({ query: q })
 
         if (q !== toValue(query)) {
           return emptySearchResponse
@@ -133,7 +133,7 @@ export function useNpmSearch(
             }),
           ])
 
-          opts.onSuccess?.({ query: q })
+          opts.onResponse?.({ query: q })
 
           if (!pkg) {
             return emptySearchResponse
@@ -170,7 +170,7 @@ export function useNpmSearch(
           60,
         )
 
-        opts.onSuccess?.({ query: q })
+        opts.onResponse?.({ query: q })
 
         // If query changed/outdated, return empty search response
         if (q !== toValue(query)) {

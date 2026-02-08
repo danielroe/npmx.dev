@@ -193,7 +193,7 @@ const {
   isRateLimited,
 } = useNpmSearch(query, () => ({
   size: requestedSize.value,
-  onSuccess: data => {
+  onResponse: data => {
     router.replace({
       name: 'search',
       query: { ...route.query, q: data.query },
