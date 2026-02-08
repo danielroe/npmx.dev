@@ -91,16 +91,12 @@ function onModalClosed() {
             </p>
             <ul class="mb-6 flex flex-col gap-2">
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >,</kbd
-                ><span>{{ $t('shortcuts.settings') }}</span>
+                <kbd class="kbd">,</kbd>
+                <span>{{ $t('shortcuts.settings') }}</span>
               </li>
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >c</kbd
-                ><span>{{ $t('shortcuts.compare') }}</span>
+                <kbd class="kbd">c</kbd>
+                <span>{{ $t('shortcuts.compare') }}</span>
               </li>
             </ul>
             <p class="mb-2 font-mono text-fg-subtle">
@@ -108,19 +104,12 @@ function onModalClosed() {
             </p>
             <ul class="mb-6 flex flex-col gap-2">
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >↑</kbd
-                >/<kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >↓</kbd
-                ><span>{{ $t('shortcuts.navigate_results') }}</span>
+                <kbd class="kbd">↑</kbd>/<kbd class="kbd">↓</kbd>
+                <span>{{ $t('shortcuts.navigate_results') }}</span>
               </li>
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >Enter</kbd
-                ><span>{{ $t('shortcuts.go_to_result') }}</span>
+                <kbd class="kbd">Enter</kbd>
+                <span>{{ $t('shortcuts.go_to_result') }}</span>
               </li>
             </ul>
             <p class="mb-2 font-mono text-fg-subtle">
@@ -128,22 +117,16 @@ function onModalClosed() {
             </p>
             <ul class="mb-6 flex flex-col gap-2">
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >.</kbd
-                ><span>{{ $t('shortcuts.open_code_view') }}</span>
+                <kbd class="kbd">.</kbd>
+                <span>{{ $t('shortcuts.open_code_view') }}</span>
               </li>
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >d</kbd
-                ><span>{{ $t('shortcuts.open_docs') }}</span>
+                <kbd class="kbd">d</kbd>
+                <span>{{ $t('shortcuts.open_docs') }}</span>
               </li>
               <li class="flex gap-2 items-center">
-                <kbd
-                  class="items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2"
-                  >c</kbd
-                ><span>{{ $t('shortcuts.open_compare_prefilled') }}</span>
+                <kbd class="kbd">c</kbd>
+                <span>{{ $t('shortcuts.open_compare_prefilled') }}</span>
               </li>
             </ul>
           </Modal>
@@ -156,3 +139,9 @@ function onModalClosed() {
     </div>
   </footer>
 </template>
+
+<style scoped>
+.kbd {
+  @apply items-center justify-center text-sm text-fg bg-bg-muted border border-border rounded px-2;
+}
+</style>
