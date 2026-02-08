@@ -5,9 +5,10 @@ onPrehydrate(el => {
   const settings = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
   const id = settings.preferredBackgroundTheme
   if (id) {
-    const input = el.querySelector<HTMLInputElement>(`input[value="${id || 'neutral'}"]`)
+    const input = el.querySelector<HTMLInputElement>(`input[value="${id}"]`)
     if (input) {
       input.checked = true
+      input.setAttribute('checked', '')
     }
   }
 })
@@ -36,3 +37,18 @@ onPrehydrate(el => {
     </label>
   </fieldset>
 </template>
+
+<style scoped>
+@media (forced-colors: active) {
+  /* keep background theme swatches visible in forced colors. */
+  label {
+    forced-color-adjust: none;
+    border: 1px solid CanvasText;
+
+    &:has(> input:checked) {
+      outline: 2px solid Highlight;
+      outline-offset: 2px;
+    }
+  }
+}
+</style>

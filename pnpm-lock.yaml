@@ -325,6 +325,9 @@ importers:
 
   docs:
     dependencies:
+      '@nuxtjs/mdc':
+        specifier: 0.20.1
+        version: 0.20.1(magicast@0.5.1)
       better-sqlite3:
         specifier: 12.5.0
         version: 12.5.0
@@ -2090,8 +2093,8 @@ packages:
       agents:
         optional: true
 
-  '@nuxtjs/mdc@0.20.0':
-    resolution: {integrity: sha512-CV1FuCZppBpNjtWT+OaV+t7qbm/dD+2bbf7Or0h1gxperlf1bB3VZnDoBkOTRjgPWyYvzzRS7FUOQJLQG28MEA==}
+  '@nuxtjs/mdc@0.20.1':
+    resolution: {integrity: sha512-fGmtLDQAmmDHF5Z37Apfc3k806rb2XWDOQFhb5xlDSL7+HiiUjyFy3ctx3qWdlC08dRzfAetmsGOYbfDqYsB/w==}
 
   '@nuxtjs/robots@5.6.7':
     resolution: {integrity: sha512-0Ex0Y38z9s5I5w3AkdlrpLPACE+cd38KH9dYjZE+flP5RSGMvKzbTc8/jyNeY7numIuFt9BQGXEzkEAmxe04Cg==}
@@ -11397,7 +11400,7 @@ snapshots:
   '@nuxt/content@3.11.0(better-sqlite3@12.5.0)(magicast@0.5.1)(valibot@1.2.0(typescript@5.9.3))':
     dependencies:
       '@nuxt/kit': 4.3.1(magicast@0.5.1)
-      '@nuxtjs/mdc': 0.20.0(magicast@0.5.1)
+      '@nuxtjs/mdc': 0.20.1(magicast@0.5.1)
       '@shikijs/langs': 3.21.0
       '@sqlite.org/sqlite-wasm': 3.50.4-build1
       '@standard-schema/spec': 1.1.0
@@ -12373,7 +12376,7 @@ snapshots:
       - magicast
       - supports-color
 
-  '@nuxtjs/mdc@0.20.0(magicast@0.5.1)':
+  '@nuxtjs/mdc@0.20.1(magicast@0.5.1)':
     dependencies:
       '@nuxt/kit': 4.3.1(magicast@0.5.1)
       '@shikijs/core': 3.21.0
@@ -15257,7 +15260,7 @@ snapshots:
       '@nuxt/ui': 4.4.0(@nuxt/content@3.11.0(better-sqlite3@12.5.0)(magicast@0.5.1)(valibot@1.2.0(typescript@5.9.3)))(@tiptap/extensions@3.17.1(@tiptap/core@3.17.1(@tiptap/pm@3.17.1))(@tiptap/pm@3.17.1))(@tiptap/y-tiptap@3.0.2(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7(yjs@13.6.29))(yjs@13.6.29))(@upstash/redis@1.36.1)(@vercel/kv@3.0.0)(db0@0.3.4(better-sqlite3@12.5.0))(embla-carousel@8.6.0)(focus-trap@7.8.0)(ioredis@5.9.2)(magicast@0.5.1)(tailwindcss@4.1.18)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(vue-router@4.6.4(vue@3.5.27(typescript@5.9.3)))(vue@3.5.27(typescript@5.9.3))(yjs@13.6.29)(zod@4.3.6)
       '@nuxtjs/i18n': 10.2.3(@upstash/redis@1.36.1)(@vercel/kv@3.0.0)(@vue/compiler-dom@3.5.27)(db0@0.3.4(better-sqlite3@12.5.0))(eslint@9.39.2(jiti@2.6.1))(ioredis@5.9.2)(magicast@0.5.1)(rollup@4.57.0)(vue@3.5.27(typescript@5.9.3))
       '@nuxtjs/mcp-toolkit': 0.6.2(hono@4.11.7)(magicast@0.5.1)(zod@4.3.6)
-      '@nuxtjs/mdc': 0.20.0(magicast@0.5.1)
+      '@nuxtjs/mdc': 0.20.1(magicast@0.5.1)
       '@nuxtjs/robots': 5.6.7(magicast@0.5.1)(vue@3.5.27(typescript@5.9.3))(zod@4.3.6)
       '@vueuse/core': 14.2.0(vue@3.5.27(typescript@5.9.3))
       better-sqlite3: 12.5.0
