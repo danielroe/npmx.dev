@@ -86,7 +86,7 @@ const { locale } = useI18n()
           </p>
           <ul class="space-y-3 text-fg-muted list-none p-0">
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>
                 <i18n-t keypath="privacy_policy.cookies.types.li1" tag="span">
                   <template #li11>
@@ -104,7 +104,7 @@ const { locale } = useI18n()
               </span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>
                 <i18n-t keypath="privacy_policy.cookies.types.li2" tag="span">
                   <template #li21>
@@ -174,7 +174,7 @@ const { locale } = useI18n()
           </p>
           <ul class="space-y-3 text-fg-muted list-none p-0">
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <a
                 href="https://support.google.com/chrome/answer/95647?hl=en"
                 target="_blank"
@@ -186,7 +186,7 @@ const { locale } = useI18n()
               </a>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <a
                 href="https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox"
                 target="_blank"
@@ -198,7 +198,7 @@ const { locale } = useI18n()
               </a>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <a
                 href="https://support.microsoft.com/en-us/windows/manage-cookies-in-microsoft-edge-view-allow-block-delete-and-use-168dab11-0753-043d-7c16-ede5947fc64d"
                 target="_blank"
@@ -229,19 +229,19 @@ const { locale } = useI18n()
           </p>
           <ul class="space-y-3 text-fg-muted list-none p-0 mb-4">
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.analytics.li1') }}</span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.analytics.li2') }}</span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.analytics.li3') }}</span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.analytics.li4') }}</span>
             </li>
           </ul>
@@ -296,19 +296,19 @@ const { locale } = useI18n()
           </p>
           <ul class="space-y-3 text-fg-muted list-none p-0 mb-4">
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.your_rights.li1') }}</span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.your_rights.li2') }}</span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.your_rights.li3') }}</span>
             </li>
             <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
+              <span class="text-fg-subtle shrink-0">&mdash;</span>
               <span>{{ $t('privacy_policy.your_rights.li4') }}</span>
             </li>
           </ul>
