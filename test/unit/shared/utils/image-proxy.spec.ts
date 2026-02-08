@@ -89,6 +89,30 @@ describe('Image Proxy Utils', () => {
       expect(isAllowedImageUrl('http://service.internal/image.png')).toBe(false)
     })
 
+    it('blocks cloud metadata IP (169.254.x.x)', () => {
+      expect(isAllowedImageUrl('http://169.254.169.254/latest/meta-data/')).toBe(false)
+    })
+
+    it('blocks private 172.16-31.x.x range', () => {
+      expect(isAllowedImageUrl('http://172.16.0.1/image.png')).toBe(false)
+      expect(isAllowedImageUrl('http://172.31.255.255/image.png')).toBe(false)
+    })
+
+    it('allows public 172.x IPs outside RFC 1918', () => {
+      expect(isAllowedImageUrl('http://172.64.0.1/image.png')).toBe(true)
+      expect(isAllowedImageUrl('http://172.15.0.1/image.png')).toBe(true)
+      expect(isAllowedImageUrl('http://172.32.0.1/image.png')).toBe(true)
+    })
+
+    it('blocks IPv6 link-local (fe80::)', () => {
+      expect(isAllowedImageUrl('http://[fe80::1]/image.png')).toBe(false)
+    })
+
+    it('blocks IPv6 unique local (fc00::/fd)', () => {
+      expect(isAllowedImageUrl('http://[fc00::1]/image.png')).toBe(false)
+      expect(isAllowedImageUrl('http://[fd12::1]/image.png')).toBe(false)
+    })
+
     it('returns false for invalid URLs', () => {
       expect(isAllowedImageUrl('not-a-url')).toBe(false)
     })

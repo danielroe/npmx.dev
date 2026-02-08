@@ -45,46 +45,66 @@ const TRUSTED_IMAGE_DOMAINS = [
  * Check if a URL points to a trusted domain that doesn't need proxying.
  */
 export function isTrustedImageDomain(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-    const hostname = parsed.hostname.toLowerCase()
-    return TRUSTED_IMAGE_DOMAINS.some(
-      domain => hostname === domain || hostname.endsWith(`.${domain}`),
-    )
-  } catch {
-    return false
-  }
+  const parsed = URL.parse(url)
+  if (!parsed) return false
+
+  const hostname = parsed.hostname.toLowerCase()
+  return TRUSTED_IMAGE_DOMAINS.some(
+    domain => hostname === domain || hostname.endsWith(`.${domain}`),
+  )
 }
 
 /**
  * Validate that a URL is a valid HTTP(S) image URL suitable for proxying.
  */
 export function isAllowedImageUrl(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-    // Only allow HTTP and HTTPS protocols
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      return false
-    }
-    // Block localhost / private IPs to prevent SSRF
-    const hostname = parsed.hostname.toLowerCase()
-    if (
-      hostname === 'localhost' ||
-      hostname === '127.0.0.1' ||
-      hostname === '::1' ||
-      hostname === '0.0.0.0' ||
-      hostname.startsWith('10.') ||
-      hostname.startsWith('192.168.') ||
-      hostname.startsWith('172.') ||
-      hostname.endsWith('.local') ||
-      hostname.endsWith('.internal')
-    ) {
-      return false
-    }
-    return true
-  } catch {
+  const parsed = URL.parse(url)
+  if (!parsed) return false
+
+  // Only allow HTTP and HTTPS protocols
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
     return false
   }
+
+  // Block localhost / private IPs to prevent SSRF
+  const hostname = parsed.hostname.toLowerCase()
+  if (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '0.0.0.0' ||
+    hostname.startsWith('10.') ||
+    hostname.startsWith('192.168.') ||
+    // RFC 1918: 172.16.0.0 – 172.31.255.255
+    /^172\.(1[6-9]|2\d|3[01])\./.test(hostname) ||
+    // Link-local (cloud metadata: 169.254.169.254)
+    hostname.startsWith('169.254.') ||
+    hostname.endsWith('.local') ||
+    hostname.endsWith('.internal') ||
+    // IPv6 loopback
+    hostname === '::1' ||
+    hostname === '[::1]' ||
+    // IPv6 link-local
+    hostname.startsWith('fe80:') ||
+    hostname.startsWith('[fe80:') ||
+    // IPv6 unique local (fc00::/7)
+    hostname.startsWith('fc') ||
+    hostname.startsWith('fd') ||
+    hostname.startsWith('[fc') ||
+    hostname.startsWith('[fd') ||
+    // IPv4-mapped IPv6 addresses
+    hostname.startsWith('::ffff:127.') ||
+    hostname.startsWith('::ffff:10.') ||
+    hostname.startsWith('::ffff:192.168.') ||
+    hostname.startsWith('::ffff:169.254.') ||
+    hostname.startsWith('[::ffff:127.') ||
+    hostname.startsWith('[::ffff:10.') ||
+    hostname.startsWith('[::ffff:192.168.') ||
+    hostname.startsWith('[::ffff:169.254.')
+  ) {
+    return false
+  }
+
+  return true
 }
 
 /**
@@ -98,13 +118,8 @@ export function toProxiedImageUrl(url: string): string {
     return url
   }
 
-  try {
-    const parsed = new URL(url)
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-      return url
-    }
-  } catch {
-    // Not an absolute URL, return as-is (relative URLs are fine)
+  const parsed = URL.parse(url)
+  if (!parsed || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')) {
     return url
   }
 
