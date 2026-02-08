@@ -41,7 +41,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   hidePlatformPackages: true,
   selectedLocale: null,
   preferredBackgroundTheme: null,
-  searchProvider: 'algolia',
+  searchProvider: import.meta.test ? 'npm' : 'algolia',
   sidebar: {
     collapsed: [],
   },

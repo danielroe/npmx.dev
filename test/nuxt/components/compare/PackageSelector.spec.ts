@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { nextTick, ref } from 'vue'
+import { ref } from 'vue'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import PackageSelector from '~/components/Compare/PackageSelector.vue'
 
@@ -141,7 +141,6 @@ describe('PackageSelector', () => {
 
       const input = component.find('input')
       await input.setValue('lodash')
-      await nextTick()
       await input.trigger('keydown', { key: 'Enter' })
 
       const emitted = component.emitted('update:modelValue')
@@ -158,7 +157,6 @@ describe('PackageSelector', () => {
 
       const input = component.find('input')
       await input.setValue('no dep')
-      await nextTick()
       await input.trigger('keydown', { key: 'Enter' })
 
       const emitted = component.emitted('update:modelValue')
@@ -175,7 +173,6 @@ describe('PackageSelector', () => {
 
       const input = component.find('input')
       await input.setValue('lodash')
-      await nextTick()
       await input.trigger('keydown', { key: 'Enter' })
 
       // Input should be cleared
