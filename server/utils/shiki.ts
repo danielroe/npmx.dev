@@ -25,6 +25,8 @@ export async function getShikiHighlighter(): Promise<HighlighterCore> {
         import('@shikijs/themes/github-light').then(t =>
           replaceThemeColors(t.default ?? t, {
             '#22863A': '#227436', // green
+            '#E36209': '#BA4D02', // orange
+            '#D73A49': '#CD3443', // red
             '#B31D28': '#AC222F', // red
           }),
         ),

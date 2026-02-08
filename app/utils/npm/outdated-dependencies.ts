@@ -74,9 +74,10 @@ export function getVersionClass(info: OutdatedDependencyInfo | undefined): strin
     return 'text-green-700 dark:text-green-500 cursor-help'
   }
   // Red for major versions behind
-  if (info.majorsBehind > 0) return 'text-#db0000 dark:text-red-500 cursor-help'
+  if (info.majorsBehind > 0) return 'text-red-700 dark:text-red-500 cursor-help'
+  // if (info.majorsBehind > 0) return 'text-#db0000 dark:text-red-500 cursor-help'
   // Orange for minor versions behind
-  if (info.minorsBehind > 0) return 'text-#bf7c01 dark:text-orange-500 cursor-help'
+  if (info.minorsBehind > 0) return 'text-orange-700 dark:text-orange-500 cursor-help'
   // Yellow for patch versions behind
-  return 'text-#929220 dark:text-yellow-500 cursor-help'
+  return 'text-yellow-700 dark:text-yellow-500 cursor-help'
 }
