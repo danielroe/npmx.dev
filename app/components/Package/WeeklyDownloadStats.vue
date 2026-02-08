@@ -267,7 +267,7 @@ const config = computed(() => {
           </ClientOnly>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
-          {{ $t('package.downloads.no_data') }}
+          {{ $t('package.trends.no_data') }}
         </p>
       </div>
     </CollapsibleSection>
