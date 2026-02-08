@@ -128,7 +128,6 @@ export default defineNuxtConfig({
     entryImportMap: false,
     typescriptPlugin: true,
     viteEnvironmentApi: true,
-    viewTransition: true,
     typedPages: true,
   },
 
