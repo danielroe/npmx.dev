@@ -26,7 +26,7 @@ const textPxToClass: Record<number, string> = {
 }
 
 function reportTextSizeWarning(match: string, suggestion: string, checker?: CollectorChecker) {
-  const message = `[A11y] Avoid using '${match}', ${suggestion}.`
+  const message = `[a11y] Avoid using '${match}', ${suggestion}.`
   if (checker) {
     checker(message, match)
   } else {
