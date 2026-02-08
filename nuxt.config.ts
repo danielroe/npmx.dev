@@ -24,7 +24,7 @@ export default defineNuxtConfig({
     storageKey: 'npmx-color-mode',
   },
 
-  css: ['~/assets/main.css', 'vue-data-ui/style.css'],
+  css: ['~/assets/main.css'],
 
   runtimeConfig: {
     sessionPassword: '',
