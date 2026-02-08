@@ -29,8 +29,7 @@ module.exports = {
       url: [
         'http://localhost:3000/',
         'http://localhost:3000/search?q=nuxt',
-        // 'http://localhost:3000/package/nuxt',
-        'http://127.0.0.1:3000/package/nuxt/v/0.1.8',
+        'http://localhost:3000/package/nuxt',
       ],
       numberOfRuns: 1,
       chromePath: findChrome(),
