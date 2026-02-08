@@ -25,6 +25,7 @@
     "found_packages": "Trovati {count} pacchetti",
     "updating": "(aggiornando...)",
     "no_results": "Nessun pacchetto trovato per \"{query}\"",
+    "rate_limited": "Limite di richieste npm raggiunto, riprova tra un momento",
     "title": "cerca",
     "title_search": "cerca: {search}",
     "title_packages": "cerca pacchetti",

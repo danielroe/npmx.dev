@@ -23,6 +23,7 @@
     "found_packages": "Paket tapılmadı | 1 paket tapıldı | {count} paket tapıldı",
     "updating": "(yenilənir...)",
     "no_results": "\"{query}\" üçün paket tapılmadı",
+    "rate_limited": "npm sorğu limitinə çatıldı, bir az sonra yenidən cəhd edin",
     "not_taken": "{name} tutulmayıb",
     "claim_prompt": "Bu paket adını npm-də tutun",
     "claim_button": "\"{name}\" adını tut",

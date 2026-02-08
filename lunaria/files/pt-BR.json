@@ -25,6 +25,7 @@
     "found_packages": "Nenhum pacote encontrado | 1 pacote encontrado | {count} pacotes encontrados",
     "updating": "(atualizando...)",
     "no_results": "Nenhum pacote encontrado para \"{query}\"",
+    "rate_limited": "Limite de requisições do npm atingido, tente novamente em instantes",
     "title": "pesquisar",
     "not_taken": "{name} não está em uso",
     "claim_prompt": "Reivindicar este nome de pacote no npm",

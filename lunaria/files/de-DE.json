@@ -25,6 +25,7 @@
     "found_packages": "Keine Pakete gefunden | 1 Paket gefunden | {count} Pakete gefunden",
     "updating": "(wird aktualisiert...)",
     "no_results": "Keine Pakete gefunden für \"{query}\"",
+    "rate_limited": "npm-Ratenlimit erreicht, versuche es gleich nochmal",
     "title": "Suche",
     "title_search": "Suche: {search}",
     "title_packages": "Suche Pakete",

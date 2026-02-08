@@ -25,6 +25,7 @@
     "found_packages": "No se encontraron paquetes | Se encontró 1 paquete | Se encontraron {count} paquetes",
     "updating": "(actualizando...)",
     "no_results": "No se encontraron paquetes para \"{query}\"",
+    "rate_limited": "Se alcanzó el límite de solicitudes de npm, intenta de nuevo en un momento",
     "title": "búsqueda",
     "title_search": "búsqueda: {search}",
     "title_packages": "búsqueda de paquetes",

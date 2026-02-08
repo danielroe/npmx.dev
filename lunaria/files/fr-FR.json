@@ -25,6 +25,7 @@
     "found_packages": "{count} paquets trouvés",
     "updating": "(mise à jour...)",
     "no_results": "Aucun paquet trouvé pour « {query} »",
+    "rate_limited": "Limite de requêtes npm atteinte, réessayez dans un instant",
     "title": "Recherche",
     "not_taken": "{name} n'est pas pris",
     "claim_prompt": "Réserver ce nom de paquet sur npm",

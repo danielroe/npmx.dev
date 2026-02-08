@@ -25,6 +25,7 @@
     "found_packages": "共找到 {count} 個套件",
     "updating": "（更新中…）",
     "no_results": "找不到符合「{query}」的套件",
+    "rate_limited": "已達到 npm 請求頻率限制，請稍後再試",
     "title": "搜尋",
     "title_search": "搜尋：{search}",
     "title_packages": "搜尋套件",

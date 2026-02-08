@@ -25,6 +25,7 @@
     "found_packages": "Nalezen {count} balíček | Nalezeny {count} balíčky | Nalezeno {count} balíčků",
     "updating": "(aktualizace...)",
     "no_results": "Žádné výsledky pro \"{query}\"",
+    "rate_limited": "Dosažen limit požadavků npm, zkuste to znovu za chvíli",
     "title": "hledání",
     "not_taken": "{name} není rezervováno",
     "claim_prompt": "Nárokovat toto jméno balíčku na npm",
