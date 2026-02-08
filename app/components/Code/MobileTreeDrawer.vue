@@ -29,7 +29,7 @@ watch(isOpen, open => (isLocked.value = open))
   <!-- Toggle button (mobile only) -->
   <button
     type="button"
-    class="md:hidden fixed bottom-4 inset-ie-4 z-40 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors"
+    class="md:hidden fixed bottom-4 inset-ie-4 z-45 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors"
     :aria-label="$t('code.toggle_tree')"
     @click="isOpen = !isOpen"
   >
