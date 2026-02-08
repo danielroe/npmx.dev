@@ -2,7 +2,6 @@
 const router = useRouter()
 
 import type { BlogPostFrontmatter } from '#shared/schemas/blog'
-import { isModEventDivert } from '@atproto/api/dist/client/types/tools/ozone/moderation/defs'
 
 const blogModules = import.meta.glob<BlogPostFrontmatter>('./*.md', { eager: true })
 
@@ -66,7 +65,6 @@ useSeoMeta({
             :topics="Array.isArray(post.tags) ? post.tags : placeHolder"
             :published="post.date"
             :index="idx"
-            @focus="i => console.log('Hovered:', i)"
           />
           <hr v-if="idx < posts.length - 1" class="border-border-subtle" />
         </template>
@@ -79,9 +77,7 @@ useSeoMeta({
         <!-- </div> -->
       </article>
 
-      <isModEventDivert v-else class="text-center py-20 text-fg-subtle"
-        >No posts found.</isModEventDivert
-      >
+      <p v-else class="text-center py-20 text-fg-subtle">No posts found.</p>
     </article>
   </main>
 </template>
