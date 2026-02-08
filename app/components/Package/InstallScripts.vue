@@ -11,10 +11,28 @@ const props = defineProps<{
   }
 }>()
 
-function getCodeLink(scriptContent: string): string {
-  const filePath = getInstallScriptFilePath(scriptContent)
+function getCodeLink(filePath: string): string {
   return `/code/${props.packageName}/v/${props.version}/${filePath}`
 }
+
+const scriptParts = computed(() => {
+  const parts: Record<string, { prefix: string | null; filePath: string | null; link: string }> = {}
+  for (const scriptName of props.installScripts.scripts) {
+    const content = props.installScripts.content?.[scriptName]
+    if (!content) continue
+    const parsed = parseNodeScript(content)
+    if (parsed) {
+      parts[scriptName] = {
+        prefix: parsed.prefix,
+        filePath: parsed.filePath,
+        link: getCodeLink(parsed.filePath),
+      }
+    } else {
+      parts[scriptName] = { prefix: null, filePath: null, link: getCodeLink('package.json') }
+    }
+  }
+  return parts
+})
 
 const outdatedNpxDeps = useOutdatedDependencies(() => props.installScripts.npxDependencies)
 const hasNpxDeps = computed(() => Object.keys(props.installScripts.npxDependencies).length > 0)
@@ -36,18 +54,23 @@ const isExpanded = shallowRef(false)
       <div v-for="scriptName in installScripts.scripts" :key="scriptName">
         <dt class="font-mono text-xs text-fg-muted">{{ scriptName }}</dt>
         <dd
-          tabindex="0"
-          class="font-mono text-sm text-fg-subtle m-0 truncate focus:whitespace-normal focus:overflow-visible cursor-help rounded focus-visible:(outline-2 outline-accent outline-offset-2)"
+          class="font-mono text-sm text-fg-subtle m-0 truncate"
           :title="installScripts.content?.[scriptName]"
         >
-          <NuxtLink
-            v-if="installScripts.content?.[scriptName]"
-            :to="getCodeLink(installScripts.content[scriptName])"
-            class="hover:text-fg transition-colors duration-200"
-          >
-            {{ installScripts.content[scriptName] }}
-          </NuxtLink>
-          <span v-else>{{ $t('package.install_scripts.script_label') }}</span>
+          <template v-if="installScripts.content?.[scriptName] && scriptParts[scriptName]">
+            <template v-if="scriptParts[scriptName].prefix">
+              {{ scriptParts[scriptName].prefix
+              }}<LinkBase :to="scriptParts[scriptName].link">{{
+                scriptParts[scriptName].filePath
+              }}</LinkBase>
+            </template>
+            <LinkBase v-else :to="scriptParts[scriptName].link">
+              {{ installScripts.content[scriptName] }}
+            </LinkBase>
+          </template>
+          <span v-else tabindex="0" class="cursor-help">
+            {{ $t('package.install_scripts.script_label') }}
+          </span>
         </dd>
       </div>
     </dl>

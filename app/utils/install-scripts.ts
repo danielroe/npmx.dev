@@ -148,3 +148,33 @@ export function getInstallScriptFilePath(scriptContent: string): string {
   // Default: link to package.json
   return 'package.json'
 }
+
+/**
+ * Parse an install script into a prefix and a linkable file path.
+ * - If the script is `node <file-path>`, returns { prefix: 'node ', filePath: '<file-path>' }
+ *   so only the file path portion can be rendered as a link.
+ * - Otherwise, returns null (the entire script content should link to package.json).
+ *
+ * @param scriptContent - The content of the script
+ * @returns Parsed parts, or null if no node file path was extracted
+ */
+export function parseNodeScript(
+  scriptContent: string,
+): { prefix: string; filePath: string } | null {
+  const match = NODE_SCRIPT_PATTERN.exec(scriptContent)
+
+  if (match?.[1]) {
+    const filePath = match[1].replace(/^\.\//, '')
+
+    // Fall back if path contains navigational elements
+    if (filePath.includes('../') || filePath.includes('./')) {
+      return null
+    }
+
+    // Reconstruct the prefix (everything before the captured file path)
+    const prefix = scriptContent.slice(0, match.index + match[0].indexOf(match[1]))
+    return { prefix, filePath }
+  }
+
+  return null
+}

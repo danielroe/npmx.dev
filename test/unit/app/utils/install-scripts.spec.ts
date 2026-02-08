@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   extractInstallScriptsInfo,
   getInstallScriptFilePath,
+  parseNodeScript,
 } from '../../../../app/utils/install-scripts'
 
 describe('extractInstallScriptsInfo', () => {
@@ -95,5 +96,39 @@ describe('getInstallScriptFilePath', () => {
   it('falls back to package.json for parent directory references', () => {
     expect(getInstallScriptFilePath('node ../scripts/setup.js')).toBe('package.json')
     expect(getInstallScriptFilePath('node ./scripts/../lib/setup.js')).toBe('package.json')
+  })
+
+  it('returns package.json for bare node command without arguments', () => {
+    expect(getInstallScriptFilePath('node')).toBe('package.json')
+    expect(getInstallScriptFilePath('node ')).toBe('package.json')
+  })
+})
+
+describe('parseNodeScript', () => {
+  it('returns prefix and filePath for node scripts', () => {
+    expect(parseNodeScript('node scripts/postinstall.js')).toEqual({
+      prefix: 'node ',
+      filePath: 'scripts/postinstall.js',
+    })
+  })
+
+  it('strips leading ./ from file path', () => {
+    expect(parseNodeScript('node ./scripts/setup.js')).toEqual({
+      prefix: 'node ',
+      filePath: 'scripts/setup.js',
+    })
+  })
+
+  it('returns null for non-node scripts', () => {
+    expect(parseNodeScript('npx prisma generate')).toBeNull()
+  })
+
+  it('returns null for bare node command', () => {
+    expect(parseNodeScript('node')).toBeNull()
+    expect(parseNodeScript('node ')).toBeNull()
+  })
+
+  it('returns null for parent directory references', () => {
+    expect(parseNodeScript('node ../scripts/setup.js')).toBeNull()
   })
 })
