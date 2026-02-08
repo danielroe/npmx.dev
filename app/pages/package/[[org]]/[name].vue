@@ -11,7 +11,6 @@ import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
 import { isEditableElement } from '~/utils/input'
-import { formatBytes } from '~/utils/formatters'
 import { getDependencyCount } from '~/utils/npm/dependency-count'
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
@@ -231,12 +230,12 @@ const sizeTooltip = computed(() => {
     displayVersion.value &&
       displayVersion.value.dist.unpackedSize &&
       $t('package.stats.size_tooltip.unpacked', {
-        size: formatBytes(displayVersion.value.dist.unpackedSize),
+        size: bytesFormatter.format(displayVersion.value.dist.unpackedSize),
       }),
     installSize.value &&
       installSize.value.dependencyCount &&
       $t('package.stats.size_tooltip.total', {
-        size: formatBytes(installSize.value.totalSize),
+        size: bytesFormatter.format(installSize.value.totalSize),
         count: installSize.value.dependencyCount,
       }),
   ]
@@ -263,7 +262,7 @@ const hasVulnerabilities = computed(() => vulnCount.value > 0)
 // Subtract 1 to exclude the root package itself
 const totalDepsCount = computed(() => {
   if (vulnTree.value) {
-    return vulnTree.value.totalPackages - 1
+    return vulnTree.value.totalPackages ? vulnTree.value.totalPackages - 1 : 0
   }
   if (installSize.value) {
     return installSize.value.dependencyCount
@@ -462,6 +461,10 @@ const likeAction = async () => {
   }
 }
 
+const numberFormatter = useNumberFormatter()
+const compactNumberFormatter = useCompactNumberFormatter()
+const bytesFormatter = useBytesFormatter()
+
 useHead({
   link: [{ rel: 'canonical', href: canonicalUrl }],
 })
@@ -522,7 +525,7 @@ onKeyStroke(
         :class="{ 'border-b': isHeaderPinned }"
       >
         <!-- Package name and version -->
-        <div class="flex items-baseline gap-2 sm:gap-3 flex-wrap min-w-0">
+        <div class="flex items-baseline gap-x-2 gap-y-1 sm:gap-x-3 flex-wrap min-w-0">
           <div class="group relative flex flex-col items-start min-w-0">
             <h1
               class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
@@ -602,15 +605,49 @@ onKeyStroke(
             >
           </span>
 
-          <!-- Package metrics (module format, types) -->
-          <div class="flex gap-2 sm:gap-3 flex-wrap">
+          <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->
+          <ButtonGroup
+            v-if="resolvedVersion"
+            as="nav"
+            :aria-label="$t('package.navigation')"
+            class="package-nav hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-50% max-sm:-translate-x-50% max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md"
+          >
+            <LinkBase
+              variant="button-secondary"
+              v-if="docsLink"
+              :to="docsLink"
+              keyshortcut="d"
+              classicon="i-carbon:document"
+            >
+              {{ $t('package.links.docs') }}
+            </LinkBase>
+            <LinkBase
+              variant="button-secondary"
+              :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }"
+              keyshortcut="."
+              classicon="i-carbon:code"
+            >
+              {{ $t('package.links.code') }}
+            </LinkBase>
+            <LinkBase
+              variant="button-secondary"
+              :to="{ name: 'compare', query: { packages: pkg.name } }"
+              keyshortcut="c"
+              classicon="i-carbon:compare"
+            >
+              {{ $t('package.links.compare') }}
+            </LinkBase>
+          </ButtonGroup>
+
+          <!-- Package metrics -->
+          <div class="basis-full flex gap-2 sm:gap-3 flex-wrap">
             <ClientOnly>
               <PackageMetricsBadges
                 v-if="resolvedVersion"
                 :package-name="pkg.name"
                 :version="resolvedVersion"
                 :is-binary="isBinaryOnly"
-                class="self-baseline ms-1 sm:ms-2"
+                class="self-baseline"
               />
 
               <!-- Package likes -->
@@ -647,13 +684,11 @@ onKeyStroke(
                       : 'i-lucide-heart-plus'
                   "
                 >
-                  {{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}
+                  {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
                 </ButtonBase>
               </TooltipApp>
               <template #fallback>
-                <div
-                  class="flex items-center gap-1.5 list-none m-0 p-0 relative top-[5px] self-baseline ms-1 sm:ms-2"
-                >
+                <div class="flex items-center gap-1.5 list-none m-0 p-0 self-baseline">
                   <SkeletonBlock class="w-16 h-5.5 rounded" />
                   <SkeletonBlock class="w-13 h-5.5 rounded" />
                   <SkeletonBlock class="w-13 h-5.5 rounded" />
@@ -662,40 +697,6 @@ onKeyStroke(
               </template>
             </ClientOnly>
           </div>
-
-          <!-- Internal navigation: Docs + Code + Compare (hidden on mobile, shown in external links instead) -->
-          <ButtonGroup
-            v-if="resolvedVersion"
-            as="nav"
-            :aria-label="$t('package.navigation')"
-            class="hidden sm:flex"
-          >
-            <LinkBase
-              variant="button-secondary"
-              v-if="docsLink"
-              :to="docsLink"
-              keyshortcut="d"
-              classicon="i-carbon:document"
-            >
-              {{ $t('package.links.docs') }}
-            </LinkBase>
-            <LinkBase
-              variant="button-secondary"
-              :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }"
-              keyshortcut="."
-              classicon="i-carbon:code"
-            >
-              {{ $t('package.links.code') }}
-            </LinkBase>
-            <LinkBase
-              variant="button-secondary"
-              :to="{ name: 'compare', query: { packages: pkg.name } }"
-              keyshortcut="c"
-              classicon="i-carbon:compare"
-            >
-              {{ $t('package.links.compare') }}
-            </LinkBase>
-          </ButtonGroup>
         </div>
       </header>
 
@@ -726,12 +727,12 @@ onKeyStroke(
             </li>
             <li v-if="repositoryUrl && repoMeta && starsLink">
               <LinkBase :to="starsLink" classicon="i-carbon:star">
-                {{ formatCompactNumber(stars, { decimals: 1 }) }}
+                {{ compactNumberFormatter.format(stars) }}
               </LinkBase>
             </li>
             <li v-if="forks && forksLink">
               <LinkBase :to="forksLink" classicon="i-carbon:fork">
-                {{ formatCompactNumber(forks, { decimals: 1 }) }}
+                {{ compactNumberFormatter.format(forks) }}
               </LinkBase>
             </li>
             <li v-if="homepageUrl">
@@ -765,28 +766,6 @@ onKeyStroke(
             <li v-if="fundingUrl">
               <LinkBase :to="fundingUrl" classicon="i-carbon:favorite">
                 {{ $t('package.links.fund') }}
-              </LinkBase>
-            </li>
-            <!-- Mobile-only: Docs + Code + Compare links -->
-            <li v-if="docsLink && displayVersion" class="sm:hidden">
-              <LinkBase :to="docsLink" classicon="i-carbon:document">
-                {{ $t('package.links.docs') }}
-              </LinkBase>
-            </li>
-            <li v-if="resolvedVersion" class="sm:hidden">
-              <LinkBase
-                :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }"
-                classicon="i-carbon:code"
-              >
-                {{ $t('package.links.code') }}
-              </LinkBase>
-            </li>
-            <li class="sm:hidden">
-              <LinkBase
-                :to="{ name: 'compare', query: { packages: pkg.name } }"
-                classicon="i-carbon:compare"
-              >
-                {{ $t('package.links.compare') }}
               </LinkBase>
             </li>
           </ul>
@@ -832,7 +811,9 @@ onKeyStroke(
             <dd class="font-mono text-sm text-fg flex items-center justify-start gap-2">
               <span class="flex items-center gap-1">
                 <!-- Direct deps (muted) -->
-                <span class="text-fg-muted">{{ getDependencyCount(displayVersion) }}</span>
+                <span class="text-fg-muted">{{
+                  numberFormatter.format(getDependencyCount(displayVersion))
+                }}</span>
 
                 <!-- Separator and total transitive deps -->
                 <template v-if="getDependencyCount(displayVersion) !== totalDepsCount">
@@ -851,7 +832,9 @@ onKeyStroke(
                         aria-hidden="true"
                       />
                     </span>
-                    <span v-else-if="totalDepsCount !== null">{{ totalDepsCount }}</span>
+                    <span v-else-if="totalDepsCount !== null">{{
+                      numberFormatter.format(totalDepsCount)
+                    }}</span>
                     <span v-else class="text-fg-subtle">-</span>
                     <template #fallback>
                       <span class="text-fg-subtle">-</span>
@@ -899,7 +882,7 @@ onKeyStroke(
               <!-- Package size (greyed out) -->
               <span class="text-fg-muted" dir="ltr">
                 <span v-if="displayVersion?.dist?.unpackedSize">
-                  {{ formatBytes(displayVersion.dist.unpackedSize) }}
+                  {{ bytesFormatter.format(displayVersion.dist.unpackedSize) }}
                 </span>
                 <span v-else>-</span>
               </span>
@@ -918,7 +901,7 @@ onKeyStroke(
                   />
                 </span>
                 <span v-else-if="installSize?.totalSize" dir="ltr">
-                  {{ formatBytes(installSize.totalSize) }}
+                  {{ bytesFormatter.format(installSize.totalSize) }}
                 </span>
                 <span v-else class="text-fg-subtle">-</span>
               </template>
@@ -942,10 +925,12 @@ onKeyStroke(
                   />
                 </span>
                 <span v-else-if="vulnTreeStatus === 'success'">
-                  <span v-if="hasVulnerabilities" class="text-amber-500">{{ vulnCount }}</span>
+                  <span v-if="hasVulnerabilities" class="text-amber-500">
+                    {{ numberFormatter.format(vulnCount) }}
+                  </span>
                   <span v-else class="inline-flex items-center gap-1 text-fg-muted">
                     <span class="i-carbon:checkmark w-3 h-3" aria-hidden="true" />
-                    0
+                    {{ numberFormatter.format(0) }}
                   </span>
                 </span>
                 <span v-else class="text-fg-subtle">-</span>
@@ -1144,11 +1129,9 @@ onKeyStroke(
           </div>
         </section>
       </section>
-      <div class="area-sidebar">
-        <!-- Sidebar -->
-        <div
-          class="sidebar-scroll sticky top-34 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(top-22 pt-2 max-h-[calc(100dvh-6rem)]) pt-1"
-        >
+
+      <PackageSidebar class="area-sidebar">
+        <div class="flex flex-col gap-4 sm:gap-6 xl:(pt-2)">
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
             <PackageAccessControls :package-name="pkg.name" />
@@ -1208,7 +1191,7 @@ onKeyStroke(
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
         </div>
-      </div>
+      </PackageSidebar>
     </article>
 
     <!-- Error state -->
@@ -1302,41 +1285,6 @@ onKeyStroke(
   grid-area: sidebar;
 }
 
-/* Sidebar scrollbar: hidden by default, shown on hover/focus */
-@media (min-width: 1024px) {
-  .sidebar-scroll {
-    scrollbar-gutter: stable;
-    scrollbar-width: 8px;
-    scrollbar-color: transparent transparent;
-  }
-
-  .sidebar-scroll::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .sidebar-scroll::-webkit-scrollbar-track,
-  .sidebar-scroll::-webkit-scrollbar-thumb {
-    background: transparent;
-  }
-
-  .sidebar-scroll:hover,
-  .sidebar-scroll:focus-within {
-    scrollbar-color: var(--border) transparent;
-  }
-
-  .sidebar-scroll:hover::-webkit-scrollbar-thumb,
-  .sidebar-scroll:focus-within::-webkit-scrollbar-thumb {
-    background-color: var(--border);
-    border-radius: 9999px;
-  }
-
-  .sidebar-scroll:hover::-webkit-scrollbar-track,
-  .sidebar-scroll:focus-within::-webkit-scrollbar-track {
-    background: transparent;
-  }
-}
-
 /* Improve package name wrapping for narrow screens */
 .area-header h1 {
   overflow-wrap: anywhere;
@@ -1399,6 +1347,21 @@ onKeyStroke(
 @media (hover: none) {
   .copy-button {
     display: none;
+  }
+}
+
+/* Mobile floating nav: safe-area positioning + kbd hiding */
+@media (max-width: 639.9px) {
+  .package-nav {
+    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .package-nav > :deep(a kbd) {
+    display: none;
+  }
+
+  .package-page {
+    padding-bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
   }
 }
 </style>
