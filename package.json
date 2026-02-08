@@ -19,11 +19,11 @@
     "i18n:check:fix": "node scripts/compare-translations.ts --fix",
     "i18n:report": "node scripts/find-invalid-translations.ts",
     "i18n:report:fix": "node scripts/remove-unused-translations.ts",
-    "rtl:check": "node scripts/rtl-checker.ts",
     "knip": "knip",
     "knip:fix": "knip --fix",
     "lint": "oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt",
+    "lint:css": "node scripts/unocss-checker.ts",
     "generate": "nuxt generate",
     "npmx-connector": "pnpm --filter npmx-connector dev",
     "generate-pwa-icons": "pwa-assets-generator",
@@ -61,10 +61,10 @@
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/fonts": "0.13.0",
     "@nuxt/scripts": "0.13.2",
-    "@nuxt/test-utils": "https://pkg.pr.new/@nuxt/test-utils@1499a48",
+    "@nuxt/test-utils": "4.0.0",
     "@nuxtjs/color-mode": "4.0.0",
     "@nuxtjs/html-validator": "2.1.0",
-    "@nuxtjs/i18n": "10.2.1",
+    "@nuxtjs/i18n": "10.2.3",
     "@shikijs/langs": "3.21.0",
     "@shikijs/themes": "3.21.0",
     "@unocss/nuxt": "66.6.0",
@@ -77,13 +77,14 @@
     "@vueuse/integrations": "14.2.0",
     "@vueuse/nuxt": "14.2.0",
     "@vueuse/router": "^14.2.0",
+    "@vueuse/shared": "14.2.0",
     "defu": "6.1.4",
     "fast-npm-meta": "1.0.0",
     "focus-trap": "^7.8.0",
     "gray-matter": "4.0.3",
     "marked": "17.0.1",
     "module-replacements": "2.11.0",
-    "nuxt": "4.3.0",
+    "nuxt": "4.3.1",
     "nuxt-og-image": "5.1.13",
     "ofetch": "1.5.1",
     "ohash": "2.0.11",
@@ -104,7 +105,7 @@
     "vite-plugin-pwa": "1.2.0",
     "vite-plus": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
     "vue": "3.5.27",
-    "vue-data-ui": "3.14.8"
+    "vue-data-ui": "3.14.9"
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.1.4",
@@ -119,6 +120,7 @@
     "@vitest/coverage-v8": "4.0.18",
     "@vue/test-utils": "2.4.6",
     "axe-core": "4.11.1",
+    "defu": "6.1.4",
     "eslint-plugin-regexp": "3.0.0",
     "fast-check": "4.5.3",
     "h3": "1.15.5",
@@ -148,6 +150,9 @@
     ],
     "*.{js,ts,mjs,cjs,vue}": [
       "pnpm oxlint --fix"
+    ],
+    "*.vue": [
+      "pnpm lint:css"
     ],
     "*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
       "pnpm oxfmt"

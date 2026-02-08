@@ -72,6 +72,7 @@ const {
   isLoadingMore,
   hasMore,
   fetchMore,
+  isRateLimited,
 } = useNpmSearch(query, () => ({
   size: requestedSize.value,
   incremental: true,
@@ -315,8 +316,6 @@ interface ValidatedSuggestion {
 
 /** Cache for existence checks to avoid repeated API calls */
 const existenceCache = ref<Record<string, boolean | 'pending'>>({})
-
-const NPM_REGISTRY = 'https://registry.npmjs.org'
 
 interface NpmSearchResponse {
   total: number
@@ -708,8 +707,15 @@ defineOgImageComponent('Default', {
             </button>
           </div>
 
+          <!-- Rate limited by npm - check FIRST before showing any results -->
+          <div v-if="isRateLimited" role="status" class="py-12">
+            <p class="text-fg-muted font-mono mb-6 text-center">
+              {{ $t('search.rate_limited') }}
+            </p>
+          </div>
+
           <!-- Enhanced toolbar -->
-          <div v-if="visibleResults.total > 0" class="mb-6">
+          <div v-else-if="visibleResults.total > 0" class="mb-6">
             <PackageListToolbar
               :filters="filters"
               v-model:sort-option="sortOption"
@@ -807,7 +813,7 @@ defineOgImageComponent('Default', {
           </div>
 
           <PackageList
-            v-if="displayResults.length > 0"
+            v-if="displayResults.length > 0 && !isRateLimited"
             :results="displayResults"
             :search-query="query"
             :filters="filters"
@@ -830,7 +836,7 @@ defineOgImageComponent('Default', {
 
           <!-- Pagination controls -->
           <PaginationControls
-            v-if="displayResults.length > 0"
+            v-if="displayResults.length > 0 && !isRateLimited"
             v-model:mode="paginationMode"
             v-model:page-size="preferredPageSize"
             v-model:current-page="currentPage"
