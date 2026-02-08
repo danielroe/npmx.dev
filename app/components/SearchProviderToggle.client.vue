@@ -18,7 +18,7 @@ useEventListener('keydown', event => {
 <template>
   <div ref="toggleRef" class="relative">
     <ButtonBase
-      :aria-label="$t('settings.search_provider')"
+      :aria-label="$t('settings.data_source.label')"
       :aria-expanded="isOpen"
       aria-haspopup="true"
       size="small"
@@ -37,7 +37,7 @@ useEventListener('keydown', event => {
         v-if="isOpen"
         class="absolute inset-ie-0 top-full pt-2 w-72 z-50"
         role="menu"
-        :aria-label="$t('settings.search_provider')"
+        :aria-label="$t('settings.data_source.label')"
       >
         <div
           class="bg-bg-subtle/80 backdrop-blur-sm border border-border-subtle rounded-lg shadow-lg shadow-bg-elevated/50 overflow-hidden p-1"
@@ -62,10 +62,10 @@ useEventListener('keydown', event => {
             />
             <div class="min-w-0 flex-1">
               <div class="text-sm font-medium" :class="!isAlgolia ? 'text-fg' : 'text-fg-muted'">
-                {{ $t('settings.search_provider_npm') }}
+                {{ $t('settings.data_source.npm') }}
               </div>
               <p class="text-xs text-fg-subtle mt-0.5">
-                {{ $t('settings.search_provider_npm_description') }}
+                {{ $t('settings.data_source.npm_description') }}
               </p>
             </div>
           </button>
@@ -90,10 +90,10 @@ useEventListener('keydown', event => {
             />
             <div class="min-w-0 flex-1">
               <div class="text-sm font-medium" :class="isAlgolia ? 'text-fg' : 'text-fg-muted'">
-                {{ $t('settings.search_provider_algolia') }}
+                {{ $t('settings.data_source.algolia') }}
               </div>
               <p class="text-xs text-fg-subtle mt-0.5">
-                {{ $t('settings.search_provider_algolia_description') }}
+                {{ $t('settings.data_source.algolia_description') }}
               </p>
             </div>
           </button>

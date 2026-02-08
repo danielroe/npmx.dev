@@ -431,10 +431,16 @@ const parsedQuery = computed<ParsedQuery>(() => {
 const validatedSuggestions = ref<ValidatedSuggestion[]>([])
 const suggestionsLoading = shallowRef(false)
 
+/** Counter to discard stale async results when query changes rapidly */
+let suggestionRequestId = 0
+
 /** Validate suggestions (check org/user existence) */
 async function validateSuggestionsImpl(parsed: ParsedQuery) {
+  const requestId = ++suggestionRequestId
+
   if (!parsed.type || !parsed.name) {
     validatedSuggestions.value = []
+    suggestionsLoading.value = false
     return
   }
 
@@ -444,11 +450,13 @@ async function validateSuggestionsImpl(parsed: ParsedQuery) {
   try {
     if (parsed.type === 'user') {
       const exists = await checkUserExists(parsed.name)
+      if (requestId !== suggestionRequestId) return
       if (exists) {
         suggestions.push({ type: 'user', name: parsed.name, exists: true })
       }
     } else if (parsed.type === 'org') {
       const exists = await checkOrgExists(parsed.name)
+      if (requestId !== suggestionRequestId) return
       if (exists) {
         suggestions.push({ type: 'org', name: parsed.name, exists: true })
       }
@@ -458,6 +466,7 @@ async function validateSuggestionsImpl(parsed: ParsedQuery) {
         checkOrgExists(parsed.name),
         checkUserExists(parsed.name),
       ])
+      if (requestId !== suggestionRequestId) return
       // Org first (more common)
       if (orgExists) {
         suggestions.push({ type: 'org', name: parsed.name, exists: true })
@@ -467,10 +476,15 @@ async function validateSuggestionsImpl(parsed: ParsedQuery) {
       }
     }
   } finally {
-    suggestionsLoading.value = false
+    // Only clear loading if this is still the active request
+    if (requestId === suggestionRequestId) {
+      suggestionsLoading.value = false
+    }
   }
 
-  validatedSuggestions.value = suggestions
+  if (requestId === suggestionRequestId) {
+    validatedSuggestions.value = suggestions
+  }
 }
 
 // Debounce lightly for npm (extra API calls are slower), skip debounce for Algolia (fast)

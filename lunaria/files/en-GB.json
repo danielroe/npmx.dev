@@ -67,12 +67,14 @@
       "search": "Data source",
       "language": "Language"
     },
-    "search_provider": "Data source",
-    "search_provider_description": "Choose where npmx gets search data. Individual package pages always use the npm registry directly.",
-    "search_provider_npm": "npm Registry",
-    "search_provider_npm_description": "Fetches search, org and user listings directly from the official npm registry. Authoritative, but can be slower.",
-    "search_provider_algolia": "Algolia",
-    "search_provider_algolia_description": "Uses Algolia for faster search, org and user pages.",
+    "data_source": {
+      "label": "Data source",
+      "description": "Choose where npmx gets search data. Individual package pages always use the npm registry directly.",
+      "npm": "npm Registry",
+      "npm_description": "Fetches search, org and user listings directly from the official npm registry. Authoritative, but can be slower.",
+      "algolia": "Algolia",
+      "algolia_description": "Uses Algolia for faster search, org and user pages."
+    },
     "relative_dates": "Relative dates",
     "include_types": "Include {'@'}types in install",
     "include_types_description": "Add {'@'}types package to install commands for untyped packages",

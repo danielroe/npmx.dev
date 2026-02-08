@@ -156,10 +156,10 @@ const setLocale: typeof setNuxti18nLocale = locale => {
           <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6">
             <div class="space-y-2">
               <label for="search-provider-select" class="block text-sm text-fg font-medium">
-                {{ $t('settings.search_provider') }}
+                {{ $t('settings.data_source.label') }}
               </label>
               <p class="text-xs text-fg-muted mb-3">
-                {{ $t('settings.search_provider_description') }}
+                {{ $t('settings.data_source.description') }}
               </p>
 
               <ClientOnly>
@@ -173,10 +173,10 @@ const setLocale: typeof setNuxti18nLocale = locale => {
                   "
                 >
                   <option value="npm">
-                    {{ $t('settings.search_provider_npm') }}
+                    {{ $t('settings.data_source.npm') }}
                   </option>
                   <option value="algolia">
-                    {{ $t('settings.search_provider_algolia') }}
+                    {{ $t('settings.data_source.algolia') }}
                   </option>
                 </select>
                 <template #fallback>
@@ -194,8 +194,8 @@ const setLocale: typeof setNuxti18nLocale = locale => {
               <p class="text-xs text-fg-subtle mt-2">
                 {{
                   settings.searchProvider === 'algolia'
-                    ? $t('settings.search_provider_algolia_description')
-                    : $t('settings.search_provider_npm_description')
+                    ? $t('settings.data_source.algolia_description')
+                    : $t('settings.data_source.npm_description')
                 }}
               </p>
 
