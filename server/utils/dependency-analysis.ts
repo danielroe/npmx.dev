@@ -149,30 +149,41 @@ function getVulnerabilityUrl(vuln: OsvVulnerability): string {
 }
 
 /**
- * Check if a version falls within an OSV range (between introduced and fixed).
- * OSV ranges use events: introduced starts vulnerability, fixed ends it.
+ * Parse OSV range events into introduced/fixed pairs.
+ * OSV events form a timeline: [introduced, fixed, introduced, fixed, ...]
+ * A single range can have multiple introduced/fixed pairs representing
+ * periods where the vulnerability was active, was fixed, and was reintroduced.
+ * @see https://ossf.github.io/osv-schema/#affectedrangesevents-fields
  */
-function isVersionInRange(version: string, range: OsvRange): boolean {
-  const introduced = range.events.find(e => e.introduced)?.introduced
-  const fixed = range.events.find(e => e.fixed)?.fixed
+function parseRangeIntervals(range: OsvRange): Array<{ introduced: string; fixed?: string }> {
+  const intervals: Array<{ introduced: string; fixed?: string }> = []
+  let currentIntroduced: string | undefined
 
-  if (!introduced) return false
-
-  // Handle "0" as "0.0.0" for semver comparison
-  const introVersion = introduced === '0' ? '0.0.0' : introduced
-
-  try {
-    // Version must be >= introduced AND < fixed (if fixed exists)
-    return semver.gte(version, introVersion) && (!fixed || semver.lt(version, fixed))
-  } catch {
-    // If semver parsing fails, skip this range
-    return false
+  for (const event of range.events) {
+    if (event.introduced !== undefined) {
+      // Start a new interval (close previous open one if any)
+      if (currentIntroduced !== undefined) {
+        intervals.push({ introduced: currentIntroduced })
+      }
+      currentIntroduced = event.introduced
+    } else if (event.fixed !== undefined && currentIntroduced !== undefined) {
+      intervals.push({ introduced: currentIntroduced, fixed: event.fixed })
+      currentIntroduced = undefined
+    }
   }
+
+  // Handle trailing introduced with no fixed (still vulnerable)
+  if (currentIntroduced !== undefined) {
+    intervals.push({ introduced: currentIntroduced })
+  }
+
+  return intervals
 }
 
 /**
  * Extract the fixed version for a specific package version from vulnerability data.
- * Finds the range that contains the current version and returns its fixed version.
+ * Finds the interval that contains the current version and returns its fixed version
+ * Finds the interval that contains the current version and returns its fixed version.
  * @see https://ossf.github.io/osv-schema/#affectedrangesevents-fields
  */
 function getFixedVersion(
@@ -187,7 +198,7 @@ function getFixedVersion(
     a => a.package.ecosystem === 'npm' && a.package.name === packageName,
   )
 
-  // Check each entry's ranges to find one that contains the current version
+  // Check each entry's ranges to find the interval that contains the current version
   for (const entry of packageAffectedEntries) {
     if (!entry.ranges) continue
 
@@ -195,10 +206,18 @@ function getFixedVersion(
       // Only handle SEMVER ranges (most common for npm)
       if (range.type !== 'SEMVER') continue
 
-      if (isVersionInRange(currentVersion, range)) {
-        // Found the matching range - return its fixed version
-        const fixedEvent = range.events.find(e => e.fixed)
-        if (fixedEvent?.fixed) return fixedEvent.fixed
+      const intervals = parseRangeIntervals(range)
+      for (const interval of intervals) {
+        const introVersion = interval.introduced === '0' ? '0.0.0' : interval.introduced
+        try {
+          const afterIntro = semver.gte(currentVersion, introVersion)
+          const beforeFixed = !interval.fixed || semver.lt(currentVersion, interval.fixed)
+          if (afterIntro && beforeFixed && interval.fixed) {
+            return interval.fixed
+          }
+        } catch {
+          continue
+        }
       }
     }
   }

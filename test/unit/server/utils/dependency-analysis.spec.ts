@@ -721,6 +721,68 @@ describe('dependency-analysis', () => {
       expect(result.vulnerablePackages[0]?.vulnerabilities[0]?.fixedIn).toBe('16.0.11')
     })
 
+    it('handles multiple introduced/fixed pairs in a single range', async () => {
+      const mockResolved = new Map([
+        [
+          'example@1.5.0',
+          {
+            name: 'example',
+            version: '1.5.0',
+            size: 1000,
+            optional: false,
+            depth: 'root' as const,
+            path: ['example@1.5.0'],
+          },
+        ],
+      ])
+      vi.mocked(resolveDependencyTree).mockResolvedValue(mockResolved)
+
+      // Single range with multiple introduced/fixed pairs (reintroduced vulnerability)
+      // Range: 0-0.2.1, 1.0.0-1.2.3, 1.4.0-1.6.0
+      // Version 1.5.0 should match the third interval (1.4.0-1.6.0)
+      mockOsvApi(
+        [{ vulns: [{ id: 'GHSA-multi-range', modified: '2024-01-01' }] }],
+        new Map([
+          [
+            'example@1.5.0',
+            {
+              vulns: [
+                {
+                  id: 'GHSA-multi-range',
+                  summary: 'Multi-range vulnerability',
+                  database_specific: { severity: 'HIGH' },
+                  affected: [
+                    {
+                      package: { ecosystem: 'npm', name: 'example' },
+                      ranges: [
+                        {
+                          type: 'SEMVER',
+                          events: [
+                            { introduced: '0' },
+                            { fixed: '0.2.1' },
+                            { introduced: '1.0.0' },
+                            { fixed: '1.2.3' },
+                            { introduced: '1.4.0' },
+                            { fixed: '1.6.0' },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        ]),
+      )
+
+      const result = await analyzeDependencyTree('example', '1.5.0')
+
+      expect(result.vulnerablePackages).toHaveLength(1)
+      // Should match the third interval and return its fixed version
+      expect(result.vulnerablePackages[0]?.vulnerabilities[0]?.fixedIn).toBe('1.6.0')
+    })
+
     it('returns undefined fixedIn when no matching range has a fixed version', async () => {
       const mockResolved = new Map([
         [
