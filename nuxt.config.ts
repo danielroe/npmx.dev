@@ -137,6 +137,7 @@ export default defineNuxtConfig({
     // never cache
     '/api/auth/**': { isr: false, cache: false },
     '/api/social/**': { isr: false, cache: false },
+    '/api/user/**': { isr: false, cache: false },
     '/api/atproto/bluesky-comments': {
       isr: {
         expiration: 60 * 60 /* one hour */,
@@ -242,6 +243,10 @@ export default defineNuxtConfig({
       'atproto': {
         driver: 'fsLite',
         base: './.cache/atproto',
+      },
+      'user-preferences': {
+        driver: 'fsLite',
+        base: './.cache/user-preferences',
       },
     },
     typescript: {
