@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap'
 import { useAtproto } from '~/composables/atproto/useAtproto'
+import type { NavigationConfigWithGroups } from '~/types'
 
 const isOpen = defineModel<boolean>('open', { default: false })
 const { links } = defineProps<{
@@ -178,8 +179,12 @@ onUnmounted(deactivate)
 
             <!-- Navigation links -->
             <div class="flex-1 overflow-y-auto overscroll-contain py-2">
-              <template v-for="group in links">
-                <div v-if="group.type === 'separator'" class="mx-4 my-2 border-t border-border" />
+              <template v-for="(group, index) in links">
+                <div
+                  v-if="group.type === 'separator'"
+                  :key="`seperator-${index}`"
+                  class="mx-4 my-2 border-t border-border"
+                />
 
                 <div v-if="group.type === 'group'" :key="group.name" class="p-2">
                   <span
@@ -192,7 +197,7 @@ onUnmounted(deactivate)
                     <NuxtLink
                       v-for="link in group.items"
                       :key="link.name"
-                      :to="link.to"
+                      :to="link.to?.name"
                       :href="link.href"
                       :target="link.target"
                       class="flex items-center gap-3 px-3 py-3 rounded-md font-mono text-sm text-fg hover:bg-bg-subtle transition-colors duration-200"

@@ -52,7 +52,6 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         name: 'About',
         label: $t('footer.about'),
         to: { name: 'about' },
-        keyshortcut: null,
         type: 'link',
         external: false,
         iconClass: 'i-carbon:information',
@@ -61,7 +60,6 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         name: 'Privacy Policy',
         label: $t('privacy_policy.title'),
         to: { name: 'privacy' },
-        keyshortcut: null,
         type: 'link',
         external: false,
         iconClass: 'i-carbon:security',
@@ -81,7 +79,6 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         label: $t('footer.docs'),
         href: 'https://docs.npmx.dev',
         target: '_blank',
-        keyshortcut: null,
         type: 'link',
         external: true,
         iconClass: 'i-carbon:document',
@@ -91,7 +88,6 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         label: $t('footer.source'),
         href: 'https://repo.npmx.dev',
         target: '_blank',
-        keyshortcut: null,
         type: 'link',
         external: true,
         iconClass: 'i-carbon:logo-github',
@@ -101,7 +97,6 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         label: $t('footer.social'),
         href: 'https://social.npmx.dev',
         target: '_blank',
-        keyshortcut: null,
         type: 'link',
         external: true,
         iconClass: 'i-simple-icons:bluesky',
@@ -111,7 +106,6 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         label: $t('footer.chat'),
         href: 'https://chat.npmx.dev',
         target: '_blank',
-        keyshortcut: null,
         type: 'link',
         external: true,
         iconClass: 'i-carbon:chat',
@@ -176,7 +170,7 @@ onKeyStroke(
     }
 
     for (const link of desktopLinks.value) {
-      if (isKeyWithoutModifiers(e, link.keyshortcut)) {
+      if (link.to && link.keyshortcut && isKeyWithoutModifiers(e, link.keyshortcut)) {
         e.preventDefault()
         navigateTo(link.to.name)
         break
