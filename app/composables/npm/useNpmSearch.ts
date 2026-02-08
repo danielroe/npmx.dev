@@ -1,5 +1,5 @@
-import type { Packument, NpmSearchResponse, NpmDownloadCount } from '#shared/types'
-import { emptySearchResponse, packumentToSearchResult } from './search-utils'
+import type { NpmSearchResponse, PackageMetaResponse } from '#shared/types'
+import { emptySearchResponse, metaToSearchResult } from './search-utils'
 
 export interface NpmSearchOptions {
   /** Number of results */
@@ -19,42 +19,41 @@ export interface NpmSearchOptions {
  * to call at any time (event handlers, async callbacks, etc.).
  */
 export function useNpmSearch() {
-  const { $npmRegistry, $npmApi } = useNuxtApp()
+  const { $npmRegistry } = useNuxtApp()
 
   /**
    * Search npm packages via the npm registry API.
    * Returns results in the same `NpmSearchResponse` format as `useAlgoliaSearch`.
    *
-   * Single-character queries are handled specially: they do a direct packument
-   * + download count lookup instead of a search, because the search API returns
-   * poor results for single-char terms.
+   * Single-character queries are handled specially: they fetch lightweight
+   * metadata from a server-side proxy instead of a search, because the
+   * search API returns poor results for single-char terms. The proxy
+   * fetches the full packument + download counts server-side and returns
+   * only the fields needed for package cards.
    */
   async function search(
     query: string,
     options: NpmSearchOptions = {},
     signal?: AbortSignal,
   ): Promise<NpmSearchResponse> {
-    // Single-character: direct packument lookup
+    // Single-character: fetch lightweight metadata via server proxy
     if (query.length === 1) {
-      const encodedName = encodePackageName(query)
-      const [{ data: pkg, isStale }, { data: downloads }] = await Promise.all([
-        $npmRegistry<Packument>(`/${encodedName}`, { signal }),
-        $npmApi<NpmDownloadCount>(`/downloads/point/last-week/${encodedName}`, {
-          signal,
-        }),
-      ])
+      try {
+        const meta = await $fetch<PackageMetaResponse>(
+          `/api/registry/package-meta/${encodePackageName(query)}`,
+          { signal },
+        )
 
-      if (!pkg) {
+        const result = metaToSearchResult(meta)
+
+        return {
+          objects: [result],
+          total: 1,
+          isStale: false,
+          time: new Date().toISOString(),
+        }
+      } catch {
         return emptySearchResponse()
-      }
-
-      const result = packumentToSearchResult(pkg, downloads?.downloads)
-
-      return {
-        objects: [result],
-        total: 1,
-        isStale,
-        time: new Date().toISOString(),
       }
     }
 

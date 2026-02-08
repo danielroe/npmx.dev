@@ -1,5 +1,5 @@
-import type { NpmSearchResponse, NpmSearchResult, MinimalPackument } from '#shared/types'
-import { emptySearchResponse, packumentToSearchResult } from './search-utils'
+import type { NpmSearchResponse, NpmSearchResult, PackageMetaResponse } from '#shared/types'
+import { emptySearchResponse, metaToSearchResult } from './search-utils'
 import { mapWithConcurrency } from '#shared/utils/async'
 
 /**
@@ -15,7 +15,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
 
   const asyncData = useLazyAsyncData(
     () => `org-packages:${searchProvider.value}:${toValue(orgName)}`,
-    async ({ $npmRegistry, ssrContext }, { signal }) => {
+    async ({ ssrContext }, { signal }) => {
       const org = toValue(orgName)
       if (!org) {
         return emptySearchResponse()
@@ -62,16 +62,15 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
         }
       }
 
-      // npm fallback: fetch packuments individually
-      const packuments = await mapWithConcurrency(
+      // npm fallback: fetch lightweight metadata via server proxy
+      const metaResults = await mapWithConcurrency(
         packageNames,
         async name => {
           try {
-            const encoded = encodePackageName(name)
-            const { data: pkg } = await $npmRegistry<MinimalPackument>(`/${encoded}`, {
-              signal,
-            })
-            return pkg
+            return await $fetch<PackageMetaResponse>(
+              `/api/registry/package-meta/${encodePackageName(name)}`,
+              { signal },
+            )
           } catch {
             return null
           }
@@ -79,11 +78,9 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
         10,
       )
 
-      const validPackuments = packuments.filter(
-        (pkg): pkg is MinimalPackument => pkg !== null && !!pkg['dist-tags'],
-      )
-
-      const results: NpmSearchResult[] = validPackuments.map(pkg => packumentToSearchResult(pkg))
+      const results: NpmSearchResult[] = metaResults
+        .filter((meta): meta is PackageMetaResponse => meta !== null)
+        .map(metaToSearchResult)
 
       return {
         isStale: false,
