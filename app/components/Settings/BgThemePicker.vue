@@ -5,9 +5,10 @@ onPrehydrate(el => {
   const settings = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
   const id = settings.preferredBackgroundTheme
   if (id) {
-    const input = el.querySelector<HTMLInputElement>(`input[value="${id || 'neutral'}"]`)
+    const input = el.querySelector<HTMLInputElement>(`input[value="${id}"]`)
     if (input) {
       input.checked = true
+      input.setAttribute('checked', '')
     }
   }
 })

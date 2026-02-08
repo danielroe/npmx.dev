@@ -10,6 +10,13 @@ onPrehydrate(el => {
     const input = el.querySelector<HTMLInputElement>(`input[value="${id}"]`)
     if (input) {
       input.checked = true
+      input.setAttribute('checked', '')
+    }
+    // Remove checked from the server-default (clear button, value="")
+    const clearInput = el.querySelector<HTMLInputElement>('input[value=""]')
+    if (clearInput) {
+      clearInput.checked = false
+      clearInput.removeAttribute('checked')
     }
   }
 })
