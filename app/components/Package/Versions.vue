@@ -369,7 +369,6 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       : row.primaryVersion.version
                   "
                   :classicon="row.primaryVersion.deprecated ? 'i-carbon-warning-hex' : undefined"
-                  icon-size="sm"
                 >
                   <span dir="ltr">
                     {{ row.primaryVersion.version }}
@@ -423,7 +422,6 @@ function getTagVersions(tag: string): VersionDisplay[] {
                     : v.version
                 "
                 :classicon="v.deprecated ? 'i-carbon-warning-hex' : undefined"
-                icon-size="sm"
               >
                 <span dir="ltr">
                   {{ v.version }}
@@ -525,7 +523,6 @@ function getTagVersions(tag: string): VersionDisplay[] {
                     : row.primaryVersion.version
                 "
                 :classicon="row.primaryVersion.deprecated ? 'i-carbon-warning-hex' : undefined"
-                icon-size="sm"
               >
                 <span dir="ltr">
                   {{ row.primaryVersion.version }}
@@ -602,7 +599,6 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       :classicon="
                         group.versions[0]?.deprecated ? 'i-carbon-warning-hex' : undefined
                       "
-                      icon-size="sm"
                     >
                       <span dir="ltr">
                         {{ group.versions[0]?.version }}
@@ -664,7 +660,6 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       :classicon="
                         group.versions[0]?.deprecated ? 'i-carbon-warning-hex' : undefined
                       "
-                      icon-size="sm"
                     >
                       <span dir="ltr">
                         {{ group.versions[0]?.version }}

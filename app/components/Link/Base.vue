@@ -12,7 +12,6 @@ const props = withDefaults(
       'type'?: never
       'variant'?: 'button-primary' | 'button-secondary' | 'link'
       'size'?: 'small' | 'medium'
-      'iconSize'?: 'sm' | 'md' | 'lg'
 
       'keyshortcut'?: string
 
@@ -52,21 +51,11 @@ const isLinkAnchor = computed(
   () => !!props.to && typeof props.to === 'string' && props.to.startsWith('#'),
 )
 
-const ICON_SIZE_MAP = {
-  sm: 'size-3 min-w-3',
-  md: 'size-4 min-w-4',
-  lg: 'size-5 min-w-5',
-}
-
 /** size is only applicable for button like links */
 const isLink = computed(() => props.variant === 'link')
 const isButton = computed(() => props.variant !== 'link')
 const isButtonSmall = computed(() => props.size === 'small' && props.variant !== 'link')
 const isButtonMedium = computed(() => props.size === 'medium' && props.variant !== 'link')
-
-const iconSizeClass = computed(
-  () => ICON_SIZE_MAP[props.iconSize || (isButtonSmall.value && 'sm') || 'md'],
-)
 </script>
 
 <template>
@@ -100,22 +89,22 @@ const iconSizeClass = computed(
     :aria-keyshortcuts="keyshortcut"
     :target="isLinkExternal ? '_blank' : undefined"
   >
-    <span v-if="classicon" class="me-1" :class="[iconSizeClass, classicon]" aria-hidden="true" />
+    <span v-if="classicon" class="me-1 size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
     <!-- automatically show icon indicating external link -->
     <span
       v-if="isLinkExternal && !classicon"
-      class="i-carbon:launch rtl-flip w-3 h-3 opacity-50"
+      class="i-carbon:launch rtl-flip size-[1em] opacity-50"
       aria-hidden="true"
     />
     <span
       v-else-if="isLinkAnchor && isLink"
-      class="i-carbon:link w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity duration-200"
+      class="i-carbon:link size-[1em] opacity-0 group-hover/link:opacity-100 transition-opacity duration-200"
       aria-hidden="true"
     />
     <kbd
       v-if="keyshortcut"
-      class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
+      class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >
       {{ keyshortcut }}
