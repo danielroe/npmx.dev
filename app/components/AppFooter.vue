@@ -7,7 +7,7 @@ const route = useRoute()
 const isHome = computed(() => route.name === 'index')
 
 const triggerRef = ref<HTMLElement | null>(null)
-const modalRef = ref<any>(null)
+const modalRef = useTemplateRef<HTMLElement>('modalRef')
 const modalOpen = ref(false)
 
 const togglePopover = (e?: Event) => {
