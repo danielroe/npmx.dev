@@ -102,8 +102,8 @@ importers:
         specifier: 1.0.2
         version: 1.0.2
       '@vite-pwa/nuxt':
-        specifier: 1.1.0
-        version: 1.1.0(@vite-pwa/assets-generator@1.0.2)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)
+        specifier: 1.1.1
+        version: 1.1.1(@vite-pwa/assets-generator@1.0.2)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)
       '@voidzero-dev/vite-plus-core':
         specifier: 0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab
         version: 0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab(@types/node@24.10.9)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(typescript@5.9.3)(yaml@2.8.2)
@@ -206,6 +206,27 @@ importers:
       vue-data-ui:
         specifier: 3.14.9
         version: 3.14.9(vue@3.5.27(typescript@5.9.3))
+      workbox-build:
+        specifier: 7.4.0
+        version: 7.4.0
+      workbox-cacheable-response:
+        specifier: 7.4.0
+        version: 7.4.0
+      workbox-core:
+        specifier: 7.4.0
+        version: 7.4.0
+      workbox-expiration:
+        specifier: 7.4.0
+        version: 7.4.0
+      workbox-precaching:
+        specifier: 7.4.0
+        version: 7.4.0
+      workbox-routing:
+        specifier: 7.4.0
+        version: 7.4.0
+      workbox-strategies:
+        specifier: 7.4.0
+        version: 7.4.0
     devDependencies:
       '@e18e/eslint-plugin':
         specifier: 0.1.4
@@ -4107,8 +4128,8 @@ packages:
     engines: {node: '>=16.14.0'}
     hasBin: true
 
-  '@vite-pwa/nuxt@1.1.0':
-    resolution: {integrity: sha512-OKrqHg9PHCqp9dlrtCaLlh55V0xEG/zkXjvpl2nE+6IB3xW8mqnH0hXYc1pjN7qv0JzB+lbCfWxFsg5EZvAjWA==}
+  '@vite-pwa/nuxt@1.1.1':
+    resolution: {integrity: sha512-8RkdxNJ3NubtwmS96bPVvDclFmysH3VADKWqlaBaUu6PLsoHM3Wq7ThdYBsAT6EpqzWS+iFC2SF6lkJ4xDhKLA==}
     peerDependencies:
       '@vite-pwa/assets-generator': ^1.0.0
     peerDependenciesMeta:
@@ -14009,7 +14030,7 @@ snapshots:
       sharp-ico: 0.1.5
       unconfig: 7.4.2
 
-  '@vite-pwa/nuxt@1.1.0(@vite-pwa/assets-generator@1.0.2)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)':
+  '@vite-pwa/nuxt@1.1.1(@vite-pwa/assets-generator@1.0.2)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.9)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)':
     dependencies:
       '@nuxt/kit': 3.21.0(magicast@0.5.1)
       pathe: 1.1.2

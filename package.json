@@ -14,6 +14,7 @@
     "build:lunaria": "node ./lunaria/lunaria.ts",
     "build:test": "NODE_ENV=test pnpm build",
     "dev": "nuxt dev",
+    "dev:pwa": "VITE_DEV_PWA=true nuxt dev",
     "dev:docs": "pnpm run --filter npmx-docs dev --port=3001",
     "i18n:check": "node scripts/compare-translations.ts",
     "i18n:check:fix": "node scripts/compare-translations.ts --fix",
@@ -71,7 +72,7 @@
     "@unocss/preset-wind4": "66.6.0",
     "@upstash/redis": "1.36.1",
     "@vite-pwa/assets-generator": "1.0.2",
-    "@vite-pwa/nuxt": "1.1.0",
+    "@vite-pwa/nuxt": "1.1.1",
     "@voidzero-dev/vite-plus-core": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
     "@vueuse/core": "14.2.0",
     "@vueuse/integrations": "14.2.0",
@@ -105,7 +106,14 @@
     "vite-plugin-pwa": "1.2.0",
     "vite-plus": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
     "vue": "3.5.27",
-    "vue-data-ui": "3.14.9"
+    "vue-data-ui": "3.14.9",
+    "workbox-build": "7.4.0",
+    "workbox-cacheable-response": "7.4.0",
+    "workbox-core": "7.4.0",
+    "workbox-expiration": "7.4.0",
+    "workbox-precaching": "7.4.0",
+    "workbox-routing": "7.4.0",
+    "workbox-strategies": "7.4.0"
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.1.4",

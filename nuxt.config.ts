@@ -199,21 +199,51 @@ export default defineNuxtConfig({
     },
   },
 
+  $test: {
+    pwa: {
+      disable: true,
+    },
+  },
+
   pwa: {
-    injectRegister: false,
+    registerType: 'autoUpdate',
+    strategies: 'injectManifest',
+    srcDir: '.',
+    filename: 'service-worker.ts',
     client: {
-      // Disable service worker
-      registerPlugin: false,
+      installPrompt: true,
+      periodicSyncForUpdates: 3_600, // Check for updates every hour
+    },
+    injectManifest: {
+      minify: process.env.VITE_DEV_PWA !== 'true',
+      enableWorkboxModulesLogs: process.env.VITE_DEV_PWA === 'true' ? true : undefined,
+      globPatterns: ['**/*.{js,json,css,html,txt,svg,png,ico,webp,woff,woff2,ttf,eot,otf,wasm}'],
+      globIgnores: ['manifest**.webmanifest'],
     },
     devOptions: {
-      enabled: true,
+      enabled: process.env.VITE_DEV_PWA === 'true',
+      type: 'module',
     },
     manifest: {
+      id: '/',
+      scope: '/',
+      start_url: '/',
       name: 'npmx',
       short_name: 'npmx',
       description: 'A fast, modern browser for the npm registry',
       theme_color: '#0a0a0a',
       background_color: '#0a0a0a',
+      orientation: 'portrait',
+      display: 'standalone',
+      display_override: ['window-controls-overlay'],
+      // categories: ['social', 'social networking', 'news'],
+      handle_links: 'preferred',
+      launch_handler: {
+        client_mode: ['navigate-existing', 'auto'],
+      },
+      edge_side_panel: {
+        preferred_width: 480,
+      },
       icons: [
         {
           src: 'pwa-64x64.png',
