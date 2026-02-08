@@ -114,7 +114,9 @@ export function useOutdatedDependencies(
   watch(
     () => toValue(dependencies),
     deps => {
-      fetchOutdatedInfo(deps)
+      fetchOutdatedInfo(deps).catch(() => {
+        // Network failure or fast-npm-meta outage — leave stale results in place
+      })
     },
     { immediate: true },
   )

@@ -7,7 +7,7 @@ import { mapWithConcurrency } from '#shared/utils/async'
  *
  * 1. Gets the authoritative package list from the npm registry (single request)
  * 2. Fetches metadata from Algolia by exact name (single request)
- * 3. Falls back to individual packument fetches when Algolia is unavailable
+ * 3. Falls back to lightweight server-side package-meta lookups
  */
 export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
   const { searchProvider } = useSearchProvider()
