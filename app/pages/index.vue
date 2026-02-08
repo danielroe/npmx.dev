@@ -69,15 +69,12 @@ defineOgImageComponent('Default', {
       >
         <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 list-none m-0 p-0">
           <li v-for="framework in SHOWCASED_FRAMEWORKS" :key="framework.name">
-            <NuxtLink
-              :to="packageRoute(framework.package)"
-              class="link-subtle font-mono text-sm inline-flex items-center gap-2 group"
-            >
+            <LinkBase :to="packageRoute(framework.package)" class="gap-2 text-sm">
               <span
-                class="w-1 h-1 rounded-full bg-accent group-hover:bg-fg transition-colors duration-200"
+                class="home-tag-dot w-1 h-1 rounded-full bg-accent group-hover:bg-fg transition-colors duration-200"
               />
               {{ framework.name }}
-            </NuxtLink>
+            </LinkBase>
           </li>
         </ul>
       </nav>
@@ -90,3 +87,13 @@ defineOgImageComponent('Default', {
     </section>
   </main>
 </template>
+
+<style scoped>
+/* Windows High Contrast Mode support */
+@media (forced-colors: active) {
+  .home-tag-dot {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+}
+</style>

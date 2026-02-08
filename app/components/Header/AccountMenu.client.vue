@@ -57,12 +57,12 @@ function openAuthModal() {
 
 <template>
   <div ref="accountMenuRef" class="relative flex min-w-24 justify-end">
-    <button
+    <ButtonBase
       type="button"
-      class="relative flex items-center gap-2 px-2 py-1.5 rounded-md transition-colors duration-200 hover:bg-bg-subtle hover:text-accent focus-visible:outline-accent/70"
       :aria-expanded="isOpen"
       aria-haspopup="true"
       @click="isOpen = !isOpen"
+      class="border-none"
     >
       <!-- Stacked avatars when connected -->
       <div
@@ -120,13 +120,13 @@ function openAuthModal() {
       <!-- Operation count badge (when npm connected with pending ops) -->
       <span
         v-if="isNpmConnected && operationCount > 0"
-        class="absolute -top-1 -inset-ie-1 min-w-[1rem] h-4 px-1 flex items-center justify-center font-mono text-[10px] rounded-full"
+        class="absolute -top-1 -inset-ie-1 min-w-[1rem] h-4 px-1 flex items-center justify-center font-mono text-3xs rounded-full"
         :class="hasPendingOperations ? 'bg-yellow-500 text-black' : 'bg-blue-500 text-white'"
         aria-hidden="true"
       >
         {{ operationCount }}
       </span>
-    </button>
+    </ButtonBase>
 
     <!-- Dropdown menu -->
     <Transition

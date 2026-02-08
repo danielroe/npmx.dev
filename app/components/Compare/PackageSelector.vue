@@ -53,6 +53,8 @@ const filteredResults = computed(() => {
     .filter(r => !packages.value.includes(r.name))
 })
 
+const numberFormatter = useNumberFormatter()
+
 function addPackage(name: string) {
   if (packages.value.length >= maxPackages.value) return
   if (packages.value.includes(name)) return
@@ -75,9 +77,18 @@ function removePackage(name: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter' && inputValue.value.trim()) {
+  const inputValueTrim = inputValue.value.trim()
+  const hasMatchInPackages = filteredResults.value.find(result => {
+    return result.name === inputValueTrim
+  })
+
+  if (e.key === 'Enter' && inputValueTrim) {
     e.preventDefault()
-    addPackage(inputValue.value.trim())
+    if (showNoDependencyOption.value) {
+      addPackage(NO_DEPENDENCY_ID)
+    } else if (hasMatchInPackages) {
+      addPackage(inputValueTrim)
+    }
   }
 }
 
@@ -209,8 +220,8 @@ function handleBlur() {
     <p class="text-xs text-fg-subtle">
       {{
         $t('compare.selector.packages_selected', {
-          count: packages.length,
-          max: maxPackages,
+          count: numberFormatter.format(packages.length),
+          max: numberFormatter.format(maxPackages),
         })
       }}
       <span v-if="packages.length < 2">{{ $t('compare.selector.add_hint') }}</span>
