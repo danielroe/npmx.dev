@@ -32,7 +32,7 @@ defineExpose({
 <template>
   <button
     ref="el"
-    class="group cursor-pointer inline-flex gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 disabled:(opacity-40 cursor-not-allowed border-transparent)"
+    class="group cursor-pointer flex gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 disabled:(opacity-40 cursor-not-allowed border-transparent)"
     :class="{
       'text-sm px-4 py-2': size === 'medium',
       'text-xs px-2 py-0.5': size === 'small',

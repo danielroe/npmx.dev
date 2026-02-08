@@ -10,7 +10,7 @@ const props = withDefaults(
        * `type` should never be used, because this will always be a link.
        * */
       'type'?: never
-      'variant'?: 'button-primary' | 'button-secondary' | 'link'
+      'variant'?: 'button-primary' | 'button-secondary' | 'link' | 'link-block'
       'size'?: 'small' | 'medium'
 
       'keyshortcut'?: string
@@ -52,17 +52,20 @@ const isLinkAnchor = computed(
 )
 
 /** size is only applicable for button like links */
-const isLink = computed(() => props.variant === 'link')
-const isButton = computed(() => props.variant !== 'link')
-const isButtonSmall = computed(() => props.size === 'small' && props.variant !== 'link')
-const isButtonMedium = computed(() => props.size === 'medium' && props.variant !== 'link')
+const isLink = computed(() => props.variant === 'link' || props.variant === 'link-block')
+const isButton = computed(() => !isLink.value)
+const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
+const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
+const isBlock = computed(() => isButton || props.variant === 'link-block')
 </script>
 
 <template>
   <span
     v-if="disabled"
     :class="{
-      'opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border border-transparent rounded-md':
+      'flex': isBlock,
+      'inline-flex': !isBlock,
+      'opacity-50 gap-x-1 items-center justify-center font-mono border border-transparent rounded-md':
         isButton,
       'text-sm px-4 py-2': isButtonMedium,
       'text-xs px-2 py-0.5': isButtonSmall,
@@ -73,12 +76,14 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
   /></span>
   <NuxtLink
     v-else
-    class="group/link inline-flex gap-x-1 items-center justify-center"
+    class="group/link gap-x-1 items-center"
     :class="{
+      'flex': isBlock,
+      'inline-flex': !isBlock,
       'underline-offset-[0.2rem] underline decoration-1 decoration-fg/30': !isLinkAnchor && isLink,
-      'font-mono text-fg hover:(decoration-accent text-accent) focus-visible:(decoration-accent text-accent) transition-colors duration-200':
+      'justify-start font-mono text-fg hover:(decoration-accent text-accent) focus-visible:(decoration-accent text-accent) transition-colors duration-200':
         isLink,
-      'font-mono border border-border rounded-md transition-all duration-200': isButton,
+      'justify-center font-mono border border-border rounded-md transition-all duration-200': isButton,
       'text-sm px-4 py-2': isButtonMedium,
       'text-xs px-2 py-0.5': isButtonSmall,
       'bg-transparent text-fg hover:(bg-fg/10) focus-visible:(bg-fg/10)':
