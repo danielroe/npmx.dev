@@ -7,7 +7,7 @@ const route = useRoute()
 const isHome = computed(() => route.name === 'index')
 
 const triggerRef = ref<HTMLElement | null>(null)
-const popoverRef = ref<HTMLElement | null>(null)
+const popoverRef = useTemplateRef<HTMLElement>('popoverRef')
 const showPopover = ref(false)
 
 const togglePopover = (e?: Event) => {
