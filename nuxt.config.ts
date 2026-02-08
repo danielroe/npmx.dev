@@ -79,6 +79,12 @@ export default defineNuxtConfig({
     description: 'A fast, modern browser for the npm registry',
   },
 
+  router: {
+    options: {
+      scrollBehaviorType: 'smooth',
+    },
+  },
+
   routeRules: {
     // API routes
     '/api/**': { isr: 60 },
