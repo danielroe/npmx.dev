@@ -25,6 +25,7 @@
     "found_packages": "Ingen pakker funnet | Fant 1 pakke | Fant {count} pakker",
     "updating": "(oppdaterer...)",
     "no_results": "Ingen pakker funnet for \"{query}\"",
+    "rate_limited": "npm-hastighetsgrense nådd, prøv igjen om et øyeblikk",
     "title": "søk",
     "title_search": "søk: {search}",
     "title_packages": "søk pakker",

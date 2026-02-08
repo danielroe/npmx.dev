@@ -25,6 +25,7 @@
     "found_packages": "共找到 {count} 个包",
     "updating": "（更新中…）",
     "no_results": "未找到匹配“{query}”的包",
+    "rate_limited": "已达到 npm 请求频率限制，请稍后重试",
     "title": "搜索",
     "title_search": "搜索：{search}",
     "title_packages": "搜索包",

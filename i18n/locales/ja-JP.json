@@ -25,6 +25,7 @@
     "found_packages": "{count} 個のパッケージが見つかりました",
     "updating": "（更新中...）",
     "no_results": "\"{query}\" に一致するパッケージは見つかりませんでした",
+    "rate_limited": "npmのレート制限に達しました。しばらくしてから再試行してください",
     "title": "検索",
     "title_search": "検索: {search}",
     "title_packages": "パッケージを検索",

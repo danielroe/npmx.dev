@@ -25,6 +25,7 @@
     "found_packages": "Nie znaleziono pakietów | Znaleziono 1 pakiet | Znaleziono {count} pakiety | Znaleziono {count} pakietów | Znaleziono {count} pakietów",
     "updating": "(aktualizowanie...)",
     "no_results": "Nie znaleziono pakietów dla \"{query}\"",
+    "rate_limited": "Osiągnięto limit zapytań npm, spróbuj ponownie za chwilę",
     "title": "Wyszukiwanie",
     "not_taken": "{name} jest wolne",
     "claim_prompt": "Zajmij tę nazwę pakietu w npm",

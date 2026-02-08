@@ -23,6 +23,7 @@
     "found_packages": "Nincs találat | 1 csomag található | {count} csomag található",
     "updating": "(frissítés...)",
     "no_results": "Nincs találat a következőre: \"{query}\"",
+    "rate_limited": "Elérted az npm kéréslimitet, próbáld újra egy pillanat múlva",
     "not_taken": "{name} még szabad",
     "claim_prompt": "Foglald le ezt a csomagnevet az npm-en",
     "claim_button": "\"{name}\" lefoglalása",

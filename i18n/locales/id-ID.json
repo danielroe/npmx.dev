@@ -25,6 +25,7 @@
     "found_packages": "Paket tidak ditemukan | Ditemukan 1 paket | Ditemukan {count} paket",
     "updating": "(memperbarui...)",
     "no_results": "Tidak ada paket yang ditemukan untuk \"{query}\"",
+    "rate_limited": "Batas permintaan npm tercapai, coba lagi sebentar",
     "not_taken": "{name} tersedia",
     "claim_prompt": "Klaim nama paket ini di npm",
     "claim_button": "Klaim \"{name}\"",
