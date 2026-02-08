@@ -47,6 +47,8 @@ if (import.meta.env.PROD) {
   denylist = [
     // search page
     /^\/search$/,
+    /^\/~/,
+    /^\/org\//,
     // api calls
     /^\/api\//,
     /^\/oauth\//,
@@ -61,7 +63,11 @@ if (import.meta.env.PROD) {
 
   registerRoute(
     ({ sameOrigin, url }) =>
-      sameOrigin && (url.pathname.startsWith('/package/') || url.pathname.startsWith('/api/')),
+      sameOrigin &&
+      (url.pathname.startsWith('/package/') ||
+        url.pathname.startsWith('/org/') ||
+        url.pathname.startsWith('/~') ||
+        url.pathname.startsWith('/api/')),
     new NetworkFirst({
       cacheName: cacheNames[0],
       plugins: [
