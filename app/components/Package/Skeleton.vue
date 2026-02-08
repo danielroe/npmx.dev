@@ -19,7 +19,7 @@
         <span class="inline-flex items-baseline font-mono text-base sm:text-lg shrink-0">
           <SkeletonInline class="h-6 w-20" />
         </span>
-        <!-- Metrics badges placeholder — basis-full forces own line, matching real layout -->
+        <!-- Metrics badges -->
         <div class="basis-full flex items-center gap-1.5 self-baseline">
           <SkeletonBlock class="w-16 h-5.5 rounded" />
           <SkeletonBlock class="w-13 h-5.5 rounded" />

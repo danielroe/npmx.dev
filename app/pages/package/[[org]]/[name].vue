@@ -605,8 +605,7 @@ onKeyStroke(
             >
           </span>
 
-          <!-- Internal navigation: Docs + Code + Compare -->
-          <!-- Desktop: inline ButtonGroup; Mobile: floating at bottom -->
+          <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->
           <ButtonGroup
             v-if="resolvedVersion"
             as="nav"
@@ -640,7 +639,7 @@ onKeyStroke(
             </LinkBase>
           </ButtonGroup>
 
-          <!-- Package metrics (module format, types) — forced onto own line to reduce CLS -->
+          <!-- Package metrics -->
           <div class="basis-full flex gap-2 sm:gap-3 flex-wrap">
             <ClientOnly>
               <PackageMetricsBadges
