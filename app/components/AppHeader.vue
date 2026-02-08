@@ -97,7 +97,7 @@ onKeyStroke(
       <button
         v-if="!isSearchExpanded && !isOnHomePage"
         type="button"
-        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 rounded"
+        class="sm:hidden flex-shrink-0 inline-flex items-center gap-2 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 rounded focus-visible(outline-2 outline-accent)"
         :aria-label="$t('nav.tap_to_search')"
         @click="expandMobileSearch"
       >
@@ -111,7 +111,7 @@ onKeyStroke(
           :to="{ name: 'index' }"
           :aria-label="$t('header.home')"
           dir="ltr"
-          class="inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded"
+          class="inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded focus-visible:(outline-2 outline-accent)"
         >
           <AppLogo class="w-8 h-8 rounded-lg" />
           <span>npmx</span>

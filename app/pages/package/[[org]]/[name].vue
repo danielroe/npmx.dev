@@ -542,7 +542,7 @@ onKeyStroke(
             <button
               type="button"
               @click="copyPkgName()"
-              class="copy-button absolute z-20 inset-is-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap transition-all duration-150 opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto"
+              class="copy-button absolute z-20 inset-is-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap transition-all duration-150 opacity-0 -translate-y-1 pointer-events-none group-hover:(opacity-100 translate-y-0 pointer-events-auto) focus-visible:(outline-2 outline-accent pointer-events-auto translate-y-0 opacity-100)"
               :class="
                 copiedPkgName ? 'text-accent bg-accent/10' : 'text-fg-muted bg-bg border-border'
               "

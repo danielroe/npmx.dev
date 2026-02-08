@@ -63,7 +63,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
   <span
     v-if="disabled"
     :class="{
-      'opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border  rounded-md':
+      'opacity-50 inline-flex gap-x-1 items-center justify-center font-mono border border-transparent rounded-md':
         isButton,
       'text-sm px-4 py-2': isButtonMedium,
       'text-xs px-2 py-0.5': isButtonSmall,
@@ -75,14 +75,15 @@ const isButtonMedium = computed(() => props.size === 'medium' && props.variant !
   </span>
   <NuxtLink
     v-else
-    class="group inline-flex gap-x-1 items-center justify-center rounded-sm outline-transparent active:scale-[0.98] focus-visible:(outline-2 outline-offset-2 outline-accent)"
+    class="group inline-flex gap-x-1 items-center justify-center rounded-sm outline-transparent active:scale-[0.98] focus-visible:(outline-2 outline-accent)"
     :class="[
       {
         'underline-offset-[0.2rem] underline decoration-1 decoration-fg/30':
           !isLinkAnchor && isLink,
-        'font-mono text-fg hover:(decoration-accent) focus-visible:(decoration-accent text-accent) transition-colors duration-200':
+        'font-mono text-fg hover:(decoration-accent) focus-visible:(decoration-accent outline-offset-2 text-accent) transition-colors duration-200':
           isLink,
-        'border border-solid border-border rounded-md transition-all duration-200': isButton,
+        'border border-solid border-border rounded-md transition-all duration-200 focus-visible:outline-offset-2':
+          isButton,
         'text-sm px-4 py-2': isButtonMedium,
         'text-xs px-2 py-0.5': isButtonSmall,
         'text-fg bg-bg hover:(bg-fg/10 border-fg/10)': variant === 'button-secondary',

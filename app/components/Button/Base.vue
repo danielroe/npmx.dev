@@ -53,8 +53,7 @@ defineExpose({
         'text-sm px-4 py-2': size === 'medium',
         'text-xs px-2 py-0.5': size === 'small',
         'text-fg bg-bg hover:(bg-fg/10 border-fg/10)': variant === 'secondary',
-        'text-bg bg-fg border-fg hover:(bg-fg/80 rounded-xl) active:rounded-xl':
-          variant === 'primary',
+        'text-bg bg-fg border-fg hover:(bg-fg/80)': variant === 'primary',
         'opacity-40 cursor-not-allowed border-transparent': disabled,
       }"
     >

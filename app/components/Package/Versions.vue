@@ -324,7 +324,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
           <button
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
+            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm focus-visible:(outline-2 outline-offset-2 outline-accent)"
             :aria-expanded="expandedTags.has(row.tag)"
             :aria-label="
               expandedTags.has(row.tag)
@@ -357,7 +357,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
               <div>
                 <LinkBase
                   :to="versionRoute(row.primaryVersion.version)"
-                  class="text-sm"
+                  class="text-sm focus-visible:outline-none"
                   :class="
                     row.primaryVersion.deprecated ? 'text-red-400 hover:text-red-300' : undefined
                   "
@@ -465,7 +465,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
       <div class="p-1">
         <button
           type="button"
-          class="flex items-center gap-2 text-start rounded-sm"
+          class="flex items-center gap-2 text-start rounded-sm focus-visible:(outline-2 outline-offset-2 outline-accent)"
           :aria-expanded="otherVersionsExpanded"
           :aria-label="
             otherVersionsExpanded
