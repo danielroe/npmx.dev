@@ -14,8 +14,8 @@ const maxPackages = computed(() => props.max ?? 4)
 const inputValue = shallowRef('')
 const isInputFocused = shallowRef(false)
 
-// Use the shared npm search composable
-const { data: searchData, status } = useNpmSearch(inputValue, { size: 15 })
+// Use the shared search composable (supports both npm and Algolia providers)
+const { data: searchData, status } = useSearch(inputValue, { size: 15 })
 
 const isSearching = computed(() => status.value === 'pending')
 

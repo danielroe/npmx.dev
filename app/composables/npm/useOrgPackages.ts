@@ -1,5 +1,5 @@
 import type { NpmSearchResponse, NpmSearchResult, MinimalPackument } from '#shared/types'
-import { emptySearchResponse, packumentToSearchResult } from './useNpmSearch'
+import { emptySearchResponse, packumentToSearchResult } from './search-utils'
 import { mapWithConcurrency } from '#shared/utils/async'
 
 /**
@@ -18,7 +18,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
     async ({ $npmRegistry, ssrContext }, { signal }) => {
       const org = toValue(orgName)
       if (!org) {
-        return emptySearchResponse
+        return emptySearchResponse()
       }
 
       // Get the authoritative package list from the npm registry (single request)
@@ -47,7 +47,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
       }
 
       if (packageNames.length === 0) {
-        return emptySearchResponse
+        return emptySearchResponse()
       }
 
       // Fetch metadata + downloads from Algolia (single request via getObjects)
@@ -92,7 +92,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
         time: new Date().toISOString(),
       } satisfies NpmSearchResponse
     },
-    { default: () => emptySearchResponse },
+    { default: emptySearchResponse },
   )
 
   return asyncData
