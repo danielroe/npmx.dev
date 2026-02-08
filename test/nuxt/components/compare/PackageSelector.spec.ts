@@ -140,13 +140,30 @@ describe('PackageSelector', () => {
       })
 
       const input = component.find('input')
-      await input.setValue('my-package')
+      await input.setValue('lodash')
       await nextTick()
       await input.trigger('keydown', { key: 'Enter' })
 
       const emitted = component.emitted('update:modelValue')
       expect(emitted).toBeTruthy()
-      expect(emitted![0]![0]).toEqual(['my-package'])
+      expect(emitted![0]![0]).toEqual(['lodash'])
+    })
+
+    it('adds "no dep" entry on Enter key', async () => {
+      const component = await mountSuspended(PackageSelector, {
+        props: {
+          modelValue: [],
+        },
+      })
+
+      const input = component.find('input')
+      await input.setValue('no dep')
+      await nextTick()
+      await input.trigger('keydown', { key: 'Enter' })
+
+      const emitted = component.emitted('update:modelValue')
+      expect(emitted).toBeTruthy()
+      expect(emitted![0]![0]).toEqual(['__no_dependency__'])
     })
 
     it('clears input after adding package', async () => {
@@ -157,7 +174,7 @@ describe('PackageSelector', () => {
       })
 
       const input = component.find('input')
-      await input.setValue('my-package')
+      await input.setValue('lodash')
       await nextTick()
       await input.trigger('keydown', { key: 'Enter' })
 
