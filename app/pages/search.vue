@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { FilterChip, SortKey } from '#shared/types/preferences'
-import { parseSortOption } from '#shared/types/preferences'
+import { parseSortOption, PROVIDER_SORT_KEYS } from '#shared/types/preferences'
 import { onKeyDown } from '@vueuse/core'
 import { debounce } from 'perfect-debounce'
 import { isValidNewPackageName, checkPackageExists } from '~/utils/package-name'
@@ -111,8 +111,8 @@ const visibleResults = computed(() => {
 // Use structured filters for client-side refinement of search results
 const resultsArray = computed(() => visibleResults.value?.objects ?? [])
 
-// Sort keys that the npm registry path doesn't support (only relevance works server-side)
-const NON_RELEVANCE_SORT_KEYS: SortKey[] = [
+// All possible non-relevance sort keys
+const ALL_SORT_KEYS: SortKey[] = [
   'downloads-week',
   'downloads-day',
   'downloads-month',
@@ -125,8 +125,11 @@ const NON_RELEVANCE_SORT_KEYS: SortKey[] = [
   'score',
 ]
 
-// Disable non-relevance sorts when using npm provider (results are relevance-only from server)
-const disabledSortKeys = computed<SortKey[]>(() => (isAlgolia.value ? [] : NON_RELEVANCE_SORT_KEYS))
+// Disable sort keys the current provider can't meaningfully sort by
+const disabledSortKeys = computed<SortKey[]>(() => {
+  const supported = PROVIDER_SORT_KEYS[isAlgolia.value ? 'algolia' : 'npm']
+  return ALL_SORT_KEYS.filter(k => !supported.has(k))
+})
 
 // Minimal structured filters usage for search context (no client-side filtering)
 const {
@@ -154,21 +157,29 @@ const isRelevanceSort = computed(
   () => sortOption.value === 'relevance-desc' || sortOption.value === 'relevance-asc',
 )
 
+// Maximum eager-load sizes per provider for client-side sorting.
+// Algolia supports up to 1000 with offset/length pagination.
+// npm supports pagination via `from` parameter (no hard cap, but diminishing relevance).
+const EAGER_LOAD_SIZE = { algolia: 500, npm: 500 } as const
+
 // Calculate how many results we need based on current page and preferred page size
 const requestedSize = computed(() => {
   const numericPrefSize = preferredPageSize.value === 'all' ? 250 : preferredPageSize.value
   const base = Math.max(pageSize, currentPage.value * numericPrefSize)
-  // When sorting by something other than relevance, fetch a large batch from Algolia
+  // When sorting by something other than relevance, fetch a large batch
   // so client-side sorting operates on a meaningful pool of matching results
   if (!isRelevanceSort.value) {
-    return Math.max(base, 250)
+    const cap = isAlgolia.value ? EAGER_LOAD_SIZE.algolia : EAGER_LOAD_SIZE.npm
+    return Math.max(base, cap)
   }
   return base
 })
 
-// Reset to relevance sort when switching to npm (which only supports relevance)
+// Reset to relevance sort when switching to a provider that doesn't support the current sort key
 watch(isAlgolia, algolia => {
-  if (!algolia && !isRelevanceSort.value) {
+  const { key } = parseSortOption(sortOption.value)
+  const supported = PROVIDER_SORT_KEYS[algolia ? 'algolia' : 'npm']
+  if (!supported.has(key)) {
     sortOption.value = 'relevance-desc'
   }
 })
@@ -192,8 +203,8 @@ const displayResults = computed(() => {
     return resultsArray.value
   }
 
-  // Sort the fetched results client-side (Algolia doesn't support arbitrary
-  // sort orders without replica indices, so we fetch a large batch and sort here)
+  // Sort the fetched results client-side — neither Algolia nor npm support
+  // arbitrary sort orders server-side, so we fetch a large batch and sort here
   const { key, direction } = parseSortOption(sortOption.value)
   const multiplier = direction === 'asc' ? 1 : -1
 
@@ -211,6 +222,18 @@ const displayResults = computed(() => {
         break
       case 'name':
         diff = a.package.name.localeCompare(b.package.name)
+        break
+      case 'quality':
+        diff = (a.score?.detail?.quality ?? 0) - (b.score?.detail?.quality ?? 0)
+        break
+      case 'popularity':
+        diff = (a.score?.detail?.popularity ?? 0) - (b.score?.detail?.popularity ?? 0)
+        break
+      case 'maintenance':
+        diff = (a.score?.detail?.maintenance ?? 0) - (b.score?.detail?.maintenance ?? 0)
+        break
+      case 'score':
+        diff = (a.score?.final ?? 0) - (b.score?.final ?? 0)
         break
       default:
         diff = 0

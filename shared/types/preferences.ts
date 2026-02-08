@@ -140,11 +140,33 @@ export const SORT_KEYS: SortKeyConfig[] = [
   { key: 'downloads-year', defaultDirection: 'desc', disabled: true },
   { key: 'updated', defaultDirection: 'desc' },
   { key: 'name', defaultDirection: 'asc' },
-  { key: 'quality', defaultDirection: 'desc', disabled: true },
-  { key: 'popularity', defaultDirection: 'desc', disabled: true },
-  { key: 'maintenance', defaultDirection: 'desc', disabled: true },
-  { key: 'score', defaultDirection: 'desc', disabled: true },
+  { key: 'quality', defaultDirection: 'desc' },
+  { key: 'popularity', defaultDirection: 'desc' },
+  { key: 'maintenance', defaultDirection: 'desc' },
+  { key: 'score', defaultDirection: 'desc' },
 ]
+
+/**
+ * Sort keys each search provider can meaningfully sort by.
+ *
+ * Algolia: has download counts and dates but synthetic/zeroed score values
+ *   - quality is 0 or 1 (boolean `popular` flag), maintenance is always 0, score is always 0
+ *   - popularity is `downloadsRatio` (a meaningful float)
+ *
+ * npm: has real score values and dates but no download counts in search results
+ */
+export const PROVIDER_SORT_KEYS: Record<'algolia' | 'npm', Set<SortKey>> = {
+  algolia: new Set<SortKey>(['relevance', 'downloads-week', 'updated', 'name', 'popularity']),
+  npm: new Set<SortKey>([
+    'relevance',
+    'updated',
+    'name',
+    'quality',
+    'popularity',
+    'maintenance',
+    'score',
+  ]),
+}
 
 /** All valid sort keys for validation */
 const VALID_SORT_KEYS = new Set<SortKey>([
