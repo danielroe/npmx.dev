@@ -80,8 +80,6 @@ defineOgImageComponent('Default', {
                   name="q"
                   autofocus
                   :placeholder="$t('search.placeholder')"
-                  v-bind="noCorrect"
-                  class="w-full bg-bg-subtle border border-border rounded-xl ps-8 pe-24 h-14 py-4 font-mono text-base text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 motion-reduce:transition-none hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
                   no-correct
                   size="large"
                   class="w-full ps-8 pe-24"
