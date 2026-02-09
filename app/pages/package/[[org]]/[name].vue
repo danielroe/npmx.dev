@@ -18,6 +18,7 @@ import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
 import { LinkBase } from '#components'
+import type { RouteLocationRaw } from 'vue-router'
 
 defineOgImageComponent('Package', {
   name: () => packageName.value,
@@ -516,7 +517,7 @@ useSeoMeta({
   twitterDescription: () => pkg.value?.description ?? '',
 })
 
-const linkCode = computed((): Parameters<typeof navigateTo>[0] | null => {
+const codeLink = computed((): RouteLocationRaw | null => {
   if (pkg.value == null || resolvedVersion.value == null) {
     return null
   }
@@ -535,10 +536,10 @@ const linkCode = computed((): Parameters<typeof navigateTo>[0] | null => {
 onKeyStroke(
   e => isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
   e => {
-    if (linkCode.value === null) return
+    if (codeLink.value === null) return
     e.preventDefault()
 
-    navigateTo(linkCode.value)
+    navigateTo(codeLink.value)
   },
   { dedupe: true },
 )
@@ -674,9 +675,9 @@ onKeyStroke(
               {{ $t('package.links.docs') }}
             </LinkBase>
             <LinkBase
-              v-if="linkCode"
+              v-if="codeLink"
               variant="button-secondary"
-              :to="linkCode"
+              :to="codeLink"
               aria-keyshortcuts="."
               classicon="i-carbon:code"
             >

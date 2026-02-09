@@ -201,9 +201,7 @@ const breadcrumbs = computed(() => {
 // Navigation helper - build URL for a path
 function getCurrentCodeUrl(path?: string): string {
   return getCodeUrl({
-    org: route.params.org,
-    packageName: packageName.value,
-    version: version.value!,
+    ...route.params,
     filePath: path,
   })
 }
