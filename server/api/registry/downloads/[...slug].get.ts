@@ -3,6 +3,7 @@ import * as v from 'valibot'
 import { hash } from 'ohash'
 import type { VersionDistributionResponse } from '#shared/types'
 import { CACHE_MAX_AGE_ONE_HOUR } from '#shared/utils/constants'
+import { encodePackageName } from '#shared/utils/npm'
 import { groupVersionDownloads } from '#server/utils/version-downloads'
 
 /**
@@ -19,7 +20,13 @@ interface NpmVersionDownloadsResponse {
  */
 const QuerySchema = v.object({
   mode: v.optional(v.picklist(['major', 'minor'] as const), 'major'),
-  filterThreshold: v.optional(v.pipe(v.string(), v.transform(Number)), '1'),
+  filterThreshold: v.optional(
+    v.pipe(
+      v.string(),
+      v.toNumber(), // Fails validation on invalid conversion (e.g., "abc") instead of producing NaN
+      v.minValue(0), // Ensure non-negative values
+    ),
+  ),
   filterOldVersions: v.optional(v.picklist(['true', 'false'] as const), 'false'),
 })
 
@@ -40,7 +47,8 @@ export default defineCachedEventHandler(
     const slugParam = getRouterParam(event, 'slug')
     const pkgParamSegments = slugParam?.split('/') ?? []
 
-    if (pkgParamSegments[pkgParamSegments.length - 1] !== 'versions') {
+    const lastSegment = pkgParamSegments.at(-1)
+    if (!lastSegment || lastSegment !== 'versions') {
       throw createError({
         statusCode: 404,
         message: 'Invalid endpoint. Expected /versions',
@@ -59,11 +67,15 @@ export default defineCachedEventHandler(
     }
 
     const query = getQuery(event)
-    const { mode, filterThreshold, filterOldVersions } = v.parse(QuerySchema, query)
-    const filterOldVersionsBool = filterOldVersions === 'true'
+    const parsed = v.parse(QuerySchema, query)
+    const mode = parsed.mode
+    const filterThreshold = parsed.filterThreshold ?? 1
+    const filterOldVersionsBool = parsed.filterOldVersions === 'true'
 
     try {
-      const url = `https://api.npmjs.org/versions/${rawPackageName}/last-week`
+      // URL-encode package name for scoped packages (e.g., @types/node -> @types%2Fnode)
+      const encodedPackageName = encodePackageName(rawPackageName)
+      const url = `https://api.npmjs.org/versions/${encodedPackageName}/last-week`
       const npmResponse = await fetch(url)
 
       if (!npmResponse.ok) {
