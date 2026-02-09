@@ -1,5 +1,6 @@
-import { getQuery } from 'h3'
+import { getQuery, setHeader } from 'h3'
 import * as v from 'valibot'
+import { hash } from 'ohash'
 import type { VersionDistributionResponse } from '#shared/types'
 import { CACHE_MAX_AGE_ONE_HOUR } from '#shared/utils/constants'
 import { groupVersionDownloads } from '#server/utils/version-downloads'
@@ -96,6 +97,14 @@ export default defineCachedEventHandler(
         timestamp: new Date().toISOString(),
       }
 
+      // Set cache headers for both client and CDN/edge caching
+      // s-maxage controls shared cache (Vercel edge) behavior
+      setHeader(
+        event,
+        'Cache-Control',
+        `public, max-age=${CACHE_MAX_AGE_ONE_HOUR}, s-maxage=${CACHE_MAX_AGE_ONE_HOUR}`,
+      )
+
       if (filterOldVersionsBool) {
         try {
           const oneYearAgo = new Date()
@@ -134,10 +143,9 @@ export default defineCachedEventHandler(
     getKey: event => {
       const slug = getRouterParam(event, 'slug') ?? ''
       const query = getQuery(event)
-      const mode = query.mode || 'major'
-      const filterThreshold = query.filterThreshold || 1
-      const filterOldVersions = query.filterOldVersions === 'true'
-      return `version-downloads:v3:${slug}:${mode}:${filterThreshold}:${filterOldVersions ? 'filtered' : 'all'}`
+      // Use ohash to create deterministic cache key from query params
+      // This ensures different param combinations = different cache entries
+      return `version-downloads:v4:${slug}:${hash(query)}`
     },
   },
 )
