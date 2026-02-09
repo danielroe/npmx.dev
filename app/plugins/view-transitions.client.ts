@@ -48,8 +48,10 @@ export default defineNuxtPlugin(nuxtApp => {
       finishTransition = resolve
     })
 
-    let changeRoute: () => void
-    const ready = new Promise<void>(resolve => (changeRoute = resolve))
+    let changeRoute: () => void = () => {}
+    const ready = new Promise<void>(resolve => {
+      changeRoute = resolve
+    })
 
     try {
       transition = document.startViewTransition(() => {
@@ -60,8 +62,9 @@ export default defineNuxtPlugin(nuxtApp => {
       transition.finished.finally(resetTransitionState)
       await nuxtApp.callHook('page:view-transition:start', transition)
     } catch (err) {
+      // oxlint-disable-next-line no-console -- error logging
       console.error('View Transition failed:', err)
-      changeRoute!()
+      changeRoute()
       finishTransition?.()
       resetTransitionState()
     }
