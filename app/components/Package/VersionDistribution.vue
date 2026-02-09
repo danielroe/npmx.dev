@@ -251,7 +251,7 @@ const endDate = computed(() => {
             {{ $t('package.versions.distribution_title') }}
           </label>
           <div
-            class="flex items-center bg-bg-subtle border border-border rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70"
+            class="flex items-center bg-bg-subtle border border-border rounded-md"
             role="group"
             :aria-label="$t('package.versions.distribution_title')"
             tabindex="0"

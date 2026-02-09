@@ -335,7 +335,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
     <template #actions>
       <ButtonBase
         variant="secondary"
-        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
+        class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 rounded"
         :title="$t('package.downloads.community_distribution')"
         classicon="i-carbon:load-balancer-network"
         @click="openDistributionModal"
@@ -593,7 +593,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                   <div class="flex items-center gap-2 min-w-0">
                     <button
                       type="button"
-                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 focus-visible:outline-accent/70 rounded-sm"
+                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 rounded-sm"
                       :aria-expanded="expandedMajorGroups.has(group.groupKey)"
                       :aria-label="
                         expandedMajorGroups.has(group.groupKey)
