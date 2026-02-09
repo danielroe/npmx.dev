@@ -384,7 +384,9 @@ ${html}
       })
     }
 
-    return `<a href="${resolvedHref}"${titleAttr}${relAttr}${targetAttr}>${text}</a>`
+    const hrefValue = resolvedHref.startsWith('#') ? resolvedHref.toLowerCase() : resolvedHref
+
+    return `<a href="${hrefValue}"${titleAttr}${relAttr}${targetAttr}>${text}</a>`
   }
 
   // GitHub-style callouts: > [!NOTE], > [!TIP], etc.

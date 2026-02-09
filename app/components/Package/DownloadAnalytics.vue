@@ -1580,44 +1580,24 @@ const chartConfig = computed(() => {
   <div class="w-full relative" id="download-analytics" :aria-busy="pending ? 'true' : 'false'">
     <div class="w-full mb-4 flex flex-col gap-3">
       <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-end">
-        <div class="flex flex-col gap-1 sm:shrink-0">
-          <label
-            for="granularity"
-            class="text-3xs font-mono text-fg-subtle tracking-wide uppercase"
-          >
-            {{ $t('package.trends.granularity') }}
-          </label>
-
-          <div
-            class="flex items-center bg-bg-subtle border border-border rounded-md overflow-hidden"
-          >
-            <select
-              id="granularity"
-              v-model="selectedGranularity"
-              :disabled="pending"
-              class="w-full px-4 py-3 leading-none bg-bg-subtle font-mono text-sm text-fg outline-none appearance-none focus-visible:outline-accent/70"
-            >
-              <option value="daily">
-                {{ $t('package.trends.granularity_daily') }}
-              </option>
-              <option value="weekly">
-                {{ $t('package.trends.granularity_weekly') }}
-              </option>
-              <option value="monthly">
-                {{ $t('package.trends.granularity_monthly') }}
-              </option>
-              <option value="yearly">
-                {{ $t('package.trends.granularity_yearly') }}
-              </option>
-            </select>
-          </div>
-        </div>
+        <SelectField
+          :label="$t('package.trends.granularity')"
+          id="granularity"
+          v-model="selectedGranularity"
+          :disabled="pending"
+          :items="[
+            { label: $t('package.trends.granularity_daily'), value: 'daily' },
+            { label: $t('package.trends.granularity_weekly'), value: 'weekly' },
+            { label: $t('package.trends.granularity_monthly'), value: 'monthly' },
+            { label: $t('package.trends.granularity_yearly'), value: 'yearly' },
+          ]"
+        />
 
         <div class="grid grid-cols-2 gap-2 flex-1">
           <div class="flex flex-col gap-1">
             <label
               for="startDate"
-              class="text-3xs font-mono text-fg-subtle tracking-wide uppercase"
+              class="text-2xs font-mono text-fg-subtle tracking-wide uppercase"
             >
               {{ $t('package.trends.start_date') }}
             </label>
@@ -1638,7 +1618,7 @@ const chartConfig = computed(() => {
           </div>
 
           <div class="flex flex-col gap-1">
-            <label for="endDate" class="text-3xs font-mono text-fg-subtle tracking-wide uppercase">
+            <label for="endDate" class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
               {{ $t('package.trends.end_date') }}
             </label>
             <div class="relative flex items-center">
