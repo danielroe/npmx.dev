@@ -145,6 +145,13 @@ function handleClick(event: MouseEvent) {
   text-decoration-color: var(--accent);
 }
 
+.readme :deep(a:focus-visible),
+.readme :deep(button:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .readme :deep(code) {
   @apply font-mono;
   font-size: 0.875em;

@@ -50,7 +50,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
           </h1>
           <button
             type="button"
-            class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0 p-1.5 -mx-1.5 outline-transparent focus-visible:(outline-2 outline-accent outline-offset-2)"
+            class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded shrink-0 -mx-1.5 outline-transparent focus-visible:(outline-2 outline-accent outline-offset-2)"
             @click="router.back()"
             v-show="router.options.history.state.back !== null"
           >
@@ -79,7 +79,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
               <select
                 id="theme-select"
                 :value="colorMode.preference"
-                class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg cursor-pointer duration-200 transition-colors hover:border-fg-subtle"
+                class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg cursor-pointer duration-200 transition-colors hover:border-fg-subtle focus-visible:(outline-2 outline-accent outline-offset-2)"
                 @change="
                   colorMode.preference = ($event.target as HTMLSelectElement).value as
                     | 'light'

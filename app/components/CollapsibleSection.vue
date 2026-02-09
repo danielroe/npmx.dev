@@ -106,7 +106,7 @@ useHead({
 
         <a
           :href="`#${id}`"
-          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
+          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline rounded-sm outline-transparent focus-visible:(outline-2 outline-accent outline-offset-2)"
         >
           <span v-if="icon" :class="icon" aria-hidden="true" />
           {{ title }}
