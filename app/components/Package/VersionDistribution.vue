@@ -94,7 +94,7 @@ const chartConfig = computed(() => {
           color: pending.value ? colors.value.border : colors.value.fgSubtle,
           axis: {
             yLabel: 'Downloads',
-            xLabel: '',
+            xLabel: props.packageName,
             yLabelOffsetX: 12,
             fontSize: isMobile.value ? 32 : 24,
           },
