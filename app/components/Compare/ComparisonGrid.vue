@@ -42,7 +42,8 @@ function getReplacementTooltip(col: ComparisonGridColumn): string {
           <span class="inline-flex items-center gap-1.5 truncate">
             <LinkBase
               :to="packageRoute(col.name, col.version)"
-              class="text-sm flex! truncate"
+              class="text-sm truncate"
+              block
               :title="col.version ? `${col.name}@${col.version}` : col.name"
             >
               {{ col.name }}<template v-if="col.version">@{{ col.version }}</template>

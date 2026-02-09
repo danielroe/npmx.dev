@@ -50,7 +50,8 @@ watch(
       <!-- Directory -->
       <template v-if="node.type === 'directory'">
         <ButtonBase
-          class="w-full flex! justify-start! rounded-none! border-none!"
+          class="w-full justify-start! rounded-none! border-none!"
+          block
           :aria-pressed="isNodeActive(node)"
           :style="{ paddingLeft: `${depth * 12 + 12}px` }"
           @click="toggleDir(node.path)"
@@ -82,7 +83,8 @@ watch(
           variant="button-secondary"
           :to="getFileRoute(node.path)"
           :aria-current="currentPath === node.path"
-          class="w-full flex! justify-start! rounded-none! border-none!"
+          class="w-full justify-start! rounded-none! border-none!"
+          block
           :style="{ paddingLeft: `${depth * 12 + 32}px` }"
           :classicon="getFileIcon(node.name)"
         >
