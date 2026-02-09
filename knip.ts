@@ -13,6 +13,7 @@ const config: KnipConfig = {
         'app/middleware/**/*.ts!',
         'app/plugins/**/*.ts!',
         'app/utils/**/*.ts!',
+        'app/service-worker.ts!',
         'server/**/*.ts!',
         'modules/**/*.ts!',
         'config/**/*.ts!',
@@ -34,6 +35,7 @@ const config: KnipConfig = {
         'puppeteer',
         /** Needs to be explicitly installed, even though it is not imported, to avoid type errors. */
         'unplugin-vue-router',
+        'workbox-build',
         'vite-plugin-pwa',
         '@vueuse/shared',
 
