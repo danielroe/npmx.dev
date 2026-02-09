@@ -249,6 +249,20 @@ const installVersionOverride = computed(
   () => publishSecurityDowngrade.value?.trustedVersion ?? null,
 )
 
+const downgradeFallbackInstallText = computed(() => {
+  const d = publishSecurityDowngrade.value
+  if (!d?.trustedVersion) return null
+  if (d.trustedTrustLevel === 'provenance')
+    return $t('package.security_downgrade.fallback_install_provenance', {
+      version: d.trustedVersion,
+    })
+  if (d.trustedTrustLevel === 'trustedPublisher')
+    return $t('package.security_downgrade.fallback_install_trustedPublisher', {
+      version: d.trustedVersion,
+    })
+  return null
+})
+
 const sizeTooltip = computed(() => {
   const chunks = [
     displayVersion.value &&
@@ -1055,7 +1069,51 @@ onKeyStroke(
             </h3>
             <p class="mt-2 mb-0 text-sm">
               <i18n-t
-                :keypath="`package.security_downgrade.description_to_${publishSecurityDowngrade.downgradedTrustLevel}_${publishSecurityDowngrade.trustedTrustLevel}`"
+                v-if="
+                  publishSecurityDowngrade.downgradedTrustLevel === 'none' &&
+                  publishSecurityDowngrade.trustedTrustLevel === 'provenance'
+                "
+                keypath="package.security_downgrade.description_to_none_provenance"
+                tag="span"
+                scope="global"
+              >
+                <template #provenance>
+                  <a
+                    href="https://docs.npmjs.com/generating-provenance-statements"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.provenance_link_text')
+                    }}<span class="i-carbon-launch w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+              </i18n-t>
+              <i18n-t
+                v-else-if="
+                  publishSecurityDowngrade.downgradedTrustLevel === 'none' &&
+                  publishSecurityDowngrade.trustedTrustLevel === 'trustedPublisher'
+                "
+                keypath="package.security_downgrade.description_to_none_trustedPublisher"
+                tag="span"
+                scope="global"
+              >
+                <template #trustedPublishing>
+                  <a
+                    href="https://docs.npmjs.com/adding-a-trusted-publisher-to-a-package"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.trusted_publishing_link_text')
+                    }}<span class="i-carbon-launch w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+              </i18n-t>
+              <i18n-t
+                v-else-if="
+                  publishSecurityDowngrade.downgradedTrustLevel === 'provenance' &&
+                  publishSecurityDowngrade.trustedTrustLevel === 'trustedPublisher'
+                "
+                keypath="package.security_downgrade.description_to_provenance_trustedPublisher"
                 tag="span"
                 scope="global"
               >
@@ -1081,15 +1139,8 @@ onKeyStroke(
                 </template>
               </i18n-t>
               {{ ' ' }}
-              <template v-if="publishSecurityDowngrade.trustedVersion">
-                {{
-                  $t(
-                    `package.security_downgrade.fallback_install_${publishSecurityDowngrade.trustedTrustLevel}`,
-                    {
-                      version: publishSecurityDowngrade.trustedVersion,
-                    },
-                  )
-                }}
+              <template v-if="downgradeFallbackInstallText">
+                {{ downgradeFallbackInstallText }}
               </template>
             </p>
           </div>
