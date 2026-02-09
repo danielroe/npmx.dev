@@ -3,7 +3,6 @@ import * as v from 'valibot'
 import { hash } from 'ohash'
 import type { VersionDistributionResponse } from '#shared/types'
 import { CACHE_MAX_AGE_ONE_HOUR } from '#shared/utils/constants'
-import { encodePackageName } from '#shared/utils/npm'
 import { groupVersionDownloads } from '#server/utils/version-downloads'
 
 /**
@@ -73,9 +72,7 @@ export default defineCachedEventHandler(
     const filterOldVersionsBool = parsed.filterOldVersions === 'true'
 
     try {
-      // URL-encode package name for scoped packages (e.g., @types/node -> @types%2Fnode)
-      const encodedPackageName = encodePackageName(rawPackageName)
-      const url = `https://api.npmjs.org/versions/${encodedPackageName}/last-week`
+      const url = `https://api.npmjs.org/versions/${rawPackageName}/last-week`
       const npmResponse = await fetch(url)
 
       if (!npmResponse.ok) {
