@@ -19,6 +19,7 @@
     "i18n:check:fix": "node scripts/compare-translations.ts --fix",
     "i18n:report": "node scripts/find-invalid-translations.ts",
     "i18n:report:fix": "node scripts/remove-unused-translations.ts",
+    "i18n:schema": "node scripts/generate-i18n-schema.ts",
     "knip": "knip",
     "knip:fix": "knip --fix",
     "lint": "oxlint && oxfmt --check",
@@ -145,9 +146,12 @@
   },
   "lint-staged": {
     "i18n/locales/*": [
-      "pnpm build:lunaria",
+      "node ./lunaria/lunaria.ts",
       "pnpm oxfmt lunaria/files/",
-      "git add lunaria/files/"
+      "git add lunaria/files/",
+      "node scripts/generate-i18n-schema.ts",
+      "pnpm oxfmt i18n/schema.json",
+      "git add i18n/schema.json"
     ],
     "*.{js,ts,mjs,cjs,vue}": [
       "pnpm oxlint --fix"
