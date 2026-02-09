@@ -1766,15 +1766,15 @@ const chartConfig = computed(() => {
                 </template>
 
                 <!-- Single series legend (no user interaction) -->
-                <template v-else>
+                <template v-else-if="legend.length > 0">
                   <div class="flex gap-1 place-items-center">
                     <div class="h-3 w-3">
                       <svg viewBox="0 0 2 2" class="w-full">
-                        <rect x="0" y="0" width="2" height="2" rx="0.3" :fill="legend[0].color" />
+                        <rect x="0" y="0" width="2" height="2" rx="0.3" :fill="legend[0]?.color" />
                       </svg>
                     </div>
                     <span>
-                      {{ legend[0].name }}
+                      {{ legend[0]?.name }}
                     </span>
                   </div>
                 </template>
