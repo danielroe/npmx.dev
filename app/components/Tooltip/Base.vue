@@ -14,6 +14,8 @@ const props = defineProps<{
   interactive?: boolean
   /** attributes for tooltip element */
   tooltipAttr?: HTMLAttributes
+  /** Teleport target selector (defaults to 'body') */
+  teleportTo?: string
 }>()
 
 const triggerRef = useTemplateRef('triggerRef')
@@ -32,7 +34,7 @@ const { floatingStyles } = useFloating(triggerRef, tooltipRef, {
   <div ref="triggerRef" class="inline-flex">
     <slot />
 
-    <Teleport to="body">
+    <Teleport :to="teleportTo ?? 'body'">
       <Transition
         enter-active-class="transition-opacity duration-150 motion-reduce:transition-none"
         leave-active-class="transition-opacity duration-100 motion-reduce:transition-none"

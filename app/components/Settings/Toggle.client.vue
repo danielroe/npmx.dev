@@ -6,6 +6,7 @@ defineProps<{
   description?: string
   tooltip?: string
   tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
+  tooltipTeleportTo?: string
   class?: string | Record<string, boolean> | Array<string | Record<string, boolean>>
 }>()
 
@@ -23,7 +24,12 @@ const checked = defineModel<boolean>({
     @click="checked = !checked"
     :class="class"
   >
-    <TooltipApp v-if="tooltip && label" :text="tooltip" :position="tooltipPosition ?? 'top'">
+    <TooltipApp
+      v-if="tooltip && label"
+      :text="tooltip"
+      :position="tooltipPosition ?? 'top'"
+      :teleportTo="tooltipTeleportTo"
+    >
       <span class="text-sm font-mono text-fg group-hover:text-fg/80 transition-colors select-none">
         {{ label }}
       </span>

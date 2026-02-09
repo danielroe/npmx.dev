@@ -247,7 +247,8 @@ const xAxisLabels = computed(() => {
         v-model="hideSmallVersions"
         :label="$t('package.versions.hide_old_versions')"
         :tooltip="$t('package.versions.hide_old_versions_tooltip')"
-        tooltip-position="top"
+        tooltip-position="right"
+        :tooltip-teleport-to="inModal ? '#chart-modal' : undefined"
         :class="{ 'opacity-50 pointer-events-none': pending }"
       />
     </div>
