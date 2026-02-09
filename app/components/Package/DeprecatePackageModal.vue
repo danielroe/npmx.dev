@@ -9,8 +9,10 @@ const props = withDefaults(
   defineProps<{
     packageName: string
     version?: string
+    /** When true, the package or version is already deprecated; form is hidden and state cannot be changed. */
+    isAlreadyDeprecated?: boolean
   }>(),
-  { version: '' },
+  { version: '', isAlreadyDeprecated: false },
 )
 
 const { t } = useI18n()
@@ -32,6 +34,7 @@ const modalTitle = computed(() =>
 )
 
 async function handleDeprecate() {
+  if (props.isAlreadyDeprecated) return
   const message = deprecateMessage.value.trim()
   if (!isConnected.value) return
 
@@ -119,8 +122,32 @@ defineExpose({ open, close })
 
 <template>
   <Modal ref="dialogRef" :modal-title="modalTitle" id="deprecate-package-modal" class="max-w-md">
+    <!-- Already deprecated: read-only, no form -->
+    <div v-if="isAlreadyDeprecated" class="space-y-4">
+      <div
+        class="flex items-center gap-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg"
+      >
+        <span class="i-carbon-warning-alt text-amber-500 w-6 h-6" aria-hidden="true" />
+        <div>
+          <p class="font-mono text-sm text-fg">
+            {{ $t('package.deprecation.modal.already_deprecated') }}
+          </p>
+          <p class="text-xs text-fg-muted">
+            {{ $t('package.deprecation.modal.already_deprecated_detail') }}
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        @click="close"
+      >
+        {{ $t('common.close') }}
+      </button>
+    </div>
+
     <!-- Success state -->
-    <div v-if="deprecateSuccess" class="space-y-4">
+    <div v-else-if="deprecateSuccess" class="space-y-4">
       <div
         class="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
       >
@@ -141,7 +168,7 @@ defineExpose({ open, close })
       </button>
     </div>
 
-    <!-- Form (only shown when connected; parent only opens modal when isConnected) -->
+    <!-- Form (only shown when not already deprecated and connected) -->
     <div v-else class="space-y-4">
       <div>
         <label for="deprecate-message" class="block text-sm font-medium text-fg mb-1">

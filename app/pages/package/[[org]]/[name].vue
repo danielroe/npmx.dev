@@ -204,6 +204,13 @@ const latestVersion = computed(() => {
   return pkg.value.versions[latestTag] ?? null
 })
 
+/** True when the currently displayed version (or resolved version) is deprecated; used to hide deprecate button. */
+const isCurrentVersionDeprecated = computed(() => {
+  if (displayVersion.value?.deprecated) return true
+  const ver = resolvedVersion.value
+  return !!(ver && pkg.value?.versions?.[ver]?.deprecated)
+})
+
 const deprecationNotice = computed(() => {
   if (!displayVersion.value?.deprecated) return null
 
@@ -1202,19 +1209,18 @@ onKeyStroke(
           <!-- Maintainers (with admin actions when connected) -->
           <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
 
-          <!-- Deprecation (when connected as package owner) -->
-          <div v-if="isConnected && resolvedVersion && isPackageOwner" class="space-y-1">
+          <!-- Deprecation (when connected as package owner; hidden when current version is already deprecated) -->
+          <div
+            v-if="isConnected && resolvedVersion && isPackageOwner && !isCurrentVersionDeprecated"
+            class="space-y-1"
+          >
             <button
               type="button"
               class="flex items-center justify-center w-full px-3 py-1.5 bg-bg-subtle rounded text-sm font-mono text-red-400 hover:text-red-500 transition-colors inline-flex items-center gap-1.5 w-full"
               @click="deprecateModal?.open()"
             >
               <span class="i-carbon-warning-alt w-4 h-4 shrink-0" aria-hidden="true" />
-              {{
-                deprecationNotice
-                  ? $t('package.deprecation.action_change')
-                  : $t('package.deprecation.action')
-              }}
+              {{ $t('package.deprecation.action') }}
             </button>
           </div>
         </div>
@@ -1243,6 +1249,7 @@ onKeyStroke(
         ref="deprecateModal"
         :package-name="pkg.name"
         :version="resolvedVersion ?? ''"
+        :is-already-deprecated="isCurrentVersionDeprecated"
       />
     </ClientOnly>
   </main>

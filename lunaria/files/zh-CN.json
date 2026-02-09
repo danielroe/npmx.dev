@@ -122,7 +122,6 @@
     "copy_name": "复制包名",
     "deprecation": {
       "action": "废弃",
-      "action_change": "修改弃用",
       "package": "这个包已经被弃用。",
       "version": "这个版本已经被弃用。",
       "no_reason": "没有提供原因",
@@ -135,7 +134,9 @@
         "success": "包已废弃",
         "success_detail": "这个包已废弃。",
         "version": "版本",
-        "version_placeholder": "留空则废弃整个包"
+        "version_placeholder": "留空则废弃整个包",
+        "already_deprecated": "已废弃",
+        "already_deprecated_detail": "该包或版本已处于废弃状态，无法再修改废弃状态。"
       }
     },
     "replacement": {

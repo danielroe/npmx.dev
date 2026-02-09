@@ -114,6 +114,17 @@ describe('DeprecatePackageModal', () => {
       expect(versionInput.exists()).toBe(true)
       expect((versionInput.element as HTMLInputElement).value).toBe('2.0.0')
     })
+
+    it('shows already-deprecated message and no form when isAlreadyDeprecated is true', async () => {
+      const component = await mountSuspended(DeprecatePackageModal, {
+        props: { packageName: 'my-pkg', version: '1.0.0', isAlreadyDeprecated: true },
+        ...mountOptions,
+      })
+
+      expect(component.find('#deprecate-message').exists()).toBe(false)
+      expect(component.find('#deprecate-version').exists()).toBe(false)
+      expect(component.html()).toMatch(/already deprecated|已废弃/i)
+    })
   })
 
   describe('exposed open() and close()', () => {
@@ -184,6 +195,18 @@ describe('DeprecatePackageModal', () => {
 
       await component.find('#deprecate-message').setValue('message')
       await component.vm.$nextTick()
+      await getVM(component).handleDeprecate?.()
+
+      expect(mockAddOperation).not.toHaveBeenCalled()
+    })
+
+    it('handleDeprecate does nothing when isAlreadyDeprecated is true', async () => {
+      mockIsConnected.value = true
+      const component = await mountSuspended(DeprecatePackageModal, {
+        props: { packageName: 'pkg', isAlreadyDeprecated: true },
+        ...mountOptions,
+      })
+
       await getVM(component).handleDeprecate?.()
 
       expect(mockAddOperation).not.toHaveBeenCalled()
