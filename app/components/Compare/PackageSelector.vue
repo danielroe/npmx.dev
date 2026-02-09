@@ -92,10 +92,17 @@ function handleKeydown(e: KeyboardEvent) {
   }
 }
 
+const { start, stop } = useTimeoutFn(() => {
+  isInputFocused.value = false
+}, 200)
+
 function handleBlur() {
-  useTimeoutFn(() => {
-    isInputFocused.value = false
-  }, 200)
+  start()
+}
+
+function handleFocus() {
+  stop()
+  isInputFocused.value = true
 }
 </script>
 
@@ -151,7 +158,7 @@ function handleBlur() {
           size="medium"
           class="w-full min-w-25 ps-7"
           aria-autocomplete="list"
-          @focus="isInputFocused = true"
+          @focus="handleFocus"
           @blur="handleBlur"
           @keydown="handleKeydown"
         />

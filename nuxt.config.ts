@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
   ],
 
+  $test: {
+    debug: {
+      hydration: true,
+    },
+  },
+
   colorMode: {
     preference: 'system',
     fallback: 'dark',
@@ -166,6 +172,11 @@ export default defineNuxtConfig({
       ],
       external: ['@deno/doc'],
     },
+    esbuild: {
+      options: {
+        target: 'es2024',
+      },
+    },
     rollupConfig: {
       output: {
         paths: {
@@ -290,7 +301,6 @@ export default defineNuxtConfig({
         'semver',
         'validate-npm-package-name',
         '@atproto/lex',
-        '@atproto/syntax',
         'fast-npm-meta',
         '@floating-ui/vue',
         'algoliasearch/lite',
