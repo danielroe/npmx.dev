@@ -5,6 +5,15 @@ import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
 import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
+import type {
+  ChartTimeGranularity,
+  DailyDownloadPoint,
+  DateRangeFields,
+  EvolutionData,
+  MonthlyDownloadPoint,
+  WeeklyDownloadPoint,
+  YearlyDownloadPoint,
+} from '~/types/chart'
 
 const props = defineProps<{
   // For single package downloads history
@@ -99,18 +108,6 @@ const accent = computed(() => {
 
 const mobileBreakpointWidth = 640
 const isMobile = computed(() => width.value > 0 && width.value < mobileBreakpointWidth)
-
-type ChartTimeGranularity = 'daily' | 'weekly' | 'monthly' | 'yearly'
-type EvolutionData =
-  | DailyDownloadPoint[]
-  | WeeklyDownloadPoint[]
-  | MonthlyDownloadPoint[]
-  | YearlyDownloadPoint[]
-
-type DateRangeFields = {
-  startDate?: string
-  endDate?: string
-}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -314,7 +311,10 @@ const effectivePackageNames = computed<string[]>(() => {
   return single ? [single] : []
 })
 
-const selectedGranularity = shallowRef<ChartTimeGranularity>('weekly')
+const selectedGranularity = defineModel<ChartTimeGranularity>('granularity', {
+  default: 'weekly',
+})
+
 const displayedGranularity = shallowRef<ChartTimeGranularity>('weekly')
 
 const isEndDateOnPeriodEnd = computed(() => {
@@ -344,8 +344,8 @@ const shouldRenderEstimationOverlay = computed(
   () => !pending.value && isEstimationGranularity.value,
 )
 
-const startDate = shallowRef<string>('') // YYYY-MM-DD
-const endDate = shallowRef<string>('') // YYYY-MM-DD
+const startDate = defineModel<string>('startDate', { default: '' })
+const endDate = defineModel<string>('endDate', { default: '' })
 const hasUserEditedDates = shallowRef(false)
 
 /**

@@ -1,22 +1,16 @@
 import type { MaybeRefOrGetter } from 'vue'
 import { toValue } from 'vue'
+import type {
+  DailyDownloadPoint,
+  MonthlyDownloadPoint,
+  WeeklyDownloadPoint,
+  YearlyDownloadPoint,
+} from '~/types/chart'
 import { fetchNpmDownloadsRange } from '~/utils/npm/api'
 
 export type PackumentLikeForTime = {
   time?: Record<string, string>
 }
-
-export type DailyDownloadPoint = { downloads: number; day: string; timestamp: number }
-export type WeeklyDownloadPoint = {
-  downloads: number
-  weekKey: string
-  weekStart: string
-  weekEnd: string
-  timestampStart: number
-  timestampEnd: number
-}
-export type MonthlyDownloadPoint = { downloads: number; month: string; timestamp: number }
-export type YearlyDownloadPoint = { downloads: number; year: string; timestamp: number }
 
 type PackageDownloadEvolutionOptionsBase = {
   startDate?: string

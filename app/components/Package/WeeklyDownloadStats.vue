@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
+import type { ChartTimeGranularity, WeeklyDownloadPoint } from '~/types/chart'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
 
 const props = defineProps<{
@@ -10,10 +11,19 @@ const props = defineProps<{
 
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
-const isChartModalOpen = shallowRef(false)
+
+const modal = useRouteQuery<'downloads' | undefined>('modal')
+const granularity = useRouteQuery<ChartTimeGranularity | undefined>('granularity')
+const startDate = useRouteQuery<string | undefined>('start')
+const endDate = useRouteQuery<string | undefined>('end')
+
+const isChartModalOpen = computed<boolean>(() => modal.value === 'downloads')
 
 function handleModalClose() {
-  isChartModalOpen.value = false
+  modal.value = undefined
+  granularity.value = undefined
+  startDate.value = undefined
+  endDate.value = undefined
   hasChartModalTransitioned.value = false
 }
 
@@ -93,7 +103,7 @@ const hasWeeklyDownloads = computed(() => weeklyDownloads.value.length > 0)
 async function openChartModal() {
   if (!hasWeeklyDownloads.value) return
 
-  isChartModalOpen.value = true
+  modal.value = 'downloads'
   hasChartModalTransitioned.value = false
   // ensure the component renders before opening the dialog
   await nextTick()
@@ -119,8 +129,11 @@ async function loadWeeklyDownloads() {
   }
 }
 
-onMounted(() => {
-  loadWeeklyDownloads()
+onMounted(async () => {
+  await loadWeeklyDownloads()
+  if (isChartModalOpen.value && hasWeeklyDownloads.value) {
+    openChartModal()
+  }
 })
 
 watch(
@@ -287,6 +300,9 @@ const config = computed(() => {
         :inModal="true"
         :packageName="props.packageName"
         :createdIso="createdIso"
+        v-model:granularity="granularity"
+        v-model:startDate="startDate"
+        v-model:endDate="endDate"
       />
     </Transition>
 
