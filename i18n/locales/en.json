@@ -128,7 +128,6 @@
       "modal": {
         "deprecating": "Deprecating",
         "title": "Deprecate",
-        "title_version": "Deprecate Version",
         "reason": "Reason",
         "reason_placeholder": "e.g. Use package-x instead. This package is no longer maintained.",
         "success": "Package deprecated",

@@ -128,7 +128,6 @@
       "modal": {
         "deprecating": "废弃中",
         "title": "废弃",
-        "title_version": "废弃版本",
         "reason": "原因",
         "reason_placeholder": "例如：使用 package-x 替代。这个包不再维护。",
         "success": "包已废弃",
