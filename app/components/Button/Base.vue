@@ -49,11 +49,7 @@ defineExpose({
     "
     :aria-keyshortcuts="ariaKeyshortcuts"
   >
-    <span
-      v-if="classicon"
-      :class="[size === 'small' ? 'size-3' : 'size-4', classicon]"
-      aria-hidden="true"
-    />
+    <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
     <kbd
       v-if="ariaKeyshortcuts"
