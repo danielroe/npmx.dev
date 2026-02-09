@@ -654,7 +654,10 @@ defineOgImageComponent('Default', {
                 $t(
                   'filters.count.showing_paginated',
                   {
-                    pageSize: preferredPageSize === 'all' ? $n(effectiveTotal) : preferredPageSize,
+                    pageSize:
+                      preferredPageSize === 'all'
+                        ? $n(effectiveTotal)
+                        : Math.min(preferredPageSize, effectiveTotal),
                     count: $n(effectiveTotal),
                   },
                   effectiveTotal,
