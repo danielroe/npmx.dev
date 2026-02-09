@@ -89,14 +89,15 @@ watch(handleInput, newHandleInput => {
           >
             {{ $t('auth.modal.handle_label') }}
           </label>
-          <input
+          <InputBase
             id="handle-input"
             v-model="handleInput"
             type="text"
             name="handle"
             :placeholder="$t('auth.modal.handle_placeholder')"
-            v-bind="noCorrect"
-            class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 hover:border-fg-subtle focus:border-accent focus-visible:(outline-2 outline-accent/70)"
+            no-correct
+            class="w-full"
+            size="medium"
           />
           <p v-if="errorMessage" class="text-red-500 text-xs mt-1" role="alert">
             {{ errorMessage }}
@@ -141,12 +142,7 @@ watch(handleInput, newHandleInput => {
         {{ $t('auth.modal.create_account') }}
       </ButtonBase>
       <hr class="color-border" />
-      <ButtonBase
-        type="button"
-        variant="primary"
-        class="w-full flex items-center justify-center gap-2"
-        @click="handleBlueskySignIn"
-      >
+      <ButtonBase type="button" variant="primary" class="w-full" @click="handleBlueskySignIn" block>
         {{ $t('auth.modal.connect_bluesky') }}
         <svg fill="none" viewBox="0 0 64 57" width="20" style="width: 20px">
           <path
