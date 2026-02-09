@@ -2260,6 +2260,7 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations with size small', async () => {
       const component = await mountSuspended(SelectBase, {
         props: { size: 'sm' },
+        attrs: { 'aria-label': 'Small select' },
         slots: { default: '<option value="option1">option 1</option>' },
       })
       const results = await runAxe(component)
@@ -2300,6 +2301,7 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(SelectField, {
         props: {
           id: 'a11y-select-3',
+          attrs: { 'aria-label': 'Disabled select' },
           items: [{ label: 'Option 1', value: 'option1' }],
           disabled: true,
         },
@@ -2312,6 +2314,7 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(SelectField, {
         props: {
           id: 'a11y-select-4',
+          attrs: { 'aria-label': 'Small select' },
           items: [{ label: 'Option 1', value: 'option1' }],
           size: 'sm',
         },
