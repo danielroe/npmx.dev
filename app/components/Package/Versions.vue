@@ -22,6 +22,14 @@ const props = defineProps<{
 const chartModal = useModal('chart-modal')
 const hasDistributionModalTransitioned = shallowRef(false)
 const isDistributionModalOpen = shallowRef(false)
+let distributionModalFallbackTimer: ReturnType<typeof setTimeout> | null = null
+
+function clearDistributionModalFallbackTimer() {
+  if (distributionModalFallbackTimer) {
+    clearTimeout(distributionModalFallbackTimer)
+    distributionModalFallbackTimer = null
+  }
+}
 
 async function openDistributionModal() {
   isDistributionModalOpen.value = true
@@ -31,7 +39,8 @@ async function openDistributionModal() {
   chartModal.open()
 
   // Fallback: Force mount if transition event doesn't fire
-  setTimeout(() => {
+  clearDistributionModalFallbackTimer()
+  distributionModalFallbackTimer = setTimeout(() => {
     if (!hasDistributionModalTransitioned.value) {
       hasDistributionModalTransitioned.value = true
     }
@@ -41,10 +50,12 @@ async function openDistributionModal() {
 function closeDistributionModal() {
   isDistributionModalOpen.value = false
   hasDistributionModalTransitioned.value = false
+  clearDistributionModalFallbackTimer()
 }
 
 function handleDistributionModalTransitioned() {
   hasDistributionModalTransitioned.value = true
+  clearDistributionModalFallbackTimer()
 }
 
 /** Maximum number of dist-tag rows to show before collapsing into "Other versions" */
