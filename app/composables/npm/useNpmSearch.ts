@@ -6,36 +6,38 @@ export interface NpmSearchOptions {
   from?: number
 }
 
-async function checkOrgExists(name: string): Promise<boolean> {
-  try {
-    const scopePrefix = `@${name.toLowerCase()}/`
-    const response = await $fetch<{
-      total: number
-      objects: Array<{ package: { name: string } }>
-    }>(`${NPM_REGISTRY}/-/v1/search`, { query: { text: `@${name}`, size: 5 } })
-    return response.objects.some(obj => obj.package.name.toLowerCase().startsWith(scopePrefix))
-  } catch {
-    return false
-  }
-}
-
-async function checkUserExists(name: string): Promise<boolean> {
-  try {
-    const response = await $fetch<{ total: number }>(`${NPM_REGISTRY}/-/v1/search`, {
-      query: { text: `maintainer:${name}`, size: 1 },
-    })
-    return response.total > 0
-  } catch {
-    return false
-  }
-}
-
 /**
  * Composable providing npm registry search.
  * Must be called during component setup.
  */
 export function useNpmSearch() {
   const { $npmRegistry } = useNuxtApp()
+
+  async function checkOrgExists(name: string): Promise<boolean> {
+    try {
+      const scopePrefix = `@${name.toLowerCase()}/`
+      const response = await $npmRegistry<{
+        total: number
+        objects: Array<{ package: { name: string } }>
+      }>(`/-/v1/search`, { query: { text: `@${name}`, size: 5 } })
+      return response.data.objects.some(obj =>
+        obj.package.name.toLowerCase().startsWith(scopePrefix),
+      )
+    } catch {
+      return false
+    }
+  }
+
+  async function checkUserExists(name: string): Promise<boolean> {
+    try {
+      const response = await $npmRegistry<{ total: number }>(`/-/v1/search`, {
+        query: { text: `maintainer:${name}`, size: 1 },
+      })
+      return response.data.total > 0
+    } catch {
+      return false
+    }
+  }
 
   /**
    * Search npm packages. Single-character queries fetch lightweight metadata
