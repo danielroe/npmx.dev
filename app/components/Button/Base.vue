@@ -6,6 +6,7 @@ const props = withDefaults(
     'variant'?: 'primary' | 'secondary'
     'size'?: 'small' | 'medium'
     'keyshortcut'?: string
+    'block'?: boolean
 
     /**
      * Do not use this directly. Use keyshortcut instead; it generates the correct HTML and displays the shortcut in the UI.
@@ -32,8 +33,10 @@ defineExpose({
 <template>
   <button
     ref="el"
-    class="group cursor-pointer flex gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 disabled:(opacity-40 cursor-not-allowed border-transparent)"
+    class="group cursor-pointer gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 disabled:(opacity-40 cursor-not-allowed border-transparent)"
     :class="{
+      'inline-flex': !block,
+      'flex': block,
       'text-sm px-4 py-2': size === 'medium',
       'text-xs px-2 py-0.5': size === 'small',
       'bg-transparent text-fg hover:enabled:(bg-fg/10) focus-visible:enabled:(bg-fg/10) aria-pressed:(bg-fg text-bg border-fg hover:enabled:(bg-fg text-bg/50))':

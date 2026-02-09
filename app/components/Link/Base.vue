@@ -10,8 +10,9 @@ const props = withDefaults(
        * `type` should never be used, because this will always be a link.
        * */
       'type'?: never
-      'variant'?: 'button-primary' | 'button-secondary' | 'link' | 'link-block'
+      'variant'?: 'button-primary' | 'button-secondary' | 'link'
       'size'?: 'small' | 'medium'
+      'block'?: boolean
 
       'keyshortcut'?: string
 
@@ -52,19 +53,18 @@ const isLinkAnchor = computed(
 )
 
 /** size is only applicable for button like links */
-const isLink = computed(() => props.variant === 'link' || props.variant === 'link-block')
+const isLink = computed(() => props.variant === 'link')
 const isButton = computed(() => !isLink.value)
 const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
-const isBlock = computed(() => isButton.value || props.variant === 'link-block')
 </script>
 
 <template>
   <span
     v-if="disabled"
     :class="{
-      'flex': isBlock,
-      'inline-flex': !isBlock,
+      'flex': block,
+      'inline-flex': !block,
       'opacity-50 gap-x-1 items-center justify-center font-mono border border-transparent rounded-md':
         isButton,
       'text-sm px-4 py-2': isButtonMedium,
@@ -78,8 +78,8 @@ const isBlock = computed(() => isButton.value || props.variant === 'link-block')
     v-else
     class="group/link gap-x-1 items-center"
     :class="{
-      'flex': isBlock,
-      'inline-flex': !isBlock,
+      'flex': block,
+      'inline-flex': !block,
       'underline-offset-[0.2rem] underline decoration-1 decoration-fg/30': !isLinkAnchor && isLink,
       'justify-start font-mono text-fg hover:(decoration-accent text-accent) focus-visible:(decoration-accent text-accent) transition-colors duration-200':
         isLink,

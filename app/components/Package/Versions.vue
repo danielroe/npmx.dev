@@ -356,7 +356,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
             <div class="overflow-hidden">
               <LinkBase
                 :to="versionRoute(row.primaryVersion.version)"
-                variant="link-block"
+                block
                 class="text-sm"
                 :class="
                   row.primaryVersion.deprecated ? 'text-red-400 hover:text-red-300' : undefined
@@ -413,7 +413,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
             <div class="flex items-center justify-between gap-2">
               <LinkBase
                 :to="versionRoute(v.version)"
-                variant="link-block"
+                block
                 class="text-xs"
                 :class="v.deprecated ? 'text-red-400 hover:text-red-300' : undefined"
                 :title="
@@ -511,7 +511,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
             <div class="flex items-center justify-between gap-2">
               <LinkBase
                 :to="versionRoute(row.primaryVersion.version)"
-                variant="link-block"
+                block
                 class="text-xs"
                 :class="
                   row.primaryVersion.deprecated ? 'text-red-400 hover:text-red-300' : undefined
@@ -584,7 +584,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                     <LinkBase
                       v-if="group.versions[0]?.version"
                       :to="versionRoute(group.versions[0]?.version)"
-                      variant="link-block"
+                      block
                       class="text-xs"
                       :class="
                         group.versions[0]?.deprecated
@@ -645,7 +645,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                     <LinkBase
                       v-if="group.versions[0]?.version"
                       :to="versionRoute(group.versions[0]?.version)"
-                      variant="link-block"
+                      block
                       class="text-xs ms-6"
                       :class="
                         group.versions[0]?.deprecated
@@ -705,7 +705,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                   <div class="flex items-center justify-between gap-2">
                     <LinkBase
                       :to="versionRoute(v.version)"
-                      variant="link-block"
+                      block
                       class="text-xs"
                       :class="v.deprecated ? 'text-red-400 hover:text-red-300' : undefined"
                       :title="
