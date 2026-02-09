@@ -7,10 +7,11 @@ import type {
 
 definePageMeta({
   name: 'code',
-  path: '/package-code/@:org?/:packageName/v/:version/:filePath(.*)?',
+  path: '/package-code/:org?/:packageName/v/:version/:filePath(.*)?',
   alias: [
-    '/package/code/@:org?/:packageName/v/:version/:filePath(.*)?',
-    '/code/@:org?/:packageName/v/:version/:filePath(.*)?',
+    '/package/code/:org?/:packageName/v/:version/:filePath(.*)?',
+    '/package/code/:packageName/v/:version/:filePath(.*)?',
+    // '/code/@:org?/:packageName/v/:version/:filePath(.*)?',
   ],
 })
 
@@ -23,7 +24,7 @@ const route = useRoute('code')
 //   /code/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
 const parsedRoute = computed(() => {
   const packageName = route.params.org
-    ? `@${route.params.org}/${route.params.packageName}`
+    ? `${route.params.org}/${route.params.packageName}`
     : route.params.packageName
   const version = route.params.version
   const filePath = route.params.filePath || null
@@ -44,7 +45,7 @@ function getCodeUrl(args: {
   filePath?: string
 }): string {
   const base = args.org
-    ? `/package-code/@${args.org}/${args.packageName}/v/${args.version}`
+    ? `/package-code/${args.org}/${args.packageName}/v/${args.version}`
     : `/package-code/${args.packageName}/v/${args.version}`
   return args.filePath ? `${base}/${args.filePath}` : base
 }

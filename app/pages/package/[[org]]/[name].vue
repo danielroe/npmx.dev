@@ -525,7 +525,7 @@ const codeLink = computed((): RouteLocationRaw | null => {
   return {
     name: 'code',
     params: {
-      org: split.length === 2 ? split[0]?.replace(/^@/, '') : undefined,
+      org: split.length === 2 ? split[0] : undefined,
       packageName: split.length === 2 ? split[1]! : split[0]!,
       version: resolvedVersion.value,
       filePath: '',
