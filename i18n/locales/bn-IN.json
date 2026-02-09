@@ -609,7 +609,7 @@
       "label": "প্যাকেজগুলি সাজান",
       "toggle_direction": "ক্রম দিক টগল করুন",
       "ascending": "আরোহী",
-      "descending": "অবরোহী", 
+      "descending": "অবরোহী",
       "relevance": "প্রাসঙ্গিকতা",
       "downloads_week": "ডাউনলোড/সপ্তাহ",
       "downloads_day": "ডাউনলোড/দিন",
@@ -629,7 +629,7 @@
       "name": "নাম",
       "version": "ভার্সন",
       "description": "বর্ণনা",
-      "downloads": "ডাউনলোড/সপ্তাহ", 
+      "downloads": "ডাউনলোড/সপ্তাহ",
       "maintainers": "রক্ষণাবেক্ষণকারী",
       "keywords": "কীওয়ার্ড",
       "quality_score": "গুণমান স্কোর",
@@ -652,7 +652,7 @@
       "all_yolo": "সব (YOLO)",
       "showing": "{total} এর মধ্যে {start}-{end}",
       "previous": "আগের পাতা",
-      "next": "পরের পাতা", 
+      "next": "পরের পাতা",
       "nav_label": "পাতায়ন"
     },
     "count": {
@@ -668,7 +668,7 @@
   },
   "about": {
     "title": "আমাদের সম্পর্কে",
-    "heading": "আমাদের সম্পর্কে", 
+    "heading": "আমাদের সম্পর্কে",
     "meta_description": "npmx হল npm রেজিস্ট্রির জন্য দ্রুত, আধুনিক ব্রাউজার। npm প্যাকেজ অন্বেষণের জন্য উন্নত UX/DX।",
     "what_we_are": {
       "title": "আমরা কী",
