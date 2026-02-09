@@ -120,9 +120,12 @@ export async function resolveAndValidateHost(url: string): Promise<boolean> {
   }
 
   try {
-    // Resolve to check all returned IPs
-    const { address } = await lookup(hostname)
-    return !isPrivateIP(address)
+    // Resolve with { all: true } to get every A/AAAA record. A hostname can
+    // have multiple records; an attacker could mix a public IP with a private
+    // one. If any resolved IP is private/reserved, reject the entire request.
+    const results = await lookup(hostname, { all: true })
+    if (results.length === 0) return false
+    return results.every(result => !isPrivateIP(result.address))
   } catch {
     // DNS resolution failed — block the request
     return false
