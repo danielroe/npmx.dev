@@ -136,7 +136,7 @@ export default defineEventHandler(async event => {
     new URLSearchParams(query as Record<string, string>),
   )
 
-  const client = new Client({ service: SLINGSHOT_HOST })
+  const client = new Client({ service: `https://${SLINGSHOT_HOST}` })
   const response = await client.xrpcSafe(com['bad-example'].identity.resolveMiniDoc, {
     headers: { 'User-Agent': 'npmx' },
     params: { identifier: authSession.did },
