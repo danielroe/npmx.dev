@@ -79,7 +79,7 @@ const bytesFormatter = useBytesFormatter()
             <LinkBase
               :to="getCodeRoute(parentPath || undefined)"
               class="py-2 px-4 font-mono text-sm w-full"
-              noUnderline
+              no-underline
               classicon="i-carbon:folder text-yellow-600"
             >
               <span class="w-full flex justify-self-stretch items-center gap-2"> .. </span>
@@ -97,7 +97,7 @@ const bytesFormatter = useBytesFormatter()
             <LinkBase
               :to="getCodeRoute(node.path)"
               class="py-2 px-4 font-mono text-sm w-full"
-              noUnderline
+              no-underline
               :classicon="
                 node.type === 'directory'
                   ? 'i-carbon:folder text-yellow-600'
