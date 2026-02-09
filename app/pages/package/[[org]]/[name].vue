@@ -1054,25 +1054,43 @@ onKeyStroke(
               {{ $t('package.security_downgrade.title') }}
             </h3>
             <p class="mt-2 mb-0 text-sm">
-              {{ $t('package.security_downgrade.description') }}
-            </p>
-            <p v-if="publishSecurityDowngrade.trustedVersion" class="mt-2 mb-0 text-sm">
-              {{
-                $t('package.security_downgrade.fallback_install', {
-                  version: publishSecurityDowngrade.trustedVersion,
-                })
-              }}
-            </p>
-            <p class="mt-2 mb-0 text-sm">
-              <a
-                href="https://docs.npmjs.com/generating-provenance-statements"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+              <i18n-t
+                :keypath="`package.security_downgrade.description_to_${publishSecurityDowngrade.downgradedTrustLevel}_${publishSecurityDowngrade.trustedTrustLevel}`"
+                tag="span"
+                scope="global"
               >
-                {{ $t('package.security_downgrade.learn_more') }}
-                <span class="i-carbon-launch w-3 h-3" aria-hidden="true" />
-              </a>
+                <template #provenance>
+                  <a
+                    href="https://docs.npmjs.com/generating-provenance-statements"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.provenance_link_text')
+                    }}<span class="i-carbon-launch w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+                <template #trustedPublishing>
+                  <a
+                    href="https://docs.npmjs.com/adding-a-trusted-publisher-to-a-package"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.trusted_publishing_link_text')
+                    }}<span class="i-carbon-launch w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+              </i18n-t>
+              {{ ' ' }}
+              <template v-if="publishSecurityDowngrade.trustedVersion">
+                {{
+                  $t(
+                    `package.security_downgrade.fallback_install_${publishSecurityDowngrade.trustedTrustLevel}`,
+                    {
+                      version: publishSecurityDowngrade.trustedVersion,
+                    },
+                  )
+                }}
+              </template>
             </p>
           </div>
           <TerminalInstall

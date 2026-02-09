@@ -182,8 +182,10 @@ describe('transformPackument', () => {
     expect(detectPublishSecurityDowngradeForVersion(infos, '1.0.1')).toEqual({
       downgradedVersion: '1.0.1',
       downgradedPublishedAt: '2026-01-02T00:00:00.000Z',
+      downgradedTrustLevel: 'none',
       trustedVersion: '1.0.0',
       trustedPublishedAt: '2026-01-01T00:00:00.000Z',
+      trustedTrustLevel: 'provenance',
     })
   })
 

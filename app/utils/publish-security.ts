@@ -4,28 +4,31 @@ import { compare, major } from 'semver'
 export interface PublishSecurityDowngrade {
   downgradedVersion: string
   downgradedPublishedAt?: string
+  downgradedTrustLevel: PublishTrustLevel
   /** Recommended trusted version within the same major, if one exists */
   trustedVersion?: string
   trustedPublishedAt?: string
+  trustedTrustLevel: PublishTrustLevel
 }
 
 type VersionWithIndex = PackageVersionInfo & {
   index: number
   timestamp: number
   trustRank: number
+  resolvedTrustLevel: PublishTrustLevel
 }
 
 const TRUST_RANK: Record<PublishTrustLevel, number> = {
   none: 0,
-  trustedPublisher: 1,
-  provenance: 2,
+  provenance: 1,
+  trustedPublisher: 2,
 }
 
-function getTrustRank(version: PackageVersionInfo): number {
-  if (version.trustLevel) return TRUST_RANK[version.trustLevel]
+function resolveTrustLevel(version: PackageVersionInfo): PublishTrustLevel {
+  if (version.trustLevel) return version.trustLevel
   // Fallback for legacy data: hasProvenance only indicates non-'none' trust,
-  // so map it to trustedPublisher (the lower rank) to avoid over-ranking
-  return version.hasProvenance ? TRUST_RANK.trustedPublisher : TRUST_RANK.none
+  // so map it to provenance (the lower rank) to avoid over-ranking
+  return version.hasProvenance ? 'provenance' : 'none'
 }
 
 function toTimestamp(time?: string): number {
@@ -65,12 +68,16 @@ export function detectPublishSecurityDowngradeForVersion(
   if (versions.length < 2 || !viewedVersion) return null
 
   const sorted = versions
-    .map((version, index) => ({
-      ...version,
-      index,
-      timestamp: toTimestamp(version.time),
-      trustRank: getTrustRank(version),
-    }))
+    .map((version, index) => {
+      const resolvedTrustLevel = resolveTrustLevel(version)
+      return {
+        ...version,
+        index,
+        timestamp: toTimestamp(version.time),
+        trustRank: TRUST_RANK[resolvedTrustLevel],
+        resolvedTrustLevel,
+      }
+    })
     .sort(sortByRecency)
 
   const currentIndex = sorted.findIndex(version => version.version === viewedVersion)
@@ -108,7 +115,9 @@ export function detectPublishSecurityDowngradeForVersion(
   return {
     downgradedVersion: current.version,
     downgradedPublishedAt: current.time,
+    downgradedTrustLevel: current.resolvedTrustLevel,
     trustedVersion: recommendation?.version,
     trustedPublishedAt: recommendation?.time,
+    trustedTrustLevel: strongestOlder.resolvedTrustLevel,
   }
 }
