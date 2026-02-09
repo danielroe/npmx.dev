@@ -74,8 +74,6 @@ export function useCompareReplacements(packageNames: MaybeRefOrGetter<string[]>)
   const allSuggestions = computed(() => {
     const result: ReplacementSuggestion[] = []
 
-    console.log({ packages })
-
     for (const pkg of packages.value) {
       const replacement = replacements.value.get(pkg)
       if (!replacement) continue
