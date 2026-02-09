@@ -259,7 +259,7 @@ onKeyStroke(
           class="border-none"
           variant="button-secondary"
           :to="link.to"
-          :keyshortcut="link.keyshortcut"
+          :aria-keyshortcuts="link.keyshortcut"
         >
           {{ link.label }}
         </LinkBase>
