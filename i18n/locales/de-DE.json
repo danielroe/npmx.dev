@@ -35,7 +35,6 @@
     "open_code_view": "Code-Ansicht öffnen",
     "open_docs": "Dokumentation öffnen"
   },
-  },
   "search": {
     "label": "npm-Pakete durchsuchen",
     "placeholder": "Pakete suchen...",
