@@ -164,7 +164,7 @@ function openAuthModal() {
                 <span class="i-carbon-terminal w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
               <span class="flex-1 min-w-0">
-                <span class="font-mono text-sm text-fg truncate">~{{ npmUser }}</span>
+                <span class="font-mono text-sm text-fg truncate block">~{{ npmUser }}</span>
                 <span class="text-xs text-fg-subtle">{{ $t('account_menu.npm_cli') }}</span>
               </span>
               <span
@@ -207,7 +207,9 @@ function openAuthModal() {
                 <span class="i-carbon-cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
               <span class="flex-1 min-w-0">
-                <span class="font-mono text-sm text-fg truncate">@{{ atprotoUser.handle }}</span>
+                <span class="font-mono text-sm text-fg truncate block"
+                  >@{{ atprotoUser.handle }}</span
+                >
                 <span class="text-xs text-fg-subtle">{{ $t('account_menu.atmosphere') }}</span>
               </span>
             </button>
@@ -237,7 +239,7 @@ function openAuthModal() {
                 <span v-else class="i-carbon-terminal w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
               <span class="flex-1 min-w-0">
-                <span class="font-mono text-sm text-fg">
+                <span class="font-mono text-sm text-fg block">
                   {{
                     isNpmConnecting
                       ? $t('account_menu.connecting')
@@ -259,7 +261,7 @@ function openAuthModal() {
                 <span class="i-carbon-cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
               <span class="flex-1 min-w-0">
-                <span class="font-mono text-sm text-fg">
+                <span class="font-mono text-sm text-fg block">
                   {{ $t('account_menu.connect_atmosphere') }}
                 </span>
                 <span class="text-xs text-fg-subtle">{{ $t('account_menu.atmosphere_desc') }}</span>
