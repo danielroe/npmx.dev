@@ -2,7 +2,11 @@ import type { $Typed, AtUriString, Unknown$TypedObject } from '@atproto/lex'
 import { Client, isAtUriString } from '@atproto/lex'
 import type { Comment, CommentEmbed } from '#shared/types/blog-post'
 import * as app from '#shared/types/lexicons/app'
-import { CACHE_MAX_AGE_ONE_MINUTE, BLUESKY_API, AT_URI_REGEX } from '#shared/utils/constants'
+import {
+  CACHE_MAX_AGE_ONE_MINUTE,
+  BLUESKY_API,
+  BSKY_POST_AT_URI_REGEX,
+} from '#shared/utils/constants'
 
 const blueskyClient = new Client({ service: BLUESKY_API })
 
@@ -78,9 +82,9 @@ export default defineCachedEventHandler(
 
 // Helper to convert AT URI to web URL
 function atUriToWebUrl(uri: AtUriString): string | null {
-  const match = uri.match(AT_URI_REGEX)
+  const match = uri.match(BSKY_POST_AT_URI_REGEX)
   if (!match) return null
-  const [, did, rkey] = match
+  const [, did, rkey] = match as [string, `did:plc:${string}`, string]
   return `https://bsky.app/profile/${did}/post/${rkey}`
 }
 

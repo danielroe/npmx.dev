@@ -4,9 +4,9 @@ import { getOAuthLock } from '#server/utils/atproto/lock'
 import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { SLINGSHOT_HOST } from '#shared/utils/constants'
 import { useServerSession } from '#server/utils/server-session'
-import type { PublicUserSession } from '#shared/schemas/publicUserSession'
 import { handleResolver } from '#server/utils/atproto/oauth'
 import { Client } from '@atproto/lex'
+import * as com from '#shared/types/lexicons/com'
 import * as app from '#shared/types/lexicons/app'
 import { isAtIdentifierString } from '@atproto/lex'
 // @ts-expect-error virtual file from oauth module
@@ -30,7 +30,7 @@ async function getAvatar(did: string, pds: string) {
   try {
     const pdsUrl = new URL(pds)
     // Only fetch from HTTPS PDS endpoints to prevent SSRF
-    if (did && pdsUrl.protocol === 'https:') {
+    if (pdsUrl.protocol === 'https:') {
       const client = new Client(pdsUrl)
       const profileResponse = await client.get(app.bsky.actor.profile, {
         repo: did,
@@ -136,12 +136,13 @@ export default defineEventHandler(async event => {
     new URLSearchParams(query as Record<string, string>),
   )
 
-  const response = await fetch(
-    `https://${SLINGSHOT_HOST}/xrpc/com.bad-example.identity.resolveMiniDoc?identifier=${encodeURIComponent(authSession.did)}`,
-    { headers: { 'User-Agent': 'npmx' } },
-  )
-  if (response.ok) {
-    const miniDoc: PublicUserSession = await response.json()
+  const client = new Client({ service: SLINGSHOT_HOST })
+  const response = await client.xrpcSafe(com['bad-example'].identity.resolveMiniDoc, {
+    headers: { 'User-Agent': 'npmx' },
+    params: { identifier: authSession.did },
+  })
+  if (response.success) {
+    const miniDoc = response.body
 
     let avatar: string | undefined = await getAvatar(authSession.did, miniDoc.pds)
 

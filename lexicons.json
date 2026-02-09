@@ -1,6 +1,7 @@
 {
   "version": 1,
   "lexicons": [
+    "app.bsky.actor.getProfiles",
     "app.bsky.actor.profile",
     "app.bsky.embed.external",
     "app.bsky.embed.images",
@@ -9,12 +10,17 @@
     "app.bsky.feed.getPostThread",
     "app.bsky.feed.getPosts",
     "app.bsky.feed.post",
+    "com.bad-example.identity.resolveMiniDoc",
     "site.standard.document"
   ],
   "resolutions": {
     "app.bsky.actor.defs": {
       "uri": "at://did:plc:4v4y5r3lwsbtmsxhile2ljac/com.atproto.lexicon.schema/app.bsky.actor.defs",
       "cid": "bafyreigwqwhe2jxohagozazfbrf6dxgzphvkg3d3lg7uxdvepsimqyclka"
+    },
+    "app.bsky.actor.getProfiles": {
+      "uri": "at://did:plc:4v4y5r3lwsbtmsxhile2ljac/com.atproto.lexicon.schema/app.bsky.actor.getProfiles",
+      "cid": "bafyreihphrndnt2cvnv3nk442f6kohdnpagk4xip74f2jn36uoal25vhta"
     },
     "app.bsky.actor.profile": {
       "uri": "at://did:plc:4v4y5r3lwsbtmsxhile2ljac/com.atproto.lexicon.schema/app.bsky.actor.profile",
@@ -103,6 +109,10 @@
     "com.atproto.repo.strongRef": {
       "uri": "at://did:plc:6msi3pj7krzih5qxqtryxlzw/com.atproto.lexicon.schema/com.atproto.repo.strongRef",
       "cid": "bafyreifrkdbnkvfjujntdaeigolnrjj3srrs53tfixjhmacclps72qlov4"
+    },
+    "com.bad-example.identity.resolveMiniDoc": {
+      "uri": "at://did:plc:hdhoaan3xa3jiuq4fg4mefid/com.atproto.lexicon.schema/com.bad-example.identity.resolveMiniDoc",
+      "cid": "bafyreihqq4ud3ihj63op2ety24nziyyh7axibm65mnde5bdeai2z6adety"
     },
     "site.standard.document": {
       "uri": "at://did:plc:re3ebnp5v7ffagz6rb6xfei4/com.atproto.lexicon.schema/site.standard.document",
