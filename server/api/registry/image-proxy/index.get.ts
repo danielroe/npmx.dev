@@ -1,7 +1,13 @@
 import { createError, getQuery, setResponseHeaders, sendStream } from 'h3'
 import { Readable } from 'node:stream'
 import { CACHE_MAX_AGE_ONE_DAY } from '#shared/utils/constants'
-import { isAllowedImageUrl } from '#server/utils/image-proxy'
+import { isAllowedImageUrl, resolveAndValidateHost } from '#server/utils/image-proxy'
+
+/** Fetch timeout in milliseconds to prevent slow-drip resource exhaustion */
+const FETCH_TIMEOUT_MS = 15_000
+
+/** Maximum image size in bytes (10 MB) */
+const MAX_SIZE = 10 * 1024 * 1024
 
 /**
  * Image proxy endpoint to prevent privacy leaks from README images.
@@ -28,8 +34,17 @@ export default defineEventHandler(async event => {
     })
   }
 
-  // Validate URL
+  // Validate URL syntactically
   if (!isAllowedImageUrl(url)) {
+    throw createError({
+      statusCode: 400,
+      message: 'Invalid or disallowed image URL.',
+    })
+  }
+
+  // Resolve hostname via DNS and validate the resolved IP is not private.
+  // This prevents DNS rebinding attacks where a hostname resolves to a private IP.
+  if (!(await resolveAndValidateHost(url))) {
     throw createError({
       statusCode: 400,
       message: 'Invalid or disallowed image URL.',
@@ -44,10 +59,19 @@ export default defineEventHandler(async event => {
         'Accept': 'image/*',
       },
       redirect: 'follow',
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     })
 
     // Validate final URL after any redirects to prevent SSRF bypass
     if (response.url !== url && !isAllowedImageUrl(response.url)) {
+      throw createError({
+        statusCode: 400,
+        message: 'Redirect to disallowed URL.',
+      })
+    }
+
+    // Also validate the resolved IP of the redirect target
+    if (response.url !== url && !(await resolveAndValidateHost(response.url))) {
       throw createError({
         statusCode: 400,
         message: 'Redirect to disallowed URL.',
@@ -63,16 +87,16 @@ export default defineEventHandler(async event => {
 
     const contentType = response.headers.get('content-type') || 'application/octet-stream'
 
-    // Only allow image content types
-    if (!contentType.startsWith('image/')) {
+    // Only allow raster/vector image content types, but block SVG to prevent
+    // embedded JavaScript execution (SVGs can contain <script> tags, event handlers, etc.)
+    if (!contentType.startsWith('image/') || contentType.includes('svg')) {
       throw createError({
         statusCode: 400,
-        message: 'URL does not point to an image.',
+        message: 'URL does not point to an allowed image type.',
       })
     }
 
     // Check Content-Length header if present (may be absent or dishonest)
-    const MAX_SIZE = 10 * 1024 * 1024 // 10 MB
     const contentLength = response.headers.get('content-length')
     if (contentLength && Number.parseInt(contentLength, 10) > MAX_SIZE) {
       throw createError({
@@ -97,13 +121,14 @@ export default defineEventHandler(async event => {
     })
 
     // Stream the response with a size limit to prevent memory exhaustion.
-    // This avoids buffering the entire image into memory before sending.
+    // Uses pipe-based backpressure so the upstream pauses when the consumer is slow.
     let bytesRead = 0
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const upstream = Readable.fromWeb(response.body as any)
     const limited = new Readable({
       read() {
-        /* pulling is driven by upstream push */
+        // Resume the upstream when the consumer is ready for more data
+        upstream.resume()
       },
     })
 
@@ -113,7 +138,11 @@ export default defineEventHandler(async event => {
         upstream.destroy()
         limited.destroy(new Error('Image too large'))
       } else {
-        limited.push(chunk)
+        // Respect backpressure: if push() returns false, pause the upstream
+        // until the consumer calls read() again
+        if (!limited.push(chunk)) {
+          upstream.pause()
+        }
       }
     })
     upstream.on('end', () => limited.push(null))

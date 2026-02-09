@@ -3,6 +3,7 @@ import {
   isTrustedImageDomain,
   isAllowedImageUrl,
   toProxiedImageUrl,
+  resolveAndValidateHost,
 } from '../../../../server/utils/image-proxy'
 
 describe('Image Proxy Utils', () => {
@@ -113,8 +114,46 @@ describe('Image Proxy Utils', () => {
       expect(isAllowedImageUrl('http://[fd12::1]/image.png')).toBe(false)
     })
 
+    it('blocks 0.0.0.0 (unspecified address)', () => {
+      expect(isAllowedImageUrl('http://0.0.0.0/image.png')).toBe(false)
+    })
+
     it('returns false for invalid URLs', () => {
       expect(isAllowedImageUrl('not-a-url')).toBe(false)
+    })
+  })
+
+  describe('resolveAndValidateHost', () => {
+    it('allows URLs with publicly-resolvable hostnames', async () => {
+      // example.com resolves to a public IP
+      expect(await resolveAndValidateHost('https://example.com/image.png')).toBe(true)
+    })
+
+    it('blocks URLs with hostnames that resolve to loopback', async () => {
+      // localhost resolves to 127.0.0.1
+      expect(await resolveAndValidateHost('http://localhost/image.png')).toBe(false)
+    })
+
+    it('blocks IP literals that are private', async () => {
+      expect(await resolveAndValidateHost('http://127.0.0.1/image.png')).toBe(false)
+      expect(await resolveAndValidateHost('http://10.0.0.1/image.png')).toBe(false)
+    })
+
+    it('allows IP literals that are public', async () => {
+      // 93.184.215.14 is example.com's IP
+      expect(await resolveAndValidateHost('http://93.184.215.14/image.png')).toBe(true)
+    })
+
+    it('blocks hostnames that fail DNS resolution', async () => {
+      expect(
+        await resolveAndValidateHost(
+          'http://this-domain-definitely-does-not-exist.invalid/img.png',
+        ),
+      ).toBe(false)
+    })
+
+    it('returns false for invalid URLs', async () => {
+      expect(await resolveAndValidateHost('not-a-url')).toBe(false)
     })
   })
 

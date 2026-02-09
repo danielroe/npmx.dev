@@ -4,6 +4,7 @@
  * Resolves: https://github.com/npmx-dev/npmx.dev/issues/1138
  */
 
+import { lookup } from 'node:dns/promises'
 import ipaddr from 'ipaddr.js'
 
 /** Trusted image domains that don't need proxying (first-party or well-known CDNs) */
@@ -57,6 +58,17 @@ export function isTrustedImageDomain(url: string): boolean {
 }
 
 /**
+ * Check if a resolved IP address is in a private/reserved range.
+ * Uses ipaddr.js for comprehensive IPv4, IPv6, and IPv4-mapped IPv6 range detection.
+ */
+function isPrivateIP(ip: string): boolean {
+  const bare = ip.startsWith('[') && ip.endsWith(']') ? ip.slice(1, -1) : ip
+  if (!ipaddr.isValid(bare)) return false
+  const addr = ipaddr.process(bare)
+  return addr.range() !== 'unicast'
+}
+
+/**
  * Validate that a URL is a valid HTTP(S) image URL suitable for proxying.
  * Blocks private/reserved IPs (SSRF protection) using ipaddr.js for comprehensive
  * IPv4, IPv6, and IPv4-mapped IPv6 range detection.
@@ -80,15 +92,41 @@ export function isAllowedImageUrl(url: string): boolean {
   // For IP addresses, use ipaddr.js to check against all reserved ranges
   // (loopback, private RFC 1918, link-local 169.254, IPv6 ULA fc00::/7, etc.)
   // ipaddr.process() also unwraps IPv4-mapped IPv6 (e.g. ::ffff:127.0.0.1 → 127.0.0.1)
-  const bare = hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname
-  if (ipaddr.isValid(bare)) {
-    const addr = ipaddr.process(bare)
-    if (addr.range() !== 'unicast') {
-      return false
-    }
+  if (isPrivateIP(hostname)) {
+    return false
   }
 
   return true
+}
+
+/**
+ * Resolve the hostname of a URL via DNS and validate that all resolved IPs are
+ * public unicast addresses. This prevents DNS rebinding SSRF attacks where a
+ * hostname passes the initial string-based check but resolves to a private IP.
+ *
+ * Returns true if the hostname resolves to a safe (unicast) IP.
+ * Returns false if any resolved IP is private/reserved, or if resolution fails.
+ */
+export async function resolveAndValidateHost(url: string): Promise<boolean> {
+  const parsed = URL.parse(url)
+  if (!parsed) return false
+
+  const hostname = parsed.hostname.toLowerCase()
+
+  // If it's already an IP literal, skip DNS resolution (already validated by isAllowedImageUrl)
+  const bare = hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname
+  if (ipaddr.isValid(bare)) {
+    return !isPrivateIP(bare)
+  }
+
+  try {
+    // Resolve to check all returned IPs
+    const { address } = await lookup(hostname)
+    return !isPrivateIP(address)
+  } catch {
+    // DNS resolution failed — block the request
+    return false
+  }
 }
 
 /**
