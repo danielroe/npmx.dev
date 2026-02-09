@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
   ],
 
+  $test: {
+    debug: {
+      hydration: true,
+    },
+  },
+
   colorMode: {
     preference: 'system',
     fallback: 'dark',
