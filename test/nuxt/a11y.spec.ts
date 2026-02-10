@@ -2390,7 +2390,7 @@ describe('component accessibility audits', () => {
   describe('Toggle', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(SettingsToggle, {
-        props: { label: 'Enable feature' },
+        props: { label: 'Enable feature', modelValue: false },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -2401,6 +2401,7 @@ describe('component accessibility audits', () => {
         props: {
           label: 'Enable feature',
           description: 'This enables the feature',
+          modelValue: false,
         },
       })
       const results = await runAxe(component)
@@ -2538,7 +2539,7 @@ describe('background theme accessibility', () => {
       name: 'SettingsToggle',
       mount: () =>
         mountSuspended(SettingsToggle, {
-          props: { label: 'Feature', description: 'Desc' },
+          props: { label: 'Feature', description: 'Desc', modelValue: false },
         }),
     },
     {
