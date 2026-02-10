@@ -85,13 +85,21 @@ export default defineEventHandler(async event => {
     try {
       const params = new URLSearchParams(query as Record<string, string>)
       const result = await atclient.callback(params)
+      try {
+        const state = decodeOAuthState(event, result.state)
+        const profile = await getMiniProfile(result.session)
 
-      await session.update({
-        public: await getMiniProfile(result.session),
-      })
-
-      const state = decodeOAuthState(event, result.state)
-      return sendRedirect(event, state.redirectPath)
+        await session.update({ public: profile })
+        return sendRedirect(event, state.redirectPath)
+      } catch (error) {
+        // If we are unable to cleanly handle the callback, meaning that the
+        // user won't be able to use the session, we sign them out of the
+        // session to prevent dangling sessions. This can happen if the state is
+        // invalid (e.g. user has cookies disabled, or the state expired) or if
+        // there is an issue fetching the user's profile after authentication.
+        await result.session.signOut()
+        throw error
+      }
     } catch (error) {
       // user cancelled explicitly
       if (query.error === 'access_denied' && error instanceof OAuthCallbackError && error.state) {
