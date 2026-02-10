@@ -148,9 +148,7 @@
           class="i-carbon:circle-dash w-4 h-4 text-fg-subtle motion-safe:animate-spin"
           aria-hidden="true"
         />
-        <span class="text-sm text-fg-muted">
-          {{ $t('package.vulnerabilities.scanning') }}
-        </span>
+        <span class="text-sm text-fg-muted" />
       </div>
     </div>
 
