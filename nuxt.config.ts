@@ -17,6 +17,12 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
   ],
 
+  $test: {
+    debug: {
+      hydration: true,
+    },
+  },
+
   colorMode: {
     preference: 'system',
     fallback: 'dark',
@@ -32,6 +38,14 @@ export default defineNuxtConfig({
     upstash: {
       redisRestUrl: process.env.UPSTASH_KV_REST_API_URL || process.env.KV_REST_API_URL || '',
       redisRestToken: process.env.UPSTASH_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '',
+    },
+    public: {
+      // Algolia npm-search index (maintained by Algolia & jsDelivr, used by yarnpkg.com et al.)
+      algolia: {
+        appId: 'OFCNCOG2CU',
+        apiKey: 'f54e21fa3a2a0160595bb058179bfb1e',
+        indexName: 'npm-search',
+      },
     },
   },
 
@@ -71,13 +85,27 @@ export default defineNuxtConfig({
     description: 'A fast, modern browser for the npm registry',
   },
 
+  router: {
+    options: {
+      scrollBehaviorType: 'smooth',
+    },
+  },
+
   routeRules: {
     // API routes
     '/api/**': { isr: 60 },
+    '/api/registry/badge/**': {
+      isr: {
+        expiration: 60 * 60 /* one hour */,
+        passQuery: true,
+        allowQuery: ['color', 'labelColor', 'label', 'name'],
+      },
+    },
     '/api/registry/docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/file/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/provenance/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/files/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/api/registry/package-meta/**': { isr: 300 },
     '/:pkg/.well-known/skills/**': { isr: 3600 },
     '/:scope/:pkg/.well-known/skills/**': { isr: 3600 },
     '/__og-image__/**': { isr: getISRConfig(60) },
@@ -120,7 +148,6 @@ export default defineNuxtConfig({
     entryImportMap: false,
     typescriptPlugin: true,
     viteEnvironmentApi: true,
-    viewTransition: true,
     typedPages: true,
   },
 
@@ -137,6 +164,11 @@ export default defineNuxtConfig({
         '@shikijs/core',
       ],
       external: ['@deno/doc'],
+    },
+    esbuild: {
+      options: {
+        target: 'es2024',
+      },
     },
     rollupConfig: {
       output: {
@@ -264,6 +296,7 @@ export default defineNuxtConfig({
         '@atproto/lex',
         'fast-npm-meta',
         '@floating-ui/vue',
+        'algoliasearch/lite',
       ],
     },
   },
