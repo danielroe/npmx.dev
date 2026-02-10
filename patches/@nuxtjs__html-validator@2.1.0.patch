@@ -1,0 +1,22 @@
+diff --git a/dist/module.mjs b/dist/module.mjs
+index 62bb9c885e18652f48f6c067258f3ad70582b1f5..eb62642ba197cb7070708bdd01d733a790fb7d6f 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -82,7 +82,7 @@ const module = defineNuxtModule({
+     }
+     if (!nuxt.options.dev) {
+       const validatorPath = await resolvePath(fileURLToPath(new URL("./runtime/validator", import.meta.url)));
+-      const { useChecker, getValidator } = await (isWindows ? import(pathToFileURL(validatorPath).href) : import(validatorPath));
++      const { useChecker, getValidator, isIgnored } = await (isWindows ? import(pathToFileURL(validatorPath).href) : import(validatorPath));
+       const validator = getValidator(options);
+       const { checkHTML, invalidPages } = useChecker(validator, usePrettier, logLevel);
+       if (failOnError) {
+@@ -98,7 +98,7 @@ const module = defineNuxtModule({
+           if (!route.contents || !route.fileName?.endsWith(".html")) {
+             return;
+           }
+-          if (route.contents.match(NuxtRedirectHtmlRegex)) {
++          if (route.contents.match(NuxtRedirectHtmlRegex) || isIgnored(route.route, moduleOptions.ignore)) {
+             return;
+           }
+           checkHTML(route.route, route.contents);
