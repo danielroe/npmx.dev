@@ -154,7 +154,7 @@ function encodeOAuthState(event: H3Event, data: OAuthStateData): string {
     // secure only if NOT in dev mode
     secure: !import.meta.dev,
     sameSite: 'lax',
-    path: event.path,
+    path: event.path.split('?', 1)[0],
   })
   return JSON.stringify({ data, sid })
 }
@@ -195,7 +195,7 @@ function decodeOAuthState(event: H3Event, state: string | null): OAuthStateData 
       httpOnly: true,
       secure: !import.meta.dev,
       sameSite: 'lax',
-      path: event.path,
+      path: event.path.split('?', 1)[0],
     })
   } else {
     throw createError({
