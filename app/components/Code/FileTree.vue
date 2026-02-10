@@ -58,7 +58,7 @@ watch(
           :classicon="isExpanded(node.path) ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
         >
           <svg
-            class="w-4 h-4 me-1 shrink-0"
+            class="size-[1em] me-1 shrink-0"
             :class="isExpanded(node.path) ? 'text-yellow-500' : 'text-yellow-600'"
             viewBox="0 0 16 16"
             fill="currentColor"
@@ -91,7 +91,7 @@ watch(
           :style="{ paddingLeft: `${depth * 12 + 32}px` }"
         >
           <svg
-            class="w-4 h-4 me-1 shrink-0"
+            class="size-[1em] me-1 shrink-0"
             viewBox="0 0 16 16"
             fill="currentColor"
             aria-hidden="true"

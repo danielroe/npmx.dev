@@ -82,7 +82,7 @@ const bytesFormatter = useBytesFormatter()
               no-underline
             >
               <svg
-                class="w-4 h-4 me-1 shrink-0 text-yellow-600"
+                class="size-[1em] me-1 shrink-0 text-yellow-600"
                 viewBox="0 0 16 16"
                 fill="currentColor"
                 aria-hidden="true"
@@ -107,7 +107,7 @@ const bytesFormatter = useBytesFormatter()
               no-underline
             >
               <svg
-                class="w-4 h-4 me-1 shrink-0"
+                class="size-[1em] me-1 shrink-0"
                 viewBox="0 0 16 16"
                 fill="currentColor"
                 :class="node.type === 'directory' ? 'text-yellow-600' : undefined"
