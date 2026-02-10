@@ -17,10 +17,6 @@ defineProps<{
   /** For keyboard nav scaffold */
   index: number
 }>()
-
-const emit = defineEmits<{
-  focus: [index: number]
-}>()
 </script>
 
 <template>
@@ -31,11 +27,9 @@ const emit = defineEmits<{
       :to="`/blog/${path}`"
       :data-suggestion-index="index"
       class="flex items-center gap-4 focus-visible:outline-none after:content-[''] after:absolute after:inset-0"
-      @focus="index != null && emit('focus', index)"
-      @mouseenter="index != null && emit('focus', index)"
     >
       <!-- Text Content -->
-      <div class="flex-1 min-w-0 text-left gap-2">
+      <div class="flex-1 min-w-0 text-start gap-2">
         <span class="text-xs text-fg-muted font-mono">{{ published }}</span>
         <h2
           class="font-mono text-xl font-medium text-fg group-hover:text-primary transition-colors hover:underline"

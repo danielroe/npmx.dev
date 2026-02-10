@@ -21,6 +21,7 @@ const { resolvedAuthors } = useAuthorProfiles(props.authors)
           :href="author.profileUrl"
           target="_blank"
           rel="noopener noreferrer"
+          :aria-label="$t('blog.author.view_profile', { name: author.name })"
           class="text-xs text-fg-muted hover:text-primary transition-colors"
         >
           @{{ author.blueskyHandle }}
