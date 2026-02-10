@@ -323,7 +323,7 @@ describe('Markdown Content Extraction', () => {
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
       expect(result.html).toBe(`<h3 id="user-content-title" data-level="1">Title</h3>
-<p>Some <strong>bold</strong> text and a <a href="https://example.com" rel="nofollow noreferrer noopener" target="_blank">link</a>.</p>
+<p>Some <strong>bold</strong> text and a <a href="https://example.com" rel="nofollow noreferrer noopener" target="_blank">link<span class="i-carbon:launch inline-block rtl-flip ms-1 size-[1em] opacity-50"></span></a>.</p>
 `)
     })
   })
