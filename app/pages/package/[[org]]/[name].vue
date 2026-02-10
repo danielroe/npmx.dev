@@ -17,7 +17,6 @@ import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-securi
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
-import { LinkBase } from '#components'
 
 defineOgImageComponent('Package', {
   name: () => packageName.value,
@@ -205,10 +204,7 @@ if (import.meta.client) {
   )
 }
 
-const provenanceBadgeMounted = shallowRef(false)
-onMounted(() => {
-  provenanceBadgeMounted.value = true
-})
+const isMounted = useMounted()
 
 // Keep latestVersion for comparison (to show "(latest)" badge)
 const latestVersion = computed(() => {
@@ -450,7 +446,7 @@ const { data: likesData, status: likeStatus } = useFetch(
   },
 )
 const isLoadingLikeData = computed(
-  () => likeStatus.value !== 'error' && likeStatus.value !== 'success',
+  () => likeStatus.value === 'pending' || likeStatus.value === 'idle',
 )
 
 const isLikeActionPending = shallowRef(false)
@@ -617,7 +613,7 @@ onKeyStroke(
             >
             <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
 
-            <template v-if="hasProvenance(displayVersion) && provenanceBadgeMounted">
+            <template v-if="hasProvenance(displayVersion)">
               <TooltipApp
                 :text="
                   provenanceData && provenanceStatus !== 'pending'
@@ -627,6 +623,7 @@ onKeyStroke(
                     : $t('package.verified_provenance')
                 "
                 position="bottom"
+                strategy="fixed"
               >
                 <LinkBase
                   variant="button-secondary"
@@ -649,7 +646,7 @@ onKeyStroke(
             v-if="resolvedVersion"
             as="nav"
             :aria-label="$t('package.navigation')"
-            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-50% max-sm:-translate-x-50% max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md"
+            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md"
             :class="$style.packageNav"
           >
             <LinkBase
@@ -680,62 +677,54 @@ onKeyStroke(
           </ButtonGroup>
 
           <!-- Package metrics -->
-          <div class="basis-full flex gap-2 sm:gap-3 flex-wrap">
-            <ClientOnly>
-              <PackageMetricsBadges
-                v-if="resolvedVersion"
-                :package-name="pkg.name"
-                :version="resolvedVersion"
-                :is-binary="isBinaryOnly"
-                class="self-baseline"
-              />
+          <div class="basis-full flex gap-2 sm:gap-3 flex-wrap items-stretch">
+            <PackageMetricsBadges
+              v-if="resolvedVersion"
+              :package-name="pkg.name"
+              :version="resolvedVersion"
+              :is-binary="isBinaryOnly"
+              class="self-baseline"
+            />
 
-              <!-- Package likes -->
-              <TooltipApp
-                :text="
-                  isLoadingLikeData
-                    ? $t('common.loading')
-                    : likesData?.userHasLiked
-                      ? $t('package.likes.unlike')
-                      : $t('package.likes.like')
+            <!-- Package likes -->
+            <TooltipApp
+              :text="
+                isLoadingLikeData
+                  ? $t('common.loading')
+                  : likesData?.userHasLiked
+                    ? $t('package.likes.unlike')
+                    : $t('package.likes.like')
+              "
+              position="bottom"
+              class="items-center"
+              strategy="fixed"
+            >
+              <ButtonBase
+                @click="likeAction"
+                size="small"
+                :title="
+                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                 "
-                position="bottom"
-                class="items-center"
+                :aria-label="
+                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                "
+                :aria-pressed="likesData?.userHasLiked"
+                :classicon="
+                  likesData?.userHasLiked
+                    ? 'i-lucide-heart-minus text-red-500'
+                    : 'i-lucide-heart-plus'
+                "
               >
                 <span
                   v-if="isLoadingLikeData"
-                  class="i-carbon-circle-dash w-3 h-3 motion-safe:animate-spin"
+                  class="i-carbon-circle-dash w-3 h-3 motion-safe:animate-spin my-0.5"
                   aria-hidden="true"
                 />
-                <ButtonBase
-                  v-else
-                  @click="likeAction"
-                  size="small"
-                  :title="
-                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                  "
-                  :aria-label="
-                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                  "
-                  :aria-pressed="likesData?.userHasLiked"
-                  :classicon="
-                    likesData?.userHasLiked
-                      ? 'i-lucide-heart-minus text-red-500'
-                      : 'i-lucide-heart-plus'
-                  "
-                >
+                <span v-else>
                   {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
-                </ButtonBase>
-              </TooltipApp>
-              <template #fallback>
-                <div class="flex items-center gap-1.5 list-none m-0 p-0 self-baseline">
-                  <SkeletonBlock class="w-16 h-5.5 rounded" />
-                  <SkeletonBlock class="w-13 h-5.5 rounded" />
-                  <SkeletonBlock class="w-13 h-5.5 rounded" />
-                  <SkeletonBlock class="w-13 h-5.5 rounded bg-bg-subtle" />
-                </div>
-              </template>
-            </ClientOnly>
+                </span>
+              </ButtonBase>
+            </TooltipApp>
           </div>
         </div>
       </header>
@@ -744,7 +733,7 @@ onKeyStroke(
       <section :class="$style.areaDetails">
         <div class="mb-4">
           <!-- Description container with min-height to prevent CLS -->
-          <div class="max-w-2xl min-h-[4.5rem]">
+          <div class="max-w-2xl">
             <p v-if="pkgDescription" class="text-fg-muted text-base m-0">
               <span v-html="pkgDescription" />
             </p>
@@ -775,6 +764,7 @@ onKeyStroke(
                 {{ compactNumberFormatter.format(forks) }}
               </LinkBase>
             </li>
+            <li class="basis-full sm:hidden" />
             <li v-if="homepageUrl">
               <LinkBase :to="homepageUrl" classicon="i-carbon:link">
                 {{ $t('package.links.homepage') }}
@@ -813,7 +803,7 @@ onKeyStroke(
 
         <div
           v-if="deprecationNotice"
-          class="border border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-400"
+          class="border border-red-700 dark:border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-700 dark:text-red-400"
         >
           <h2 class="font-medium mb-2">
             {{
@@ -949,42 +939,32 @@ onKeyStroke(
           </div>
 
           <!-- Vulnerabilities count -->
-          <ClientOnly>
-            <div class="space-y-1 sm:col-span-2">
-              <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-                {{ $t('package.stats.vulns') }}
-              </dt>
-              <dd class="font-mono text-sm text-fg">
+          <div class="space-y-1 sm:col-span-2">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
+              {{ $t('package.stats.vulns') }}
+            </dt>
+            <dd class="font-mono text-sm text-fg">
+              <span
+                v-if="vulnTreeStatus === 'pending' || vulnTreeStatus === 'idle'"
+                class="inline-flex items-center gap-1 text-fg-subtle"
+              >
                 <span
-                  v-if="vulnTreeStatus === 'pending' || vulnTreeStatus === 'idle'"
-                  class="inline-flex items-center gap-1 text-fg-subtle"
-                >
-                  <span
-                    class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
-                    aria-hidden="true"
-                  />
+                  class="i-carbon:circle-dash w-3 h-3 motion-safe:animate-spin"
+                  aria-hidden="true"
+                />
+              </span>
+              <span v-else-if="vulnTreeStatus === 'success'">
+                <span v-if="hasVulnerabilities" class="text-amber-700 dark:text-amber-500">
+                  {{ numberFormatter.format(vulnCount) }}
                 </span>
-                <span v-else-if="vulnTreeStatus === 'success'">
-                  <span v-if="hasVulnerabilities" class="text-amber-500">
-                    {{ numberFormatter.format(vulnCount) }}
-                  </span>
-                  <span v-else class="inline-flex items-center gap-1 text-fg-muted">
-                    <span class="i-carbon:checkmark w-3 h-3" aria-hidden="true" />
-                    {{ numberFormatter.format(0) }}
-                  </span>
+                <span v-else class="inline-flex items-center gap-1 text-fg-muted">
+                  <span class="i-carbon:checkmark w-3 h-3" aria-hidden="true" />
+                  {{ numberFormatter.format(0) }}
                 </span>
-                <span v-else class="text-fg-subtle">-</span>
-              </dd>
-            </div>
-            <template #fallback>
-              <div class="space-y-1 sm:col-span-2">
-                <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-                  {{ $t('package.stats.vulns') }}
-                </dt>
-                <dd class="font-mono text-sm text-fg-subtle">-</dd>
-              </div>
-            </template>
-          </ClientOnly>
+              </span>
+              <span v-else class="text-fg-subtle">-</span>
+            </dd>
+          </div>
 
           <div
             v-if="resolvedVersion && pkg.time?.[resolvedVersion]"
@@ -1183,32 +1163,30 @@ onKeyStroke(
               {{ $t('package.readme.title') }}
             </LinkBase>
           </h2>
-          <ClientOnly>
-            <div class="flex gap-2">
-              <!-- Copy readme as Markdown button -->
-              <TooltipApp
-                v-if="readmeData?.md"
-                :text="$t('package.readme.copy_as_markdown')"
-                position="bottom"
+          <div class="flex gap-2">
+            <!-- Copy readme as Markdown button -->
+            <TooltipApp
+              v-if="readmeData?.md"
+              :text="$t('package.readme.copy_as_markdown')"
+              position="bottom"
+            >
+              <ButtonBase
+                @click="copyReadme()"
+                :aria-pressed="copiedReadme"
+                :aria-label="
+                  copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
+                "
+                :classicon="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
               >
-                <ButtonBase
-                  @click="copyReadme()"
-                  :aria-pressed="copiedReadme"
-                  :aria-label="
-                    copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
-                  "
-                  :classicon="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
-                >
-                  {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
-                </ButtonBase>
-              </TooltipApp>
-              <ReadmeTocDropdown
-                v-if="readmeData?.toc && readmeData.toc.length > 1"
-                :toc="readmeData.toc"
-                :active-id="activeTocId"
-              />
-            </div>
-          </ClientOnly>
+                {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
+              </ButtonBase>
+            </TooltipApp>
+            <ReadmeTocDropdown
+              v-if="readmeData?.toc && readmeData.toc.length > 1"
+              :toc="readmeData.toc"
+              :active-id="activeTocId"
+            />
+          </div>
         </div>
 
         <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
@@ -1226,7 +1204,7 @@ onKeyStroke(
         </p>
 
         <section
-          v-if="hasProvenance(displayVersion) && provenanceBadgeMounted"
+          v-if="hasProvenance(displayVersion) && isMounted"
           id="provenance"
           class="scroll-mt-20"
         >
@@ -1261,6 +1239,9 @@ onKeyStroke(
           <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
             <PackageAccessControls :package-name="pkg.name" />
+            <template #fallback>
+              <!-- Show skeleton loaders when SSR or access controls are loading -->
+            </template>
           </ClientOnly>
 
           <!-- Agent Skills -->
@@ -1271,6 +1252,9 @@ onKeyStroke(
               :package-name="pkg.name"
               :version="resolvedVersion || undefined"
             />
+            <template #fallback>
+              <!-- Show skeleton loaders when SSR or access controls are loading -->
+            </template>
           </ClientOnly>
 
           <!-- Download stats -->

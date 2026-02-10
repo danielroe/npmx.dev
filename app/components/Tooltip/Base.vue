@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from 'vue'
-import type { Placement } from '@floating-ui/vue'
+import type { Placement, Strategy } from '@floating-ui/vue'
 import { autoUpdate, flip, offset, shift, useFloating } from '@floating-ui/vue'
 
 const props = withDefaults(
@@ -19,10 +19,13 @@ const props = withDefaults(
     to?: string | HTMLElement
     /** Offset distance in pixels (default: 4) */
     offset?: number
+    /** Strategy for the tooltip - prefer fixed for sticky containers (defaults to 'absolute') */
+    strategy?: Strategy
   }>(),
   {
     to: 'body',
     offset: 4,
+    strategy: 'absolute',
   },
 )
 
@@ -34,6 +37,7 @@ const placement = computed<Placement>(() => props.position || 'bottom')
 const { floatingStyles } = useFloating(triggerRef, tooltipRef, {
   placement,
   whileElementsMounted: autoUpdate,
+  strategy: props.strategy,
   middleware: [offset(props.offset), flip(), shift({ padding: 8 })],
 })
 </script>

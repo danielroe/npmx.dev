@@ -399,7 +399,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                 block
                 class="text-sm"
                 :class="
-                  row.primaryVersion.deprecated ? 'text-red-400 hover:text-red-300' : undefined
+                  row.primaryVersion.deprecated
+                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                    : undefined
                 "
                 :title="
                   row.primaryVersion.deprecated
@@ -455,7 +457,11 @@ function getTagVersions(tag: string): VersionDisplay[] {
                 :to="versionRoute(v.version)"
                 block
                 class="text-xs"
-                :class="v.deprecated ? 'text-red-400 hover:text-red-300' : undefined"
+                :class="
+                  v.deprecated
+                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                    : undefined
+                "
                 :title="
                   v.deprecated
                     ? $t('package.versions.deprecated_title', { version: v.version })
@@ -554,7 +560,9 @@ function getTagVersions(tag: string): VersionDisplay[] {
                 block
                 class="text-xs"
                 :class="
-                  row.primaryVersion.deprecated ? 'text-red-400 hover:text-red-300' : undefined
+                  row.primaryVersion.deprecated
+                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                    : undefined
                 "
                 :title="
                   row.primaryVersion.deprecated
@@ -628,7 +636,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       class="text-xs"
                       :class="
                         group.versions[0]?.deprecated
-                          ? 'text-red-400 hover:text-red-300'
+                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
                           : undefined
                       "
                       :title="
@@ -689,7 +697,7 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       class="text-xs ms-6"
                       :class="
                         group.versions[0]?.deprecated
-                          ? 'text-red-400 hover:text-red-300'
+                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
                           : undefined
                       "
                       :title="
@@ -747,7 +755,11 @@ function getTagVersions(tag: string): VersionDisplay[] {
                       :to="versionRoute(v.version)"
                       block
                       class="text-xs"
-                      :class="v.deprecated ? 'text-red-400 hover:text-red-300' : undefined"
+                      :class="
+                        v.deprecated
+                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                          : undefined
+                      "
                       :title="
                         v.deprecated
                           ? $t('package.versions.deprecated_title', { version: v.version })

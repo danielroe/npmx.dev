@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const props = defineProps<{
-  title: string
+  modalTitle?: string
 }>()
 
 const emit = defineEmits<{
@@ -10,7 +10,7 @@ const emit = defineEmits<{
 
 <template>
   <Modal
-    :modalTitle="title"
+    :modalTitle="modalTitle ?? $t('package.trends.title')"
     id="chart-modal"
     class="h-full sm:h-min sm:border sm:border-border sm:rounded-lg shadow-xl sm:max-h-[90vh] sm:max-w-3xl"
     @transitioned="emit('transitioned')"
