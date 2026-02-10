@@ -9,12 +9,24 @@ const checked = defineModel<boolean>({
   required: true,
 })
 const id = 'toggle-' + props.label
+const { locale, locales } = useI18n()
+const dir = computed(() => {
+  const localeObj = locales.value.find(item => item.code === locale.value)
+  return localeObj?.dir ?? 'ltr'
+})
 </script>
 
 <template>
   <label :for="id">
     <span class="toggle--label-text">{{ label }}</span>
-    <input role="switch" type="checkbox" :id class="toggle--checkbox" v-model="checked" />
+    <input
+      role="switch"
+      type="checkbox"
+      :id
+      class="toggle--checkbox"
+      :class="dir"
+      v-model="checked"
+    />
     <span class="toggle--background"></span>
   </label>
   <p v-if="description" class="text-sm text-fg-muted mt-2">
@@ -72,23 +84,29 @@ label:has(input:hover) .toggle--background {
   position: relative;
 }
 
+.toggle--checkbox:checked.ltr + .toggle--background:before {
+  transform: translate(21px);
+  left: 2px;
+}
+
+.toggle--checkbox:checked.rtl + .toggle--background:before {
+  transform: translate(-21px);
+  right: 2px;
+}
+
 /* Circle that moves */
 .toggle--checkbox:checked + .toggle--background:before {
-  animation-name: switch;
   animation-fill-mode: forwards;
-  transform: translate(21px);
   transition: transform 200ms ease-in-out;
   background: #f9fafb;
 }
 
 .toggle--background:before {
-  animation-name: reverse;
   animation-fill-mode: forwards;
   transition: transform 200ms ease-in-out;
   content: '';
   width: 20px;
   height: 20px;
-  left: 2px;
   top: 2px;
   position: absolute;
   border-radius: 9999px;
