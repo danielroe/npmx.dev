@@ -176,6 +176,8 @@ import {
   ReadmeTocDropdown,
   SearchProviderToggle,
   SearchSuggestionCard,
+  SelectBase,
+  SelectField,
   SettingsAccentColorPicker,
   SettingsBgThemePicker,
   SettingsToggle,
@@ -1993,6 +1995,7 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageInstallScripts, {
         props: {
           packageName: 'esbuild',
+          version: '0.25.0',
           installScripts: {
             scripts: ['postinstall'],
             content: { postinstall: 'node install.js' },
@@ -2008,6 +2011,7 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageInstallScripts, {
         props: {
           packageName: 'husky',
+          version: '9.1.0',
           installScripts: {
             scripts: ['postinstall'],
             content: { postinstall: 'husky install' },
@@ -2224,6 +2228,96 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(InputBase, {
         props: { noCorrect: false },
         attrs: { 'aria-label': 'Input with corrections' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('SelectBase', () => {
+    it('should have no accessibility violations with options and aria-label', async () => {
+      const component = await mountSuspended(SelectBase, {
+        attrs: { 'aria-label': 'Choose option' },
+        slots: {
+          default:
+            '<option value="option1">option 1</option><option value="option2">option 2</option>',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations when disabled', async () => {
+      const component = await mountSuspended(SelectBase, {
+        props: { disabled: true },
+        attrs: { 'aria-label': 'Disabled select' },
+        slots: { default: '<option value="option1">option 1</option>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with size small', async () => {
+      const component = await mountSuspended(SelectBase, {
+        props: { size: 'sm' },
+        attrs: { 'aria-label': 'Small select' },
+        slots: { default: '<option value="option1">option 1</option>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('SelectField', () => {
+    it('should have no accessibility violations with label and items', async () => {
+      const component = await mountSuspended(SelectField, {
+        props: {
+          id: 'a11y-select-1',
+          label: 'Choose one',
+          items: [
+            { label: 'Option 1', value: 'option1' },
+            { label: 'Option 2', value: 'option2' },
+          ],
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with hiddenLabel', async () => {
+      const component = await mountSuspended(SelectField, {
+        props: {
+          id: 'a11y-select-2',
+          label: 'Hidden',
+          hiddenLabel: true,
+          items: [{ label: 'Option 1', value: 'option1' }],
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations when disabled', async () => {
+      const component = await mountSuspended(SelectField, {
+        props: {
+          id: 'a11y-select-3',
+          selectAttrs: { 'aria-label': 'Disabled select' },
+          items: [{ label: 'Option 1', value: 'option1' }],
+          disabled: true,
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with size small', async () => {
+      const component = await mountSuspended(SelectField, {
+        props: {
+          id: 'a11y-select-4',
+          selectAttrs: { 'aria-label': 'Disabled select' },
+          items: [{ label: 'Option 1', value: 'option1' }],
+          size: 'sm',
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
