@@ -71,7 +71,6 @@ defineOgImageComponent('Default', {
         >
           {{ $t('tagline') }}
         </p>
-
         <search
           class="w-full max-w-xl motion-safe:animate-slide-up motion-safe:animate-fill-both"
           style="animation-delay: 0.2s"
