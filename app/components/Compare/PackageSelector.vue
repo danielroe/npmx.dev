@@ -185,7 +185,7 @@ function handleFocus() {
             :aria-label="$t('compare.no_dependency.add_column')"
             @click="addPackage(NO_DEPENDENCY_ID)"
           >
-            <span class="text-sm text-accent italic flex items-center gap-2 block">
+            <span class="text-sm text-accent italic flex items-center gap-2">
               <span class="i-carbon:clean w-4 h-4" aria-hidden="true" />
               {{ $t('compare.no_dependency.typeahead_title') }}
             </span>
