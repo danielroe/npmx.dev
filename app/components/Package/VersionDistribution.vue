@@ -429,6 +429,14 @@ const endDate = computed(() => {
               />
             </template>
 
+            <!-- Subtle gradient applied for area charts -->
+            <template #area-gradient="{ series: chartModalSeries, id: gradientId }">
+              <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" :stop-color="chartModalSeries.color" stop-opacity="0.2" />
+                <stop offset="100%" :stop-color="colors.bg" stop-opacity="0" />
+              </linearGradient>
+            </template>
+
             <!-- Custom legend for single series (non-interactive) -->
             <template #legend="{ legend }">
               <div class="flex gap-4 flex-wrap justify-center">
