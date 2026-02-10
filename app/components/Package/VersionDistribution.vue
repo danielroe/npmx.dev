@@ -313,7 +313,7 @@ const endDate = computed(() => {
           <TooltipApp
             :text="$t('package.versions.date_range_tooltip')"
             position="bottom"
-            :teleportTo="inModal ? '#chart-modal' : undefined"
+            :to="inModal ? '#chart-modal' : undefined"
             :offset="8"
             class="w-full"
           >
@@ -344,7 +344,7 @@ const endDate = computed(() => {
           <TooltipApp
             :text="$t('package.versions.date_range_tooltip')"
             position="bottom"
-            :teleportTo="inModal ? '#chart-modal' : undefined"
+            :to="inModal ? '#chart-modal' : undefined"
             :offset="8"
             class="w-full"
           >
@@ -380,7 +380,7 @@ const endDate = computed(() => {
           :label="$t('package.versions.show_old_versions')"
           :tooltip="$t('package.versions.show_old_versions_tooltip')"
           tooltip-position="bottom"
-          :tooltip-teleport-to="inModal ? '#chart-modal' : undefined"
+          :tooltip-to="inModal ? '#chart-modal' : undefined"
           :tooltip-offset="8"
           justify="between"
           :class="pending ? 'opacity-50 pointer-events-none' : ''"
@@ -391,7 +391,7 @@ const endDate = computed(() => {
           :label="$t('package.versions.show_low_usage')"
           :tooltip="$t('package.versions.show_low_usage_tooltip')"
           tooltip-position="bottom"
-          :tooltip-teleport-to="inModal ? '#chart-modal' : undefined"
+          :tooltip-to="inModal ? '#chart-modal' : undefined"
           :tooltip-offset="8"
           justify="between"
           :class="pending ? 'opacity-50 pointer-events-none' : ''"

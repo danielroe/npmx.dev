@@ -9,7 +9,7 @@ withDefaults(
     justify?: 'between' | 'start'
     tooltip?: string
     tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
-    tooltipTeleportTo?: string
+    tooltipTo?: string
     tooltipOffset?: number
   }>(),
   {
@@ -35,7 +35,7 @@ const checked = defineModel<boolean>({
       v-if="tooltip && label"
       :text="tooltip"
       :position="tooltipPosition ?? 'top'"
-      :teleportTo="tooltipTeleportTo"
+      :to="tooltipTo"
       :offset="tooltipOffset"
     >
       <span class="text-sm text-fg font-medium text-start">
