@@ -772,6 +772,36 @@
           },
           "additionalProperties": false
         },
+        "security_downgrade": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "description_to_none_provenance": {
+              "type": "string"
+            },
+            "description_to_none_trustedPublisher": {
+              "type": "string"
+            },
+            "description_to_provenance_trustedPublisher": {
+              "type": "string"
+            },
+            "fallback_install_provenance": {
+              "type": "string"
+            },
+            "fallback_install_trustedPublisher": {
+              "type": "string"
+            },
+            "provenance_link_text": {
+              "type": "string"
+            },
+            "trusted_publishing_link_text": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "keywords_title": {
           "type": "string"
         },
@@ -1128,6 +1158,9 @@
                 }
               },
               "additionalProperties": false
+            },
+            "fixed_in_title": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -1232,9 +1265,6 @@
           "type": "object",
           "properties": {
             "loading": {
-              "type": "string"
-            },
-            "weekly": {
               "type": "string"
             },
             "maintainers": {
