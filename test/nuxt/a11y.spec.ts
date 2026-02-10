@@ -140,7 +140,6 @@ import {
   HeaderConnectorModal,
   HeaderSearchBox,
   InputBase,
-  JSRequired,
   LicenseDisplay,
   LoadingSpinner,
   PackageProvenanceSection,
@@ -2482,14 +2481,6 @@ describe('component accessibility audits', () => {
       expect(results.violations).toEqual([])
     })
   })
-
-  describe('JSRequired', () => {
-    it('should have no accessibility violations', async () => {
-      const component = await mountSuspended(JSRequired)
-      const results = await runAxe(component)
-      expect(results.violations).toEqual([])
-    })
-  })
 })
 
 function applyTheme(colorMode: string, bgTheme: string | null) {
@@ -2612,10 +2603,6 @@ describe('background theme accessibility', () => {
     {
       name: 'PackageList',
       mount: () => mountSuspended(PackageList, { props: { results: [packageResult] } }),
-    },
-    {
-      name: 'JSRequired',
-      mount: () => mountSuspended(JSRequired),
     },
   ]
 

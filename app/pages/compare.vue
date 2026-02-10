@@ -111,6 +111,18 @@ useSeoMeta({
       ? $t('compare.packages.meta_description', { packages: packages.value.join(', ') })
       : $t('compare.packages.meta_description_empty'),
 })
+
+useHead({
+  noscript: [
+    {
+      key: 'js-required',
+      innerHTML: `<div class="noscript-alert" role="alert">
+        ${$t('js_required')}
+      </div>`,
+      tagPosition: 'bodyOpen',
+    },
+  ],
+})
 </script>
 
 <template>
@@ -135,8 +147,6 @@ useSeoMeta({
           {{ $t('compare.packages.tagline') }}
         </p>
       </header>
-
-      <JSRequired />
 
       <!-- Package selector -->
       <section class="mb-8" aria-labelledby="packages-heading">
