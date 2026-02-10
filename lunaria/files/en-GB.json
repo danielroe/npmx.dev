@@ -82,6 +82,10 @@
     "meta_description": "Insights and updates from the npmx community",
     "author": {
       "view_profile": "View {name}'s profile on Bluesky"
+    },
+    "atproto": {
+      "loading_bluesky_post": "Loading Bluesky post...",
+      "view_on_bluesky": "View this post on Bluesky"
     }
   },
   "settings": {
