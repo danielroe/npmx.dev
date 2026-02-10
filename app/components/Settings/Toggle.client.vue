@@ -59,46 +59,35 @@ input {
   justify-self: end;
 }
 
-label:has(input:focus) .toggle--background {
-  outline: solid 2px #030712;
-  outline-offset: 2px;
-}
-
-label:has(input:checked) .toggle--background {
-  background: #030712;
-  border-color: #030712;
-}
-
-label:has(input:hover) .toggle--background {
-  background: #6b7280;
-}
-
 /* background */
 .toggle--background {
-  width: 46px;
-  height: 26px;
-  background: #9ca3af;
+  width: 44px;
+  height: 24px;
+  background: var(--fg-subtle);
   border-radius: 9999px;
-  border: 1px solid #030712;
+  border: 1px solid var(--fg);
   display: flex;
   position: relative;
 }
 
-.toggle--checkbox:checked.ltr + .toggle--background:before {
-  transform: translate(21px);
-  left: 2px;
+label:has(input:focus) .toggle--background {
+  outline: solid 2px var(--fg);
+  outline-offset: 2px;
 }
 
-.toggle--checkbox:checked.rtl + .toggle--background:before {
-  transform: translate(-21px);
-  right: 2px;
+label:has(input:checked) .toggle--background {
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+label:has(input:hover) .toggle--background {
+  background: var(--fg-muted);
 }
 
 /* Circle that moves */
 .toggle--checkbox:checked + .toggle--background:before {
   animation-fill-mode: forwards;
   transition: transform 200ms ease-in-out;
-  background: #f9fafb;
 }
 
 .toggle--background:before {
@@ -107,9 +96,26 @@ label:has(input:hover) .toggle--background {
   content: '';
   width: 20px;
   height: 20px;
-  top: 2px;
+  top: 1px;
   position: absolute;
   border-radius: 9999px;
-  background: #f9fafb;
+  background: var(--bg);
+}
+
+/* Support rtl locales */
+.toggle--checkbox.ltr + .toggle--background:before {
+  left: 3px;
+}
+
+.toggle--checkbox.rtl + .toggle--background:before {
+  right: 3px;
+}
+
+.toggle--checkbox:checked.ltr + .toggle--background:before {
+  transform: translate(17px);
+}
+
+.toggle--checkbox:checked.rtl + .toggle--background:before {
+  transform: translate(-17px);
 }
 </style>
