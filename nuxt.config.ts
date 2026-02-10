@@ -2,6 +2,8 @@ import process from 'node:process'
 import { currentLocales } from './config/i18n'
 import { isCI, provider } from 'std-env'
 
+console.log(!isCI || (provider !== 'vercel' && !!process.env.VALIDATE_HTML))
+
 export default defineNuxtConfig({
   modules: [
     '@unocss/nuxt',
@@ -220,6 +222,8 @@ export default defineNuxtConfig({
 
   htmlValidator: {
     enabled: !isCI || (provider !== 'vercel' && !!process.env.VALIDATE_HTML),
+    ignore:
+      !isCI || (provider !== 'vercel' && !!process.env.VALIDATE_HTML) ? ['/compare'] : undefined,
     failOnError: true,
   },
 

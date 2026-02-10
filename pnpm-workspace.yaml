@@ -32,6 +32,7 @@ packageExtensions:
 
 patchedDependencies:
   '@jsr/deno__doc@0.189.1': patches/@jsr__deno__doc@0.189.1.patch
+  '@nuxtjs/html-validator@2.1.0': patches/@nuxtjs__html-validator@2.1.0.patch
 
 savePrefix: ''
 
