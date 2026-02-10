@@ -23,19 +23,6 @@ const showModal = () => modalRef.value?.showModal?.()
           <LinkBase :to="{ name: 'privacy' }">
             {{ $t('privacy_policy.title') }}
           </LinkBase>
-          <LinkBase to="https://docs.npmx.dev">
-            {{ $t('footer.docs') }}
-          </LinkBase>
-          <LinkBase to="https://repo.npmx.dev">
-            {{ $t('footer.source') }}
-          </LinkBase>
-          <LinkBase to="https://social.npmx.dev">
-            {{ $t('footer.social') }}
-          </LinkBase>
-          <LinkBase to="https://chat.npmx.dev">
-            {{ $t('footer.chat') }}
-          </LinkBase>
-
           <button
             type="button"
             class="group cursor-pointer gap-x-1 items-center rounded-sm font-mono text-fg hover:decoration-accent outline-transparent active:scale-[0.98] underline underline-offset-[0.2rem] decoration-1 decoration-fg/30 outline-2 outline-transparent focus-visible:(outline-offset-2 outline-accent text-accent) transition-colors duration-200"
@@ -102,6 +89,18 @@ const showModal = () => modalRef.value?.showModal?.()
               </li>
             </ul>
           </Modal>
+          <LinkBase to="https://docs.npmx.dev">
+            {{ $t('footer.docs') }}
+          </LinkBase>
+          <LinkBase to="https://repo.npmx.dev">
+            {{ $t('footer.source') }}
+          </LinkBase>
+          <LinkBase to="https://social.npmx.dev">
+            {{ $t('footer.social') }}
+          </LinkBase>
+          <LinkBase to="https://chat.npmx.dev">
+            {{ $t('footer.chat') }}
+          </LinkBase>
         </div>
       </div>
       <BuildEnvironment v-if="!isHome" footer />

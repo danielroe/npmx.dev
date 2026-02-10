@@ -56,7 +56,7 @@ function openAuthModal() {
 </script>
 
 <template>
-  <div ref="accountMenuRef" class="relative flex min-w-24 justify-end">
+  <div ref="accountMenuRef" class="relative flex min-w-28 justify-end">
     <ButtonBase
       type="button"
       :aria-expanded="isOpen"
@@ -64,7 +64,7 @@ function openAuthModal() {
       @click="isOpen = !isOpen"
     >
       <!-- Stacked avatars when connected -->
-      <div
+      <span
         v-if="hasAnyConnection"
         class="flex items-center"
         :class="hasBothConnections ? '-space-x-2' : ''"
@@ -102,7 +102,7 @@ function openAuthModal() {
         >
           <span class="i-carbon-cloud w-3 h-3 text-fg-muted" aria-hidden="true" />
         </span>
-      </div>
+      </span>
 
       <!-- "connect" text when not connected -->
       <span v-if="!hasAnyConnection" class="font-sans text-sm">
@@ -162,10 +162,10 @@ function openAuthModal() {
               >
                 <span class="i-carbon-terminal w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
-              <div class="flex-1 min-w-0">
-                <div class="font-mono text-sm text-fg truncate">~{{ npmUser }}</div>
-                <div class="text-xs text-fg-subtle">{{ $t('account_menu.npm_cli') }}</div>
-              </div>
+              <span class="flex-1 min-w-0">
+                <span class="font-mono text-sm text-fg truncate block">~{{ npmUser }}</span>
+                <span class="text-xs text-fg-subtle">{{ $t('account_menu.npm_cli') }}</span>
+              </span>
               <span
                 v-if="operationCount > 0"
                 class="px-1.5 py-0.5 font-mono text-xs rounded"
@@ -205,10 +205,12 @@ function openAuthModal() {
               >
                 <span class="i-carbon-cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
-              <div class="flex-1 min-w-0">
-                <div class="font-mono text-sm text-fg truncate">@{{ atprotoUser.handle }}</div>
-                <div class="text-xs text-fg-subtle">{{ $t('account_menu.atmosphere') }}</div>
-              </div>
+              <span class="flex-1 min-w-0">
+                <span class="font-mono text-sm text-fg truncate block"
+                  >@{{ atprotoUser.handle }}</span
+                >
+                <span class="text-xs text-fg-subtle">{{ $t('account_menu.atmosphere') }}</span>
+              </span>
             </button>
           </div>
 
@@ -237,16 +239,16 @@ function openAuthModal() {
                 />
                 <span v-else class="i-carbon-terminal w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
-              <div class="flex-1 min-w-0">
-                <div class="font-mono text-sm text-fg">
+              <span class="flex-1 min-w-0">
+                <span class="font-mono text-sm text-fg block">
                   {{
                     isNpmConnecting
                       ? $t('account_menu.connecting')
                       : $t('account_menu.connect_npm_cli')
                   }}
-                </div>
-                <div class="text-xs text-fg-subtle">{{ $t('account_menu.npm_cli_desc') }}</div>
-              </div>
+                </span>
+                <span class="text-xs text-fg-subtle">{{ $t('account_menu.npm_cli_desc') }}</span>
+              </span>
             </button>
 
             <button
@@ -261,12 +263,12 @@ function openAuthModal() {
               >
                 <span class="i-carbon-cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
-              <div class="flex-1 min-w-0">
-                <div class="font-mono text-sm text-fg">
+              <span class="flex-1 min-w-0">
+                <span class="font-mono text-sm text-fg block">
                   {{ $t('account_menu.connect_atmosphere') }}
-                </div>
-                <div class="text-xs text-fg-subtle">{{ $t('account_menu.atmosphere_desc') }}</div>
-              </div>
+                </span>
+                <span class="text-xs text-fg-subtle">{{ $t('account_menu.atmosphere_desc') }}</span>
+              </span>
             </button>
           </div>
         </div>
