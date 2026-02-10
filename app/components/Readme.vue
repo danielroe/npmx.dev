@@ -54,7 +54,7 @@ function handleClick(event: MouseEvent) {
   // Handle relative anchor links
   if (href.startsWith('#') || href.startsWith('/')) {
     event.preventDefault()
-    router.push(href)
+    navigateTo(href)
     return
   }
 }
