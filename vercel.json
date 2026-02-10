@@ -82,16 +82,5 @@
       ],
       "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/LICENSE"
     }
-  ],
-  "headers": [
-    {
-      "source": "/:path*_payload.json",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        }
-      ]
-    }
   ]
 }

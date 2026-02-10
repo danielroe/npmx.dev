@@ -324,17 +324,11 @@ interface ISRConfigOptions {
 function getISRConfig(expirationSeconds: number, options: ISRConfigOptions = {}) {
   if (options.fallback) {
     return {
-      ...(options.fallback === 'json'
-        ? {
-            headers: {
-              'content-type': 'application/json',
-            },
-          }
-        : {}),
       isr: {
         expiration: expirationSeconds,
         fallback:
           options.fallback === 'html' ? 'spa.prerender-fallback.html' : 'payload-fallback.json',
+        initialHeaders: options.fallback === 'json' ? { 'content-type': 'application/json' } : {},
       } as { expiration: number },
     }
   }
