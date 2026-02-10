@@ -623,6 +623,7 @@ onKeyStroke(
                     : $t('package.verified_provenance')
                 "
                 position="bottom"
+                strategy="fixed"
               >
                 <LinkBase
                   variant="button-secondary"
@@ -696,6 +697,7 @@ onKeyStroke(
               "
               position="bottom"
               class="items-center"
+              strategy="fixed"
             >
               <ButtonBase
                 @click="likeAction"
