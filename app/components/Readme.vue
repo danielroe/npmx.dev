@@ -117,24 +117,13 @@ function handleClick(event: MouseEvent) {
 }
 
 .readme :deep(a) {
-  @apply underline-offset-[0.2rem]
-  @apply underline
-  @apply decoration-1
-  @apply decoration-fg/30
-  @apply font-mono
-  @apply text-fg
-  @apply transition-colors
-  @apply duration-200;
+  @apply underline-offset-[0.2rem] underline decoration-1 decoration-fg/30 font-mono text-fg transition-colors duration-200;
 }
-
 .readme :deep(a:hover) {
-  @apply decoration-accent
-  @apply text-accent;
+  @apply decoration-accent text-accent;
 }
-
 .readme :deep(a:focus-visible) {
-  @apply decoration-accent
-  @apply text-accent;
+  @apply decoration-accent text-accent;
 }
 
 .readme :deep(code) {
