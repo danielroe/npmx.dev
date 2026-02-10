@@ -1,0 +1,26 @@
+/**
+ * Creates a computed property that uses route query parameters by default,
+ * with an option to use local state instead.
+ */
+export function usePermalinkValue<T extends string | number = string>(
+  queryKey: string,
+  defaultValue: T = '' as T,
+  options: { permanent?: boolean } = {},
+): WritableComputedRef<T> {
+  const { permanent = true } = options
+  const localValue = shallowRef<T>(defaultValue)
+  const routeValue = useRouteQuery<T>(queryKey, defaultValue)
+
+  const parmalinkValue = computed({
+    get: () => (permanent ? routeValue.value : localValue.value),
+    set: (value: T) => {
+      if (permanent) {
+        routeValue.value = value
+      } else {
+        localValue.value = value
+      }
+    },
+  })
+
+  return parmalinkValue
+}

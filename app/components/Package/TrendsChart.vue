@@ -320,19 +320,13 @@ const effectivePackageNames = computed<string[]>(() => {
   return single ? [single] : []
 })
 
-const granularityLocal = shallowRef<ChartTimeGranularity>(DEFAULT_GRANULARITY)
-const granularityRoute = useRouteQuery<ChartTimeGranularity>('granularity', DEFAULT_GRANULARITY)
-
-const selectedGranularity = computed({
-  get: () => (props.permalink ? granularityRoute.value : granularityLocal.value),
-  set: (value: ChartTimeGranularity) => {
-    if (props.permalink) {
-      granularityRoute.value = value
-    } else {
-      granularityLocal.value = value
-    }
+const selectedGranularity = usePermalinkValue<ChartTimeGranularity>(
+  'granularity',
+  DEFAULT_GRANULARITY,
+  {
+    permanent: props.permalink,
   },
-})
+)
 
 const displayedGranularity = shallowRef<ChartTimeGranularity>(DEFAULT_GRANULARITY)
 
@@ -363,31 +357,11 @@ const shouldRenderEstimationOverlay = computed(
   () => !pending.value && isEstimationGranularity.value,
 )
 
-const startDateLocal = shallowRef<string>('')
-const endDateLocal = shallowRef<string>('')
-const startDateRoute = useRouteQuery<string>('start', '')
-const endDateRoute = useRouteQuery<string>('end', '')
-
-const startDate = computed({
-  get: () => (props.permalink ? startDateRoute.value : startDateLocal.value),
-  set: (value: string) => {
-    if (props.permalink) {
-      startDateRoute.value = value
-    } else {
-      startDateLocal.value = value
-    }
-  },
+const startDate = usePermalinkValue<string>('start', '', {
+  permanent: props.permalink,
 })
-
-const endDate = computed({
-  get: () => (props.permalink ? endDateRoute.value : endDateLocal.value),
-  set: (value: string) => {
-    if (props.permalink) {
-      endDateRoute.value = value
-    } else {
-      endDateLocal.value = value
-    }
-  },
+const endDate = usePermalinkValue<string>('end', '', {
+  permanent: props.permalink,
 })
 
 const hasUserEditedDates = shallowRef(false)
