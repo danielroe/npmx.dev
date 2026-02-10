@@ -399,12 +399,6 @@ ${html}
     const isExternal = resolvedHref.startsWith('http://') || resolvedHref.startsWith('https://')
     const relAttr = isExternal ? ' rel="nofollow noreferrer noopener"' : ''
     const targetAttr = isExternal ? ' target="_blank"' : ''
-    const isExternalIcon = isExternal
-      ? `<span
-      class="i-carbon:launch inline-block rtl-flip ms-1 size-[1em] opacity-50"
-      aria-hidden="true"
-    ></span>`
-      : ''
 
     // Check if this is a playground link
     const provider = matchPlaygroundProvider(resolvedHref)
@@ -424,7 +418,7 @@ ${html}
 
     const hrefValue = resolvedHref.startsWith('#') ? resolvedHref.toLowerCase() : resolvedHref
 
-    return `<a href="${hrefValue}"${titleAttr}${relAttr}${targetAttr}>${text}${isExternalIcon}</a>`
+    return `<a href="${hrefValue}"${titleAttr}${relAttr}${targetAttr}>${text}</a>`
   }
 
   // GitHub-style callouts: > [!NOTE], > [!TIP], etc.

@@ -126,6 +126,11 @@ function handleClick(event: MouseEvent) {
   @apply decoration-accent text-accent;
 }
 
+.readme :deep(a[target='_blank']::after) {
+  content: '';
+  @apply i-carbon:launch rtl-flip ms-1 size-[1em] opacity-50;
+}
+
 .readme :deep(code) {
   @apply font-mono;
   font-size: 0.875em;
