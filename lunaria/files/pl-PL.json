@@ -898,7 +898,8 @@
         "types_included": "Wbudowane",
         "types_none": "Brak",
         "vulnerabilities_summary": "{count} ({critical}K/{high}W)"
-      }
+      },
+      "trends": {}
     }
   },
   "privacy_policy": {

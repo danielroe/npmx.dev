@@ -897,7 +897,8 @@
         "types_included": "Inkludert",
         "types_none": "Ingen",
         "vulnerabilities_summary": "{count} ({critical}C/{high}H)"
-      }
+      },
+      "trends": {}
     }
   },
   "privacy_policy": {

@@ -935,7 +935,8 @@
         "types_none": "Ninguno",
         "vulnerabilities_summary": "{count} ({critical}C/{high}H)",
         "up_to_you": "¡Depende de ti!"
-      }
+      },
+      "trends": {}
     }
   },
   "privacy_policy": {

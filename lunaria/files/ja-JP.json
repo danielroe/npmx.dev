@@ -931,7 +931,8 @@
         "types_none": "なし",
         "vulnerabilities_summary": "{count} 件 ({critical}C/{high}H)",
         "up_to_you": "あなた次第！"
-      }
+      },
+      "trends": {}
     }
   },
   "privacy_policy": {
