@@ -1,14 +1,14 @@
-import { promises as fs } from 'node:fs'
-import path from 'node:path'
 import type { IconifyJSON } from '@iconify-json/carbon'
+import { promises as fs } from 'node:fs'
 import { fileURLToPath } from 'node:url'
+import path from 'node:path'
 import {
   ADDITIONAL_ICONS,
   EXTENSION_ICONS,
   FILENAME_ICONS,
   COMPOUND_EXTENSIONS,
   DEFAULT_ICON,
-} from './app/utils/file-icons.ts'
+} from '../app/utils/file-icons.ts'
 
 const rootDir = process.cwd()
 const outputDevPath = path.join(rootDir, 'public', 'file-tree-sprite.svg')
