@@ -2,6 +2,43 @@
 defineProps<{
   html: string
 }>()
+
+const { copy } = useClipboard()
+
+// Combined click handler for:
+// 1. Intercepting npmjs.com links to route internally
+// 2. Copy button functionality for code blocks
+function handleClick(event: MouseEvent) {
+  const target = event.target as HTMLElement | undefined
+  if (!target) return
+
+  // Handle copy button clicks
+  const copyTarget = target.closest('[data-copy]')
+  if (copyTarget) {
+    const wrapper = copyTarget.closest('.readme-code-block')
+    if (!wrapper) return
+
+    const pre = wrapper.querySelector('pre')
+    if (!pre?.textContent) return
+
+    copy(pre.textContent)
+
+    const icon = copyTarget.querySelector('span')
+    if (!icon) return
+
+    const originalIcon = 'i-carbon:copy'
+    const successIcon = 'i-carbon:checkmark'
+
+    icon.classList.remove(originalIcon)
+    icon.classList.add(successIcon)
+
+    setTimeout(() => {
+      icon.classList.remove(successIcon)
+      icon.classList.add(originalIcon)
+    }, 2000)
+    return
+  }
+}
 </script>
 
 <template>
@@ -16,6 +53,7 @@ defineProps<{
       '--i18n-warning': '\'' + $t('package.readme.callout.warning') + '\'',
       '--i18n-caution': '\'' + $t('package.readme.callout.caution') + '\'',
     }"
+    @click="handleClick"
   />
 </template>
 
