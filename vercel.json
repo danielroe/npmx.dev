@@ -85,7 +85,7 @@
   ],
   "headers": [
     {
-      "source": "**/*_payload.json",
+      "source": "/:path*_payload.json",
       "headers": [
         {
           "key": "Content-Type",
