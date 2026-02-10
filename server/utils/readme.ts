@@ -227,7 +227,6 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
       const parsed = new URL(url, 'https://example.com')
       if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
         // Redirect npmjs urls to ourself
-        console.log({ isnpm: isNpmJsUrlThatCanBeRedirected(parsed) })
         if (isNpmJsUrlThatCanBeRedirected(parsed)) {
           return parsed.pathname + parsed.search + parsed.hash
         }
