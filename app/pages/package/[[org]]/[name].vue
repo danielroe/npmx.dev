@@ -620,6 +620,7 @@ onKeyStroke(
                     : $t('package.verified_provenance')
                 "
                 position="bottom"
+                strategy="fixed"
               >
                 <LinkBase
                   variant="button-secondary"
@@ -693,6 +694,7 @@ onKeyStroke(
               "
               position="bottom"
               class="items-center"
+              strategy="fixed"
             >
               <ButtonBase
                 @click="likeAction"
@@ -798,7 +800,7 @@ onKeyStroke(
 
         <div
           v-if="deprecationNotice"
-          class="border border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-400"
+          class="border border-red-700 dark:border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-700 dark:text-red-400"
         >
           <h2 class="font-medium mb-2">
             {{
@@ -949,7 +951,7 @@ onKeyStroke(
                 />
               </span>
               <span v-else-if="vulnTreeStatus === 'success'">
-                <span v-if="hasVulnerabilities" class="text-amber-500">
+                <span v-if="hasVulnerabilities" class="text-amber-700 dark:text-amber-500">
                   {{ numberFormatter.format(vulnCount) }}
                 </span>
                 <span v-else class="inline-flex items-center gap-1 text-fg-muted">

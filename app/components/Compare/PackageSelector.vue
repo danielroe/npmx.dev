@@ -89,6 +89,8 @@ function handleKeydown(e: KeyboardEvent) {
     } else if (hasMatchInPackages) {
       addPackage(inputValueTrim)
     }
+  } else if (e.key === 'Escape') {
+    inputValue.value = ''
   }
 }
 
