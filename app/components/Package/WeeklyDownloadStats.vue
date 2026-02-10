@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
-import type { ChartTimeGranularity, WeeklyDataPoint } from '~/types/chart'
+import type { WeeklyDataPoint } from '~/types/chart'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
 
 const props = defineProps<{
@@ -9,22 +9,27 @@ const props = defineProps<{
   createdIso: string | null
 }>()
 
+const router = useRouter()
+const route = useRoute()
+
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
 
-const modal = useRouteQuery<'downloads' | undefined>('modal')
-const granularity = useRouteQuery<ChartTimeGranularity | undefined>('granularity')
-const startDate = useRouteQuery<string | undefined>('start')
-const endDate = useRouteQuery<string | undefined>('end')
-
-const isChartModalOpen = computed<boolean>(() => modal.value === 'downloads')
+const isChartModalOpen = shallowRef<boolean>(false)
 
 function handleModalClose() {
-  modal.value = undefined
-  granularity.value = undefined
-  startDate.value = undefined
-  endDate.value = undefined
+  isChartModalOpen.value = false
   hasChartModalTransitioned.value = false
+
+  router.replace({
+    query: {
+      ...route.query,
+      modal: undefined,
+      granularity: undefined,
+      end: undefined,
+      start: undefined,
+    },
+  })
 }
 
 function handleModalTransitioned() {
@@ -103,8 +108,16 @@ const hasWeeklyDownloads = computed(() => weeklyDownloads.value.length > 0)
 async function openChartModal() {
   if (!hasWeeklyDownloads.value) return
 
-  modal.value = 'downloads'
+  isChartModalOpen.value = true
   hasChartModalTransitioned.value = false
+
+  await router.replace({
+    query: {
+      ...route.query,
+      modal: 'chart',
+    },
+  })
+
   // ensure the component renders before opening the dialog
   await nextTick()
   await nextTick()
@@ -131,6 +144,11 @@ async function loadWeeklyDownloads() {
 
 onMounted(async () => {
   await loadWeeklyDownloads()
+
+  if (route.query.modal === 'chart') {
+    isChartModalOpen.value = true
+  }
+
   if (isChartModalOpen.value && hasWeeklyDownloads.value) {
     openChartModal()
   }
@@ -296,9 +314,7 @@ const config = computed(() => {
         :inModal="true"
         :packageName="props.packageName"
         :createdIso="createdIso"
-        v-model:granularity="granularity"
-        v-model:startDate="startDate"
-        v-model:endDate="endDate"
+        permalink
         show-facet-selector
       />
     </Transition>

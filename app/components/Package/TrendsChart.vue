@@ -36,7 +36,9 @@ const props = defineProps<{
 
   /** When true, shows facet selector (e.g. Downloads / Likes). */
   showFacetSelector?: boolean
+  permalink?: boolean
 }>()
+const emit = defineEmits(['update:startDate', 'update:endDate'])
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
@@ -318,9 +320,20 @@ const effectivePackageNames = computed<string[]>(() => {
   return single ? [single] : []
 })
 
-const selectedGranularity = defineModel<ChartTimeGranularity>('granularity', {
-  default: DEFAULT_GRANULARITY,
+const granularityLocal = shallowRef<ChartTimeGranularity>(DEFAULT_GRANULARITY)
+const granularityRoute = useRouteQuery<ChartTimeGranularity>('granularity', DEFAULT_GRANULARITY)
+
+const selectedGranularity = computed({
+  get: () => (props.permalink ? granularityRoute.value : granularityLocal.value),
+  set: (value: ChartTimeGranularity) => {
+    if (props.permalink) {
+      granularityRoute.value = value
+    } else {
+      granularityLocal.value = value
+    }
+  },
 })
+
 const displayedGranularity = shallowRef<ChartTimeGranularity>(DEFAULT_GRANULARITY)
 
 const isEndDateOnPeriodEnd = computed(() => {
@@ -350,8 +363,33 @@ const shouldRenderEstimationOverlay = computed(
   () => !pending.value && isEstimationGranularity.value,
 )
 
-const startDate = defineModel<string>('startDate', { default: '' })
-const endDate = defineModel<string>('endDate', { default: '' })
+const startDateLocal = shallowRef<string>('')
+const endDateLocal = shallowRef<string>('')
+const startDateRoute = useRouteQuery<string>('start', '')
+const endDateRoute = useRouteQuery<string>('end', '')
+
+const startDate = computed({
+  get: () => (props.permalink ? startDateRoute.value : startDateLocal.value),
+  set: (value: string) => {
+    if (props.permalink) {
+      startDateRoute.value = value
+    } else {
+      startDateLocal.value = value
+    }
+  },
+})
+
+const endDate = computed({
+  get: () => (props.permalink ? endDateRoute.value : endDateLocal.value),
+  set: (value: string) => {
+    if (props.permalink) {
+      endDateRoute.value = value
+    } else {
+      endDateLocal.value = value
+    }
+  },
+})
+
 const hasUserEditedDates = shallowRef(false)
 
 /**
