@@ -10,6 +10,7 @@ import type {
   DailyDataPoint,
   DateRangeFields,
   EvolutionData,
+  EvolutionOptions,
   MonthlyDataPoint,
   WeeklyDataPoint,
   YearlyDataPoint,

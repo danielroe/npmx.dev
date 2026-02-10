@@ -27,3 +27,26 @@ export type EvolutionOptionsBase = {
   startDate?: string
   endDate?: string
 }
+
+export type EvolutionOptionsDay = EvolutionOptionsBase & {
+  granularity: 'day'
+}
+export type EvolutionOptionsWeek = EvolutionOptionsBase & {
+  granularity: 'week'
+  weeks?: number
+}
+export type EvolutionOptionsMonth = EvolutionOptionsBase & {
+  granularity: 'month'
+  months?: number
+}
+export type EvolutionOptionsYear = EvolutionOptionsBase & {
+  granularity: 'year'
+}
+
+export type EvolutionOptions =
+  | EvolutionOptionsDay
+  | EvolutionOptionsWeek
+  | EvolutionOptionsMonth
+  | EvolutionOptionsYear
+
+export type DailyRawPoint = { day: string; value: number }
