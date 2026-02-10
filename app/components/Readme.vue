@@ -127,8 +127,9 @@ function handleClick(event: MouseEvent) {
 }
 
 .readme :deep(a[target='_blank']::after) {
-  content: '';
-  @apply i-carbon:launch rtl-flip ms-1 -align-10% size-[1em] opacity-50;
+  /* I don't know what kind of sorcery this is, but it ensures this icon can't wrap to a new line on its own. */
+  content: '__';
+  @apply inline i-carbon:launch rtl-flip ms-1 opacity-50;
 }
 
 .readme :deep(code) {
