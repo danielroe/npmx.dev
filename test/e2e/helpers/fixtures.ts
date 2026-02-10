@@ -81,20 +81,33 @@ export class MockConnectorClient {
         ...options?.headers,
       },
     })
+    if (!response.ok) {
+      throw new Error(
+        `Mock connector request failed: ${response.status} ${response.statusText} (${path})`,
+      )
+    }
     return response.json() as Promise<T>
+  }
+
+  /** Make a fire-and-forget POST to a test-only endpoint, throwing on failure. */
+  private async testEndpoint(path: string, body: unknown): Promise<void> {
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    if (!response.ok) {
+      throw new Error(
+        `Mock connector test endpoint failed: ${response.status} ${response.statusText} (${path})`,
+      )
+    }
   }
 
   /** Reset the mock connector state */
   async reset(): Promise<void> {
-    // Reset state via test endpoint (no auth required)
-    await fetch(`${this.baseUrl}/__test__/reset`, { method: 'POST' })
-
+    await this.testEndpoint('/__test__/reset', {})
     // Connect to establish session
-    await fetch(`${this.baseUrl}/connect`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: this.token }),
-    })
+    await this.testEndpoint('/connect', { token: this.token })
   }
 
   /** Set org data */
@@ -106,29 +119,17 @@ export class MockConnectorClient {
       teamMembers?: Record<string, string[]>
     },
   ): Promise<void> {
-    await fetch(`${this.baseUrl}/__test__/org`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ org, ...data }),
-    })
+    await this.testEndpoint('/__test__/org', { org, ...data })
   }
 
   /** Set user orgs */
   async setUserOrgs(orgs: string[]): Promise<void> {
-    await fetch(`${this.baseUrl}/__test__/user-orgs`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orgs }),
-    })
+    await this.testEndpoint('/__test__/user-orgs', { orgs })
   }
 
   /** Set user packages */
   async setUserPackages(packages: Record<string, 'read-only' | 'read-write'>): Promise<void> {
-    await fetch(`${this.baseUrl}/__test__/user-packages`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ packages }),
-    })
+    await this.testEndpoint('/__test__/user-packages', { packages })
   }
 
   /** Set package data */
@@ -136,11 +137,7 @@ export class MockConnectorClient {
     pkg: string,
     data: { collaborators?: Record<string, 'read-only' | 'read-write'> },
   ): Promise<void> {
-    await fetch(`${this.baseUrl}/__test__/package`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ package: pkg, ...data }),
-    })
+    await this.testEndpoint('/__test__/package', { package: pkg, ...data })
   }
 
   /** Add an operation */

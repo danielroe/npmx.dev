@@ -523,6 +523,7 @@ export class MockConnectorServer {
       const port = this.stateManager.port
 
       this.server!.on('error', (err: NodeJS.ErrnoException) => {
+        this.server = null
         if (err.code === 'EADDRINUSE') {
           reject(new Error(`Port ${port} is already in use. Is the real connector running?`))
         } else {

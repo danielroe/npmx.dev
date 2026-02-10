@@ -3,10 +3,15 @@
  *
  * These tests use a mock connector server (started in global setup)
  * to test features that require being logged in via the connector.
+ *
+ * All tests run serially because they share a single mock connector server
+ * whose state is reset before each test via `mockConnector.reset()`.
  */
 
 import type { Page } from '@playwright/test'
 import { test, expect } from './helpers/fixtures'
+
+test.describe.configure({ mode: 'serial' })
 
 /**
  * When connected, the header shows "packages" and "orgs" links scoped to the user.
