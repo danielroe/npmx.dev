@@ -74,15 +74,7 @@ const versionToTags = computed(() => buildVersionToTagsMap(props.distTags))
 
 /** Get URL for a specific version */
 function getVersionUrl(version: string): string {
-  let url = props.urlPattern.replace('{version}', version)
-  // Replace storyid placeholder if it exists
-  if (url.includes('{storyid}')) {
-    // Get current storyid from route query
-    const route = useRoute()
-    const currentStoryId = route.query.storyid as string
-    url = url.replace('{storyid}', currentStoryId || '')
-  }
-  return url
+  return props.urlPattern.replace('{version}', version)
 }
 
 /** Safe semver comparison with fallback */

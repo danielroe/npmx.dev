@@ -131,6 +131,20 @@ const {
   },
 )
 
+const playgroundLinks = computed(() => [
+  ...readmeData.value.playgroundLinks,
+  ...(packageJson.value?.storybook
+    ? [
+        {
+          url: packageJson.value.storybook.url,
+          provider: 'storybook',
+          providerName: 'Storybook',
+          label: 'Storybook',
+        },
+      ]
+    : []),
+])
+
 //copy README file as Markdown
 const { copied: copiedReadme, copy: copyReadme } = useClipboard({
   source: () => '',
@@ -186,9 +200,7 @@ const {
     immediate: false,
   },
 )
-onMounted(() => {
-  fetchInstallSize()
-})
+onMounted(() => fetchInstallSize())
 
 const { data: skillsData } = useLazyFetch<SkillsListResponse>(
   () => {
@@ -806,6 +818,15 @@ const showSkeleton = shallowRef(false)
               {{ $t('package.links.code') }}
             </LinkBase>
             <LinkBase
+              v-if="packageJson?.storybook"
+              variant="button-secondary"
+              :to="{ name: 'stories', params: { path: [pkg.name, 'v', resolvedVersion] } }"
+              aria-keyshortcuts="."
+              classicon="i-carbon:code"
+            >
+              stories
+            </LinkBase>
+            <LinkBase
               variant="button-secondary"
               :to="{ name: 'compare', query: { packages: pkg.name } }"
               aria-keyshortcuts="c"
@@ -1385,23 +1406,7 @@ const showSkeleton = shallowRef(false)
           />
 
           <!-- Playground links -->
-          <PackagePlaygrounds
-            v-if="readmeData?.playgroundLinks?.length"
-            :links="readmeData.playgroundLinks"
-          />
-
-          <!-- <StorybookPlaygrounds
-            v-if="readmeData?.storybookPlaygrounds?.length"
-            :links="readmeData.storybookPlaygroundLinks"
-          /> -->
-
-          <a v-if="packageJson?.storybook" :href="packageJson.storybook.url">storybook</a>
-          <a
-            v-if="packageJson?.storybook"
-            :href="`/package-stories/${pkg.name}/v/${resolvedVersion}`"
-            >sb internal</a
-          >
-          <!-- :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }" -->
+          <PackagePlaygrounds v-if="playgroundLinks.length" :links="playgroundLinks" />
 
           <PackageCompatibility :engines="displayVersion?.engines" />
 

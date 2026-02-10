@@ -52,8 +52,8 @@ const { data: pkg } = usePackage(packageName)
 // URL pattern for version selector - maintain current story if available
 const versionUrlPattern = computed(() => {
   const base = `/package-stories/${packageName.value}/v/{version}`
-  // Use placeholder for storyid that will be handled by version switch watcher
-  return currentStoryId.value ? `${base}?storyid={storyid}` : base
+  // Directly include the current storyid if available
+  return currentStoryId.value ? `${base}?storyid=${currentStoryId.value}` : base
 })
 
 // Fetch package.json to get Storybook URL
@@ -383,7 +383,7 @@ defineOgImageComponent('Default', {
           </div>
           <div class="flex items-center gap-2">
             <a
-              :href="packageJson.storybook.url"
+              :href="packageJson.storybook.url + '?path=/story/' + currentStoryId"
               target="_blank"
               rel="noopener noreferrer"
               class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors inline-flex items-center gap-1"

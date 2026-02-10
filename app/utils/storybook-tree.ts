@@ -9,17 +9,13 @@ export function transformStorybookEntries(
   const tree: StorybookFileTree[] = []
   const dirMap = new Map<string, StorybookFileTree>()
 
-  // Sort entries by title for consistent ordering
-  const sortedEntries = Object.values(entries).sort((a, b) =>
-    (a.title || '').localeCompare(b.title || ''),
-  )
-
-  for (const entry of sortedEntries) {
+  // Use entries in original order to preserve object key ordering
+  for (const [_id, entry] of Object.entries(entries)) {
     // Parse title into path parts
     // "Example/Button/Primary" -> ["Example", "Button", "Primary"]
     if (!entry.title) continue
     const parts = entry.title.split('/')
-    const storyName = parts.pop()! // Last part is the story name
+    const storyName = entry.name
     const storyPath = parts.join('/') || '' || ''
 
     // Create directories as needed
