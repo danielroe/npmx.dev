@@ -588,7 +588,9 @@ const METRICS = computed<MetricDef[]>(() => [
   },
 ])
 
-const selectedMetric = shallowRef<MetricId>(DEFAULT_METRIC_ID)
+const selectedMetric = usePermalinkValue<MetricId>('facet', DEFAULT_METRIC_ID, {
+  permanent: props.permalink,
+})
 
 // Per-metric state keyed by metric id
 const metricStates = reactive<

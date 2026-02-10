@@ -28,6 +28,7 @@ function handleModalClose() {
       granularity: undefined,
       end: undefined,
       start: undefined,
+      facet: undefined,
     },
   })
 }
