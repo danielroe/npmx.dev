@@ -249,7 +249,7 @@ function copyPermalinkUrl() {
 }
 
 // Canonical URL for this code page
-const canonicalUrl = computed(() => `https://npmx.dev${getCurrentCodeUrlWithPath()}`)
+const canonicalUrl = computed(() => `https://npmx.dev${getCodeUrl()}`)
 
 // Toggle markdown view mode
 const markdownViewModes = [
