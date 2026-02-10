@@ -495,7 +495,7 @@ const likeAction = async () => {
   }
 }
 
-const dependencyCount = getDependencyCount(displayVersion.value)
+const dependencyCount = computed(() => getDependencyCount(displayVersion.value))
 
 const numberFormatter = useNumberFormatter()
 const compactNumberFormatter = useCompactNumberFormatter()
@@ -918,7 +918,7 @@ onKeyStroke(
               </span>
 
               <!-- Separator and install size -->
-              <template v-if="displayVersion?.dist.unpackedSize !== installSize?.totalSize">
+              <template v-if="displayVersion?.dist?.unpackedSize !== installSize?.totalSize">
                 <span class="text-fg-subtle mx-1">/</span>
 
                 <span
