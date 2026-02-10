@@ -104,10 +104,14 @@ export default defineEventHandler(async event => {
         throw error
       }
     } catch (error) {
-      // user cancelled explicitly
-      if (query.error === 'access_denied' && error instanceof OAuthCallbackError && error.state) {
+      if (error instanceof OAuthCallbackError && error.state) {
+        // Always decode the state, to clean up the cookie
         const state = decodeOAuthState(event, error.state)
-        return sendRedirect(event, state.redirectPath)
+
+        // user cancelled explicitly
+        if (query.error === 'access_denied') {
+          return sendRedirect(event, state.redirectPath)
+        }
       }
 
       const message = error instanceof Error ? error.message : 'Authentication failed.'
@@ -124,8 +128,7 @@ type OAuthStateData = {
   redirectPath: string
 }
 
-const SID_COOKIE_PREFIX = 'atproto_oauth_sid'
-const SID_COOKIE_VALUE = '1'
+const OAUTH_REQUEST_COOKIE_PREFIX = 'atproto_oauth_req'
 
 /**
  * This function encodes the OAuth state by generating a random SID, storing it
@@ -138,17 +141,26 @@ const SID_COOKIE_VALUE = '1'
  * and ensuring that the callback is part of an ongoing authentication flow
  * initiated by the same client.
  *
- * Note that this mechanism could use any other unique session mechanism the
- * server has with the client (e.g. UserServerSession). We don't do that though
- * to avoid polluting the session with ephemeral OAuth-specific data.
- *
  * @param event The H3 event object, used to set the cookie
  * @param state The original OAuth state to encode
  * @returns A JSON string encapsulating the original state and the generated SID
  */
 function encodeOAuthState(event: H3Event, data: OAuthStateData): string {
-  const sid = generateRandomHexString()
-  setCookie(event, `${SID_COOKIE_PREFIX}_${sid}`, SID_COOKIE_VALUE, {
+  const id = generateRandomHexString()
+  // This uses an ephemeral cookie instead of useSession() to avoid polluting
+  // the session with ephemeral OAuth-specific data. The cookie is set with a
+  // short expiration time to limit the window of potential misuse, and is
+  // deleted immediately after validating the callback to clean up any remnants
+  // of the authentication flow. Using useSession() for this would require
+  // additional logic to clean up the session in case of expired ephemeral data.
+
+  // We use the id as cookie name to allow multiple concurrent auth flows (e.g.
+  // user opens multiple tabs and initiates auth in both, or initiates auth,
+  // waits for a while, then initiates again before completing the first one),
+  // without risk of cookie value collisions between them. The cookie value is a
+  // constant since the actual value doesn't matter - it's just used as a flag
+  // to validate the presence of the cookie on callback.
+  setCookie(event, `${OAUTH_REQUEST_COOKIE_PREFIX}_${id}`, '1', {
     maxAge: 60 * 5,
     httpOnly: true,
     // secure only if NOT in dev mode
@@ -156,7 +168,8 @@ function encodeOAuthState(event: H3Event, data: OAuthStateData): string {
     sameSite: 'lax',
     path: event.path.split('?', 1)[0],
   })
-  return JSON.stringify({ data, sid })
+
+  return JSON.stringify({ data, id })
 }
 
 function generateRandomHexString(byteLength: number = 16): string {
@@ -170,9 +183,9 @@ function generateRandomHexString(byteLength: number = 16): string {
  * session performing the oauth callback.
  *
  * @param event The H3 event object, used to read and delete the cookie
- * @param state The JSON string containing the original state and SID
- * @returns The original OAuth state if the SID is valid
- * @throws An error if the SID is missing or invalid, indicating a potential issue with cookies or expired state
+ * @param state The JSON string containing the original state and id
+ * @returns The original OAuth state if the id is valid
+ * @throws An error if the id is missing or invalid, indicating a potential issue with cookies or expired state
  */
 function decodeOAuthState(event: H3Event, state: string | null): OAuthStateData {
   if (!state) {
@@ -187,11 +200,14 @@ function decodeOAuthState(event: H3Event, state: string | null): OAuthStateData 
 
   // The state sting was encoded using encodeOAuthState. No need to protect
   // against JSON parsing since the StateStore should ensure it's integrity.
-  const decoded = JSON.parse(state) as { data: OAuthStateData; sid: string }
+  const decoded = JSON.parse(state) as { data: OAuthStateData; id: string }
+  const requestCookieName = `${OAUTH_REQUEST_COOKIE_PREFIX}_${decoded.id}`
 
-  const sid = getCookie(event, `${SID_COOKIE_PREFIX}_${decoded.sid}`)
-  if (sid === SID_COOKIE_VALUE) {
-    deleteCookie(event, `${SID_COOKIE_PREFIX}_${decoded.sid}`, {
+  if (getCookie(event, requestCookieName) != null) {
+    // The cookie will never be used again since the state store ensure unique
+    // nonces, but we delete it to clean up any remnants of the authentication
+    // flow.
+    deleteCookie(event, requestCookieName, {
       httpOnly: true,
       secure: !import.meta.dev,
       sameSite: 'lax',
