@@ -383,6 +383,7 @@ const endDate = computed(() => {
           :tooltip-to="inModal ? '#chart-modal' : undefined"
           :tooltip-offset="8"
           justify="between"
+          reverse-order
           :class="pending ? 'opacity-50 pointer-events-none' : ''"
         />
 
@@ -394,6 +395,7 @@ const endDate = computed(() => {
           :tooltip-to="inModal ? '#chart-modal' : undefined"
           :tooltip-offset="8"
           justify="between"
+          reverse-order
           :class="pending ? 'opacity-50 pointer-events-none' : ''"
         />
       </div>
