@@ -286,7 +286,7 @@ useHead({
             </div>
 
             <h2
-              id="comparison-heading"
+              id="comparison-heading-footer"
               class="text-xs text-fg-subtle uppercase tracking-wider mb-4 mt-10"
             >
               {{ $t('compare.facets.trends.title') }}

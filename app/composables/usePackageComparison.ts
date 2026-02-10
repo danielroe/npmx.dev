@@ -80,7 +80,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   const cache = shallowRef(new Map<string, PackageComparisonData>())
 
   // Derived array in current package order
-  const packagesData = computed(
+  const packagesData = computed<false | (PackageComparisonData | null)[]>(
     () =>
       import.meta.client &&
       !nuxt.isHydrating &&
