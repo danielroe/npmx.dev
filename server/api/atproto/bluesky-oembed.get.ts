@@ -8,6 +8,8 @@ import {
   BLUESKY_URL_EXTRACT_REGEX,
 } from '#shared/utils/constants'
 import { type BlueskyOEmbedResponse, BlueskyOEmbedRequestSchema } from '#shared/schemas/atproto'
+import { Client } from '@atproto/lex'
+import * as com from '#shared/types/lexicons/com'
 
 export default defineCachedEventHandler(
   async (event): Promise<BlueskyOEmbedResponse> => {
@@ -21,15 +23,14 @@ export default defineCachedEventHandler(
        * If the schema passes, this regex is mathematically guaranteed to match and contain both capture groups.
        * Match returns ["profile/danielroe.dev/post/123", "danielroe.dev", "123"] — only want the two capture groups, the full match string is discarded.
        */
-      const [, handle, postId] = url.match(BLUESKY_URL_EXTRACT_REGEX)! as [string, string, string]
+      const [, handle, postId] = url.match(BLUESKY_URL_EXTRACT_REGEX)! as [
+        string,
+        `${string}.${string}`,
+        string,
+      ]
 
-      // INFO: Resolve handle to DID using Bluesky's public API
-      const { did } = await $fetch<{ did: string }>(
-        `${BLUESKY_API}com.atproto.identity.resolveHandle`,
-        {
-          query: { handle },
-        },
-      )
+      const client = new Client({ service: BLUESKY_API })
+      const { did } = await client.call(com.atproto.identity.resolveHandle, { handle })
 
       // INFO: Construct the embed URL with the DID
       const embedUrl = `${BLUESKY_EMBED_BASE_ROUTE}/embed/${did}/app.bsky.feed.post/${postId}?colorMode=${colorMode}`
