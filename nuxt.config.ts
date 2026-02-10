@@ -287,7 +287,7 @@ export default defineNuxtConfig({
   },
 
   unocss: {
-    mode: 'per-module',
+    mode: 'vue-scoped',
   },
 
   vite: {
