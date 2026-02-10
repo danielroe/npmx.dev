@@ -38,7 +38,7 @@ const showModal = () => modalRef.value?.showModal?.()
 
           <button
             type="button"
-            class="group inline-flex gap-x-1 items-center justify-center underline-offset-[0.2rem] underline decoration-1 decoration-fg/30 font-mono text-fg hover:(decoration-accent text-accent) focus-visible:(decoration-accent text-accent) transition-colors duration-200"
+            class="group cursor-pointer gap-x-1 items-center rounded-sm font-mono text-fg hover:decoration-accent outline-transparent active:scale-[0.98] underline underline-offset-[0.2rem] decoration-1 decoration-fg/30 outline-2 outline-transparent focus-visible:(outline-offset-2 outline-accent text-accent) transition-colors duration-200"
             @click.prevent="showModal"
             aria-haspopup="dialog"
           >

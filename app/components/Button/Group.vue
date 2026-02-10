@@ -7,7 +7,7 @@ const props = defineProps<{
 <template>
   <component
     :is="props.as || 'div'"
-    class="flex [&>*]:rounded-e-none [&>*:last-child]:rounded-e-md [&>*]:rounded-s-none [&>*:first-child]:rounded-s-md [&>*:not(:first-child)]:border-s-0 [&>*:focus-visible]:relative [&>*:focus-visible]:z-10"
+    class="inline-flex items-stretch [&>*:not(:first-child)]:(-ml-px rounded-is-none) [&>*:not(:last-child)]:rounded-ie-none [&>*:focus-visible]:(relative z-40)"
   >
     <slot />
   </component>

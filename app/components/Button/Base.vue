@@ -27,14 +27,14 @@ defineExpose({
 <template>
   <button
     ref="el"
-    class="group cursor-pointer gap-x-1.5 relative items-center justify-center rounded-md active:scale-[0.98] font-mono border border-solid border-border transition-[background-color,color,border,outline] duration-200 outline-transparent focus-visible:(outline-2 outline-accent outline-offset-2) disabled:(opacity-40 cursor-not-allowed border-transparent)"
+    class="group cursor-pointer gap-x-1.5 relative items-center justify-center rounded-md active:scale-[0.98] font-mono border border-solid border-border transition-colors duration-200 outline-transparent focus-visible:(outline-2 outline-accent outline-offset-2) disabled:(opacity-40 cursor-not-allowed border-transparent)"
     :class="{
       'inline-flex': !block,
       'flex': block,
       'text-sm px-4 py-2': size === 'medium',
       'text-xs px-2 py-0.5': size === 'small',
-      'text-fg bg-bg hover:(bg-fg/10 border-fg/10)': variant === 'secondary',
       'text-bg bg-fg border-fg hover:(bg-fg/80)': variant === 'primary',
+      'text-fg bg-bg hover:(bg-fg/10 border-fg/10)': variant === 'secondary',
       'opacity-40 cursor-not-allowed border-transparent': disabled,
     }"
     :type="props.type"
