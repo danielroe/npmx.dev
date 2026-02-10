@@ -171,16 +171,14 @@ test.describe('Organization Management', () => {
     await orgManagement.getByRole('button', { name: /add member/i }).click()
 
     // Wait for the add-member form to appear
-    const usernameInput = orgManagement.locator('input[name="new-member-username"]')
+    const usernameInput = orgManagement.locator('#new-member-username')
     await expect(usernameInput).toBeVisible({ timeout: 5000 })
 
     // Fill in the form
     await usernameInput.fill('newuser')
 
-    // Select role
-    const roleSelect = orgManagement.locator('select[name="new-member-role"]')
-    await expect(roleSelect).toBeVisible({ timeout: 5000 })
-    await roleSelect.selectOption('admin')
+    // Select role (SelectField renders id on the <select>, not name)
+    await orgManagement.locator('#new-member-role').selectOption('admin')
 
     // Submit
     await orgManagement.getByRole('button', { name: /^add$/i }).click()
@@ -219,7 +217,7 @@ test.describe('Organization Management', () => {
     const orgManagement = page.getByRole('region', { name: /organization management/i })
     await expect(orgManagement).toBeVisible({ timeout: 10_000 })
 
-    const roleSelect = orgManagement.locator('select[name="role-member2"]')
+    const roleSelect = orgManagement.locator('#role-member2')
     await expect(roleSelect).toBeVisible({ timeout: 5000 })
     await roleSelect.selectOption('admin')
     await page.waitForTimeout(500)
@@ -258,11 +256,6 @@ test.describe('Package Access Controls', () => {
     await expect(page.locator('h1')).toContainText('kit', { timeout: 30_000 })
   }
 
-  /** The access section is identified by the "Team Access" heading */
-  function accessSection(page: Page) {
-    return page.locator('section:has(#access-heading)')
-  }
-
   test('shows team access section on scoped package when connected', async ({
     page,
     gotoConnected,
@@ -299,13 +292,12 @@ test.describe('Package Access Controls', () => {
 
     await section.getByRole('button', { name: /grant team access/i }).click()
 
-    const teamSelect = section.locator('select[name="grant-team"]')
+    const teamSelect = section.locator('#grant-team-select')
     await expect(teamSelect).toBeVisible()
     await expect(teamSelect.locator('option')).toHaveCount(4, { timeout: 10_000 })
     await teamSelect.selectOption({ label: 'nuxt:triage' })
 
-    const permissionSelect = section.locator('select[name="grant-permission"]')
-    await permissionSelect.selectOption('read-write')
+    await section.locator('#grant-permission-select').selectOption('read-write')
 
     await section.getByRole('button', { name: /^grant$/i }).click()
     await page.waitForTimeout(500)
@@ -348,7 +340,7 @@ test.describe('Package Access Controls', () => {
     await expect(section).toBeVisible({ timeout: 15_000 })
 
     await section.getByRole('button', { name: /grant team access/i }).click()
-    const teamSelect = section.locator('select[name="grant-team"]')
+    const teamSelect = section.locator('#grant-team-select')
     await expect(teamSelect).toBeVisible()
 
     await section.getByRole('button', { name: /cancel granting access/i }).click()
@@ -436,3 +428,8 @@ test.describe('Operations Queue', () => {
     expect(operations).toHaveLength(0)
   })
 })
+
+/** The access section is identified by the "Team Access" heading */
+function accessSection(page: Page) {
+  return page.locator('section:has(#access-heading)')
+}
