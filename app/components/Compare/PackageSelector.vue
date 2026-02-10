@@ -89,13 +89,22 @@ function handleKeydown(e: KeyboardEvent) {
     } else if (hasMatchInPackages) {
       addPackage(inputValueTrim)
     }
+  } else if (e.key === 'Escape') {
+    inputValue.value = ''
   }
 }
 
+const { start, stop } = useTimeoutFn(() => {
+  isInputFocused.value = false
+}, 200)
+
 function handleBlur() {
-  useTimeoutFn(() => {
-    isInputFocused.value = false
-  }, 200)
+  start()
+}
+
+function handleFocus() {
+  stop()
+  isInputFocused.value = true
 }
 </script>
 
@@ -151,7 +160,7 @@ function handleBlur() {
           size="medium"
           class="w-full min-w-25 ps-7"
           aria-autocomplete="list"
-          @focus="isInputFocused = true"
+          @focus="handleFocus"
           @blur="handleBlur"
           @keydown="handleKeydown"
         />
@@ -178,7 +187,7 @@ function handleBlur() {
             :aria-label="$t('compare.no_dependency.add_column')"
             @click="addPackage(NO_DEPENDENCY_ID)"
           >
-            <span class="text-sm text-accent italic flex items-center gap-2 block">
+            <span class="text-sm text-accent italic flex items-center gap-2">
               <span class="i-carbon:clean w-4 h-4" aria-hidden="true" />
               {{ $t('compare.no_dependency.typeahead_title') }}
             </span>
@@ -197,7 +206,10 @@ function handleBlur() {
             @click="addPackage(result.name)"
           >
             <span class="font-mono text-sm text-fg block">{{ result.name }}</span>
-            <span v-if="result.description" class="text-xs text-fg-muted truncate mt-0.5">
+            <span
+              v-if="result.description"
+              class="text-xs text-fg-muted truncate mt-0.5 w-full block"
+            >
               {{ result.description }}
             </span>
           </ButtonBase>
