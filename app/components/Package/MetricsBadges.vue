@@ -60,8 +60,8 @@ const typesHref = computed(() => {
       <TooltipApp :text="typesTooltip">
         <LinkBase
           v-if="typesHref"
-          variant="button-secondary"
-          size="small"
+          type="button"
+          size="xs"
           :to="typesHref"
           classicon="i-carbon-checkmark"
         >
