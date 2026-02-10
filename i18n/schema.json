@@ -880,10 +880,10 @@
             "grouping_minor": {
               "type": "string"
             },
-            "show_old_versions": {
+            "recent_versions_only": {
               "type": "string"
             },
-            "show_old_versions_tooltip": {
+            "recent_versions_only_tooltip": {
               "type": "string"
             },
             "show_low_usage": {

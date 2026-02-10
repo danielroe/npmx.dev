@@ -80,7 +80,7 @@ const isMobile = computed(() => width.value > 0 && width.value < mobileBreakpoin
 
 const {
   groupingMode,
-  showOldVersions,
+  showRecentOnly,
   showLowUsageVersions,
   pending,
   error,
@@ -376,9 +376,9 @@ const endDate = computed(() => {
 
       <div class="flex flex-col gap-4 w-full max-w-1/2">
         <SettingsToggle
-          v-model="showOldVersions"
-          :label="$t('package.versions.show_old_versions')"
-          :tooltip="$t('package.versions.show_old_versions_tooltip')"
+          v-model="showRecentOnly"
+          :label="$t('package.versions.recent_versions_only')"
+          :tooltip="$t('package.versions.recent_versions_only_tooltip')"
           tooltip-position="bottom"
           :tooltip-to="inModal ? '#chart-modal' : undefined"
           :tooltip-offset="8"
