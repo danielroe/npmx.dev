@@ -38,8 +38,8 @@ const updateUrlPage = debounce((page: number) => {
   })
 }, 500)
 
-// The actual search query (from URL, used for API calls)
-const query = computed(() => normalizeSearchParam(route.query.q))
+const searchQuery = useGlobalSearchQuery()
+const query = computed(() => searchQuery.value)
 
 // Track if page just loaded (for hiding "Searching..." during view transition)
 const hasInteracted = shallowRef(false)

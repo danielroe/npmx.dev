@@ -4,7 +4,7 @@ import { SHOWCASED_FRAMEWORKS } from '~/utils/frameworks'
 
 const { searchProvider } = useSearchProvider()
 
-const searchQuery = shallowRef('')
+const searchQuery = useGlobalSearchQuery()
 const isSearchFocused = shallowRef(false)
 
 async function search() {

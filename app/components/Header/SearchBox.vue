@@ -28,8 +28,7 @@ const showSearchBar = computed(() => {
   return route.name !== 'index'
 })
 
-// Local input value (updates immediately as user types)
-const searchQuery = shallowRef(normalizeSearchParam(route.query.q))
+const searchQuery = useGlobalSearchQuery()
 
 // Pages that have their own local filter using ?q
 const pagesWithLocalFilter = new Set(['~username', 'org'])
@@ -74,21 +73,6 @@ const updateUrlQuery = Object.assign(
 watch(searchQuery, value => {
   updateUrlQuery(value)
 })
-
-// Sync input with URL when navigating (e.g., back button)
-watch(
-  () => route.query.q,
-  urlQuery => {
-    // Don't sync from pages that use ?q for local filtering
-    if (pagesWithLocalFilter.has(route.name as string)) {
-      return
-    }
-    const value = normalizeSearchParam(urlQuery)
-    if (searchQuery.value !== value) {
-      searchQuery.value = value
-    }
-  },
-)
 
 function handleSubmit() {
   if (pagesWithLocalFilter.has(route.name as string)) {
