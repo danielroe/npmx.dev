@@ -283,6 +283,7 @@ export class MockConnectorStateManager {
           exitCode: configuredResult.exitCode ?? 1,
           requiresOtp: configuredResult.requiresOtp,
           authFailure: configuredResult.authFailure,
+          urls: configuredResult.urls,
         }
         op.result = result
         op.status = result.exitCode === 0 ? 'completed' : 'failed'

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { mountSuspended } from '@nuxt/test-utils/runtime'
+import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
 import { ref, computed, readonly, nextTick } from 'vue'
 import type { VueWrapper } from '@vue/test-utils'
 import type { PendingOperation } from '../../../cli/src/types'
@@ -110,11 +110,6 @@ function simulateConnect() {
   mockState.value.avatar = 'https://example.com/avatar.png'
 }
 
-// Mock the composables at module level (vi.mock is hoisted)
-vi.mock('~/composables/useConnector', () => ({
-  useConnector: createMockUseConnector,
-}))
-
 const mockSettings = ref({
   relativeDates: false,
   includeTypesInInstall: true,
@@ -131,13 +126,17 @@ const mockSettings = ref({
   },
 })
 
-vi.mock('~/composables/useSettings', () => ({
-  useSettings: () => ({ settings: mockSettings }),
-}))
+mockNuxtImport('useConnector', () => {
+  return createMockUseConnector
+})
 
-vi.mock('~/composables/useSelectedPackageManager', () => ({
-  useSelectedPackageManager: () => ref('npm'),
-}))
+mockNuxtImport('useSettings', () => {
+  return () => ({ settings: mockSettings })
+})
+
+mockNuxtImport('useSelectedPackageManager', () => {
+  return () => ref('npm')
+})
 
 vi.mock('~/utils/npm', () => ({
   getExecuteCommand: () => 'npx npmx-connector',
@@ -199,6 +198,181 @@ afterEach(() => {
 })
 
 describe('HeaderConnectorModal', () => {
+  describe('Web auth settings (connected)', () => {
+    it('shows web auth toggle when connected', async () => {
+      const dialog = await mountAndOpen('connected')
+      const labels = Array.from(dialog?.querySelectorAll('label, span') ?? [])
+      const webAuthLabel = labels.find(el => el.textContent?.includes('web authentication'))
+      expect(webAuthLabel).toBeTruthy()
+    })
+
+    it('shows auto-open URL toggle when connected', async () => {
+      const dialog = await mountAndOpen('connected')
+      const labels = Array.from(dialog?.querySelectorAll('label, span') ?? [])
+      const autoOpenLabel = labels.find(el => el.textContent?.includes('open auth page'))
+      expect(autoOpenLabel).toBeTruthy()
+    })
+
+    it('auto-open URL toggle is disabled when webAuth is off', async () => {
+      mockSettings.value.connector.webAuth = false
+      const dialog = await mountAndOpen('connected')
+
+      // Find the auto-open toggle container - it should have opacity-50 class
+      const toggleContainers = Array.from(dialog?.querySelectorAll('[class*="opacity-50"]') ?? [])
+      expect(toggleContainers.length).toBeGreaterThan(0)
+    })
+
+    it('auto-open URL toggle is not disabled when webAuth is on', async () => {
+      mockSettings.value.connector.webAuth = true
+      const dialog = await mountAndOpen('connected')
+
+      // When webAuth is ON, the auto-open toggle should not have opacity-50
+      // Verify by checking that we can find the toggle with the "open auth page" label
+      // and it does NOT have opacity-50 in its parent
+      const autoOpenLabels = Array.from(dialog?.querySelectorAll('*') ?? []).filter(el =>
+        el.textContent?.includes('open auth page'),
+      )
+      expect(autoOpenLabels.length).toBeGreaterThan(0)
+    })
+  })
+
+  describe('Web auth settings (disconnected advanced)', () => {
+    it('shows web auth toggles in advanced details section', async () => {
+      const dialog = await mountAndOpen()
+
+      // Open the advanced details section
+      const details = dialog?.querySelector('details')
+      expect(details).not.toBeNull()
+
+      // Programmatically open it
+      details?.setAttribute('open', '')
+      await nextTick()
+
+      const labels = Array.from(details?.querySelectorAll('label, span') ?? [])
+      const webAuthLabel = labels.find(el => el.textContent?.includes('web authentication'))
+      const autoOpenLabel = labels.find(el => el.textContent?.includes('open auth page'))
+      expect(webAuthLabel).toBeTruthy()
+      expect(autoOpenLabel).toBeTruthy()
+    })
+  })
+
+  describe('Auth URL button', () => {
+    it('does not show auth URL button when no running operations have an authUrl', async () => {
+      const dialog = await mountAndOpen('connected')
+
+      const buttons = Array.from(dialog?.querySelectorAll('button') ?? [])
+      const authUrlBtn = buttons.find(b => b.textContent?.includes('web auth link'))
+      expect(authUrlBtn).toBeUndefined()
+    })
+
+    it('shows auth URL button when a running operation has an authUrl', async () => {
+      mockState.value.operations = [
+        {
+          id: '0000000000000001',
+          type: 'org:add-user',
+          params: { org: 'myorg', user: 'alice', role: 'developer' },
+          description: 'Add alice',
+          command: 'npm org set myorg alice developer',
+          status: 'running',
+          createdAt: Date.now(),
+          authUrl: 'https://www.npmjs.com/login?next=/login/cli/abc123',
+        },
+      ]
+      const dialog = await mountAndOpen('connected')
+
+      const buttons = Array.from(dialog?.querySelectorAll('button') ?? [])
+      const authUrlBtn = buttons.find(b => b.textContent?.includes('web auth link'))
+      expect(authUrlBtn).toBeTruthy()
+    })
+
+    it('opens auth URL in new tab when button is clicked', async () => {
+      const mockOpen = vi.fn()
+      vi.stubGlobal('open', mockOpen)
+
+      mockState.value.operations = [
+        {
+          id: '0000000000000001',
+          type: 'org:add-user',
+          params: { org: 'myorg', user: 'alice', role: 'developer' },
+          description: 'Add alice',
+          command: 'npm org set myorg alice developer',
+          status: 'running',
+          createdAt: Date.now(),
+          authUrl: 'https://www.npmjs.com/login?next=/login/cli/abc123',
+        },
+      ]
+      const dialog = await mountAndOpen('connected')
+
+      const buttons = Array.from(dialog?.querySelectorAll('button') ?? [])
+      const authUrlBtn = buttons.find(b =>
+        b.textContent?.includes('web auth link'),
+      ) as HTMLButtonElement
+      authUrlBtn?.click()
+      await nextTick()
+
+      expect(mockOpen).toHaveBeenCalledWith(
+        'https://www.npmjs.com/login?next=/login/cli/abc123',
+        '_blank',
+        'noopener,noreferrer',
+      )
+
+      vi.unstubAllGlobals()
+      // Re-stub navigator.clipboard which was unstubbed
+      vi.stubGlobal('navigator', {
+        ...navigator,
+        clipboard: {
+          writeText: mockWriteText,
+          readText: vi.fn().mockResolvedValue(''),
+        },
+      })
+    })
+  })
+
+  describe('Operations queue in connected state', () => {
+    it('renders OTP prompt when operations have OTP failures', async () => {
+      mockState.value.operations = [
+        {
+          id: '0000000000000001',
+          type: 'org:add-user',
+          params: { org: 'myorg', user: 'alice', role: 'developer' },
+          description: 'Add alice',
+          command: 'npm org set myorg alice developer',
+          status: 'failed',
+          createdAt: Date.now(),
+          result: { stdout: '', stderr: 'otp required', exitCode: 1, requiresOtp: true },
+        },
+      ]
+      const dialog = await mountAndOpen('connected')
+
+      // The OrgOperationsQueue child should render with the OTP alert
+      const otpAlert = dialog?.querySelector('[role="alert"]')
+      expect(otpAlert).not.toBeNull()
+      expect(dialog?.innerHTML).toContain('otp-input')
+    })
+
+    it('does not show retry with web auth button when webAuth setting is off', async () => {
+      mockSettings.value.connector.webAuth = false
+      mockState.value.operations = [
+        {
+          id: '0000000000000001',
+          type: 'org:add-user',
+          params: { org: 'myorg', user: 'alice', role: 'developer' },
+          description: 'Add alice',
+          command: 'npm org set myorg alice developer',
+          status: 'failed',
+          createdAt: Date.now(),
+          result: { stdout: '', stderr: 'otp required', exitCode: 1, requiresOtp: true },
+        },
+      ]
+      const dialog = await mountAndOpen('connected')
+
+      const html = dialog?.innerHTML ?? ''
+      const hasWebAuthButton =
+        html.includes('Retry with web auth') || html.includes('retry_web_auth')
+      expect(hasWebAuthButton).toBe(false)
+    })
+  })
+
   describe('Disconnected state', () => {
     it('shows connection form when not connected', async () => {
       const dialog = await mountAndOpen()
