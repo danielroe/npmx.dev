@@ -712,6 +712,9 @@
             "toc_title": {
               "type": "string"
             },
+            "load_error": {
+              "type": "string"
+            },
             "callout": {
               "type": "object",
               "properties": {

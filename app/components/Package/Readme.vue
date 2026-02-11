@@ -8,14 +8,11 @@ const props = defineProps<{
 }>()
 
 // Fetch README for specific version if requested, otherwise latest
-const { data } = useLazyFetch<ReadmeResponse>(
-  () => {
-    const base = `/api/registry/readme/${props.packageName}`
-    const version = props.requestedVersion
-    return version ? `${base}/v/${version}` : base
-  },
-  { default: () => ({ html: '', md: '', playgroundLinks: [], toc: [] }) },
-)
+const { data, status, error } = useLazyFetch<ReadmeResponse>(() => {
+  const base = `/api/registry/readme/${props.packageName}`
+  const version = props.requestedVersion
+  return version ? `${base}/v/${version}` : base
+})
 
 // Track active TOC item based on scroll position
 const tocItems = computed(() => data.value?.toc ?? [])
@@ -37,12 +34,17 @@ const { copied: copiedReadme, copy: copyReadme } = useClipboard({
     </h2>
     <div class="flex gap-2">
       <!-- Copy readme as Markdown button -->
-      <TooltipApp v-if="data?.md" :text="$t('package.readme.copy_as_markdown')" position="bottom">
+      <TooltipApp
+        v-if="data?.md || status === 'pending' || status === 'idle'"
+        :text="$t('package.readme.copy_as_markdown')"
+        position="bottom"
+      >
         <ButtonBase
           @click="copyReadme()"
           :aria-pressed="copiedReadme"
           :aria-label="copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')"
           :classicon="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
+          :disabled="status === 'pending' || status === 'idle'"
         >
           {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
         </ButtonBase>
@@ -51,12 +53,41 @@ const { copied: copiedReadme, copy: copyReadme } = useClipboard({
         v-if="data?.toc && data.toc.length > 1"
         :toc="data.toc"
         :active-id="activeTocId"
+        :disabled="!data || !data.toc"
       />
+      <ButtonBase
+        v-else-if="status === 'pending' || status === 'idle'"
+        disabled
+        classicon="i-carbon:list"
+        block
+      >
+        <span class="i-carbon:chevron-down w-3 h-3" aria-hidden="true" />
+      </ButtonBase>
     </div>
   </div>
 
   <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-  <Readme v-if="data?.html" :html="data.html" />
+  <Readme v-if="status === 'success' && data?.html" :html="data.html" />
+  <div class="space-y-4" v-else-if="status === 'pending' || status === 'idle'">
+    <!-- Heading -->
+    <SkeletonBlock class="h-7 w-2/3" />
+    <!-- Paragraphs -->
+    <SkeletonBlock class="h-4 w-full" />
+    <SkeletonBlock class="h-4 w-full" />
+    <SkeletonBlock class="h-4 w-4/5" />
+    <!-- Gap for section break -->
+    <SkeletonBlock class="h-6 w-1/2 mt-6" />
+    <SkeletonBlock class="h-4 w-full" />
+    <SkeletonBlock class="h-4 w-full" />
+    <SkeletonBlock class="h-4 w-3/4" />
+    <!-- Code block placeholder -->
+    <SkeletonBlock class="h-24 w-full rounded-lg mt-4" />
+    <SkeletonBlock class="h-4 w-full" />
+    <SkeletonBlock class="h-4 w-5/6" />
+  </div>
+  <div v-else-if="status === 'error'" class="text-red-500">
+    {{ $t('package.readme.load_error') }}
+  </div>
   <p v-else class="text-fg-muted italic">
     {{ $t('package.readme.no_readme') }}
     <a
