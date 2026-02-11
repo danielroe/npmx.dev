@@ -94,7 +94,7 @@ async function fetchFileContent(
  * - /api/registry/file/@scope/packageName/v/1.2.3/path/to/file.ts
  */
 export default defineCachedEventHandler(
-  async event => {
+  async (event): Promise<PackageFileContentResponse> => {
     // Parse: [pkg, 'v', version, ...filePath] or [@scope, pkg, 'v', version, ...filePath]
     const pkgParamSegments = getRouterParam(event, 'pkg')?.split('/') ?? []
 
