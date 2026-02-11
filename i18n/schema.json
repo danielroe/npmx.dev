@@ -624,6 +624,27 @@
             },
             "compare": {
               "type": "string"
+            },
+            "release": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "releases": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "view_all": {
+              "type": "string"
+            },
+            "view_release": {
+              "type": "string"
+            },
+            "view_release_for_version": {
+              "type": "string"
             }
           },
           "additionalProperties": false

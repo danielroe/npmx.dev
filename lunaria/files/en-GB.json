@@ -205,7 +205,14 @@
       "code": "code",
       "docs": "docs",
       "fund": "fund",
-      "compare": "compare"
+      "compare": "compare",
+      "release": "release"
+    },
+    "releases": {
+      "title": "Releases",
+      "view_all": "View all {count} releases",
+      "view_release": "View release",
+      "view_release_for_version": "View release for {version}"
     },
     "likes": {
       "like": "Like this package",
