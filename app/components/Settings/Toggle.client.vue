@@ -1,8 +1,24 @@
 <script setup lang="ts">
-defineProps<{
-  label: string
-  description?: string
-}>()
+import TooltipApp from '~/components/Tooltip/App.vue'
+
+const props = withDefaults(
+  defineProps<{
+    label?: string
+    description?: string
+    class?: string
+    justify?: 'between' | 'start'
+    tooltip?: string
+    tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
+    tooltipTo?: string
+    tooltipOffset?: number
+    reverseOrder?: boolean
+  }>(),
+  {
+    justify: 'between',
+    reverseOrder: false,
+  },
+)
+
 const checked = defineModel<boolean>({
   required: true,
 })
@@ -10,22 +26,66 @@ const id = useId()
 </script>
 
 <template>
-  <label :for="id" class="grid" style="grid-template-areas: 'label-text . toggle-background'">
-    <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">{{
-      label
-    }}</span>
-    <input
-      role="switch"
-      type="checkbox"
-      :id
-      class="opacity-0"
-      style="grid-row: 1; grid-column: 3; justify-self: end"
-      v-model="checked"
-    />
-    <span
-      class="toggle-background h-6 w-11 rounded-full border border-fg relative flex"
-      style="grid-area: toggle-background; justify-self: end"
-    ></span>
+  <label
+    :for="id"
+    class="grid items-center gap-4 py-1 -my-1"
+    :class="[justify === 'start' ? 'justify-start' : '', props.reverseOrder ? 'toggle-reverse' : 'toggle-default', $props.class]"
+  >
+    <template v-if="props.reverseOrder">
+      <input
+        role="switch"
+        type="checkbox"
+        :id
+        class="toggle-checkbox opacity-0"
+        style="grid-row: 1; grid-column: 1; justify-self: start"
+        v-model="checked"
+      />
+      <span
+        class="toggle-background h-6 w-11 rounded-full border border-fg relative flex shrink-0"
+      ></span>
+      <TooltipApp
+        v-if="tooltip && label"
+        :text="tooltip"
+        :position="tooltipPosition ?? 'top'"
+        :to="tooltipTo"
+        :offset="tooltipOffset"
+      >
+        <span class="text-sm text-fg font-medium text-start">
+          {{ label }}
+        </span>
+      </TooltipApp>
+      <span v-else-if="label" class="text-sm text-fg font-medium text-start">
+        {{ label }}
+      </span>
+    </template>
+    <template v-else>
+      <TooltipApp
+        v-if="tooltip && label"
+        :text="tooltip"
+        :position="tooltipPosition ?? 'top'"
+        :to="tooltipTo"
+        :offset="tooltipOffset"
+      >
+        <span class="text-sm text-fg font-medium text-start">
+          {{ label }}
+        </span>
+      </TooltipApp>
+      <span v-else-if="label" class="text-sm text-fg font-medium text-start">
+        {{ label }}
+      </span>
+      <input
+        role="switch"
+        type="checkbox"
+        :id
+        class="toggle-checkbox opacity-0"
+        style="grid-row: 1; grid-column: 3; justify-self: end"
+        v-model="checked"
+      />
+      <span
+        class="toggle-background h-6 w-11 rounded-full border border-fg relative flex shrink-0"
+        style="grid-area: toggle-background; justify-self: end"
+      ></span>
+    </template>
   </label>
   <p v-if="description" class="text-sm text-fg-muted mt-2">
     {{ description }}
@@ -33,12 +93,22 @@ const id = useId()
 </template>
 
 <style scoped>
+/* Layout: default order (label first, toggle last) */
+.toggle-default {
+  grid-template-areas: 'label-text . toggle-background';
+  grid-template-columns: auto 1fr auto;
+}
+
+/* Layout: reverse order (toggle first, label last) */
+.toggle-reverse {
+  grid-template-areas: 'toggle-background . label-text';
+  grid-template-columns: auto 1fr auto;
+}
+
 /* Track background */
 .toggle-background {
   background: var(--fg-subtle);
-  transition:
-    background-color 100ms ease-in,
-    border-color 100ms ease-in;
+  transition: background-color 100ms ease-in, border-color 100ms ease-in;
 }
 
 @media (prefers-reduced-motion: reduce) {

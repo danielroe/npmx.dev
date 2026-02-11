@@ -28,6 +28,8 @@ const router = useRouter()
 
 const header = useTemplateRef('header')
 const isHeaderPinned = shallowRef(false)
+const navExtraOffset = shallowRef(0)
+const isMobile = useMediaQuery('(max-width: 639.9px)')
 
 function checkHeaderPosition() {
   const el = header.value
@@ -43,9 +45,50 @@ function checkHeaderPosition() {
 useEventListener('scroll', checkHeaderPosition, { passive: true })
 useEventListener('resize', checkHeaderPosition)
 
+const footerTarget = ref<HTMLElement | null>(null)
+const footerThresholds = Array.from({ length: 11 }, (_, i) => i / 10)
+
+const { pause: pauseFooterObserver, resume: resumeFooterObserver } = useIntersectionObserver(
+  footerTarget,
+  ([entry]) => {
+    if (!entry) return
+
+    navExtraOffset.value = entry.isIntersecting ? entry.intersectionRect.height : 0
+  },
+  {
+    threshold: footerThresholds,
+    immediate: false,
+  },
+)
+
+function initFooterObserver() {
+  footerTarget.value = document.querySelector('footer')
+  if (!footerTarget.value) return
+
+  pauseFooterObserver()
+
+  watch(
+    isMobile,
+    value => {
+      if (value) {
+        resumeFooterObserver()
+      } else {
+        pauseFooterObserver()
+        navExtraOffset.value = 0
+      }
+    },
+    { immediate: true },
+  )
+}
+
 onMounted(() => {
   checkHeaderPosition()
+  initFooterObserver()
 })
+
+const navExtraOffsetStyle = computed(() => ({
+  '--package-nav-extra': `${navExtraOffset.value}px`,
+}))
 
 const { packageName, requestedVersion, orgName } = usePackageRoute()
 const selectedPM = useSelectedPackageManager()
@@ -495,6 +538,8 @@ const likeAction = async () => {
   }
 }
 
+const dependencyCount = computed(() => getDependencyCount(displayVersion.value))
+
 const numberFormatter = useNumberFormatter()
 const compactNumberFormatter = useCompactNumberFormatter()
 const bytesFormatter = useBytesFormatter()
@@ -661,6 +706,7 @@ const showSkeleton = shallowRef(false)
             as="nav"
             :aria-label="$t('package.navigation')"
             class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md"
+            :style="navExtraOffsetStyle"
             :class="$style.packageNav"
           >
             <LinkBase
@@ -855,12 +901,10 @@ const showSkeleton = shallowRef(false)
             <dd class="font-mono text-sm text-fg flex items-center justify-start gap-2">
               <span class="flex items-center gap-1">
                 <!-- Direct deps (muted) -->
-                <span class="text-fg-muted">{{
-                  numberFormatter.format(getDependencyCount(displayVersion))
-                }}</span>
+                <span class="text-fg-muted">{{ numberFormatter.format(dependencyCount) }}</span>
 
                 <!-- Separator and total transitive deps -->
-                <template v-if="getDependencyCount(displayVersion) !== totalDepsCount">
+                <template v-if="dependencyCount > 0 && dependencyCount !== totalDepsCount">
                   <span class="text-fg-subtle">/</span>
 
                   <ClientOnly>
@@ -886,7 +930,7 @@ const showSkeleton = shallowRef(false)
                   </ClientOnly>
                 </template>
               </span>
-              <ButtonGroup v-if="getDependencyCount(displayVersion) > 0">
+              <ButtonGroup v-if="dependencyCount > 0">
                 <LinkBase
                   variant="button-secondary"
                   size="small"
@@ -932,7 +976,7 @@ const showSkeleton = shallowRef(false)
               </span>
 
               <!-- Separator and install size -->
-              <template v-if="getDependencyCount(displayVersion) > 0">
+              <template v-if="displayVersion?.dist?.unpackedSize !== installSize?.totalSize">
                 <span class="text-fg-subtle mx-1">/</span>
 
                 <span
@@ -1289,6 +1333,7 @@ const showSkeleton = shallowRef(false)
             :versions="pkg.versions"
             :dist-tags="pkg['dist-tags'] ?? {}"
             :time="pkg.time"
+            :selected-version="resolvedVersion ?? pkg['dist-tags']?.['latest']"
           />
 
           <!-- Install Scripts Warning -->
@@ -1474,7 +1519,7 @@ const showSkeleton = shallowRef(false)
 /* Mobile floating nav: safe-area positioning + kbd hiding */
 @media (max-width: 639.9px) {
   .packageNav {
-    bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(1.25rem + var(--package-nav-extra, 0px) + env(safe-area-inset-bottom, 0px));
   }
 
   .packageNav > :global(a kbd) {
