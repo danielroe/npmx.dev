@@ -3,7 +3,7 @@ import TooltipApp from '~/components/Tooltip/App.vue'
 
 const props = withDefaults(
   defineProps<{
-    label?: string
+    label: string
     description?: string
     justify?: 'between' | 'start'
     tooltip?: string
@@ -137,6 +137,57 @@ const id = useId()
   .toggle,
   .toggle::before {
     transition: none;
+  }
+}
+
+/* Support forced colors */
+@media (forced-colors: active) {
+  label > span {
+    background: Canvas;
+    color: var(--bg);
+    forced-color-adjust: none;
+  }
+
+  label:has(.toggle:checked) > span {
+    background: Highlight;
+    color: var(--fg);
+  }
+
+  .toggle::before {
+    forced-color-adjust: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .toggle::before {
+      background-color: Highlight;
+    }
+
+    label > span {
+      background: Canvas;
+      color: var(--fg);
+      forced-color-adjust: none;
+    }
+
+    label:has(.toggle:checked) > span {
+      background: Highlight;
+      color: var(--bg);
+    }
+  }
+
+  .toggle,
+  .toggle:hover {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .toggle:checked,
+  .toggle:checked:hover {
+    background: Highlight;
+    border-color: HighlightText;
+  }
+
+  .toggle:checked::before {
+    background: Canvas;
   }
 }
 </style>
