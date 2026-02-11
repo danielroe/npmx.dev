@@ -27,24 +27,23 @@ const id = useId()
 <template>
   <label
     :for="id"
-    class="grid items-center gap-4 py-1 -my-1"
-    :class="[
-      justify === 'start' ? 'justify-start' : '',
-      props.reverseOrder ? 'toggle-reverse' : 'toggle-default',
-    ]"
+    class="grid items-center gap-4 py-1 -my-1 grid-cols-[auto_1fr_auto]"
+    :class="[justify === 'start' ? 'justify-start' : '']"
+    :style="
+      props.reverseOrder
+        ? 'grid-template-areas: \'toggle . label-text\''
+        : 'grid-template-areas: \'label-text . toggle\''
+    "
   >
     <template v-if="props.reverseOrder">
       <input
         role="switch"
         type="checkbox"
         :id
-        class="toggle-checkbox opacity-0"
-        style="grid-row: 1; grid-column: 1; justify-self: start"
         v-model="checked"
+        class="toggle appearance-none h-6 w-11 rounded-full border border-fg relative shrink-0 cursor-pointer bg-fg-subtle checked:bg-fg checked:border-fg focus-visible:(outline-2 outline-fg outline-offset-2) before:content-[''] before:absolute before:h-5 before:w-5 before:top-1px before:rounded-full before:bg-bg"
+        style="grid-area: toggle"
       />
-      <span
-        class="toggle-background h-6 w-11 rounded-full border border-fg relative flex shrink-0"
-      ></span>
       <TooltipApp
         v-if="tooltip && label"
         :text="tooltip"
@@ -52,11 +51,15 @@ const id = useId()
         :to="tooltipTo"
         :offset="tooltipOffset"
       >
-        <span class="text-sm text-fg font-medium text-start">
+        <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">
           {{ label }}
         </span>
       </TooltipApp>
-      <span v-else-if="label" class="text-sm text-fg font-medium text-start">
+      <span
+        v-else-if="label"
+        class="text-sm text-fg font-medium text-start"
+        style="grid-area: label-text"
+      >
         {{ label }}
       </span>
     </template>
@@ -68,25 +71,25 @@ const id = useId()
         :to="tooltipTo"
         :offset="tooltipOffset"
       >
-        <span class="text-sm text-fg font-medium text-start">
+        <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">
           {{ label }}
         </span>
       </TooltipApp>
-      <span v-else-if="label" class="text-sm text-fg font-medium text-start">
+      <span
+        v-else-if="label"
+        class="text-sm text-fg font-medium text-start"
+        style="grid-area: label-text"
+      >
         {{ label }}
       </span>
       <input
         role="switch"
         type="checkbox"
         :id
-        class="toggle-checkbox opacity-0"
-        style="grid-row: 1; grid-column: 3; justify-self: end"
         v-model="checked"
+        class="toggle appearance-none h-6 w-11 rounded-full border border-fg relative shrink-0 cursor-pointer bg-fg-subtle checked:bg-fg checked:border-fg focus-visible:(outline-2 outline-fg outline-offset-2) before:content-[''] before:absolute before:h-5 before:w-5 before:top-1px before:rounded-full before:bg-bg"
+        style="grid-area: toggle; justify-self: end"
       />
-      <span
-        class="toggle-background h-6 w-11 rounded-full border border-fg relative flex shrink-0"
-        style="grid-area: toggle-background; justify-self: end"
-      ></span>
     </template>
   </label>
   <p v-if="description" class="text-sm text-fg-muted mt-2">
@@ -95,76 +98,45 @@ const id = useId()
 </template>
 
 <style scoped>
-/* Layout: default order (label first, toggle last) */
-.toggle-default {
-  grid-template-areas: 'label-text . toggle-background';
-  grid-template-columns: auto 1fr auto;
+/* Thumb position: logical property for RTL support */
+.toggle::before {
+  inset-inline-start: 1px;
 }
 
-/* Layout: reverse order (toggle first, label last) */
-.toggle-reverse {
-  grid-template-areas: 'toggle-background . label-text';
-  grid-template-columns: auto 1fr auto;
-}
-
-/* Track background */
-.toggle-background {
-  background: var(--fg-subtle);
+/* Track transition */
+.toggle {
   transition:
     background-color 100ms ease-in,
     border-color 100ms ease-in;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .toggle-background {
-    transition: none;
-  }
+.toggle::before {
+  transition: translate 200ms ease-in-out;
 }
 
-label:has(input:focus-visible) .toggle-background {
-  outline: solid 2px var(--fg);
-  outline-offset: 2px;
-}
-
-label:has(input:checked) .toggle-background {
-  background: var(--fg);
-  border-color: var(--fg);
-}
-
-label:has(input:hover:not(:checked)) .toggle-background {
+/* Hover states */
+.toggle:hover:not(:checked) {
   background: var(--fg-muted);
 }
 
-label:has(input:checked:hover) .toggle-background {
+.toggle:checked:hover {
   background: var(--fg-muted);
   border-color: var(--fg-muted);
 }
 
-/* Circle that moves */
-.toggle-background::before {
-  transition: translate 200ms ease-in-out;
-  content: '';
-  width: 20px;
-  height: 20px;
-  top: 1px;
-  inset-inline-start: 1px;
-  position: absolute;
-  border-radius: 9999px;
-  background: var(--bg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .toggle-background::before {
-    transition: none;
-  }
-}
-
-/* Support rtl locales */
-:dir(ltr) input:checked + .toggle-background::before {
+/* RTL-aware checked thumb position */
+:dir(ltr) .toggle:checked::before {
   translate: 20px;
 }
 
-:dir(rtl) input:checked + .toggle-background::before {
+:dir(rtl) .toggle:checked::before {
   translate: -20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggle::before {
+    transition: none;
+  }
 }
 </style>
