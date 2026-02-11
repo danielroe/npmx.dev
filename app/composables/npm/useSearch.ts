@@ -364,6 +364,7 @@ export function useSearch(
 
     if (!intent || !name) {
       suggestionsLoading.value = false
+      await Promise.all(promises)
       return { suggestions: [], packageAvailability: availability }
     }
 
