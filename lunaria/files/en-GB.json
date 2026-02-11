@@ -235,6 +235,7 @@
       "no_readme": "No README available.",
       "view_on_github": "View on GitHub",
       "toc_title": "Outline",
+      "load_error": "Failed to load README",
       "callout": {
         "note": "Note",
         "tip": "Tip",

@@ -56,7 +56,7 @@ async function fetchReadmeFromJsdelivr(
  * - /api/registry/readme/@scope/packageName/v/1.2.3 - scoped package, specific version
  */
 export default defineCachedEventHandler(
-  async event => {
+  async (event): Promise<ReadmeResponse> => {
     // Parse package name and optional version from URL segments
     // Patterns: [pkg] or [pkg, 'v', version] or [@scope, pkg] or [@scope, pkg, 'v', version]
     const pkgParamSegments = getRouterParam(event, 'pkg')?.split('/') ?? []
@@ -107,7 +107,7 @@ export default defineCachedEventHandler(
       }
 
       if (!readmeContent || readmeContent === NPM_MISSING_README_SENTINEL) {
-        return { html: '', playgroundLinks: [], toc: [] }
+        return { html: '', playgroundLinks: [], toc: [], md: '' }
       }
 
       // Parse repository info for resolving relative URLs to GitHub

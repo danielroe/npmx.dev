@@ -3,8 +3,21 @@ import type { PlaygroundLink } from '#shared/types'
 import { decodeHtmlEntities } from '~/utils/formatters'
 
 const props = defineProps<{
-  links: PlaygroundLink[]
+  packageName: string
+  requestedVersion: string | null
 }>()
+
+// Fetch README for specific version if requested, otherwise latest
+const { data } = useLazyFetch<ReadmeResponse>(
+  () => {
+    const base = `/api/registry/readme/${props.packageName}`
+    const version = props.requestedVersion
+    return version ? `${base}/v/${version}` : base
+  },
+  { default: () => ({ html: '', md: '', playgroundLinks: [], toc: [] }) },
+)
+
+const links = computed<PlaygroundLink[]>(() => data.value?.playgroundLinks ?? [])
 
 // Map provider id to icon class
 const providerIcons: Record<string, string> = {
@@ -51,9 +64,9 @@ onClickOutside(dropdownRef, () => {
 })
 
 // Single vs multiple
-const hasSingleLink = computed(() => props.links.length === 1)
-const hasMultipleLinks = computed(() => props.links.length > 1)
-const firstLink = computed(() => props.links[0])
+const hasSingleLink = computed(() => links.value.length === 1)
+const hasMultipleLinks = computed(() => links.value.length > 1)
+const firstLink = computed(() => links.value[0])
 
 function closeDropdown() {
   isOpen.value = false
@@ -78,12 +91,12 @@ function handleKeydown(event: KeyboardEvent) {
       break
     case 'ArrowDown':
       event.preventDefault()
-      focusedIndex.value = (focusedIndex.value + 1) % props.links.length
+      focusedIndex.value = (focusedIndex.value + 1) % links.value.length
       focusMenuItem(focusedIndex.value)
       break
     case 'ArrowUp':
       event.preventDefault()
-      focusedIndex.value = focusedIndex.value <= 0 ? props.links.length - 1 : focusedIndex.value - 1
+      focusedIndex.value = focusedIndex.value <= 0 ? links.value.length - 1 : focusedIndex.value - 1
       focusMenuItem(focusedIndex.value)
       break
     case 'Home':
@@ -93,8 +106,8 @@ function handleKeydown(event: KeyboardEvent) {
       break
     case 'End':
       event.preventDefault()
-      focusedIndex.value = props.links.length - 1
-      focusMenuItem(props.links.length - 1)
+      focusedIndex.value = links.value.length - 1
+      focusMenuItem(links.value.length - 1)
       break
     case 'Tab':
       closeDropdown()

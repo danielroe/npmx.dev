@@ -4,7 +4,6 @@ import type {
   PackageVersionInfo,
   PackumentVersion,
   ProvenanceDetails,
-  ReadmeResponse,
   SkillsListResponse,
 } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
@@ -98,26 +97,6 @@ const activePmId = computed(() => selectedPM.value ?? 'npm')
 if (import.meta.server) {
   assertValidPackageName(packageName.value)
 }
-
-// Fetch README for specific version if requested, otherwise latest
-const { data: readmeData } = useLazyFetch<ReadmeResponse>(
-  () => {
-    const base = `/api/registry/readme/${packageName.value}`
-    const version = requestedVersion.value
-    return version ? `${base}/v/${version}` : base
-  },
-  { default: () => ({ html: '', md: '', playgroundLinks: [], toc: [] }) },
-)
-
-//copy README file as Markdown
-const { copied: copiedReadme, copy: copyReadme } = useClipboard({
-  source: () => readmeData.value?.md ?? '',
-  copiedDuring: 2000,
-})
-
-// Track active TOC item based on scroll position
-const tocItems = computed(() => readmeData.value?.toc ?? [])
-const { activeId: activeTocId } = useActiveTocItem(tocItems)
 
 // Check if package exists on JSR (only for scoped packages)
 const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${packageName.value}`, {
@@ -1227,53 +1206,12 @@ const showSkeleton = shallowRef(false)
         </ClientOnly>
       </div>
 
-      <!-- README -->
-      <section id="readme" class="min-w-0 scroll-mt-20" :class="$style.areaReadme">
-        <div class="flex flex-wrap items-center justify-between mb-3 px-1">
-          <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
-            <LinkBase to="#readme">
-              {{ $t('package.readme.title') }}
-            </LinkBase>
-          </h2>
-          <div class="flex gap-2">
-            <!-- Copy readme as Markdown button -->
-            <TooltipApp
-              v-if="readmeData?.md"
-              :text="$t('package.readme.copy_as_markdown')"
-              position="bottom"
-            >
-              <ButtonBase
-                @click="copyReadme()"
-                :aria-pressed="copiedReadme"
-                :aria-label="
-                  copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
-                "
-                :classicon="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
-              >
-                {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
-              </ButtonBase>
-            </TooltipApp>
-            <ReadmeTocDropdown
-              v-if="readmeData?.toc && readmeData.toc.length > 1"
-              :toc="readmeData.toc"
-              :active-id="activeTocId"
-            />
-          </div>
-        </div>
-
-        <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-        <Readme v-if="readmeData?.html" :html="readmeData.html" />
-        <p v-else class="text-fg-muted italic">
-          {{ $t('package.readme.no_readme') }}
-          <a
-            v-if="repositoryUrl"
-            :href="repositoryUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="link text-fg underline underline-offset-4 decoration-fg-subtle hover:(decoration-fg text-fg) transition-colors duration-200"
-            >{{ $t('package.readme.view_on_github') }}</a
-          >
-        </p>
+      <section id="readme" class="min-w-0 scroll-mt-20">
+        <PackageReadme
+          :package-name="pkg.name"
+          :requested-version="resolvedVersion ?? null"
+          :repository-url="repositoryUrl"
+        />
 
         <section
           v-if="hasProvenance(displayVersion) && isMounted"
@@ -1334,8 +1272,8 @@ const showSkeleton = shallowRef(false)
 
           <!-- Playground links -->
           <PackagePlaygrounds
-            v-if="readmeData?.playgroundLinks?.length"
-            :links="readmeData.playgroundLinks"
+            :package-name="pkg.name"
+            :requested-version="resolvedVersion ?? null"
           />
 
           <PackageCompatibility :engines="displayVersion?.engines" />
@@ -1482,14 +1420,6 @@ const showSkeleton = shallowRef(false)
 
 .areaVulns {
   grid-area: vulns;
-  overflow-x: hidden;
-}
-
-.areaReadme {
-  grid-area: readme;
-}
-
-.areaReadme > :global(.readme) {
   overflow-x: hidden;
 }
 
