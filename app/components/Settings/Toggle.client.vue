@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   label: string
   description?: string
 }>()
@@ -10,10 +10,22 @@ const id = useId()
 </script>
 
 <template>
-  <label :for="id">
-    <span class="label-text">{{ label }}</span>
-    <input role="switch" type="checkbox" :id class="checkbox" v-model="checked" />
-    <span class="background"></span>
+  <label :for="id" class="grid" style="grid-template-areas: 'label-text . toggle-background'">
+    <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">{{
+      label
+    }}</span>
+    <input
+      role="switch"
+      type="checkbox"
+      :id
+      class="opacity-0"
+      style="grid-row: 1; grid-column: 3; justify-self: end"
+      v-model="checked"
+    />
+    <span
+      class="toggle-background h-6 w-11 rounded-full border border-fg relative flex"
+      style="grid-area: toggle-background; justify-self: end"
+    ></span>
   </label>
   <p v-if="description" class="text-sm text-fg-muted mt-2">
     {{ description }}
@@ -21,58 +33,42 @@ const id = useId()
 </template>
 
 <style scoped>
-.label-text {
-  grid-area: label-text;
-}
-
-.background {
-  grid-area: toggle-background;
-  justify-self: end;
-}
-
-.checkbox {
-  opacity: 0;
-}
-
-label {
-  display: grid;
-  grid-template-areas: 'label-text . toggle-background';
-}
-
-input {
-  grid-row: 1;
-  grid-column: 3;
-  justify-self: end;
-}
-
-/* background */
-.background {
-  width: 44px;
-  height: 24px;
+/* Track background */
+.toggle-background {
   background: var(--fg-subtle);
-  border-radius: 9999px;
-  border: 1px solid var(--fg);
-  display: flex;
-  position: relative;
+  transition:
+    background-color 100ms ease-in,
+    border-color 100ms ease-in;
 }
 
-label:has(input:focus-visible) .background {
+@media (prefers-reduced-motion: reduce) {
+  .toggle-background {
+    transition: none;
+  }
+}
+
+label:has(input:focus-visible) .toggle-background {
   outline: solid 2px var(--fg);
   outline-offset: 2px;
 }
 
-label:has(input:checked) .background {
+label:has(input:checked) .toggle-background {
   background: var(--fg);
   border-color: var(--fg);
 }
 
-label:has(input:hover) .background {
+label:has(input:hover:not(:checked)) .toggle-background {
   background: var(--fg-muted);
 }
 
+label:has(input:checked:hover) .toggle-background {
+  background: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
 /* Circle that moves */
-.background::before {
-  transition: transform 200ms ease-in-out;
+.toggle-background::before {
+  transition: translate 200ms ease-in-out;
   content: '';
   width: 20px;
   height: 20px;
@@ -83,12 +79,18 @@ label:has(input:hover) .background {
   background: var(--bg);
 }
 
-/* Support rtl locales */
-:dir(ltr) .checkbox:checked + .background::before {
-  transform: translate(20px);
+@media (prefers-reduced-motion: reduce) {
+  .toggle-background::before {
+    transition: none;
+  }
 }
 
-:dir(rtl) .checkbox:checked + .background::before {
-  transform: translate(-20px);
+/* Support rtl locales */
+:dir(ltr) input:checked + .toggle-background::before {
+  translate: 20px;
+}
+
+:dir(rtl) input:checked + .toggle-background::before {
+  translate: -20px;
 }
 </style>
