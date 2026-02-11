@@ -190,8 +190,7 @@ onKeyStroke(
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 border-b border-border">
-    <div class="absolute inset-0 bg-bg/80 backdrop-blur-md" />
+  <header class="sticky top-0 z-50 border-b border-border bg-bg/80 backdrop-blur-md">
     <nav
       :aria-label="$t('nav.main_navigation')"
       class="relative container min-h-14 flex items-center gap-2 z-1"

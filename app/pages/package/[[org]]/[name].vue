@@ -552,7 +552,7 @@ const showSkeleton = shallowRef(false)
 <template>
   <DevOnly>
     <ButtonBase
-      class="fixed bottom-4 inset-is-4 z-50 shadow-lg rounded-full! px-3! py-2!"
+      class="fixed! bottom-4 inset-is-4 z-50 shadow-lg rounded-full! px-3! py-2!"
       classicon="i-simple-icons:skeleton"
       variant="primary"
       title="Toggle skeleton loader (development only)"

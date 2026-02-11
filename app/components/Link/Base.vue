@@ -106,7 +106,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
     />
     <span
       v-else-if="isLinkAnchor && isLink"
-      class="i-carbon:link size-[1em] opacity-0 group-hover/link:opacity-100 transition-opacity duration-200"
+      class="i-carbon:link size-[1em] opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-200"
       aria-hidden="true"
     />
     <kbd
