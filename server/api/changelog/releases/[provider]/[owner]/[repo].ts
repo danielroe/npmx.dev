@@ -7,8 +7,9 @@ import { parse } from 'valibot'
 export default defineCachedEventHandler(async event => {
   const provider = getRouterParam(event, 'provider')
   const repo = getRouterParam(event, 'repo')
+  const owner = getRouterParam(event, 'owner')
 
-  if (!repo || !provider || !/^[\w-]+\/[\w-]+$/.test(repo)) {
+  if (!repo || !provider || !owner) {
     throw createError({
       status: 404,
       statusMessage: THROW_INCOMPLETE_PARAM,
@@ -18,7 +19,7 @@ export default defineCachedEventHandler(async event => {
   try {
     switch (provider as ProviderId) {
       case 'github':
-        return getReleasesFromGithub(repo)
+        return getReleasesFromGithub(owner, repo)
 
       default:
         return false
@@ -32,8 +33,8 @@ export default defineCachedEventHandler(async event => {
   }
 })
 
-async function getReleasesFromGithub(repo: string) {
-  const data = await $fetch(`https://ungh.cc/repos/${repo}/releases`, {
+async function getReleasesFromGithub(owner: string, repo: string) {
+  const data = await $fetch(`https://ungh.cc/repos/${owner}/${repo}/releases`, {
     headers: {
       'Accept': '*/*',
       'User-Agent': 'npmx.dev',

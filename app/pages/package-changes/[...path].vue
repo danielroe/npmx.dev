@@ -90,7 +90,7 @@ const { data: changelog } = usePackageChangelog(packageName, version)
       </div>
     </header>
 
-    <section class="container" v-if="changelog">
+    <section class="container w-full" v-if="changelog">
       <LazyChangelogReleases v-if="changelog.type == 'release'" :info="changelog" />
       <p v-else>changelog.md support is comming or the package doesn't have changelogs</p>
     </section>
