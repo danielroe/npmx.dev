@@ -181,10 +181,11 @@ test.describe('Organization Management', () => {
     await orgManagement.locator('#new-member-role').selectOption('admin')
 
     // Submit
-    await orgManagement.getByRole('button', { name: /^add$/i }).click()
-    await page.waitForTimeout(500)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/operations') && resp.ok()),
+      orgManagement.getByRole('button', { name: /^add$/i }).click(),
+    ])
 
-    // Verify operation
     const operations = await mockConnector.getOperations()
     expect(operations).toHaveLength(1)
     expect(operations[0]?.type).toBe('org:add-user')
@@ -198,8 +199,10 @@ test.describe('Organization Management', () => {
     const orgManagement = page.getByRole('region', { name: /organization management/i })
     await expect(orgManagement).toBeVisible({ timeout: 10_000 })
 
-    await orgManagement.getByRole('button', { name: /remove member2/i }).click()
-    await page.waitForTimeout(500)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/operations') && resp.ok()),
+      orgManagement.getByRole('button', { name: /remove member2/i }).click(),
+    ])
 
     const operations = await mockConnector.getOperations()
     expect(operations).toHaveLength(1)
@@ -219,8 +222,10 @@ test.describe('Organization Management', () => {
 
     const roleSelect = orgManagement.locator('#role-member2')
     await expect(roleSelect).toBeVisible({ timeout: 5000 })
-    await roleSelect.selectOption('admin')
-    await page.waitForTimeout(500)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/operations') && resp.ok()),
+      roleSelect.selectOption('admin'),
+    ])
 
     const operations = await mockConnector.getOperations()
     expect(operations).toHaveLength(1)
@@ -299,8 +304,10 @@ test.describe('Package Access Controls', () => {
 
     await section.locator('#grant-permission-select').selectOption('read-write')
 
-    await section.getByRole('button', { name: /^grant$/i }).click()
-    await page.waitForTimeout(500)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/operations') && resp.ok()),
+      section.getByRole('button', { name: /^grant$/i }).click(),
+    ])
 
     const operations = await mockConnector.getOperations()
     expect(operations).toHaveLength(1)
@@ -323,8 +330,10 @@ test.describe('Package Access Controls', () => {
     const teamList = page.getByRole('list', { name: /team access list/i })
     await expect(teamList).toBeVisible({ timeout: 10_000 })
 
-    await section.getByRole('button', { name: /revoke docs access/i }).click()
-    await page.waitForTimeout(500)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/operations') && resp.ok()),
+      section.getByRole('button', { name: /revoke docs access/i }).click(),
+    ])
 
     const operations = await mockConnector.getOperations()
     expect(operations).toHaveLength(1)
@@ -392,8 +401,10 @@ test.describe('Operations Queue', () => {
     // Approve all
     const approveAllBtn = modal.getByRole('button', { name: /approve all/i })
     await expect(approveAllBtn).toBeVisible({ timeout: 5000 })
-    await approveAllBtn.click()
-    await page.waitForTimeout(300)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/approve-all') && resp.ok()),
+      approveAllBtn.click(),
+    ])
 
     let operations = await mockConnector.getOperations()
     expect(operations[0]?.status).toBe('approved')
@@ -401,8 +412,10 @@ test.describe('Operations Queue', () => {
     // Execute
     const executeBtn = modal.getByRole('button', { name: /execute/i })
     await expect(executeBtn).toBeVisible({ timeout: 5000 })
-    await executeBtn.click()
-    await page.waitForTimeout(500)
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/execute') && resp.ok()),
+      executeBtn.click(),
+    ])
 
     operations = await mockConnector.getOperations()
     expect(operations[0]?.status).toBe('completed')
@@ -422,7 +435,10 @@ test.describe('Operations Queue', () => {
     await openConnectorModal(page)
 
     const modal = page.getByRole('dialog')
-    await modal.getByRole('button', { name: /clear/i }).click()
+    await Promise.all([
+      page.waitForResponse(resp => resp.url().includes('/operations/all') && resp.ok()),
+      modal.getByRole('button', { name: /clear/i }).click(),
+    ])
 
     const operations = await mockConnector.getOperations()
     expect(operations).toHaveLength(0)
