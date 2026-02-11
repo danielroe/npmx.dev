@@ -104,9 +104,10 @@ async function handleRetryWithOtp() {
   otpError.value = ''
   otpInput.value = ''
 
-  // First, re-approve all OTP-failed operations
+  // First, re-approve all OTP/auth-failed operations
   const otpFailedOps = activeOperations.value.filter(
-    (op: PendingOperation) => op.status === 'failed' && op.result?.requiresOtp,
+    (op: PendingOperation) =>
+      op.status === 'failed' && (op.result?.requiresOtp || op.result?.authFailure),
   )
   for (const op of otpFailedOps) {
     await retryOperation(op.id)

@@ -377,20 +377,22 @@ export const useConnector = createSharedComposable(function useConnector() {
   const approvedOperations = computed(() =>
     state.value.operations.filter(op => op.status === 'approved'),
   )
-  /** Operations that are done (completed, or failed without needing OTP retry) */
+  /** Operations that are done (completed, or failed without needing OTP/auth retry) */
   const completedOperations = computed(() =>
     state.value.operations.filter(
-      op => op.status === 'completed' || (op.status === 'failed' && !op.result?.requiresOtp),
+      op =>
+        op.status === 'completed' ||
+        (op.status === 'failed' && !op.result?.requiresOtp && !op.result?.authFailure),
     ),
   )
-  /** Operations that are still active (pending, approved, running, or failed needing OTP retry) */
+  /** Operations that are still active (pending, approved, running, or failed needing OTP/auth retry) */
   const activeOperations = computed(() =>
     state.value.operations.filter(
       op =>
         op.status === 'pending' ||
         op.status === 'approved' ||
         op.status === 'running' ||
-        (op.status === 'failed' && op.result?.requiresOtp),
+        (op.status === 'failed' && (op.result?.requiresOtp || op.result?.authFailure)),
     ),
   )
   const hasOperations = computed(() => state.value.operations.length > 0)

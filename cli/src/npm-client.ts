@@ -160,15 +160,15 @@ export interface ExecNpmOptions {
 /**
  * PTY-based npm execution for interactive commands (uses node-pty).
  *
- * - Web OTP - either opend URL in browser if openUrls is true or passes the URL to frontend. If no auth happend within AUTH_URL_TIMEOUT_MS kills the process to unlock the connector.
+ * - Web OTP - either open URL in browser if openUrls is true or passes the URL to frontend. If no auth happend within AUTH_URL_TIMEOUT_MS kills the process to unlock the connector.
  *
- * - Cli OTP - if we get a classic OTP prompt will either return OTP request to the frontend or will pass sent OTP if its provided
+ * - CLI OTP - if we get a classic OTP prompt will either return OTP request to the frontend or will pass sent OTP if its provided
  */
 async function execNpmInteractive(
   args: string[],
   options: ExecNpmOptions = {},
 ): Promise<NpmExecResult> {
-  const openUrls = options.openUrls !== false
+  const openUrls = options.openUrls === true
 
   // Lazy-load node-pty so the native addon is only required when interactive mode is actually used.
   const pty = await import('@lydell/node-pty')
@@ -187,6 +187,7 @@ async function execNpmInteractive(
     let resolved = false
     let otpPromptSeen = false
     let authUrlSeen = false
+    let enterSent = false
     let authUrlTimeout: ReturnType<typeof setTimeout> | null = null
     let authUrlTimedOut = false
 
@@ -242,7 +243,8 @@ async function execNpmInteractive(
         }
       }
 
-      if (authUrlSeen && openUrls && AUTH_URL_PROMPT_RE.test(cleanAll)) {
+      if (authUrlSeen && openUrls && !enterSent && AUTH_URL_PROMPT_RE.test(cleanAll)) {
+        enterSent = true
         logDebug('Web auth prompt detected, pressing ENTER')
         child.write('\r')
       }
