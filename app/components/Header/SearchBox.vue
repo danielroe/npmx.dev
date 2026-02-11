@@ -15,7 +15,13 @@ const emit = defineEmits(['blur', 'focus'])
 
 const router = useRouter()
 const route = useRoute()
-const { isAlgolia } = useSearchProvider()
+// The actual search provider (from URL, used for API calls)
+const searchProviderParam = computed(() => {
+  const p = normalizeSearchParam(route.query.p)
+  return p === 'npm' ? 'npm' : 'algolia'
+})
+const { searchProvider } = useSearchProvider()
+const searchProviderValue = computed(() => searchProviderParam.value || searchProvider.value)
 
 const isSearchFocused = shallowRef(false)
 
@@ -35,7 +41,7 @@ function updateUrlQueryImpl(value: string) {
     return
   }
   if (route.name === 'search') {
-    router.replace({ query: { q: value || undefined } })
+    router.replace({ query: { q: value || undefined, p: searchProviderValue.value } })
     return
   }
   if (!value) {
@@ -46,6 +52,7 @@ function updateUrlQueryImpl(value: string) {
     name: 'search',
     query: {
       q: value,
+      p: searchProviderValue.value,
     },
   })
 }
@@ -54,9 +61,11 @@ const updateUrlQueryNpm = debounce(updateUrlQueryImpl, 250)
 const updateUrlQueryAlgolia = debounce(updateUrlQueryImpl, 80)
 
 const updateUrlQuery = Object.assign(
-  (value: string) => (isAlgolia.value ? updateUrlQueryAlgolia : updateUrlQueryNpm)(value),
+  (value: string) =>
+    (searchProviderValue.value === 'algolia' ? updateUrlQueryAlgolia : updateUrlQueryNpm)(value),
   {
-    flush: () => (isAlgolia.value ? updateUrlQueryAlgolia : updateUrlQueryNpm).flush(),
+    flush: () =>
+      (searchProviderValue.value === 'algolia' ? updateUrlQueryAlgolia : updateUrlQueryNpm).flush(),
   },
 )
 
@@ -85,6 +94,7 @@ function handleSubmit() {
       name: 'search',
       query: {
         q: searchQuery.value,
+        p: searchProviderValue.value,
       },
     })
   } else {

@@ -10,11 +10,17 @@ import { mapWithConcurrency } from '#shared/utils/async'
  * 3. Falls back to lightweight server-side package-meta lookups
  */
 export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
+  const route = useRoute()
+  const searchProviderParam = computed(() => {
+    const p = normalizeSearchParam(route.query.p)
+    return p === 'npm' ? 'npm' : 'algolia'
+  })
   const { searchProvider } = useSearchProvider()
+  const searchProviderValue = computed(() => searchProviderParam.value || searchProvider.value)
   const { getPackagesByName } = useAlgoliaSearch()
 
   const asyncData = useLazyAsyncData(
-    () => `org-packages:${searchProvider.value}:${toValue(orgName)}`,
+    () => `org-packages:${searchProviderValue.value}:${toValue(orgName)}`,
     async ({ ssrContext }, { signal }) => {
       const org = toValue(orgName)
       if (!org) {
@@ -51,7 +57,7 @@ export function useOrgPackages(orgName: MaybeRefOrGetter<string>) {
       }
 
       // Fetch metadata + downloads from Algolia (single request via getObjects)
-      if (searchProvider.value === 'algolia') {
+      if (searchProviderValue.value === 'algolia') {
         try {
           const response = await getPackagesByName(packageNames)
           if (response.objects.length > 0) {

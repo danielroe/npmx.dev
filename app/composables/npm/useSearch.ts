@@ -27,10 +27,10 @@ export interface UseSearchConfig {
 
 export function useSearch(
   query: MaybeRefOrGetter<string>,
+  searchProvider: MaybeRefOrGetter<SearchProvider>,
   options: MaybeRefOrGetter<SearchOptions> = {},
   config: UseSearchConfig = {},
 ) {
-  const { searchProvider } = useSearchProvider()
   const { search: searchAlgolia, searchWithSuggestions: algoliaMultiSearch } = useAlgoliaSearch()
   const {
     search: searchNpm,
@@ -143,10 +143,10 @@ export function useSearch(
   }
 
   const asyncData = useLazyAsyncData(
-    () => `search:${searchProvider.value}:${toValue(query)}`,
+    () => `search:${toValue(searchProvider)}:${toValue(query)}`,
     async (_nuxtApp, { signal }) => {
       const q = toValue(query)
-      const provider = searchProvider.value
+      const provider = toValue(searchProvider)
 
       if (!q.trim()) {
         isRateLimited.value = false
@@ -227,7 +227,7 @@ export function useSearch(
 
   async function fetchMore(targetSize: number): Promise<void> {
     const q = toValue(query).trim()
-    const provider = searchProvider.value
+    const provider = toValue(searchProvider)
 
     if (!q) {
       cache.value = null
@@ -307,15 +307,18 @@ export function useSearch(
     },
   )
 
-  watch(searchProvider, async () => {
-    cache.value = null
-    existenceCache.value = {}
-    await asyncData.refresh()
-    const targetSize = toValue(options).size
-    if (targetSize) {
-      await fetchMore(targetSize)
-    }
-  })
+  watch(
+    () => toValue(searchProvider),
+    async () => {
+      cache.value = null
+      existenceCache.value = {}
+      await asyncData.refresh()
+      const targetSize = toValue(options).size
+      if (targetSize) {
+        await fetchMore(targetSize)
+      }
+    },
+  )
 
   const data = computed<NpmSearchResponse | null>(() => {
     if (cache.value) {
@@ -427,10 +430,10 @@ export function useSearch(
   }
 
   const npmSuggestions = useLazyAsyncData(
-    () => `npm-suggestions:${searchProvider.value}:${toValue(query)}`,
+    () => `npm-suggestions:${toValue(searchProvider)}:${toValue(query)}`,
     async () => {
       const q = toValue(query).trim()
-      if (searchProvider.value === 'algolia' || !q)
+      if (toValue(searchProvider) === 'algolia' || !q)
         return { suggestions: [], packageAvailability: null }
       const { intent, name } = parseSuggestionIntent(q)
       if (!intent || !name) return { suggestions: [], packageAvailability: null }

@@ -115,18 +115,11 @@ export function useAccentColor() {
  * Composable for managing the search provider setting.
  */
 export function useSearchProvider() {
-  const cookie = useCookie('search-provider', {
-    secure: true,
-    sameSite: 'strict',
-    maxAge: 60 * 60 * 24 * 30,
-    path: '/',
-  })
   const { settings } = useSettings()
 
   const searchProvider = computed({
-    get: () => (cookie.value === 'npm' ? 'npm' : settings.value.searchProvider),
+    get: () => settings.value.searchProvider,
     set: (value: SearchProvider) => {
-      cookie.value = value
       settings.value.searchProvider = value
     },
   })

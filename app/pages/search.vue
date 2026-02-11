@@ -10,8 +10,13 @@ import { normalizeSearchParam } from '#shared/utils/url'
 const route = useRoute()
 const router = useRouter()
 
-// Search provider
-const { isAlgolia } = useSearchProvider()
+// The actual search provider (from URL, used for API calls)
+const searchProviderParam = computed(() => {
+  const p = normalizeSearchParam(route.query.p)
+  return p === 'npm' ? 'npm' : 'algolia'
+})
+const { searchProvider } = useSearchProvider()
+const searchProviderValue = computed(() => searchProviderParam.value || searchProvider.value)
 
 // Preferences (persisted to localStorage)
 const {
@@ -29,6 +34,7 @@ const updateUrlPage = debounce((page: number) => {
     query: {
       ...route.query,
       page: page > 1 ? page : undefined,
+      p: searchProviderValue.value,
     },
   })
 }, 500)
@@ -126,7 +132,7 @@ const ALL_SORT_KEYS: SortKey[] = [
 
 // Disable sort keys the current provider can't meaningfully sort by
 const disabledSortKeys = computed<SortKey[]>(() => {
-  const supported = PROVIDER_SORT_KEYS[isAlgolia.value ? 'algolia' : 'npm']
+  const supported = PROVIDER_SORT_KEYS[searchProviderValue.value]
   return ALL_SORT_KEYS.filter(k => !supported.has(k))
 })
 
@@ -168,16 +174,16 @@ const requestedSize = computed(() => {
   // When sorting by something other than relevance, fetch a large batch
   // so client-side sorting operates on a meaningful pool of matching results
   if (!isRelevanceSort.value) {
-    const cap = isAlgolia.value ? EAGER_LOAD_SIZE.algolia : EAGER_LOAD_SIZE.npm
+    const cap = EAGER_LOAD_SIZE[searchProviderValue.value]
     return Math.max(base, cap)
   }
   return base
 })
 
 // Reset to relevance sort when switching to a provider that doesn't support the current sort key
-watch(isAlgolia, algolia => {
+watch(searchProviderValue, provider => {
   const { key } = parseSortOption(sortOption.value)
-  const supported = PROVIDER_SORT_KEYS[algolia ? 'algolia' : 'npm']
+  const supported = PROVIDER_SORT_KEYS[provider]
   if (!supported.has(key)) {
     sortOption.value = 'relevance-desc'
   }
@@ -195,6 +201,7 @@ const {
   packageAvailability,
 } = useSearch(
   query,
+  searchProviderValue,
   () => ({
     size: requestedSize.value,
   }),
