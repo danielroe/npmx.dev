@@ -29,7 +29,11 @@ const id = useId()
   <label
     :for="id"
     class="grid items-center gap-4 py-1 -my-1"
-    :class="[justify === 'start' ? 'justify-start' : '', props.reverseOrder ? 'toggle-reverse' : 'toggle-default', $props.class]"
+    :class="[
+      justify === 'start' ? 'justify-start' : '',
+      props.reverseOrder ? 'toggle-reverse' : 'toggle-default',
+      $props.class,
+    ]"
   >
     <template v-if="props.reverseOrder">
       <input
@@ -108,7 +112,9 @@ const id = useId()
 /* Track background */
 .toggle-background {
   background: var(--fg-subtle);
-  transition: background-color 100ms ease-in, border-color 100ms ease-in;
+  transition:
+    background-color 100ms ease-in,
+    border-color 100ms ease-in;
 }
 
 @media (prefers-reduced-motion: reduce) {
