@@ -35,6 +35,11 @@ export default defineConfig({
     // keep this preset last
     ...(process.env.CI ? [] : [presetRtl(), presetA11y()]),
   ].filter(Boolean),
+  content: {
+    pipeline: {
+      exclude: [/\.(css|postcss|sass|scss|less|stylus|styl)($|\?)/, /[/\\]node_modules[/\\]/],
+    },
+  },
   transformers: [transformerDirectives(), transformerVariantGroup()],
   theme: {
     spacing: { DEFAULT: '4px' },

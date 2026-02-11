@@ -49,6 +49,10 @@ export default defineNuxtConfig({
     },
   },
 
+  unocss: {
+    autoImport: false,
+  },
+
   devtools: { enabled: true },
 
   devServer: {
