@@ -113,7 +113,7 @@ label:has(input:hover) .toggle--background {
   transform: translate(19px);
 }
 
-.toggle--checkbox:checked.rtl + .toggle--background:before {
+.toggle--checkbox:checked.rtl + .toggle--background::before {
   transform: translate(-19px);
 }
 </style>
