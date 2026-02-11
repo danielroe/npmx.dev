@@ -5,7 +5,6 @@ const props = withDefaults(
   defineProps<{
     label?: string
     description?: string
-    class?: string
     justify?: 'between' | 'start'
     tooltip?: string
     tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
@@ -32,7 +31,6 @@ const id = useId()
     :class="[
       justify === 'start' ? 'justify-start' : '',
       props.reverseOrder ? 'toggle-reverse' : 'toggle-default',
-      $props.class,
     ]"
   >
     <template v-if="props.reverseOrder">
