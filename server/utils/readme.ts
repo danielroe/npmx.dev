@@ -77,7 +77,7 @@ const PLAYGROUND_PROVIDERS: PlaygroundProvider[] = [
   },
   {
     id: 'typescript-playground',
-    name: 'Typescript Playground',
+    name: 'TypeScript Playground',
     domains: ['typescriptlang.org'],
     path: '/play',
     icon: 'typescript',
