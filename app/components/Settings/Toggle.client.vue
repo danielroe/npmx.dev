@@ -9,24 +9,12 @@ const checked = defineModel<boolean>({
   required: true,
 })
 const id = useId()
-const { locale, locales } = useI18n()
-const dir = computed(() => {
-  const localeObj = locales.value.find(item => item.code === locale.value)
-  return localeObj?.dir ?? 'ltr'
-})
 </script>
 
 <template>
   <label :for="id">
     <span class="toggle--label-text">{{ label }}</span>
-    <input
-      role="switch"
-      type="checkbox"
-      :id
-      class="toggle--checkbox"
-      :class="dir"
-      v-model="checked"
-    />
+    <input role="switch" type="checkbox" :id class="toggle--checkbox" v-model="checked" />
     <span class="toggle--background"></span>
   </label>
   <p v-if="description" class="text-sm text-fg-muted mt-2">
@@ -95,21 +83,18 @@ label:has(input:hover) .toggle--background {
   width: 20px;
   height: 20px;
   top: 1px;
+  inset-inline-start: 1px;
   position: absolute;
   border-radius: 9999px;
   background: var(--bg);
 }
 
 /* Support rtl locales */
-.toggle--checkbox + .toggle--background::before {
-  inset-inline-start: 3px;
+:dir(ltr) .toggle--checkbox:checked + .toggle--background::before {
+  transform: translate(20px);
 }
 
-.toggle--checkbox:checked.ltr + .toggle--background::before {
-  transform: translate(19px);
-}
-
-.toggle--checkbox:checked.rtl + .toggle--background::before {
-  transform: translate(-19px);
+:dir(rtl) .toggle--checkbox:checked + .toggle--background::before {
+  transform: translate(-20px);
 }
 </style>
