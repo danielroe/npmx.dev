@@ -63,7 +63,7 @@ const typesHref = computed(() => {
           variant="button-secondary"
           size="small"
           :to="typesHref"
-          classicon="i-carbon-checkmark"
+          classicon="i-carbon:checkmark"
         >
           {{ $t('package.metrics.types_label') }}
         </LinkBase>
@@ -73,10 +73,10 @@ const typesHref = computed(() => {
           :tabindex="0"
           :classicon="
             isLoading
-              ? 'i-carbon-circle-dash motion-safe:animate-spin'
+              ? 'i-carbon:circle-dash motion-safe:animate-spin'
               : hasTypes
-                ? 'i-carbon-checkmark'
-                : 'i-carbon-close'
+                ? 'i-carbon:checkmark'
+                : 'i-carbon:close'
           "
         >
           {{ $t('package.metrics.types_label') }}
@@ -95,10 +95,10 @@ const typesHref = computed(() => {
           :variant="hasEsm && !isLoading ? 'default' : 'ghost'"
           :classicon="
             isLoading
-              ? 'i-carbon-circle-dash motion-safe:animate-spin'
+              ? 'i-carbon:circle-dash motion-safe:animate-spin'
               : hasEsm
-                ? 'i-carbon-checkmark'
-                : 'i-carbon-close'
+                ? 'i-carbon:checkmark'
+                : 'i-carbon:close'
           "
         >
           ESM
@@ -113,7 +113,7 @@ const typesHref = computed(() => {
           tabindex="0"
           :variant="isLoading ? 'ghost' : 'default'"
           :classicon="
-            isLoading ? 'i-carbon-circle-dash motion-safe:animate-spin' : 'i-carbon-checkmark'
+            isLoading ? 'i-carbon:circle-dash motion-safe:animate-spin' : 'i-carbon:checkmark'
           "
         >
           CJS

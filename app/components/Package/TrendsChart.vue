@@ -5,28 +5,45 @@ import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
 import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
+import { drawNpmxLogoAndTaglineWatermark } from '~/composables/useChartWatermark'
+import type {
+  ChartTimeGranularity,
+  DailyDataPoint,
+  DateRangeFields,
+  EvolutionData,
+  EvolutionOptions,
+  MonthlyDataPoint,
+  WeeklyDataPoint,
+  YearlyDataPoint,
+} from '~/types/chart'
 
-const props = defineProps<{
-  // For single package downloads history
-  weeklyDownloads?: WeeklyDataPoint[]
-  inModal?: boolean
+const props = withDefaults(
+  defineProps<{
+    // For single package downloads history
+    weeklyDownloads?: WeeklyDataPoint[]
+    inModal?: boolean
 
-  /**
-   * Backward compatible single package mode.
-   * Used when `weeklyDownloads` is provided.
-   */
-  packageName?: string
+    /**
+     * Backward compatible single package mode.
+     * Used when `weeklyDownloads` is provided.
+     */
+    packageName?: string
 
-  /**
-   * Multi-package mode.
-   * Used when `weeklyDownloads` is not provided.
-   */
-  packageNames?: string[]
-  createdIso?: string | null
+    /**
+     * Multi-package mode.
+     * Used when `weeklyDownloads` is not provided.
+     */
+    packageNames?: string[]
+    createdIso?: string | null
 
-  /** When true, shows facet selector (e.g. Downloads / Likes). */
-  showFacetSelector?: boolean
-}>()
+    /** When true, shows facet selector (e.g. Downloads / Likes). */
+    showFacetSelector?: boolean
+    permalink?: boolean
+  }>(),
+  {
+    permalink: false,
+  },
+)
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
@@ -100,17 +117,16 @@ const accent = computed(() => {
     : (colors.value.fgSubtle ?? OKLCH_NEUTRAL_FALLBACK)
 })
 
+const watermarkColors = computed(() => ({
+  fg: colors.value.fg ?? OKLCH_NEUTRAL_FALLBACK,
+  bg: colors.value.bg ?? OKLCH_NEUTRAL_FALLBACK,
+  fgSubtle: colors.value.fgSubtle ?? OKLCH_NEUTRAL_FALLBACK,
+}))
+
 const mobileBreakpointWidth = 640
 const isMobile = computed(() => width.value > 0 && width.value < mobileBreakpointWidth)
 
-type ChartTimeGranularity = 'daily' | 'weekly' | 'monthly' | 'yearly'
 const DEFAULT_GRANULARITY: ChartTimeGranularity = 'weekly'
-type EvolutionData = DailyDataPoint[] | WeeklyDataPoint[] | MonthlyDataPoint[] | YearlyDataPoint[]
-
-type DateRangeFields = {
-  startDate?: string
-  endDate?: string
-}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null
@@ -315,7 +331,10 @@ const effectivePackageNames = computed<string[]>(() => {
   return single ? [single] : []
 })
 
-const selectedGranularity = shallowRef<ChartTimeGranularity>(DEFAULT_GRANULARITY)
+const selectedGranularity = usePermalink<ChartTimeGranularity>('granularity', DEFAULT_GRANULARITY, {
+  permanent: props.permalink,
+})
+
 const displayedGranularity = shallowRef<ChartTimeGranularity>(DEFAULT_GRANULARITY)
 
 const isEndDateOnPeriodEnd = computed(() => {
@@ -345,8 +364,13 @@ const shouldRenderEstimationOverlay = computed(
   () => !pending.value && isEstimationGranularity.value,
 )
 
-const startDate = shallowRef<string>('') // YYYY-MM-DD
-const endDate = shallowRef<string>('') // YYYY-MM-DD
+const startDate = usePermalink<string>('start', '', {
+  permanent: props.permalink,
+})
+const endDate = usePermalink<string>('end', '', {
+  permanent: props.permalink,
+})
+
 const hasUserEditedDates = shallowRef(false)
 
 /**
@@ -571,7 +595,9 @@ const METRICS = computed<MetricDef[]>(() => [
   },
 ])
 
-const selectedMetric = shallowRef<MetricId>(DEFAULT_METRIC_ID)
+const selectedMetric = usePermalink<MetricId>('facet', DEFAULT_METRIC_ID, {
+  permanent: props.permalink,
+})
 
 // Per-metric state keyed by metric id
 const metricStates = reactive<
@@ -848,82 +874,18 @@ const chartData = computed<{
   return { dataset, dates }
 })
 
+const normalisedDataset = computed(() => {
+  return chartData.value.dataset?.map(d => {
+    return {
+      ...d,
+      series: [...d.series.slice(0, -1), extrapolateLastValue(d.series.at(-1) ?? 0)],
+    }
+  })
+})
+
 const maxDatapoints = computed(() =>
   Math.max(0, ...(chartData.value.dataset ?? []).map(d => d.series.length)),
 )
-
-/**
- * Maximum estimated value across all series when the chart is
- * displaying a partially completed time bucket (monthly or yearly).
- *
- * Used to determine whether the Y-axis upper bound must be extended to accommodate extrapolated values.
- * It does not mutate chart state or rendering directly.
- *
- * Behavior:
- * - Returns `0` when:
- *   - the chart is loading (`pending === true`)
- *   - the current granularity is not `monthly` or `yearly`
- *   - the dataset is empty or has fewer than two points
- *   - the last bucket is fully completed
- *
- * - For partially completed buckets:
- *   - Computes the bucket completion ratio using UTC boundaries
- *   - Linearly extrapolates the last datapoint of each series
- *   - Returns the maximum extrapolated value across all series
- *
- * The reference time used for completion is:
- * - the end of `endDate` (UTC) when provided, or
- * - the current time (`Date.now()`) otherwise
- *
- * @returns The maximum extrapolated value across all series, or `0` when
- * estimation is not applicable.
- */
-const estimatedMaxFromData = computed<number>(() => {
-  if (pending.value) return 0
-  if (!isEstimationGranularity.value) return 0
-
-  const dataset = chartData.value.dataset
-  const dates = chartData.value.dates
-  if (!dataset?.length || dates.length < 2) return 0
-
-  const lastBucketTimestampMs = dates[dates.length - 1] ?? 0
-  const endDateMs = endDate.value ? endDateOnlyToUtcMs(endDate.value) : null
-  const referenceMs = endDateMs ?? Date.now()
-
-  const completionRatio = getCompletionRatioForBucket({
-    bucketTimestampMs: lastBucketTimestampMs,
-    granularity: displayedGranularity.value as 'monthly' | 'yearly',
-    referenceMs,
-  })
-
-  if (!(completionRatio > 0 && completionRatio < 1)) return 0
-
-  let maxEstimated = 0
-
-  for (const serie of dataset) {
-    const values = Array.isArray((serie as any).series) ? ((serie as any).series as number[]) : []
-    if (values.length < 2) continue
-
-    const lastValue = Number(values[values.length - 1])
-    if (!Number.isFinite(lastValue) || lastValue <= 0) continue
-
-    const estimated = lastValue / completionRatio
-    if (Number.isFinite(estimated) && estimated > maxEstimated) maxEstimated = estimated
-  }
-
-  return maxEstimated
-})
-
-const yAxisScaleMax = computed<number | undefined>(() => {
-  if (!isEstimationGranularity.value || pending.value) return undefined
-
-  const datasetMax = getDatasetMaxValue(chartData.value.dataset)
-  const estimatedMax = estimatedMaxFromData.value
-  const candidateMax = Math.max(datasetMax, estimatedMax)
-
-  const niceMax = candidateMax > 0 ? niceMaxScale(candidateMax) : 0
-  return niceMax > datasetMax ? niceMax : undefined
-})
 
 const loadFile = (link: string, filename: string) => {
   const a = document.createElement('a')
@@ -1073,153 +1035,47 @@ function getCompletionRatioForBucket(params: {
 }
 
 /**
- * Returns a "nice" rounded upper bound for a positive value, suitable for
- * chart axis scaling.
+ * Extrapolate the last observed value of a time series when the last bucket
+ * (month or year) is only partially complete.
  *
- * The value is converted to a power-of-ten range and then rounded up to the
- * next monotonic step within that decade (1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10).
+ * This is used to replace the final value in each `VueUiXy` series
+ * before rendering, so the chart can display an estimated full-period value
+ * for the current month or year.
  *
- * VueUiXy computes its own nice scale from the dataset.
- * However, when injecting an estimation for partial datapoints, the scale must be forced to avoid
- * overflowing the estimation if it were to become the max value. This scale is fed into the `scaleMax`
- * config attribute of VueUiXy.
+ * Notes:
+ * - This function assumes `lastValue` is the value corresponding to the last
+ *   date in `chartData.value.dates`
  *
- * Examples:
- * - `niceMaxScale(2_340)` returns `2_500`
- * - `niceMaxScale(7_100)` returns `8_000`
- * - `niceMaxScale(12)` returns `12.5`
- *
- * @param value - Candidate maximum value
- * @returns A nice maximum >= `value`, or `0` when `value` is not finite or <= 0.
+ * @param lastValue - The last observed numeric value for a series.
+ * @returns The extrapolated value for partially completed monthly or yearly granularities,
+ * or the original `lastValue` when no extrapolation should be applied.
  */
-function niceMaxScale(value: number): number {
-  const v = Number(value)
-  if (!Number.isFinite(v) || v <= 0) return 0
+function extrapolateLastValue(lastValue: number) {
+  if (displayedGranularity.value !== 'monthly' && displayedGranularity.value !== 'yearly')
+    return lastValue
 
-  const exponent = Math.floor(Math.log10(v))
-  const base = 10 ** exponent
-  const fraction = v / base
-
-  // Monotonic scale steps
-  if (fraction <= 1) return 1 * base
-  if (fraction <= 1.25) return 1.25 * base
-  if (fraction <= 1.5) return 1.5 * base
-  if (fraction <= 2) return 2 * base
-  if (fraction <= 2.5) return 2.5 * base
-  if (fraction <= 3) return 3 * base
-  if (fraction <= 4) return 4 * base
-  if (fraction <= 5) return 5 * base
-  if (fraction <= 6) return 6 * base
-  if (fraction <= 8) return 8 * base
-  return 10 * base
-}
-
-/**
- * Extrapolates the last datapoint of a series when it belongs to a partially
- * completed time bucket (monthly or yearly).
- *
- * The extrapolation assumes that the observed value of the last datapoint
- * grows linearly with time within its bucket. The value is scaled by the
- * inverse of the bucket completion ratio, and the corresponding y
- * coordinate is computed by projecting along the segment defined by the
- * previous and last datapoints.
- *
- * Extrapolation is performed only when:
- * - the granularity is `monthly` or `yearly`
- * - the bucket completion ratio is strictly between `0` and `1`
- *
- * In all other cases, the original `lastPoint` is returned unchanged.
- *
- * The reference time used to compute the completion ratio is:
- * - the end of `endDateOnly` (UTC) when provided, or
- * - the current time (`Date.now()`) otherwise
- *
- * @param params.previousPoint - Datapoint immediately preceding the last one
- * @param params.lastPoint - Last observed datapoint (potentially incomplete)
- * @param params.lastBucketTimestampMs - Timestamp identifying the bucket of the last datapoint
- * @param params.granularity - Chart granularity
- * @param params.endDateOnly - Optional `YYYY-MM-DD` end date used as a fixed reference time
- * @returns A new datapoint representing the extrapolated estimate, or the
- *          original `lastPoint` when extrapolation is not applicable.
- */
-function extrapolateIncompleteLastPoint(params: {
-  previousPoint: { x: number; y: number; value: number }
-  lastPoint: { x: number; y: number; value: number; comment?: string }
-  lastBucketTimestampMs: number
-  granularity: ChartTimeGranularity
-  endDateOnly?: string
-}) {
-  if (params.granularity !== 'monthly' && params.granularity !== 'yearly')
-    return { ...params.lastPoint }
-
-  const endDateMs = params.endDateOnly ? endDateOnlyToUtcMs(params.endDateOnly) : null
+  const endDateMs = endDate.value ? endDateOnlyToUtcMs(endDate.value) : null
   const referenceMs = endDateMs ?? Date.now()
 
   const completionRatio = getCompletionRatioForBucket({
-    bucketTimestampMs: params.lastBucketTimestampMs,
-    granularity: params.granularity,
+    bucketTimestampMs: chartData.value.dates.at(-1) ?? 0,
+    granularity: displayedGranularity.value,
     referenceMs,
   })
 
-  if (!(completionRatio > 0 && completionRatio < 1)) return { ...params.lastPoint }
+  if (!(completionRatio > 0 && completionRatio < 1)) return lastValue
 
-  const extrapolatedValue = params.lastPoint.value / completionRatio
-  if (!Number.isFinite(extrapolatedValue)) return { ...params.lastPoint }
+  const extrapolatedValue = lastValue / completionRatio
+  if (!Number.isFinite(extrapolatedValue)) return lastValue
 
-  const valueDelta = params.lastPoint.value - params.previousPoint.value
-  const yDelta = params.lastPoint.y - params.previousPoint.y
-
-  if (valueDelta === 0)
-    return { ...params.lastPoint, value: extrapolatedValue, comment: 'extrapolated' }
-
-  const valueToYPixelRatio = yDelta / valueDelta
-  const extrapolatedY =
-    params.previousPoint.y + (extrapolatedValue - params.previousPoint.value) * valueToYPixelRatio
-
-  return {
-    x: params.lastPoint.x,
-    y: extrapolatedY,
-    value: extrapolatedValue,
-    comment: 'extrapolated',
-  }
-}
-
-/**
- * Compute the max value across all series in a `VueUiXy` dataset.
- *
- * @param dataset - Array of `VueUiXyDatasetItem` objects, or `null`
- * @returns The maximum finite value found across all series, or `0` when
- * the dataset is empty or absent.
- */
-function getDatasetMaxValue(dataset: VueUiXyDatasetItem[] | null): number {
-  if (!dataset?.length) return 0
-  let max = 0
-  for (const serie of dataset) {
-    const values = Array.isArray((serie as any).series) ? ((serie as any).series as number[]) : []
-    for (const v of values) {
-      const n = Number(v)
-      if (Number.isFinite(n) && n > max) max = n
-    }
-  }
-  return max
+  return extrapolatedValue
 }
 
 /**
  * Build and return svg markup for estimation overlays on the chart.
  *
- * This function is used in the `#svg` slot of `VueUiXy` to visually indicate
- * estimated values for partially completed monthly or yearly periods.
- *
- * For each series:
- * - extrapolates the last datapoint when it belongs to an incomplete time bucket
- * - draws a dashed line from the previous datapoint to the extrapolated position
- * - masks the original line segment to avoid visual overlap
- * - renders marker circles at relevant points
- * - displays a formatted label for the estimated value
- *
- * While computing estimations, the function also evaluates whether the Y-axis
- * scale needs to be extended to accommodate estimated values. When required,
- * it commits a deferred `scaleMax` update using `commitYAxisScaleMaxLater`.
+ * This function is used in the `#svg` slot of `VueUiXy` to draw a dashed line
+ * between the last datapoint and its ancestor, for partial month or year.
  *
  * The function returns an empty string when:
  * - estimation overlays are disabled
@@ -1238,9 +1094,6 @@ function drawEstimationLine(svg: Record<string, any>) {
   // Collect per-series estimates and a global max candidate for the y-axis
   const lines: string[] = []
 
-  // Use the last bucket timestamp once (shared x-axis dates)
-  const lastBucketTimestampMs = chartData.value?.dates?.at(-1) ?? 0
-
   for (const serie of data) {
     const plots = serie?.plots
     if (!Array.isArray(plots) || plots.length < 2) continue
@@ -1249,35 +1102,16 @@ function drawEstimationLine(svg: Record<string, any>) {
     const lastPoint = plots.at(-1)
     if (!previousPoint || !lastPoint) continue
 
-    const estimationPoint = extrapolateIncompleteLastPoint({
-      previousPoint,
-      lastPoint,
-      lastBucketTimestampMs,
-      granularity: displayedGranularity.value,
-      endDateOnly: endDate.value,
-    })
-
     const stroke = String(serie?.color ?? colors.value.fg)
 
     /**
      * The following svg elements are injected in the #svg slot of VueUiXy:
+     * - a line overlay covering the plain path bewteen the last datapoint and its ancestor
      * - a dashed line connecting the last datapoint to its ancestor
-     * - a line overlay covering the path segment of 'real data' between last datapoint and its ancestor
-     * - circles on the estimation coordinates, and another on the ancestor to mitigate the line overlay
-     * - the formatted data label
+     * - a circle for the last datapoint
      */
 
     lines.push(`
-      <line 
-        x1="${previousPoint.x}" 
-        y1="${previousPoint.y}" 
-        x2="${lastPoint.x}" 
-        y2="${estimationPoint.y}" 
-        stroke="${stroke}" 
-        stroke-width="3"
-        stroke-dasharray="4 8"
-        stroke-linecap="round"
-      />
       <line
         x1="${previousPoint.x}" 
         y1="${previousPoint.y}" 
@@ -1285,44 +1119,26 @@ function drawEstimationLine(svg: Record<string, any>) {
         y2="${lastPoint.y}" 
         stroke="${colors.value.bg}" 
         stroke-width="3"
-        opacity="0.7"
+        opacity="1"
+      />
+      <line 
+        x1="${previousPoint.x}" 
+        y1="${previousPoint.y}" 
+        x2="${lastPoint.x}" 
+        y2="${lastPoint.y}" 
+        stroke="${stroke}" 
+        stroke-width="3"
+        stroke-dasharray="4 8"
+        stroke-linecap="round"
       />
       <circle
         cx="${lastPoint.x}"
         cy="${lastPoint.y}"
         r="4"
-        fill="${colors.value.bg}"
-        opacity="0.7"
-      />
-      <circle
-        cx="${lastPoint.x}"
-        cy="${estimationPoint.y}"
-        r="4"
         fill="${stroke}"
         stroke="${colors.value.bg}"
         stroke-width="2"
       />
-      <circle
-        cx="${previousPoint.x}"
-        cy="${previousPoint.y}"
-        r="4"
-        fill="${stroke}"
-        stroke="${colors.value.bg}"
-        stroke-width="2"
-      />
-      <text
-        text-anchor="start"
-        dominant-baseline="middle"
-        x="${lastPoint.x + 12}"
-        y="${estimationPoint.y}"
-        font-size="24"
-        fill="${colors.value.fg}"
-        stroke="${colors.value.bg}"
-        stroke-width="1"
-        paint-order="stroke fill"
-      >
-        ${compactNumberFormatter.value.format(Number.isFinite(estimationPoint.value) ? estimationPoint.value : 0)}
-      </text>
     `)
   }
 
@@ -1451,31 +1267,6 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
   return seriesNames.join('\n')
 }
 
-/**
- * Build and return npmx svg logo and tagline, to be injected during PNG & SVG exports
- */
-function drawNpmxLogoAndTaglineWatermark(svg: Record<string, any>) {
-  if (!svg?.drawingArea) return ''
-  const npmxLogoWidthToHeight = 2.64
-  const npmxLogoWidth = 100
-  const npmxLogoHeight = npmxLogoWidth / npmxLogoWidthToHeight
-
-  return `
-    <svg x="${svg.drawingArea.left + svg.drawingArea.width / 2 - npmxLogoWidth / 2 - 3}" y="${svg.height - npmxLogoHeight}" width="${npmxLogoWidth}" height="${npmxLogoHeight}" viewBox="0 0 330 125" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M22.848 97V85.288H34.752V97H22.848ZM56.4105 107.56L85.5945 25H93.2745L64.0905 107.56H56.4105ZM121.269 97V46.12H128.661L128.949 59.08L127.989 58.216C128.629 55.208 129.781 52.744 131.445 50.824C133.173 48.84 135.221 47.368 137.589 46.408C139.957 45.448 142.453 44.968 145.077 44.968C148.981 44.968 152.213 45.832 154.773 47.56C157.397 49.288 159.381 51.624 160.725 54.568C162.069 57.448 162.741 60.68 162.741 64.264V97H154.677V66.568C154.677 61.832 153.749 58.248 151.893 55.816C150.037 53.32 147.189 52.072 143.349 52.072C140.725 52.072 138.357 52.648 136.245 53.8C134.133 54.888 132.437 56.52 131.157 58.696C129.941 60.808 129.333 63.432 129.333 66.568V97H121.269ZM173.647 111.4V46.12H181.135L181.327 57.64L180.175 57.064C181.455 53.096 183.568 50.088 186.512 48.04C189.519 45.992 192.976 44.968 196.88 44.968C201.936 44.968 206.064 46.216 209.264 48.712C212.528 51.208 214.928 54.472 216.464 58.504C218 62.536 218.767 66.888 218.767 71.56C218.767 76.232 218 80.584 216.464 84.616C214.928 88.648 212.528 91.912 209.264 94.408C206.064 96.904 201.936 98.152 196.88 98.152C194.256 98.152 191.792 97.704 189.487 96.808C187.247 95.912 185.327 94.664 183.727 93.064C182.191 91.464 181.135 89.576 180.559 87.4L181.711 86.056V111.4H173.647ZM196.111 90.472C200.528 90.472 203.984 88.808 206.48 85.48C209.04 82.152 210.319 77.512 210.319 71.56C210.319 65.608 209.04 60.968 206.48 57.64C203.984 54.312 200.528 52.648 196.111 52.648C193.167 52.648 190.607 53.352 188.431 54.76C186.319 56.168 184.655 58.28 183.439 61.096C182.287 63.912 181.711 67.4 181.711 71.56C181.711 75.72 182.287 79.208 183.439 82.024C184.591 84.84 186.255 86.952 188.431 88.36C190.607 89.768 193.167 90.472 196.111 90.472ZM222.57 97V46.12H229.962L230.25 57.448L229.29 57.256C229.866 53.48 231.082 50.504 232.938 48.328C234.858 46.088 237.29 44.968 240.234 44.968C243.242 44.968 245.546 46.056 247.146 48.232C248.81 50.408 249.834 53.608 250.218 57.832H249.258C249.834 53.864 251.114 50.728 253.098 48.424C255.146 46.12 257.706 44.968 260.778 44.968C264.874 44.968 267.85 46.376 269.706 49.192C271.562 52.008 272.49 56.68 272.49 63.208V97H264.426V64.36C264.426 59.816 263.946 56.648 262.986 54.856C262.026 53 260.522 52.072 258.474 52.072C257.13 52.072 255.946 52.52 254.922 53.416C253.898 54.248 253.066 55.592 252.426 57.448C251.85 59.304 251.562 61.672 251.562 64.552V97H243.498V64.36C243.498 60.008 243.018 56.872 242.058 54.952C241.162 53.032 239.658 52.072 237.546 52.072C236.202 52.072 235.018 52.52 233.994 53.416C232.97 54.248 232.138 55.592 231.498 57.448C230.922 59.304 230.634 61.672 230.634 64.552V97H222.57ZM276.676 97L295.396 70.888L277.636 46.12H287.044L300.388 65.32L313.444 46.12H323.044L305.38 71.08L323.908 97H314.5L300.388 76.456L286.276 97H276.676Z" fill="${colors.value.fg}"/>
-    </svg>
-    <text
-      fill="${colors.value.fgMuted}"
-      x="${svg.drawingArea.left + svg.drawingArea.width / 2}"
-      y="${svg.height - npmxLogoHeight - 6}"
-      font-size="12"
-      text-anchor="middle"
-    >
-      ${$t('tagline')}
-    </text>
-  `
-}
-
 // VueUiXy chart component configuration
 const chartConfig = computed(() => {
   return {
@@ -1556,8 +1347,7 @@ const chartConfig = computed(() => {
             formatter: ({ value }: { value: number }) => {
               return compactNumberFormatter.value.format(Number.isFinite(value) ? value : 0)
             },
-            useNiceScale: !isEstimationGranularity.value || pending.value, // daily/weekly -> true, monthly/yearly -> false
-            scaleMax: yAxisScaleMax.value,
+            useNiceScale: true, // daily/weekly -> true, monthly/yearly -> false
             gap: 24, // vertical gap between individual series in stacked mode
           },
         },
@@ -1745,7 +1535,7 @@ watch(selectedMetric, value => {
       <ClientOnly v-if="chartData.dataset">
         <div :data-pending="pending" :data-minimap-visible="maxDatapoints > 6">
           <VueUiXy
-            :dataset="chartData.dataset"
+            :dataset="normalisedDataset"
             :config="chartConfig"
             class="[direction:ltr]"
             @zoomStart="setIsZoom"
@@ -1766,15 +1556,7 @@ watch(selectedMetric, value => {
               />
 
               <!-- Last value label for all other cases -->
-              <g
-                v-if="
-                  !pending &&
-                  (['daily', 'weekly'].includes(displayedGranularity) ||
-                    isEndDateOnPeriodEnd ||
-                    isZoomed)
-                "
-                v-html="drawLastDatapointLabel(svg)"
-              />
+              <g v-if="!pending" v-html="drawLastDatapointLabel(svg)" />
 
               <!-- Inject legend during SVG print only -->
               <g v-if="svg.isPrintingSvg" v-html="drawSvgPrintLegend(svg)" />
@@ -1782,7 +1564,7 @@ watch(selectedMetric, value => {
               <!-- Inject npmx logo & tagline during SVG and PNG print -->
               <g
                 v-if="svg.isPrintingSvg || svg.isPrintingImg"
-                v-html="drawNpmxLogoAndTaglineWatermark(svg)"
+                v-html="drawNpmxLogoAndTaglineWatermark(svg, watermarkColors, $t, 'bottom')"
               />
 
               <!-- Overlay covering the chart area to hide line resizing when switching granularities recalculates VueUiXy scaleMax when estimation lines are necessary -->
