@@ -44,7 +44,7 @@ function createMockUseConnector() {
           op.status === 'pending' ||
           op.status === 'approved' ||
           op.status === 'running' ||
-          (op.status === 'failed' && op.result?.requiresOtp),
+          (op.status === 'failed' && (op.result?.requiresOtp || op.result?.authFailure)),
       ),
     ),
     hasOperations: computed(() => mockState.value.operations.length > 0),
@@ -60,12 +60,14 @@ function createMockUseConnector() {
           op.status === 'pending' ||
           op.status === 'approved' ||
           op.status === 'running' ||
-          (op.status === 'failed' && op.result?.requiresOtp),
+          (op.status === 'failed' && (op.result?.requiresOtp || op.result?.authFailure)),
       ),
     ),
     hasCompletedOperations: computed(() =>
       mockState.value.operations.some(
-        op => op.status === 'completed' || (op.status === 'failed' && !op.result?.requiresOtp),
+        op =>
+          op.status === 'completed' ||
+          (op.status === 'failed' && !op.result?.requiresOtp && !op.result?.authFailure),
       ),
     ),
     connect: vi.fn().mockResolvedValue(true),
@@ -198,14 +200,7 @@ afterEach(() => {
 })
 
 describe('HeaderConnectorModal', () => {
-  describe('Web auth settings (connected)', () => {
-    it('shows web auth toggle when connected', async () => {
-      const dialog = await mountAndOpen('connected')
-      const labels = Array.from(dialog?.querySelectorAll('label, span') ?? [])
-      const webAuthLabel = labels.find(el => el.textContent?.includes('web authentication'))
-      expect(webAuthLabel).toBeTruthy()
-    })
-
+  describe('Connector preferences (connected)', () => {
     it('shows auto-open URL toggle when connected', async () => {
       const dialog = await mountAndOpen('connected')
       const labels = Array.from(dialog?.querySelectorAll('label, span') ?? [])
@@ -213,46 +208,11 @@ describe('HeaderConnectorModal', () => {
       expect(autoOpenLabel).toBeTruthy()
     })
 
-    it('auto-open URL toggle is disabled when webAuth is off', async () => {
-      mockSettings.value.connector.webAuth = false
+    it('does not show a web auth toggle (web auth is now always on)', async () => {
       const dialog = await mountAndOpen('connected')
-
-      // Find the auto-open toggle container - it should have opacity-50 class
-      const toggleContainers = Array.from(dialog?.querySelectorAll('[class*="opacity-50"]') ?? [])
-      expect(toggleContainers.length).toBeGreaterThan(0)
-    })
-
-    it('auto-open URL toggle is not disabled when webAuth is on', async () => {
-      mockSettings.value.connector.webAuth = true
-      const dialog = await mountAndOpen('connected')
-
-      // When webAuth is ON, the auto-open toggle should not have opacity-50
-      // Verify by checking that we can find the toggle with the "open auth page" label
-      // and it does NOT have opacity-50 in its parent
-      const autoOpenLabels = Array.from(dialog?.querySelectorAll('*') ?? []).filter(el =>
-        el.textContent?.includes('open auth page'),
-      )
-      expect(autoOpenLabels.length).toBeGreaterThan(0)
-    })
-  })
-
-  describe('Web auth settings (disconnected advanced)', () => {
-    it('shows web auth toggles in advanced details section', async () => {
-      const dialog = await mountAndOpen()
-
-      // Open the advanced details section
-      const details = dialog?.querySelector('details')
-      expect(details).not.toBeNull()
-
-      // Programmatically open it
-      details?.setAttribute('open', '')
-      await nextTick()
-
-      const labels = Array.from(details?.querySelectorAll('label, span') ?? [])
+      const labels = Array.from(dialog?.querySelectorAll('label, span') ?? [])
       const webAuthLabel = labels.find(el => el.textContent?.includes('web authentication'))
-      const autoOpenLabel = labels.find(el => el.textContent?.includes('open auth page'))
-      expect(webAuthLabel).toBeTruthy()
-      expect(autoOpenLabel).toBeTruthy()
+      expect(webAuthLabel).toBeUndefined()
     })
   })
 
@@ -350,8 +310,27 @@ describe('HeaderConnectorModal', () => {
       expect(dialog?.innerHTML).toContain('otp-input')
     })
 
-    it('does not show retry with web auth button when webAuth setting is off', async () => {
-      mockSettings.value.connector.webAuth = false
+    it('does not show retry with web auth when there are no auth failures', async () => {
+      mockState.value.operations = [
+        {
+          id: '0000000000000001',
+          type: 'org:add-user',
+          params: { org: 'myorg', user: 'alice', role: 'developer' },
+          description: 'Add alice',
+          command: 'npm org set myorg alice developer',
+          status: 'approved',
+          createdAt: Date.now(),
+        },
+      ]
+      const dialog = await mountAndOpen('connected')
+
+      const html = dialog?.innerHTML ?? ''
+      const hasWebAuthButton =
+        html.includes('Retry with web auth') || html.includes('retry_web_auth')
+      expect(hasWebAuthButton).toBe(false)
+    })
+
+    it('shows OTP alert section for operations with authFailure (not just requiresOtp)', async () => {
       mockState.value.operations = [
         {
           id: '0000000000000001',
@@ -361,15 +340,14 @@ describe('HeaderConnectorModal', () => {
           command: 'npm org set myorg alice developer',
           status: 'failed',
           createdAt: Date.now(),
-          result: { stdout: '', stderr: 'otp required', exitCode: 1, requiresOtp: true },
+          result: { stdout: '', stderr: 'auth failed', exitCode: 1, authFailure: true },
         },
       ]
       const dialog = await mountAndOpen('connected')
 
-      const html = dialog?.innerHTML ?? ''
-      const hasWebAuthButton =
-        html.includes('Retry with web auth') || html.includes('retry_web_auth')
-      expect(hasWebAuthButton).toBe(false)
+      // The OTP/auth failures section should render for authFailure too
+      const otpAlert = dialog?.querySelector('[role="alert"]')
+      expect(otpAlert).not.toBeNull()
     })
   })
 
