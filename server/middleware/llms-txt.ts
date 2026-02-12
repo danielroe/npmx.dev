@@ -26,7 +26,7 @@ const CACHE_HEADER = 's-maxage=3600, stale-while-revalidate=86400'
  * - /package/@:org/:name/v/:version/llms_full.txt (scoped, versioned, full)
  */
 export default defineEventHandler(async event => {
-  const path = event.path.split('?')[0]
+  const path = event.path.split('?')[0] ?? '/'
 
   if (!path.endsWith('/llms.txt') && !path.endsWith('/llms_full.txt')) return
 
@@ -70,12 +70,12 @@ export default defineEventHandler(async event => {
     // Versioned path
     if (inner.startsWith('@')) {
       const match = inner.match(/^(@[^/]+\/[^/]+)\/v\/(.+)$/)
-      if (!match) return
+      if (!match?.[1] || !match[2]) return
       rawPackageName = match[1]
       rawVersion = match[2]
     } else {
       const match = inner.match(/^([^/]+)\/v\/(.+)$/)
-      if (!match) return
+      if (!match?.[1] || !match[2]) return
       rawPackageName = match[1]
       rawVersion = match[2]
     }
