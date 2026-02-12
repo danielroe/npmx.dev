@@ -213,14 +213,16 @@ onKeyStroke(
           :to="{ name: 'index' }"
           :aria-label="$t('header.home')"
           dir="ltr"
-          class="inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded"
+          class="relative inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded"
         >
-          <AppLogo class="w-8 h-8 rounded-lg" />
-          <span>npmx</span>
-          <sup class="text-sm ms--1.5 italic text-fg-muted">
-            <!-- TODO: improve styling and show 'alpha' until March 3 annoucement -->
-            {{ env === 'release' ? '' : env }}
-          </sup>
+          <AppLogo class="w-7 h-7 rounded-lg" />
+          <span class="pb-0.5">npmx</span>
+          <span
+            aria-hidden="true"
+            class="scale-35 transform-origin-br font-mono tracking-wide text-accent absolute bottom-0.5 -inset-ie-1"
+          >
+            {{ env === 'release' ? 'alpha' : env }}
+          </span>
         </NuxtLink>
       </div>
       <!-- Spacer when logo is hidden on desktop -->
