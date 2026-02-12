@@ -353,7 +353,8 @@
       "title": "Trends",
       "items": {
         "downloads": "Downloads",
-        "likes": "Likes"
+        "likes": "Likes",
+        "contributors": "Contributors"
       }
     },
     "downloads": {

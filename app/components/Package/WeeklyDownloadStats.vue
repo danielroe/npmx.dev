@@ -3,10 +3,12 @@ import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
+import type { RepoRef } from '#shared/utils/git-providers'
 
 const props = defineProps<{
   packageName: string
   createdIso: string | null
+  repoRef?: RepoRef | null
 }>()
 
 const router = useRouter()
@@ -315,6 +317,7 @@ const config = computed(() => {
         :weeklyDownloads="weeklyDownloads"
         :inModal="true"
         :packageName="props.packageName"
+        :repoRef="props.repoRef ?? null"
         :createdIso="createdIso"
         permalink
         show-facet-selector

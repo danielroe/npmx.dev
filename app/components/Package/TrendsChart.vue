@@ -6,6 +6,10 @@ import { useCssVariables } from '~/composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
 import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
 import { drawNpmxLogoAndTaglineWatermark } from '~/composables/useChartWatermark'
+import type { RepoRef } from '#shared/utils/git-providers'
+import { parseRepoUrl } from '#shared/utils/git-providers'
+import type { PackageMetaResponse } from '#shared/types'
+import { encodePackageName } from '#shared/utils/npm'
 import type {
   ChartTimeGranularity,
   DailyDataPoint,
@@ -35,6 +39,7 @@ const props = withDefaults(
      * Used when `weeklyDownloads` is not provided.
      */
     packageNames?: string[]
+    repoRef?: RepoRef | null
     createdIso?: string | null
 
     /** When true, shows facet selector (e.g. Downloads / Likes). */
@@ -332,6 +337,56 @@ const effectivePackageNames = computed<string[]>(() => {
   return single ? [single] : []
 })
 
+const repoRefsByPackage = shallowRef<Record<string, RepoRef | null>>({})
+const repoRefsRequestToken = shallowRef(0)
+
+async function loadRepoRefsForPackages(packages: string[]) {
+  if (!import.meta.client) return
+  if (!packages.length) {
+    repoRefsByPackage.value = {}
+    return
+  }
+
+  const currentToken = ++repoRefsRequestToken.value
+
+  const settled = await Promise.allSettled(
+    packages.map(async name => {
+      const encoded = encodePackageName(name)
+      const meta = await $fetch<PackageMetaResponse>(`/api/registry/package-meta/${encoded}`)
+      const repoUrl = meta?.links?.repository
+      const ref = repoUrl ? parseRepoUrl(repoUrl) : null
+      return { name, ref }
+    }),
+  )
+
+  if (currentToken !== repoRefsRequestToken.value) return
+
+  const next: Record<string, RepoRef | null> = {}
+  for (const [index, entry] of settled.entries()) {
+    const name = packages[index]
+    if (!name) continue
+    if (entry.status === 'fulfilled') {
+      next[name] = entry.value.ref ?? null
+    } else {
+      next[name] = null
+    }
+  }
+  repoRefsByPackage.value = next
+}
+
+watch(
+  () => effectivePackageNames.value,
+  names => {
+    if (!import.meta.client) return
+    if (!isMultiPackageMode.value) {
+      repoRefsByPackage.value = {}
+      return
+    }
+    loadRepoRefsForPackages(names)
+  },
+  { immediate: true },
+)
+
 const selectedGranularity = usePermalink<ChartTimeGranularity>('granularity', DEFAULT_GRANULARITY, {
   permanent: props.permalink,
 })
@@ -571,34 +626,107 @@ function applyDateRange<T extends Record<string, unknown>>(base: T): T & DateRan
   return next
 }
 
-const { fetchPackageDownloadEvolution, fetchPackageLikesEvolution } = useCharts()
+const {
+  fetchPackageDownloadEvolution,
+  fetchPackageLikesEvolution,
+  fetchRepoContributorsEvolution,
+} = useCharts()
 
-type MetricId = 'downloads' | 'likes'
+type MetricId = 'downloads' | 'likes' | 'contributors'
 const DEFAULT_METRIC_ID: MetricId = 'downloads'
+
+type MetricContext = {
+  packageName: string
+  repoRef: RepoRef | null
+}
 
 type MetricDef = {
   id: MetricId
   label: string
-  fetch: (pkg: string, options: EvolutionOptions) => Promise<EvolutionData>
+  fetch: (context: MetricContext, options: EvolutionOptions) => Promise<EvolutionData>
+  supportsMulti?: boolean
 }
 
-const METRICS = computed<MetricDef[]>(() => [
-  {
-    id: 'downloads',
-    label: $t('package.trends.items.downloads'),
-    fetch: (pkg, opts) =>
-      fetchPackageDownloadEvolution(pkg, props.createdIso ?? null, opts) as Promise<EvolutionData>,
-  },
-  {
-    id: 'likes',
-    label: $t('package.trends.items.likes'),
-    fetch: (pkg, opts) => fetchPackageLikesEvolution(pkg, opts) as Promise<EvolutionData>,
-  },
-])
+const hasContributorsFacet = computed(() => {
+  if (isMultiPackageMode.value) {
+    return Object.values(repoRefsByPackage.value).some(ref => ref?.provider === 'github')
+  }
+  const ref = props.repoRef
+  return ref?.provider === 'github' && ref.owner && ref.repo
+})
+
+const METRICS = computed<MetricDef[]>(() => {
+  const metrics: MetricDef[] = [
+    {
+      id: 'downloads',
+      label: $t('package.trends.items.downloads'),
+      fetch: ({ packageName }, opts) =>
+        fetchPackageDownloadEvolution(
+          packageName,
+          props.createdIso ?? null,
+          opts,
+        ) as Promise<EvolutionData>,
+      supportsMulti: true,
+    },
+    {
+      id: 'likes',
+      label: $t('package.trends.items.likes'),
+      fetch: ({ packageName }, opts) => fetchPackageLikesEvolution(packageName, opts),
+      supportsMulti: true,
+    },
+  ]
+
+  if (hasContributorsFacet.value) {
+    metrics.push({
+      id: 'contributors',
+      label: $t('package.trends.items.contributors'),
+      fetch: ({ repoRef }, opts) => fetchRepoContributorsEvolution(repoRef, opts),
+      supportsMulti: false,
+    })
+  }
+
+  return metrics
+})
 
 const selectedMetric = usePermalink<MetricId>('facet', DEFAULT_METRIC_ID, {
   permanent: props.permalink,
 })
+
+const effectivePackageNamesForMetric = computed<string[]>(() => {
+  if (!isMultiPackageMode.value) return effectivePackageNames.value
+  if (selectedMetric.value !== 'contributors') return effectivePackageNames.value
+  return effectivePackageNames.value.filter(
+    name => repoRefsByPackage.value[name]?.provider === 'github',
+  )
+})
+
+const availableGranularities = computed<ChartTimeGranularity[]>(() => {
+  if (selectedMetric.value === 'contributors') {
+    return ['weekly', 'monthly', 'yearly']
+  }
+
+  return ['daily', 'weekly', 'monthly', 'yearly']
+})
+
+watch(
+  () => [selectedMetric.value, availableGranularities.value] as const,
+  () => {
+    if (!availableGranularities.value.includes(selectedGranularity.value)) {
+      selectedGranularity.value = 'weekly'
+    }
+  },
+  { immediate: true },
+)
+
+watch(
+  () => METRICS.value,
+  metrics => {
+    if (!metrics.some(m => m.id === selectedMetric.value)) {
+      selectedMetric.value = DEFAULT_METRIC_ID
+    }
+  },
+  { immediate: true },
+)
 
 // Per-metric state keyed by metric id
 const metricStates = reactive<
@@ -624,10 +752,18 @@ const metricStates = reactive<
     evolutionsByPackage: {},
     requestToken: 0,
   },
+  contributors: {
+    pending: false,
+    evolution: [],
+    evolutionsByPackage: {},
+    requestToken: 0,
+  },
 })
 
 const activeMetricState = computed(() => metricStates[selectedMetric.value])
-const activeMetricDef = computed(() => METRICS.value.find(m => m.id === selectedMetric.value)!)
+const activeMetricDef = computed(
+  () => METRICS.value.find(m => m.id === selectedMetric.value) ?? METRICS.value[0],
+)
 const pending = computed(() => activeMetricState.value.pending)
 
 const isMounted = shallowRef(false)
@@ -695,21 +831,33 @@ watch(
 async function loadMetric(metricId: MetricId) {
   if (!import.meta.client) return
 
-  const packageNames = effectivePackageNames.value
-  if (!packageNames.length) return
-
   const state = metricStates[metricId]
   const metric = METRICS.value.find(m => m.id === metricId)!
   const currentToken = ++state.requestToken
   state.pending = true
 
-  const fetchFn = (pkg: string) => metric.fetch(pkg, options.value)
+  const fetchFn = (context: MetricContext) => metric.fetch(context, options.value)
 
   try {
+    const packageNames = effectivePackageNamesForMetric.value
+    if (!packageNames.length) {
+      if (isMultiPackageMode.value) state.evolutionsByPackage = {}
+      else state.evolution = []
+      displayedGranularity.value = selectedGranularity.value
+      return
+    }
+
     if (isMultiPackageMode.value) {
+      if (metric.supportsMulti === false) {
+        state.evolutionsByPackage = {}
+        displayedGranularity.value = selectedGranularity.value
+        return
+      }
+
       const settled = await Promise.allSettled(
         packageNames.map(async pkg => {
-          const result = await fetchFn(pkg)
+          const repoRef = metricId === 'contributors' ? repoRefsByPackage.value[pkg] : null
+          const result = await fetchFn({ packageName: pkg, repoRef })
           return { pkg, result: (result ?? []) as EvolutionData }
         }),
       )
@@ -750,7 +898,7 @@ async function loadMetric(metricId: MetricId) {
       }
     }
 
-    const result = await fetchFn(pkg)
+    const result = await fetchFn({ packageName: pkg, repoRef: props.repoRef ?? null })
     if (currentToken !== state.requestToken) return
 
     state.evolution = (result ?? []) as EvolutionData
@@ -778,9 +926,13 @@ const debouncedLoadNow = useDebounceFn(() => {
 const fetchTriggerKey = computed(() => {
   const names = effectivePackageNames.value.join(',')
   const o = options.value
+  const repoKey = props.repoRef
+    ? `${props.repoRef.provider}:${props.repoRef.owner}/${props.repoRef.repo}`
+    : ''
   return [
     isMultiPackageMode.value ? 'M' : 'S',
     names,
+    repoKey,
     String(props.createdIso ?? ''),
     String(o.granularity ?? ''),
     String('weeks' in o ? (o.weeks ?? '') : ''),
@@ -798,6 +950,18 @@ watch(
     debouncedLoadNow()
   },
   { flush: 'post' },
+)
+
+watch(
+  () => repoRefsByPackage.value,
+  () => {
+    if (!import.meta.client) return
+    if (!isMounted.value) return
+    if (!isMultiPackageMode.value) return
+    if (selectedMetric.value !== 'contributors') return
+    debouncedLoadNow()
+  },
+  { deep: true },
 )
 
 const effectiveDataSingle = computed<EvolutionData>(() => {
@@ -837,7 +1001,7 @@ const chartData = computed<{
   }
 
   const state = activeMetricState.value
-  const names = effectivePackageNames.value
+  const names = effectivePackageNamesForMetric.value
   const granularity = displayedGranularity.value
 
   const timestampSet = new Set<number>()
@@ -935,6 +1099,13 @@ const granularityLabels = computed(() => ({
 function getGranularityLabel(granularity: ChartTimeGranularity) {
   return granularityLabels.value[granularity]
 }
+
+const granularityItems = computed(() =>
+  availableGranularities.value.map(granularity => ({
+    label: granularityLabels.value[granularity],
+    value: granularity,
+  })),
+)
 
 function clampRatio(value: number): number {
   if (value < 0) return 0
@@ -1114,20 +1285,20 @@ function drawEstimationLine(svg: Record<string, any>) {
 
     lines.push(`
       <line
-        x1="${previousPoint.x}" 
-        y1="${previousPoint.y}" 
-        x2="${lastPoint.x}" 
-        y2="${lastPoint.y}" 
-        stroke="${colors.value.bg}" 
+        x1="${previousPoint.x}"
+        y1="${previousPoint.y}"
+        x2="${lastPoint.x}"
+        y2="${lastPoint.y}"
+        stroke="${colors.value.bg}"
         stroke-width="3"
         opacity="1"
       />
-      <line 
-        x1="${previousPoint.x}" 
-        y1="${previousPoint.y}" 
-        x2="${lastPoint.x}" 
-        y2="${lastPoint.y}" 
-        stroke="${stroke}" 
+      <line
+        x1="${previousPoint.x}"
+        y1="${previousPoint.y}"
+        x2="${lastPoint.x}"
+        y2="${lastPoint.y}"
+        stroke="${stroke}"
         stroke-width="3"
         stroke-dasharray="4 8"
         stroke-linecap="round"
@@ -1240,7 +1411,7 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
     !isZoomed.value
   ) {
     seriesNames.push(`
-        <line 
+        <line
           x1="${svg.drawingArea.left + 12}"
           y1="${svg.drawingArea.top + 24 * data.length}"
           x2="${svg.drawingArea.left + 24}"
@@ -1463,12 +1634,7 @@ watch(selectedMetric, value => {
           id="granularity"
           v-model="selectedGranularity"
           :disabled="activeMetricState.pending"
-          :items="[
-            { label: $t('package.trends.granularity_daily'), value: 'daily' },
-            { label: $t('package.trends.granularity_weekly'), value: 'weekly' },
-            { label: $t('package.trends.granularity_monthly'), value: 'monthly' },
-            { label: $t('package.trends.granularity_yearly'), value: 'yearly' },
-          ]"
+          :items="granularityItems"
         />
 
         <div class="grid grid-cols-2 gap-2 flex-1">

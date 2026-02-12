@@ -1065,6 +1065,9 @@
                 },
                 "likes": {
                   "type": "string"
+                },
+                "contributors": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false

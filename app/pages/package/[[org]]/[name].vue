@@ -1365,7 +1365,11 @@ const showSkeleton = shallowRef(false)
           </ClientOnly>
 
           <!-- Download stats -->
-          <PackageWeeklyDownloadStats :packageName :createdIso="pkg?.time?.created ?? null" />
+          <PackageWeeklyDownloadStats
+            :packageName
+            :createdIso="pkg?.time?.created ?? null"
+            :repoRef="repoRef"
+          />
 
           <!-- Playground links -->
           <PackagePlaygrounds
