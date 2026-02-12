@@ -28,34 +28,32 @@ export function useGlobalSearch() {
       if (!value) searchQuery.value = ''
     },
   )
-  const updateUrlQuery = debounce(
-    (value: string, provider: 'npm' | 'algolia') => {
-      // Don't navigate away from pages that use ?q for local filtering
-      if (pagesWithLocalFilter.has(route.name as string)) {
-        return
-      }
-      if (route.name === 'search') {
-        router.replace({
-          query: {
-            ...route.query,
-            q: value || undefined,
-            p: provider === 'npm' ? 'npm' : undefined,
-          },
-        })
-        return
-      }
+  const updateUrlQueryImpl = (value: string, provider: 'npm' | 'algolia') => {
+    const isSameQuery = route.query.q === value && route.query.p === provider
+    // Don't navigate away from pages that use ?q for local filtering
+    if (pagesWithLocalFilter.has(route.name as string) || isSameQuery) {
+      return
+    }
 
-      router.push({
-        name: 'search',
+    if (route.name === 'search') {
+      router.replace({
         query: {
-          q: value,
+          ...route.query,
+          q: value || undefined,
           p: provider === 'npm' ? 'npm' : undefined,
         },
       })
-    },
-    250,
-    { leading: true },
-  )
+      return
+    }
+    router.push({
+      name: 'search',
+      query: {
+        q: value,
+        p: provider === 'npm' ? 'npm' : undefined,
+      },
+    })
+  }
+  const updateUrlQuery = debounce(updateUrlQueryImpl, 250)
 
   function flushUpdateUrlQuery() {
     updateUrlQuery.flush()
@@ -63,9 +61,14 @@ export function useGlobalSearch() {
 
   const searchQueryValue = computed({
     get: () => searchQuery.value,
-    set: (value: string) => {
-      updateUrlQuery(value, searchProvider.value)
+    set: async (value: string) => {
       searchQuery.value = value
+
+      // Leading debounce implementation as it doesn't work properly out of the box (https://github.com/unjs/perfect-debounce/issues/43)
+      if (!updateUrlQuery.isPending()) {
+        updateUrlQueryImpl(value, searchProvider.value)
+      }
+      updateUrlQuery(value, searchProvider.value)
     },
   })
   return { model: searchQueryValue, provider: searchProviderValue, flushUpdateUrlQuery }
