@@ -86,7 +86,7 @@ function downloadIcs() {
 }
 
 const stats = {
-  weeks: '4',
+  weeks: '3',
   contributors: '160+',
   commits: '1.1k+',
   pr: '900+',
