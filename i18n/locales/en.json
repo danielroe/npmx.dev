@@ -125,6 +125,7 @@
     "end_of_results": "End of results",
     "try_again": "Try again",
     "close": "Close",
+    "or": "or",
     "retry": "Retry",
     "copy": "copy",
     "copied": "copied!",
@@ -471,7 +472,8 @@
       "warning": "WARNING",
       "warning_text": "This allows npmx to access your npm CLI. Only connect to sites you trust.",
       "connect": "Connect",
-      "connecting": "Connecting..."
+      "connecting": "Connecting...",
+      "auto_open_url": "Automatically open auth page"
     }
   },
   "operations": {
@@ -487,7 +489,9 @@
       "otp_placeholder": "Enter OTP code...",
       "otp_label": "One-time password",
       "retry_otp": "Retry with OTP",
+      "retry_web_auth": "Retry with web auth",
       "retrying": "Retrying...",
+      "open_web_auth": "Open web auth link",
       "approve_operation": "Approve operation",
       "remove_operation": "Remove operation",
       "approve_all": "Approve All",

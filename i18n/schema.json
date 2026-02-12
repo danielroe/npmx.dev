@@ -379,6 +379,9 @@
         "close": {
           "type": "string"
         },
+        "or": {
+          "type": "string"
+        },
         "retry": {
           "type": "string"
         },
@@ -1419,6 +1422,9 @@
             },
             "connecting": {
               "type": "string"
+            },
+            "auto_open_url": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -1465,7 +1471,13 @@
             "retry_otp": {
               "type": "string"
             },
+            "retry_web_auth": {
+              "type": "string"
+            },
             "retrying": {
+              "type": "string"
+            },
+            "open_web_auth": {
               "type": "string"
             },
             "approve_operation": {
