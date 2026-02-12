@@ -9438,7 +9438,7 @@ packages:
     resolution: {integrity: sha512-05lR16HeZDcDpB23ku5b5f1fBOoHqFnMiKRr2CiEvbG5Ux4Yi0McmQBOET0dR0nxDXosxyVqv67q6CzS3AK8rw==}
 
   vue-data-ui@file:vdu.tgz:
-    resolution: {integrity: sha512-kY27h8SZM9YKFCQ0ueEUo4AOrxM9zz/bJPjaLMUJTGpUKvScfMnDBX9+HlnUfzeKdfim5PAdSYYZzv2nT83NUQ==, tarball: file:vdu.tgz}
+    resolution: {integrity: sha512-AFvSEsw/oMVwkRUQE+plcEFUMT3XricUbX6iEVprlpARsqyKI0fYcrlwQcqdIPgXxJ9DSX2KgPk8/Zkpa4PSUw==, tarball: file:vdu.tgz}
     version: 3.14.10
     peerDependencies:
       jspdf: '>=3.0.1'
