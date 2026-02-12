@@ -1127,22 +1127,19 @@
     },
     "meantime": {
       "title": "in the meantime",
-      "p1": "npmx.dev and the {repo} stay open – dig in, file issues, open PRs. we'll get to everything when we're back. just don't expect a fast review. we'll be somewhere near a cosy fireplace.",
-      "repo_link": "GitHub"
+      "p1": "{site} and {repo} stay open – dig in, file issues, open PRs. we'll get to everything when we're back. just don't expect a fast review. we'll be somewhere near a cosy fireplace.",
+      "repo_link": "the repo"
     },
     "return": {
       "title": "see you soon",
-      "p1": "we'll come back recharged and ready for the final push to March 3rd. follow us {social} for updates.",
-      "social_link": "on Bluesky",
+      "p1": "we'll come back recharged and ready for the final push to March 3rd. {social} for updates.",
+      "social_link": "follow us on Bluesky",
       "add_to_calendar": "remind me when Discord reopens"
     },
     "stats": {
       "contributors": "Contributors",
-      "contributors_text": "160+",
       "commits": "Commits",
-      "commits_text": "1.1k+",
       "pr": "PRs Merged",
-      "pr_text": "900+",
       "subtitle": {
         "some": "some",
         "all": "all"

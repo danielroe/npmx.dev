@@ -20,6 +20,20 @@ defineOgImageComponent('Default', {
 const router = useRouter()
 const canGoBack = useCanGoBack()
 
+const { data: stats } = useFetch('/api/repo-stats')
+
+/**
+ * Formats a number into a compact human-readable string.
+ * e.g. 1142 → "1.1k+", 163 → "160+"
+ */
+function formatStat(n: number): string {
+  if (n >= 1000) {
+    const k = Math.floor(n / 100) / 10
+    return `${k}k+`
+  }
+  return `${Math.floor(n / 10) * 10}+`
+}
+
 // --- Cosy fireplace easter egg ---
 const logClicks = ref(0)
 const fireVisible = ref(false)
@@ -127,34 +141,11 @@ function downloadIcs() {
           </template>
         </i18n-t>
       </header>
-
-      <div
-        class="grid grid-cols-3 justify-center gap-4 sm:gap-8 mb-8 py-8 border-y border-border/50"
-      >
-        <div class="space-y-1 text-center">
-          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
-            {{ $t('vacations.stats.contributors_text') }}
-          </div>
-          <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
-            {{ $t('vacations.stats.contributors') }}
-          </div>
-        </div>
-        <div class="space-y-1 text-center">
-          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
-            {{ $t('vacations.stats.commits_text') }}
-          </div>
-          <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
-            {{ $t('vacations.stats.commits') }}
-          </div>
-        </div>
-        <div class="space-y-1 text-center">
-          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
-            {{ $t('vacations.stats.pr_text') }}
-          </div>
-          <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
-            {{ $t('vacations.stats.pr') }}
-          </div>
-        </div>
+      <!-- Bluesky post embed -->
+      <div class="my-8">
+        <BlueskyPostEmbed
+          uri="at://did:plc:u5zp7npt5kpueado77kuihyz/app.bsky.feed.post/3mejzn5mrcc2g"
+        />
       </div>
 
       <section class="prose prose-invert max-w-none space-y-8">
@@ -186,8 +177,11 @@ function downloadIcs() {
           </h2>
           <p class="text-fg-muted leading-relaxed">
             <i18n-t keypath="vacations.meantime.p1" tag="span" scope="global">
+              <template #site>
+                <LinkBase class="font-sans" to="/">npmx.dev</LinkBase>
+              </template>
               <template #repo>
-                <LinkBase to="https://repo.npmx.dev">
+                <LinkBase class="font-sans" to="https://repo.npmx.dev">
                   {{ $t('vacations.meantime.repo_link') }}
                 </LinkBase>
               </template>
@@ -238,7 +232,7 @@ function downloadIcs() {
           <p class="text-fg-muted leading-relaxed mb-6">
             <i18n-t keypath="vacations.return.p1" tag="span" scope="global">
               <template #social>
-                <LinkBase to="https://social.npmx.dev">
+                <LinkBase class="font-sans" to="https://social.npmx.dev">
                   {{ $t('vacations.return.social_link') }}
                 </LinkBase>
               </template>
@@ -249,6 +243,36 @@ function downloadIcs() {
           <ButtonBase classicon="i-carbon:calendar" @click="downloadIcs">
             {{ $t('vacations.return.add_to_calendar') }}
           </ButtonBase>
+        </div>
+
+        <div
+          v-if="stats"
+          class="grid grid-cols-3 justify-center gap-4 sm:gap-8 mb-8 py-8 border-y border-border/50"
+        >
+          <div class="space-y-1 text-center">
+            <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
+              {{ formatStat(stats.contributors) }}
+            </div>
+            <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
+              {{ $t('vacations.stats.contributors') }}
+            </div>
+          </div>
+          <div class="space-y-1 text-center">
+            <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
+              {{ formatStat(stats.commits) }}
+            </div>
+            <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
+              {{ $t('vacations.stats.commits') }}
+            </div>
+          </div>
+          <div class="space-y-1 text-center">
+            <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
+              {{ formatStat(stats.pullRequests) }}
+            </div>
+            <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
+              {{ $t('vacations.stats.pr') }}
+            </div>
+          </div>
         </div>
       </section>
     </article>

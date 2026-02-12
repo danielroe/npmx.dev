@@ -3418,19 +3418,10 @@
             "contributors": {
               "type": "string"
             },
-            "contributors_text": {
-              "type": "string"
-            },
             "commits": {
               "type": "string"
             },
-            "commits_text": {
-              "type": "string"
-            },
             "pr": {
-              "type": "string"
-            },
-            "pr_text": {
               "type": "string"
             },
             "subtitle": {
