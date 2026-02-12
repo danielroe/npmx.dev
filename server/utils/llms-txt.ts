@@ -1,4 +1,3 @@
-import type { Packument } from '@npm/types'
 import type { JsDelivrFileNode, AgentFile, LlmsTxtResult } from '#shared/types'
 import { NPM_MISSING_README_SENTINEL, NPM_REGISTRY } from '#shared/utils/constants'
 
@@ -72,11 +71,12 @@ export function discoverAgentFiles(files: JsDelivrFileNode[]): string[] {
  * Get the display name for an agent file path.
  */
 function getDisplayName(filePath: string): string {
-  if (filePath in ROOT_AGENT_FILES) return ROOT_AGENT_FILES[filePath]
-  if (filePath in DIRECTORY_AGENT_FILES) return DIRECTORY_AGENT_FILES[filePath]
+  if (filePath in ROOT_AGENT_FILES) return ROOT_AGENT_FILES[filePath]!
+  if (filePath in DIRECTORY_AGENT_FILES) return DIRECTORY_AGENT_FILES[filePath]!
 
   for (const [dirPath, displayName] of Object.entries(RULE_DIRECTORIES)) {
-    if (filePath.startsWith(`${dirPath}/`)) return `${displayName}: ${filePath.split('/').pop()}`
+    if (filePath.startsWith(`${dirPath}/`))
+      return `${displayName}: ${filePath.split('/').pop() ?? filePath}`
   }
 
   return filePath
@@ -181,7 +181,10 @@ async function fetchReadmeFromCdn(packageName: string, version: string): Promise
 }
 
 /** Extract README from packument data */
-function getReadmeFromPackument(packageData: Packument, requestedVersion?: string): string | null {
+function getReadmeFromPackument(
+  packageData: Awaited<ReturnType<typeof fetchNpmPackage>>,
+  requestedVersion?: string,
+): string | null {
   const readme = requestedVersion
     ? packageData.versions[requestedVersion]?.readme
     : packageData.readme
