@@ -101,6 +101,13 @@ export default defineNuxtConfig({
         allowQuery: ['color', 'labelColor', 'label', 'name'],
       },
     },
+    '/api/registry/downloads/**': {
+      isr: {
+        expiration: 60 * 60 /* one hour */,
+        passQuery: true,
+        allowQuery: ['mode', 'filterOldVersions', 'filterThreshold'],
+      },
+    },
     '/api/registry/docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/file/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/provenance/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -138,6 +145,7 @@ export default defineNuxtConfig({
     '/': { prerender: true },
     '/200.html': { prerender: true },
     '/about': { prerender: true },
+    '/accessibility': { prerender: true },
     '/privacy': { prerender: true },
     '/search': { isr: false, cache: false }, // never cache
     '/settings': { prerender: true },
@@ -272,6 +280,9 @@ export default defineNuxtConfig({
       compilerOptions: {
         noUnusedLocals: true,
         allowImportingTsExtensions: true,
+        paths: {
+          '#cli/*': ['../cli/src/*'],
+        },
       },
       include: ['../test/unit/app/**/*.ts'],
     },
@@ -281,8 +292,13 @@ export default defineNuxtConfig({
     nodeTsConfig: {
       compilerOptions: {
         allowImportingTsExtensions: true,
+        paths: {
+          '#cli/*': ['../cli/src/*'],
+          '#server/*': ['../server/*'],
+          '#shared/*': ['../shared/*'],
+        },
       },
-      include: ['../*.ts'],
+      include: ['../*.ts', '../test/e2e/**/*.ts'],
     },
   },
 
