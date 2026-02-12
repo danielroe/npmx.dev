@@ -1,4 +1,5 @@
 import type { ProviderId } from '../utils/git-providers'
+import type { TocItem } from './readme'
 
 export interface ChangelogReleaseInfo {
   type: 'release'
@@ -24,4 +25,5 @@ export interface ReleaseData {
   draft?: boolean
   id: string | number
   publishedAt?: string
+  toc?: TocItem[]
 }

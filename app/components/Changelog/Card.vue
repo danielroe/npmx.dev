@@ -7,9 +7,17 @@ const { release } = defineProps<{
 </script>
 <template>
   <section class="border border-border rounded-lg p-4 sm:p-6">
-    <h2 class="text-1xl sm:text-2xl font-medium min-w-0 break-words py-2">
-      {{ release.title }}
-    </h2>
+    <div class="flex justify-between">
+      <h2 class="text-1xl sm:text-2xl font-medium min-w-0 break-words py-2">
+        {{ release.title }}
+      </h2>
+      <ReadmeTocDropdown
+        v-if="release?.toc && release.toc.length > 1"
+        :toc="release.toc"
+        class="justify-self-end"
+      />
+      <!-- :active-id="activeTocId" -->
+    </div>
     <Readme v-if="release.html" :html="release.html"></Readme>
   </section>
 </template>

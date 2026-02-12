@@ -1,16 +1,64 @@
-import { marked } from 'marked'
-import { ALLOWED_ATTR, ALLOWED_TAGS } from '../readme'
+import { marked, type Tokens } from 'marked'
+import { ALLOWED_ATTR, ALLOWED_TAGS, calculateSemanticDepth, prefixId, slugify } from '../readme'
 import sanitizeHtml from 'sanitize-html'
 
 export async function changelogRenderer() {
   const renderer = new marked.Renderer()
 
-  // settings will need to be added still
+  return (markdown: string | null, releaseId: string | number) => {
+    // Collect table of contents items during parsing
+    const toc: TocItem[] = []
 
-  return (markdown: string) =>
-    marked.parse(markdown, {
-      renderer,
-    })
+    if (!markdown) {
+      return {
+        html: null,
+        toc,
+      }
+    }
+
+    // Track used heading slugs to handle duplicates (GitHub-style: foo, foo-1, foo-2)
+    const usedSlugs = new Map<string, number>()
+
+    // settings will need to be added still
+    let lastSemanticLevel = 2 // Start after h2 (the "Readme" section heading)
+    renderer.heading = function ({ tokens, depth }: Tokens.Heading) {
+      // Calculate the target semantic level based on document structure
+      // Start at h3 (since page h1 + section h2 already exist)
+      // But ensure we never skip levels - can only go down by 1 or stay same/go up
+      const semanticLevel = calculateSemanticDepth(depth, lastSemanticLevel)
+      lastSemanticLevel = semanticLevel
+      const text = this.parser.parseInline(tokens)
+
+      // Generate GitHub-style slug for anchor links
+      // adding release id to prevent conflicts
+      let slug = slugify(text)
+      if (!slug) slug = 'heading' // Fallback for empty headings
+
+      // Handle duplicate slugs (GitHub-style: foo, foo-1, foo-2)
+      const count = usedSlugs.get(slug) ?? 0
+      usedSlugs.set(slug, count + 1)
+      const uniqueSlug = count === 0 ? slug : `${slug}-${count}`
+
+      // Prefix with 'user-content-' to avoid collisions with page IDs
+      // (e.g., #install, #dependencies, #versions are used by the package page)
+      const id = `user-content-${releaseId}-${uniqueSlug}`
+
+      // Collect TOC item with plain text (HTML stripped)
+      const plainText = text.replace(/<[^>]*>/g, '').trim()
+      if (plainText) {
+        toc.push({ text: plainText, id, depth })
+      }
+
+      return `<h${semanticLevel} id="${id}" data-level="${depth}">${text}</h${semanticLevel}>\n`
+    }
+
+    return {
+      html: marked.parse(markdown, {
+        renderer,
+      }) as string,
+      toc,
+    }
+  }
 }
 
 export function sanitizeRawHTML(rawHtml: string) {
@@ -99,11 +147,11 @@ export function sanitizeRawHTML(rawHtml: string) {
       //   attribs.href = resolvedHref
       //   return { tagName, attribs }
       // },
-      // div: prefixId,
-      // p: prefixId,
-      // span: prefixId,
-      // section: prefixId,
-      // article: prefixId,
+      div: prefixId,
+      p: prefixId,
+      span: prefixId,
+      section: prefixId,
+      article: prefixId,
     },
   })
 }

@@ -183,7 +183,7 @@ export const ALLOWED_ATTR: Record<string, string[]> = {
  * - Remove special characters (keep alphanumeric, hyphens, underscores)
  * - Collapse multiple hyphens
  */
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return text
     .replace(/<[^>]*>/g, '') // Strip HTML tags
     .toLowerCase()
@@ -319,7 +319,7 @@ function resolveImageUrl(url: string, packageName: string, repoInfo?: Repository
 }
 
 // Helper to prefix id attributes with 'user-content-'
-function prefixId(tagName: string, attribs: sanitizeHtml.Attributes) {
+export function prefixId(tagName: string, attribs: sanitizeHtml.Attributes) {
   if (attribs.id && !attribs.id.startsWith('user-content-')) {
     attribs.id = `user-content-${attribs.id}`
   }
@@ -329,7 +329,7 @@ function prefixId(tagName: string, attribs: sanitizeHtml.Attributes) {
 // README h1 always becomes h3
 // For deeper levels, ensure sequential order
 // Don't allow jumping more than 1 level deeper than previous
-function calculateSemanticDepth(depth: number, lastSemanticLevel: number) {
+export function calculateSemanticDepth(depth: number, lastSemanticLevel: number) {
   if (depth === 1) return 3
   const maxAllowed = Math.min(lastSemanticLevel + 1, 6)
   return Math.min(depth + 2, maxAllowed)
