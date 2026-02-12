@@ -9,7 +9,7 @@ authors:
 title: 'ATProto'
 tags: ['OpenSource', 'Nuxt']
 excerpt: 'ATProto is very cool'
-date: '2026-01-28'
+date: '2026-01-28T14:30:00Z'
 slug: 'atproto'
 description: 'ATProto Adjacency Agenda'
 draft: false

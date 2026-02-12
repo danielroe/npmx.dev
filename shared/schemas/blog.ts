@@ -1,4 +1,4 @@
-import { object, string, optional, array, boolean, pipe, isoDate } from 'valibot'
+import { object, string, optional, array, boolean, pipe, isoTimestamp } from 'valibot'
 import type { InferOutput } from 'valibot'
 
 export const AuthorSchema = object({
@@ -9,7 +9,7 @@ export const AuthorSchema = object({
 export const BlogPostSchema = object({
   authors: array(AuthorSchema),
   title: string(),
-  date: pipe(string(), isoDate()),
+  date: pipe(string(), isoTimestamp()),
   description: string(),
   path: string(),
   slug: string(),

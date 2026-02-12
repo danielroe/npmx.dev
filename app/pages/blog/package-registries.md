@@ -5,7 +5,7 @@ authors:
 title: 'Package Registries'
 tags: ['OpenSource', 'Nuxt']
 excerpt: 'Package Registries need fixing'
-date: '2026-01-28'
+date: '2026-01-28T12:30:00Z'
 slug: 'package-registries'
 description: 'Package Registries Reimagined'
 draft: false

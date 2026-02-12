@@ -5,7 +5,7 @@ authors:
 title: 'Nuxted'
 tags: ['OpenSource', 'Nuxt']
 excerpt: 'Nuxting'
-date: '2026-01-28'
+date: '2026-01-28T13:30:00Z'
 slug: 'nuxt'
 description: 'Nuxter'
 draft: false
