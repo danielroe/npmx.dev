@@ -206,7 +206,8 @@
       "code": "code",
       "docs": "docs",
       "fund": "fund",
-      "compare": "compare"
+      "compare": "compare",
+      "changelog": "changelog"
     },
     "likes": {
       "like": "Like this package",

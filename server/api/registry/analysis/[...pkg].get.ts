@@ -54,7 +54,6 @@ export default defineCachedEventHandler(
       const createPackage = await findAssociatedCreatePackage(packageName, pkg)
 
       const analysis = analyzePackage(pkg, { typesPackage, createPackage })
-
       return {
         package: packageName,
         version: pkg.version ?? version ?? 'latest',
