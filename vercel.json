@@ -10,7 +10,7 @@
           "value": "chat.npmx.dev"
         }
       ],
-      "destination": "https://npmx.dev/holiday"
+      "destination": "https://npmx.dev/recharging"
     },
     {
       "source": "/(.*)",
