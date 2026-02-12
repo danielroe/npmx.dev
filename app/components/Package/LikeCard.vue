@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useAtproto } from '~/composables/atproto/useAtproto'
+import { togglePackageLike } from '~/utils/atproto/likes'
 const props = defineProps<{
   packageUrl: string
 }>()
@@ -14,7 +16,7 @@ const { user } = useAtproto()
 
 const authModal = useModal('auth-modal')
 
-const { data: likesData } = useFetch(() => `/api/social/likes/${name}`, {
+const { data: likesData } = useFetch(() => `/api/social/likes/${name.value}`, {
   default: () => ({ totalLikes: 0, userHasLiked: false }),
   server: false,
 })
@@ -41,7 +43,7 @@ const likeAction = async () => {
   isLikeActionPending.value = true
 
   try {
-    const result = await togglePackageLike(name, currentlyLiked, user.value?.handle)
+    const result = await togglePackageLike(name.value, currentlyLiked, user.value?.handle)
 
     isLikeActionPending.value = false
 
@@ -55,7 +57,7 @@ const likeAction = async () => {
         userHasLiked: currentlyLiked,
       }
     }
-  } catch {
+  } catch (e) {
     // Revert on error
     likesData.value = {
       totalLikes: currentLikes,
@@ -70,34 +72,38 @@ const likeAction = async () => {
   <NuxtLink :to="packageRoute(name)">
     <BaseCard class="group font-mono flex justify-between">
       {{ name }}
-      <ClientOnly>
-        <TooltipApp
-          :text="likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')"
-          position="bottom"
-        >
-          <button
-            @click="likeAction"
-            type="button"
-            :title="likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')"
-            class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
-            :aria-label="
-              likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-            "
+      <div class="flex items-center gap-4">
+        <ClientOnly>
+          <TooltipApp
+            :text="likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')"
+            position="bottom"
           >
-            <span
-              :class="
-                likesData?.userHasLiked
-                  ? 'i-lucide-heart-minus text-red-500'
-                  : 'i-lucide-heart-plus'
+            <button
+              @click.prevent="likeAction"
+              type="button"
+              :title="
+                likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
               "
-              class="w-4 h-4"
-              aria-hidden="true"
-            />
-            <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
-          </button>
-        </TooltipApp>
-      </ClientOnly>
-      <p class="transition-transform duration-150 group-hover:rotate-45">↗</p>
+              class="inline-flex items-center gap-1.5 font-mono text-sm text-fg hover:text-fg-muted transition-colors duration-200"
+              :aria-label="
+                likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+              "
+            >
+              <span
+                :class="
+                  likesData?.userHasLiked
+                    ? 'i-lucide-heart-minus text-red-500'
+                    : 'i-lucide-heart-plus'
+                "
+                class="w-4 h-4"
+                aria-hidden="true"
+              />
+              <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
+            </button>
+          </TooltipApp>
+        </ClientOnly>
+        <p class="transition-transform duration-150 group-hover:rotate-45 pt-1">↗</p>
+      </div>
     </BaseCard>
   </NuxtLink>
 </template>
