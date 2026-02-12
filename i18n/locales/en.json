@@ -1109,5 +1109,51 @@
       "p1": "If you encounter an accessibility barrier on {app}, please let us know by opening an issue on our {link}. We take these reports seriously and will do our best to address them.",
       "link": "GitHub repository"
     }
+  },
+  "vacations": {
+    "title": "on vacation",
+    "meta_description": "The npmx team is recharging. Discord reopens in a week.",
+    "heading": "recharging",
+    "subtitle": "after {weeks} of intense coding, {contributors}, and over {commits}, the {npmx} team is taking a short break, because it's a marathon, not a sprint.",
+    "illustration_alt": "a single row of cosy icons",
+    "poke_log": "Poke the campfire",
+    "intro": {
+      "p1": "We've been building npmx at a pace that has cost {some} of us sleep. That's not sustainable – and we don't want it to be the norm. So we're doing something about it: all of us are taking a week off. Together.",
+      "some": "some",
+      "all": "all",
+      "p2": "Go outside. Touch grass – or snow. Finish that book you started before npmx took over your evenings. Visit someone you've been meaning to visit. Do something that has nothing to do with code. We'll all be better for it."
+    },
+    "what": {
+      "title": "what's happening",
+      "p1": "Discord is closed {dates}.",
+      "dates": "February 14 – 21",
+      "discord": "All invite links are gone and channels are locked – except {garden}, which stays open for folks already there who want to keep hanging out.",
+      "garden": "#garden",
+      "site": "npmx.dev is still up. Browse packages as usual.",
+      "repo": "The repo is open. Issues and PRs are welcome – but expect us to be hands-off until we're back."
+    },
+    "meantime": {
+      "title": "in the meantime",
+      "p1": "You're more than welcome to keep poking around while we're away. The codebase is on {repo} – dig in, file issues, open PRs. We'll get to everything when we return.",
+      "repo_link": "GitHub",
+      "p2": "Just don't expect a fast review. We'll be somewhere near a cosy fireplace."
+    },
+    "return": {
+      "title": "see you soon",
+      "p1": "We'll come back recharged and ready for the final push to March 3rd. Things are going to get even more interesting after that – so let's make sure we're taking care of each other first.",
+      "p2": "Follow us {social} if you want updates in the meantime.",
+      "social_link": "on Bluesky",
+      "add_to_calendar": "remind me when Discord reopens"
+    },
+    "stats": {
+      "contributors": "Contributors",
+      "commits": "Commits",
+      "pr": "PRs Merged",
+      "subtitle": {
+        "weeks": "{0} weeks",
+        "commits": "{0} commits",
+        "contributors": "{0} contributors"
+      }
+    }
   }
 }
