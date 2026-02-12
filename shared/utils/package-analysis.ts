@@ -76,7 +76,11 @@ export function detectModuleFormat(pkg: ExtendedPackageJson): ModuleFormat {
       return 'cjs'
     }
 
-    // exports field exists but doesn't use import/require conditions
+    // If exports only contain JSON files, treat as ESM since JSON can be natively imported in ESM contexts.
+    if (exportInfo.hasJsonExport) {
+      return 'esm'
+    }
+
     // Fall through to other detection methods
   }
 
@@ -102,6 +106,7 @@ interface ExportsAnalysis {
   hasRequire: boolean
   hasModule: boolean
   hasTypes: boolean
+  hasJsonExport: boolean
 }
 
 /**
@@ -113,6 +118,7 @@ function analyzeExports(exports: PackageExports, depth = 0): ExportsAnalysis {
     hasRequire: false,
     hasModule: false,
     hasTypes: false,
+    hasJsonExport: false,
   }
 
   // Prevent infinite recursion
@@ -124,13 +130,21 @@ function analyzeExports(exports: PackageExports, depth = 0): ExportsAnalysis {
 
   if (typeof exports === 'string') {
     // Check file extension for format hints
-    if (exports.endsWith('.mjs') || exports.endsWith('.mts')) {
+    const isMjs = exports.endsWith('.mjs') || exports.endsWith('.mts')
+    const isCjs = exports.endsWith('.cjs') || exports.endsWith('.cts')
+    const isTypes =
+      exports.endsWith('.d.ts') || exports.endsWith('.d.mts') || exports.endsWith('.d.cts')
+    const isJson = exports.endsWith('.json')
+
+    if (isMjs) {
       result.hasImport = true
-    } else if (exports.endsWith('.cjs') || exports.endsWith('.cts')) {
+    } else if (isCjs) {
       result.hasRequire = true
     }
-    if (exports.endsWith('.d.ts') || exports.endsWith('.d.mts') || exports.endsWith('.d.cts')) {
+    if (isTypes) {
       result.hasTypes = true
+    } else if (isJson) {
+      result.hasJsonExport = true
     }
     return result
   }
@@ -170,6 +184,7 @@ function mergeExportsAnalysis(target: ExportsAnalysis, source: ExportsAnalysis):
   target.hasRequire = target.hasRequire || source.hasRequire
   target.hasModule = target.hasModule || source.hasModule
   target.hasTypes = target.hasTypes || source.hasTypes
+  target.hasJsonExport = target.hasJsonExport || source.hasJsonExport
 }
 
 /** Info about a related package (@types or create-*) */

@@ -87,6 +87,33 @@ describe('detectModuleFormat', () => {
     ).toBe('dual')
   })
 
+  it('detects ESM when exports contain only JSON files', () => {
+    expect(
+      detectModuleFormat({
+        exports: {
+          '.': './data.json',
+          './config': './config.json',
+        },
+      }),
+    ).toBe('esm')
+  })
+
+  // example from package "@tc39/ecma262-biblio"
+  it('detects ESM for JSON-only exports with package.json re-export', () => {
+    expect(
+      detectModuleFormat({
+        exports: {
+          '.': './biblio.json',
+          './package.json': './package.json',
+        },
+      }),
+    ).toBe('esm')
+  })
+
+  it('detects ESM when exports contain only a single JSON file', () => {
+    expect(detectModuleFormat({ exports: './data.json' })).toBe('esm')
+  })
+
   it('returns cjs for empty package (npm default)', () => {
     // npm treats packages without type field as CommonJS
     expect(detectModuleFormat({})).toBe('cjs')
