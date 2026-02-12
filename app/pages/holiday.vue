@@ -45,6 +45,14 @@ const icons = [
 ] as const
 
 // --- .ics calendar reminder ---
+
+// Format as UTC for the .ics file
+const fmt = (d: Date) =>
+  d
+    .toISOString()
+    .replace(/[-:]/g, '')
+    .replace(/\.\d{3}/, '')
+
 // Pick a random daytime hour (9–17) in the user's local timezone on Feb 22
 // so reminders are staggered and people don't all flood in at once.
 function downloadIcs() {
@@ -52,19 +60,12 @@ function downloadIcs() {
   const start = new Date(2026, 1, 22, hour, 0, 0) // month is 0-indexed
   const end = new Date(2026, 1, 22, hour + 1, 0, 0)
 
-  // Format as UTC for the .ics file
-  const fmt = (d: Date) =>
-    d
-      .toISOString()
-      .replace(/[-:]/g, '')
-      .replace(/\.\d{3}/, '')
-
   const uid = `npmx-vacations-${start.getTime()}@npmx.dev`
 
   const ics = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//npmx//vacations//EN',
+    'PRODID:-//npmx//holiday//EN',
     'BEGIN:VEVENT',
     `DTSTART:${fmt(start)}`,
     `DTEND:${fmt(end)}`,
@@ -117,19 +118,12 @@ function downloadIcs() {
           scope="global"
           class="text-fg-muted text-lg sm:text-xl"
         >
-          <template #weeks>
-            {{ $t('vacations.stats.subtitle.weeks') }}
-          </template>
-          <template #contributors>
-            {{
-              $t('vacations.stats.subtitle.contributors', [$t('vacations.stats.contributors_text')])
-            }}
-          </template>
-          <template #commits>
-            {{ $t('vacations.stats.subtitle.commits', [$t('vacations.stats.commits_text')]) }}
-          </template>
-          <template #npmx>
-            <strong>npmx</strong>
+          <template #some>
+            <span class="line-through decoration-fg">{{
+              $t('vacations.stats.subtitle.some')
+            }}</span>
+            {{ ' ' }}
+            <strong class="text-fg">{{ $t('vacations.stats.subtitle.all') }}</strong>
           </template>
         </i18n-t>
       </header>
@@ -163,57 +157,7 @@ function downloadIcs() {
         </div>
       </div>
 
-      <!-- Icon banner — a single row of cosy icons, clipped to fill width -->
-      <div
-        class="relative mb-12 px-4 border border-border rounded-lg bg-bg-subtle overflow-hidden select-none"
-        :aria-label="$t('vacations.illustration_alt')"
-        role="group"
-      >
-        <div class="flex items-center gap-4 sm:gap-5 py-3 sm:py-4 w-max">
-          <template v-for="n in 4" :key="`set-${n}`">
-            <!-- Campsite icon — click it 3x to light the fire -->
-            <button
-              type="button"
-              class="relative shrink-0 cursor-pointer rounded transition-transform duration-200 hover:scale-110 focus-visible:outline-accent/70 w-5 h-5 sm:w-6 sm:h-6"
-              :aria-label="$t('vacations.poke_log')"
-              @click="pokeLog"
-            >
-              <span
-                class="absolute inset-0 i-carbon:fire w-5 h-5 sm:w-6 sm:h-6 text-orange-400 transition-opacity duration-400"
-                :class="fireVisible ? 'opacity-100' : 'opacity-0'"
-              />
-              <span
-                class="absolute inset-0 i-carbon:campsite w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-400"
-                :class="fireVisible ? 'text-amber-700' : ''"
-              />
-            </button>
-            <span
-              v-for="(icon, i) in icons"
-              :key="`${n}-${i}`"
-              class="shrink-0 w-5 h-5 sm:w-6 sm:h-6 opacity-40"
-              :class="icon"
-              aria-hidden="true"
-            />
-          </template>
-        </div>
-      </div>
-
       <section class="prose prose-invert max-w-none space-y-8">
-        <div>
-          <p class="text-fg-muted leading-relaxed mb-4">
-            <i18n-t keypath="vacations.intro.p1" tag="span" scope="global">
-              <template #some>
-                <span class="line-through decoration-fg">{{ $t('vacations.intro.some') }}</span>
-                {{ ' ' }}
-                <strong class="text-fg">{{ $t('vacations.intro.all') }}</strong>
-              </template>
-            </i18n-t>
-          </p>
-          <p class="text-fg-muted leading-relaxed">
-            {{ $t('vacations.intro.p2') }}
-          </p>
-        </div>
-
         <!-- What's happening -->
         <div>
           <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
@@ -226,26 +170,13 @@ function downloadIcs() {
               </template>
             </i18n-t>
           </p>
-          <ul class="space-y-3 text-fg-muted list-none p-0">
-            <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
-              <span>
-                <i18n-t keypath="vacations.what.discord" tag="span" scope="global">
-                  <template #garden>
-                    <code class="font-mono text-fg text-sm">{{ $t('vacations.what.garden') }}</code>
-                  </template>
-                </i18n-t>
-              </span>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
-              <span>{{ $t('vacations.what.site') }}</span>
-            </li>
-            <li class="flex items-start gap-3">
-              <span class="text-fg-subtle shrink-0 mt-1">&mdash;</span>
-              <span>{{ $t('vacations.what.repo') }}</span>
-            </li>
-          </ul>
+          <p class="text-fg-muted leading-relaxed mb-4">
+            <i18n-t keypath="vacations.what.p2" tag="span" scope="global">
+              <template #garden>
+                <code class="font-mono text-fg text-sm">{{ $t('vacations.what.garden') }}</code>
+              </template>
+            </i18n-t>
+          </p>
         </div>
 
         <!-- In the meantime -->
@@ -253,7 +184,7 @@ function downloadIcs() {
           <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('vacations.meantime.title') }}
           </h2>
-          <p class="text-fg-muted leading-relaxed mb-4">
+          <p class="text-fg-muted leading-relaxed">
             <i18n-t keypath="vacations.meantime.p1" tag="span" scope="global">
               <template #repo>
                 <LinkBase to="https://repo.npmx.dev">
@@ -262,9 +193,41 @@ function downloadIcs() {
               </template>
             </i18n-t>
           </p>
-          <p class="text-fg-muted leading-relaxed">
-            {{ $t('vacations.meantime.p2') }}
-          </p>
+        </div>
+
+        <!-- Icon banner — a single row of cosy icons, clipped to fill width -->
+        <div
+          class="relative mb-12 px-4 border border-border rounded-lg bg-bg-subtle overflow-hidden select-none"
+          :aria-label="$t('vacations.illustration_alt')"
+          role="group"
+        >
+          <div class="flex items-center gap-4 sm:gap-5 py-3 sm:py-4 w-max">
+            <template v-for="n in 4" :key="`set-${n}`">
+              <!-- Campsite icon — click it 3x to light the fire -->
+              <button
+                type="button"
+                class="relative shrink-0 cursor-pointer rounded transition-transform duration-200 hover:scale-110 focus-visible:outline-accent/70 w-5 h-5 sm:w-6 sm:h-6"
+                :aria-label="$t('vacations.poke_log')"
+                @click="pokeLog"
+              >
+                <span
+                  class="absolute inset-0 i-carbon:fire w-5 h-5 sm:w-6 sm:h-6 text-orange-400 transition-opacity duration-400"
+                  :class="fireVisible ? 'opacity-100' : 'opacity-0'"
+                />
+                <span
+                  class="absolute inset-0 i-carbon:campsite w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-400"
+                  :class="fireVisible ? 'text-amber-700' : ''"
+                />
+              </button>
+              <span
+                v-for="(icon, i) in icons"
+                :key="`${n}-${i}`"
+                class="shrink-0 w-5 h-5 sm:w-6 sm:h-6 opacity-40"
+                :class="icon"
+                aria-hidden="true"
+              />
+            </template>
+          </div>
         </div>
 
         <!-- See you soon -->
@@ -272,11 +235,8 @@ function downloadIcs() {
           <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('vacations.return.title') }}
           </h2>
-          <p class="text-fg-muted leading-relaxed mb-4">
-            {{ $t('vacations.return.p1') }}
-          </p>
           <p class="text-fg-muted leading-relaxed mb-6">
-            <i18n-t keypath="vacations.return.p2" tag="span" scope="global">
+            <i18n-t keypath="vacations.return.p1" tag="span" scope="global">
               <template #social>
                 <LinkBase to="https://social.npmx.dev">
                   {{ $t('vacations.return.social_link') }}

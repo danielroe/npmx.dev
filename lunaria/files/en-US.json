@@ -1114,34 +1114,24 @@
     "title": "on vacation",
     "meta_description": "The npmx team is recharging. Discord reopens in a week.",
     "heading": "recharging",
-    "subtitle": "after {weeks} of intense coding, {contributors}, and over {commits}, the {npmx} team is taking a short break, because it's a marathon, not a sprint.",
+    "subtitle": "we've been building npmx at a pace that has cost {some} of us sleep. we don't want that to be the norm! so we are taking a week off. together.",
     "illustration_alt": "a single row of cosy icons",
     "poke_log": "Poke the campfire",
-    "intro": {
-      "p1": "We've been building npmx at a pace that has cost {some} of us sleep. That's not sustainable – and we don't want it to be the norm. So we're doing something about it: all of us are taking a week off. Together.",
-      "some": "some",
-      "all": "all",
-      "p2": "Go outside. Touch grass – or snow. Finish that book you started before npmx took over your evenings. Visit someone you've been meaning to visit. Do something that has nothing to do with code. We'll all be better for it."
-    },
     "what": {
       "title": "what's happening",
-      "p1": "Discord is closed {dates}.",
+      "p1": "discord is closed {dates}.",
       "dates": "February 14 – 21",
-      "discord": "All invite links are gone and channels are locked – except {garden}, which stays open for folks already there who want to keep hanging out.",
-      "garden": "#garden",
-      "site": "npmx.dev is still up. Browse packages as usual.",
-      "repo": "The repo is open. Issues and PRs are welcome – but expect us to be hands-off until we're back."
+      "p2": "all invite links are gone and channels are locked – except {garden}, which stays open for folks who want to keep hanging out.",
+      "garden": "#garden"
     },
     "meantime": {
       "title": "in the meantime",
-      "p1": "You're more than welcome to keep poking around while we're away. The codebase is on {repo} – dig in, file issues, open PRs. We'll get to everything when we return.",
-      "repo_link": "GitHub",
-      "p2": "Just don't expect a fast review. We'll be somewhere near a cosy fireplace."
+      "p1": "npmx.dev and the {repo} stay open – dig in, file issues, open PRs. we'll get to everything when we're back. just don't expect a fast review. we'll be somewhere near a cosy fireplace.",
+      "repo_link": "GitHub"
     },
     "return": {
       "title": "see you soon",
-      "p1": "We'll come back recharged and ready for the final push to March 3rd. Things are going to get even more interesting after that – so let's make sure we're taking care of each other first.",
-      "p2": "Follow us {social} if you want updates in the meantime.",
+      "p1": "we'll come back recharged and ready for the final push to March 3rd. follow us {social} for updates.",
       "social_link": "on Bluesky",
       "add_to_calendar": "remind me when Discord reopens"
     },
@@ -1153,9 +1143,8 @@
       "pr": "PRs Merged",
       "pr_text": "900+",
       "subtitle": {
-        "weeks": "3 weeks",
-        "commits": "{0} commits",
-        "contributors": "{0} contributors"
+        "some": "some",
+        "all": "all"
       }
     }
   }

@@ -3358,24 +3358,6 @@
         "poke_log": {
           "type": "string"
         },
-        "intro": {
-          "type": "object",
-          "properties": {
-            "p1": {
-              "type": "string"
-            },
-            "some": {
-              "type": "string"
-            },
-            "all": {
-              "type": "string"
-            },
-            "p2": {
-              "type": "string"
-            }
-          },
-          "additionalProperties": false
-        },
         "what": {
           "type": "object",
           "properties": {
@@ -3388,16 +3370,10 @@
             "dates": {
               "type": "string"
             },
-            "discord": {
+            "p2": {
               "type": "string"
             },
             "garden": {
-              "type": "string"
-            },
-            "site": {
-              "type": "string"
-            },
-            "repo": {
               "type": "string"
             }
           },
@@ -3414,9 +3390,6 @@
             },
             "repo_link": {
               "type": "string"
-            },
-            "p2": {
-              "type": "string"
             }
           },
           "additionalProperties": false
@@ -3428,9 +3401,6 @@
               "type": "string"
             },
             "p1": {
-              "type": "string"
-            },
-            "p2": {
               "type": "string"
             },
             "social_link": {
@@ -3466,13 +3436,10 @@
             "subtitle": {
               "type": "object",
               "properties": {
-                "weeks": {
+                "some": {
                   "type": "string"
                 },
-                "commits": {
-                  "type": "string"
-                },
-                "contributors": {
+                "all": {
                   "type": "string"
                 }
               },
