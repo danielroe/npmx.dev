@@ -145,7 +145,7 @@
     "node": "24"
   },
   "simple-git-hooks": {
-    "pre-commit": "[ -n \"$NO_VERIFY\" ] && exit 0\nnpx lint-staged"
+    "pre-commit": "npx lint-staged"
   },
   "lint-staged": {
     "i18n/locales/*": [
