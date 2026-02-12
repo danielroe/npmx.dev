@@ -9,6 +9,7 @@ export const CACHE_MAX_AGE_ONE_YEAR = 60 * 60 * 24 * 365
 
 // API Strings
 export const NPMX_SITE = 'https://npmx.dev'
+export const NPMX_DOCS_SITE = 'https://docs.npmx.dev'
 export const BLUESKY_API = 'https://public.api.bsky.app'
 export const BLUESKY_COMMENTS_REQUEST = '/api/atproto/bluesky-comments'
 export const NPM_REGISTRY = 'https://registry.npmjs.org'

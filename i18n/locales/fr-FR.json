@@ -278,7 +278,13 @@
       "more_tagged": "{count} de plus avec tag",
       "all_covered": "Toutes les versions sont couvertes par les tags ci-dessus",
       "deprecated_title": "{version} (dépréciée)",
-      "view_all": "Voir la version | Voir les {count} versions"
+      "view_all": "Voir la version | Voir les {count} versions",
+      "filter_placeholder": "Filtrer par plage semver (ex. ^3.0.0)",
+      "filter_invalid": "Plage semver invalide",
+      "filter_help": "Infos sur le filtre de plage semver",
+      "filter_tooltip": "Filtrer les versions avec une {link}. Par exemple, ^3.0.0 affiche toutes les versions 3.x.",
+      "filter_tooltip_link": "plage semver",
+      "no_matches": "Aucune version ne correspond à cette plage"
     },
     "dependencies": {
       "title": "Dépendances ({count})",

@@ -906,6 +906,24 @@
             },
             "y_axis_label": {
               "type": "string"
+            },
+            "filter_placeholder": {
+              "type": "string"
+            },
+            "filter_invalid": {
+              "type": "string"
+            },
+            "filter_help": {
+              "type": "string"
+            },
+            "filter_tooltip": {
+              "type": "string"
+            },
+            "filter_tooltip_link": {
+              "type": "string"
+            },
+            "no_matches": {
+              "type": "string"
             }
           },
           "additionalProperties": false

@@ -300,7 +300,13 @@
       "show_low_usage": "Show low usage versions",
       "show_low_usage_tooltip": "Include version groups with less than 1% of total downloads.",
       "date_range_tooltip": "Last week of version distributions only",
-      "y_axis_label": "Downloads"
+      "y_axis_label": "Downloads",
+      "filter_placeholder": "Filter by semver (e.g. ^3.0.0)",
+      "filter_invalid": "Invalid semver range",
+      "filter_help": "Semver range filter help",
+      "filter_tooltip": "Filter versions using a {link}. For example, ^3.0.0 shows all 3.x versions.",
+      "filter_tooltip_link": "semver range",
+      "no_matches": "No versions match this range"
     },
     "dependencies": {
       "title": "Dependency ({count}) | Dependencies ({count})",

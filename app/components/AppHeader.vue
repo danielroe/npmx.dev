@@ -2,6 +2,7 @@
 import { LinkBase } from '#components'
 import type { NavigationConfig, NavigationConfigWithGroups } from '~/types'
 import { isEditableElement } from '~/utils/input'
+import { NPMX_DOCS_SITE } from '#shared/utils/constants'
 
 withDefaults(
   defineProps<{
@@ -85,7 +86,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
       {
         name: 'Docs',
         label: $t('footer.docs'),
-        href: 'https://docs.npmx.dev',
+        href: NPMX_DOCS_SITE,
         target: '_blank',
         type: 'link',
         external: true,
