@@ -84,13 +84,6 @@ function downloadIcs() {
   a.click()
   URL.revokeObjectURL(url)
 }
-
-const stats = {
-  weeks: '3',
-  contributors: '160+',
-  commits: '1.1k+',
-  pr: '900+',
-}
 </script>
 
 <template>
@@ -125,13 +118,15 @@ const stats = {
           class="text-fg-muted text-lg sm:text-xl"
         >
           <template #weeks>
-            {{ $t('vacations.stats.subtitle.weeks', [stats.weeks]) }}
+            {{ $t('vacations.stats.subtitle.weeks') }}
           </template>
           <template #contributors>
-            {{ $t('vacations.stats.subtitle.contributors', [stats.contributors]) }}
+            {{
+              $t('vacations.stats.subtitle.contributors', [$t('vacations.stats.contributors_text')])
+            }}
           </template>
           <template #commits>
-            {{ $t('vacations.stats.subtitle.commits', [stats.commits]) }}
+            {{ $t('vacations.stats.subtitle.commits', [$t('vacations.stats.commits_text')]) }}
           </template>
           <template #npmx>
             <strong>npmx</strong>
@@ -144,20 +139,24 @@ const stats = {
       >
         <div class="space-y-1 text-center">
           <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
-            {{ stats.contributors }}
+            {{ $t('vacations.stats.contributors_text') }}
           </div>
           <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
             {{ $t('vacations.stats.contributors') }}
           </div>
         </div>
         <div class="space-y-1 text-center">
-          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">{{ stats.commits }}</div>
+          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
+            {{ $t('vacations.stats.commits_text') }}
+          </div>
           <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
             {{ $t('vacations.stats.commits') }}
           </div>
         </div>
         <div class="space-y-1 text-center">
-          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">{{ stats.pr }}</div>
+          <div class="font-mono text-2xl sm:text-3xl font-bold text-fg">
+            {{ $t('vacations.stats.pr_text') }}
+          </div>
           <div class="text-xs sm:text-sm text-fg-subtle uppercase tracking-wider">
             {{ $t('vacations.stats.pr') }}
           </div>

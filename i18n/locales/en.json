@@ -1148,10 +1148,13 @@
     },
     "stats": {
       "contributors": "Contributors",
+      "contributors_text": "160+",
       "commits": "Commits",
+      "commits_text": "1.1k+",
       "pr": "PRs Merged",
+      "pr_text": "900+",
       "subtitle": {
-        "weeks": "{0} weeks",
+        "weeks": "3 weeks",
         "commits": "{0} commits",
         "contributors": "{0} contributors"
       }
