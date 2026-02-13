@@ -45,7 +45,7 @@ describe('FacetRow', () => {
   })
 
   describe('value rendering', () => {
-    it('renders null values as dash', async () => {
+    it('renders null values as skeleton', async () => {
       const component = await mountSuspended(FacetRow, {
         props: {
           ...baseProps,
@@ -54,7 +54,8 @@ describe('FacetRow', () => {
       })
       const cells = component.findAll('.comparison-cell')
       expect(cells.length).toBe(2)
-      expect(component.text()).toContain('-')
+      // Should render SkeletonInline component (check for skeleton class)
+      expect(component.findAll('.animate-skeleton-pulse').length).toBe(2)
     })
 
     it('renders facet values', async () => {

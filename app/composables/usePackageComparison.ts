@@ -74,12 +74,18 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   const compactNumberFormatter = useCompactNumberFormatter()
   const bytesFormatter = useBytesFormatter()
   const packages = computed(() => toValue(packageNames))
+  const nuxt = useNuxtApp()
 
   // Cache of fetched data by package name (source of truth)
   const cache = shallowRef(new Map<string, PackageComparisonData>())
 
   // Derived array in current package order
-  const packagesData = computed(() => packages.value.map(name => cache.value.get(name) ?? null))
+  const packagesData = computed<false | (PackageComparisonData | null)[]>(
+    () =>
+      import.meta.client &&
+      !nuxt.isHydrating &&
+      packages.value.map(name => cache.value.get(name) ?? null),
+  )
 
   const status = shallowRef<'idle' | 'pending' | 'success' | 'error'>('idle')
   const error = shallowRef<Error | null>(null)
@@ -250,9 +256,11 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   // Watch for package changes and refetch (client-side only)
   if (import.meta.client) {
     watch(
-      packages,
-      newPackages => {
-        fetchPackages(newPackages)
+      () => [nuxt.isHydrating, packages.value] as const,
+      ([isHydrating, newPackages]) => {
+        if (!isHydrating) {
+          fetchPackages(newPackages)
+        }
       },
       { immediate: true },
     )
@@ -260,7 +268,10 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
 
   // Compute values for each facet
   function getFacetValues(facet: ComparisonFacet): (FacetValue | null)[] {
-    if (!packagesData.value || packagesData.value.length === 0) return []
+    // If not ready or no data, return array of nulls to render skeletons
+    if (nuxt.isHydrating || !packagesData.value || packagesData.value.length === 0) {
+      return Array.from({ length: packages.value.length }, () => null)
+    }
 
     return packagesData.value.map(pkg => {
       if (!pkg) return null
@@ -277,7 +288,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
 
   // Check if a facet depends on slow-loading data
   function isFacetLoading(facet: ComparisonFacet): boolean {
-    if (!installSizeLoading.value) return false
+    if (nuxt.isHydrating || !installSizeLoading.value) return false
     // These facets depend on install-size API
     return facet === 'installSize' || facet === 'totalDependencies'
   }

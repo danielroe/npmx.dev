@@ -6,6 +6,7 @@
       "description": "a fast, modern browser for the npm registry. Search, browse, and explore packages with a modern interface."
     }
   },
+  "js_required": "This page requires JavaScript to function.",
   "built_at": "built {0}",
   "alt_logo": "npmx logo",
   "tagline": "a fast, modern browser for the npm registry",

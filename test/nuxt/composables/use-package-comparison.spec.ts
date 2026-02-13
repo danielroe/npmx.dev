@@ -23,7 +23,9 @@ async function usePackageComparisonInComponent(packageNames: string[]) {
 
       // Sync values to captured refs
       watchEffect(() => {
-        capturedPackagesData.value = [...packagesData.value]
+        capturedPackagesData.value = Array.isArray(packagesData.value)
+          ? [...packagesData.value]
+          : []
         capturedStatus.value = status.value
       })
       capturedGetFacetValues = getFacetValues

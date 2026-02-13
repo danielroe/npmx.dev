@@ -149,6 +149,7 @@ export default defineNuxtConfig({
     '/200.html': { prerender: true },
     '/about': { prerender: true },
     '/accessibility': { prerender: true },
+    '/compare': { prerender: true },
     '/privacy': { prerender: true },
     '/search': { isr: false, cache: false }, // never cache
     '/settings': { prerender: true },

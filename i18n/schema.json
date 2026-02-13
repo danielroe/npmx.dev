@@ -22,6 +22,9 @@
       },
       "additionalProperties": false
     },
+    "js_required": {
+      "type": "string"
+    },
     "built_at": {
       "type": "string"
     },
