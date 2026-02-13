@@ -124,7 +124,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
 ])
 
 const showFullSearch = shallowRef(false)
-const showMobileMenu = shallowRef(true)
+const showMobileMenu = shallowRef(false)
 const { env } = useAppConfig().buildInfo
 
 // On mobile, clicking logo+search button expands search
