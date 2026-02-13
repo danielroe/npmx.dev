@@ -3427,9 +3427,6 @@
         "locale_summary_status": {
           "type": "string"
         },
-        "complete_template": {
-          "type": "string"
-        },
         "complete_text": {
           "type": "string"
         },
