@@ -389,9 +389,10 @@ const isEndDateOnPeriodEnd = computed(() => {
 const isEstimationGranularity = computed(
   () => displayedGranularity.value === 'monthly' || displayedGranularity.value === 'yearly',
 )
-const shouldRenderEstimationOverlay = computed(
-  () => !pending.value && isEstimationGranularity.value,
+const supportsEstimation = computed(
+  () => isEstimationGranularity.value && selectedMetric.value !== 'contributors',
 )
+const shouldRenderEstimationOverlay = computed(() => !pending.value && supportsEstimation.value)
 
 const startDate = usePermalink<string>('start', '', {
   permanent: props.permalink,
@@ -1018,9 +1019,15 @@ const chartData = computed<{
 
 const normalisedDataset = computed(() => {
   return chartData.value.dataset?.map(d => {
+    const lastValue = d.series.at(-1) ?? 0
+
+    // Contributors is an absolute metric: keep the partial period value as-is.
+    const projectedLastValue =
+      selectedMetric.value === 'contributors' ? lastValue : extrapolateLastValue(lastValue)
+
     return {
       ...d,
-      series: [...d.series.slice(0, -1), extrapolateLastValue(d.series.at(-1) ?? 0)],
+      series: [...d.series.slice(0, -1), projectedLastValue],
     }
   })
 })
@@ -1200,6 +1207,8 @@ function getCompletionRatioForBucket(params: {
  * or the original `lastValue` when no extrapolation should be applied.
  */
 function extrapolateLastValue(lastValue: number) {
+  if (selectedMetric.value === 'contributors') return lastValue
+
   if (displayedGranularity.value !== 'monthly' && displayedGranularity.value !== 'yearly')
     return lastValue
 
@@ -1382,11 +1391,7 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
   })
 
   // Inject the estimation legend item when necessary
-  if (
-    ['monthly', 'yearly'].includes(displayedGranularity.value) &&
-    !isEndDateOnPeriodEnd.value &&
-    !isZoomed.value
-  ) {
+  if (supportsEstimation.value && !isEndDateOnPeriodEnd.value && !isZoomed.value) {
     seriesNames.push(`
         <line
           x1="${svg.drawingArea.left + 12}"
@@ -1696,12 +1701,7 @@ watch(selectedMetric, value => {
             <template #svg="{ svg }">
               <!-- Estimation lines for monthly & yearly granularities when the end date induces a downwards trend -->
               <g
-                v-if="
-                  !pending &&
-                  ['monthly', 'yearly'].includes(displayedGranularity) &&
-                  !isEndDateOnPeriodEnd &&
-                  !isZoomed
-                "
+                v-if="shouldRenderEstimationOverlay && !isEndDateOnPeriodEnd && !isZoomed"
                 v-html="drawEstimationLine(svg)"
               />
 
@@ -1779,10 +1779,7 @@ watch(selectedMetric, value => {
                 </template>
 
                 <!-- Estimation extra legend item -->
-                <div
-                  class="flex gap-1 place-items-center"
-                  v-if="['monthly', 'yearly'].includes(selectedGranularity)"
-                >
+                <div class="flex gap-1 place-items-center" v-if="supportsEstimation">
                   <svg viewBox="0 0 20 2" width="20">
                     <line
                       x1="0"
