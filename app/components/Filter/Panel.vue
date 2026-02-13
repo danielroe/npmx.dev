@@ -328,15 +328,16 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             {{ $t('filters.keywords') }}
           </legend>
           <div class="flex flex-wrap gap-1.5" role="group" :aria-label="$t('filters.keywords')">
-            <ButtonBase
+            <CheckboxBase
               v-for="keyword in displayedKeywords"
               :key="keyword"
               size="small"
-              :aria-pressed="filters.keywords.includes(keyword)"
-              @click="emit('toggleKeyword', keyword)"
+              :model-value="filters.keywords.includes(keyword)"
+              @update:modelValue="emit('toggleKeyword', keyword)"
+              :value="keyword"
             >
               {{ keyword }}
-            </ButtonBase>
+            </CheckboxBase>
             <button
               v-if="hasMoreKeywords"
               type="button"
