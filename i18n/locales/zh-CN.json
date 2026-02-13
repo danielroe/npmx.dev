@@ -790,14 +790,6 @@
     }
   },
   "about": {
-    "team": {
-      "title": "团队",
-      "governance": "治理",
-      "role_steward": "管理者",
-      "role_maintainer": "维护者",
-      "sponsor": "赞助者",
-      "sponsor_aria": "在 GitHub 上赞助 {name}"
-    },
     "title": "关于",
     "heading": "关于",
     "meta_description": "npmx 是一个快速、现代的 npm 仓库浏览器。为探索 npm 包提供更好的用户体验和开发者体验。",
@@ -823,6 +815,14 @@
         "package": "包",
         "managers": "管理器"
       }
+    },
+    "team": {
+      "title": "团队",
+      "governance": "治理",
+      "role_steward": "管理者",
+      "role_maintainer": "维护者",
+      "sponsor": "赞助者",
+      "sponsor_aria": "在 GitHub 上赞助 {name}"
     },
     "contributors": {
       "title": "{count} 位贡献者",
