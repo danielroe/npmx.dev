@@ -158,6 +158,12 @@ export default defineNuxtConfig({
     '/_v/view': { proxy: 'https://npmx.dev/_vercel/insights/view' },
     '/_v/event': { proxy: 'https://npmx.dev/_vercel/insights/event' },
     '/_v/session': { proxy: 'https://npmx.dev/_vercel/insights/session' },
+    // lunaria status.json
+    '/lunaria/status.json': {
+      headers: {
+        'Cache-Control': 'public, max-age=0, must-revalidate',
+      },
+    },
   },
 
   experimental: {
