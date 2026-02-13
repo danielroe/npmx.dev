@@ -315,7 +315,8 @@
       "view_vulnerabilities": "View vulnerabilities",
       "outdated_major": "{count} major version behind (latest: {latest}) | {count} major versions behind (latest: {latest})",
       "outdated_minor": "{count} minor version behind (latest: {latest}) | {count} minor versions behind (latest: {latest})",
-      "outdated_patch": "Patch update available (latest: {latest})"
+      "outdated_patch": "Patch update available (latest: {latest})",
+      "has_replacement": "This dependency has suggested replacements"
     },
     "peer_dependencies": {
       "title": "Peer Dependency ({count}) | Peer Dependencies ({count})",
