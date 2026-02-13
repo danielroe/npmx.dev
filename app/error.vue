@@ -53,10 +53,10 @@ useHead({
 
       <button
         type="button"
-        class="font-mono text-sm px-6 py-3 bg-fg text-bg rounded-lg transition-all duration-200 hover:bg-fg/90 active:scale-95"
+        class="font-mono text-sm px-6 py-3 bg-fg text-bg rounded-lg transition-all duration-200 hover:bg-fg/90 active:scale-95 cursor-pointer"
         @click="handleError"
       >
-        go home
+        {{ $t('common.go_back_home') }}
       </button>
     </main>
 
