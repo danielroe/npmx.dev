@@ -25,7 +25,9 @@ export const packageManagers = [
     id: 'yarn',
     label: 'yarn',
     action: 'add',
-    executeLocal: 'yarn',
+    // For both yarn v1 and v2+ support
+    // local exec defers to npx instead
+    executeLocal: 'npx',
     executeRemote: 'yarn dlx',
     create: 'yarn create',
     icon: 'i-simple-icons:yarn',
@@ -52,9 +54,9 @@ export const packageManagers = [
     id: 'vlt',
     label: 'vlt',
     action: 'install',
-    executeLocal: 'vlt x',
-    executeRemote: 'vlt x',
-    create: 'vlt x',
+    executeLocal: 'vlx',
+    executeRemote: 'vlx',
+    create: 'vlx',
     icon: 'i-custom-vlt',
   },
 ] as const
@@ -66,6 +68,11 @@ export interface InstallCommandOptions {
   packageManager: PackageManagerId
   version?: string | null
   jsrInfo?: JsrPackageInfo | null
+  dev?: boolean
+}
+
+export function getDevDependencyFlag(packageManager: PackageManagerId): '-D' | '-d' {
+  return packageManager === 'bun' ? '-d' : '-D'
 }
 
 /**
@@ -90,7 +97,6 @@ export function getPackageSpecifier(options: InstallCommandOptions): string {
 
 /**
  * Generate the full install command for a package.
- * @public
  */
 export function getInstallCommand(options: InstallCommandOptions): string {
   return getInstallCommandParts(options).join(' ')
@@ -107,8 +113,9 @@ export function getInstallCommandParts(options: InstallCommandOptions): string[]
 
   const spec = getPackageSpecifier(options)
   const version = options.version ? `@${options.version}` : ''
+  const devFlag = options.dev ? [getDevDependencyFlag(options.packageManager)] : []
 
-  return [pm.label, pm.action, `${spec}${version}`]
+  return [pm.label, pm.action, ...devFlag, `${spec}${version}`]
 }
 
 export interface ExecuteCommandOptions extends InstallCommandOptions {
@@ -118,7 +125,6 @@ export interface ExecuteCommandOptions extends InstallCommandOptions {
   isCreatePackage?: boolean
 }
 
-/** @public */
 export function getExecuteCommand(options: ExecuteCommandOptions): string {
   return getExecuteCommandParts(options).join(' ')
 }

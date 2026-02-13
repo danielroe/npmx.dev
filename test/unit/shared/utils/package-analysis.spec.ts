@@ -91,6 +91,27 @@ describe('detectModuleFormat', () => {
     // npm treats packages without type field as CommonJS
     expect(detectModuleFormat({})).toBe('cjs')
   })
+
+  it('detect dual from JSON exports', () => {
+    expect(
+      detectModuleFormat({
+        main: 'test.json',
+        exports: {
+          '.': './test.json',
+        },
+      }),
+    ).toBe('dual')
+  })
+
+  it('detect esm from JSON exports', () => {
+    expect(
+      detectModuleFormat({
+        exports: {
+          '.': './test.json',
+        },
+      }),
+    ).toBe('esm')
+  })
 })
 
 describe('detectTypesStatus', () => {
@@ -217,12 +238,17 @@ describe('analyzePackage', () => {
       name: 'test',
       main: 'index.js',
       engines: {
+        bun: '>=1.0.0',
         node: '>=18',
         npm: '>=9',
       },
     })
 
-    expect(result.engines).toEqual({ node: '>=18', npm: '>=9' })
+    expect(result.engines).toEqual({
+      bun: '>=1.0.0',
+      node: '>=18',
+      npm: '>=9',
+    })
   })
 
   it('detects @types package when typesPackage info is provided', () => {

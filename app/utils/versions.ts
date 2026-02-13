@@ -1,4 +1,4 @@
-import { compare, valid } from 'semver'
+import { compare, satisfies, validRange, valid } from 'semver'
 
 /**
  * Utilities for handling npm package versions and dist-tags
@@ -55,7 +55,6 @@ export function getPrereleaseChannel(version: string): string {
  * Sort tags with 'latest' first, then alphabetically
  * @param tags - Array of tag names
  * @returns New sorted array
- * @public
  */
 export function sortTags(tags: string[]): string[] {
   return [...tags].sort((a, b) => {
@@ -112,7 +111,6 @@ export interface TaggedVersionRow {
  * Each unique version appears once with all its tags
  * @param distTags - Object mapping tag names to version strings
  * @returns Array of rows sorted by version (descending)
- * @public
  */
 export function buildTaggedVersionRows(distTags: Record<string, string>): TaggedVersionRow[] {
   const versionToTags = buildVersionToTagsMap(distTags)
@@ -180,4 +178,32 @@ export function getVersionGroupLabel(groupKey: string): string {
  */
 export function isSameVersionGroup(versionA: string, versionB: string): boolean {
   return getVersionGroupKey(versionA) === getVersionGroupKey(versionB)
+}
+
+/**
+ * Filter versions by a semver range string.
+ *
+ * @param versions - Array of version strings to filter
+ * @param range - A semver range string (e.g., "^3.0.0", ">=2.0.0 <3.0.0")
+ * @returns Set of version strings that satisfy the range.
+ *   Returns all versions if range is empty/whitespace.
+ *   Returns empty set if range is invalid.
+ */
+export function filterVersions(versions: string[], range: string): Set<string> {
+  const trimmed = range.trim()
+  if (trimmed === '') {
+    return new Set(versions)
+  }
+
+  if (!validRange(trimmed)) {
+    return new Set()
+  }
+
+  const matched = new Set<string>()
+  for (const v of versions) {
+    if (satisfies(v, trimmed, { includePrerelease: true })) {
+      matched.add(v)
+    }
+  }
+  return matched
 }

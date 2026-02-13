@@ -1,8 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "trailingSlash": false,
   "redirects": [
     {
-      "source": "/",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -12,7 +13,7 @@
       "destination": "https://discord.gg/NHwgTgAFVV"
     },
     {
-      "source": "/",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -22,7 +23,7 @@
       "destination": "https://bsky.app/profile/npmx.dev"
     },
     {
-      "source": "/",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -32,7 +33,7 @@
       "destination": "https://github.com/npmx-dev/npmx.dev"
     },
     {
-      "source": "/",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -42,7 +43,7 @@
       "destination": "https://github.com/npmx-dev/npmx.dev/issues"
     },
     {
-      "source": "/",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -52,7 +53,7 @@
       "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/CODE_OF_CONDUCT.md"
     },
     {
-      "source": "/",
+      "source": "/(.*)",
       "has": [
         {
           "type": "host",
@@ -60,6 +61,26 @@
         }
       ],
       "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "governance.npmx.dev"
+        }
+      ],
+      "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/GOVERNANCE.md"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "license.npmx.dev"
+        }
+      ],
+      "destination": "https://github.com/npmx-dev/npmx.dev/blob/main/LICENSE"
     }
   ]
 }

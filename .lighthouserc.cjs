@@ -29,20 +29,24 @@ module.exports = {
       url: [
         'http://localhost:3000/',
         'http://localhost:3000/search?q=nuxt',
-        'http://localhost:3000/nuxt',
+        'http://localhost:3000/package/nuxt',
       ],
       numberOfRuns: 1,
       chromePath: findChrome(),
       puppeteerScript: './lighthouse-setup.cjs',
       settings: {
-        onlyCategories: ['accessibility'],
+        onlyCategories: process.env.LH_PERF ? ['performance'] : ['accessibility'],
         skipAudits: ['valid-source-maps'],
       },
     },
     assert: {
-      assertions: {
-        'categories:accessibility': ['error', { minScore: 1 }],
-      },
+      assertions: process.env.LH_PERF
+        ? {
+            'cumulative-layout-shift': ['error', { maxNumericValue: 0 }],
+          }
+        : {
+            'categories:accessibility': ['error', { minScore: 1 }],
+          },
     },
     upload: {
       target: 'temporary-public-storage',

@@ -1,45 +1,74 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { joinURL } from 'ufo'
 
-interface Props {
-  name: string
-  version: string
-  downloads?: string
-  license?: string
-  primaryColor?: string
-  description?: string
-  repoOwner?: string
-  repoName?: string
-  stars?: number
-  forks?: number
-  directDepsCount?: number
-  updatedAt?: string
-  hasTypes?: boolean
-  hasESM?: boolean
-  hasCJS?: boolean
+const props = withDefaults(
+  defineProps<{
+    name: string
+    version: string
+    primaryColor?: string
+  }>(),
+  {
+    primaryColor: '#60a5fa',
+  },
+)
+
+const { name, version, primaryColor } = toRefs(props)
+
+const {
+  data: resolvedVersion,
+  status: versionStatus,
+  error: versionError,
+} = await useResolvedVersion(name, version)
+
+if (
+  versionStatus.value === 'error' &&
+  versionError.value?.statusCode &&
+  versionError.value.statusCode >= 400 &&
+  versionError.value.statusCode < 500
+) {
+  throw createError({
+    statusCode: 404,
+  })
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  downloads: '',
-  license: '',
-  primaryColor: '#60a5fa',
-  description: '',
-  repoOwner: '',
-  repoName: '',
-  stars: 0,
-  forks: 0,
-  directDepsCount: 0,
-  updatedAt: '',
-  hasTypes: false,
-  hasESM: false,
-  hasCJS: false,
+const { data: downloads, refresh: refreshDownloads } = usePackageDownloads(name, 'last-week')
+const { data: pkg, refresh: refreshPkg } = usePackage(
+  name,
+  () => resolvedVersion.value ?? version.value,
+)
+const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
+
+const repositoryUrl = computed(() => {
+  const repo = displayVersion.value?.repository
+  if (!repo?.url) return null
+  let url = normalizeGitUrl(repo.url)
+  // append `repository.directory` for monorepo packages
+  if (repo.directory) {
+    url = joinURL(`${url}/tree/HEAD`, repo.directory)
+  }
+  return url
 })
+
+const { data: likes, refresh: refreshLikes } = useFetch(() => `/api/social/likes/${name.value}`, {
+  default: () => ({ totalLikes: 0, userHasLiked: false }),
+})
+
+const { stars, refresh: refreshRepoMeta } = useRepoMeta(repositoryUrl)
+
+const formattedStars = computed(() =>
+  stars.value > 0
+    ? Intl.NumberFormat('en', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+      }).format(stars.value)
+    : '',
+)
 
 // Dynamic font sizing based on name length
 // OG images are 1200px wide, with 64px padding on each side = 1072px content width
 // Icon is 80px + 24px gap = 104px, leaving ~968px for name + version
 const titleFontSize = computed(() => {
-  const len = props.name.length
+  const len = name.value.length
   if (len <= 12) return 96 // text-8xl
   if (len <= 18) return 80
   if (len <= 24) return 64
@@ -48,42 +77,44 @@ const titleFontSize = computed(() => {
   return 36 // very long names
 })
 
-const versionFontSize = computed(() => {
-  // Version scales proportionally but stays readable
-  const base = titleFontSize.value
-  return Math.max(42, Math.round(base * 0.5))
+const truncatedVersion = computed(() => {
+  const ver = resolvedVersion.value ?? version.value
+  if (ver.length <= 12) return ver
+  return ver.slice(0, 11) + '…'
 })
 
-const truncatedVersion = computed(() => {
-  const v = props.version
-  if (v.length <= 12) return v
-  return v.slice(0, 11) + '…'
-})
+try {
+  await refreshPkg()
+  await Promise.all([refreshRepoMeta(), refreshDownloads(), refreshLikes()])
+} catch (err) {
+  console.warn('[og-image-package] Failed to load data server-side:', err)
+  throw createError({
+    statusCode: 404,
+  })
+}
 </script>
 
 <template>
   <div
-    class="h-full w-full flex flex-col justify-between px-16 py-14 bg-[#050505] text-[#fafafa] relative overflow-hidden"
+    class="h-full w-full flex flex-col justify-center px-20 bg-[#050505] text-[#fafafa] relative overflow-hidden"
     style="font-family: 'Geist', sans-serif"
   >
-    <!-- Top section -->
-    <div class="relative z-10 flex flex-col gap-4">
-      <!-- Short name layout: icon + ./name + version in one row -->
-      <div v-if="props.name.length < 24" class="flex flex-row items-end gap-6 align-baseline mb-6">
+    <div class="relative z-10 flex flex-col gap-6">
+      <!-- Package name -->
+      <div class="flex items-start gap-4">
         <div
-          class="w-20 h-20 rounded-xl shadow-lg flex items-center justify-center"
-          :style="{ backgroundColor: props.primaryColor }"
+          class="flex items-center justify-center w-16 h-16 p-4 rounded-xl shadow-lg bg-gradient-to-tr from-[#3b82f6]"
+          :style="{ backgroundColor: primaryColor }"
         >
           <svg
-            width="42"
-            height="42"
+            width="36"
+            height="36"
             viewBox="0 0 24 24"
             fill="none"
             stroke="white"
             stroke-width="2.5"
             stroke-linecap="round"
             stroke-linejoin="round"
-            :style="{ marginTop: '36px' }"
           >
             <path d="m7.5 4.27 9 5.15" />
             <path
@@ -95,257 +126,130 @@ const truncatedVersion = computed(() => {
         </div>
 
         <h1
-          class="font-bold tracking-tight leading-none mt-0"
-          :style="{
-            fontSize: `${titleFontSize}px`,
-            marginBottom: '-8px',
-            fontFamily: 'Geist Mono, monospace',
-          }"
+          class="font-bold tracking-tighter"
+          style="font-family: 'Geist Mono', sans-serif"
+          :style="{ fontSize: titleFontSize }"
         >
-          <span class="opacity-80" :style="{ color: props.primaryColor }">./</span>{{ props.name }}
+          <span :style="{ color: primaryColor }" class="opacity-80">./</span>{{ pkg?.name }}
         </h1>
-
-        <span
-          class="pb-1"
-          :style="{
-            fontSize: `${versionFontSize}px`,
-            color: props.primaryColor,
-            fontFamily: 'Geist Mono, monospace',
-          }"
-        >
-          v{{ truncatedVersion }}
-        </span>
       </div>
 
-      <!-- Long name layout: icon + name on first row, version below -->
-      <template v-else>
-        <div class="flex flex-row items-center gap-6">
-          <div
-            class="w-20 h-20 rounded-xl shadow-lg flex items-center justify-center"
-            :style="{ backgroundColor: props.primaryColor }"
+      <!-- Version -->
+      <div
+        class="flex items-center gap-5 text-3xl font-light text-[#a3a3a3]"
+        style="font-family: 'Geist Mono', sans-serif"
+      >
+        <span
+          class="px-3 py-1 me-2 rounded-lg border font-bold opacity-90"
+          :style="{
+            color: primaryColor,
+            backgroundColor: primaryColor + '10',
+            borderColor: primaryColor + '30',
+            boxShadow: `0 0 20px ${primaryColor}25`,
+          }"
+        >
+          {{ truncatedVersion }}
+        </span>
+
+        <!-- Downloads (if any) -->
+        <span v-if="downloads" class="flex items-center gap-2">
+          <svg
+            width="30"
+            height="30"
+            viewBox="0 0 24 24"
+            fill="none"
+            :stroke="primaryColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="opacity-90"
           >
-            <svg
-              width="42"
-              height="42"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="white"
-              stroke-width="2.5"
+            <circle cx="12" cy="12" r="10" class="opacity-60" />
+            <path d="M12 8v8m-3-3l3 3 3-3" />
+          </svg>
+          <span>{{ $n(downloads.downloads) }}/wk</span>
+        </span>
+
+        <!-- License (if any) -->
+        <span v-if="pkg?.license" class="flex items-center gap-2" data-testid="license">
+          <svg
+            viewBox="0 0 32 32"
+            :fill="primaryColor"
+            xmlns="http://www.w3.org/2000/svg"
+            height="32"
+            width="32"
+            class="opacity-90"
+          >
+            <path
+              d="M21.7166 12.57C20.5503 10.631 18.4257 9.33301 15.9997 9.33301C12.3197 9.33301 9.33301 12.3197 9.33301 15.9997C9.33301 19.6797 12.3197 22.6663 15.9997 22.6663C18.4257 22.6663 20.5503 21.3683 21.7166 19.4294L19.4302 18.0586C18.7307 19.2218 17.4566 19.9997 15.9997 19.9997C13.7897 19.9997 11.9997 18.2097 11.9997 15.9997C11.9997 13.7897 13.7897 11.9997 15.9997 11.9997C17.457 11.9997 18.7318 12.7782 19.431 13.9421L21.7166 12.57Z"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M15.5247 2.66602C22.8847 2.66602 28.8581 8.63932 28.8581 15.9993C28.8581 23.3593 22.8847 29.3327 15.5247 29.3327C8.16471 29.3327 2.19141 23.3593 2.19141 15.9993C2.19141 8.63932 8.16471 2.66602 15.5247 2.66602ZM4.85807 15.9993C4.85807 10.106 9.63135 5.33268 15.5247 5.33268C21.4181 5.33268 26.1914 10.106 26.1914 15.9993C26.1914 21.8927 21.4181 26.666 15.5247 26.666C9.63135 26.666 4.85807 21.8927 4.85807 15.9993Z"
+              class="opacity-60"
+            />
+          </svg>
+          <span>
+            {{ pkg.license }}
+          </span>
+        </span>
+
+        <!-- Stars (if any) -->
+        <span v-if="formattedStars" class="flex items-center gap-2" data-testid="stars">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 32 32"
+            width="32px"
+            height="32px"
+            class="opacity-60"
+          >
+            <path
+              :fill="primaryColor"
+              d="m16 6.52l2.76 5.58l.46 1l1 .15l6.16.89l-4.38 4.3l-.75.73l.18 1l1.05 6.13l-5.51-2.89L16 23l-.93.49l-5.51 2.85l1-6.13l.18-1l-.74-.77l-4.42-4.35l6.16-.89l1-.15l.46-1zM16 2l-4.55 9.22l-10.17 1.47l7.36 7.18L6.9 30l9.1-4.78L25.1 30l-1.74-10.13l7.36-7.17l-10.17-1.48Z"
+            />
+          </svg>
+          <span>
+            {{ formattedStars }}
+          </span>
+        </span>
+
+        <!-- Likes (if any) -->
+        <span v-if="likes.totalLikes > 0" class="flex items-center gap-2" data-testid="likes">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            class="opacity-90"
+          >
+            <path
+              d="M19.3057 25.8317L18.011 27.0837C17.7626 27.3691 17.4562 27.5983 17.1124 27.7561C16.7685 27.914 16.3951 27.9969 16.0167 27.9993C15.6384 28.0017 15.2639 27.9235 14.918 27.77C14.5722 27.6165 14.263 27.3912 14.011 27.1091L6.66699 19.9997C4.66699 17.9997 2.66699 15.7331 2.66699 12.6664C2.66702 11.1827 3.11712 9.73384 3.95784 8.51128C4.79856 7.28872 5.99035 6.34994 7.3758 5.81893C8.76126 5.28792 10.2752 5.18965 11.7177 5.53712C13.1602 5.88459 14.4633 6.66143 15.455 7.76506C15.5248 7.83975 15.6093 7.89929 15.7031 7.93999C15.7969 7.9807 15.8981 8.00171 16.0003 8.00171C16.1026 8.00171 16.2038 7.9807 16.2976 7.93999C16.3914 7.89929 16.4758 7.83975 16.5457 7.76506C17.5342 6.65426 18.8377 5.87088 20.2825 5.5192C21.7273 5.16751 23.245 5.26419 24.6335 5.79637C26.022 6.32856 27.2155 7.271 28.0551 8.49826C28.8948 9.72553 29.3407 11.1794 29.3337 12.6664C29.3332 13.3393 29.2349 14.0085 29.0417 14.6531"
+              :stroke="primaryColor"
+              stroke-width="2.66667"
               stroke-linecap="round"
               stroke-linejoin="round"
-              :style="{ marginTop: '36px' }"
-            >
-              <path d="m7.5 4.27 9 5.15" />
-              <path
-                d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
-              />
-              <path d="m3.3 7 8.7 5 8.7-5" />
-              <path d="M12 22V12" />
-            </svg>
-          </div>
-
-          <h1
-            class="font-bold tracking-tight leading-none"
-            :style="{ fontSize: `${titleFontSize}px`, fontFamily: 'Geist Mono, monospace' }"
-          >
-            {{ props.name }}
-          </h1>
-        </div>
-
-        <!-- ./ and version on second row, under the icon -->
-        <div class="flex flex-row items-baseline gap-6">
-          <div
-            class="w-20 text-right opacity-80"
-            :style="{
-              fontSize: `${versionFontSize}px`,
-              color: props.primaryColor,
-              paddingLeft: '22px',
-              fontFamily: 'Geist Mono, monospace',
-            }"
-          >
-            ./
-          </div>
-          <span
-            :style="{
-              fontSize: `${versionFontSize}px`,
-              color: props.primaryColor,
-              fontFamily: 'Geist Mono, monospace',
-            }"
-          >
-            v{{ truncatedVersion }}
+              class="opacity-60"
+            />
+            <path
+              d="M20 20H24M28 20H24M24 16L24 20M24 24L24 20"
+              :stroke="primaryColor"
+              stroke-width="2.66667"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <span>
+            {{ likes.totalLikes }}
           </span>
-        </div>
-      </template>
-
-      <!-- Description (can extend under stats, will be faded out) -->
-      <div v-if="props.description" class="text-4xl text-[#a3a3a3] max-w-[1000px]">
-        {{ props.description }}
+        </span>
       </div>
     </div>
 
-    <!-- Module format badges - top right (unchanged size) -->
-    <div class="absolute top-8 right-10 flex flex-row items-center gap-2 text-xl">
-      <span
-        v-if="props.hasTypes"
-        class="px-3 py-1 rounded-md bg-[#1a1a1a] border border-[#333] text-[#a3a3a3] font-medium"
-      >
-        Types
-      </span>
-      <span
-        v-if="props.hasESM"
-        class="px-3 py-1 rounded-md bg-[#1a1a1a] border border-[#333] text-[#a3a3a3] font-medium"
-      >
-        ESM
-      </span>
-      <span
-        v-if="props.hasCJS"
-        class="px-3 py-1 rounded-md bg-[#1a1a1a] border border-[#333] text-[#a3a3a3] font-medium"
-      >
-        CJS
-      </span>
-    </div>
-
-    <!-- Gradient fade above stats -->
     <div
-      class="absolute left-0 right-0 h-24 z-10"
-      :style="{ bottom: '140px', background: 'linear-gradient(to bottom, transparent, #050505)' }"
-    />
-
-    <!-- Bottom stats (fixed at bottom) -->
-    <div class="absolute bottom-14 left-16 right-16 z-20 flex flex-col gap-4 bg-[#050505]">
-      <!-- GitHub stats row -->
-      <div
-        v-if="props.repoOwner && props.repoName"
-        class="flex flex-row items-center gap-12 text-3xl text-[#737373]"
-      >
-        <span
-          class="flex flex-row items-center gap-3"
-          :style="{ fontFamily: 'Geist Mono, monospace' }"
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
-            />
-          </svg>
-          {{ props.repoOwner }}/{{ props.repoName }}
-        </span>
-        <span v-if="props.stars" class="flex flex-row items-center gap-3">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <polygon
-              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-            />
-          </svg>
-          {{ props.stars.toLocaleString() }}
-        </span>
-        <span v-if="props.forks" class="flex flex-row items-center gap-3">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="18" r="3" />
-            <circle cx="6" cy="6" r="3" />
-            <circle cx="18" cy="6" r="3" />
-            <path d="M18 9v2c0 .6-.4 1-1 1H7c-.6 0-1-.4-1-1V9" />
-            <path d="M12 12v3" />
-          </svg>
-          {{ props.forks.toLocaleString() }}
-        </span>
-      </div>
-
-      <!-- npm stats row -->
-      <div class="flex flex-row items-center gap-12 text-3xl text-[#a3a3a3]">
-        <span v-if="props.downloads" class="flex flex-row items-center gap-3">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" x2="12" y1="15" y2="3" />
-          </svg>
-          {{ props.downloads }}/wk
-        </span>
-        <span v-if="props.directDepsCount !== undefined" class="flex flex-row items-center gap-3">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
-            />
-          </svg>
-          {{ props.directDepsCount }} deps
-        </span>
-        <span v-if="props.license" class="flex flex-row items-center gap-3">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <path d="m15 9-6 6" />
-            <path d="M9 9h.01" />
-            <path d="M15 15h.01" />
-          </svg>
-          {{ props.license }}
-        </span>
-        <span v-if="props.updatedAt" class="flex flex-row items-center gap-3">
-          <svg
-            width="28"
-            height="28"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
-            <line x1="16" x2="16" y1="2" y2="6" />
-            <line x1="8" x2="8" y1="2" y2="6" />
-            <line x1="3" x2="21" y1="10" y2="10" />
-          </svg>
-          {{ props.updatedAt }}
-        </span>
-      </div>
-    </div>
-
-    <!-- Background glow -->
-    <div
-      class="absolute -top-32 -right-32 w-[550px] h-[550px] rounded-full blur-3xl"
-      :style="{ backgroundColor: props.primaryColor + '10' }"
+      class="absolute -top-32 -inset-ie-32 w-[550px] h-[550px] rounded-full blur-3xl"
+      :style="{ backgroundColor: primaryColor + '10' }"
     />
   </div>
 </template>

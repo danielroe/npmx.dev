@@ -3,13 +3,13 @@ import type { JsrPackageInfo } from '#shared/types/jsr'
 /**
  * Composable for generating install commands with support for
  * multiple package managers, @types packages, and JSR.
- * @public
  */
 export function useInstallCommand(
   packageName: MaybeRefOrGetter<string | null>,
   requestedVersion: MaybeRefOrGetter<string | null>,
   jsrInfo: MaybeRefOrGetter<JsrPackageInfo | null>,
   typesPackageName: MaybeRefOrGetter<string | null>,
+  installVersionOverride?: MaybeRefOrGetter<string | null>,
 ) {
   const selectedPM = useSelectedPackageManager()
   const { settings } = useSettings()
@@ -22,10 +22,11 @@ export function useInstallCommand(
   const installCommandParts = computed(() => {
     const name = toValue(packageName)
     if (!name) return []
+    const version = toValue(installVersionOverride) ?? toValue(requestedVersion)
     return getInstallCommandParts({
       packageName: name,
       packageManager: selectedPM.value,
-      version: toValue(requestedVersion),
+      version,
       jsrInfo: toValue(jsrInfo),
     })
   })
@@ -33,10 +34,11 @@ export function useInstallCommand(
   const installCommand = computed(() => {
     const name = toValue(packageName)
     if (!name) return ''
+    const version = toValue(installVersionOverride) ?? toValue(requestedVersion)
     return getInstallCommand({
       packageName: name,
       packageManager: selectedPM.value,
-      version: toValue(requestedVersion),
+      version,
       jsrInfo: toValue(jsrInfo),
     })
   })

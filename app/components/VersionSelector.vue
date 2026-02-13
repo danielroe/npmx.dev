@@ -4,13 +4,12 @@ import { onClickOutside } from '@vueuse/core'
 import { compare } from 'semver'
 import {
   buildVersionToTagsMap,
-  parseVersion,
   getPrereleaseChannel,
   getVersionGroupKey,
   getVersionGroupLabel,
   isSameVersionGroup,
 } from '~/utils/versions'
-import { fetchAllPackageVersions } from '~/composables/useNpmRegistry'
+import { fetchAllPackageVersions } from '~/utils/npm/api'
 
 const props = defineProps<{
   packageName: string
@@ -477,7 +476,7 @@ watch(
       @click="isOpen = !isOpen"
       @keydown="handleButtonKeydown"
     >
-      <span>{{ currentVersion }}</span>
+      <span dir="ltr">{{ currentVersion }}</span>
       <span
         v-if="currentVersion === latestVersion"
         class="text-xs px-1.5 py-0.5 rounded badge-green font-sans font-medium"
@@ -507,11 +506,11 @@ watch(
         :aria-activedescendant="
           focusedIndex >= 0 ? `version-${flatItems[focusedIndex]?.version?.version}` : undefined
         "
-        class="absolute top-full inset-is-0 mt-2 min-w-[220px] bg-bg-elevated border border-border rounded-lg shadow-lg z-50 py-1 max-h-[400px] overflow-y-auto overscroll-contain focus-visible:outline-none"
+        class="absolute top-full inset-is-0 mt-2 min-w-[220px] bg-bg-subtle/80 backdrop-blur-sm border border-border-subtle rounded-lg shadow-lg shadow-fg-subtle/10 z-50 py-1 max-h-[400px] overflow-y-auto overscroll-contain focus-visible:outline-none"
         @keydown="handleListboxKeydown"
       >
         <!-- Version groups -->
-        <div v-for="(group, groupIndex) in versionGroups" :key="group.id">
+        <div v-for="group in versionGroups" :key="group.id">
           <!-- Group header (primary version) -->
           <div
             :id="`version-${group.primaryVersion.version}`"
@@ -521,7 +520,7 @@ watch(
               flatItems[focusedIndex]?.groupId === group.id &&
               flatItems[focusedIndex]?.type === 'group'
             "
-            class="flex items-center gap-2 px-3 py-2 text-sm font-mono hover:bg-bg-muted transition-[color,background-color] focus-visible:outline-none cursor-pointer"
+            class="flex items-center gap-2 px-3 py-2 text-sm font-mono hover:bg-bg-muted transition-[color,background-color] focus-visible:outline-none"
             :class="[
               group.primaryVersion.isCurrent ? 'text-fg bg-bg-muted' : 'text-fg-muted',
               flatItems[focusedIndex]?.groupId === group.id &&
@@ -547,7 +546,7 @@ watch(
               <span
                 v-else
                 class="w-3 h-3 transition-transform duration-200 rtl-flip"
-                :class="group.isExpanded ? 'i:carbon:chevron-down' : 'i-carbon:chevron-right'"
+                :class="group.isExpanded ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
                 aria-hidden="true"
               />
             </button>
@@ -559,7 +558,9 @@ watch(
               class="flex-1 truncate hover:text-fg transition-colors"
               @click="isOpen = false"
             >
-              {{ group.primaryVersion.version }}
+              <span dir="ltr">
+                {{ group.primaryVersion.version }}
+              </span>
             </NuxtLink>
 
             <!-- Tags -->
@@ -580,7 +581,7 @@ watch(
             v-if="group.isExpanded && group.versions.length > 1"
             class="ms-6 border-is border-border"
           >
-            <template v-for="(v, vIndex) in group.versions.slice(1)" :key="v.version">
+            <template v-for="v in group.versions.slice(1)" :key="v.version">
               <NuxtLink
                 :id="`version-${v.version}`"
                 :to="getVersionUrl(v.version)"
@@ -598,12 +599,12 @@ watch(
                 ]"
                 @click="isOpen = false"
               >
-                <span class="truncate">{{ v.version }}</span>
+                <span class="truncate" dir="ltr">{{ v.version }}</span>
                 <span v-if="v.tags?.length" class="flex items-center gap-1 shrink-0">
                   <span
                     v-for="tag in v.tags"
                     :key="tag"
-                    class="text-[9px] px-1 py-0.5 rounded font-sans font-medium"
+                    class="text-4xs px-1 py-0.5 rounded font-sans font-medium"
                     :class="
                       tag === 'latest'
                         ? 'bg-emerald-500/10 text-emerald-400'
@@ -621,7 +622,7 @@ watch(
         <!-- Link to package page for full version list -->
         <div class="border-t border-border mt-1 pt-1 px-3 py-2">
           <NuxtLink
-            :to="`/${packageName}`"
+            :to="packageRoute(packageName)"
             class="text-xs text-fg-subtle hover:text-fg transition-[color] focus-visible:outline-none focus-visible:text-fg"
             @click="isOpen = false"
           >

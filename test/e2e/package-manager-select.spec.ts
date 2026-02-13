@@ -1,8 +1,8 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './test-utils'
 
 test.describe('Package Page', () => {
   test('/vue → package manager select dropdown works', async ({ page, goto }) => {
-    await goto('/vue', { waitUntil: 'hydration' })
+    await goto('/package/vue', { waitUntil: 'hydration' })
 
     await expect(page.locator('h1')).toContainText('vue', { timeout: 15000 })
 

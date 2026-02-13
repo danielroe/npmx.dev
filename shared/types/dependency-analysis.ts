@@ -37,6 +37,37 @@ export interface OsvReference {
 }
 
 /**
+ * Version range event from OSV affected data
+ * @see https://ossf.github.io/osv-schema/#affectedrangesevents-fields
+ */
+export interface OsvRangeEvent {
+  introduced?: string
+  fixed?: string
+  last_affected?: string
+  limit?: string
+}
+
+/**
+ * Version range from OSV affected data
+ */
+export interface OsvRange {
+  type: 'SEMVER' | 'ECOSYSTEM' | 'GIT'
+  events: OsvRangeEvent[]
+}
+
+/**
+ * Affected package info from OSV
+ */
+export interface OsvAffected {
+  package: {
+    ecosystem: string
+    name: string
+  }
+  ranges?: OsvRange[]
+  versions?: string[]
+}
+
+/**
  * Individual vulnerability record from OSV
  */
 export interface OsvVulnerability {
@@ -48,6 +79,7 @@ export interface OsvVulnerability {
   published?: string
   severity?: OsvSeverity[]
   references?: OsvReference[]
+  affected?: OsvAffected[]
   database_specific?: {
     severity?: string
     cwe_ids?: string[]
@@ -65,6 +97,30 @@ export interface OsvQueryResponse {
 }
 
 /**
+ * Single result from OSV batch query (minimal info - just ID and modified)
+ */
+export interface OsvBatchVulnRef {
+  id: string
+  modified: string
+}
+
+/**
+ * Single result in OSV batch response
+ */
+export interface OsvBatchResult {
+  vulns?: OsvBatchVulnRef[]
+  next_page_token?: string
+}
+
+/**
+ * OSV batch query response
+ * @see https://google.github.io/osv.dev/post-v1-querybatch/
+ */
+export interface OsvBatchResponse {
+  results: OsvBatchResult[]
+}
+
+/**
  * Simplified vulnerability info for display
  */
 export interface VulnerabilitySummary {
@@ -73,11 +129,12 @@ export interface VulnerabilitySummary {
   severity: OsvSeverityLevel
   aliases: string[]
   url: string
+  /** Version that fixes this vulnerability (if known) */
+  fixedIn?: string
 }
 
 /**
  * Package vulnerability response returned by our API
- * @public
  */
 export interface PackageVulnerabilities {
   package: string

@@ -15,7 +15,6 @@ import {
   DEFAULT_FILTERS,
   DOWNLOAD_RANGES,
   parseSortOption,
-  SECURITY_FILTER_OPTIONS,
   UPDATED_WITHIN_OPTIONS,
 } from '#shared/types/preferences'
 
@@ -43,7 +42,7 @@ export function parseSearchOperators(input: string): ParsedSearchOperators {
 
   // Regex to match operators: name:value, desc:value, description:value, kw:value, keyword:value
   // Value continues until whitespace or next operator
-  const operatorRegex = /\b(name|desc|description|kw|keyword):([^\s]+)/gi
+  const operatorRegex = /\b(name|desc|description|kw|keyword):(\S+)/gi
 
   let remaining = input
   let match
@@ -88,6 +87,7 @@ export function hasSearchOperators(parsed: ParsedSearchOperators): boolean {
 
 interface UseStructuredFiltersOptions {
   packages: Ref<NpmSearchResult[]>
+  searchQueryModel?: Ref<string>
   initialFilters?: Partial<StructuredFilters>
   initialSort?: SortOption
 }
@@ -111,10 +111,23 @@ function matchesSecurity(pkg: NpmSearchResult, security: SecurityFilter): boolea
 /**
  * Composable for structured filtering and sorting of package lists
  *
- * @public
  */
 export function useStructuredFilters(options: UseStructuredFiltersOptions) {
-  const { packages, initialFilters, initialSort } = options
+  const route = useRoute()
+  const router = useRouter()
+  const { packages, initialFilters, initialSort, searchQueryModel } = options
+  const { t } = useI18n()
+
+  const searchQuery = shallowRef(normalizeSearchParam(route.query.q))
+  watch(
+    () => route.query.q,
+    urlQuery => {
+      const value = normalizeSearchParam(urlQuery)
+      if (searchQuery.value !== value) {
+        searchQuery.value = value
+      }
+    },
+  )
 
   // Filter state
   const filters = ref<StructuredFilters>({
@@ -225,7 +238,7 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
     const config = UPDATED_WITHIN_OPTIONS.find(o => o.value === within)
     if (!config?.days) return true
 
-    const updatedDate = new Date(pkg.updated ?? pkg.package.date)
+    const updatedDate = new Date(pkg.package.date)
     const cutoff = new Date()
     cutoff.setDate(cutoff.getDate() - config.days)
     return updatedDate >= cutoff
@@ -260,9 +273,7 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
         diff = (a.downloads?.weekly ?? 0) - (b.downloads?.weekly ?? 0)
         break
       case 'updated':
-        diff =
-          new Date(a.updated ?? a.package.date).getTime() -
-          new Date(b.updated ?? b.package.date).getTime()
+        diff = new Date(a.package.date).getTime() - new Date(b.package.date).getTime()
         break
       case 'name':
         diff = a.package.name.localeCompare(b.package.name)
@@ -295,6 +306,30 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
     return [...filteredPackages.value].sort((a, b) => comparePackages(a, b, sortOption.value))
   })
 
+  // i18n key mappings for filter chip values
+  const downloadRangeLabels = computed<Record<DownloadRange, string>>(() => ({
+    'any': t('filters.download_range.any'),
+    'lt100': t('filters.download_range.lt100'),
+    '100-1k': t('filters.download_range.100_1k'),
+    '1k-10k': t('filters.download_range.1k_10k'),
+    '10k-100k': t('filters.download_range.10k_100k'),
+    'gt100k': t('filters.download_range.gt100k'),
+  }))
+
+  const securityLabels = computed<Record<SecurityFilter, string>>(() => ({
+    all: t('filters.security_options.all'),
+    secure: t('filters.security_options.secure'),
+    warnings: t('filters.security_options.insecure'),
+  }))
+
+  const updatedWithinLabels = computed<Record<UpdatedWithin, string>>(() => ({
+    any: t('filters.updated.any'),
+    week: t('filters.updated.week'),
+    month: t('filters.updated.month'),
+    quarter: t('filters.updated.quarter'),
+    year: t('filters.updated.year'),
+  }))
+
   // Active filter chips for display
   const activeFilters = computed<FilterChip[]>(() => {
     const chips: FilterChip[] = []
@@ -303,18 +338,17 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
       chips.push({
         id: 'text',
         type: 'text',
-        label: 'Search',
+        label: t('filters.chips.search'),
         value: filters.value.text,
       })
     }
 
     if (filters.value.downloadRange !== 'any') {
-      const config = DOWNLOAD_RANGES.find(r => r.value === filters.value.downloadRange)
       chips.push({
         id: 'downloadRange',
         type: 'downloadRange',
-        label: 'Downloads',
-        value: config?.label ?? filters.value.downloadRange,
+        label: t('filters.chips.downloads'),
+        value: downloadRangeLabels.value[filters.value.downloadRange],
       })
     }
 
@@ -322,28 +356,26 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
       chips.push({
         id: `keyword-${keyword}`,
         type: 'keywords',
-        label: 'Keyword',
+        label: t('filters.chips.keyword'),
         value: keyword,
       })
     }
 
     if (filters.value.security !== 'all') {
-      const config = SECURITY_FILTER_OPTIONS.find(o => o.value === filters.value.security)
       chips.push({
         id: 'security',
         type: 'security',
-        label: 'Security',
-        value: config?.label ?? filters.value.security,
+        label: t('filters.chips.security'),
+        value: securityLabels.value[filters.value.security],
       })
     }
 
     if (filters.value.updatedWithin !== 'any') {
-      const config = UPDATED_WITHIN_OPTIONS.find(o => o.value === filters.value.updatedWithin)
       chips.push({
         id: 'updatedWithin',
         type: 'updatedWithin',
-        label: 'Updated',
-        value: config?.label ?? filters.value.updatedWithin,
+        label: t('filters.chips.updated'),
+        value: updatedWithinLabels.value[filters.value.updatedWithin],
       })
     }
 
@@ -369,11 +401,20 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
   function addKeyword(keyword: string) {
     if (!filters.value.keywords.includes(keyword)) {
       filters.value.keywords = [...filters.value.keywords, keyword]
+      const newQ = searchQuery.value
+        ? `${searchQuery.value.trim()} keyword:${keyword}`
+        : `keyword:${keyword}`
+      router.replace({ query: { ...route.query, q: newQ } })
+
+      if (searchQueryModel) searchQueryModel.value = newQ
     }
   }
 
   function removeKeyword(keyword: string) {
     filters.value.keywords = filters.value.keywords.filter(k => k !== keyword)
+    const newQ = searchQuery.value.replace(new RegExp(`keyword:${keyword}($| )`, 'g'), '').trim()
+    router.replace({ query: { ...route.query, q: newQ || undefined } })
+    if (searchQueryModel) searchQueryModel.value = newQ
   }
 
   function toggleKeyword(keyword: string) {

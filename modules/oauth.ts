@@ -1,14 +1,26 @@
-import { defineNuxtModule, useNuxt } from 'nuxt/kit'
+import { defineNuxtModule, useNuxt, addServerTemplate } from 'nuxt/kit'
+import process from 'node:process'
 import { join } from 'node:path'
 import { appendFileSync, existsSync, readFileSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
+import { getEnv } from '../config/env.ts'
 
 export default defineNuxtModule({
   meta: {
     name: 'oauth',
   },
-  setup() {
+  async setup() {
     const nuxt = useNuxt()
+
+    const { previewUrl, productionUrl } = await getEnv(nuxt.options.dev)
+    const clientUri = productionUrl || previewUrl || 'http://127.0.0.1:3000'
+
+    // bake it into a virtual file
+    addServerTemplate({
+      filename: '#oauth/config',
+      getContents: () => `export const clientUri = ${JSON.stringify(clientUri)};`,
+    })
+
     if (nuxt.options._prepare || process.env.NUXT_SESSION_PASSWORD) {
       return
     }

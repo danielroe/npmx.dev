@@ -1,5 +1,6 @@
 import type {
   OsvQueryResponse,
+  OsvBatchResponse,
   OsvVulnerability,
   OsvSeverityLevel,
   VulnerabilitySummary,
@@ -7,32 +8,87 @@ import type {
   PackageVulnerabilityInfo,
   VulnerabilityTreeResult,
   DeprecatedPackageInfo,
+  OsvAffected,
+  OsvRange,
 } from '#shared/types/dependency-analysis'
+import { mapWithConcurrency } from '#shared/utils/async'
 import { resolveDependencyTree } from './dependency-resolver'
+import * as semver from 'semver'
 
-/** Result of a single OSV query */
-type OsvQueryResult = { status: 'ok'; data: PackageVulnerabilityInfo | null } | { status: 'error' }
+/** Maximum concurrent requests for fetching vulnerability details */
+const OSV_DETAIL_CONCURRENCY = 25
+
+/** Package info needed for OSV queries */
+interface PackageQueryInfo {
+  name: string
+  version: string
+  depth: DependencyDepth
+  path: string[]
+}
 
 /**
- * Query OSV for vulnerabilities in a package
+ * Query OSV batch API to find which packages have vulnerabilities.
+ * Returns indices of packages that have vulnerabilities (for follow-up detailed queries).
+ * @see https://google.github.io/osv.dev/post-v1-querybatch/
  */
-async function queryOsv(
-  name: string,
-  version: string,
-  depth: DependencyDepth,
-  path: string[],
-): Promise<OsvQueryResult> {
+async function queryOsvBatch(
+  packages: PackageQueryInfo[],
+): Promise<{ vulnerableIndices: number[]; failed: boolean }> {
+  if (packages.length === 0) return { vulnerableIndices: [], failed: false }
+
+  try {
+    const response = await $fetch<OsvBatchResponse>('https://api.osv.dev/v1/querybatch', {
+      method: 'POST',
+      body: {
+        queries: packages.map(pkg => ({
+          package: { name: pkg.name, ecosystem: 'npm' },
+          version: pkg.version,
+        })),
+      },
+    })
+
+    // Find indices of packages that have vulnerabilities
+    const vulnerableIndices: number[] = []
+    for (let i = 0; i < response.results.length; i++) {
+      const result = response.results[i]
+      if (result?.vulns && result.vulns.length > 0) {
+        vulnerableIndices.push(i)
+      }
+      // Warn if pagination token present (>1000 vulns for single query or >3000 total)
+      // This is extremely unlikely for npm packages but log for visibility
+      if (result?.next_page_token) {
+        // oxlint-disable-next-line no-console -- warn about paginated results
+        console.warn(
+          `[dep-analysis] OSV batch result has pagination token for package index ${i} ` +
+            `(${packages[i]?.name}@${packages[i]?.version}) - some vulnerabilities may be missing`,
+        )
+      }
+    }
+
+    return { vulnerableIndices, failed: false }
+  } catch (error) {
+    // oxlint-disable-next-line no-console -- log OSV API failures for debugging
+    console.warn(`[dep-analysis] OSV batch query failed:`, error)
+    return { vulnerableIndices: [], failed: true }
+  }
+}
+
+/**
+ * Query OSV for full vulnerability details for a single package.
+ * Only called for packages known to have vulnerabilities.
+ */
+async function queryOsvDetails(pkg: PackageQueryInfo): Promise<PackageVulnerabilityInfo | null> {
   try {
     const response = await $fetch<OsvQueryResponse>('https://api.osv.dev/v1/query', {
       method: 'POST',
       body: {
-        package: { name, ecosystem: 'npm' },
-        version,
+        package: { name: pkg.name, ecosystem: 'npm' },
+        version: pkg.version,
       },
     })
 
     const vulns = response.vulns || []
-    if (vulns.length === 0) return { status: 'ok', data: null }
+    if (vulns.length === 0) return null
 
     const counts = { total: vulns.length, critical: 0, high: 0, moderate: 0, low: 0 }
     const vulnerabilities: VulnerabilitySummary[] = []
@@ -62,14 +118,22 @@ async function queryOsv(
         severity,
         aliases: vuln.aliases || [],
         url: getVulnerabilityUrl(vuln),
+        fixedIn: getFixedVersion(vuln.affected, pkg.name, pkg.version),
       })
     }
 
-    return { status: 'ok', data: { name, version, depth, path, vulnerabilities, counts } }
+    return {
+      name: pkg.name,
+      version: pkg.version,
+      depth: pkg.depth,
+      path: pkg.path,
+      vulnerabilities,
+      counts,
+    }
   } catch (error) {
     // oxlint-disable-next-line no-console -- log OSV API failures for debugging
-    console.warn(`[dep-analysis] OSV query failed for ${name}@${version}:`, error)
-    return { status: 'error' }
+    console.warn(`[dep-analysis] OSV detail query failed for ${pkg.name}@${pkg.version}:`, error)
+    return null
   }
 }
 
@@ -82,6 +146,89 @@ function getVulnerabilityUrl(vuln: OsvVulnerability): string {
     return `https://nvd.nist.gov/vuln/detail/${cveAlias}`
   }
   return `https://osv.dev/vulnerability/${vuln.id}`
+}
+
+/**
+ * Parse OSV range events into introduced/fixed pairs.
+ * OSV events form a timeline: [introduced, fixed, introduced, fixed, ...]
+ * A single range can have multiple introduced/fixed pairs representing
+ * periods where the vulnerability was active, was fixed, and was reintroduced.
+ * @see https://ossf.github.io/osv-schema/#affectedrangesevents-fields
+ */
+function parseRangeIntervals(range: OsvRange): Array<{ introduced: string; fixed?: string }> {
+  const intervals: Array<{ introduced: string; fixed?: string }> = []
+  let currentIntroduced: string | undefined
+
+  for (const event of range.events) {
+    if (event.introduced !== undefined) {
+      // Start a new interval (close previous open one if any)
+      if (currentIntroduced !== undefined) {
+        intervals.push({ introduced: currentIntroduced })
+      }
+      currentIntroduced = event.introduced
+    } else if (event.fixed !== undefined && currentIntroduced !== undefined) {
+      intervals.push({ introduced: currentIntroduced, fixed: event.fixed })
+      currentIntroduced = undefined
+    }
+  }
+
+  // Handle trailing introduced with no fixed (still vulnerable)
+  if (currentIntroduced !== undefined) {
+    intervals.push({ introduced: currentIntroduced })
+  }
+
+  return intervals
+}
+
+/**
+ * Extract the fixed version for a specific package version from vulnerability data.
+ * Finds all intervals that contain the current version and returns the closest fix,
+ * preferring a nearby backport over a distant major-version bump.
+ * @see https://ossf.github.io/osv-schema/#affectedrangesevents-fields
+ */
+function getFixedVersion(
+  affected: OsvAffected[] | undefined,
+  packageName: string,
+  currentVersion: string,
+): string | undefined {
+  if (!affected) return undefined
+
+  // Find all affected entries for this specific package
+  const packageAffectedEntries = affected.filter(
+    a => a.package.ecosystem === 'npm' && a.package.name === packageName,
+  )
+
+  // Collect all matching fixed versions across all ranges
+  const matchingFixedVersions: string[] = []
+
+  for (const entry of packageAffectedEntries) {
+    if (!entry.ranges) continue
+
+    for (const range of entry.ranges) {
+      // Only handle SEMVER ranges (most common for npm)
+      if (range.type !== 'SEMVER') continue
+
+      const intervals = parseRangeIntervals(range)
+      for (const interval of intervals) {
+        const introVersion = interval.introduced === '0' ? '0.0.0' : interval.introduced
+        try {
+          const afterIntro = semver.gte(currentVersion, introVersion)
+          const beforeFixed = !interval.fixed || semver.lt(currentVersion, interval.fixed)
+          if (afterIntro && beforeFixed && interval.fixed) {
+            matchingFixedVersions.push(interval.fixed)
+          }
+        } catch {
+          continue
+        }
+      }
+    }
+  }
+
+  if (matchingFixedVersions.length === 0) return undefined
+  if (matchingFixedVersions.length === 1) return matchingFixedVersions[0]
+
+  // Return the lowest (closest) fixed version — the smallest bump from the current version
+  return matchingFixedVersions.sort(semver.compare)[0]
 }
 
 function getSeverityLevel(vuln: OsvVulnerability): OsvSeverityLevel {
@@ -110,18 +257,24 @@ function getSeverityLevel(vuln: OsvVulnerability): OsvSeverityLevel {
 
 /**
  * Analyze entire dependency tree for vulnerabilities and deprecated packages.
- * @public
+ * Uses OSV batch API for efficient vulnerability discovery, then fetches
+ * full details only for packages with known vulnerabilities.
  */
 export const analyzeDependencyTree = defineCachedFunction(
   async (name: string, version: string): Promise<VulnerabilityTreeResult> => {
     // Resolve all packages in the tree with depth tracking
     const resolved = await resolveDependencyTree(name, version, { trackDepth: true })
 
-    // Convert to array for OSV querying
-    const packages = [...resolved.values()]
+    // Convert to array with query info
+    const packages: PackageQueryInfo[] = Array.from(resolved.values(), pkg => ({
+      name: pkg.name,
+      version: pkg.version,
+      depth: pkg.depth!,
+      path: pkg.path || [],
+    }))
 
     // Collect deprecated packages (no API call needed - already in packument data)
-    const deprecatedPackages: DeprecatedPackageInfo[] = packages
+    const deprecatedPackages: DeprecatedPackageInfo[] = [...resolved.values()]
       .filter(pkg => pkg.deprecated)
       .map(pkg => ({
         name: pkg.name,
@@ -136,22 +289,27 @@ export const analyzeDependencyTree = defineCachedFunction(
         return depthOrder[a.depth] - depthOrder[b.depth]
       })
 
-    // Query OSV for all packages in parallel batches
-    const vulnerablePackages: PackageVulnerabilityInfo[] = []
-    let failedQueries = 0
-    const batchSize = 10
+    // Step 1: Use batch API to find which packages have vulnerabilities
+    // This is much faster than individual queries - one request for all packages
+    const { vulnerableIndices, failed: batchFailed } = await queryOsvBatch(packages)
 
-    for (let i = 0; i < packages.length; i += batchSize) {
-      const batch = packages.slice(i, i + batchSize)
-      const results = await Promise.all(
-        batch.map(pkg => queryOsv(pkg.name, pkg.version, pkg.depth!, pkg.path || [])),
+    let vulnerablePackages: PackageVulnerabilityInfo[] = []
+    let failedQueries = batchFailed ? packages.length : 0
+
+    if (!batchFailed && vulnerableIndices.length > 0) {
+      // Step 2: Fetch full vulnerability details only for packages with vulns
+      // This is typically a small fraction of total packages
+      const detailResults = await mapWithConcurrency(
+        vulnerableIndices,
+        i => queryOsvDetails(packages[i]!),
+        OSV_DETAIL_CONCURRENCY,
       )
 
-      for (const result of results) {
-        if (result.status === 'error') {
+      for (const result of detailResults) {
+        if (result) {
+          vulnerablePackages.push(result)
+        } else {
           failedQueries++
-        } else if (result.data) {
-          vulnerablePackages.push(result.data)
         }
       }
     }
@@ -176,11 +334,11 @@ export const analyzeDependencyTree = defineCachedFunction(
       totalCounts.low += pkg.counts.low
     }
 
-    // Log critical failures (>50% of queries failed)
-    if (failedQueries > 0 && failedQueries > packages.length / 2) {
+    // Log if batch query failed entirely
+    if (batchFailed) {
       // oxlint-disable-next-line no-console -- critical error logging
       console.error(
-        `[dep-analysis] Critical: ${failedQueries}/${packages.length} OSV queries failed for ${name}@${version}`,
+        `[dep-analysis] Critical: OSV batch query failed for ${name}@${version} (${packages.length} packages)`,
       )
     }
 
@@ -198,6 +356,6 @@ export const analyzeDependencyTree = defineCachedFunction(
     maxAge: 60 * 60,
     swr: true,
     name: 'dependency-analysis',
-    getKey: (name: string, version: string) => `v1:${name}@${version}`,
+    getKey: (name: string, version: string) => `v2:${name}@${version}`,
   },
 )

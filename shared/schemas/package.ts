@@ -22,7 +22,7 @@ export const PackageNameSchema = v.pipe(
 export const VersionSchema = v.pipe(
   v.string(),
   v.nonEmpty('Version is required'),
-  v.regex(/^[a-z0-9._+-]+$/i, 'Invalid version format'),
+  v.regex(/^[\w.+-]+$/, 'Invalid version format'),
 )
 
 /**
@@ -73,10 +73,7 @@ export const PackageFileQuerySchema = v.object({
 /**
  * Automatically infer types for routes
  * Usage - prefer this over manually defining interfaces
- * @public
  */
 export type PackageRouteParams = v.InferOutput<typeof PackageRouteParamsSchema>
-/** @public */
 export type PackageVersionQuery = v.InferOutput<typeof PackageVersionQuerySchema>
-/** @public */
 export type PackageFileQuery = v.InferOutput<typeof PackageFileQuerySchema>

@@ -1,0 +1,65 @@
+<script setup lang="ts">
+withDefaults(
+  defineProps<{
+    inputClass?: string
+  }>(),
+  {
+    inputClass: 'inline sm:block',
+  },
+)
+
+const emit = defineEmits(['blur', 'focus'])
+const route = useRoute()
+const isSearchFocused = shallowRef(false)
+
+const showSearchBar = computed(() => {
+  return route.name !== 'index'
+})
+
+const { model: searchQuery, flushUpdateUrlQuery } = useGlobalSearch()
+
+function handleSubmit() {
+  flushUpdateUrlQuery()
+}
+
+// Expose focus method for parent components
+const inputRef = useTemplateRef('inputRef')
+function focus() {
+  inputRef.value?.focus()
+}
+defineExpose({ focus })
+</script>
+<template>
+  <search v-if="showSearchBar" :class="'flex-1 sm:max-w-md ' + inputClass">
+    <form method="GET" action="/search" class="relative" @submit.prevent="handleSubmit">
+      <label for="header-search" class="sr-only">
+        {{ $t('search.label') }}
+      </label>
+
+      <div class="relative group" :class="{ 'is-focused': isSearchFocused }">
+        <div class="search-box relative flex items-center">
+          <span
+            class="absolute inset-is-3 text-fg-subtle font-mono text-sm pointer-events-none transition-colors duration-200 motion-reduce:transition-none [.group:hover:not(:focus-within)_&]:text-fg/80 group-focus-within:text-accent z-1"
+          >
+            /
+          </span>
+
+          <InputBase
+            id="header-search"
+            ref="inputRef"
+            v-model="searchQuery"
+            type="search"
+            name="q"
+            :placeholder="$t('search.placeholder')"
+            no-correct
+            class="w-full min-w-25 ps-7"
+            @focus="isSearchFocused = true"
+            @blur="isSearchFocused = false"
+            size="small"
+          />
+          <button type="submit" class="sr-only">{{ $t('search.button') }}</button>
+        </div>
+      </div>
+    </form>
+  </search>
+</template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Directions } from '@nuxtjs/i18n'
-import { useEventListener } from '@vueuse/core'
+import { useEventListener, onKeyDown, onKeyUp } from '@vueuse/core'
+import { isEditableElement } from '~/utils/input'
 
 const route = useRoute()
 const router = useRouter()
@@ -20,6 +21,16 @@ const localeMap = locales.value.reduce(
   {} as Record<string, Directions>,
 )
 
+const darkMode = usePreferredDark()
+const colorMode = useColorMode()
+const colorScheme = computed(() => {
+  return {
+    system: darkMode ? 'dark light' : 'light dark',
+    light: 'only light',
+    dark: 'only dark',
+  }[colorMode.preference]
+})
+
 useHead({
   htmlAttrs: {
     'lang': () => locale.value,
@@ -29,27 +40,19 @@ useHead({
   titleTemplate: titleChunk => {
     return titleChunk ? titleChunk : 'npmx - Better npm Package Browser'
   },
+  meta: [{ name: 'color-scheme', content: colorScheme }],
 })
 
 if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
-// Global keyboard shortcut:
-// "/" focuses search or navigates to search page
-// "?" highlights all keyboard shortcut elements
-function handleGlobalKeydown(e: KeyboardEvent) {
-  const target = e.target as HTMLElement
-
-  const isEditableTarget =
-    target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable
-
-  if (isEditableTarget) return
-
-  if (e.key === '/') {
+onKeyDown(
+  '/',
+  e => {
+    if (isEditableElement(e.target)) return
     e.preventDefault()
 
-    // Try to find and focus search input on current page
     const searchInput = document.querySelector<HTMLInputElement>(
       'input[type="search"], input[name="q"]',
     )
@@ -59,33 +62,72 @@ function handleGlobalKeydown(e: KeyboardEvent) {
       return
     }
 
-    router.push('/search')
-  }
+    router.push({ name: 'search' })
+  },
+  { dedupe: true },
+)
 
-  if (e.key === '?') {
+onKeyDown(
+  '?',
+  e => {
+    if (isEditableElement(e.target)) return
     e.preventDefault()
     showKbdHints.value = true
-  }
-}
+  },
+  { dedupe: true },
+)
 
-function handleGlobalKeyup() {
-  showKbdHints.value = false
+onKeyUp(
+  '?',
+  e => {
+    if (isEditableElement(e.target)) return
+    e.preventDefault()
+    showKbdHints.value = false
+  },
+  { dedupe: true },
+)
+
+// Light dismiss fallback for browsers that don't support closedby="any" (Safari + old Chrome/Firefox)
+// https://codepen.io/paramagicdev/pen/gbYompq
+// see: https://github.com/npmx-dev/npmx.dev/pull/522#discussion_r2749978022
+function handleModalLightDismiss(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  if (target.tagName === 'DIALOG' && target.hasAttribute('open')) {
+    const rect = target.getBoundingClientRect()
+    const isOutside =
+      e.clientX < rect.left ||
+      e.clientX > rect.right ||
+      e.clientY < rect.top ||
+      e.clientY > rect.bottom
+
+    if (!isOutside) return
+    ;(target as HTMLDialogElement).close()
+  }
 }
 
 if (import.meta.client) {
-  useEventListener(document, 'keydown', handleGlobalKeydown)
-  useEventListener(document, 'keyup', handleGlobalKeyup)
+  // Feature check for native light dismiss support via closedby="any"
+  // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#closedby
+  const supportsClosedBy =
+    typeof HTMLDialogElement !== 'undefined' &&
+    typeof HTMLDialogElement.prototype === 'object' &&
+    'closedBy' in HTMLDialogElement.prototype
+  if (!supportsClosedBy) {
+    useEventListener(document, 'click', handleModalLightDismiss)
+  }
 }
 </script>
 
 <template>
   <div class="min-h-screen flex flex-col bg-bg text-fg">
     <NuxtPwaAssets />
-    <a href="#main-content" class="skip-link font-mono">{{ $t('common.skip_link') }}</a>
+    <LinkBase to="#main-content" external variant="button-primary" class="skip-link">{{
+      $t('common.skip_link')
+    }}</LinkBase>
 
     <AppHeader :show-logo="!isHomepage" />
 
-    <div id="main-content" class="flex-1 flex flex-col">
+    <div id="main-content" class="flex-1 flex flex-col" tabindex="-1">
       <NuxtPage />
     </div>
 
@@ -94,6 +136,19 @@ if (import.meta.client) {
     <ScrollToTop />
   </div>
 </template>
+
+<style scoped>
+/* Skip link */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+</style>
 
 <style>
 /* Keyboard shortcut highlight on "?" key press */

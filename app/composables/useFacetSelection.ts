@@ -1,19 +1,100 @@
-import type { ComparisonFacet } from '#shared/types'
-import { ALL_FACETS, DEFAULT_FACETS, FACET_INFO } from '#shared/types/comparison'
+import type { ComparisonFacet, FacetInfo } from '#shared/types'
+import {
+  ALL_FACETS,
+  CATEGORY_ORDER,
+  DEFAULT_FACETS,
+  FACET_INFO,
+  FACETS_BY_CATEGORY,
+} from '#shared/types/comparison'
 import { useRouteQuery } from '@vueuse/router'
+
+/** Facet info enriched with i18n labels */
+export interface FacetInfoWithLabels extends Omit<FacetInfo, 'id'> {
+  id: ComparisonFacet
+  label: string
+  description: string
+}
 
 /**
  * Composable for managing comparison facet selection with URL sync.
  *
- * @public
  * @param queryParam - The URL query parameter name to use (default: 'facets')
  */
 export function useFacetSelection(queryParam = 'facets') {
+  const { t } = useI18n()
+
+  const facetLabels = computed(
+    (): Record<ComparisonFacet, { label: string; description: string }> => ({
+      downloads: {
+        label: t(`compare.facets.items.downloads.label`),
+        description: t(`compare.facets.items.downloads.description`),
+      },
+      totalLikes: {
+        label: t(`compare.facets.items.totalLikes.label`),
+        description: t(`compare.facets.items.totalLikes.description`),
+      },
+      packageSize: {
+        label: t(`compare.facets.items.packageSize.label`),
+        description: t(`compare.facets.items.packageSize.description`),
+      },
+      installSize: {
+        label: t(`compare.facets.items.installSize.label`),
+        description: t(`compare.facets.items.installSize.description`),
+      },
+      moduleFormat: {
+        label: t(`compare.facets.items.moduleFormat.label`),
+        description: t(`compare.facets.items.moduleFormat.description`),
+      },
+      types: {
+        label: t(`compare.facets.items.types.label`),
+        description: t(`compare.facets.items.types.description`),
+      },
+      engines: {
+        label: t(`compare.facets.items.engines.label`),
+        description: t(`compare.facets.items.engines.description`),
+      },
+      vulnerabilities: {
+        label: t(`compare.facets.items.vulnerabilities.label`),
+        description: t(`compare.facets.items.vulnerabilities.description`),
+      },
+      lastUpdated: {
+        label: t(`compare.facets.items.lastUpdated.label`),
+        description: t(`compare.facets.items.lastUpdated.description`),
+      },
+      license: {
+        label: t(`compare.facets.items.license.label`),
+        description: t(`compare.facets.items.license.description`),
+      },
+      dependencies: {
+        label: t(`compare.facets.items.dependencies.label`),
+        description: t(`compare.facets.items.dependencies.description`),
+      },
+      totalDependencies: {
+        label: t(`compare.facets.items.totalDependencies.label`),
+        description: t(`compare.facets.items.totalDependencies.description`),
+      },
+      deprecated: {
+        label: t(`compare.facets.items.deprecated.label`),
+        description: t(`compare.facets.items.deprecated.description`),
+      },
+    }),
+  )
+
+  // Helper to build facet info with i18n labels
+  function buildFacetInfo(facet: ComparisonFacet): FacetInfoWithLabels {
+    return {
+      id: facet,
+      ...FACET_INFO[facet],
+      label: facetLabels.value[facet].label,
+      description: facetLabels.value[facet].description,
+    }
+  }
+
   // Sync with URL query param (stable ref - doesn't change on other query changes)
   const facetsParam = useRouteQuery<string>(queryParam, '', { mode: 'replace' })
 
-  // Parse facets from URL or use defaults
-  const selectedFacets = computed<ComparisonFacet[]>({
+  // Parse facet IDs from URL or use defaults
+  const selectedFacetIds = computed<ComparisonFacet[]>({
     get() {
       if (!facetsParam.value) {
         return DEFAULT_FACETS
@@ -41,21 +122,26 @@ export function useFacetSelection(queryParam = 'facets') {
     },
   })
 
+  // Selected facets with full info and i18n labels
+  const selectedFacets = computed<FacetInfoWithLabels[]>(() =>
+    selectedFacetIds.value.map(buildFacetInfo),
+  )
+
   // Check if a facet is selected
   function isFacetSelected(facet: ComparisonFacet): boolean {
-    return selectedFacets.value.includes(facet)
+    return selectedFacetIds.value.includes(facet)
   }
 
   // Toggle a single facet
   function toggleFacet(facet: ComparisonFacet): void {
-    const current = selectedFacets.value
+    const current = selectedFacetIds.value
     if (current.includes(facet)) {
       // Don't allow deselecting all facets
       if (current.length > 1) {
-        selectedFacets.value = current.filter(f => f !== facet)
+        selectedFacetIds.value = current.filter(f => f !== facet)
       }
     } else {
-      selectedFacets.value = [...current, facet]
+      selectedFacetIds.value = [...current, facet]
     }
   }
 
@@ -70,36 +156,57 @@ export function useFacetSelection(queryParam = 'facets') {
   // Select all facets in a category
   function selectCategory(category: string): void {
     const categoryFacets = getFacetsInCategory(category)
-    const current = selectedFacets.value
+    const current = selectedFacetIds.value
     const newFacets = [...new Set([...current, ...categoryFacets])]
-    selectedFacets.value = newFacets
+    selectedFacetIds.value = newFacets
   }
 
   // Deselect all facets in a category
   function deselectCategory(category: string): void {
     const categoryFacets = getFacetsInCategory(category)
-    const remaining = selectedFacets.value.filter(f => !categoryFacets.includes(f))
+    const remaining = selectedFacetIds.value.filter(f => !categoryFacets.includes(f))
     // Don't allow deselecting all facets
     if (remaining.length > 0) {
-      selectedFacets.value = remaining
+      selectedFacetIds.value = remaining
     }
   }
 
   // Select all facets globally
   function selectAll(): void {
-    selectedFacets.value = DEFAULT_FACETS
+    selectedFacetIds.value = DEFAULT_FACETS
   }
 
   // Deselect all facets globally (keeps first facet to ensure at least one)
   function deselectAll(): void {
-    selectedFacets.value = [DEFAULT_FACETS[0] as ComparisonFacet]
+    selectedFacetIds.value = [DEFAULT_FACETS[0] as ComparisonFacet]
   }
 
   // Check if all facets are selected
-  const isAllSelected = computed(() => selectedFacets.value.length === DEFAULT_FACETS.length)
+  const isAllSelected = computed(() => selectedFacetIds.value.length === DEFAULT_FACETS.length)
 
   // Check if only one facet is selected (minimum)
-  const isNoneSelected = computed(() => selectedFacets.value.length === 1)
+  const isNoneSelected = computed(() => selectedFacetIds.value.length === 1)
+
+  const facetCategories = {
+    performance: t(`compare.facets.categories.performance`),
+    health: t(`compare.facets.categories.health`),
+    compatibility: t(`compare.facets.categories.compatibility`),
+    security: t(`compare.facets.categories.security`),
+  }
+
+  // Get translated category name
+  function getCategoryLabel(category: FacetInfo['category']): string {
+    return facetCategories[category]
+  }
+
+  // All facets with their info and i18n labels, grouped by category
+  const facetsByCategory = computed(() => {
+    const result: Record<string, FacetInfoWithLabels[]> = {}
+    for (const category of CATEGORY_ORDER) {
+      result[category] = FACETS_BY_CATEGORY[category].map(buildFacetInfo)
+    }
+    return result
+  })
 
   return {
     selectedFacets,
@@ -112,6 +219,10 @@ export function useFacetSelection(queryParam = 'facets') {
     isAllSelected,
     isNoneSelected,
     allFacets: ALL_FACETS,
+    // Facet info with i18n
+    getCategoryLabel,
+    facetsByCategory,
+    categoryOrder: CATEGORY_ORDER,
   }
 }
 

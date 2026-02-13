@@ -12,6 +12,8 @@ const mode = defineModel<PaginationMode>('mode', { required: true })
 const pageSize = defineModel<PageSize>('pageSize', { required: true })
 const currentPage = defineModel<number>('currentPage', { required: true })
 
+const pageSizeSelectValue = computed(() => String(pageSize.value))
+
 // Whether we should show pagination controls (table view always uses pagination)
 const shouldShowControls = computed(() => props.viewMode === 'table' || mode.value === 'paginated')
 
@@ -22,7 +24,6 @@ const effectiveMode = computed<PaginationMode>(() =>
 
 // When 'all' is selected, there's only 1 page with everything
 const isShowingAll = computed(() => pageSize.value === 'all')
-const effectivePageSize = computed(() => (isShowingAll.value ? props.totalItems : pageSize.value))
 const totalPages = computed(() =>
   isShowingAll.value ? 1 : Math.ceil(props.totalItems / (pageSize.value as number)),
 )
@@ -117,7 +118,7 @@ function handlePageSizeChange(event: Event) {
   <!-- Only show when in paginated mode (table view or explicit paginated mode) -->
   <div
     v-if="shouldShowControls"
-    class="flex flex-wrap items-center justify-between gap-4 py-4 border-t border-border mt-6"
+    class="flex flex-wrap items-center justify-between gap-4 py-4 mt-2"
   >
     <!-- Left: Mode toggle and page size -->
     <div class="flex items-center gap-4">
@@ -150,27 +151,22 @@ function handlePageSizeChange(event: Event) {
 
       <!-- Page size (shown when paginated or table view) -->
       <div v-if="effectiveMode === 'paginated'" class="relative shrink-0">
-        <label for="page-size" class="sr-only">{{ $t('filters.pagination.items_per_page') }}</label>
-        <select
+        <SelectField
+          :label="$t('filters.pagination.items_per_page')"
+          hidden-label
           id="page-size"
-          :value="pageSize"
-          class="appearance-none bg-bg-subtle border border-border rounded-md ps-3 pe-8 py-1 font-mono text-sm text-fg cursor-pointer transition-colors duration-200 hover:border-border-hover focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-2 focus-visible:ring-offset-bg focus-visible:outline-none"
+          v-model="pageSizeSelectValue"
           @change="handlePageSizeChange"
-        >
-          <option v-for="size in PAGE_SIZE_OPTIONS" :key="size" :value="size">
-            {{
-              size === 'all'
-                ? $t('filters.pagination.all_yolo')
-                : $t('filters.pagination.per_page', { count: size })
-            }}
-          </option>
-        </select>
-        <div
-          class="absolute inset-ie-2 top-1/2 -translate-y-1/2 text-fg-subtle pointer-events-none"
-          aria-hidden="true"
-        >
-          <span class="i-carbon-chevron-down w-3 h-3" />
-        </div>
+          :items="
+            PAGE_SIZE_OPTIONS.map(size => ({
+              label:
+                size === 'all'
+                  ? $t('filters.pagination.all_yolo')
+                  : $t('filters.pagination.per_page', { count: size }),
+              value: String(size),
+            }))
+          "
+        />
       </div>
     </div>
 
@@ -182,7 +178,7 @@ function handlePageSizeChange(event: Event) {
           $t('filters.pagination.showing', {
             start: startItem,
             end: endItem,
-            total: totalItems.toLocaleString(),
+            total: $n(totalItems),
           })
         }}
       </span>
@@ -201,7 +197,7 @@ function handlePageSizeChange(event: Event) {
           :aria-label="$t('filters.pagination.previous')"
           @click="goPrev"
         >
-          <span class="i-carbon-chevron-left w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon-chevron-left block rtl-flip w-4 h-4" aria-hidden="true" />
         </button>
 
         <!-- Page numbers -->
@@ -231,7 +227,7 @@ function handlePageSizeChange(event: Event) {
           :aria-label="$t('filters.pagination.next')"
           @click="goNext"
         >
-          <span class="i-carbon-chevron-right w-4 h-4" aria-hidden="true" />
+          <span class="i-carbon-chevron-right block rtl-flip w-4 h-4" aria-hidden="true" />
         </button>
       </nav>
     </div>

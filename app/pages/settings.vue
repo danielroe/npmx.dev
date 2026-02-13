@@ -1,26 +1,31 @@
 <script setup lang="ts">
 const router = useRouter()
+const canGoBack = useCanGoBack()
 const { settings } = useSettings()
-const { locale, locales, setLocale } = useI18n()
+const { locale, locales, setLocale: setNuxti18nLocale } = useI18n()
 const colorMode = useColorMode()
 const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
 
-// Escape to go back (but not when focused on form elements)
+// Escape to go back (but not when focused on form elements or modal is open)
 onKeyStroke(
-  'Escape',
+  e =>
+    isKeyWithoutModifiers(e, 'Escape') &&
+    !isEditableElement(e.target) &&
+    !document.documentElement.matches('html:has(:modal)'),
   e => {
-    const target = e.target as HTMLElement
-    if (!['INPUT', 'SELECT', 'TEXTAREA'].includes(target?.tagName)) {
-      e.preventDefault()
-      router.back()
-    }
+    e.preventDefault()
+    router.back()
   },
   { dedupe: true },
 )
 
 useSeoMeta({
   title: () => `${$t('settings.title')} - npmx`,
+  ogTitle: () => `${$t('settings.title')} - npmx`,
+  twitterTitle: () => `${$t('settings.title')} - npmx`,
   description: () => $t('settings.meta_description'),
+  ogDescription: () => $t('settings.meta_description'),
+  twitterDescription: () => $t('settings.meta_description'),
 })
 
 defineOgImageComponent('Default', {
@@ -28,6 +33,11 @@ defineOgImageComponent('Default', {
   description: () => $t('settings.tagline'),
   primaryColor: '#60a5fa',
 })
+
+const setLocale: typeof setNuxti18nLocale = locale => {
+  settings.value.selectedLocale = locale
+  return setNuxti18nLocale(locale)
+}
 </script>
 
 <template>
@@ -41,11 +51,12 @@ defineOgImageComponent('Default', {
           </h1>
           <button
             type="button"
-            class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 shrink-0"
+            class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0 p-1.5 -mx-1.5"
             @click="router.back()"
+            v-if="canGoBack"
           >
             <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
-            <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+            <span class="sr-only sm:not-sr-only">{{ $t('nav.back') }}</span>
           </button>
         </div>
         <p class="text-fg-muted text-lg">
@@ -57,7 +68,7 @@ defineOgImageComponent('Default', {
       <div class="space-y-8">
         <!-- APPEARANCE Section -->
         <section>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
             {{ $t('settings.sections.appearance') }}
           </h2>
           <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6 space-y-6">
@@ -66,21 +77,18 @@ defineOgImageComponent('Default', {
               <label for="theme-select" class="block text-sm text-fg font-medium">
                 {{ $t('settings.theme') }}
               </label>
-              <select
+              <SelectField
                 id="theme-select"
-                :value="colorMode.preference"
-                class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 cursor-pointer"
-                @change="
-                  colorMode.preference = ($event.target as HTMLSelectElement).value as
-                    | 'light'
-                    | 'dark'
-                    | 'system'
-                "
-              >
-                <option value="system">{{ $t('settings.theme_system') }}</option>
-                <option value="light">{{ $t('settings.theme_light') }}</option>
-                <option value="dark">{{ $t('settings.theme_dark') }}</option>
-              </select>
+                v-model="colorMode.preference"
+                block
+                size="sm"
+                class="max-w-48"
+                :items="[
+                  { label: $t('settings.theme_system'), value: 'system' },
+                  { label: $t('settings.theme_light'), value: 'light' },
+                  { label: $t('settings.theme_dark'), value: 'dark' },
+                ]"
+              />
             </div>
 
             <!-- Accent colors -->
@@ -88,132 +96,117 @@ defineOgImageComponent('Default', {
               <span class="block text-sm text-fg font-medium">
                 {{ $t('settings.accent_colors') }}
               </span>
-              <AccentColorPicker />
+              <SettingsAccentColorPicker />
+            </div>
+
+            <!-- Background themes -->
+            <div class="space-y-3">
+              <span class="block text-sm text-fg font-medium">
+                {{ $t('settings.background_themes') }}
+              </span>
+              <SettingsBgThemePicker />
             </div>
           </div>
         </section>
 
         <!-- DISPLAY Section -->
         <section>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
             {{ $t('settings.sections.display') }}
           </h2>
-          <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6 space-y-4">
+          <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6">
             <!-- Relative dates toggle -->
-            <div class="space-y-2">
-              <ClientOnly>
-                <button
-                  type="button"
-                  class="w-full flex items-center justify-between gap-4 group"
-                  role="switch"
-                  :aria-checked="settings.relativeDates"
-                  @click="settings.relativeDates = !settings.relativeDates"
-                >
-                  <span class="text-sm text-fg font-medium text-start">
-                    {{ $t('settings.relative_dates') }}
-                  </span>
-                  <span
-                    class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out motion-reduce:transition-none shadow-sm cursor-pointer"
-                    :class="settings.relativeDates ? 'bg-accent' : 'bg-bg border border-border'"
-                    aria-hidden="true"
-                  >
-                    <span
-                      class="pointer-events-none inline-block h-5 w-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
-                      :class="settings.relativeDates ? 'bg-bg' : 'bg-fg-muted'"
-                    />
-                  </span>
-                </button>
-                <template #fallback>
-                  <ToggleSkeleton :label="$t('settings.relative_dates')" />
-                </template>
-              </ClientOnly>
-              <p class="text-sm text-fg-muted">
-                {{ $t('settings.relative_dates_description') }}
-              </p>
-            </div>
+            <SettingsToggle
+              :label="$t('settings.relative_dates')"
+              v-model="settings.relativeDates"
+            />
 
             <!-- Divider -->
-            <div class="border-t border-border" />
+            <div class="border-t border-border my-4" />
 
             <!-- Include @types in install toggle -->
-            <div class="space-y-2">
-              <ClientOnly>
-                <button
-                  type="button"
-                  class="w-full flex items-center justify-between gap-4 group"
-                  role="switch"
-                  :aria-checked="settings.includeTypesInInstall"
-                  @click="settings.includeTypesInInstall = !settings.includeTypesInInstall"
-                >
-                  <span class="text-sm text-fg font-medium text-start">
-                    {{ $t('settings.include_types') }}
-                  </span>
-                  <span
-                    class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out motion-reduce:transition-none shadow-sm cursor-pointer"
-                    :class="
-                      settings.includeTypesInInstall ? 'bg-accent' : 'bg-bg border border-border'
-                    "
-                    aria-hidden="true"
-                  >
-                    <span
-                      class="pointer-events-none inline-block h-5 w-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
-                      :class="settings.includeTypesInInstall ? 'bg-bg' : 'bg-fg-muted'"
-                    />
-                  </span>
-                </button>
-                <template #fallback>
-                  <ToggleSkeleton :label="$t('settings.include_types')" />
-                </template>
-              </ClientOnly>
-              <p class="text-sm text-fg-muted">
-                {{ $t('settings.include_types_description') }}
-              </p>
-            </div>
+            <SettingsToggle
+              :label="$t('settings.include_types')"
+              :description="$t('settings.include_types_description')"
+              v-model="settings.includeTypesInInstall"
+            />
 
             <!-- Divider -->
-            <div class="border-t border-border" />
+            <div class="border-t border-border my-4" />
 
             <!-- Hide platform-specific packages toggle -->
+            <SettingsToggle
+              :label="$t('settings.hide_platform_packages')"
+              :description="$t('settings.hide_platform_packages_description')"
+              v-model="settings.hidePlatformPackages"
+            />
+          </div>
+        </section>
+
+        <!-- DATA SOURCE Section -->
+        <section>
+          <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
+            {{ $t('settings.sections.search') }}
+          </h2>
+          <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6">
             <div class="space-y-2">
+              <label for="search-provider-select" class="block text-sm text-fg font-medium">
+                {{ $t('settings.data_source.label') }}
+              </label>
+              <p class="text-xs text-fg-muted mb-3">
+                {{ $t('settings.data_source.description') }}
+              </p>
+
               <ClientOnly>
-                <button
-                  type="button"
-                  class="w-full flex items-center justify-between gap-4 group"
-                  role="switch"
-                  :aria-checked="settings.hidePlatformPackages"
-                  @click="settings.hidePlatformPackages = !settings.hidePlatformPackages"
-                >
-                  <span class="text-sm text-fg font-medium text-start">
-                    {{ $t('settings.hide_platform_packages') }}
-                  </span>
-                  <span
-                    class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out motion-reduce:transition-none shadow-sm cursor-pointer"
-                    :class="
-                      settings.hidePlatformPackages ? 'bg-accent' : 'bg-bg border border-border'
-                    "
-                    aria-hidden="true"
-                  >
-                    <span
-                      class="pointer-events-none inline-block h-5 w-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
-                      :class="settings.hidePlatformPackages ? 'bg-bg' : 'bg-fg-muted'"
-                    />
-                  </span>
-                </button>
+                <SelectField
+                  id="search-provider-select"
+                  :items="[
+                    { label: $t('settings.data_source.npm'), value: 'npm' },
+                    { label: $t('settings.data_source.algolia'), value: 'algolia' },
+                  ]"
+                  v-model="settings.searchProvider"
+                  block
+                  size="sm"
+                  class="max-w-48"
+                />
                 <template #fallback>
-                  <p class="text-sm text-fg-muted">
-                    {{ $t('settings.hide_platform_packages') }}
-                  </p>
+                  <SelectField
+                    id="search-provider-select"
+                    disabled
+                    :items="[{ label: $t('common.loading'), value: 'loading' }]"
+                    block
+                    size="sm"
+                    class="max-w-48"
+                  />
                 </template>
               </ClientOnly>
-              <p class="text-sm text-fg-muted">
-                {{ $t('settings.hide_platform_packages_description') }}
+
+              <!-- Provider description -->
+              <p class="text-xs text-fg-subtle mt-2">
+                {{
+                  settings.searchProvider === 'algolia'
+                    ? $t('settings.data_source.algolia_description')
+                    : $t('settings.data_source.npm_description')
+                }}
               </p>
+
+              <!-- Algolia attribution -->
+              <a
+                v-if="settings.searchProvider === 'algolia'"
+                href="https://www.algolia.com/developers"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg-muted transition-colors mt-2"
+              >
+                {{ $t('search.algolia_disclaimer') }}
+                <span class="i-carbon:launch w-3 h-3" aria-hidden="true" />
+              </a>
             </div>
           </div>
         </section>
 
         <section>
-          <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
             {{ $t('settings.sections.language') }}
           </h2>
           <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6 space-y-4">
@@ -224,24 +217,24 @@ defineOgImageComponent('Default', {
               </label>
 
               <ClientOnly>
-                <select
+                <SelectField
                   id="language-select"
-                  :value="locale"
-                  class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 cursor-pointer"
-                  @change="setLocale(($event.target as HTMLSelectElement).value as typeof locale)"
-                >
-                  <option v-for="loc in locales" :key="loc.code" :value="loc.code" :lang="loc.code">
-                    {{ loc.name }}
-                  </option>
-                </select>
+                  :items="locales.map(loc => ({ label: loc.name ?? '', value: loc.code }))"
+                  v-model="locale"
+                  @update:modelValue="setLocale($event as typeof locale)"
+                  block
+                  size="sm"
+                  class="max-w-48"
+                />
                 <template #fallback>
-                  <select
+                  <SelectField
                     id="language-select"
                     disabled
-                    class="w-full sm:w-auto min-w-48 bg-bg border border-border rounded-md px-3 py-2 text-sm text-fg opacity-50 cursor-wait"
-                  >
-                    <option>{{ $t('common.loading') }}</option>
-                  </select>
+                    :items="[{ label: $t('common.loading'), value: 'loading' }]"
+                    block
+                    size="sm"
+                    class="max-w-48"
+                  />
                 </template>
               </ClientOnly>
             </div>
@@ -249,7 +242,7 @@ defineOgImageComponent('Default', {
             <!-- Translation helper for non-source locales -->
             <template v-if="currentLocaleStatus && !isSourceLocale">
               <div class="border-t border-border pt-4">
-                <TranslationHelper :status="currentLocaleStatus" />
+                <SettingsTranslationHelper :status="currentLocaleStatus" />
               </div>
             </template>
 
@@ -259,7 +252,7 @@ defineOgImageComponent('Default', {
                 href="https://github.com/npmx-dev/npmx.dev/tree/main/i18n/locales"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 text-sm text-fg-muted hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+                class="inline-flex items-center gap-2 text-sm text-fg-muted hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
               >
                 <span class="i-carbon:logo-github w-4 h-4" aria-hidden="true" />
                 {{ $t('settings.help_translate') }}
@@ -271,15 +264,3 @@ defineOgImageComponent('Default', {
     </article>
   </main>
 </template>
-
-<style scoped>
-button[aria-checked='false'] > span:last-of-type > span {
-  translate: 0;
-}
-button[aria-checked='true'] > span:last-of-type > span {
-  translate: calc(100%);
-}
-html[dir='rtl'] button[aria-checked='true'] > span:last-of-type > span {
-  translate: calc(-100%);
-}
-</style>

@@ -1,4 +1,3 @@
-import type { Locale } from '@lunariajs/core'
 import type { LocaleObject } from '@nuxtjs/i18n'
 import * as path from 'node:path'
 import * as fs from 'node:fs/promises'
@@ -8,48 +7,86 @@ import { deepCopy } from '@intlify/shared'
 const destFolder = path.resolve('lunaria/files')
 const localesFolder = path.resolve('i18n/locales')
 
-const defaultLocale = currentLocales.find(l => l.code === 'en-US')!
-/** @public */
+const defaultLocale = currentLocales.find(l => l.code === 'en-US')
+if (!defaultLocale?.name) {
+  throw new Error('Default locale en-US not found or has no name')
+}
 export { lunariaJSONFiles }
-/** @public */
 export const sourceLocale = {
   label: defaultLocale.name,
   lang: defaultLocale.code,
 }
-/** @public */
-export const locales: Locale[] = currentLocales
-  .filter(l => l.code !== 'en-US')
-  .map(l => ({
+const filteredLocales = currentLocales.filter(
+  (l): l is typeof l & { name: string } => l.code !== 'en-US' && typeof l.name === 'string',
+)
+const firstLocale = filteredLocales[0]
+if (!firstLocale) {
+  throw new Error('No locales found besides en-US')
+}
+export const locales: [{ label: string; lang: string }, ...{ label: string; lang: string }[]] = [
+  { label: firstLocale.name, lang: firstLocale.code },
+  ...filteredLocales.slice(1).map(l => ({
     label: l.name,
     lang: l.code,
-  }))
+  })),
+]
 
-export async function prepareJsonFiles() {
+export async function prepareJsonFiles(): Promise<void> {
   await fs.rm(destFolder, { recursive: true, force: true })
   await fs.mkdir(destFolder)
   await Promise.all(currentLocales.map(l => mergeLocale(l)))
 }
 
-async function loadJsonFile(name: string) {
-  return JSON.parse(await fs.readFile(path.resolve(`${localesFolder}/${name}`), 'utf8'))
-}
+type NestedObject = Record<string, unknown>
 
-async function mergeLocale(locale: LocaleObject) {
-  if (locale.file || locale.files.length === 1) {
-    const json = locale.file || locale.files[0]
-    await fs.cp(path.resolve(`${localesFolder}/${json}`), path.resolve(`${destFolder}/${json}`))
-    return
+export async function mergeLocaleObject(locale: LocaleObject): Promise<NestedObject | undefined> {
+  const files = locale.files ?? []
+  if (locale.file || files.length === 1) {
+    const json =
+      (locale.file ? getFileName(locale.file) : undefined) ??
+      (files[0] ? getFileName(files[0]) : undefined)
+    if (!json) return undefined
+
+    return await loadLocaleSourceJson<NestedObject>(json)
   }
 
-  const source = await loadJsonFile(locale.files[0] as string)
+  const firstFile = files[0]
+  if (!firstFile) return undefined
+  const source = await loadLocaleSourceJson<NestedObject>(getFileName(firstFile))
   let currentSource: unknown
-  for (let i = 1; i < locale.files.length; i++) {
-    currentSource = await loadJsonFile(locale.files[i] as string)
+  for (let i = 1; i < files.length; i++) {
+    const file = files[i]
+    if (!file) continue
+    currentSource = await loadLocaleSourceJson(getFileName(file))
     deepCopy(currentSource, source)
+  }
+
+  return source
+}
+
+async function loadLocaleSourceJson<T = unknown>(name: string): Promise<T> {
+  const rawJson = JSON.parse(await fs.readFile(path.resolve(`${localesFolder}/${name}`), 'utf8'))
+  // Exclude $schema since it isn't useful in generated files and the relative
+
+  // TODO: removing vacations entry key for temporal recharging page
+  // would be wrong anyway
+  const { $schema: _, vacations: __, ...rest } = rawJson
+  return rest
+}
+
+function getFileName(file: string | { path: string }): string {
+  return typeof file === 'string' ? file : file.path
+}
+
+async function mergeLocale(locale: LocaleObject): Promise<void> {
+  const source = await mergeLocaleObject(locale)
+  if (!source) {
+    return
   }
 
   await fs.writeFile(
     path.resolve(`${destFolder}/${locale.code}.json`),
-    JSON.stringify(source, null, 2),
+    `${JSON.stringify(source, null, 2)}\n`,
+    'utf-8',
   )
 }

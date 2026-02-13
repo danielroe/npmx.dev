@@ -15,16 +15,17 @@
     "social": "соцсети",
     "chat": "чат"
   },
+  "shortcuts": {
+    "section": {}
+  },
   "search": {
     "label": "Поиск пакетов npm",
     "placeholder": "поиск пакетов...",
     "button": "поиск",
-    "clear": "Очистить поиск",
     "searching": "Поиск...",
     "found_packages": "Пакетов не найдено | Найден 1 пакет | Найдено {count} пакетов",
     "updating": "(обновление...)",
     "no_results": "Пакетов по запросу \"{query}\" не найдено",
-    "results": "Результаты поиска",
     "not_taken": "{name} не занято",
     "claim_prompt": "Занять это имя пакета в npm",
     "claim_button": "Занять \"{name}\"",
@@ -41,7 +42,6 @@
   "nav": {
     "main_navigation": "Главное",
     "popular_packages": "Популярные пакеты",
-    "search": "поиск",
     "settings": "настройки",
     "back": "назад"
   },
@@ -54,8 +54,8 @@
       "display": "Отображение",
       "language": "Язык"
     },
+    "data_source": {},
     "relative_dates": "Относительные даты",
-    "relative_dates_description": "Показывать «3 дня назад» вместо полных дат",
     "include_types": "Включать {'@'}types при установке",
     "include_types_description": "Добавлять пакет {'@'}types в команды установки для нетипизированных пакетов",
     "hide_platform_packages": "Скрывать платформо-зависимые пакеты в поиске",
@@ -89,8 +89,6 @@
     "copy": "копировать",
     "copied": "скопировано!",
     "skip_link": "Перейти к основному контенту",
-    "close_modal": "Закрыть модальное окно",
-    "show_more": "показать больше",
     "warnings": "Предупреждения:",
     "go_back_home": "Вернуться на главную",
     "view_on_npm": "посмотреть на npm",
@@ -106,7 +104,6 @@
     "not_found": "Пакет не найден",
     "not_found_message": "Пакет не удалось найти.",
     "no_description": "Описание отсутствует",
-    "show_full_description": "Показать полное описание",
     "not_latest": "(не последняя)",
     "verified_provenance": "Подтвержденное происхождение",
     "view_permalink": "Посмотреть постоянную ссылку на эту версию",
@@ -130,9 +127,12 @@
       "deps": "Зависимости",
       "install_size": "Размер установки",
       "vulns": "Уязвимости",
-      "updated": "Обновлен",
       "view_dependency_graph": "Посмотреть граф зависимостей",
-      "inspect_dependency_tree": "Изучить дерево зависимостей"
+      "inspect_dependency_tree": "Изучить дерево зависимостей",
+      "size_tooltip": {}
+    },
+    "skills": {
+      "file_counts": {}
     },
     "links": {
       "repo": "репозиторий",
@@ -143,6 +143,7 @@
       "docs": "доки",
       "fund": "поддержать"
     },
+    "likes": {},
     "docs": {
       "not_available": "Документация недоступна",
       "not_available_detail": "Мы не смогли сгенерировать документацию для этой версии."
@@ -164,13 +165,15 @@
     "readme": {
       "title": "Readme",
       "no_readme": "README недоступен.",
-      "view_on_github": "Посмотреть на GitHub"
+      "view_on_github": "Посмотреть на GitHub",
+      "callout": {}
     },
+    "provenance_section": {},
+    "security_downgrade": {},
     "keywords_title": "Ключевые слова",
     "compatibility": "Совместимость",
     "card": {
       "publisher": "Издатель",
-      "updated": "Обновлен",
       "weekly_downloads": "Еженедельные загрузки",
       "keywords": "Ключевые слова",
       "license": "Лицензия"
@@ -219,12 +222,7 @@
       "show_more": "(показать ещё {count})",
       "show_less": "(показать меньше)"
     },
-    "downloads": {
-      "title": "Загрузки за неделю",
-      "date_range": "С {start} по {end}",
-      "date_range_multiline": "С {start}\nпо {end}",
-      "analyze": "Анализировать загрузки",
-      "modal_title": "Загрузки",
+    "trends": {
       "granularity": "Детализация",
       "granularity_daily": "По дням",
       "granularity_weekly": "По неделям",
@@ -232,11 +230,16 @@
       "granularity_yearly": "По годам",
       "start_date": "Начало",
       "end_date": "Конец",
-      "no_data": "Нет данных о загрузках",
       "loading": "Загрузка...",
-      "y_axis_label": "{granularity} загрузки",
+      "date_range": "С {start} по {end}",
+      "date_range_multiline": "С {start}\nпо {end}",
       "download_file": "Скачать {fileType}",
-      "toggle_annotator": "Переключить аннотации"
+      "toggle_annotator": "Переключить аннотации",
+      "items": {}
+    },
+    "downloads": {
+      "title": "Загрузки за неделю",
+      "analyze": "Анализировать загрузки"
     },
     "install_scripts": {
       "title": "Скрипты установки",
@@ -260,25 +263,12 @@
       "view_spdx": "Посмотреть текст лицензии на SPDX"
     },
     "vulnerabilities": {
-      "no_description": "Описание отсутствует",
-      "found": "Найдена {count} уязвимость | Найдено {count} уязвимости |Найдено {count} уязвимостей",
-      "deps_found": "Найдена {count} уязвимость | Найдено {count} уязвимости | Найдено {count} уязвимостей",
-      "deps_affected": "Затронута {count} зависимость | Затронуто {count} зависимости | Затронуто {count} зависимостей",
       "tree_found": "{vulns} уязвимость в {packages}/{total} пакетах | {vulns} уязвимостей в {packages}/{total} пакетах",
-      "scanning_tree": "Сканирование дерева зависимостей...",
       "show_all_packages": "показать все затронутые пакеты ({count})",
-      "no_summary": "Нет сводки",
-      "view_details": "Посмотреть детали уязвимости",
       "path": "путь",
       "more": "ещё +{count}",
       "packages_failed": "{count} пакет не удалось проверить | {count} пакета не удалось проверить | {count} пакетов не удалось проверить",
-      "no_known": "Нет известных уязвимостей в {count} пакетах",
       "scan_failed": "Не удалось выполнить сканирование на уязвимости",
-      "depth": {
-        "root": "Этот пакет",
-        "direct": "Прямая зависимость",
-        "transitive": "Транзитивная зависимость (косвенная)"
-      },
       "severity": {
         "critical": "критическая",
         "high": "высокая",
@@ -320,12 +310,6 @@
     },
     "skeleton": {
       "loading": "Загрузка информации о пакете",
-      "license": "Лицензия",
-      "weekly": "В неделю",
-      "size": "Размер",
-      "deps": "Зависимости",
-      "updated": "Обновлен",
-      "readme": "Readme",
       "maintainers": "Мейнтейнеры",
       "keywords": "Ключевые слова",
       "versions": "Версии",
@@ -333,22 +317,12 @@
     },
     "sort": {
       "downloads": "Больше всего скачиваний",
-      "updated": "Недавно обновлённые",
       "name_asc": "Имя (А-Я)",
       "name_desc": "Имя (Я-А)"
-    }
+    },
+    "size": {}
   },
   "connector": {
-    "status": {
-      "connecting": "подключение...",
-      "connected_as": "подключен как {'@'}{user}",
-      "connected": "подключено",
-      "connect_cli": "подключить локальный CLI",
-      "aria_connecting": "Подключение к локальному коннектору",
-      "aria_connected": "Подключено к локальному коннектору",
-      "aria_click_to_connect": "Нажмите для подключения к локальному коннектору",
-      "avatar_alt": "аватар {user}"
-    },
     "modal": {
       "title": "Локальный коннектор",
       "connected": "Подключено",
@@ -460,8 +434,7 @@
       "failed_to_load": "Не удалось загрузить пакеты организации",
       "no_match": "Нет пакетов, соответствующих \"{query}\"",
       "not_found": "Организация не найдена",
-      "not_found_message": "Организация \"{'@'}{name}\" не существует в npm",
-      "filter_placeholder": "Фильтровать {count} пакет... | Фильтровать {count} пакета... | Фильтровать {count} пакетов..."
+      "not_found_message": "Организация \"{'@'}{name}\" не существует в npm"
     }
   },
   "user": {
@@ -522,7 +495,6 @@
   "code": {
     "files_label": "Файлы",
     "no_files": "В этой директории нет файлов",
-    "select_version": "Выберите версию",
     "root": "корневая директория",
     "lines": "{count} строк",
     "toggle_tree": "Переключить дерево файлов",
@@ -532,7 +504,6 @@
     "view_raw": "Посмотреть исходный файл",
     "file_too_large": "Файл слишком большой для предпросмотра",
     "file_size_warning": "{size} превышает лимит в 500 КБ для подсветки синтаксиса",
-    "load_anyway": "Загрузить всё равно",
     "failed_to_load": "Не удалось загрузить файл",
     "unavailable_hint": "Файл может быть слишком большим или недоступным",
     "version_required": "Для просмотра кода требуется версия",
@@ -543,7 +514,8 @@
     "table": {
       "name": "Имя",
       "size": "Размер"
-    }
+    },
+    "markdown_view_mode": {}
   },
   "badges": {
     "provenance": {
@@ -552,8 +524,7 @@
       "verified_via": "Подтверждено: опубликовано через {provider}"
     },
     "jsr": {
-      "title": "также доступно на JSR",
-      "label": "jsr"
+      "title": "также доступно на JSR"
     }
   },
   "filters": {
@@ -579,6 +550,7 @@
     "more_keywords": "ещё +{count}",
     "clear_all": "Очистить все",
     "remove_filter": "Удалить фильтр {label}",
+    "chips": {},
     "download_range": {
       "any": "Любое кол-во",
       "lt100": "< 100",
@@ -609,7 +581,6 @@
       "downloads_day": "Загрузок/день",
       "downloads_month": "Загрузок/мес",
       "downloads_year": "Загрузок/год",
-      "updated": "Последнее обновление",
       "name": "Имя",
       "quality": "Качество",
       "popularity": "Популярность",
@@ -625,7 +596,6 @@
       "version": "Версия",
       "description": "Описание",
       "downloads": "Загрузок/нед",
-      "updated": "Последнее обновление",
       "maintainers": "Мейнтейнеры",
       "keywords": "Ключевые слова",
       "quality_score": "Оценка качества",
@@ -652,9 +622,9 @@
       "nav_label": "Пагинация"
     },
     "count": {
-      "showing_filtered": "{filtered} из {total}",
-      "showing_all": "{total}",
-      "showing_paginated": "{pageSize} из {total}"
+      "showing_filtered": "{filtered} из {count}",
+      "showing_all": "{count}",
+      "showing_paginated": "{pageSize} из {count}"
     },
     "table": {
       "security_warning": "Предупреждение безопасности",
@@ -666,7 +636,6 @@
     "title": "О проекте",
     "heading": "о проекте",
     "meta_description": "npmx — это быстрый, современный браузер для реестра npm. Лучший UX/DX для изучения пакетов npm.",
-    "back_home": "на главную",
     "what_we_are": {
       "title": "Кто мы",
       "better_ux_dx": "лучший UX/DX",
@@ -726,8 +695,7 @@
     "connect_npm_cli": "Подключиться к npm CLI",
     "connect_atmosphere": "Подключиться к Atmosphere",
     "connecting": "Подключение...",
-    "ops": "{count} операция | {count} операции | {count} операций",
-    "disconnect": "Выйти"
+    "ops": "{count} операция | {count} операции | {count} операций"
   },
   "auth": {
     "modal": {
@@ -746,7 +714,6 @@
   },
   "header": {
     "home": "npmx главная",
-    "github": "GitHub",
     "packages": "пакеты",
     "packages_dropdown": {
       "title": "Ваши пакеты",
@@ -763,5 +730,44 @@
       "empty": "Организации не найдены",
       "view_all": "Посмотреть все"
     }
+  },
+  "compare": {
+    "packages": {},
+    "selector": {},
+    "no_dependency": {},
+    "facets": {
+      "categories": {},
+      "items": {
+        "packageSize": {},
+        "installSize": {},
+        "dependencies": {},
+        "totalDependencies": {},
+        "downloads": {},
+        "totalLikes": {},
+        "lastUpdated": {},
+        "deprecated": {},
+        "engines": {},
+        "types": {},
+        "moduleFormat": {},
+        "license": {},
+        "vulnerabilities": {}
+      },
+      "values": {},
+      "trends": {}
+    }
+  },
+  "privacy_policy": {
+    "cookies": {
+      "what_are": {},
+      "types": {},
+      "local_storage": {},
+      "management": {}
+    },
+    "analytics": {},
+    "authenticated": {},
+    "data_retention": {},
+    "your_rights": {},
+    "contact": {},
+    "changes": {}
   }
 }

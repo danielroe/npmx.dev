@@ -3,7 +3,6 @@ import type { I18nStatus, I18nLocaleStatus } from '#shared/types'
 /**
  * Composable for accessing translation status data from Lunaria.
  * Provides information about translation progress for each locale.
- * @public
  */
 export function useI18nStatus() {
   const { locale } = useI18n()
@@ -16,7 +15,7 @@ export function useI18nStatus() {
     responseType: 'json',
     server: false,
     // Cache the result to avoid refetching on navigation
-    getCachedData: key => useNuxtApp().payload.data[key] || useNuxtApp().static.data[key],
+    getCachedData: (key, nuxtApp) => nuxtApp.payload.data[key] ?? nuxtApp.static.data[key],
   })
 
   /**
