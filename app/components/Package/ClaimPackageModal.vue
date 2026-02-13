@@ -234,7 +234,7 @@ const previewPackageJson = computed(() => {
           v-else
           class="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
         >
-          <span class="i-carbon:close-filled text-red-500 w-5 h-5" aria-hidden="true" />
+          <span class="i-lucide:circle-x-filled text-red-500 w-5 h-5" aria-hidden="true" />
           <p class="font-mono text-sm text-fg">{{ $t('claim.modal.taken') }}</p>
         </div>
       </div>

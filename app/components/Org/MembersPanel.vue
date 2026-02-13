@@ -486,7 +486,7 @@ watch(lastExecutionTime, () => {
               :aria-label="$t('org.members.remove_from_org', { name: member.name })"
               @click="handleRemoveMember(member.name)"
             >
-              <span class="i-carbon:close w-4 h-4" aria-hidden="true" />
+              <span class="i-lucide:circle-x w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -572,7 +572,7 @@ watch(lastExecutionTime, () => {
               :aria-label="$t('org.members.cancel_add')"
               @click="showAddMember = false"
             >
-              <span class="i-carbon:close w-4 h-4" aria-hidden="true" />
+              <span class="i-lucide:circle-x w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </form>

@@ -76,7 +76,7 @@ const typesHref = computed(() => {
               ? 'i-carbon:circle-dash motion-safe:animate-spin'
               : hasTypes
                 ? 'i-carbon:checkmark'
-                : 'i-carbon:close'
+                : 'i-lucide:circle-x'
           "
         >
           {{ $t('package.metrics.types_label') }}
@@ -98,7 +98,7 @@ const typesHref = computed(() => {
               ? 'i-carbon:circle-dash motion-safe:animate-spin'
               : hasEsm
                 ? 'i-carbon:checkmark'
-                : 'i-carbon:close'
+                : 'i-lucide:circle-x'
           "
         >
           ESM

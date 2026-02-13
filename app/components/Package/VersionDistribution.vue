@@ -514,7 +514,7 @@ const endDate = computed(() => {
 
             <!-- Contextual menu icon -->
             <template #menuIcon="{ isOpen }">
-              <span v-if="isOpen" class="i-carbon:close w-6 h-6" aria-hidden="true" />
+              <span v-if="isOpen" class="i-lucide:circle-x w-6 h-6" aria-hidden="true" />
               <span v-else class="i-carbon:overflow-menu-vertical w-6 h-6" aria-hidden="true" />
             </template>
 
@@ -546,7 +546,7 @@ const endDate = computed(() => {
             <!-- Annotator action icons -->
             <template #annotator-action-close>
               <span
-                class="i-carbon:close w-6 h-6 text-fg-subtle"
+                class="i-lucide:circle-x w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />

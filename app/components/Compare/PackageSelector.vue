@@ -214,7 +214,7 @@ function handleFocus() {
             })
           "
           @click="removePackage(pkg)"
-          classicon="i-carbon:close"
+          classicon="i-lucide:circle-x"
         />
       </TagStatic>
     </div>
