@@ -1,6 +1,10 @@
 import * as v from 'valibot'
 import { PackageRouteParamsSchema } from '#shared/schemas/package'
-import { CACHE_MAX_AGE_ONE_HOUR, NPM_MISSING_README_SENTINEL } from '#shared/utils/constants'
+import {
+  CACHE_MAX_AGE_ONE_HOUR,
+  NPM_MISSING_README_SENTINEL,
+  NPM_README_TRUNCATION_THRESHOLD,
+} from '#shared/utils/constants'
 
 /** Standard README filenames to try when fetching from jsdelivr (case-sensitive CDN) */
 const standardReadmeFilenames = [
@@ -58,34 +62,39 @@ export const resolvePackageReadmeSource = defineCachedFunction(
     })
 
     const packageData = await fetchNpmPackage(packageName)
-    const resolvedVersion = version ?? packageData['dist-tags']?.latest
 
-    // Prefer jsDelivr (actual file from npm tarball) because the npm registry
-    // truncates the packument readme field at 65,536 characters.
-    let readmeContent = await fetchReadmeFromJsdelivr(
-      packageName,
-      standardReadmeFilenames,
-      resolvedVersion,
-    )
+    let readmeContent: string | undefined
+    let readmeFilename: string | undefined
 
-    // Fall back to packument readme if jsDelivr didn't have a standard README.
-    // This covers packages with non-standard readme filenames (e.g. README.zh-TW.md)
-    // or packages that don't include a README in the tarball.
-    if (!readmeContent) {
-      let packumentReadme: string | undefined
-
-      if (version) {
-        packumentReadme = packageData.versions?.[version]?.readme
-      } else {
-        packumentReadme = packageData.readme
+    if (version) {
+      const versionData = packageData.versions[version]
+      if (versionData) {
+        readmeContent = versionData.readme
+        readmeFilename = versionData.readmeFilename
       }
+    } else {
+      readmeContent = packageData.readme
+      readmeFilename = packageData.readmeFilename
+    }
 
-      if (packumentReadme && packumentReadme !== NPM_MISSING_README_SENTINEL) {
-        readmeContent = packumentReadme
+    const hasValidNpmReadme = readmeContent && readmeContent !== NPM_MISSING_README_SENTINEL
+
+    const isLikelyTruncated =
+      hasValidNpmReadme && readmeContent!.length >= NPM_README_TRUNCATION_THRESHOLD
+
+    if (!hasValidNpmReadme || !isStandardReadme(readmeFilename) || isLikelyTruncated) {
+      const resolvedVersion = version ?? packageData['dist-tags']?.latest
+      const jsdelivrReadme = await fetchReadmeFromJsdelivr(
+        packageName,
+        standardReadmeFilenames,
+        resolvedVersion,
+      )
+      if (jsdelivrReadme) {
+        readmeContent = jsdelivrReadme
       }
     }
 
-    if (!readmeContent) {
+    if (!readmeContent || readmeContent === NPM_MISSING_README_SENTINEL) {
       return {
         packageName,
         version,

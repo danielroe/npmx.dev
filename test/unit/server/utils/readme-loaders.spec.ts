@@ -81,14 +81,13 @@ describe('resolvePackageReadmeSource', () => {
     parseRepositoryInfoMock.mockReset()
   })
 
-  it('prefers jsDelivr readme over packument readme (latest)', async () => {
-    const jsdelivrContent = '# Full README from CDN'
+  it('returns markdown and repoInfo when package has valid npm readme (latest)', async () => {
+    const markdown = '# Hello'
     fetchNpmPackageMock.mockResolvedValue({
-      'readme': '# Truncated',
-      'readmeFilename': 'README.md',
-      'repository': { url: 'https://github.com/u/r' },
-      'versions': {},
-      'dist-tags': { latest: '2.0.0' },
+      readme: markdown,
+      readmeFilename: 'README.md',
+      repository: { url: 'https://github.com/u/r' },
+      versions: {},
     })
     parseRepositoryInfoMock.mockReturnValue({
       provider: 'github',
@@ -97,53 +96,46 @@ describe('resolvePackageReadmeSource', () => {
       rawBaseUrl: 'https://raw.githubusercontent.com/u/r/HEAD',
       blobBaseUrl: 'https://github.com/u/r/blob/HEAD',
     })
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      text: async () => jsdelivrContent,
-    })
-    vi.stubGlobal('fetch', fetchMock)
 
     const result = await resolvePackageReadmeSource('some-pkg')
 
     expect(result).toMatchObject({
       packageName: 'some-pkg',
       version: undefined,
-      markdown: jsdelivrContent,
+      markdown,
       repoInfo: { provider: 'github', owner: 'u', repo: 'r' },
     })
     expect(fetchNpmPackageMock).toHaveBeenCalledWith('some-pkg')
   })
 
-  it('uses resolved latest version for jsDelivr when no version specified', async () => {
+  it('returns markdown from version when packagePath includes version', async () => {
+    const markdown = '# Version readme'
     fetchNpmPackageMock.mockResolvedValue({
-      'readme': '# Packument',
-      'readmeFilename': 'README.md',
-      'repository': undefined,
-      'versions': {},
-      'dist-tags': { latest: '3.1.0' },
+      readme: 'latest readme',
+      readmeFilename: 'README.md',
+      repository: undefined,
+      versions: {
+        '1.0.0': { readme: markdown, readmeFilename: 'README.md' },
+      },
     })
     parseRepositoryInfoMock.mockReturnValue(undefined)
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      text: async () => '# CDN',
+
+    const result = await resolvePackageReadmeSource('some-pkg/v/1.0.0')
+
+    expect(result).toMatchObject({
+      packageName: 'some-pkg',
+      version: '1.0.0',
+      markdown,
     })
-    vi.stubGlobal('fetch', fetchMock)
-
-    await resolvePackageReadmeSource('pkg')
-
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('pkg@3.1.0'))
   })
 
-  it('returns markdown from specific version jsDelivr when packagePath includes version', async () => {
-    const jsdelivrContent = '# Version readme from CDN'
+  it('falls back to jsdelivr when npm readme is missing sentinel', async () => {
+    const jsdelivrContent = '# From CDN'
     fetchNpmPackageMock.mockResolvedValue({
-      'readme': 'latest readme',
-      'readmeFilename': 'README.md',
-      'repository': undefined,
-      'versions': {
-        '1.0.0': { readme: 'version readme from packument', readmeFilename: 'README.md' },
-      },
-      'dist-tags': { latest: '2.0.0' },
+      readme: NPM_MISSING_README_SENTINEL,
+      readmeFilename: 'README.md',
+      repository: undefined,
+      versions: {},
     })
     parseRepositoryInfoMock.mockReturnValue(undefined)
     const fetchMock = vi.fn().mockResolvedValue({
@@ -152,88 +144,42 @@ describe('resolvePackageReadmeSource', () => {
     })
     vi.stubGlobal('fetch', fetchMock)
 
-    const result = await resolvePackageReadmeSource('some-pkg/v/1.0.0')
+    const result = await resolvePackageReadmeSource('pkg')
 
     expect(result).toMatchObject({
-      packageName: 'some-pkg',
-      version: '1.0.0',
+      packageName: 'pkg',
       markdown: jsdelivrContent,
-    })
-    expect(fetchMock).toHaveBeenCalledWith(expect.stringContaining('some-pkg@1.0.0'))
-  })
-
-  it('falls back to packument readme when jsDelivr fails', async () => {
-    const packumentReadme = '# From packument'
-    fetchNpmPackageMock.mockResolvedValue({
-      'readme': packumentReadme,
-      'readmeFilename': 'README.md',
-      'repository': undefined,
-      'versions': {},
-      'dist-tags': { latest: '1.0.0' },
-    })
-    parseRepositoryInfoMock.mockReturnValue(undefined)
-    const fetchMock = vi.fn().mockResolvedValue({ ok: false })
-    vi.stubGlobal('fetch', fetchMock)
-
-    const result = await resolvePackageReadmeSource('pkg')
-
-    expect(result).toMatchObject({
-      packageName: 'pkg',
-      markdown: packumentReadme,
-    })
-  })
-
-  it('falls back to version packument readme when jsDelivr fails', async () => {
-    const versionReadme = '# Version readme'
-    fetchNpmPackageMock.mockResolvedValue({
-      'readme': 'latest readme',
-      'repository': undefined,
-      'versions': {
-        '1.0.0': { readme: versionReadme },
-      },
-      'dist-tags': { latest: '1.0.0' },
-    })
-    parseRepositoryInfoMock.mockReturnValue(undefined)
-    const fetchMock = vi.fn().mockResolvedValue({ ok: false })
-    vi.stubGlobal('fetch', fetchMock)
-
-    const result = await resolvePackageReadmeSource('pkg/v/1.0.0')
-
-    expect(result).toMatchObject({
-      packageName: 'pkg',
-      version: '1.0.0',
-      markdown: versionReadme,
-    })
-  })
-
-  it('skips packument readme with missing sentinel in fallback', async () => {
-    fetchNpmPackageMock.mockResolvedValue({
-      'readme': NPM_MISSING_README_SENTINEL,
-      'readmeFilename': 'README.md',
-      'repository': undefined,
-      'versions': {},
-      'dist-tags': { latest: '1.0.0' },
-    })
-    parseRepositoryInfoMock.mockReturnValue(undefined)
-    const fetchMock = vi.fn().mockResolvedValue({ ok: false })
-    vi.stubGlobal('fetch', fetchMock)
-
-    const result = await resolvePackageReadmeSource('pkg')
-
-    expect(result).toMatchObject({
-      packageName: 'pkg',
-      markdown: undefined,
       repoInfo: undefined,
     })
+    expect(fetchMock).toHaveBeenCalled()
   })
 
-  it('returns undefined markdown when no content anywhere', async () => {
+  it('falls back to jsdelivr when readmeFilename is not standard', async () => {
+    const jsdelivrContent = '# From CDN'
     fetchNpmPackageMock.mockResolvedValue({
-      'readme': undefined,
-      'readmeFilename': undefined,
-      'repository': undefined,
-      'versions': {},
-      'dist-tags': { latest: '1.0.0' },
+      readme: 'content',
+      readmeFilename: 'DOCS.md',
+      repository: undefined,
+      versions: {},
+    })
+    parseRepositoryInfoMock.mockReturnValue(undefined)
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => jsdelivrContent,
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await resolvePackageReadmeSource('pkg')
+
+    expect(result).toMatchObject({ markdown: jsdelivrContent })
+  })
+
+  it('returns undefined markdown when no content and jsdelivr fails', async () => {
+    fetchNpmPackageMock.mockResolvedValue({
+      readme: undefined,
+      readmeFilename: undefined,
+      repository: undefined,
+      versions: {},
     })
     parseRepositoryInfoMock.mockReturnValue(undefined)
     const fetchMock = vi.fn().mockResolvedValue({ ok: false })
@@ -249,13 +195,54 @@ describe('resolvePackageReadmeSource', () => {
     })
   })
 
-  it('uses package repository for repoInfo when markdown is present', async () => {
+  it('returns undefined markdown when content is NPM_MISSING_README_SENTINEL and jsdelivr fails', async () => {
     fetchNpmPackageMock.mockResolvedValue({
-      'readme': '# Hi',
+      readme: NPM_MISSING_README_SENTINEL,
+      readmeFilename: 'README.md',
+      repository: undefined,
+      versions: {},
+    })
+    const fetchMock = vi.fn().mockResolvedValue({ ok: false })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await resolvePackageReadmeSource('pkg')
+
+    expect(result).toMatchObject({
+      packageName: 'pkg',
+      markdown: undefined,
+      repoInfo: undefined,
+    })
+  })
+
+  it('fetches from jsdelivr when packument readme exceeds truncation threshold', async () => {
+    const truncatedReadme = 'x'.repeat(64_000)
+    const fullReadme = 'x'.repeat(80_000)
+    fetchNpmPackageMock.mockResolvedValue({
+      'readme': truncatedReadme,
       'readmeFilename': 'README.md',
-      'repository': { url: 'https://github.com/a/b' },
+      'repository': undefined,
       'versions': {},
       'dist-tags': { latest: '1.0.0' },
+    })
+    parseRepositoryInfoMock.mockReturnValue(undefined)
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      text: async () => fullReadme,
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const result = await resolvePackageReadmeSource('pkg')
+
+    expect(result).toMatchObject({ markdown: fullReadme })
+    expect(fetchMock).toHaveBeenCalled()
+  })
+
+  it('uses package repository for repoInfo when markdown is present', async () => {
+    fetchNpmPackageMock.mockResolvedValue({
+      readme: '# Hi',
+      readmeFilename: 'README.md',
+      repository: { url: 'https://github.com/a/b' },
+      versions: {},
     })
     const repoInfo = {
       provider: 'github' as const,
@@ -265,11 +252,6 @@ describe('resolvePackageReadmeSource', () => {
       blobBaseUrl: 'https://github.com/a/b/blob/HEAD',
     }
     parseRepositoryInfoMock.mockReturnValue(repoInfo)
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      text: async () => '# CDN',
-    })
-    vi.stubGlobal('fetch', fetchMock)
 
     const result = await resolvePackageReadmeSource('pkg')
 
