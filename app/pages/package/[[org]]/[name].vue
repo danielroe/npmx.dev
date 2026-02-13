@@ -246,6 +246,12 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
   copiedDuring: 2000,
 })
 
+//copy version name
+const { copied: copiedVersion, copy: copyVersion } = useClipboard({
+  source: resolvedVersion.value ?? '',
+  copiedDuring: 2000,
+})
+
 // Fetch dependency analysis (lazy, client-side)
 // This is the same composable used by PackageVulnerabilityTree and PackageDeprecatedTree
 const { data: vulnTree, status: vulnTreeStatus } = useDependencyAnalysis(
@@ -680,7 +686,7 @@ const showSkeleton = shallowRef(false)
               </span>
             </h1>
 
-            <!-- Floating copy button -->
+            <!-- Floating copy name button -->
             <button
               type="button"
               @click="copyPkgName()"
@@ -699,9 +705,10 @@ const showSkeleton = shallowRef(false)
               {{ copiedPkgName ? $t('common.copied') : $t('package.copy_name') }}
             </button>
           </div>
+
           <span
             v-if="resolvedVersion"
-            class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
+            class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0 relative group"
           >
             <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
             <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
@@ -744,6 +751,25 @@ const showSkeleton = shallowRef(false)
               class="text-fg-subtle text-sm shrink-0"
               >{{ $t('package.not_latest') }}</span
             >
+
+            <!-- Floating copy version button -->
+            <button
+              type="button"
+              @click="copyVersion()"
+              class="absolute z-20 inset-is-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap transition-all duration-150 opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto"
+              :class="[
+                $style.copyButton,
+                copiedVersion ? 'text-accent bg-accent/10' : 'text-fg-muted bg-bg border-border',
+              ]"
+              :aria-label="copiedVersion ? $t('common.copied') : $t('package.copy_version')"
+            >
+              <span
+                :class="copiedVersion ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+                class="w-3.5 h-3.5"
+                aria-hidden="true"
+              />
+              {{ copiedVersion ? $t('common.copied') : $t('package.copy_version') }}
+            </button>
           </span>
 
           <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->

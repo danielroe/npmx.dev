@@ -2,6 +2,8 @@
 import { SEVERITY_TEXT_COLORS, getHighestSeverity } from '#shared/utils/severity'
 import { getOutdatedTooltip, getVersionClass } from '~/utils/npm/outdated-dependencies'
 
+const { t } = useI18n()
+
 const props = defineProps<{
   packageName: string
   version: string
@@ -13,6 +15,9 @@ const props = defineProps<{
 
 // Fetch outdated info for dependencies
 const outdatedDeps = useOutdatedDependencies(() => props.dependencies)
+
+// Fetch replacement suggestions for dependencies
+const replacementDeps = useReplacementDependencies(() => props.dependencies)
 
 // Get vulnerability info from shared cache (already fetched by PackageVulnerabilityTree)
 const { data: vulnTree } = useDependencyAnalysis(
@@ -66,6 +71,24 @@ const sortedOptionalDependencies = computed(() => {
   return Object.entries(props.optionalDependencies).sort(([a], [b]) => a.localeCompare(b))
 })
 
+// Get version tooltip
+function getDepVersionTooltip(dep: string, version: string) {
+  const outdated = outdatedDeps.value[dep]
+  if (outdated) return getOutdatedTooltip(outdated, t)
+  if (getVulnerableDepInfo(dep) || getDeprecatedDepInfo(dep)) return version
+  if (replacementDeps.value[dep]) return t('package.dependencies.has_replacement')
+  return version
+}
+
+// Get version class
+function getDepVersionClass(dep: string) {
+  const outdated = outdatedDeps.value[dep]
+  if (outdated) return getVersionClass(outdated)
+  if (getVulnerableDepInfo(dep) || getDeprecatedDepInfo(dep)) return getVersionClass(undefined)
+  if (replacementDeps.value[dep]) return 'text-amber-700 dark:text-amber-500'
+  return getVersionClass(undefined)
+}
+
 const numberFormatter = useNumberFormatter()
 </script>
 
@@ -104,6 +127,14 @@ const numberFormatter = useNumberFormatter()
             >
               <span class="i-lucide:circle-alert w-3 h-3" />
             </TooltipApp>
+            <TooltipApp
+              v-if="replacementDeps[dep]"
+              class="shrink-0 p-2 -m-2 text-amber-700 dark:text-amber-500"
+              aria-hidden="true"
+              :text="$t('package.dependencies.has_replacement')"
+            >
+              <span class="i-carbon:idea w-3 h-3" />
+            </TooltipApp>
             <LinkBase
               v-if="getVulnerableDepInfo(dep)"
               :to="packageRoute(dep, getVulnerableDepInfo(dep)!.version)"
@@ -126,8 +157,8 @@ const numberFormatter = useNumberFormatter()
             <LinkBase
               :to="packageRoute(dep, version)"
               class="block truncate"
-              :class="getVersionClass(outdatedDeps[dep])"
-              :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep], $t) : version"
+              :class="getDepVersionClass(dep)"
+              :title="getDepVersionTooltip(dep, version)"
             >
               {{ version }}
             </LinkBase>

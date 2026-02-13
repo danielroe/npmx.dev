@@ -457,6 +457,9 @@
         "copy_name": {
           "type": "string"
         },
+        "copy_version": {
+          "type": "string"
+        },
         "deprecation": {
           "type": "object",
           "properties": {
@@ -953,6 +956,9 @@
               "type": "string"
             },
             "outdated_patch": {
+              "type": "string"
+            },
+            "has_replacement": {
               "type": "string"
             }
           },
