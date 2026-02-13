@@ -824,7 +824,7 @@ const showSkeleton = shallowRef(false)
               >
                 <span
                   v-if="isLoadingLikeData"
-                  class="i-svg-spinners:ring-resize w-3 h-3 motion-safe:animate-spin my-0.5"
+                  class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
                   aria-hidden="true"
                 />
                 <span v-else>
@@ -962,10 +962,7 @@ const showSkeleton = shallowRef(false)
                       "
                       class="inline-flex items-center gap-1 text-fg-subtle"
                     >
-                      <span
-                        class="i-svg-spinners:ring-resize w-3 h-3 motion-safe:animate-spin"
-                        aria-hidden="true"
-                      />
+                      <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
                     </span>
                     <span v-else-if="totalDepsCount !== null">{{
                       numberFormatter.format(totalDepsCount)
@@ -1030,10 +1027,7 @@ const showSkeleton = shallowRef(false)
                   v-if="installSizeStatus === 'pending'"
                   class="inline-flex items-center gap-1 text-fg-subtle"
                 >
-                  <span
-                    class="i-svg-spinners:ring-resize w-3 h-3 motion-safe:animate-spin"
-                    aria-hidden="true"
-                  />
+                  <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
                 </span>
                 <span v-else-if="installSize?.totalSize" dir="ltr">
                   {{ bytesFormatter.format(installSize.totalSize) }}
@@ -1053,10 +1047,7 @@ const showSkeleton = shallowRef(false)
                 v-if="vulnTreeStatus === 'pending' || vulnTreeStatus === 'idle'"
                 class="inline-flex items-center gap-1 text-fg-subtle"
               >
-                <span
-                  class="i-svg-spinners:ring-resize w-3 h-3 motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
+                <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
               </span>
               <span v-else-if="vulnTreeStatus === 'success'">
                 <span v-if="hasVulnerabilities" class="text-amber-700 dark:text-amber-500">
@@ -1320,10 +1311,7 @@ const showSkeleton = shallowRef(false)
             v-if="provenanceStatus === 'pending'"
             class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
           >
-            <span
-              class="i-svg-spinners:ring-resize w-4 h-4 motion-safe:animate-spin"
-              aria-hidden="true"
-            />
+            <span class="i-svg-spinners:ring-resize w-4 h-4" aria-hidden="true" />
             <span>{{ $t('package.provenance_section.title') }}…</span>
           </div>
           <PackageProvenanceSection

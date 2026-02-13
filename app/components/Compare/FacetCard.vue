@@ -111,10 +111,7 @@ function getShortName(header: string): string {
         <span class="relative min-w-0 text-end">
           <!-- Loading state -->
           <template v-if="isCellLoading(index)">
-            <span
-              class="i-svg-spinners:ring-resize w-4 h-4 text-fg-subtle motion-safe:animate-spin"
-              aria-hidden="true"
-            />
+            <span class="i-svg-spinners:ring-resize w-4 h-4 text-fg-subtle" aria-hidden="true" />
           </template>
 
           <!-- No data -->
