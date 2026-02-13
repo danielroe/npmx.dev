@@ -552,7 +552,7 @@ const endDate = computed(() => {
 
             <template #annotator-action-redo>
               <span
-                class="i-carbon:redo w-6 h-6 text-fg-subtle"
+                class="i-lucide:redo-2 w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
