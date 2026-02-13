@@ -1121,37 +1121,37 @@
     }
   },
   "vacations": {
-    "title": "EN TEXT TO REPLACE:on vacation",
-    "meta_description": "EN TEXT TO REPLACE:The npmx team is recharging. Discord reopens in a week.",
-    "heading": "EN TEXT TO REPLACE:recharging",
-    "subtitle": "EN TEXT TO REPLACE:we've been building npmx at a pace that has cost {some} of us sleep. we don't want that to be the norm! so we are taking a week off. together.",
-    "illustration_alt": "EN TEXT TO REPLACE:a single row of cosy icons",
-    "poke_log": "EN TEXT TO REPLACE:Poke the campfire",
+    "title": "リフレッシュ休暇中",
+    "meta_description": "npmxチームはリフレッシュ休暇中です。Discordは1週間後に再開します。",
+    "heading": "リフレッシュ休暇中",
+    "subtitle": "私たちはnpmxを {some} が睡眠時間を削るほどのペースで開発してきました。そのようなペースを当たり前にはしたくありません！ そこで、みんなで1週間の休暇を取ることにしました。",
+    "illustration_alt": "居心地の良いアイコンの並び",
+    "poke_log": "キャンプファイヤーをつつく",
     "what": {
-      "title": "EN TEXT TO REPLACE:what's happening",
-      "p1": "EN TEXT TO REPLACE:discord is closed {dates}.",
-      "dates": "EN TEXT TO REPLACE:February 14 – 21",
-      "p2": "EN TEXT TO REPLACE:all invite links are gone and channels are locked – except {garden}, which stays open for folks who want to keep hanging out.",
-      "garden": "EN TEXT TO REPLACE:#garden"
+      "title": "現在の状況",
+      "p1": "Discordは{dates}の間、クローズします。",
+      "dates": "2月14日 – 21日",
+      "p2": "すべての招待リンクは無効化され、チャンネルはロックされます。ただし、交流を続けたい人たちのために {garden} のみ開放します。",
+      "garden": "#garden"
     },
     "meantime": {
-      "title": "EN TEXT TO REPLACE:in the meantime",
-      "p1": "EN TEXT TO REPLACE:{site} and {repo} stay open – dig in, file issues, open PRs. we'll get to everything when we're back. just don't expect a fast review. we'll be somewhere near a cosy fireplace.",
-      "repo_link": "EN TEXT TO REPLACE:the repo"
+      "title": "休暇期間中",
+      "p1": "{site} と {repo} は引き続き利用可能です。issuesの作成やPRのオープンは自由に行ってください。休暇後に順次対応しますが、すぐにレビューされるとは期待しないでください。私たちは居心地のよい暖炉のそばでリラックスしています。",
+      "repo_link": "リポジトリ"
     },
     "return": {
-      "title": "EN TEXT TO REPLACE:see you soon",
-      "p1": "EN TEXT TO REPLACE:we'll come back recharged and ready for the final push to March 3rd. {social} for updates.",
-      "social_link": "EN TEXT TO REPLACE:follow us on Bluesky",
-      "add_to_calendar": "EN TEXT TO REPLACE:remind me when Discord reopens"
+      "title": "またすぐに会いしましょう",
+      "p1": "リフレッシュして戻り、3月3日に向けた最後の追い込みに備えます。最新情報は {social} ことで確認できます。",
+      "social_link": "Blueskyでフォローする",
+      "add_to_calendar": "Discord再開時にリマインダーを受け取る"
     },
     "stats": {
-      "contributors": "EN TEXT TO REPLACE:Contributors",
-      "commits": "EN TEXT TO REPLACE:Commits",
-      "pr": "EN TEXT TO REPLACE:PRs Merged",
+      "contributors": "コントリビューター数",
+      "commits": "コミット数",
+      "pr": "マージされたPR数",
       "subtitle": {
-        "some": "EN TEXT TO REPLACE:some",
-        "all": "EN TEXT TO REPLACE:all"
+        "some": "一部のメンバー",
+        "all": "全員"
       }
     }
   }
