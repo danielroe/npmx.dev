@@ -395,7 +395,7 @@ export async function renderReadmeHtml(
     const html = highlightCodeSync(shiki, text, lang || 'text')
     // Add copy button
     return `<div class="readme-code-block" >
-<button type="button" class="readme-copy-button" aria-label="Copy code" check-icon="i-carbon:checkmark" copy-icon="i-carbon:copy" data-copy>
+<button type="button" class="readme-copy-button" aria-label="Copy code" check-icon="i-lucide:check" copy-icon="i-carbon:copy" data-copy>
 <span class="i-carbon:copy" aria-hidden="true"></span>
 <span class="sr-only">Copy code</span>
 </button>

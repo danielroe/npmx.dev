@@ -160,11 +160,11 @@ function getStatusIcon(status: string): string {
     case 'pending':
       return 'i-carbon:time'
     case 'approved':
-      return 'i-carbon:checkmark'
+      return 'i-lucide:check'
     case 'running':
       return 'i-carbon:rotate-180'
     case 'completed':
-      return 'i-carbon:checkmark-filled'
+      return 'i-lucide:check-filled'
     case 'failed':
       return 'i-lucide:circle-x-filled'
     default:
@@ -283,7 +283,7 @@ watch(isExecuting, executing => {
             :aria-label="$t('operations.queue.approve_operation')"
             @click="approveOperation(op.id)"
           >
-            <span class="i-carbon:checkmark w-4 h-4" aria-hidden="true" />
+            <span class="i-lucide:check w-4 h-4" aria-hidden="true" />
           </button>
           <button
             v-if="op.status !== 'running'"
@@ -410,7 +410,7 @@ watch(isExecuting, executing => {
           <span
             :class="
               op.status === 'completed'
-                ? 'i-carbon:checkmark-filled text-green-500'
+                ? 'i-lucide:check-filled text-green-500'
                 : 'i-lucide:circle-x-filled text-red-500'
             "
             class="w-3.5 h-3.5 shrink-0 mt-0.5"

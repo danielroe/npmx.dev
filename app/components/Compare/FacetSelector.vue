@@ -82,7 +82,7 @@ function isCategoryNoneSelected(category: string): boolean {
             facet.comingSoon
               ? undefined
               : isFacetSelected(facet.id)
-                ? 'i-carbon:checkmark'
+                ? 'i-lucide:check'
                 : 'i-carbon:add'
           "
         >

@@ -191,7 +191,7 @@ const allMaintainersText = computed(() => {
         <span class="sr-only">{{ $t('filters.table.security_warning') }}</span>
       </span>
       <span v-else-if="result.flags !== undefined" class="text-provider-nuxt">
-        <span class="i-carbon:checkmark w-4 h-4" aria-hidden="true" />
+        <span class="i-lucide:check w-4 h-4" aria-hidden="true" />
         <span class="sr-only">{{ $t('filters.table.secure') }}</span>
       </span>
       <span v-else class="text-fg-subtle"> - </span>

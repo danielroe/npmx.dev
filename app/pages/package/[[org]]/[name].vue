@@ -692,7 +692,7 @@ const showSkeleton = shallowRef(false)
               :aria-label="copiedPkgName ? $t('common.copied') : $t('package.copy_name')"
             >
               <span
-                :class="copiedPkgName ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+                :class="copiedPkgName ? 'i-lucide:check' : 'i-carbon:copy'"
                 class="w-3.5 h-3.5"
                 aria-hidden="true"
               />
@@ -1063,7 +1063,7 @@ const showSkeleton = shallowRef(false)
                   {{ numberFormatter.format(vulnCount) }}
                 </span>
                 <span v-else class="inline-flex items-center gap-1 text-fg-muted">
-                  <span class="i-carbon:checkmark w-3 h-3" aria-hidden="true" />
+                  <span class="i-lucide:check w-3 h-3" aria-hidden="true" />
                   {{ numberFormatter.format(0) }}
                 </span>
               </span>
@@ -1284,7 +1284,7 @@ const showSkeleton = shallowRef(false)
                 :aria-label="
                   copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
                 "
-                :classicon="copiedReadme ? 'i-carbon:checkmark' : 'i-simple-icons:markdown'"
+                :classicon="copiedReadme ? 'i-lucide:check' : 'i-simple-icons:markdown'"
               >
                 {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
               </ButtonBase>

@@ -31,7 +31,7 @@ function handleClick(event: MouseEvent) {
     if (!icon) return
 
     const originalIcon = 'i-carbon:copy'
-    const successIcon = 'i-carbon:checkmark'
+    const successIcon = 'i-lucide:check'
 
     icon.classList.remove(originalIcon)
     icon.classList.add(successIcon)
