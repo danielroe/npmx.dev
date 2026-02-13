@@ -305,7 +305,7 @@ watch(isExecuting, executing => {
       role="alert"
     >
       <div class="flex items-center gap-2 mb-2">
-        <span class="i-carbon:locked w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
+        <span class="i-lucide:lock w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
         <span class="font-mono text-sm text-amber-400">
           {{ $t('operations.queue.otp_prompt') }}
         </span>
