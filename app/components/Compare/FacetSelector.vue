@@ -47,6 +47,8 @@ function isCategoryNoneSelected(category: string): boolean {
           v-for="facet in facetsByCategory[category]"
           :key="facet.id"
           size="small"
+          variant="tag"
+          hide-checkbox
           :title="facet.comingSoon ? $t('compare.facets.coming_soon') : facet.description"
           :disabled="facet.comingSoon"
           :model-value="isFacetSelected(facet.id)"

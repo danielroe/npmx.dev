@@ -10,6 +10,10 @@ const props = withDefaults(
 
     indeterminate?: boolean
 
+    variant?: 'default' | 'tag'
+
+    hideCheckbox?: boolean
+
     /**
      * type should never be used, because this will always be a radio button.
      *
@@ -19,6 +23,7 @@ const props = withDefaults(
   }>(),
   {
     size: 'medium',
+    variant: 'default',
   },
 )
 
@@ -36,10 +41,16 @@ const internalId = `checkbox-${uid}`
 <template>
   <label
     :htmlFor="internalId"
-    class="bg-bg-muted text-fg-muted hover:(text-fg bg-fg/10) inline-flex items-center font-mono rounded transition-colors duration-200 has-checked:(bg-fg/20 text-fg hover:(text-fg)) has-disabled:(opacity-50 pointer-events-none)"
+    class="text-fg-muted hover:(text-fg) inline-flex items-center font-mono rounded transition-colors duration-200 has-checked:(hover:(text-fg)) has-disabled:(opacity-50 pointer-events-none)"
     :class="{
-      'text-sm px-4 py-2': size === 'medium',
-      'text-xs px-2 py-0.5': size === 'small',
+      'bg-bg-muted hover:(bg-fg/10)': variant === 'tag',
+      'has-checked:(bg-fg/20 text-fg)': variant === 'tag' && !hideCheckbox,
+      'has-checked:(bg-fg text-bg)': variant === 'tag' && hideCheckbox,
+      'has-checked:(text-fg)': variant !== 'tag',
+      'text-sm': size === 'medium',
+      'text-xs': size === 'small',
+      'px-4 py-2': size === 'medium' && variant === 'tag',
+      'px-2 py-0.5': size === 'small' && variant === 'tag',
     }"
   >
     <input
@@ -51,6 +62,7 @@ const internalId = `checkbox-${uid}`
       @change="$emit('update:modelValue', !model)"
       :indeterminate="props.indeterminate"
       class="size-[1em] bg-bg-muted border-border rounded disabled:opacity-50 me-1"
+      :class="{ 'sr-only': hideCheckbox }"
     />
     <slot />
   </label>

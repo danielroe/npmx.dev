@@ -170,6 +170,8 @@ const numberFormatter = useNumberFormatter()
         <CheckboxBase
           class="pointer-events-auto"
           :key="keyword"
+          variant="tag"
+          hide-checkbox
           size="small"
           :model-value="props.filters?.keywords.includes(keyword)"
           :title="`Filter by ${keyword}`"

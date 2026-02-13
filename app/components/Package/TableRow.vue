@@ -133,6 +133,8 @@ const allMaintainersText = computed(() => {
         <CheckboxBase
           v-for="keyword in pkg.keywords.slice(0, 3)"
           :key="keyword"
+          variant="tag"
+          hide-checkbox
           size="small"
           :model-value="props.filters?.keywords.includes(keyword)"
           :title="`Filter by ${keyword}`"

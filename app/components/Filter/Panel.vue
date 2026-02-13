@@ -332,6 +332,8 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               v-for="keyword in displayedKeywords"
               :key="keyword"
               size="small"
+              variant="tag"
+              hide-checkbox
               :v-model="filters.keywords.includes(keyword)"
               @update:modelValue="emit('toggleKeyword', keyword)"
               :value="keyword"
