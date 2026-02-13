@@ -101,7 +101,7 @@ function openAuthModal() {
           class="w-6 h-6 rounded-full bg-bg-muted ring-2 ring-bg flex items-center justify-center"
           :class="hasBothConnections ? 'relative z-10' : ''"
         >
-          <span class="i-carbon:cloud w-3 h-3 text-fg-muted" aria-hidden="true" />
+          <span class="i-lucide:at-sign w-3 h-3 text-fg-muted" aria-hidden="true" />
         </span>
       </span>
 
@@ -203,7 +203,7 @@ function openAuthModal() {
                 v-else
                 class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center"
               >
-                <span class="i-carbon:cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
+                <span class="i-lucide:at-sign w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
               <span class="flex-1 min-w-0">
                 <span class="font-mono text-sm text-fg truncate block"
@@ -255,7 +255,7 @@ function openAuthModal() {
               @click="openAuthModal"
             >
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
-                <span class="i-carbon:cloud w-4 h-4 text-fg-muted" aria-hidden="true" />
+                <span class="i-lucide:at-sign w-4 h-4 text-fg-muted" aria-hidden="true" />
               </span>
               <span class="flex-1 min-w-0">
                 <span class="font-mono text-sm text-fg block">
