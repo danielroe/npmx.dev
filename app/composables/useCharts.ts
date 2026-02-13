@@ -587,11 +587,6 @@ export function useCharts() {
           `/api/registry/package-meta/${encodePackageName(name)}`,
         )
           .then(meta => {
-            console.log('name', name)
-            if (name === 'create-cedar-app') {
-              console.log('create-cedar-app returns null')
-              return null
-            }
             const repoUrl = meta?.links?.repository
             return repoUrl ? parseRepoUrl(repoUrl) : null
           })
