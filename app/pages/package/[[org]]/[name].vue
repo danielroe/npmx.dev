@@ -404,7 +404,7 @@ const PROVIDER_ICONS: Record<string, string> = {
   gitee: 'i-simple-icons:gitee',
   sourcehut: 'i-simple-icons:sourcehut',
   tangled: 'i-custom:tangled',
-  radicle: 'i-carbon:network-3', // Radicle is a P2P network, using network icon
+  radicle: 'i-lucide:network', // Radicle is a P2P network, using network icon
 }
 
 const repoProviderIcon = computed(() => {
