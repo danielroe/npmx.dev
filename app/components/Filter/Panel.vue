@@ -257,7 +257,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             {{ $t('filters.weekly_downloads') }}
           </legend>
           <div
-            class="flex flex-wrap gap-2"
+            class="flex flex-wrap gap-8"
             role="radiogroup"
             :aria-label="$t('filters.weekly_downloads')"
           >
@@ -281,7 +281,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             {{ $t('filters.updated_within') }}
           </legend>
           <div
-            class="flex flex-wrap gap-2"
+            class="flex flex-wrap gap-8"
             role="radiogroup"
             :aria-label="$t('filters.updated_within')"
           >
@@ -307,7 +307,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               {{ $t('filters.columns.coming_soon') }}
             </span>
           </legend>
-          <div class="flex flex-wrap gap-2" role="radiogroup" :aria-label="$t('filters.security')">
+          <div class="flex flex-wrap gap-8" role="radiogroup" :aria-label="$t('filters.security')">
             <RadioBase
               v-for="security in SECURITY_FILTER_VALUES"
               :key="security"

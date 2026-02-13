@@ -42,10 +42,10 @@ const onChange = () => {
 
 <template>
   <label
-    class="bg-bg-muted text-fg-muted hover:(text-fg bg-fg/10) inline-flex items-center font-mono rounded transition-colors duration-200 has-checked:(bg-fg/20 text-fg hover:(text-fg)) has-disabled:(opacity-50 pointer-events-none) before:content-['']"
+    class="text-fg-muted hover:(text-fg) inline-flex items-center font-mono rounded transition-colors duration-200 has-checked:(text-fg hover:(text-fg)) has-disabled:(opacity-50 pointer-events-none) before:content-['']"
     :class="{
-      'text-sm px-4 py-2': size === 'medium',
-      'text-xs px-2 py-0.5': size === 'small',
+      'text-sm': size === 'medium',
+      'text-xs': size === 'small',
     }"
     :htmlFor="internalId"
   >
