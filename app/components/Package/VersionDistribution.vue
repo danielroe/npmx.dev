@@ -132,12 +132,14 @@ const chartConfig = computed(() => {
           fullscreen: false,
           table: false,
           tooltip: false,
+          altCopy: false, // TODO: set to true to enable the alt copy feature
         },
         buttonTitles: {
           csv: $t('package.trends.download_file', { fileType: 'CSV' }),
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
+          altCopy: undefined, // TODO: set to proper translation key
         },
         callbacks: {
           img: ({ imageUri }: { imageUri: string }) => {
@@ -165,6 +167,10 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
           },
+          // altCopy: ({ dataset: dst, config: cfg }: { dataset: Array<VueUiXyDatasetItem>; config: VueUiXyConfig}) => {
+          //   // TODO: implement a reusable copy-alt-text-to-clipboard feature based on the dataset & configuration
+          //   console.log({ dst, cfg})
+          // }
         },
       },
       grid: {
@@ -174,7 +180,7 @@ const chartConfig = computed(() => {
           fontSize: isMobile.value ? 24 : 16,
           color: pending.value ? colors.value.border : colors.value.fgSubtle,
           axis: {
-            yLabel: 'Downloads',
+            yLabel: $t('package.versions.y_axis_label'),
             yLabelOffsetX: 12,
             fontSize: isMobile.value ? 32 : 24,
           },
@@ -243,6 +249,9 @@ const chartConfig = computed(() => {
           selectedColor: accent.value,
           selectedColorOpacity: 0.06,
           frameColor: colors.value.border,
+          handleWidth: isMobile.value ? 40 : 20, // does not affect the size of the touch area
+          handleBorderColor: colors.value.fgSubtle,
+          handleType: 'grab', // 'empty' | 'chevron' | 'arrow' | 'grab'
         },
         preview: {
           fill: transparentizeOklch(accent.value, isDarkMode.value ? 0.95 : 0.92),
@@ -318,7 +327,7 @@ const endDate = computed(() => {
   >
     <div class="w-full mb-4 flex flex-col gap-3">
       <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-end">
-        <div class="flex flex-col gap-1 sm:shrink-0">
+        <div class="flex flex-col gap-1 w-fit sm:shrink-0">
           <label class="text-3xs font-mono text-fg-subtle tracking-wide uppercase">
             {{ $t('package.versions.distribution_title') }}
           </label>
@@ -427,7 +436,7 @@ const endDate = computed(() => {
         </div>
       </div>
 
-      <div class="flex flex-col gap-4 w-full max-w-1/2">
+      <div class="flex flex-col gap-4 w-full">
         <TooltipApp
           :text="$t('package.versions.recent_versions_only_tooltip')"
           position="bottom"
@@ -663,7 +672,7 @@ const endDate = computed(() => {
 @media screen and (min-width: 767px) {
   #version-distribution .vue-data-ui-refresh-button {
     top: -0.6rem !important;
-    left: calc(100% + 2rem) !important;
+    left: calc(100% + 4rem) !important;
   }
 }
 </style>

@@ -73,6 +73,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
     ><slot
   /></span>
   <NuxtLink
+    v-bind="props"
     v-else
     class="group/link gap-x-1 items-center"
     :class="{

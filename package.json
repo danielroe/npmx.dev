@@ -111,7 +111,7 @@
     "vite-plugin-pwa": "1.2.0",
     "vite-plus": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
     "vue": "3.5.27",
-    "vue-data-ui": "3.14.10"
+    "vue-data-ui": "3.15.0"
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.1.4",
@@ -144,7 +144,7 @@
     "vue-tsc": "3.2.4"
   },
   "engines": {
-    "node": ">=24"
+    "node": "24"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged"

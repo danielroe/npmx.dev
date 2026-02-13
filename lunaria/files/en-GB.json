@@ -124,6 +124,7 @@
     "end_of_results": "End of results",
     "try_again": "Try again",
     "close": "Close",
+    "or": "or",
     "retry": "Retry",
     "copy": "copy",
     "copied": "copied!",
@@ -219,6 +220,8 @@
       "title": "Get started",
       "pm_label": "Package manager",
       "copy_command": "Copy install command",
+      "copy_dev_command": "Copy dev install command",
+      "dev_dependency_hint": "Usually installed as a dev dependency",
       "view_types": "View {package}"
     },
     "create": {
@@ -295,7 +298,14 @@
       "recent_versions_only_tooltip": "Show only versions published within the last year.",
       "show_low_usage": "Show low usage versions",
       "show_low_usage_tooltip": "Include version groups with less than 1% of total downloads.",
-      "date_range_tooltip": "Last week of version distributions only"
+      "date_range_tooltip": "Last week of version distributions only",
+      "y_axis_label": "Downloads",
+      "filter_placeholder": "Filter by semver (e.g. ^3.0.0)",
+      "filter_invalid": "Invalid semver range",
+      "filter_help": "Semver range filter help",
+      "filter_tooltip": "Filter versions using a {link}. For example, ^3.0.0 shows all 3.x versions.",
+      "filter_tooltip_link": "semver range",
+      "no_matches": "No versions match this range"
     },
     "dependencies": {
       "title": "Dependency ({count}) | Dependencies ({count})",
@@ -470,7 +480,8 @@
       "warning": "WARNING",
       "warning_text": "This allows npmx to access your npm CLI. Only connect to sites you trust.",
       "connect": "Connect",
-      "connecting": "Connecting..."
+      "connecting": "Connecting...",
+      "auto_open_url": "Automatically open auth page"
     }
   },
   "operations": {
@@ -486,7 +497,9 @@
       "otp_placeholder": "Enter OTP code...",
       "otp_label": "One-time password",
       "retry_otp": "Retry with OTP",
+      "retry_web_auth": "Retry with web auth",
       "retrying": "Retrying...",
+      "open_web_auth": "Open web auth link",
       "approve_operation": "Approve operation",
       "remove_operation": "Remove operation",
       "approve_all": "Approve All",
@@ -802,8 +815,16 @@
         "managers": "package managers"
       }
     },
+    "team": {
+      "title": "Team",
+      "governance": "Governance",
+      "role_steward": "steward",
+      "role_maintainer": "maintainer",
+      "sponsor": "sponsor",
+      "sponsor_aria": "Sponsor {name} on GitHub"
+    },
     "contributors": {
-      "title": "{count} Contributor | {count} Contributors",
+      "title": "... and {count} more contributor | ... and {count} more contributors",
       "description": "npmx is fully open source, built by an amazing community of contributors. Join us and let's build the npm browsing experience we always wanted, together.",
       "loading": "Loading contributors...",
       "error": "Failed to load contributors",
