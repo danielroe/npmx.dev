@@ -762,7 +762,7 @@ const showSkeleton = shallowRef(false)
               :aria-label="copiedVersion ? $t('common.copied') : $t('package.copy_version')"
             >
               <span
-                :class="copiedVersion ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+                :class="copiedVersion ? 'i-lucide:check' : 'i-lucide:copy'"
                 class="w-3.5 h-3.5"
                 aria-hidden="true"
               />

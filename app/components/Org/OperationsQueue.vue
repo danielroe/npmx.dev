@@ -164,9 +164,9 @@ function getStatusIcon(status: string): string {
     case 'running':
       return 'i-svg-spinners:ring-resize'
     case 'completed':
-      return 'i-lucide:check-filled'
+      return 'i-lucide:check'
     case 'failed':
-      return 'i-lucide:x-filled'
+      return 'i-lucide:x'
     default:
       return 'i-lucide:circle-question-mark'
   }
@@ -410,8 +410,8 @@ watch(isExecuting, executing => {
           <span
             :class="
               op.status === 'completed'
-                ? 'i-lucide:check-filled text-green-500'
-                : 'i-lucide:x-filled text-red-500'
+                ? 'i-lucide:check text-green-500'
+                : 'i-lucide:x text-red-500'
             "
             class="w-3.5 h-3.5 shrink-0 mt-0.5"
             aria-hidden="true"

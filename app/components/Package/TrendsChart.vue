@@ -1114,20 +1114,20 @@ function drawEstimationLine(svg: Record<string, any>) {
 
     lines.push(`
       <line
-        x1="${previousPoint.x}" 
-        y1="${previousPoint.y}" 
-        x2="${lastPoint.x}" 
-        y2="${lastPoint.y}" 
-        stroke="${colors.value.bg}" 
+        x1="${previousPoint.x}"
+        y1="${previousPoint.y}"
+        x2="${lastPoint.x}"
+        y2="${lastPoint.y}"
+        stroke="${colors.value.bg}"
         stroke-width="3"
         opacity="1"
       />
-      <line 
-        x1="${previousPoint.x}" 
-        y1="${previousPoint.y}" 
-        x2="${lastPoint.x}" 
-        y2="${lastPoint.y}" 
-        stroke="${stroke}" 
+      <line
+        x1="${previousPoint.x}"
+        y1="${previousPoint.y}"
+        x2="${lastPoint.x}"
+        y2="${lastPoint.y}"
+        stroke="${stroke}"
         stroke-width="3"
         stroke-dasharray="4 8"
         stroke-linecap="round"
@@ -1240,7 +1240,7 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
     !isZoomed.value
   ) {
     seriesNames.push(`
-        <line 
+        <line
           x1="${svg.drawingArea.left + 12}"
           y1="${svg.drawingArea.top + 24 * data.length}"
           x2="${svg.drawingArea.left + 24}"
@@ -1721,7 +1721,7 @@ watch(selectedMetric, value => {
             </template>
             <template #optionAltCopy>
               <span
-                class="i-carbon:accessibility-alt w-6 h-6 text-fg-subtle"
+                class="i-lucide:person-standing w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
