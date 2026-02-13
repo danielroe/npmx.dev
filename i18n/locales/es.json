@@ -1142,7 +1142,7 @@
     "locale_summary": "{name} ({id})",
     "locale_summary_status": "{doneicon} {donetext} {done}, {missingicon} {missingtext} {missing}",
     "complete_template": "{text} {emoji}",
-    "complete_text": "¡La traducción está completa, un trabajo increible!",
+    "complete_text": "¡La traducción está completa, un trabajo increíble!",
     "done_text": "traducidas",
     "missing_text": "sin traducir",
     "missing_keys": "X | Mensaje sin traducir | Mensajes sin traducir",
@@ -1150,7 +1150,7 @@
     "table": {
       "file": "Archivo",
       "status": "Estado",
-      "loading": "{spinner} Loading translation files...",
+      "loading": "{spinner} Cargando archivos de traducción...",
       "empty": "No se encontraron archivos",
       "file_link": "Editar {file} ({lang}) en GitHub"
     }

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { I18nStatus } from '#shared/types'
 import type { Directions } from '@nuxtjs/i18n'
 
 definePageMeta({
