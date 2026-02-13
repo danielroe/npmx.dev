@@ -57,7 +57,7 @@ function* mapFiles(
       missing: entry.missingKeys.length,
       missingClass:
         entry.missingKeys.length > 0 ? 'text-orange-700 dark:text-orange-500' : undefined,
-      file: entry.githubEditUrl.split('/').pop()!,
+      file: entry.githubEditUrl.split('/').pop() ?? entry.lang,
     }
   }
 }
