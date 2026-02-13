@@ -54,7 +54,7 @@ const icons = [
   'i-carbon:book',
   'i-carbon:music',
   'i-carbon:snowflake',
-  'i-carbon:star',
+  'i-lucide:star',
   'i-carbon:moon',
 ] as const
 
