@@ -231,7 +231,7 @@ function openAuthModal() {
               <span class="w-8 h-8 rounded-full bg-bg-muted flex items-center justify-center">
                 <span
                   v-if="isNpmConnecting"
-                  class="i-carbon:circle-dash w-4 h-4 text-yellow-500 animate-spin"
+                  class="i-i-svg-spinners:ring-resize w-4 h-4 text-yellow-500 animate-spin"
                   aria-hidden="true"
                 />
                 <span v-else class="i-carbon:terminal w-4 h-4 text-fg-muted" aria-hidden="true" />

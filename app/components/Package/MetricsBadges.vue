@@ -73,7 +73,7 @@ const typesHref = computed(() => {
           :tabindex="0"
           :classicon="
             isLoading
-              ? 'i-carbon:circle-dash motion-safe:animate-spin'
+              ? 'i-i-svg-spinners:ring-resize motion-safe:animate-spin'
               : hasTypes
                 ? 'i-carbon:checkmark'
                 : 'i-lucide:circle-x'
@@ -95,7 +95,7 @@ const typesHref = computed(() => {
           :variant="hasEsm && !isLoading ? 'default' : 'ghost'"
           :classicon="
             isLoading
-              ? 'i-carbon:circle-dash motion-safe:animate-spin'
+              ? 'i-i-svg-spinners:ring-resize motion-safe:animate-spin'
               : hasEsm
                 ? 'i-carbon:checkmark'
                 : 'i-lucide:circle-x'
@@ -113,7 +113,9 @@ const typesHref = computed(() => {
           tabindex="0"
           :variant="isLoading ? 'ghost' : 'default'"
           :classicon="
-            isLoading ? 'i-carbon:circle-dash motion-safe:animate-spin' : 'i-carbon:checkmark'
+            isLoading
+              ? 'i-i-svg-spinners:ring-resize motion-safe:animate-spin'
+              : 'i-carbon:checkmark'
           "
         >
           CJS
