@@ -96,14 +96,11 @@ function handleDisconnect() {
           <p class="text-sm text-fg-muted">
             <i18n-t keypath="connector.modal.contributor_notice" scope="global">
               <template #link>
-                <a
-                  href="https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md#local-connector-cli"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-blue-400 hover:underline"
+                <LinkBase
+                  to="https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md#local-connector-cli"
                 >
                   {{ $t('connector.modal.contributor_link') }}
-                </a>
+                </LinkBase>
               </template>
             </i18n-t>
           </p>

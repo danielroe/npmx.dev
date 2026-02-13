@@ -108,19 +108,13 @@ watch(handleInput, newHandleInput => {
                 <span class="font-bold">npmx.dev</span>
               </template>
               <template #atproto>
-                <a :href="atprotoLink" target="_blank" class="text-blue-400 hover:underline">
-                  AT Protocol
-                </a>
+                <LinkBase :to="atprotoLink"> AT Protocol </LinkBase>
               </template>
               <template #bluesky>
-                <a href="https://bsky.app" target="_blank" class="text-blue-400 hover:underline">
-                  Bluesky
-                </a>
+                <LinkBase to="https://bsky.app"> Bluesky </LinkBase>
               </template>
               <template #tangled>
-                <a href="https://tangled.org" target="_blank" class="text-blue-400 hover:underline">
-                  Tangled
-                </a>
+                <LinkBase to="https://tangled.org"> Tangled </LinkBase>
               </template>
             </i18n-t>
           </div>
