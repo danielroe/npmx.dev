@@ -216,27 +216,17 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               {{ $t('filters.search') }}
             </label>
             <!-- Search scope toggle -->
-            <div
-              class="inline-flex rounded-md border border-border p-0.5 bg-bg"
-              role="group"
-              :aria-label="$t('filters.search_scope')"
-            >
-              <button
+            <div class="inline-flex gap-x-4" role="group" :aria-label="$t('filters.search_scope')">
+              <RadioBase
                 v-for="scope in SEARCH_SCOPE_VALUES"
                 :key="scope"
-                type="button"
-                class="px-2 py-0.5 text-xs font-mono rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-                :class="
-                  filters.searchScope === scope
-                    ? 'bg-bg-muted text-fg'
-                    : 'text-fg-muted hover:text-fg'
-                "
-                :aria-pressed="filters.searchScope === scope"
+                :value="scope"
+                :model-value="filters.searchScope"
                 :title="getScopeDescriptionKey(scope)"
-                @click="emit('update:searchScope', scope)"
+                @update:model-value="emit('update:searchScope', scope)"
               >
                 {{ getScopeLabelKey(scope) }}
-              </button>
+              </RadioBase>
             </div>
           </div>
           <InputBase
