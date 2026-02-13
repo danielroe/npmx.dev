@@ -125,6 +125,7 @@
     "end_of_results": "結果の最後です",
     "try_again": "もう一度お試しください",
     "close": "閉じる",
+    "or": "EN TEXT TO REPLACE: or",
     "retry": "再試行",
     "copy": "コピー",
     "copied": "コピー完了！",
@@ -220,6 +221,8 @@
       "title": "はじめに",
       "pm_label": "パッケージマネージャー",
       "copy_command": "インストールコマンドをコピー",
+      "copy_dev_command": "EN TEXT TO REPLACE: Copy dev install command",
+      "dev_dependency_hint": "EN TEXT TO REPLACE: Usually installed as a dev dependency",
       "view_types": "{package} を表示"
     },
     "create": {
@@ -296,7 +299,8 @@
       "recent_versions_only_tooltip": "過去1年以内に公開されたバージョンのみ表示します。",
       "show_low_usage": "利用率の低いバージョンを表示",
       "show_low_usage_tooltip": "総ダウンロード数の1%未満のバージョングループも含めます。",
-      "date_range_tooltip": "直近1週間のバージョン分布のみ"
+      "date_range_tooltip": "直近1週間のバージョン分布のみ",
+      "y_axis_label": "EN TEXT TO REPLACE: Downloads"
     },
     "dependencies": {
       "title": "依存関係（{count}）",
@@ -351,8 +355,7 @@
       "facet": "指標",
       "title": "トレンド",
       "items": {
-        "downloads": "ダウンロード数",
-        "likes": "いいね数"
+        "downloads": "ダウンロード数"
       }
     },
     "downloads": {
@@ -471,7 +474,8 @@
       "warning": "警告",
       "warning_text": "これによりnpmxがnpm CLIにアクセスできるようになります。信頼できるサイトにのみ接続してください。",
       "connect": "接続",
-      "connecting": "接続中..."
+      "connecting": "接続中...",
+      "auto_open_url": "EN TEXT TO REPLACE: Automatically open auth page"
     }
   },
   "operations": {
@@ -487,7 +491,9 @@
       "otp_placeholder": "OTPコードを入力...",
       "otp_label": "ワンタイムパスワード",
       "retry_otp": "OTPで再試行",
+      "retry_web_auth": "EN TEXT TO REPLACE: Retry with web auth",
       "retrying": "再試行中...",
+      "open_web_auth": "EN TEXT TO REPLACE: Open web auth link",
       "approve_operation": "操作を承認",
       "remove_operation": "操作を削除",
       "approve_all": "すべて承認",
@@ -802,6 +808,14 @@
         "package": "人たちが",
         "managers": "存在します"
       }
+    },
+    "team": {
+      "title": "EN TEXT TO REPLACE: Team",
+      "governance": "EN TEXT TO REPLACE: Governance",
+      "role_steward": "EN TEXT TO REPLACE: steward",
+      "role_maintainer": "EN TEXT TO REPLACE: maintainer",
+      "sponsor": "EN TEXT TO REPLACE: sponsor",
+      "sponsor_aria": "EN TEXT TO REPLACE: Sponsor {name} on GitHub"
     },
     "contributors": {
       "title": "コントリビューター",
