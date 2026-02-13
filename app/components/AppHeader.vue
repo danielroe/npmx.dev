@@ -70,7 +70,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         to: { name: 'accessibility' },
         type: 'link',
         external: false,
-        iconClass: 'i-lucide:person-standing border rounded-full',
+        iconClass: 'i-custom:a11y',
       },
     ],
   },
@@ -123,7 +123,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
 ])
 
 const showFullSearch = shallowRef(false)
-const showMobileMenu = shallowRef(false)
+const showMobileMenu = shallowRef(true)
 const { env } = useAppConfig().buildInfo
 
 // On mobile, clicking logo+search button expands search
