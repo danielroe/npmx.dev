@@ -99,10 +99,18 @@ export function useOutdatedDependencies(
       const data = versionMap.get(name)
       if (!data) continue
 
-      const latestTag = data.distTags.latest
-      if (!latestTag) continue
+      let latestStable = data.distTags.latest
+      if (!latestStable) continue
 
-      const info = resolveOutdated(data.versions, latestTag, constraint)
+      // If latest tag is a prerelease, find the latest stable version instead
+      if (prerelease(latestStable)) {
+        const stableVersions = data.versions.filter(v => !prerelease(v))
+        if (stableVersions.length > 0) {
+          latestStable = maxSatisfying(stableVersions, '*') ?? latestStable
+        }
+      }
+
+      const info = resolveOutdated(data.versions, latestStable, constraint)
       if (info) {
         results[name] = info
       }
