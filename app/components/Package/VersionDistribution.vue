@@ -519,7 +519,7 @@ const endDate = computed(() => {
             </template>
 
             <!-- Export options -->
-             <template #optionCsv>
+            <template #optionCsv>
               <span class="text-fg-subtle font-mono pointer-events-none">CSV</span>
             </template>
             <template #optionImg>
@@ -544,7 +544,7 @@ const endDate = computed(() => {
 
             <template #annotator-action-undo>
               <span
-                class="i-carbon:undo w-6 h-6 text-fg-subtle"
+                class="i-lucide:undo-2 w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />

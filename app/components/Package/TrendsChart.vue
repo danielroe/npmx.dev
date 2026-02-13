@@ -1677,7 +1677,7 @@ watch(selectedMetric, value => {
             </template>
             <template #annotator-action-undo>
               <span
-                class="i-carbon:undo w-6 h-6 text-fg-subtle"
+                class="i-lucide:undo-2 w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
