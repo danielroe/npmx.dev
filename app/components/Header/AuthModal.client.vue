@@ -130,13 +130,12 @@ watch(handleInput, newHandleInput => {
       <ButtonBase type="submit" variant="primary" :disabled="!handleInput.trim()" class="w-full">
         {{ $t('auth.modal.connect') }}
       </ButtonBase>
-      <ButtonBase type="button" variant="primary" class="w-full" @click="handleCreateAccount">
+      <ButtonBase type="button" class="w-full" @click="handleCreateAccount">
         {{ $t('auth.modal.create_account') }}
       </ButtonBase>
       <hr class="color-border" />
       <ButtonBase
         type="button"
-        variant="primary"
         class="w-full"
         @click="handleBlueskySignIn"
         classicon="i-carbon:logo-bluesky"
