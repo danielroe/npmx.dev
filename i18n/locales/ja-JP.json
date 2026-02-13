@@ -125,7 +125,7 @@
     "end_of_results": "結果の最後です",
     "try_again": "もう一度お試しください",
     "close": "閉じる",
-    "or": "EN TEXT TO REPLACE: or",
+    "or": "または",
     "retry": "再試行",
     "copy": "コピー",
     "copied": "コピー完了！",
@@ -221,8 +221,8 @@
       "title": "はじめに",
       "pm_label": "パッケージマネージャー",
       "copy_command": "インストールコマンドをコピー",
-      "copy_dev_command": "EN TEXT TO REPLACE: Copy dev install command",
-      "dev_dependency_hint": "EN TEXT TO REPLACE: Usually installed as a dev dependency",
+      "copy_dev_command": "devインストールコマンドをコピー",
+      "dev_dependency_hint": "通常はdev dependencyとしてインストールされます",
       "view_types": "{package} を表示"
     },
     "create": {
@@ -300,7 +300,7 @@
       "show_low_usage": "利用率の低いバージョンを表示",
       "show_low_usage_tooltip": "総ダウンロード数の1%未満のバージョングループも含めます。",
       "date_range_tooltip": "直近1週間のバージョン分布のみ",
-      "y_axis_label": "EN TEXT TO REPLACE: Downloads"
+      "y_axis_label": "ダウンロード"
     },
     "dependencies": {
       "title": "依存関係（{count}）",
@@ -475,7 +475,7 @@
       "warning_text": "これによりnpmxがnpm CLIにアクセスできるようになります。信頼できるサイトにのみ接続してください。",
       "connect": "接続",
       "connecting": "接続中...",
-      "auto_open_url": "EN TEXT TO REPLACE: Automatically open auth page"
+      "auto_open_url": "認証ページを自動で開く"
     }
   },
   "operations": {
@@ -491,9 +491,9 @@
       "otp_placeholder": "OTPコードを入力...",
       "otp_label": "ワンタイムパスワード",
       "retry_otp": "OTPで再試行",
-      "retry_web_auth": "EN TEXT TO REPLACE: Retry with web auth",
+      "retry_web_auth": "ウェブ認証で再試行",
       "retrying": "再試行中...",
-      "open_web_auth": "EN TEXT TO REPLACE: Open web auth link",
+      "open_web_auth": "ウェブ認証リンクを開く",
       "approve_operation": "操作を承認",
       "remove_operation": "操作を削除",
       "approve_all": "すべて承認",
@@ -810,12 +810,12 @@
       }
     },
     "team": {
-      "title": "EN TEXT TO REPLACE: Team",
-      "governance": "EN TEXT TO REPLACE: Governance",
-      "role_steward": "EN TEXT TO REPLACE: steward",
-      "role_maintainer": "EN TEXT TO REPLACE: maintainer",
-      "sponsor": "EN TEXT TO REPLACE: sponsor",
-      "sponsor_aria": "EN TEXT TO REPLACE: Sponsor {name} on GitHub"
+      "title": "チーム",
+      "governance": "ガバナンス",
+      "role_steward": "スチュワード",
+      "role_maintainer": "メンテナ",
+      "sponsor": "スポンサー",
+      "sponsor_aria": "GitHubで {name} さんをスポンサーする"
     },
     "contributors": {
       "title": "コントリビューター",
