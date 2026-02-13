@@ -110,7 +110,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
         class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors shrink-0"
       >
         {{ $t('package.skills.learn_more') }}
-        <span class="i-carbon:arrow-right w-3 h-3" />
+        <span class="i-lucide:arrow-right w-3 h-3" />
       </a>
     </div>
 

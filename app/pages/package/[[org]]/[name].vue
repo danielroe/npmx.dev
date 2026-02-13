@@ -706,7 +706,7 @@ const showSkeleton = shallowRef(false)
             <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
             <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
               <span class="font-mono text-fg-muted text-sm" dir="ltr">{{ requestedVersion }}</span>
-              <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
+              <span class="i-lucide:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
             </template>
 
             <LinkBase

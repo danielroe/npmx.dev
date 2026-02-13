@@ -55,7 +55,7 @@ const socialLinks = computed(() => [
           class="text-sm text-fg-muted group-hover:text-fg inline-flex items-center gap-1 mt-auto focus-visible:outline-none"
         >
           {{ link.ctaKey }}
-          <span class="i-carbon:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
+          <span class="i-lucide:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
           <span class="absolute z-0 inset-0" aria-hidden="true" />
         </a>
       </div>
