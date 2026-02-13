@@ -355,7 +355,8 @@
       "facet": "指標",
       "title": "トレンド",
       "items": {
-        "downloads": "ダウンロード数"
+        "downloads": "ダウンロード数",
+        "likes": "いいね数"
       }
     },
     "downloads": {
