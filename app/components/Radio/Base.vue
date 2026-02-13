@@ -56,7 +56,7 @@ const onChange = () => {
       :checked="checked"
       :disabled="props.disabled ? true : undefined"
       @change="onChange"
-      class="me-2"
+      class="me-1"
     />
     <slot />
   </label>

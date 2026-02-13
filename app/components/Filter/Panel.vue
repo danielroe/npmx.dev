@@ -332,7 +332,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
               v-for="keyword in displayedKeywords"
               :key="keyword"
               size="small"
-              :model-value="filters.keywords.includes(keyword)"
+              :v-model="filters.keywords.includes(keyword)"
               @update:modelValue="emit('toggleKeyword', keyword)"
               :value="keyword"
             >
