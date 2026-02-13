@@ -330,14 +330,9 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             >
               {{ keyword }}
             </CheckboxBase>
-            <button
-              v-if="hasMoreKeywords"
-              type="button"
-              class="text-xs text-fg-subtle self-center font-mono hover:text-fg transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-              @click="showAllKeywords = true"
-            >
+            <ButtonBase v-if="hasMoreKeywords" size="small" @click="showAllKeywords = true">
               {{ $t('filters.more_keywords', { count: (availableKeywords?.length ?? 0) - 20 }) }}
-            </button>
+            </ButtonBase>
           </div>
         </fieldset>
       </div>
