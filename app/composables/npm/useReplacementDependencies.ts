@@ -1,15 +1,8 @@
-import type { ShallowRef } from 'vue'
 import type { ModuleReplacement } from 'module-replacements'
 
 async function fetchReplacements(
-  deps: Record<string, string> | undefined,
-  replacements: ShallowRef<Record<string, ModuleReplacement>>,
-) {
-  if (!deps || Object.keys(deps).length === 0) {
-    replacements.value = {}
-    return
-  }
-
+  deps: Record<string, string>,
+): Promise<Record<string, ModuleReplacement>> {
   const names = Object.keys(deps)
 
   const results = await Promise.all(
@@ -29,7 +22,7 @@ async function fetchReplacements(
       map[name] = replacement
     }
   }
-  replacements.value = map
+  return map
 }
 
 /**
@@ -40,12 +33,27 @@ export function useReplacementDependencies(
   dependencies: MaybeRefOrGetter<Record<string, string> | undefined>,
 ) {
   const replacements = shallowRef<Record<string, ModuleReplacement>>({})
+  let generation = 0
 
   if (import.meta.client) {
     watch(
       () => toValue(dependencies),
-      deps => {
-        fetchReplacements(deps, replacements).catch(() => {})
+      async deps => {
+        const currentGeneration = ++generation
+
+        if (!deps || Object.keys(deps).length === 0) {
+          replacements.value = {}
+          return
+        }
+
+        try {
+          const result = await fetchReplacements(deps)
+          if (currentGeneration === generation) {
+            replacements.value = result
+          }
+        } catch {
+          // catastrophic failure, just keep whatever we have
+        }
       },
       { immediate: true },
     )
