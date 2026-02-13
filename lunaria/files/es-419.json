@@ -124,6 +124,7 @@
     "end_of_results": "Fin de los resultados",
     "try_again": "Intentar de nuevo",
     "close": "Cerrar",
+    "or": "o",
     "retry": "Reintentar",
     "copy": "copiar",
     "copied": "¡copiado!",
@@ -219,6 +220,8 @@
       "title": "Empezar",
       "pm_label": "Gestor de paquetes",
       "copy_command": "Copiar comando de instalación",
+      "copy_dev_command": "Copiar comando de instalación como dependencia de desarrollo",
+      "dev_dependency_hint": "Instalar como dependencia de desarrollo",
       "view_types": "Ver {package}"
     },
     "create": {
@@ -295,7 +298,14 @@
       "recent_versions_only_tooltip": "Mostrar solo versiones publicadas en el último año.",
       "show_low_usage": "Mostrar versiones de bajo uso",
       "show_low_usage_tooltip": "Incluir grupos de versiones con menos del 1% de las descargas totales.",
-      "date_range_tooltip": "Solo la última semana de distribución de versiones"
+      "date_range_tooltip": "Solo la última semana de distribución de versiones",
+      "y_axis_label": "Descargas",
+      "filter_placeholder": "Filtrar versiones (ej: ^1.0.0, >2.0)...",
+      "filter_invalid": "Rango semver inválido",
+      "filter_help": "Usa sintaxis semver estándar",
+      "filter_tooltip": "Filtra versiones usando rangos semver. Ejemplos:",
+      "filter_tooltip_link": "Calculadora Semver",
+      "no_matches": "Ninguna versión coincide con el filtro"
     },
     "dependencies": {
       "title": "Dependencias ({count})",
@@ -470,7 +480,8 @@
       "warning": "ADVERTENCIA",
       "warning_text": "Esto permite a npmx acceder a tu CLI de npm. Conéctate solo a sitios en los que confíes.",
       "connect": "Conectar",
-      "connecting": "Conectando..."
+      "connecting": "Conectando...",
+      "auto_open_url": "Abrir automáticamente la página de autenticación"
     }
   },
   "operations": {
@@ -486,7 +497,9 @@
       "otp_placeholder": "Introduce código OTP...",
       "otp_label": "Contraseña de un solo uso",
       "retry_otp": "Reintentar con OTP",
+      "retry_web_auth": "Reintentar con autenticación web",
       "retrying": "Reintentando...",
+      "open_web_auth": "Abrir enlace de autenticación web",
       "approve_operation": "Aprobar operación",
       "remove_operation": "Eliminar operación",
       "approve_all": "Aprobar Todo",
@@ -801,6 +814,14 @@
         "package": "realmente",
         "managers": "geniales"
       }
+    },
+    "team": {
+      "title": "Equipo",
+      "governance": "Gobernanza",
+      "role_steward": "Administrador",
+      "role_maintainer": "Mantenedor",
+      "sponsor": "Patrocinar",
+      "sponsor_aria": "Patrocinar a {name} en GitHub"
     },
     "contributors": {
       "title": "{count} Colaborador | {count} Colaboradores",
