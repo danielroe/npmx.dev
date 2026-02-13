@@ -98,7 +98,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         target: '_blank',
         type: 'link',
         external: true,
-        iconClass: 'i-carbon:logo-github',
+        iconClass: 'i-simple-icons:github',
       },
       {
         name: 'Social',

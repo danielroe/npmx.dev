@@ -3,7 +3,7 @@ const socialLinks = computed(() => [
   {
     id: 'github',
     href: 'https://repo.npmx.dev',
-    icon: 'i-carbon:logo-github',
+    icon: 'i-simple-icons:github',
     titleKey: $t('about.get_involved.contribute.title'),
     descriptionKey: $t('about.get_involved.contribute.description'),
     ctaKey: $t('about.get_involved.contribute.cta'),

@@ -395,7 +395,7 @@ const repositoryUrl = computed(() => {
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 
 const PROVIDER_ICONS: Record<string, string> = {
-  github: 'i-carbon:logo-github',
+  github: 'i-simple-icons:github',
   gitlab: 'i-simple-icons:gitlab',
   bitbucket: 'i-simple-icons:bitbucket',
   codeberg: 'i-simple-icons:codeberg',
@@ -409,7 +409,7 @@ const PROVIDER_ICONS: Record<string, string> = {
 
 const repoProviderIcon = computed(() => {
   const provider = repoRef.value?.provider
-  if (!provider) return 'i-carbon:logo-github'
+  if (!provider) return 'i-simple-icons:github'
   return PROVIDER_ICONS[provider] ?? 'i-lucide:code'
 })
 
