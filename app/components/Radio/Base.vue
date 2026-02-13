@@ -41,7 +41,14 @@ const onChange = () => {
 </script>
 
 <template>
-  <div>
+  <label
+    class="bg-bg-muted text-fg-muted border-border hover:(text-fg border-border-hover) inline-flex items-center font-mono border rounded transition-colors duration-200 border-none has-checked:(bg-fg text-bg border-fg hover:(text-text-bg/50)) has-disabled:(opacity-50 pointer-events-none) before:content-['']"
+    :class="{
+      'text-sm px-4 py-2': size === 'medium',
+      'text-xs px-2 py-0.5': size === 'small',
+    }"
+    :htmlFor="internalId"
+  >
     <input
       type="radio"
       :id="internalId"
@@ -49,17 +56,8 @@ const onChange = () => {
       :checked="checked"
       :disabled="props.disabled ? true : undefined"
       @change="onChange"
-      class="peer sr-only"
+      class="me-2"
     />
-    <label
-      class="bg-bg-muted text-fg-muted border-border hover:(text-fg border-border-hover) inline-flex items-center font-mono border rounded transition-colors duration-200 peer-focus-visible:(before:outline-2 before:outline-accent/70 before:outline-offset-2) border-none peer-checked:(bg-fg text-bg border-fg hover:(text-text-bg/50)) peer-disabled:(opacity-50 pointer-events-none) before:content-[''] before:inline-block before:w-3 before:h-3 before:rounded-full before:bg-transparent before:border before:border-current before:me-2 peer-checked:before:bg-accent peer-checked:before:border-transparent peer-disabled:before:border-current/50 before:transition-colors before:duration-200"
-      :class="{
-        'text-sm px-4 py-2': size === 'medium',
-        'text-xs px-2 py-0.5': size === 'small',
-      }"
-      :htmlFor="internalId"
-    >
-      <slot />
-    </label>
-  </div>
+    <slot />
+  </label>
 </template>
