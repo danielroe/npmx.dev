@@ -591,7 +591,7 @@ const endDate = computed(() => {
       <!-- No-data state -->
       <div v-if="!hasData && !pending && !error" class="flex items-center justify-center h-full">
         <div class="text-sm text-fg-subtle font-mono text-center flex flex-col items-center gap-2">
-          <span class="i-carbon:data-vis-4 w-8 h-8" />
+          <span class="i-lucide:database w-8 h-8" />
           <p>{{ $t('package.trends.no_data') }}</p>
         </div>
       </div>
