@@ -19,7 +19,7 @@ const socialLinks = computed(() => [
   {
     id: 'bluesky',
     href: 'https://social.npmx.dev',
-    icon: 'i-carbon:logo-bluesky',
+    icon: 'i-simple-icons:bluesky',
     titleKey: $t('about.get_involved.follow.title'),
     descriptionKey: $t('about.get_involved.follow.description'),
     ctaKey: $t('about.get_involved.follow.cta'),

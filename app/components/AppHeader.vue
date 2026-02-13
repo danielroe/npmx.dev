@@ -107,7 +107,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         target: '_blank',
         type: 'link',
         external: true,
-        iconClass: 'i-carbon:logo-bluesky',
+        iconClass: 'i-simple-icons:bluesky',
       },
       {
         name: 'Chat',

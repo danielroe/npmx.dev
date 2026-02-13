@@ -83,7 +83,7 @@ const { data: post, status } = useAsyncData(
         <div class="text-sm text-fg-subtle truncate">@{{ post.author.handle }}</div>
       </div>
       <span
-        class="i-carbon:logo-bluesky w-5 h-5 text-fg-subtle ms-auto shrink-0"
+        class="i-simple-icons:bluesky w-5 h-5 text-fg-subtle ms-auto shrink-0"
         aria-hidden="true"
       />
     </div>
