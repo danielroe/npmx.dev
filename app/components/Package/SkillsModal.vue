@@ -211,7 +211,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
                   }}
                 </span>
                 <span v-if="skill.fileCounts?.assets" class="text-fg-subtle">
-                  <span class="i-carbon:image size-3 align-[-2px] me-0.5" />{{
+                  <span class="i-lucide:image size-3 align-[-2px] me-0.5" />{{
                     $t(
                       'package.skills.file_counts.assets',
                       { count: skill.fileCounts.assets },
