@@ -246,7 +246,7 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
   copiedDuring: 2000,
 })
 
-//copy package name
+//copy version name
 const { copied: copiedVersion, copy: copyVersion } = useClipboard({
   source: resolvedVersion.value ?? '',
   copiedDuring: 2000,
