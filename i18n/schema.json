@@ -2434,6 +2434,30 @@
           },
           "additionalProperties": false
         },
+        "team": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "governance": {
+              "type": "string"
+            },
+            "role_steward": {
+              "type": "string"
+            },
+            "role_maintainer": {
+              "type": "string"
+            },
+            "sponsor": {
+              "type": "string"
+            },
+            "sponsor_aria": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "contributors": {
           "type": "object",
           "properties": {
