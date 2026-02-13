@@ -867,7 +867,7 @@ const showSkeleton = shallowRef(false)
               </LinkBase>
             </li>
             <li v-if="forks && forksLink">
-              <LinkBase :to="forksLink" classicon="i-carbon:fork">
+              <LinkBase :to="forksLink" classicon="i-lucide:git-fork">
                 {{ compactNumberFormatter.format(forks) }}
               </LinkBase>
             </li>
