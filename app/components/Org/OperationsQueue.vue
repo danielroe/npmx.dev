@@ -292,7 +292,7 @@ watch(isExecuting, executing => {
             :aria-label="$t('operations.queue.remove_operation')"
             @click="removeOperation(op.id)"
           >
-            <span class="i-carbon-close w-4 h-4" aria-hidden="true" />
+            <span class="i-carbon:close w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </li>

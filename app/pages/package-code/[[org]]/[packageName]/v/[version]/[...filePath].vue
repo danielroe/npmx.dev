@@ -256,12 +256,12 @@ const markdownViewModes = [
   {
     key: 'preview',
     label: $t('code.markdown_view_mode.preview'),
-    icon: 'i-carbon-view',
+    icon: 'i-carbon:view',
   },
   {
     key: 'code',
     label: $t('code.markdown_view_mode.code'),
-    icon: 'i-carbon-code',
+    icon: 'i-carbon:code',
   },
 ] as const
 

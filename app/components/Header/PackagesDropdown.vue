@@ -63,7 +63,7 @@ function handleKeydown(event: KeyboardEvent) {
     >
       {{ $t('header.packages') }}
       <span
-        class="i-carbon-chevron-down w-3 h-3 transition-transform duration-200"
+        class="i-carbon:chevron-down w-3 h-3 transition-transform duration-200"
         :class="{ 'rotate-180': isOpen }"
         aria-hidden="true"
       />

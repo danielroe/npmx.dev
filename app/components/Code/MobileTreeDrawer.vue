@@ -68,7 +68,7 @@ watch(isOpen, open => (isLocked.value = open))
         <ButtonBase
           :aria-label="$t('code.close_tree')"
           @click="isOpen = false"
-          classicon="i-carbon-close"
+          classicon="i-carbon:close"
         />
       </div>
       <CodeFileTree

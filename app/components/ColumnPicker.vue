@@ -75,7 +75,7 @@ function handleReset() {
       aria-haspopup="true"
       :aria-controls="menuId"
       @click.stop="isOpen = !isOpen"
-      classicon="i-carbon-column"
+      classicon="i-carbon:column"
     >
       {{ $t('filters.columns.title') }}
     </ButtonBase>
