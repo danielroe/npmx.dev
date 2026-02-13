@@ -193,7 +193,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
       @click="isExpanded = !isExpanded"
     >
       <span class="flex items-center gap-2 text-sm font-mono text-fg shrink-0">
-        <span class="i-carbon:filter w-4 h-4" aria-hidden="true" />
+        <span class="i-lucide:funnel w-4 h-4" aria-hidden="true" />
         {{ $t('filters.title') }}
       </span>
       <span v-if="!isExpanded && hasActiveFilters" class="text-xs font-mono text-fg-muted truncate">
