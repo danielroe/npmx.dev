@@ -120,20 +120,30 @@ const numberFormatter = useNumberFormatter()
           <span class="flex items-center gap-1 max-w-[40%]" dir="ltr">
             <TooltipApp
               v-if="outdatedDeps[dep]"
-              class="shrink-0 p-2 -m-2"
+              class="shrink-0"
               :class="getVersionClass(outdatedDeps[dep])"
-              aria-hidden="true"
               :text="getOutdatedTooltip(outdatedDeps[dep], $t)"
             >
-              <span class="i-lucide:circle-alert w-3 h-3" />
+              <button
+                type="button"
+                class="p-2 -m-2"
+                :aria-label="getOutdatedTooltip(outdatedDeps[dep], $t)"
+              >
+                <span class="i-lucide:circle-alert w-3 h-3" aria-hidden="true" />
+              </button>
             </TooltipApp>
             <TooltipApp
               v-if="replacementDeps[dep]"
-              class="shrink-0 p-2 -m-2 text-amber-700 dark:text-amber-500"
-              aria-hidden="true"
+              class="shrink-0 text-amber-700 dark:text-amber-500"
               :text="$t('package.dependencies.has_replacement')"
             >
-              <span class="i-carbon:idea w-3 h-3" />
+              <button
+                type="button"
+                class="p-2 -m-2"
+                :aria-label="$t('package.dependencies.has_replacement')"
+              >
+                <span class="i-lucide:lightbulb w-3 h-3" aria-hidden="true" />
+              </button>
             </TooltipApp>
             <LinkBase
               v-if="getVulnerableDepInfo(dep)"
