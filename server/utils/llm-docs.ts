@@ -323,8 +323,7 @@ export async function handleOrgLlmsTxt(orgName: string, baseUrl: string): Promis
   lines.push('')
 
   for (const pkg of packages) {
-    const encodedPkg = pkg.replace('/', '/')
-    lines.push(`- [${pkg}](${baseUrl}/package/${encodedPkg}/llms.txt)`)
+    lines.push(`- [${pkg}](${baseUrl}/package/${pkg}/llms.txt)`)
   }
 
   lines.push('')
