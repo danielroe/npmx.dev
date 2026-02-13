@@ -79,10 +79,11 @@ export const resolvePackageReadmeSource = defineCachedFunction(
 
     const hasValidNpmReadme = readmeContent && readmeContent !== NPM_MISSING_README_SENTINEL
 
-    const isLikelyTruncated =
-      hasValidNpmReadme && readmeContent!.length >= NPM_README_TRUNCATION_THRESHOLD
-
-    if (!hasValidNpmReadme || !isStandardReadme(readmeFilename) || isLikelyTruncated) {
+    if (
+      !hasValidNpmReadme ||
+      !isStandardReadme(readmeFilename) ||
+      readmeContent!.length >= NPM_README_TRUNCATION_THRESHOLD
+    ) {
       const resolvedVersion = version ?? packageData['dist-tags']?.latest
       const jsdelivrReadme = await fetchReadmeFromJsdelivr(
         packageName,
