@@ -16,7 +16,7 @@ const providerIcons: Record<string, string> = {
   'vue-playground': 'i-simple-icons:vuedotjs',
   'nuxt-new': 'i-simple-icons:nuxtdotjs',
   'vite-new': 'i-simple-icons:vite',
-  'jsfiddle': 'i-carbon:code',
+  'jsfiddle': 'i-lucide:code',
 }
 
 // Map provider id to color class

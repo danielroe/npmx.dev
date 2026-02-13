@@ -410,7 +410,7 @@ const PROVIDER_ICONS: Record<string, string> = {
 const repoProviderIcon = computed(() => {
   const provider = repoRef.value?.provider
   if (!provider) return 'i-carbon:logo-github'
-  return PROVIDER_ICONS[provider] ?? 'i-carbon:code'
+  return PROVIDER_ICONS[provider] ?? 'i-lucide:code'
 })
 
 const homepageUrl = computed(() => {
@@ -769,7 +769,7 @@ const showSkeleton = shallowRef(false)
               variant="button-secondary"
               :to="codeLink"
               aria-keyshortcuts="."
-              classicon="i-carbon:code"
+              classicon="i-lucide:code"
             >
               {{ $t('package.links.code') }}
             </LinkBase>

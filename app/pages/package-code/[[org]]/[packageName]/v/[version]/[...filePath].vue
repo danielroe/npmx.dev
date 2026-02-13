@@ -261,7 +261,7 @@ const markdownViewModes = [
   {
     key: 'code',
     label: $t('code.markdown_view_mode.code'),
-    icon: 'i-carbon:code',
+    icon: 'i-lucide:code',
   },
 ] as const
 

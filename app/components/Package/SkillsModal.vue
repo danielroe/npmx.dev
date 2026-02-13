@@ -234,7 +234,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
                 class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors"
                 @click.stop
               >
-                <span class="i-carbon:code size-3" />{{ $t('package.skills.view_source') }}
+                <span class="i-lucide:code size-3" />{{ $t('package.skills.view_source') }}
               </NuxtLink>
             </div>
           </div>
