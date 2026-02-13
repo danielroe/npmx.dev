@@ -314,8 +314,8 @@ export const COMPOUND_EXTENSIONS: Record<string, string> = {
 export const DEFAULT_ICON = 'vscode-icons-default-file'
 
 export const ADDITIONAL_ICONS = {
-  'folder': 'carbon:folder',
-  'folder-open': 'carbon:folder-open',
+  'folder': 'lucide:folder',
+  'folder-open': 'lucide:folder-open',
 }
 
 /**

@@ -32,7 +32,7 @@ watch(isOpen, open => (isLocked.value = open))
     class="md:hidden fixed bottom-4 inset-ie-4 z-45"
     :aria-label="$t('code.toggle_tree')"
     @click="isOpen = !isOpen"
-    :classicon="isOpen ? 'i-lucide:circle-x' : 'i-carbon:folder'"
+    :classicon="isOpen ? 'i-lucide:circle-x' : 'i-lucide:folder'"
   />
 
   <!-- Backdrop -->
