@@ -166,7 +166,7 @@ function getStatusIcon(status: string): string {
     case 'completed':
       return 'i-lucide:check-filled'
     case 'failed':
-      return 'i-lucide:circle-x-filled'
+      return 'i-lucide:x-filled'
     default:
       return 'i-lucide:circle-question-mark'
   }
@@ -292,7 +292,7 @@ watch(isExecuting, executing => {
             :aria-label="$t('operations.queue.remove_operation')"
             @click="removeOperation(op.id)"
           >
-            <span class="i-lucide:circle-x w-4 h-4" aria-hidden="true" />
+            <span class="i-lucide:x w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </li>
@@ -411,7 +411,7 @@ watch(isExecuting, executing => {
             :class="
               op.status === 'completed'
                 ? 'i-lucide:check-filled text-green-500'
-                : 'i-lucide:circle-x-filled text-red-500'
+                : 'i-lucide:x-filled text-red-500'
             "
             class="w-3.5 h-3.5 shrink-0 mt-0.5"
             aria-hidden="true"
@@ -431,7 +431,7 @@ watch(isExecuting, executing => {
             :aria-label="$t('operations.queue.remove_from_log')"
             @click="removeOperation(op.id)"
           >
-            <span class="i-lucide:circle-x w-3 h-3" aria-hidden="true" />
+            <span class="i-lucide:x w-3 h-3" aria-hidden="true" />
           </button>
         </li>
       </ul>

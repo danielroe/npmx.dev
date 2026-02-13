@@ -1652,7 +1652,7 @@ watch(selectedMetric, value => {
             </template>
 
             <template #menuIcon="{ isOpen }">
-              <span v-if="isOpen" class="i-lucide:circle-x w-6 h-6" aria-hidden="true" />
+              <span v-if="isOpen" class="i-lucide:x w-6 h-6" aria-hidden="true" />
               <span v-else class="i-lucide:ellipsis-vertical w-6 h-6" aria-hidden="true" />
             </template>
             <template #optionCsv>
@@ -1667,7 +1667,7 @@ watch(selectedMetric, value => {
 
             <template #annotator-action-close>
               <span
-                class="i-lucide:circle-x w-6 h-6 text-fg-subtle"
+                class="i-lucide:x w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />

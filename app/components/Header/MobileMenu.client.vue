@@ -99,7 +99,7 @@ onUnmounted(deactivate)
                 :aria-label="$t('common.close')"
                 @click="closeMenu"
               >
-                <span class="i-lucide:circle-x w-5 h-5" aria-hidden="true" />
+                <span class="i-lucide:x w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 

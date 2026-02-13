@@ -229,7 +229,7 @@ watch(
           :aria-label="$t('package.access.revoke_access', { name: collab.displayName })"
           @click="handleRevokeAccess(collab.name)"
         >
-          <span class="i-lucide:circle-x w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-lucide:x w-3.5 h-3.5" aria-hidden="true" />
         </button>
         <span v-else class="text-xs text-fg-subtle"> {{ $t('package.access.owner') }} </span>
       </li>
@@ -289,7 +289,7 @@ watch(
             :aria-label="$t('package.access.cancel_grant')"
             @click="showGrantAccess = false"
           >
-            <span class="i-lucide:circle-x w-4 h-4" aria-hidden="true" />
+            <span class="i-lucide:x w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </form>

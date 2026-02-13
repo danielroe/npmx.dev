@@ -72,11 +72,7 @@ const typesHref = computed(() => {
           :variant="hasTypes && !isLoading ? 'default' : 'ghost'"
           :tabindex="0"
           :classicon="
-            isLoading
-              ? 'i-svg-spinners:ring-resize '
-              : hasTypes
-                ? 'i-lucide:check'
-                : 'i-lucide:circle-x'
+            isLoading ? 'i-svg-spinners:ring-resize ' : hasTypes ? 'i-lucide:check' : 'i-lucide:x'
           "
         >
           {{ $t('package.metrics.types_label') }}
@@ -94,11 +90,7 @@ const typesHref = computed(() => {
           tabindex="0"
           :variant="hasEsm && !isLoading ? 'default' : 'ghost'"
           :classicon="
-            isLoading
-              ? 'i-svg-spinners:ring-resize '
-              : hasEsm
-                ? 'i-lucide:check'
-                : 'i-lucide:circle-x'
+            isLoading ? 'i-svg-spinners:ring-resize ' : hasEsm ? 'i-lucide:check' : 'i-lucide:x'
           "
         >
           ESM

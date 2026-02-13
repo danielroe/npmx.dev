@@ -430,7 +430,7 @@ watch(lastExecutionTime, () => {
                 :aria-label="$t('org.teams.remove_user', { user })"
                 @click="handleRemoveUser(teamName, user)"
               >
-                <span class="i-lucide:circle-x w-3.5 h-3.5" aria-hidden="true" />
+                <span class="i-lucide:x w-3.5 h-3.5" aria-hidden="true" />
               </button>
             </li>
           </ul>
@@ -467,7 +467,7 @@ watch(lastExecutionTime, () => {
                 :aria-label="$t('org.teams.cancel_add_user')"
                 @click="showAddUserFor = null"
               >
-                <span class="i-lucide:circle-x w-4 h-4" aria-hidden="true" />
+                <span class="i-lucide:x w-4 h-4" aria-hidden="true" />
               </button>
             </form>
           </div>
@@ -525,7 +525,7 @@ watch(lastExecutionTime, () => {
             :aria-label="$t('org.teams.cancel_create')"
             @click="showCreateTeam = false"
           >
-            <span class="i-lucide:circle-x w-4 h-4" aria-hidden="true" />
+            <span class="i-lucide:x w-4 h-4" aria-hidden="true" />
           </button>
         </form>
       </div>

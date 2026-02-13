@@ -57,7 +57,7 @@ defineExpose({
           type="button"
           :aria-label="$t('common.close')"
           @click="handleModalClose"
-          classicon="i-lucide:circle-x"
+          classicon="i-lucide:x"
         />
       </div>
       <!-- Modal body content -->
