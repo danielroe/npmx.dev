@@ -357,22 +357,6 @@ Query parameters work as expected:
 <NuxtLink :to="{ name: 'compare', query: { packages: pkg.name } }">Compare</NuxtLink>
 ```
 
-### Cursor and navigation
-
-We prefer consistency in user everyday experience
-
-npmx uses `cursor-pointer` only for links. For all other elements, including buttons, use the default cursor (_or other appropriate cursors to show state_).
-
-**What counts as a link**
-
-A link is any element that change or show meaningful content:
-
-- **Not meaningful content:** burger menu, "likes" button - the user does not get substantive information from them.
-- **Meaningful content:** a dialog with a chart, auth button, tabs with new data—they convey new or important information.
-
-> [!IMPORTANT]
-> Always prefer implementing such changes as real links so they can be opened in a new tab, shared or reloaded, and so the same content is available at a stable URL.
-
 #### Package routes
 
 For package links, use the auto-imported `packageRoute()` utility from `app/utils/router.ts`. It handles scoped/unscoped packages and optional versions:
@@ -408,6 +392,22 @@ For package links, use the auto-imported `packageRoute()` utility from `app/util
 | `org`             | `/org/:org`                       | `org`                     |
 | `~username`       | `/~:username`                     | `username`                |
 | `~username-orgs`  | `/~:username/orgs`                | `username`                |
+
+### Cursor and navigation
+
+We prefer consistency in user everyday experience
+
+npmx uses `cursor-pointer` only for links. For all other elements, including buttons, use the default cursor (_or other appropriate cursors to show state_).
+
+**What counts as a link**
+
+A link is any element that change or show meaningful content:
+
+- **Not meaningful content:** burger menu, "likes" button - the user does not get substantive information from them.
+- **Meaningful content:** a dialog with a chart, auth button, tabs with new data—they convey new or important information.
+
+> [!IMPORTANT]
+> Always prefer implementing such changes as real links so they can be opened in a new tab, shared or reloaded, and so the same content is available at a stable URL.
 
 ## RTL Support
 
