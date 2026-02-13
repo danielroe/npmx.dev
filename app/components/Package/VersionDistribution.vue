@@ -5,7 +5,6 @@ import type {
   VueUiXyDatasetBarItem,
   VueUiXyDatapointItem,
   MinimalCustomFormatParams,
-  VueUiXyConfig,
 } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
