@@ -17,12 +17,11 @@ const route = useRoute()
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
 
-const { t } = useI18n()
 const modalTitle = computed(() => {
   const facet = route.query.facet as string | undefined
-  if (facet === 'likes') return t('package.trends.items.likes')
-  if (facet === 'contributors') return t('package.trends.items.contributors')
-  return t('package.trends.items.downloads')
+  if (facet === 'likes') return $t('package.trends.items.likes')
+  if (facet === 'contributors') return $t('package.trends.items.contributors')
+  return $t('package.trends.items.downloads')
 })
 
 const isChartModalOpen = shallowRef<boolean>(false)
