@@ -155,7 +155,7 @@ function handleClick(event: MouseEvent) {
  &::after {
    display: none;
  }
-  
+
 .readme :deep(a[href^='#']::after) {
   /* I don't know what kind of sorcery this is, but it ensures this icon can't wrap to a new line on its own. */
   content: '__';
