@@ -113,7 +113,9 @@ function simulateConnect() {
 }
 
 const mockUserLocalSettings = ref({
-  sidebarCollapsedSections: [],
+  sidebar: {
+    collapsed: [],
+  },
   connector: {
     autoOpenURL: false,
   },

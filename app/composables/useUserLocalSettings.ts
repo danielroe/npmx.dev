@@ -1,5 +1,7 @@
 interface UserLocalSettings {
-  sidebarCollapsedSections: string[]
+  sidebar: {
+    collapsed: string[]
+  }
   connector: {
     autoOpenURL: boolean
   }
@@ -7,7 +9,9 @@ interface UserLocalSettings {
 
 const STORAGE_KEY = 'npmx-settings'
 const DEFAULT_USER_LOCAL_SETTINGS: UserLocalSettings = {
-  sidebarCollapsedSections: [],
+  sidebar: {
+    collapsed: [],
+  },
   connector: {
     autoOpenURL: false,
   },

@@ -24,7 +24,7 @@ const isOpen = shallowRef(true)
 
 onPrehydrate(() => {
   const sidebar = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
-  const collapsed: string[] = sidebar?.sidebarCollapsedSections || []
+  const collapsed: string[] = sidebar?.sidebar?.collapsed || []
   for (const id of collapsed) {
     if (!document.documentElement.dataset.collapsed?.split(' ').includes(id)) {
       document.documentElement.dataset.collapsed = (
@@ -47,17 +47,16 @@ onMounted(() => {
 function toggle() {
   isOpen.value = !isOpen.value
 
-  const removed = userLocalSettings.value.sidebarCollapsedSections.filter(c => c !== props.id)
+  const removed = userLocalSettings.value.sidebar.collapsed.filter(c => c !== props.id)
 
   if (isOpen.value) {
-    userLocalSettings.value.sidebarCollapsedSections = removed
+    userLocalSettings.value.sidebar.collapsed = removed
   } else {
     removed.push(props.id)
-    userLocalSettings.value.sidebarCollapsedSections = removed
+    userLocalSettings.value.sidebar.collapsed = removed
   }
 
-  document.documentElement.dataset.collapsed =
-    userLocalSettings.value.sidebarCollapsedSections.join(' ')
+  document.documentElement.dataset.collapsed = userLocalSettings.value.sidebar.collapsed.join(' ')
 }
 
 const ariaLabel = computed(() => {
