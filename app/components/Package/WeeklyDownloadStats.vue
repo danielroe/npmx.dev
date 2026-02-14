@@ -22,7 +22,7 @@ const modalTitle = computed(() => {
   const facet = route.query.facet as string | undefined
   if (facet === 'likes') return t('package.trends.items.likes')
   if (facet === 'contributors') return t('package.trends.items.contributors')
-  return t('package.downloads.modal_title')
+  return t('package.trends.items.downloads')
 })
 
 const isChartModalOpen = shallowRef<boolean>(false)
