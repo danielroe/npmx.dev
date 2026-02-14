@@ -5,6 +5,9 @@ interface UseScrollToTopOptions {
   duration?: number
 }
 
+// Easing function for the scroll animation
+const easeOutQuad = (t: number) => t * (2 - t)
+
 /**
  * Scroll to the top of the page with a smooth animation.
  * @param options - Configuration options for the scroll animation.
@@ -16,24 +19,11 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
   // Check if prefers-reduced-motion is enabled
   const preferReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
-  // Easing function for the scroll animation
-  const easeOutQuad = (t: number) => t * (2 - t)
-
   /**
    * Active requestAnimationFrame id for the current auto-scroll animation
    */
   let rafId: number | null = null
-  /**
-   * Disposer for temporary interaction listeners attached during auto-scroll
-   */
-  let stopInteractionListeners: (() => void) | null = null
-
-  function cleanupInteractionListeners() {
-    if (stopInteractionListeners) {
-      stopInteractionListeners()
-      stopInteractionListeners = null
-    }
-  }
+  const isScrolling = ref(false)
 
   /**
    * Stop any in-flight auto-scroll before starting a new one.
@@ -43,8 +33,21 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
       cancelAnimationFrame(rafId)
       rafId = null
     }
+    isScrolling.value = false
+  }
 
-    cleanupInteractionListeners()
+  // Cancel scroll on user interaction
+  const onInteraction = () => {
+    if (isScrolling.value) {
+      cancel()
+    }
+  }
+
+  if (import.meta.client) {
+    const listenerOptions = { passive: true }
+    useEventListener(window, 'wheel', onInteraction, listenerOptions)
+    useEventListener(window, 'touchstart', onInteraction, listenerOptions)
+    useEventListener(window, 'mousedown', onInteraction, listenerOptions)
   }
 
   function scrollToTop() {
@@ -58,16 +61,10 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
     const start = window.scrollY
     if (start <= 0) return
 
+    isScrolling.value = true
+
     const startTime = performance.now()
     const change = -start
-
-    const cleanup = [
-      useEventListener(window, 'wheel', cancel, { passive: true }),
-      useEventListener(window, 'touchstart', cancel, { passive: true }),
-      useEventListener(window, 'mousedown', cancel, { passive: true }),
-    ]
-
-    stopInteractionListeners = () => cleanup.forEach(stop => stop())
 
     // Start the frame-by-frame scroll animation.
     function animate() {
@@ -77,7 +74,7 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
 
       window.scrollTo({ top: y })
 
-      if (t < 1) {
+      if (t < 1 && isScrolling.value) {
         rafId = requestAnimationFrame(animate)
       } else {
         cancel()
@@ -87,7 +84,7 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
     rafId = requestAnimationFrame(animate)
   }
 
-  onBeforeUnmount(cancel)
+  tryOnScopeDispose(cancel)
 
   return {
     scrollToTop,

@@ -10,8 +10,12 @@ const SCROLL_TO_TOP_DURATION = 500
 
 const isMounted = useMounted()
 const isTouchDeviceClient = shallowRef(false)
-const isVisible = shallowRef(false)
 const scrollThreshold = 300
+const { y: scrollTop } = useScroll(window)
+const isVisible = computed(() => {
+  if (supportsScrollStateQueries.value) return false
+  return scrollTop.value > scrollThreshold
+})
 const { isSupported: supportsScrollStateQueries } = useCssSupports(
   'container-type',
   'scroll-state',
@@ -19,20 +23,10 @@ const { isSupported: supportsScrollStateQueries } = useCssSupports(
 )
 const shouldShowButton = computed(() => isActive.value && isTouchDeviceClient.value)
 
-function onScroll() {
-  if (supportsScrollStateQueries.value) {
-    return
-  }
-  isVisible.value = window.scrollY > scrollThreshold
-}
-
 const { scrollToTop } = useScrollToTop({ duration: SCROLL_TO_TOP_DURATION })
-
-useEventListener('scroll', onScroll, { passive: true })
 
 onMounted(() => {
   isTouchDeviceClient.value = isTouchDevice()
-  onScroll()
 })
 </script>
 
@@ -43,7 +37,7 @@ onMounted(() => {
     type="button"
     class="scroll-to-top-css fixed bottom-4 inset-ie-4 z-50 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors active:scale-95"
     :aria-label="$t('common.scroll_to_top')"
-    @click="scrollToTop()"
+    @click="() => scrollToTop()"
   >
     <span class="i-lucide:arrow-up w-5 h-5" aria-hidden="true" />
   </button>
@@ -63,7 +57,7 @@ onMounted(() => {
       type="button"
       class="fixed bottom-4 inset-ie-4 z-50 w-12 h-12 bg-bg-elevated border border-border rounded-full shadow-lg flex items-center justify-center text-fg-muted hover:text-fg transition-colors active:scale-95"
       :aria-label="$t('common.scroll_to_top')"
-      @click="scrollToTop()"
+      @click="() => scrollToTop()"
     >
       <span class="i-lucide:arrow-up w-5 h-5" aria-hidden="true" />
     </button>
