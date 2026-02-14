@@ -362,9 +362,11 @@
       "y_axis_label": "{facet} {granularity}",
       "facet": "Mesure",
       "title": "Tendances",
+      "contributors_skip": "Pas affiché(s) dans les Contributeurs (pas de dépôt GitHub) :",
       "items": {
         "downloads": "Téléchargements",
-        "likes": "J'aime"
+        "likes": "J'aime",
+        "contributors": "Contributeurs"
       }
     },
     "downloads": {
