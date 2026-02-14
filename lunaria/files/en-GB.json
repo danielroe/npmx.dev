@@ -1144,7 +1144,7 @@
     "complete_text": "This translation is complete, amazing job!",
     "done_text": "done",
     "missing_text": "missing",
-    "missing_keys": "There is no missing translatios | Missing translation | Missing translations",
+    "missing_keys": "There is no missing translations | Missing translation | Missing translations",
     "progress_label": "Progress status for {locale}",
     "table": {
       "file": "File",
