@@ -1136,7 +1136,7 @@
     "welcome": "If you're interested in helping us to translate {npmx} into one of the languages listed below, you've come to the right place! This auto-updating page always lists all the content that could use your help right now.",
     "p1": "We use {lang} as the default language, with a total of {count}. If you'd like to help add translations, locate the language in {bylang} and expand the details. If you only want to fix existing incorrect messages, find the language in {byfile}.",
     "p1_lang": "American English (en-US)",
-    "p1_count": "X|X|{count} messages",
+    "p1_count": "0 messages | 1 message |{count} messages",
     "p2": "Before starting, please read our {guide} to learn about our translation process and how you can get involved.",
     "guide": "localization (i18n) guide",
     "by_locale": "Translation progress by locale",
@@ -1145,7 +1145,7 @@
     "complete_text": "This translation is complete, amazing job!",
     "done_text": "done",
     "missing_text": "missing",
-    "missing_keys": "X | Missing translation | Missing translations",
+    "missing_keys": "There is no missing translatios | Missing translation | Missing translations",
     "progress_label": "Progress status for {locale}",
     "table": {
       "file": "File",

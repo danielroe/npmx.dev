@@ -1134,7 +1134,7 @@
     "welcome": "Si estás interesado en ayudarnos a traducir {npmx} a uno de los idiomas listados a continuación, ¡has llegado al lugar indicado! Esta página se actualiza automáticamente y muestra todo el contenido que necesita tu ayuda ahora mismo.",
     "p1": "Usamos como idioma por defecto el {lang} con un total de {count}. Si quieres ayudar a incluir traducciones, localiza el idioma en {bylang} y expande el detalle, pero si sólo quieres corregir mensajes existientes erróneos, localiza el idioma en {byfile}.",
     "p1_lang": "Inglés Americano (en-US)",
-    "p1_count": "X|X|{count} mensajes",
+    "p1_count": "0 mensajes | 1 mensaje | {count} mensajes",
     "p2": "Antes de empezar, por favor lee nuestra {guide} para conocer nuestro proceso de traducción y cómo puedes participar.",
     "guide": "guía de internacionalización (i18n)",
     "by_locale": "Progreso de la traducción por idioma",
@@ -1143,7 +1143,7 @@
     "complete_text": "¡La traducción está completa, un trabajo increíble!",
     "done_text": "traducidas",
     "missing_text": "sin traducir",
-    "missing_keys": "X | Mensaje sin traducir | Mensajes sin traducir",
+    "missing_keys": "No hay mensajes sin traducir | Mensaje sin traducir | Mensajes sin traducir",
     "progress_label": "Progreso de traducción para {locale}",
     "table": {
       "file": "Archivo",
