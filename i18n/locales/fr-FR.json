@@ -1130,40 +1130,5 @@
       "p1": "Si vous rencontrez un problème d'accessibilité sur {app}, veuillez nous le faire savoir en ouvrant une issue sur notre {link}. Nous prenons ces rapports au sérieux et ferons de notre mieux pour les régler.",
       "link": "dépôt GitHub"
     }
-  },
-  "vacations": {
-    "title": "en vacances",
-    "meta_description": "L'équipe npmx recharge ses batteries. Le Discord rouvre dans une semaine.",
-    "heading": "en pause",
-    "subtitle": "nous avons construit npmx à une vitesse qui nous a coûté {some} beaucoup de sommeil. nous ne voulons pas que ça soit la norme ! donc nous prenons une semaine de vacances. ensemble.",
-    "illustration_alt": "une seule ligne de superbes icônes",
-    "poke_log": "Rallumer le feu de camp",
-    "what": {
-      "title": "que se passe-t-il",
-      "p1": "le discord est fermé du {dates}.",
-      "dates": "14 au 21 février",
-      "p2": "tous les liens d'invitation sont désactivés et les canaux sont verrouillés – sauf {garden}, qui reste ouvert poux ceux qui veulent discuter.",
-      "garden": "#garden"
-    },
-    "meantime": {
-      "title": "pendant ce temps",
-      "p1": "{site} et {repo} restent ouverts – creusez le code, créer des issues, ouvrez des PRs. on s'en occupera quand on sera de retour. ne vous attendez juste pas à une revue rapide. on sera prêt d'un feu de camp chaleureux.",
-      "repo_link": "son dépôt"
-    },
-    "return": {
-      "title": "à bientôt",
-      "p1": "on sera de retour en forme et prêts pour la dernière ligne droite jusqu'au 3 Mars. {social} pour suivre les mises à jour.",
-      "social_link": "suivez-nous sur Bluesky",
-      "add_to_calendar": "me rappeler quand le Discord rouvre"
-    },
-    "stats": {
-      "contributors": "Contributeurs",
-      "commits": "Commits",
-      "pr": "PRs Fusionnées",
-      "subtitle": {
-        "some": "à quelques-uns",
-        "all": "à tous"
-      }
-    }
   }
 }
