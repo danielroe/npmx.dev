@@ -49,7 +49,7 @@ describe('usePreferencesProvider', () => {
     })
   })
 
-  it('handles array merging by replacement (preventing duplicates)', () => {
+  it('handles array merging by replacement', () => {
     mountWithSetup(() => {
       const defaults = { cols: ['name', 'version', 'date'] }
       const stored = { cols: ['name', 'version'] }
