@@ -13,10 +13,9 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
-    '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    isStorybook ? undefined : '@nuxtjs/color-mode',
+    ...(isStorybook ? [] : ['@vite-pwa/nuxt', '@nuxtjs/color-mode']),
   ],
 
   $test: {
