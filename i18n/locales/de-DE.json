@@ -362,9 +362,11 @@
       "y_axis_label": "{granularity} {facet}",
       "facet": "Facette",
       "title": "Trends",
+      "contributors_skip": "Nicht angezeigt bei Mitwirkende (hat kein GitHub-Repository): | Nicht angezeigt bei Mitwirkende (haben kein GitHub-Repository):",
       "items": {
         "downloads": "Downloads",
-        "likes": "Likes"
+        "likes": "Likes",
+        "contributors": "Mitwirkende"
       }
     },
     "downloads": {
