@@ -23,12 +23,7 @@ function handleModalClose() {
  * This is used by consumers that need to run layout-sensitive logic (for example
  * dispatching a resize) only after the modal is fully displayed.
  */
-function onDialogTransitionEnd(event: TransitionEvent) {
-  const el = dialogRef.value
-  if (!el) return
-  if (!el.open) return
-  if (event.target !== el) return
-  if (event.propertyName !== 'opacity') return
+function onDialogTransitionEnd() {
   emit('transitioned')
 }
 
