@@ -3,10 +3,12 @@ import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
+import type { RepoRef } from '#shared/utils/git-providers'
 
 const props = defineProps<{
   packageName: string
   createdIso: string | null
+  repoRef?: RepoRef | null | undefined
 }>()
 
 const router = useRouter()
@@ -256,7 +258,7 @@ const config = computed(() => {
           @click="openChartModal"
           class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
           :title="$t('package.downloads.analyze')"
-          classicon="i-carbon:data-analytics"
+          classicon="i-lucide:chart-line"
         >
           <span class="sr-only">{{ $t('package.downloads.analyze') }}</span>
         </ButtonBase>
@@ -315,6 +317,7 @@ const config = computed(() => {
         :weeklyDownloads="weeklyDownloads"
         :inModal="true"
         :packageName="props.packageName"
+        :repoRef="props.repoRef"
         :createdIso="createdIso"
         permalink
         show-facet-selector

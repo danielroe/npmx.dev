@@ -41,6 +41,7 @@ This focus helps guide our project decisions as a community and what we choose t
   - [Naming conventions](#naming-conventions)
   - [Vue components](#vue-components)
   - [Internal linking](#internal-linking)
+  - [Cursor and navigation](#cursor-and-navigation)
 - [RTL Support](#rtl-support)
 - [Localization (i18n)](#localization-i18n)
   - [Approach](#approach)
@@ -392,6 +393,18 @@ For package links, use the auto-imported `packageRoute()` utility from `app/util
 | `~username`       | `/~:username`                     | `username`                |
 | `~username-orgs`  | `/~:username/orgs`                | `username`                |
 
+### Cursor and navigation
+
+**npmx** uses `cursor: pointer` only for links to match users’ everyday experience. For all other interactive elements, including buttons, use the default cursor (_or another appropriate cursor to indicate state_).
+
+> [!NOTE]
+> A link is any element that leads to another content (_go to another page, authorize_)
+> A button is any element that operates an action (_show tooltip, open menu, "like" package, open dropdown_)
+> If you're unsure which element to use - feel free to ask question in the issue or on discord
+
+> [!IMPORTANT]
+> Always Prefer implementing navigation as real links whenever possible. This ensures they can be opened in a new tab, shared or reloaded, and so the same content is available at a stable URL
+
 ## RTL Support
 
 We support `right-to-left` languages, we need to make sure that the UI is working correctly in both directions.
@@ -416,7 +429,7 @@ npmx.dev uses [@nuxtjs/i18n](https://i18n.nuxtjs.org/) for internationalization.
 - All user-facing strings should use translation keys via `$t()` in templates and script
 - Translation files live in [`i18n/locales/`](i18n/locales) (e.g., `en-US.json`)
 - We use the `no_prefix` strategy (no `/en-US/` or `/fr-FR/` in URLs)
-- Locale preference is stored in cookies and respected on subsequent visits
+- Locale preference is stored in `localStorage` and respected on subsequent visits
 
 ### i18n commands
 
