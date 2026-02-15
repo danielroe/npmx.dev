@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const route = useRoute()
-const { settings } = useSettings()
+const { localSettings } = useUserLocalSettings()
 
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
@@ -98,10 +98,10 @@ const { colors } = useCssVariables(
 )
 
 function toggleSparklineAnimation() {
-  settings.value.sidebar.animateSparkline = !settings.value.sidebar.animateSparkline
+  localSettings.value.sidebar.animateSparkline = !localSettings.value.sidebar.animateSparkline
 }
 
-const hasSparklineAnimation = computed(() => settings.value.sidebar.animateSparkline)
+const hasSparklineAnimation = computed(() => localSettings.value.sidebar.animateSparkline)
 
 const isDarkMode = computed(() => resolvedMode.value === 'dark')
 
