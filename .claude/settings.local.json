@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(npm run i18n:check:fix:*)",
-      "Bash(pnpm oxlint:*)"
-    ]
-  }
-}
