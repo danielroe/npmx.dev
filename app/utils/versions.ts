@@ -29,7 +29,7 @@ export interface VersionLink {
 }
 
 const LAST_VERSION_IN_RANGE_REGEXP =
-  /([~^<>=]+\s*\d+\.\d+\.\d+(?:-[0-9A-Z-]+(?:\.[0-9A-Z-]+)*)?(?:\+[0-9A-Z-]+(?:\.[0-9A-Z-]+)*)?)\s*$/i
+  /([~^<>=]*\s*\d+\.\d+\.\d+(?:-[0-9A-Z-]+(?:\.[0-9A-Z-]+)*)?(?:\+[0-9A-Z-]+(?:\.[0-9A-Z-]+)*)?)\s*$/i
 
 /**
  * Parse a semver version string into its components
