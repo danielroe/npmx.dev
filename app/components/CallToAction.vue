@@ -27,7 +27,7 @@ const socialLinks = computed(() => [
 ])
 
 function handleCardClick(event: MouseEvent) {
-  if ((event.target as HTMLElement).closest('a')) return
+  if ((event.target as HTMLElement).closest(':any-link')) return
   if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
 
   const selection = window.getSelection()
