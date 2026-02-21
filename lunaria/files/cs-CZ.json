@@ -1066,7 +1066,7 @@
       "li2": "Neshromažďuje osobní identifikátory",
       "li3": "Nesleduje uživatele napříč webovými stránkami",
       "li4": "Všechna data jsou agregována a anonymizována",
-      "p3": "Jediné informace, které jsou shromažďovány, zahrnují: UR stránek, referrer, zemi/region, typ zařízení, prohlížeč a operační systém. Tato data nelze použít k identifikaci jednotlivých uživatelů."
+      "p3": "Jediné informace, které jsou shromažďovány, zahrnují: adresy stránek, referrer, zemi/region, typ zařízení, prohlížeč a operační systém. Tato data nelze použít k identifikaci jednotlivých uživatelů."
     },
     "authenticated": {
       "title": "Ověření uživatelé",
