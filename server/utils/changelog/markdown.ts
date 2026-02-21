@@ -96,7 +96,7 @@ export async function changelogRenderer() {
         toc.push({ text: plainText, id, depth })
       }
 
-      return `<h${semanticLevel} id="${id}" data-level="${depth}">${text}</h${semanticLevel}>\n`
+      return `<h${semanticLevel} id="${id}" data-level="${depth}">${text}  <a class="content-none" href="#${id}"><span class="i-lucide:link size-[1em]" aria-hidden="true"></span></a></h${semanticLevel}>\n`
     }
 
     return {
