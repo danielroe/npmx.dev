@@ -48,6 +48,7 @@ import {
   accessGrant,
   accessRevoke,
   accessListCollaborators,
+  listTeamPackages,
   ownerAdd,
   ownerRemove,
   packageInit,
@@ -674,7 +675,10 @@ export function createConnectorApp(expectedToken: string) {
       throw new HTTPError({ statusCode: 400, message: pkgValidation.error })
     }
 
-    const result = await accessListCollaborators(pkgValidation.data)
+    const pkg = pkgValidation.data
+
+    // Get user collaborators
+    const result = await accessListCollaborators(pkg)
     if (result.exitCode !== 0) {
       return {
         success: false,
@@ -684,6 +688,48 @@ export function createConnectorApp(expectedToken: string) {
 
     try {
       const collaborators = JSON.parse(result.stdout) as Record<string, 'read-only' | 'read-write'>
+
+      // For scoped packages, also fetch team access
+      if (pkg.startsWith('@')) {
+        const orgMatch = pkg.match(/^@([^/]+)\//)
+        if (orgMatch) {
+          const org = orgMatch[1]
+
+          // Get all teams in the org
+          const teamsResult = await teamListTeams(org)
+          if (teamsResult.exitCode === 0) {
+            try {
+              const teams = JSON.parse(teamsResult.stdout) as string[]
+
+              // Check each team's package access
+              await Promise.all(
+                teams.map(async team => {
+                  // Add @ prefix to team name since we expect scoped packages
+                  team = '@' + team
+                  const teamPkgsResult = await listTeamPackages(team)
+                  if (teamPkgsResult.exitCode === 0) {
+                    try {
+                      const teamPkgs = JSON.parse(teamPkgsResult.stdout) as Record<
+                        string,
+                        'read-only' | 'read-write'
+                      >
+                      // If this team has access to the package, add it to collaborators
+                      if (teamPkgs[pkg]) {
+                        collaborators[team] = teamPkgs[pkg]
+                      }
+                    } catch {
+                      // Ignore parse errors for individual teams
+                    }
+                  }
+                }),
+              )
+            } catch {
+              // Ignore team list parse errors, return user collaborators only
+            }
+          }
+        }
+      }
+
       return {
         success: true,
         data: collaborators,
