@@ -322,7 +322,7 @@ describe('VersionSelector', () => {
 
       const versionLink = component.findAll('a').find(a => a.text().includes('1.0.0'))
       expect(versionLink?.attributes('href')).toBe(
-        '/package-code/test-package/v/1.0.0/src/index.ts',
+        '/package-code/test-package/v/1.0.0/src/index.ts/',
       )
     })
   })

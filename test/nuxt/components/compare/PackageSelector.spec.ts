@@ -40,7 +40,7 @@ describe('PackageSelector', () => {
         },
       })
 
-      const link = component.find('a[href="/package/lodash"]')
+      const link = component.find('a[href="/package/lodash/"]')
       expect(link.exists()).toBe(true)
     })
 
