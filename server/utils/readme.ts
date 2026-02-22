@@ -3,8 +3,10 @@ import sanitizeHtml from 'sanitize-html'
 import { hasProtocol } from 'ufo'
 import type { ReadmeResponse, TocItem } from '#shared/types/readme'
 import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
-import { highlightCodeSync } from './shiki'
+import { decodeHtmlEntities } from '#shared/utils/html'
 import { convertToEmoji } from '#shared/utils/emoji'
+
+import { highlightCodeSync } from './shiki'
 
 /**
  * Playground provider configuration
@@ -371,8 +373,8 @@ export async function renderReadmeHtml(
     // (e.g., #install, #dependencies, #versions are used by the package page)
     const id = `user-content-${uniqueSlug}`
 
-    // Collect TOC item with plain text (HTML stripped)
-    const plainText = text.replace(/<[^>]*>/g, '').trim()
+    // Collect TOC item with plain text (HTML stripped, entities decoded)
+    const plainText = decodeHtmlEntities(text.replace(/<[^>]*>/g, '').trim())
     if (plainText) {
       toc.push({ text: plainText, id, depth })
     }
@@ -511,7 +513,7 @@ ${html}
              * provide the text of the element. This will automatically be removed, because there
              * is an allow list for link attributes.
              * */
-            label: attribs['data-title-intermediate'] || provider.name,
+            label: decodeHtmlEntities(attribs['data-title-intermediate'] || provider.name),
           })
         }
 
