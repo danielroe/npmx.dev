@@ -3,18 +3,19 @@ const route = useRoute()
 
 // Pages where scroll-to-top should NOT be shown
 const excludedRoutes = new Set(['index', 'code'])
+const isPackagePage = computed(() => route.path.includes('/package/'))
 
-const isActive = computed(() => !excludedRoutes.has(route.name as string))
+const isActive = computed(() => !excludedRoutes.has(route.name as string) && !isPackagePage.value)
 
 const SCROLL_TO_TOP_DURATION = 500
 
 const isMounted = useMounted()
-const isTouchDeviceClient = shallowRef(false)
-const scrollThreshold = 300
+const { scrollToTop, isTouchDeviceClient } = useScrollToTop({ duration: SCROLL_TO_TOP_DURATION })
+
 const { y: scrollTop } = useScroll(window)
 const isVisible = computed(() => {
   if (supportsScrollStateQueries.value) return false
-  return scrollTop.value > scrollThreshold
+  return scrollTop.value > SCROLL_TO_TOP_THRESHOLD
 })
 const { isSupported: supportsScrollStateQueries } = useCssSupports(
   'container-type',
@@ -22,12 +23,6 @@ const { isSupported: supportsScrollStateQueries } = useCssSupports(
   { ssrValue: false },
 )
 const shouldShowButton = computed(() => isActive.value && isTouchDeviceClient.value)
-
-const { scrollToTop } = useScrollToTop({ duration: SCROLL_TO_TOP_DURATION })
-
-onMounted(() => {
-  isTouchDeviceClient.value = isTouchDevice()
-})
 </script>
 
 <template>

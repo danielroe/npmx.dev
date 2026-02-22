@@ -8,6 +8,8 @@ interface UseScrollToTopOptions {
 // Easing function for the scroll animation
 const easeOutQuad = (t: number) => t * (2 - t)
 
+export const SCROLL_TO_TOP_THRESHOLD = 300
+
 /**
  * Scroll to the top of the page with a smooth animation.
  * @param options - Configuration options for the scroll animation.
@@ -86,8 +88,14 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
 
   tryOnScopeDispose(cancel)
 
+  const isTouchDeviceClient = shallowRef(false)
+  onMounted(() => {
+    isTouchDeviceClient.value = isTouchDevice()
+  })
+
   return {
     scrollToTop,
     cancel,
+    isTouchDeviceClient,
   }
 }

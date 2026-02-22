@@ -250,6 +250,13 @@ const { copied: copiedVersion, copy: copyVersion } = useClipboard({
   copiedDuring: 2000,
 })
 
+const { scrollToTop, isTouchDeviceClient } = useScrollToTop({ duration: 500 })
+
+const { y: scrollY } = useScroll(window)
+const showScrollToTop = computed(
+  () => isTouchDeviceClient.value && scrollY.value > SCROLL_TO_TOP_THRESHOLD,
+)
+
 // Fetch dependency analysis (lazy, client-side)
 // This is the same composable used by PackageVulnerabilityTree and PackageDeprecatedTree
 const { data: vulnTree, status: vulnTreeStatus } = useDependencyAnalysis(
@@ -785,8 +792,9 @@ const showSkeleton = shallowRef(false)
               :to="docsLink"
               aria-keyshortcuts="d"
               classicon="i-lucide:file-text"
+              :title="$t('package.links.docs')"
             >
-              {{ $t('package.links.docs') }}
+              <span class="max-sm:sr-only">{{ $t('package.links.docs') }}</span>
             </LinkBase>
             <LinkBase
               v-if="codeLink"
@@ -794,17 +802,27 @@ const showSkeleton = shallowRef(false)
               :to="codeLink"
               aria-keyshortcuts="."
               classicon="i-lucide:code"
+              :title="$t('package.links.code')"
             >
-              {{ $t('package.links.code') }}
+              <span class="max-sm:sr-only">{{ $t('package.links.code') }}</span>
             </LinkBase>
             <LinkBase
               variant="button-secondary"
               :to="{ name: 'compare', query: { packages: pkg.name } }"
               aria-keyshortcuts="c"
               classicon="i-lucide:git-compare"
+              :title="$t('package.links.compare')"
             >
-              {{ $t('package.links.compare') }}
+              <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
             </LinkBase>
+            <ButtonBase
+              v-if="showScrollToTop"
+              variant="secondary"
+              :title="$t('common.scroll_to_top')"
+              :aria-label="$t('common.scroll_to_top')"
+              @click="() => scrollToTop()"
+              classicon="i-lucide:arrow-up"
+            />
           </ButtonGroup>
 
           <!-- Package metrics -->
