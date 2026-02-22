@@ -174,8 +174,21 @@ const ALLOWED_ATTR: Record<string, string[]> = {
   'p': ['align'],
 }
 
-// GitHub-style callout types
-// Format: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
+/**
+ * Strip all HTML tags from a string, looping until stable to prevent
+ * incomplete sanitization from nested/interleaved tags
+ * (e.g. `<scr<script>ipt>` → `<script>` after one pass).
+ */
+function stripHtmlTags(text: string): string {
+  const tagPattern = /<[^>]*>/g
+  let result = text
+  let previous: string
+  do {
+    previous = result
+    result = result.replace(tagPattern, '')
+  } while (result !== previous)
+  return result
+}
 
 /**
  * Generate a GitHub-style slug from heading text.
@@ -186,8 +199,7 @@ const ALLOWED_ATTR: Record<string, string[]> = {
  * - Collapse multiple hyphens
  */
 function slugify(text: string): string {
-  return text
-    .replace(/<[^>]*>/g, '') // Strip HTML tags
+  return stripHtmlTags(text)
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-') // Spaces to hyphens
@@ -374,7 +386,7 @@ export async function renderReadmeHtml(
     const id = `user-content-${uniqueSlug}`
 
     // Collect TOC item with plain text (HTML stripped, entities decoded)
-    const plainText = decodeHtmlEntities(text.replace(/<[^>]*>/g, '').trim())
+    const plainText = decodeHtmlEntities(stripHtmlTags(text).trim())
     if (plainText) {
       toc.push({ text: plainText, id, depth })
     }
@@ -404,11 +416,11 @@ ${html}
     return `<img src="${resolvedHref}"${altAttr}${titleAttr}>`
   }
 
-  // // Resolve link URLs, add security attributes, and collect playground links
+  // Resolve link URLs, add security attributes, and collect playground links
   renderer.link = function ({ href, title, tokens }: Tokens.Link) {
     const text = this.parser.parseInline(tokens)
     const titleAttr = title ? ` title="${title}"` : ''
-    let plainText = text.replace(/<[^>]*>/g, '').trim()
+    let plainText = stripHtmlTags(text).trim()
 
     // If plain text is empty, check if we have an image with alt text
     if (!plainText && tokens.length === 1 && tokens[0]?.type === 'image') {
