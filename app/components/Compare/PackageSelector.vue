@@ -306,8 +306,9 @@ function handleFocus() {
             <span
               v-if="result.description"
               class="text-xs text-fg-muted truncate mt-0.5 w-full block"
-              v-html="result.description"
-            />
+            >
+              {{ decodeHtmlEntities(result.description) }}
+            </span>
           </ButtonBase>
         </div>
       </Transition>
