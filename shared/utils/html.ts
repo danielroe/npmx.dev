@@ -5,7 +5,7 @@ const htmlEntities: Record<string, string> = {
   '&quot;': '"',
   '&#39;': "'",
   '&apos;': "'",
-  '&nbsp;': ' ',
+  '&nbsp;': '\u00A0',
 }
 
 export function decodeHtmlEntities(text: string): string {
