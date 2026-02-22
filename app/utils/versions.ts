@@ -221,7 +221,7 @@ export function filterVersions(versions: string[], range: string): Set<string> {
  * a version object with href and title. It's needed to get a single version
  * for valid URL if there is a range version, union version or combination of both
  * e.g. (href), "^1.0.0" -> "^1.0.0",
- *              ">=1.0.0 <= 2.0.0" -> "2.0.0"
+ *              ">=1.0.0 <= 2.0.0" -> "<=2.0.0"
  *              "1.0.0 || 2.0.0" -> "2.0.0"
  *
  * @param version - A semver version, might be a range, union, etc
