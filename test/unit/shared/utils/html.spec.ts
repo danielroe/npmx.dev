@@ -9,7 +9,7 @@ describe('decodeHtmlEntities', () => {
     ['&quot;', '"'],
     ['&#39;', "'"],
     ['&apos;', "'"],
-    ['&nbsp;', ' '],
+    ['&nbsp;', '\u00A0'],
   ] as const)('%s → %s', (input, expected) => {
     expect(decodeHtmlEntities(input)).toBe(expected)
   })
