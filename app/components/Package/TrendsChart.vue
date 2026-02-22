@@ -201,14 +201,10 @@ function formatXyDataset(
   dataset: EvolutionData,
   seriesName: string,
 ): { dataset: VueUiXyDatasetItem[] | null; dates: number[] } {
-  const baseColor = accent.value
-  const lightColor = isDarkMode.value && baseColor ? lightenOklch(baseColor, 0.618) : undefined
+  const lightColor = isDarkMode.value ? lightenOklch(accent.value, 0.618) : undefined
 
   // Subtle path gradient applied in dark mode only
-  const temperatureColors =
-    isDarkMode.value && typeof baseColor === 'string' && typeof lightColor === 'string'
-      ? [lightColor, baseColor]
-      : undefined
+  const temperatureColors = lightColor ? [lightColor, accent.value] : undefined
 
   const datasetItem: VueUiXyDatasetItem = {
     name: seriesName,
