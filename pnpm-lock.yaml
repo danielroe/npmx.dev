@@ -51,8 +51,8 @@ importers:
         specifier: 11.2.8
         version: 11.2.8
       '@lunariajs/core':
-        specifier: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3
-        version: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3
+        specifier: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935
+        version: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935
       '@napi-rs/canvas':
         specifier: 0.1.92
         version: 0.1.92
@@ -1862,8 +1862,8 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@lunariajs/core@https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3':
-    resolution: {tarball: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3}
+  '@lunariajs/core@https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935':
+    resolution: {tarball: https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935}
     version: 0.1.1
     engines: {node: '>=18.17.0'}
 
@@ -11495,7 +11495,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@lunariajs/core@https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3':
+  '@lunariajs/core@https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935':
     dependencies:
       consola: 3.4.2
       jiti: 2.3.3
