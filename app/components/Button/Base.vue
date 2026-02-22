@@ -1,10 +1,5 @@
 <script setup lang="ts">
-type StartIcon =
-  | `i-carbon:${string}`
-  | `i-lucide:${string}`
-  | `i-simple-icons:${string}`
-  | `i-svg-spinners:${string}`
-  | `i-custom:${string}`
+import type { IconClass } from '~/types'
 
 const props = withDefaults(
   defineProps<{
@@ -15,7 +10,7 @@ const props = withDefaults(
     ariaKeyshortcuts?: string
     block?: boolean
 
-    classicon?: StartIcon
+    classicon?: IconClass
   }>(),
   {
     type: 'button',
