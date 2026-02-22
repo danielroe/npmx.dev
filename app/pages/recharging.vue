@@ -57,48 +57,6 @@ const icons = [
   'i-lucide:star',
   'i-lucide:moon',
 ] as const
-
-// --- .ics calendar reminder ---
-
-// Format as UTC for the .ics file
-const fmt = (d: Date) =>
-  d
-    .toISOString()
-    .replace(/[-:]/g, '')
-    .replace(/\.\d{3}/, '')
-
-// Pick a random daytime hour (9–17) in the user's local timezone on Feb 22
-// so reminders are staggered and people don't all flood in at once.
-function downloadIcs() {
-  const hour = 9 + Math.floor(Math.random() * 9) // 9..17
-  const start = new Date(2026, 1, 22, hour, 0, 0) // month is 0-indexed
-  const end = new Date(2026, 1, 22, hour + 1, 0, 0)
-
-  const uid = `npmx-vacations-${start.getTime()}@npmx.dev`
-
-  const ics = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//npmx//recharging//EN',
-    'BEGIN:VEVENT',
-    `DTSTART:${fmt(start)}`,
-    `DTEND:${fmt(end)}`,
-    `SUMMARY:npmx Discord is back!`,
-    `DESCRIPTION:The npmx team is back from vacation. Time to rejoin! https://chat.npmx.dev`,
-    'STATUS:CONFIRMED',
-    `UID:${uid}`,
-    'END:VEVENT',
-    'END:VCALENDAR',
-  ].join('\r\n')
-
-  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'npmx-discord-reminder.ics'
-  a.click()
-  URL.revokeObjectURL(url)
-}
 </script>
 
 <template>
