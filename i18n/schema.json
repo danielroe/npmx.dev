@@ -1117,12 +1117,6 @@
             "title": {
               "type": "string"
             },
-            "modal_title": {
-              "type": "string"
-            },
-            "analyze": {
-              "type": "string"
-            },
             "community_distribution": {
               "type": "string"
             }
@@ -1880,6 +1874,9 @@
               "type": "string"
             },
             "taken": {
+              "type": "string"
+            },
+            "missing_permission": {
               "type": "string"
             },
             "similar_warning": {
@@ -3464,9 +3461,6 @@
               "type": "string"
             },
             "social_link": {
-              "type": "string"
-            },
-            "add_to_calendar": {
               "type": "string"
             }
           },

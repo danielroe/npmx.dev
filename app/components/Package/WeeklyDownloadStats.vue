@@ -17,6 +17,13 @@ const route = useRoute()
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
 
+const modalTitle = computed(() => {
+  const facet = route.query.facet as string | undefined
+  if (facet === 'likes') return $t('package.trends.items.likes')
+  if (facet === 'contributors') return $t('package.trends.items.contributors')
+  return $t('package.trends.items.downloads')
+})
+
 const isChartModalOpen = shallowRef<boolean>(false)
 
 function handleModalClose() {
@@ -257,10 +264,10 @@ const config = computed(() => {
           type="button"
           @click="openChartModal"
           class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
-          :title="$t('package.downloads.analyze')"
+          :title="$t('package.trends.title')"
           classicon="i-lucide:chart-line"
         >
-          <span class="sr-only">{{ $t('package.downloads.analyze') }}</span>
+          <span class="sr-only">{{ $t('package.trends.title') }}</span>
         </ButtonBase>
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
@@ -305,7 +312,7 @@ const config = computed(() => {
 
   <PackageChartModal
     v-if="isChartModalOpen && hasWeeklyDownloads"
-    :title="$t('package.downloads.modal_title')"
+    :modal-title="modalTitle"
     @close="handleModalClose"
     @transitioned="handleModalTransitioned"
   >
@@ -355,7 +362,9 @@ const config = computed(() => {
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
+  @apply font-mono;
 }
+
 .vue-ui-sparkline text {
   font-family:
     Geist Mono,
