@@ -194,7 +194,7 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
-const resolvedVersion = await useResolvedVersion(packageName, requestedVersion)
+const { data: resolvedVersion } = await useResolvedVersion(packageName, requestedVersion)
 
 if (resolvedVersion.value === null) {
   throw createError({
