@@ -69,7 +69,7 @@ const allMaintainersText = computed(() => {
       v-if="isColumnVisible('description')"
       class="py-2 px-3 text-sm text-fg-muted max-w-xs truncate"
     >
-      {{ pkg.description || '-' }}
+      {{ decodeHtmlEntities(pkg.description || '-') }}
     </td>
 
     <!-- Downloads -->
