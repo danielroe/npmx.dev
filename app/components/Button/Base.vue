@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { IconClass } from '~/types'
+
 const props = withDefaults(
   defineProps<{
     disabled?: boolean
@@ -8,7 +10,7 @@ const props = withDefaults(
     ariaKeyshortcuts?: string
     block?: boolean
 
-    classicon?: string
+    classicon?: IconClass
   }>(),
   {
     type: 'button',
