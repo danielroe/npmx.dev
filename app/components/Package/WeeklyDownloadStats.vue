@@ -362,6 +362,7 @@ const config = computed(() => {
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
+  @apply font-mono;
 }
 
 .vue-ui-sparkline text {
