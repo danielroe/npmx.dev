@@ -158,6 +158,7 @@ function handleClick(event: MouseEvent) {
 
 .readme :deep(a[href^='#']:hover::after) {
   @apply opacity-100;
+  font-size: 0.75em;
 }
 
 .readme :deep(code) {
