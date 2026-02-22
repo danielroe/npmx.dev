@@ -201,59 +201,45 @@ function formatXyDataset(
   dataset: EvolutionData,
   seriesName: string,
 ): { dataset: VueUiXyDatasetItem[] | null; dates: number[] } {
+  const baseColor = accent.value
+  const lightColor = isDarkMode.value && baseColor ? lightenOklch(baseColor, 0.618) : undefined
+
+  // Subtle path gradient applied in dark mode only
+  const temperatureColors =
+    isDarkMode.value && typeof baseColor === 'string' && typeof lightColor === 'string'
+      ? [lightColor, baseColor]
+      : undefined
+
+  const datasetItem: VueUiXyDatasetItem = {
+    name: seriesName,
+    type: 'line',
+    series: dataset.map(d => d.value),
+    color: accent.value,
+    temperatureColors,
+    useArea: true,
+  }
+
   if (selectedGranularity === 'weekly' && isWeeklyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestampEnd),
     }
   }
   if (selectedGranularity === 'daily' && isDailyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
   if (selectedGranularity === 'monthly' && isMonthlyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
   if (selectedGranularity === 'yearly' && isYearlyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
@@ -1529,7 +1515,7 @@ const chartConfig = computed(() => {
         backdropFilter: false,
         backgroundColor: 'transparent',
         customFormat: ({ datapoint }: { datapoint: Record<string, any> | any[] }) => {
-          if (!datapoint) return ''
+          if (!datapoint || pending.value) return ''
 
           const items = Array.isArray(datapoint) ? datapoint : [datapoint[0]]
           const hasMultipleItems = items.length > 1
