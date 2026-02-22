@@ -8,7 +8,7 @@ import type {
 } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
-import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
+import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenHex } from '~/utils/colors'
 import {
   drawSvgPrintLegend,
   drawNpmxLogoAndTaglineWatermark,
@@ -212,7 +212,7 @@ const chartConfig = computed(() => {
         backgroundColor: 'transparent',
         customFormat: (params: TooltipParams) => {
           const { datapoint, absoluteIndex, bars } = params
-          if (!datapoint) return ''
+          if (!datapoint || pending.value) return ''
 
           // Use absoluteIndex to get the correct version from chartDataset
           const index = Number(absoluteIndex)
@@ -243,6 +243,7 @@ const chartConfig = computed(() => {
       zoom: {
         maxWidth: isMobile.value ? 350 : 500,
         highlightColor: colors.value.bgElevated,
+        useResetSlot: true,
         minimap: {
           show: true,
           lineColor: '#FAFAFA',
@@ -495,11 +496,12 @@ const endDate = computed(() => {
               />
             </template>
 
-            <!-- Subtle gradient applied for area charts -->
-            <template #area-gradient="{ series: chartModalSeries, id: gradientId }">
-              <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" :stop-color="chartModalSeries.color" stop-opacity="0.2" />
-                <stop offset="100%" :stop-color="colors.bg" stop-opacity="0" />
+            <!-- Custom bar gradient based on the series color -->
+            <template #bar-gradient="{ series, positiveId }">
+              <linearGradient :id="positiveId" x1="0" x2="0" y1="0" y2="1">
+                <!-- vue-data-ui exposes hex-normalized colors -->
+                <stop offset="0%" :stop-color="lightenHex(series.color, 0.618)" />
+                <stop offset="100%" :stop-color="series.color" stop-opacity="0.618" />
               </linearGradient>
             </template>
 
@@ -519,6 +521,19 @@ const endDate = computed(() => {
                   </div>
                 </template>
               </div>
+            </template>
+
+            <!-- Custom minimap reset button -->
+            <template #reset-action="{ reset: resetMinimap }">
+              <button
+                type="button"
+                aria-label="reset minimap"
+                class="absolute inset-is-1/2 -translate-x-1/2 -bottom-18 sm:inset-is-unset sm:translate-x-0 sm:bottom-auto sm:-inset-ie-20 sm:-top-3 flex items-center justify-center px-2.5 py-1.75 border border-transparent rounded-md text-fg-subtle hover:text-fg transition-colors hover:border-border focus-visible:outline-accent/70 sm:mb-0"
+                style="pointer-events: all !important"
+                @click="resetMinimap"
+              >
+                <span class="i-lucide:undo-2 w-5 h-5" aria-hidden="true" />
+              </button>
             </template>
 
             <!-- Contextual menu icon -->

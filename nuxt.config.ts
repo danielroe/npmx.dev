@@ -101,7 +101,7 @@ export default defineNuxtConfig({
       isr: {
         expiration: 60 * 60 /* one hour */,
         passQuery: true,
-        allowQuery: ['color', 'labelColor', 'label', 'name'],
+        allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
       },
     },
     '/api/registry/downloads/**': {

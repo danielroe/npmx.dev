@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from '#app'
+import type { IconClass } from '~/types'
 
 const props = withDefaults(
   defineProps<
@@ -26,7 +27,7 @@ const props = withDefaults(
        */
       rel?: never
 
-      classicon?: string
+      classicon?: IconClass
 
       to?: NuxtLinkProps['to']
 

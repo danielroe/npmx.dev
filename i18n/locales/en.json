@@ -367,12 +367,12 @@
         "downloads": "Downloads",
         "likes": "Likes",
         "contributors": "Contributors"
-      }
+      },
+      "play_animation": "Play animation",
+      "pause_animation": "Pause animation"
     },
     "downloads": {
       "title": "Weekly Downloads",
-      "modal_title": "Weekly Downloads",
-      "analyze": "Analyze downloads",
       "community_distribution": "View community adoption distribution"
     },
     "install_scripts": {
@@ -626,6 +626,7 @@
       "invalid_name": "Invalid package name:",
       "available": "This name is available!",
       "taken": "This name is already taken.",
+      "missing_permission": "You do not have permission to add a package to scope {'@'}{scope}.",
       "similar_warning": "Similar packages exist - npm may reject this name:",
       "related": "Related packages:",
       "scope_warning_title": "Consider using a scoped package instead",
@@ -1133,28 +1134,27 @@
   },
   "vacations": {
     "title": "on vacation",
-    "meta_description": "The npmx team is recharging. Discord reopens in a week.",
+    "meta_description": "The npmx team was recharging. Discord reopened after a week.",
     "heading": "recharging",
-    "subtitle": "we've been building npmx at a pace that has cost {some} of us sleep. we don't want that to be the norm! so we are taking a week off. together.",
+    "subtitle": "we were building npmx at a pace that was costing {some} of us sleep. we didn't want that to be the norm! so we took a week off. together.",
     "illustration_alt": "a single row of cosy icons",
     "poke_log": "Poke the campfire",
     "what": {
-      "title": "what's happening",
-      "p1": "discord is closed {dates}.",
+      "title": "what happened",
+      "p1": "discord was closed {dates}.",
       "dates": "February 14 – 21",
-      "p2": "all invite links are gone and channels are locked – except {garden}, which stays open for folks who want to keep hanging out.",
+      "p2": "all invite links were gone and channels were locked – except {garden}, which stayed open for folks who wanted to keep hanging out.",
       "garden": "#garden"
     },
     "meantime": {
       "title": "in the meantime",
-      "p1": "{site} and {repo} stay open – dig in, file issues, open PRs. we'll get to everything when we're back. just don't expect a fast review. we'll be somewhere near a cosy fireplace.",
+      "p1": "{site} and {repo} stayed open – people still dug in, filed some issues, opened a few PRs, but mainly everyone spent time somewhere near a cosy fireplace.",
       "repo_link": "the repo"
     },
     "return": {
-      "title": "see you soon",
-      "p1": "we'll come back recharged and ready for the final push to March 3rd. {social} for updates.",
-      "social_link": "follow us on Bluesky",
-      "add_to_calendar": "remind me when Discord reopens"
+      "title": "we came back!",
+      "p1": "we came back recharged and ready for the final push to March 3rd. {social} for updates.",
+      "social_link": "follow us on Bluesky"
     },
     "stats": {
       "contributors": "Contributors",

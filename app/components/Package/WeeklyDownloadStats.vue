@@ -13,9 +13,17 @@ const props = defineProps<{
 
 const router = useRouter()
 const route = useRoute()
+const { settings } = useSettings()
 
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
+
+const modalTitle = computed(() => {
+  const facet = route.query.facet as string | undefined
+  if (facet === 'likes') return $t('package.trends.items.likes')
+  if (facet === 'contributors') return $t('package.trends.items.contributors')
+  return $t('package.trends.items.downloads')
+})
 
 const isChartModalOpen = shallowRef<boolean>(false)
 
@@ -79,6 +87,12 @@ const { colors } = useCssVariables(
     watchResize: false, // set to true only if a var changes color on resize
   },
 )
+
+function toggleSparklineAnimation() {
+  settings.value.sidebar.animateSparkline = !settings.value.sidebar.animateSparkline
+}
+
+const hasSparklineAnimation = computed(() => settings.value.sidebar.animateSparkline)
 
 const isDarkMode = computed(() => resolvedMode.value === 'dark')
 
@@ -217,14 +231,14 @@ const config = computed(() => {
       line: {
         color: colors.value.borderHover,
         pulse: {
-          show: true, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
+          show: hasSparklineAnimation.value, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
           loop: true, // runs only once if false
           radius: 1.5,
           color: pulseColor.value,
           easing: 'ease-in-out',
           trail: {
             show: true,
-            length: 20,
+            length: 30,
             opacity: 0.75,
           },
         },
@@ -257,10 +271,10 @@ const config = computed(() => {
           type="button"
           @click="openChartModal"
           class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
-          :title="$t('package.downloads.analyze')"
+          :title="$t('package.trends.title')"
           classicon="i-lucide:chart-line"
         >
-          <span class="sr-only">{{ $t('package.downloads.analyze') }}</span>
+          <span class="sr-only">{{ $t('package.trends.title') }}</span>
         </ButtonBase>
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
@@ -295,6 +309,16 @@ const config = computed(() => {
               </div>
             </template>
           </ClientOnly>
+
+          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end p-1">
+            <ButtonBase size="small" @click="toggleSparklineAnimation">
+              {{
+                hasSparklineAnimation
+                  ? $t('package.trends.pause_animation')
+                  : $t('package.trends.play_animation')
+              }}
+            </ButtonBase>
+          </div>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
           {{ $t('package.trends.no_data') }}
@@ -305,7 +329,7 @@ const config = computed(() => {
 
   <PackageChartModal
     v-if="isChartModalOpen && hasWeeklyDownloads"
-    :title="$t('package.downloads.modal_title')"
+    :modal-title="modalTitle"
     @close="handleModalClose"
     @transitioned="handleModalTransitioned"
   >
@@ -355,7 +379,9 @@ const config = computed(() => {
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
+  @apply font-mono;
 }
+
 .vue-ui-sparkline text {
   font-family:
     Geist Mono,
