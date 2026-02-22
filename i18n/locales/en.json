@@ -1131,9 +1131,9 @@
   },
   "vacations": {
     "title": "on vacation",
-    "meta_description": "The npmx team is recharging. Discord reopens in a week.",
+    "meta_description": "The npmx team was recharging. Discord reopened after a week.",
     "heading": "recharging",
-    "subtitle": "we were building npmx at a pace that was costing {some} of us sleep. we didn't wanted that to be the norm! so we took a week off. together.",
+    "subtitle": "we were building npmx at a pace that was costing {some} of us sleep. we didn't want that to be the norm! so we took a week off. together.",
     "illustration_alt": "a single row of cosy icons",
     "poke_log": "Poke the campfire",
     "what": {
@@ -1149,8 +1149,8 @@
       "repo_link": "the repo"
     },
     "return": {
-      "title": "we're back!",
-      "p1": "we come back recharged and ready for the final push to March 3rd. {social} for updates.",
+      "title": "we came back!",
+      "p1": "we came back recharged and ready for the final push to March 3rd. {social} for updates.",
       "social_link": "follow us on Bluesky"
     },
     "stats": {
