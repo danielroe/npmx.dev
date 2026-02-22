@@ -3,6 +3,7 @@ import { SHOWCASED_FRAMEWORKS } from '~/utils/frameworks'
 
 const { model: searchQuery, flushUpdateUrlQuery } = useGlobalSearch()
 const isSearchFocused = shallowRef(false)
+const inputWrapperRef = useTemplateRef<HTMLDivElement>('inputWrapper')
 
 async function search() {
   flushUpdateUrlQuery()
@@ -24,6 +25,16 @@ defineOgImageComponent('Default', {
   title: 'npmx',
   description: 'a fast, modern browser for the **npm registry**',
 })
+
+function onMouseMove(event: MouseEvent) {
+  const inputWrapper = inputWrapperRef.value
+  if (!inputWrapper) return
+  const rect = inputWrapper.getBoundingClientRect()
+  const x = event.clientX - rect.left
+  const y = event.clientY - rect.top
+  inputWrapper.style.setProperty('--mouse-x', `${x}px`)
+  inputWrapper.style.setProperty('--mouse-y', `${y}px`)
+}
 </script>
 
 <template>
@@ -75,7 +86,11 @@ defineOgImageComponent('Default', {
                   /
                 </span>
 
-                <div class="home-input-wrapper relative w-full">
+                <div
+                  ref="inputWrapper"
+                  class="home-input-wrapper relative w-full"
+                  @mousemove="onMouseMove"
+                >
                   <InputBase
                     id="home-search"
                     v-model="searchQuery"
@@ -147,18 +162,21 @@ defineOgImageComponent('Default', {
 .home-input-wrapper {
   &::before {
     content: '';
-    @apply absolute -inset-0.5 rounded-xl -z-1;
-    animation: glide 1s 0.8s ease-in-out;
+    @apply absolute -inset-0.5 rounded-[0.875rem] -z-1;
     background: linear-gradient(
-      -30deg,
-      transparent 40%,
-      var(--accent) 41%,
-      var(--accent) 59%,
-      transparent 60%
+      -80deg,
+      transparent 0%,
+      var(--accent) 5%,
+      var(--accent) 75%,
+      transparent 80%
     );
     background-size: 300% 100%;
-    background-position: -150% 0;
+    background-position: var(--mouse-x, 0) var(--mouse-y, 0);
     opacity: 0.5;
+  }
+
+  input {
+    @apply bg-bg-subtle/90 backdrop-blur-sm;
   }
 }
 
