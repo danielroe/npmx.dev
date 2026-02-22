@@ -231,7 +231,7 @@ const config = computed(() => {
           easing: 'ease-in-out',
           trail: {
             show: true,
-            length: 20,
+            length: 30,
             opacity: 0.75,
           },
         },
