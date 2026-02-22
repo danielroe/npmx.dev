@@ -310,7 +310,7 @@ const config = computed(() => {
             </template>
           </ClientOnly>
 
-          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end">
+          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end p-1">
             <ButtonBase size="small" @click="toggleSparklineAnimation">
               {{
                 hasSparklineAnimation
