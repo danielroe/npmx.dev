@@ -13,6 +13,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const route = useRoute()
+const { settings } = useSettings()
 
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
@@ -86,6 +87,12 @@ const { colors } = useCssVariables(
     watchResize: false, // set to true only if a var changes color on resize
   },
 )
+
+function toggleSparklineAnimation() {
+  settings.value.sidebar.animateSparkline = !settings.value.sidebar.animateSparkline
+}
+
+const hasSparklineAnimation = computed(() => settings.value.sidebar.animateSparkline)
 
 const isDarkMode = computed(() => resolvedMode.value === 'dark')
 
@@ -224,7 +231,7 @@ const config = computed(() => {
       line: {
         color: colors.value.borderHover,
         pulse: {
-          show: true, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
+          show: hasSparklineAnimation.value, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
           loop: true, // runs only once if false
           radius: 1.5,
           color: pulseColor.value,
@@ -302,6 +309,16 @@ const config = computed(() => {
               </div>
             </template>
           </ClientOnly>
+
+          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end">
+            <ButtonBase size="small" @click="toggleSparklineAnimation">
+              {{
+                hasSparklineAnimation
+                  ? $t('package.trends.pause_animation')
+                  : $t('package.trends.play_animation')
+              }}
+            </ButtonBase>
+          </div>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
           {{ $t('package.trends.no_data') }}

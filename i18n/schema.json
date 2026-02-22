@@ -1107,6 +1107,12 @@
                 }
               },
               "additionalProperties": false
+            },
+            "play_animation": {
+              "type": "string"
+            },
+            "pause_animation": {
+              "type": "string"
             }
           },
           "additionalProperties": false
