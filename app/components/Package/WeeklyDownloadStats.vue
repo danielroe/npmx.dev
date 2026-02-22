@@ -310,7 +310,7 @@ const config = computed(() => {
             </template>
           </ClientOnly>
 
-          <div class="hidden motion-safe:flex justify-end">
+          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end">
             <ButtonBase
               size="small"
               :aria-label="
@@ -318,7 +318,7 @@ const config = computed(() => {
                   ? $t('package.trends.pause_animation')
                   : $t('package.trends.play_animation')
               "
-              @click="toggleSparklineAnimation"
+              `@click`="toggleSparklineAnimation"
             >
               {{
                 hasSparklineAnimation
