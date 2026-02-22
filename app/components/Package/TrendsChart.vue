@@ -3,7 +3,7 @@ import type { VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
-import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
+import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenOklch } from '~/utils/colors'
 import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
 import { drawNpmxLogoAndTaglineWatermark } from '~/composables/useChartWatermark'
 import type { RepoRef } from '#shared/utils/git-providers'
@@ -201,59 +201,41 @@ function formatXyDataset(
   dataset: EvolutionData,
   seriesName: string,
 ): { dataset: VueUiXyDatasetItem[] | null; dates: number[] } {
+  const lightColor = isDarkMode.value ? lightenOklch(accent.value, 0.618) : undefined
+
+  // Subtle path gradient applied in dark mode only
+  const temperatureColors = lightColor ? [lightColor, accent.value] : undefined
+
+  const datasetItem: VueUiXyDatasetItem = {
+    name: seriesName,
+    type: 'line',
+    series: dataset.map(d => d.value),
+    color: accent.value,
+    temperatureColors,
+    useArea: true,
+  }
+
   if (selectedGranularity === 'weekly' && isWeeklyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestampEnd),
     }
   }
   if (selectedGranularity === 'daily' && isDailyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
   if (selectedGranularity === 'monthly' && isMonthlyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
   if (selectedGranularity === 'yearly' && isYearlyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
@@ -1529,7 +1511,7 @@ const chartConfig = computed(() => {
         backdropFilter: false,
         backgroundColor: 'transparent',
         customFormat: ({ datapoint }: { datapoint: Record<string, any> | any[] }) => {
-          if (!datapoint) return ''
+          if (!datapoint || pending.value) return ''
 
           const items = Array.isArray(datapoint) ? datapoint : [datapoint[0]]
           const hasMultipleItems = items.length > 1

@@ -8,7 +8,7 @@ import type {
 } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
-import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
+import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenHex } from '~/utils/colors'
 import {
   drawSvgPrintLegend,
   drawNpmxLogoAndTaglineWatermark,
@@ -212,7 +212,7 @@ const chartConfig = computed(() => {
         backgroundColor: 'transparent',
         customFormat: (params: TooltipParams) => {
           const { datapoint, absoluteIndex, bars } = params
-          if (!datapoint) return ''
+          if (!datapoint || pending.value) return ''
 
           // Use absoluteIndex to get the correct version from chartDataset
           const index = Number(absoluteIndex)
@@ -496,11 +496,12 @@ const endDate = computed(() => {
               />
             </template>
 
-            <!-- Subtle gradient applied for area charts -->
-            <template #area-gradient="{ series: chartModalSeries, id: gradientId }">
-              <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" :stop-color="chartModalSeries.color" stop-opacity="0.2" />
-                <stop offset="100%" :stop-color="colors.bg" stop-opacity="0" />
+            <!-- Custom bar gradient based on the series color -->
+            <template #bar-gradient="{ series, positiveId }">
+              <linearGradient :id="positiveId" x1="0" x2="0" y1="0" y2="1">
+                <!-- vue-data-ui exposes hex-normalized colors -->
+                <stop offset="0%" :stop-color="lightenHex(series.color, 0.618)" />
+                <stop offset="100%" :stop-color="series.color" stop-opacity="0.618" />
               </linearGradient>
             </template>
 
