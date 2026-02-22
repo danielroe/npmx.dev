@@ -100,7 +100,7 @@ function onMouseMove(event: MouseEvent) {
                     :placeholder="$t('search.placeholder')"
                     no-correct
                     size="large"
-                    class="w-full ps-8 pe-24"
+                    class="w-full ps-8 pe-24 bg-bg-subtle/90! backdrop-blur-sm"
                     @focus="isSearchFocused = true"
                     @blur="isSearchFocused = false"
                   />
@@ -159,25 +159,19 @@ function onMouseMove(event: MouseEvent) {
   }
 }
 
-.home-input-wrapper {
-  &::before {
-    content: '';
-    @apply absolute -inset-0.5 rounded-[0.875rem] -z-1;
-    background: linear-gradient(
-      -80deg,
-      transparent 0%,
-      var(--accent) 5%,
-      var(--accent) 75%,
-      transparent 80%
-    );
-    background-size: 300% 100%;
-    background-position: var(--mouse-x, 0) var(--mouse-y, 0);
-    opacity: 0.5;
-  }
-
-  input {
-    @apply bg-bg-subtle/90 backdrop-blur-sm;
-  }
+.home-input-wrapper::before {
+  content: '';
+  @apply absolute -inset-0.5 rounded-[0.875rem] -z-1;
+  background: linear-gradient(
+    -80deg,
+    transparent 0%,
+    var(--accent) 5%,
+    var(--accent) 75%,
+    transparent 80%
+  );
+  background-size: 300% 100%;
+  background-position: var(--mouse-x, 0) var(--mouse-y, 0);
+  opacity: 0.5;
 }
 
 @keyframes glide {
