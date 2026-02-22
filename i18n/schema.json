@@ -3465,9 +3465,6 @@
             },
             "social_link": {
               "type": "string"
-            },
-            "add_to_calendar": {
-              "type": "string"
             }
           },
           "additionalProperties": false
