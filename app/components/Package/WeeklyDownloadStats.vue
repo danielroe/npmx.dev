@@ -311,15 +311,7 @@ const config = computed(() => {
           </ClientOnly>
 
           <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end">
-            <ButtonBase
-              size="small"
-              :aria-label="
-                hasSparklineAnimation
-                  ? $t('package.trends.pause_animation')
-                  : $t('package.trends.play_animation')
-              "
-              `@click`="toggleSparklineAnimation"
-            >
+            <ButtonBase size="small" @click="toggleSparklineAnimation">
               {{
                 hasSparklineAnimation
                   ? $t('package.trends.pause_animation')
