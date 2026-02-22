@@ -101,6 +101,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'direct' as const,
             path: ['test-pkg@1.0.0', 'dep-a@2.0.0'],
+            tarballUrl: 'https://example.com/dep-a-2.0.0.tgz',
           },
         ],
       ])
@@ -127,6 +128,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['vuln-pkg@1.0.0'],
+            tarballUrl: 'https://example.com/vuln-pkg-1.0.0.tgz',
           },
         ],
       ])
@@ -181,6 +183,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['root@1.0.0'],
+            tarballUrl: 'https://example.com/root-1.0.0.tgz',
           },
         ],
         [
@@ -192,6 +195,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'transitive' as const,
             path: ['root@1.0.0', 'middle@1.5.0', 'vuln-dep@2.0.0'],
+            tarballUrl: 'https://example.com/vuln-dep-2.0.0.tgz',
           },
         ],
       ])
@@ -231,6 +235,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['root@1.0.0'],
+            tarballUrl: 'https://example.com/root-1.0.0.tgz',
           },
         ],
         [
@@ -242,6 +247,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'direct' as const,
             path: ['root@1.0.0', 'direct-dep@1.0.0'],
+            tarballUrl: 'https://example.com/direct-dep-1.0.0.tgz',
           },
         ],
         [
@@ -253,6 +259,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'transitive' as const,
             path: ['root@1.0.0', 'direct-dep@1.0.0', 'transitive-dep@1.0.0'],
+            tarballUrl: 'https://example.com/transitive-dep-1.0.0.tgz',
           },
         ],
       ])
@@ -490,6 +497,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['root@1.0.0'],
+            tarballUrl: 'https://example.com/root-1.0.0.tgz',
           },
         ],
         [
@@ -502,6 +510,7 @@ describe('dependency-analysis', () => {
             depth: 'direct' as const,
             path: ['root@1.0.0', 'deprecated-pkg@2.0.0'],
             deprecated: 'This package is deprecated. Use new-pkg instead.',
+            tarballUrl: 'https://example.com/deprecated-pkg-2.0.0.tgz',
           },
         ],
       ])
@@ -531,6 +540,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['root@1.0.0'],
+            tarballUrl: 'https://example.com/root-1.0.0.tgz',
           },
         ],
       ])
@@ -554,6 +564,7 @@ describe('dependency-analysis', () => {
             depth: 'root' as const,
             path: ['root@1.0.0'],
             deprecated: 'Root is deprecated',
+            tarballUrl: 'https://example.com/root-1.0.0.tgz',
           },
         ],
         [
@@ -566,6 +577,7 @@ describe('dependency-analysis', () => {
             depth: 'transitive' as const,
             path: ['root@1.0.0', 'direct-dep@1.0.0', 'transitive-dep@1.0.0'],
             deprecated: 'Transitive is deprecated',
+            tarballUrl: 'https://example.com/transitive-dep-1.0.0.tgz',
           },
         ],
         [
@@ -578,6 +590,7 @@ describe('dependency-analysis', () => {
             depth: 'direct' as const,
             path: ['root@1.0.0', 'direct-dep@1.0.0'],
             deprecated: 'Direct is deprecated',
+            tarballUrl: 'https://example.com/direct-dep-1.0.0.tgz',
           },
         ],
       ])
@@ -606,6 +619,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['minimist@1.0.0'],
+            tarballUrl: 'https://example.com/minimist-1.0.0.tgz',
           },
         ],
       ])
@@ -669,6 +683,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['next@16.0.0-beta.0'],
+            tarballUrl: 'https://example.com/next-16.0.0-beta.0.tgz',
           },
         ],
       ])
@@ -732,6 +747,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['example@1.5.0'],
+            tarballUrl: 'https://example.com/example-1.5.0.tgz',
           },
         ],
       ])
@@ -794,6 +810,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['example@3.4.6'],
+            tarballUrl: 'https://example.com/example-3.4.6.tgz',
           },
         ],
       ])
@@ -904,6 +921,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'root' as const,
             path: ['root@1.0.0'],
+            tarballUrl: 'https://example.com/root-1.0.0.tgz',
           },
         ],
         [
@@ -915,6 +933,7 @@ describe('dependency-analysis', () => {
             optional: false,
             depth: 'direct' as const,
             path: ['root@1.0.0', 'vuln-pkg@1.0.0'],
+            tarballUrl: 'https://example.com/vuln-pkg-1.0.0.tgz',
           },
         ],
         [
@@ -927,6 +946,7 @@ describe('dependency-analysis', () => {
             depth: 'direct' as const,
             path: ['root@1.0.0', 'deprecated-pkg@1.0.0'],
             deprecated: 'Use something else',
+            tarballUrl: 'https://example.com/deprecated-pkg-1.0.0.tgz',
           },
         ],
       ])
