@@ -246,7 +246,6 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
 })
 
 //copy version name
-//orginally only copied name and not version number
 const { copied: copiedVersion, copy: copyVersion } = useClipboard({
   source: () => resolvedVersion.value ?? '',
   copiedDuring: 2000,
