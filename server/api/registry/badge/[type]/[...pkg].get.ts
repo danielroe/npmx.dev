@@ -69,7 +69,7 @@ function measureTextWidth(text: string, font: string): number | null {
 
     const measuredWidth = context.measureText(text).width
 
-    if (!Number.isNaN(measuredWidth)) {
+    if (Number.isFinite(measuredWidth) && measuredWidth > 0) {
       return Math.ceil(measuredWidth)
     }
   }
