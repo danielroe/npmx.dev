@@ -231,7 +231,7 @@ const config = computed(() => {
           easing: 'ease-in-out',
           trail: {
             show: true,
-            length: 20,
+            length: 30,
             opacity: 0.75,
           },
         },
@@ -362,6 +362,7 @@ const config = computed(() => {
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
+  @apply font-mono;
 }
 
 .vue-ui-sparkline text {

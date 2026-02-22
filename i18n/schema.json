@@ -1876,6 +1876,9 @@
             "taken": {
               "type": "string"
             },
+            "missing_permission": {
+              "type": "string"
+            },
             "similar_warning": {
               "type": "string"
             },
@@ -3458,9 +3461,6 @@
               "type": "string"
             },
             "social_link": {
-              "type": "string"
-            },
-            "add_to_calendar": {
               "type": "string"
             }
           },
