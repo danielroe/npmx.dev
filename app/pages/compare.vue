@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { NO_DEPENDENCY_ID } from '~/composables/usePackageComparison'
 import { useRouteQuery } from '@vueuse/router'
-import { escapeHtml } from '#shared/utils/html'
 import { NPMX_SITE } from '#shared/utils/constants'
 
 definePageMeta({
   name: 'compare',
 })
 
+const { locale } = useI18n()
 const router = useRouter()
 const canGoBack = useCanGoBack()
 const { copied, copy } = useClipboard({ copiedDuring: 2000 })
-const gridRef = useTemplateRef<HTMLDivElement>('gridRef')
 
 // Sync packages with URL query param (stable ref - doesn't change on other query changes)
 const packagesParam = useRouteQuery<string>('packages', '', { mode: 'replace' })
@@ -83,55 +82,56 @@ const gridHeaders = computed(() =>
   gridColumns.value.map(col => (col.version ? `${col.name}@${col.version}` : col.name)),
 )
 
-function copyComparisonGridAsMd() {
-  const grid = gridRef.value?.querySelector('.comparison-grid')
-  if (!grid) return
-  const md = gridToMarkdown(grid as HTMLElement)
-  copy(md)
-}
-
 /*
- * Convert the comparison grid DOM to a Markdown table.
- * We build a proper HTML <table> from the grid structure and delegate to `htmlToMarkdown` for the actual conversion.
+ * Convert the comparison grid data to a Markdown table.
  */
-function gridToMarkdown(gridEl: HTMLElement): string {
-  const children = Array.from(gridEl.children)
-  const headerRow = children[0]
-  const dataRows = children.slice(1)
+function exportComparisonDataAsMarkdown() {
+  const mdData: Array<Array<string>> = []
+  mdData.push([
+    '',
+    ...gridColumns.value.map(
+      (col, index) =>
+        `[${gridHeaders.value[index]}](${NPMX_SITE}/package/${col?.name}/v/${col?.version})`,
+    ),
+  ])
+  const maxLengths = gridHeaders.value.map(header => header.length)
 
-  if (!headerRow || dataRows.length === 0) return ''
+  selectedFacets.value.forEach((facet, index) => {
+    const label = facet.label
+    const data = getFacetValues(facet.id)
+    mdData.push([
+      label,
+      ...data.map(item =>
+        item?.type === 'date'
+          ? new Date(item.display).toLocaleDateString(locale.value, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          : item?.display || '',
+      ),
+    ])
+    mdData?.[index + 1]?.forEach((item, index) => {
+      if (item.length > (maxLengths?.[index] || 0)) {
+        maxLengths[index] = item.length
+      }
+    })
+  })
 
-  const headerCells = Array.from(headerRow.children).slice(1)
-  if (headerCells.length === 0) return ''
-
-  const ths = headerCells.map(cell => {
-    const link = cell.querySelector('a')
-    if (link) {
-      const href = link.getAttribute('href') || ''
-      const absoluteHref = /^https?:\/\/|^\/\//.test(href) ? href : `${NPMX_SITE}${href}`
-      return `<th><a href="${escapeHtml(absoluteHref)}">${escapeHtml(link.textContent?.trim() || '')}</a></th>`
+  const markdown = mdData.reduce((result, row, index) => {
+    // replacing pipe `|` with `ǀ` (U+01C0 Latin Letter Dental Click) to avoid breaking tables
+    result += `| ${row
+      .map((el, ind) => el.padEnd(maxLengths[ind] || 0, ' ').replace(/\|/g, 'ǀ'))
+      .join(' | ')} |`
+    if (index === 0) {
+      result += `\n|`
+      maxLengths.forEach(len => (result += ` ${'-'.padEnd(len, '-')} |`))
     }
-    return `<th>${escapeHtml(cell.textContent?.trim() || '')}</th>`
-  })
+    result += `\n`
+    return result
+  }, '')
 
-  const trs = dataRows.map(row => {
-    const rowChildren = Array.from(row.children)
-    const label = rowChildren[0]?.textContent?.trim() || ''
-    const valueCells = rowChildren.slice(1)
-    const tds = [label, ...valueCells.map(cell => cell.textContent?.trim() || '-')]
-      .map(v => `<td>${escapeHtml(v)}</td>`)
-      .join('')
-    return `<tr>${tds}</tr>`
-  })
-
-  const tableHtml = [
-    '<table>',
-    `<thead><tr><th>Metric</th>${ths.join('')}</tr></thead>`,
-    `<tbody>${trs.join('')}</tbody>`,
-    '</table>',
-  ].join('')
-
-  return htmlToMarkdown(tableHtml, { tablePipeAlign: false })
+  copy(markdown)
 }
 
 useSeoMeta({
@@ -253,7 +253,7 @@ useSeoMeta({
           :copied="copied"
           :copy-text="$t('compare.packages.copy_as_markdown')"
           class="mb-4 inline-block hidden md:inline-flex"
-          @click="copyComparisonGridAsMd"
+          @click="exportComparisonDataAsMarkdown"
         >
           <h2 id="comparison-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
             {{ $t('compare.packages.section_comparison') }}
@@ -280,7 +280,7 @@ useSeoMeta({
 
         <div v-else-if="packagesData && packagesData.some(p => p !== null)">
           <!-- Desktop: Grid layout -->
-          <div ref="gridRef" class="hidden md:block overflow-x-auto">
+          <div class="hidden md:block overflow-x-auto">
             <CompareComparisonGrid :columns="gridColumns" :show-no-dependency="showNoDependency">
               <CompareFacetRow
                 v-for="facet in selectedFacets"

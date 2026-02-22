@@ -9,7 +9,6 @@
 
 import { highlightCodeBlock } from '../shiki'
 import type { SymbolLookup } from './types'
-import { escapeHtml } from '#shared/utils/html'
 
 /**
  * Strip ANSI escape codes from text.
@@ -20,6 +19,20 @@ const ANSI_PATTERN = new RegExp(`${ESC}\\[[0-9;]*m`, 'g')
 
 export function stripAnsi(text: string): string {
   return text.replace(ANSI_PATTERN, '')
+}
+
+/**
+ * Escape HTML special characters.
+ *
+ * @internal Exported for testing
+ */
+export function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
 /**
