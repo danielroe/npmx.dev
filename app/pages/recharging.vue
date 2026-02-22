@@ -149,7 +149,7 @@ function downloadIcs() {
       </div>
 
       <section class="prose prose-invert max-w-none space-y-8">
-        <!-- What's happening -->
+        <!-- What happened -->
         <div>
           <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
             {{ $t('vacations.what.title') }}
@@ -238,11 +238,6 @@ function downloadIcs() {
               </template>
             </i18n-t>
           </p>
-
-          <!-- Add to calendar button -->
-          <ButtonBase classicon="i-lucide:calendar" @click="downloadIcs">
-            {{ $t('vacations.return.add_to_calendar') }}
-          </ButtonBase>
         </div>
 
         <div
