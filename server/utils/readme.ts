@@ -198,7 +198,7 @@ function stripHtmlTags(text: string): string {
  * - Remove special characters (keep alphanumeric, hyphens, underscores)
  * - Collapse multiple hyphens
  */
-function slugify(text: string): string {
+export function slugify(text: string): string {
   return stripHtmlTags(text)
     .toLowerCase()
     .trim()
