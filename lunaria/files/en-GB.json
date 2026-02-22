@@ -461,6 +461,11 @@
       "b": "{size} B",
       "kb": "{size} kB",
       "mb": "{size} MB"
+    },
+    "download": {
+      "button": "Download",
+      "package": "Download Package (.tgz)",
+      "dependencies": "Download Dependencies (.sh)"
     }
   },
   "connector": {

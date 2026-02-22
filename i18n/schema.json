@@ -1392,6 +1392,21 @@
             }
           },
           "additionalProperties": false
+        },
+        "download": {
+          "type": "object",
+          "properties": {
+            "button": {
+              "type": "string"
+            },
+            "package": {
+              "type": "string"
+            },
+            "dependencies": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
