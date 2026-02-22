@@ -86,7 +86,6 @@ export default defineNuxtConfig({
     url: 'https://npmx.dev',
     name: 'npmx',
     description: 'A fast, modern browser for the npm registry',
-    trailingSlash: true,
   },
 
   router: {

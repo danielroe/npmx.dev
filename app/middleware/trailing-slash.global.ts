@@ -8,12 +8,10 @@
  * - /docs/getting-started/?query=value → /docs/getting-started?query=value
  */
 export default defineNuxtRouteMiddleware(to => {
-  if (!import.meta.dev) return
-
-  if (to.path !== '/' && to.path.endsWith('/')) {
+  if (to.path !== '' && !to.path.endsWith('/')) {
     return navigateTo(
       {
-        path: to.path.slice(0, -1),
+        path: to.path + '/',
         query: to.query,
         hash: to.hash,
       },
