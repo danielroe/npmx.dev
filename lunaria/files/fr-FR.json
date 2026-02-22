@@ -366,7 +366,9 @@
         "downloads": "Téléchargements",
         "likes": "J'aime",
         "contributors": "Contributeurs"
-      }
+      },
+      "play_animation": "Lancer l'animation",
+      "pause_animation": "Mettre l'animation en pause"
     },
     "downloads": {
       "title": "Téléchargements hebdo.",

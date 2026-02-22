@@ -1029,6 +1029,8 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageClaimPackageModal, {
         props: {
           packageName: 'test-package',
+          packageScope: undefined,
+          canPublishToScope: true,
           open: false,
         },
       })
@@ -1040,6 +1042,8 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageClaimPackageModal, {
         props: {
           packageName: 'test-package',
+          packageScope: undefined,
+          canPublishToScope: true,
           open: true,
         },
       })

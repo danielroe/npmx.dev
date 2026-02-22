@@ -9,6 +9,7 @@ import type {
   SkillsListResponse,
 } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
+import type { IconClass } from '~/types'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
@@ -246,7 +247,7 @@ const { copied: copiedPkgName, copy: copyPkgName } = useClipboard({
 
 //copy version name
 const { copied: copiedVersion, copy: copyVersion } = useClipboard({
-  source: resolvedVersion.value ?? '',
+  source: () => resolvedVersion.value ?? '',
   copiedDuring: 2000,
 })
 
@@ -398,7 +399,7 @@ const repositoryUrl = computed(() => {
 
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 
-const PROVIDER_ICONS: Record<string, string> = {
+const PROVIDER_ICONS: Record<string, IconClass> = {
   github: 'i-simple-icons:github',
   gitlab: 'i-simple-icons:gitlab',
   bitbucket: 'i-simple-icons:bitbucket',
@@ -411,7 +412,7 @@ const PROVIDER_ICONS: Record<string, string> = {
   radicle: 'i-lucide:network', // Radicle is a P2P network, using network icon
 }
 
-const repoProviderIcon = computed(() => {
+const repoProviderIcon = computed((): IconClass => {
   const provider = repoRef.value?.provider
   if (!provider) return 'i-simple-icons:github'
   return PROVIDER_ICONS[provider] ?? 'i-lucide:code'

@@ -1,4 +1,4 @@
-import { decodeHtmlEntities } from '~/utils/formatters'
+import { decodeHtmlEntities } from '#shared/utils/html'
 
 interface UseMarkdownOptions {
   text: string
