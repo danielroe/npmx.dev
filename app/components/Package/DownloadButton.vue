@@ -20,10 +20,11 @@ const isOpen = shallowRef(false)
 const highlightedIndex = shallowRef(-1)
 const dropdownPosition = shallowRef<{ top: number; right: number } | null>(null)
 
+const { t } = useI18n()
 const menuId = useId()
 const menuItems = computed(() => [
-  { id: 'package', label: $t('package.download.package'), icon: 'i-lucide:package' },
-  { id: 'dependencies', label: $t('package.download.dependencies'), icon: 'i-lucide:list-tree' },
+  { id: 'package', label: t('package.download.package'), icon: 'i-lucide:package' },
+  { id: 'dependencies', label: t('package.download.dependencies'), icon: 'i-lucide:list-tree' },
 ])
 
 function getDropdownStyle(): Record<string, string> {
