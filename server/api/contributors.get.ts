@@ -147,7 +147,6 @@ async function fetchGitHubUserData(
     if (json.data) {
       for (const user of Object.values(json.data)) {
         if (!user) continue
-        console.log(JSON.stringify(user))
         if (user.hasSponsorsListing) {
           sponsorable.add(user.login)
         }
