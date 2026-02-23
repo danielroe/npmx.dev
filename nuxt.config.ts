@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import { isCI, provider } from 'std-env'
+import { isCI, isTest, provider } from 'std-env'
 
 export default defineNuxtConfig({
   modules: [
@@ -37,6 +37,7 @@ export default defineNuxtConfig({
     github: {
       orgToken: '',
     },
+    oauthJwkOne: process.env.OAUTH_JWK_ONE || undefined,
     // Upstash Redis for distributed OAuth token refresh locking in production
     upstash: {
       redisRestUrl: process.env.UPSTASH_KV_REST_API_URL || process.env.KV_REST_API_URL || '',
@@ -101,7 +102,7 @@ export default defineNuxtConfig({
       isr: {
         expiration: 60 * 60 /* one hour */,
         passQuery: true,
-        allowQuery: ['color', 'labelColor', 'label', 'name'],
+        allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
       },
     },
     '/api/registry/downloads/**': {
@@ -122,6 +123,7 @@ export default defineNuxtConfig({
     '/_avatar/**': { isr: 3600, proxy: 'https://www.gravatar.com/avatar/**' },
     '/opensearch.xml': { isr: true },
     '/oauth-client-metadata.json': { prerender: true },
+    '/.well-known/jwks.json': { prerender: true },
     // never cache
     '/api/auth/**': { isr: false, cache: false },
     '/api/social/**': { isr: false, cache: false },
@@ -216,9 +218,15 @@ export default defineNuxtConfig({
         include: ['../test/unit/server/**/*.ts'],
       },
     },
+    replace: {
+      'import.meta.test': isTest,
+    },
   },
 
   fonts: {
+    providers: {
+      fontshare: false,
+    },
     families: [
       {
         name: 'Geist',

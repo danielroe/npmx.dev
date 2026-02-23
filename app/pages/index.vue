@@ -109,7 +109,7 @@ defineOgImageComponent('Default', {
 
       <nav
         :aria-label="$t('nav.popular_packages')"
-        class="pt-4 pb-36 sm:pb-40 text-center motion-safe:animate-fade-in motion-safe:animate-fill-both"
+        class="pt-4 pb-36 sm:pb-40 text-center motion-safe:animate-fade-in motion-safe:animate-fill-both max-w-xl mx-auto"
         style="animation-delay: 0.3s"
       >
         <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 list-none m-0 p-0">
