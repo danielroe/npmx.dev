@@ -121,6 +121,18 @@ watch(orgName, () => {
   currentPage.value = 1
 })
 
+if (import.meta.client) {
+  watch(
+    () => [status.value, orgName.value] as const,
+    ([s, name]) => {
+      if (s === 'success') {
+        trackRecentView({ type: 'org', name, label: `@${name}` })
+      }
+    },
+    { immediate: true },
+  )
+}
+
 // Handle filter chip removal
 function handleClearFilter(chip: FilterChip) {
   clearFilter(chip)

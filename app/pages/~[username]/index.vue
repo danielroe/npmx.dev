@@ -119,6 +119,18 @@ watch(username, () => {
   sortOption.value = 'downloads'
 })
 
+if (import.meta.client) {
+  watch(
+    () => [status.value, username.value] as const,
+    ([s, name]) => {
+      if (s === 'success') {
+        trackRecentView({ type: 'user', name, label: `~${name}` })
+      }
+    },
+    { immediate: true },
+  )
+}
+
 useSeoMeta({
   title: () => `~${username.value} - npmx`,
   ogTitle: () => `~${username.value} - npmx`,

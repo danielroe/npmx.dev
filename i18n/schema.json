@@ -205,6 +205,9 @@
         "popular_packages": {
           "type": "string"
         },
+        "recently_viewed": {
+          "type": "string"
+        },
         "settings": {
           "type": "string"
         },
