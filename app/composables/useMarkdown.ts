@@ -32,12 +32,18 @@ function stripAndEscapeHtml(text: string, packageName?: string): string {
   // Then strip markdown image badges
   stripped = stripMarkdownImages(stripped)
 
-  // Then strip actual HTML tags (keep their text content)
-  // Only match tags that start with a letter or / (to avoid matching things like "a < b > c")
-  stripped = stripped.replace(/<\/?[a-z][^>]*>/gi, '')
+  // Strip actual HTML tags (keep their text content), but leave tags inside backtick spans
+  // The alternation matches a backtick span first — if that branch wins the match is kept as-is
+  stripped = stripped.replace(
+    /(`[^`]*`)|<\/?[a-z][^>]*>/gi,
+    (match, codeSpan: string | undefined) => codeSpan ?? '',
+  )
 
   // Strip HTML comments: <!-- ... --> (including unclosed comments from truncation)
-  stripped = stripped.replace(/<!--[\s\S]*?(-->|$)/g, '')
+  stripped = stripped.replace(
+    /(`[^`]*`)|<!--[\s\S]*?(-->|$)/g,
+    (match, codeSpan: string | undefined) => codeSpan ?? '',
+  )
 
   if (packageName) {
     // Trim first to handle leading/trailing whitespace from stripped HTML
