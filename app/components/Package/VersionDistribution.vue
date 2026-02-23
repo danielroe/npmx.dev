@@ -178,7 +178,7 @@ const hasMinimap = computed<boolean>(() => {
 
 const chartConfig = computed(() => {
   return {
-    theme: 'dark',
+    theme: isDarkMode.value ? 'dark' : '',
     chart: {
       title: {
         text: dateRangeLabel.value,
