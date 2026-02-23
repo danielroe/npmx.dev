@@ -486,7 +486,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
     <div class="space-y-0.5 min-w-0">
       <!-- Semver range filter -->
       <div class="px-1 pb-1">
-        <div class="flex items-center gap-1.5">
+        <div class="flex items-center gap-1.5 py-1">
           <InputBase
             v-model="semverFilter"
             type="text"
