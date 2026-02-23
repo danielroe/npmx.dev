@@ -107,8 +107,13 @@ const sanitise = (value: string) =>
     .replace(/[\\/:"*?<>|]/g, '-')
     .replace(/\//g, '-')
 
+const { locale } = useI18n()
 function formatDate(date: Date) {
-  return date.toLocaleString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' })
+  return date.toLocaleString(locale.value, {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
 }
 
 const endDate = computed(() => {
