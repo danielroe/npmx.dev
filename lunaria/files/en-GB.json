@@ -833,7 +833,12 @@
       "loading": "Loading contributors...",
       "error": "Failed to load contributors",
       "view_profile": "View {name}'s GitHub profile",
-      "avatar": "{name}'s avatar"
+      "avatar": "{name}'s avatar",
+      "view_profile_detailed": "View {name}'s GitHub profile{role}{works_at}{location}",
+      "separator": " — ",
+      "role": "{separator}{role} at npmx.dev",
+      "works_at": "{separator}works at {company}",
+      "location": "{separator}based in {location}"
     },
     "get_involved": {
       "title": "Get involved",

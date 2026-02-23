@@ -173,6 +173,26 @@ function onMouseLeave() {
     }
   }, 120)
 }
+
+// --- Add this helper function ---
+function getAriaLabel(c: GitHubContributor): string {
+  const separator = $t('about.contributors.separator')
+  const role = roleLabels.value[c.role]
+    ? $t('about.contributors.role', { separator, role: roleLabels.value[c.role] })
+    : ''
+  const works_at = c.company
+    ? $t('about.contributors.works_at', { separator, company: c.company })
+    : ''
+  const location = c.location
+    ? $t('about.contributors.location', { separator, location: c.location })
+    : ''
+  return $t('about.contributors.view_profile_detailed', {
+    name: c.name || c.login,
+    role,
+    works_at,
+    location,
+  })
+}
 </script>
 
 <template>
@@ -330,7 +350,11 @@ function onMouseLeave() {
                 <LinkBase
                   :id="`anchor-${contributor.id}`"
                   :to="contributor.html_url"
-                  :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
+                  :aria-label="
+                    isExpandable(contributor)
+                      ? getAriaLabel(contributor)
+                      : $t('about.contributors.view_profile', { name: contributor.login })
+                  "
                   no-underline
                   no-external-icon
                   class="group relative block h-12 w-12 rounded-lg transition-all outline-none focus-visible:(ring-2 ring-accent z-20)"

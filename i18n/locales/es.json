@@ -827,7 +827,12 @@
       "loading": "Cargando colaboradores...",
       "error": "Error al cargar colaboradores",
       "view_profile": "Ver perfil de GitHub de {name}",
-      "avatar": "avatar de {name}"
+      "avatar": "avatar de {name}",
+      "view_profile_detailed": "Ver el perfil de GitHub de {name}{role}{works_at}{location}",
+      "separator": " — ",
+      "role": "{separator}{role} en npmx.dev",
+      "works_at": "{separator}trabaja en {company}",
+      "location": "{separator}ubicado en {location}"
     },
     "get_involved": {
       "title": "Involúcrate",
