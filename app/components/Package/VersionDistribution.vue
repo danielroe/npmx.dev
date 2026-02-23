@@ -646,6 +646,7 @@ const chartConfig = computed(() => {
   }
 }
 
+/* Adds padding to graph title in absence of a configurable css property */
 #version-distribution .atom-title {
   padding-top: 20px;
 }
