@@ -822,7 +822,6 @@
     },
     "team": {
       "title": "Équipe",
-      "governance": "Gouvernance",
       "role_steward": "pilote",
       "role_maintainer": "mainteneur",
       "sponsor": "sponsor",
