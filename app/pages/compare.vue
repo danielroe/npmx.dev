@@ -245,7 +245,8 @@ useSeoMeta({
           v-if="packagesData && packagesData.some(p => p !== null)"
           :copied="copied"
           :copy-text="$t('compare.packages.copy_as_markdown')"
-          class="mb-4 inline-block hidden md:inline-flex"
+          class="mb-4"
+          :button-attrs="{ class: 'hidden md:inline-flex' }"
           @click="exportComparisonDataAsMarkdown"
         >
           <h2 id="comparison-heading" class="text-xs text-fg-subtle uppercase tracking-wider">

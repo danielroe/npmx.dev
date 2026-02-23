@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { HTMLAttributes } from 'vue'
+
 defineOptions({
   inheritAttrs: false,
 })
@@ -9,6 +11,7 @@ const props = defineProps<{
   copiedText?: string
   ariaLabelCopy?: string
   ariaLabelCopied?: string
+  buttonAttrs?: HTMLAttributes
 }>()
 
 const buttonCopyText = computed(() => props.copyText || $t('common.copy'))
@@ -37,6 +40,7 @@ function handleClick() {
         copied ? 'text-accent bg-accent/10' : 'text-fg-muted bg-bg border-border',
       ]"
       :aria-label="copied ? buttonAriaLabelCopied : buttonAriaLabelCopy"
+      v-bind="buttonAttrs"
     >
       <span
         :class="copied ? 'i-lucide:check' : 'i-lucide:copy'"
