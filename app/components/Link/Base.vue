@@ -37,7 +37,7 @@ const props = withDefaults(
     noUnderline?: boolean
 
     /**
-     * should external link icon be displayed?.
+     * When `true`, suppresses the external-link icon even for external `to` URLs.
      *
      * @default false
      */
