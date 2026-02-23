@@ -86,8 +86,13 @@ const gridHeaders = computed(() =>
  */
 function exportComparisonDataAsMarkdown() {
   const mdData: Array<Array<string>> = []
-  mdData.push(['', ...gridHeaders.value])
-  const maxLengths = [0, ...gridHeaders.value.map(header => header.length)]
+  const headers = [
+    '',
+    ...gridHeaders.value,
+    ...(showNoDependency.value ? [$t('compare.no_dependency.label')] : []),
+  ]
+  mdData.push(headers)
+  const maxLengths = headers.map(item => item.length)
 
   selectedFacets.value.forEach((facet, index) => {
     const label = facet.label
@@ -104,9 +109,9 @@ function exportComparisonDataAsMarkdown() {
           : item?.display || '',
       ),
     ])
-    mdData?.[index + 1]?.forEach((item, index) => {
-      if (item.length > (maxLengths?.[index] || 0)) {
-        maxLengths[index] = item.length
+    mdData?.[index + 1]?.forEach((item, itemIndex) => {
+      if (item.length > (maxLengths?.[itemIndex] || 0)) {
+        maxLengths[itemIndex] = item.length
       }
     })
   })
