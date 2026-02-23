@@ -341,7 +341,7 @@ const endDate = computed(() => {
             <button
               type="button"
               :class="[
-                'px-4 py-2.3 font-mono text-sm transition-colors rounded-s-lg',
+                'px-4 py-4 font-mono text-sm leading-none transition-colors rounded-s-lg',
                 groupingMode === 'major'
                   ? 'bg-accent text-bg font-medium'
                   : 'text-fg-subtle hover:text-fg hover:bg-bg-subtle/50',
@@ -356,7 +356,7 @@ const endDate = computed(() => {
             <button
               type="button"
               :class="[
-                'px-4 py-2.3 font-mono text-sm transition-colors rounded-e-lg border-is border-border',
+                'px-4 py-4 font-mono text-sm leading-none transition-colors rounded-e-lg border-is border-border',
                 groupingMode === 'minor'
                   ? 'bg-accent text-bg font-medium'
                   : 'text-fg-subtle hover:text-fg hover:bg-bg-subtle/50',
