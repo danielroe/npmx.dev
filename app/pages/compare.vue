@@ -87,13 +87,7 @@ const gridHeaders = computed(() =>
  */
 function exportComparisonDataAsMarkdown() {
   const mdData: Array<Array<string>> = []
-  mdData.push([
-    '',
-    ...gridColumns.value.map(
-      (col, index) =>
-        `[${gridHeaders.value[index]}](${NPMX_SITE}/package/${col?.name}/v/${col?.version})`,
-    ),
-  ])
+  mdData.push(['', ...gridHeaders.value])
   const maxLengths = gridHeaders.value.map(header => header.length)
 
   selectedFacets.value.forEach((facet, index) => {
