@@ -133,11 +133,7 @@ export default defineNuxtConfig({
       },
     },
     // pages
-    '/package/**': getISRConfig(60, { fallback: 'html' }),
-    '/package/:name/_payload.json': { isr: 60 },
-    '/package/:name/v/:version/_payload.json': { isr: 60 },
-    '/package/:org/:name/_payload.json': { isr: 60 },
-    '/package/:org/:name/v/:version/_payload.json': { isr: 60 },
+    '/package/**': getISRConfig(60),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/package-docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
