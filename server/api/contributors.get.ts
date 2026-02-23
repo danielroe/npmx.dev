@@ -97,9 +97,13 @@ function sanitizeGitHubHTML(html: string | null): string | null {
  * Handles "undefined" strings, empty values, or purely whitespace strings.
  * Prevents UI issues with empty icons or broken conditional logic.
  */
-function cleanString(val: string | null): string | null {
+function cleanString(val: string | null, url = false): string | null {
   if (!val || val === 'undefined' || val.trim() === '') return null
-  return val.trim()
+  val = val.trim()
+  if (!url) {
+    return val
+  }
+  return val.startsWith('https://') || val.startsWith('http:') ? val : null
 }
 
 /**
@@ -158,7 +162,7 @@ async function fetchGitHubUserData(
           // Rich HTML sanitization for company mentions/orgs
           companyHTML: sanitizeGitHubHTML(user.companyHTML),
           location: cleanString(user.location),
-          websiteUrl: cleanString(user.websiteUrl),
+          websiteUrl: cleanString(user.websiteUrl, true),
           twitterUsername: cleanString(user.twitterUsername),
         })
       }
