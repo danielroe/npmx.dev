@@ -623,6 +623,7 @@
       "invalid_name": "Ungültiger Paketname:",
       "available": "Dieser Name ist verfügbar!",
       "taken": "Dieser Name ist bereits vergeben.",
+      "missing_permission": "Du hast keine Berechtigung, ein Paket zum Scope {'@'}{scope} hinzuzufügen.",
       "similar_warning": "Ähnliche Pakete existieren - npm könnte diesen Namen ablehnen:",
       "related": "Verwandte Pakete:",
       "scope_warning_title": "Erwäge stattdessen ein Scoped-Paket",

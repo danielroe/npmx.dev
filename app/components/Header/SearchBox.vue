@@ -16,7 +16,7 @@ const showSearchBar = computed(() => {
   return route.name !== 'index'
 })
 
-const { model: searchQuery, flushUpdateUrlQuery } = useGlobalSearch()
+const { model: searchQuery, flushUpdateUrlQuery } = useGlobalSearch('header')
 
 function handleSubmit() {
   flushUpdateUrlQuery()
