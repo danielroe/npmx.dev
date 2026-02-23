@@ -74,7 +74,7 @@ test.describe('Search Pages', () => {
   })
 
   test('/search/?q=vue → "/" focuses the search input from results', async ({ page, goto }) => {
-    await goto('/search?q=vue', { waitUntil: 'hydration' })
+    await goto('/search/?q=vue', { waitUntil: 'hydration' })
 
     await expect(page.locator('text=/found \\d+|showing \\d+/i').first()).toBeVisible({
       timeout: 15000,
