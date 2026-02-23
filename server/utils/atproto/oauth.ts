@@ -28,14 +28,17 @@ export const handleResolver = new AtprotoDohHandleResolver({
  * Generates the OAuth client metadata. pkAlg is used to signify that the OAuth client is confidential
  */
 export function getOauthClientMetadata(pkAlg: string | undefined = undefined): OAuthClientMetadata {
-  const dev = import.meta.dev
-
-  const client_uri = clientUri
   const redirect_uri: OAuthRedirectUri = oauthRedirectUriSchema.parse(
-    `${client_uri}/api/auth/atproto`,
+    `${clientUri}/api/auth/atproto`,
   )
+
+  const client_id =
+    import.meta.dev || import.meta.test
+      ? `http://localhost?redirect_uri=${encodeURIComponent(redirect_uri)}&scope=${encodeURIComponent(scope)}`
+      : `${clientUri}/oauth-client-metadata.json`
+
   const jwks_uri: WebUri | undefined = pkAlg
-    ? webUriSchema.parse(`${client_uri}/.well-known/jwks.json`)
+    ? webUriSchema.parse(`${clientUri}/.well-known/jwks.json`)
     : undefined
 
   // If anything changes here, please make sure to also update /shared/schemas/oauth.ts to match
