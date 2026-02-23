@@ -122,6 +122,7 @@ watch(orgName, () => {
 })
 
 if (import.meta.client) {
+  const { trackRecentView } = useRecentlyViewed()
   watch(
     () => [status.value, orgName.value] as const,
     ([s, name]) => {

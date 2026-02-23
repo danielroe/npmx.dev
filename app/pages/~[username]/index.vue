@@ -120,6 +120,7 @@ watch(username, () => {
 })
 
 if (import.meta.client) {
+  const { trackRecentView } = useRecentlyViewed()
   watch(
     () => [status.value, username.value] as const,
     ([s, name]) => {
