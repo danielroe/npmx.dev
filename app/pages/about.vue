@@ -129,14 +129,15 @@ function onMouseEnter(contributor: GitHubContributor) {
   if (!isExpandable(contributor)) return
   cancelClose()
   clearTimeout(openTimer.value)
+  openTimer.value = undefined
 
-  const trigger = () => {
+  const trigger = async () => {
     activeContributor.value = contributor
-    positionPopover(`anchor-${contributor.id}`)
+    await positionPopover(`anchor-${contributor.id}`)
   }
 
   if (activeContributor.value) {
-    trigger()
+    void trigger()
   } else {
     openTimer.value = setTimeout(trigger, 80)
   }
@@ -151,12 +152,18 @@ function cancelClose() {
 
 function onMouseLeave() {
   clearTimeout(openTimer.value)
+  openTimer.value = undefined
   closeTimer.value = setTimeout(() => {
     const popover = document.getElementById('shared-contributor-popover')
     if (popover && !popover.matches(':hover')) {
       try {
         ;(popover as any).hidePopover()
-      } catch (e) {}
+      } catch (e) {
+        if (import.meta.dev) {
+          // oxlint-disable-next-line no-console
+          console.warn('[positionPopover] showPopover failed:', e)
+        }
+      }
       activeContributor.value = null
     }
   }, 120)
