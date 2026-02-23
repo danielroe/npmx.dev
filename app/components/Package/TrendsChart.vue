@@ -1515,10 +1515,9 @@ const chartConfig = computed<VueUiXyConfig>(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: ({ datapoint }) => {
-          if (!datapoint || pending.value) return ''
+        customFormat: ({ datapoint: items }) => {
+          if (!items || pending.value) return ''
 
-          const items = Array.isArray(datapoint) ? datapoint : [datapoint[0]]
           const hasMultipleItems = items.length > 1
 
           const rows = items
