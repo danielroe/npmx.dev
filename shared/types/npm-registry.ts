@@ -233,7 +233,6 @@ export interface NpmVersionDist {
 /**
  * Parsed provenance details for display (from attestation bundle SLSA predicate).
  * Used by the provenance API and PackageProvenanceSection.
- * @public
  */
 export interface ProvenanceDetails {
   /** Provider ID (e.g. "github", "gitlab") */
