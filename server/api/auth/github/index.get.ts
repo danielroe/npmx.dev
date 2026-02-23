@@ -30,6 +30,10 @@ export default defineEventHandler(async event => {
 
   const query = getQuery(event)
 
+  if (query.error === 'access_denied') {
+    return sendRedirect(event, '/')
+  }
+
   // If no code, initiate the OAuth flow
   if (!query.code) {
     const state = generateRandomHexString()
