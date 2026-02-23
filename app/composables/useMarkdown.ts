@@ -41,7 +41,7 @@ function stripAndEscapeHtml(text: string, packageName?: string): string {
   )
 
   // Strip HTML comments: <!-- ... --> (including unclosed comments from truncation)
-  // Same alternation trick: preserve backtick spans so comments inside code are kept
+  // Strip HTML comments: <!-- ... --> (including unclosed comments from truncation)
   stripped = stripped.replace(
     /(`[^`]*`)|<!--[\s\S]*?(-->|$)/g,
     (match, codeSpan: string | undefined) => codeSpan ?? '',
