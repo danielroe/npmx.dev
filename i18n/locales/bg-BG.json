@@ -292,11 +292,8 @@
       "distribution_modal_title": "Версии",
       "grouping_major": "Major",
       "grouping_minor": "Minor",
-      "recent_versions_only": "Само последни версии",
       "recent_versions_only_tooltip": "Показване само на версии, публикувани през последната година.",
-      "show_low_usage": "Показване на версии с малко използване",
       "show_low_usage_tooltip": "Включване на групи версии с по-малко от 1% от общите изтегляния.",
-      "date_range_tooltip": "Само последната седмица на разпределение на версиите",
       "y_axis_label": "Изтегляния"
     },
     "dependencies": {

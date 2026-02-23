@@ -100,6 +100,10 @@ export default defineConfig({
         nuxt: '#00DC82',
         vite: '#646CFF',
         jsfiddle: '#0084FF',
+        typescript: '#3178C6',
+        solid: '#2C4F7C',
+        svelte: '#FF3E00',
+        tailwind: '#06B6D4',
       },
     },
     animation: {

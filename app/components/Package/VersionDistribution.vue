@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
-import type {
-  VueUiXyDatasetItem,
-  VueUiXyDatasetBarItem,
-  VueUiXyDatapointItem,
-  MinimalCustomFormatParams,
+import {
+  type VueUiXyDatasetItem,
+  type VueUiXyDatasetBarItem,
+  type VueUiXyDatapointItem,
+  type MinimalCustomFormatParams,
 } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
@@ -107,23 +107,90 @@ const sanitise = (value: string) =>
     .replace(/[\\/:"*?<>|]/g, '-')
     .replace(/\//g, '-')
 
+const { locale } = useI18n()
+function formatDate(date: Date) {
+  return date.toLocaleString(locale.value, {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+const endDate = computed(() => {
+  const t = new Date()
+  return new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() - 1))
+})
+
+const startDate = computed(() => {
+  const start = new Date(endDate.value)
+  start.setUTCDate(start.getUTCDate() - 6)
+  return start
+})
+
+const { t } = useI18n()
+const dateRangeLabel = computed(() => {
+  const from = formatDate(startDate.value)
+  const to = formatDate(endDate.value)
+  const endYear = endDate.value.getUTCFullYear()
+  const startYear = startDate.value.getUTCFullYear()
+
+  if (startYear !== endYear) {
+    return t('package.versions.distribution_range_date_multiple_years', {
+      from,
+      to,
+      startYear,
+      endYear,
+    })
+  }
+
+  return t('package.versions.distribution_range_date_same_year', { from, to, endYear })
+})
+
 function buildExportFilename(extension: string): string {
-  const range = `${startDate.value}_${endDate.value}`
+  const range = dateRangeLabel.value.replaceAll(' ', '_').replaceAll(',', '')
 
   const label = props.packageName
   return `${sanitise(label ?? '')}_${range}.${extension}`
 }
 
+// VueUiXy expects one series with multiple values for bar charts
+const xyDataset = computed<VueUiXyDatasetItem[]>(() => {
+  if (!chartDataset.value.length) return []
+
+  return [
+    {
+      name: props.packageName,
+      series: chartDataset.value.map(item => item.downloads),
+      type: 'bar' as const,
+      color: accent.value,
+    },
+  ]
+})
+
+const xAxisLabels = computed(() => {
+  return chartDataset.value.map(item => item.name)
+})
+
+const hasMinimap = computed<boolean>(() => {
+  const series = xyDataset.value[0]?.series ?? []
+  return series.length > 6
+})
+
 const chartConfig = computed(() => {
   return {
-    theme: isDarkMode.value ? 'dark' : 'default',
+    theme: isDarkMode.value ? 'dark' : '',
     chart: {
-      height: isMobile.value ? 750 : 500,
+      title: {
+        text: dateRangeLabel.value,
+        fontSize: isMobile.value ? 24 : 16,
+        bold: false,
+      },
+      height: isMobile.value ? 750 : hasMinimap.value ? 500 : 611,
       backgroundColor: colors.value.bg,
       padding: {
         top: 24,
         right: 24,
-        bottom: xAxisLabels.value.length > 10 ? 84 : 72, // Space for rotated labels + watermark
+        bottom: 60,
       },
       userOptions: {
         buttons: {
@@ -267,57 +334,6 @@ const chartConfig = computed(() => {
     },
   }
 })
-
-// VueUiXy expects one series with multiple values for bar charts
-const xyDataset = computed<VueUiXyDatasetItem[]>(() => {
-  if (!chartDataset.value.length) return []
-
-  return [
-    {
-      name: props.packageName,
-      series: chartDataset.value.map(item => item.downloads),
-      type: 'bar' as const,
-      color: accent.value,
-    },
-  ]
-})
-
-const xAxisLabels = computed(() => {
-  return chartDataset.value.map(item => item.name)
-})
-
-// Handle keyboard navigation for semver group toggle
-function handleGroupingKeydown(event: KeyboardEvent) {
-  if (pending.value) return
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    // Toggle between major and minor
-    groupingMode.value = groupingMode.value === 'major' ? 'minor' : 'major'
-  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault()
-    // Arrow keys also toggle
-    groupingMode.value = groupingMode.value === 'major' ? 'minor' : 'major'
-  }
-}
-
-// Calculate last week date range (matches npm's "last-week" API)
-const startDate = computed(() => {
-  const today = new Date()
-  const yesterday = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
-  )
-  const startObj = new Date(yesterday)
-  startObj.setUTCDate(startObj.getUTCDate() - 6)
-  return startObj.toISOString().slice(0, 10)
-})
-
-const endDate = computed(() => {
-  const today = new Date()
-  const yesterday = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
-  )
-  return yesterday.toISOString().slice(0, 10)
-})
 </script>
 
 <template>
@@ -326,147 +342,100 @@ const endDate = computed(() => {
     id="version-distribution"
     :aria-busy="pending ? 'true' : 'false'"
   >
-    <div class="w-full mb-4 flex flex-col gap-3">
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-end">
-        <div class="flex flex-col gap-1 w-fit sm:shrink-0">
-          <label class="text-3xs font-mono text-fg-subtle tracking-wide uppercase">
-            {{ $t('package.versions.distribution_title') }}
-          </label>
-          <div
-            class="flex items-center bg-bg-subtle border border-border rounded-md"
-            role="group"
-            :aria-label="$t('package.versions.distribution_title')"
-            tabindex="0"
-            @keydown="handleGroupingKeydown"
-          >
-            <button
-              type="button"
-              :class="[
-                'px-4 py-1.75 font-mono text-sm transition-colors rounded-s-md',
-                groupingMode === 'major'
-                  ? 'bg-accent text-bg font-medium'
-                  : 'text-fg-subtle hover:text-fg hover:bg-bg-subtle/50',
-              ]"
-              :aria-pressed="groupingMode === 'major'"
-              :disabled="pending"
-              tabindex="-1"
-              @click="groupingMode = 'major'"
-            >
-              {{ $t('package.versions.grouping_major') }}
-            </button>
-            <button
-              type="button"
-              :class="[
-                'px-4 py-1.75 font-mono text-sm transition-colors rounded-e-md border-is border-border',
-                groupingMode === 'minor'
-                  ? 'bg-accent text-bg font-medium'
-                  : 'text-fg-subtle hover:text-fg hover:bg-bg-subtle/50',
-              ]"
-              :aria-pressed="groupingMode === 'minor'"
-              :disabled="pending"
-              tabindex="-1"
-              @click="groupingMode = 'minor'"
-            >
-              {{ $t('package.versions.grouping_minor') }}
-            </button>
-          </div>
-        </div>
+    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-end mb-6">
+      <div class="flex flex-col gap-1">
+        <label class="text-3xs font-mono text-fg-subtle tracking-wide uppercase">
+          {{ $t('package.versions.distribution_title') }}
+        </label>
 
-        <div class="grid grid-cols-2 gap-2 flex-1">
-          <TooltipApp
-            :text="$t('package.versions.date_range_tooltip')"
-            position="bottom"
-            :to="inModal ? '#chart-modal' : undefined"
-            :offset="8"
-            class="w-full"
+        <ButtonGroup>
+          <ButtonBase
+            @click="groupingMode = 'major'"
+            :variant="groupingMode === 'major' ? 'primary' : 'secondary'"
           >
-            <div class="flex flex-col gap-1 w-full">
-              <label
-                for="versionDistStartDate"
-                class="text-3xs font-mono text-fg-subtle tracking-wide uppercase"
-              >
-                {{ $t('package.trends.start_date') }}
-              </label>
-              <div class="relative flex items-center">
-                <span
-                  class="absolute inset-is-2 i-lucide:calendar w-4 h-4 text-fg-subtle shrink-0 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <InputBase
-                  id="versionDistStartDate"
-                  :model-value="startDate"
-                  disabled
-                  type="date"
-                  class="w-full min-w-0 bg-transparent ps-7"
-                  size="medium"
-                />
-              </div>
-            </div>
-          </TooltipApp>
+            {{ $t('package.versions.grouping_major') }}
+          </ButtonBase>
 
-          <TooltipApp
-            :text="$t('package.versions.date_range_tooltip')"
-            position="bottom"
-            :to="inModal ? '#chart-modal' : undefined"
-            :offset="8"
-            class="w-full"
+          <ButtonBase
+            @click="groupingMode = 'minor'"
+            :variant="groupingMode === 'minor' ? 'primary' : 'secondary'"
           >
-            <div class="flex flex-col gap-1 w-full">
-              <label
-                for="versionDistEndDate"
-                class="text-3xs font-mono text-fg-subtle tracking-wide uppercase"
-              >
-                {{ $t('package.trends.end_date') }}
-              </label>
-              <div class="relative flex items-center">
-                <span
-                  class="absolute inset-is-2 i-lucide:calendar w-4 h-4 text-fg-subtle shrink-0 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <InputBase
-                  id="versionDistEndDate"
-                  :model-value="endDate"
-                  disabled
-                  type="date"
-                  class="w-full min-w-0 bg-transparent ps-7"
-                  size="medium"
-                />
-              </div>
-            </div>
-          </TooltipApp>
-        </div>
+            {{ $t('package.versions.grouping_minor') }}
+          </ButtonBase>
+        </ButtonGroup>
       </div>
 
-      <div class="flex flex-col gap-4 w-full">
-        <TooltipApp
-          :text="$t('package.versions.recent_versions_only_tooltip')"
-          position="bottom"
-          :to="inModal ? '#chart-modal' : undefined"
-          :offset="8"
+      <div class="flex flex-col gap-1">
+        <label
+          class="text-3xs font-mono text-fg-subtle tracking-wide uppercase flex items-center gap-2"
         >
-          <SettingsToggle
-            v-model="showRecentOnly"
-            :label="$t('package.versions.recent_versions_only')"
-            justify="start"
-            reverse-order
-            :class="pending ? 'opacity-50 pointer-events-none' : ''"
-          />
-        </TooltipApp>
+          <span>{{ $t('package.versions.grouping_versions_title') }}</span>
+          <TooltipApp
+            :text="$t('package.versions.recent_versions_only_tooltip')"
+            interactive
+            position="top"
+            :to="inModal ? '#chart-modal' : undefined"
+            :offset="8"
+          >
+            <span
+              tabindex="0"
+              class="i-lucide:info w-3.5 h-3.5 text-fg-subtle cursor-help shrink-0 rounded-sm"
+              role="img"
+              aria-label="versions info"
+            />
+          </TooltipApp>
+        </label>
 
-        <TooltipApp
-          :text="$t('package.versions.show_low_usage_tooltip')"
-          position="bottom"
-          :to="inModal ? '#chart-modal' : undefined"
-          :offset="8"
+        <ButtonGroup>
+          <ButtonBase
+            @click="showRecentOnly = false"
+            :variant="showRecentOnly ? 'secondary' : 'primary'"
+          >
+            {{ $t('package.versions.grouping_versions_all') }}
+          </ButtonBase>
+          <ButtonBase
+            @click="showRecentOnly = true"
+            :variant="showRecentOnly ? 'primary' : 'secondary'"
+          >
+            {{ $t('package.versions.grouping_versions_only_recent') }}
+          </ButtonBase>
+        </ButtonGroup>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label
+          class="text-3xs font-mono text-fg-subtle tracking-wide uppercase flex items-center gap-2"
         >
-          <SettingsToggle
-            v-model="showLowUsageVersions"
-            :label="$t('package.versions.show_low_usage')"
-            justify="start"
-            reverse-order
-            :class="pending ? 'opacity-50 pointer-events-none' : ''"
-          />
-        </TooltipApp>
+          <span>{{ $t('package.versions.grouping_usage_title') }}</span>
+          <TooltipApp
+            :text="$t('package.versions.show_low_usage_tooltip')"
+            interactive
+            position="top"
+            :to="inModal ? '#chart-modal' : undefined"
+            :offset="8"
+          >
+            <span
+              tabindex="0"
+              class="i-lucide:info w-3.5 h-3.5 text-fg-subtle cursor-help shrink-0 rounded-sm"
+              role="img"
+              aria-label="versions info"
+            />
+          </TooltipApp>
+        </label>
+        <ButtonGroup>
+          <ButtonBase
+            @click="showLowUsageVersions = false"
+            :variant="showLowUsageVersions ? 'secondary' : 'primary'"
+          >
+            {{ $t('package.versions.grouping_usage_all') }}
+          </ButtonBase>
+          <ButtonBase
+            @click="showLowUsageVersions = true"
+            :variant="showLowUsageVersions ? 'primary' : 'secondary'"
+          >
+            {{ $t('package.versions.grouping_usage_low') }}
+          </ButtonBase>
+        </ButtonGroup>
       </div>
     </div>
 
@@ -507,7 +476,7 @@ const endDate = computed(() => {
 
             <!-- Custom legend for single series (non-interactive) -->
             <template #legend="{ legend }">
-              <div class="flex gap-4 flex-wrap justify-center">
+              <div class="flex gap-4 flex-wrap justify-center pt-8">
                 <template v-if="legend.length > 0">
                   <div class="flex gap-1 place-items-center">
                     <div class="h-3 w-3">
@@ -675,5 +644,10 @@ const endDate = computed(() => {
     top: -0.6rem !important;
     left: calc(100% + 4rem) !important;
   }
+}
+
+/* Adds padding to graph title in absence of a configurable css property */
+#version-distribution .atom-title {
+  padding-top: 20px;
 }
 </style>
