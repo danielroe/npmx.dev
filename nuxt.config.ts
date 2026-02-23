@@ -134,10 +134,10 @@ export default defineNuxtConfig({
       },
     },
     // pages
-    '/package/:name': getISRConfig(60, { fallback: 'html' }),
-    '/package/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
-    '/package/:org/:name': getISRConfig(60, { fallback: 'html' }),
-    '/package/:org/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
+    '/package/:name': getISRConfig(60),
+    '/package/:name/v/:version': getISRConfig(3600),
+    '/package/:org/:name': getISRConfig(60),
+    '/package/:org/:name/v/:version': getISRConfig(3600),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/package-docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -371,8 +371,6 @@ function getISRConfig(expirationSeconds: number, options: ISRConfigOptions = {})
     }
   }
   return {
-    isr: {
-      expiration: expirationSeconds,
-    },
+    isr: expirationSeconds,
   }
 }
