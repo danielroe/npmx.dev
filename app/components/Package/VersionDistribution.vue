@@ -223,7 +223,9 @@ const chartConfig = computed<VueUiXyConfig>(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }) => {
+          svg: args => {
+            const blob = args?.blob
+            if (!blob) return
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
