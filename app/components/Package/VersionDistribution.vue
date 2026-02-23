@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
-import {
-  type VueUiXyDatasetItem,
-  type VueUiXyDatasetBarItem,
-  type VueUiXyDatapointItem,
-  type MinimalCustomFormatParams,
-} from 'vue-data-ui'
+import { type VueUiXyDatasetItem, type VueUiXyConfig } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenHex } from '~/utils/colors'
@@ -14,10 +9,6 @@ import {
   drawNpmxLogoAndTaglineWatermark,
 } from '~/composables/useChartWatermark'
 import TooltipApp from '~/components/Tooltip/App.vue'
-
-type TooltipParams = MinimalCustomFormatParams<VueUiXyDatapointItem[]> & {
-  bars: VueUiXyDatasetBarItem[]
-}
 
 const props = defineProps<{
   packageName: string
@@ -176,7 +167,7 @@ const hasMinimap = computed<boolean>(() => {
   return series.length > 6
 })
 
-const chartConfig = computed(() => {
+const chartConfig = computed<VueUiXyConfig>(() => {
   return {
     theme: isDarkMode.value ? 'dark' : '',
     chart: {
@@ -209,10 +200,13 @@ const chartConfig = computed(() => {
           altCopy: undefined, // TODO: set to proper translation key
         },
         callbacks: {
-          img: ({ imageUri }: { imageUri: string }) => {
+          img: args => {
+            const imageUri = args?.imageUri
+            if (!imageUri) return
             loadFile(imageUri, buildExportFilename('png'))
           },
-          csv: (csvStr: string) => {
+          csv: csvStr => {
+            if (!csvStr) return
             const PLACEHOLDER_CHAR = '\0'
             const multilineDateTemplate = $t('package.trends.date_range_multiline', {
               start: PLACEHOLDER_CHAR,
@@ -229,7 +223,7 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }: { blob: Blob }) => {
+          svg: ({ blob }) => {
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
@@ -277,8 +271,7 @@ const chartConfig = computed(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: (params: TooltipParams) => {
-          const { datapoint, absoluteIndex, bars } = params
+        customFormat: ({ datapoint, absoluteIndex, bars }) => {
           if (!datapoint || pending.value) return ''
 
           // Use absoluteIndex to get the correct version from chartDataset
@@ -328,9 +321,6 @@ const chartConfig = computed(() => {
           strokeDasharray: 3,
         },
       },
-    },
-    table: {
-      show: false,
     },
   }
 })
@@ -447,7 +437,7 @@ const chartConfig = computed(() => {
       role="region"
       aria-labelledby="version-distribution-title"
       class="relative"
-      :class="isMobile ? 'min-h-[260px]' : 'min-h-[400px]'"
+      :class="isMobile ? 'min-h-[260px]' : 'min-h-[520px]'"
     >
       <!-- Chart content -->
       <ClientOnly v-if="xyDataset.length > 0 && !error">
@@ -462,6 +452,16 @@ const chartConfig = computed(() => {
               <g
                 v-if="svg.isPrintingSvg || svg.isPrintingImg"
                 v-html="drawNpmxLogoAndTaglineWatermark(svg, watermarkColors, $t, 'bottom')"
+              />
+
+              <!-- Overlay covering the chart area to hide line resizing when switching granularities recalculates VueUiXy scaleMax when estimation lines are necessary -->
+              <rect
+                v-if="pending"
+                :x="svg.drawingArea.left"
+                :y="svg.drawingArea.top - 12"
+                :width="svg.drawingArea.width + 12"
+                :height="svg.drawingArea.height + 48"
+                :fill="colors.bg"
               />
             </template>
 
@@ -619,21 +619,6 @@ const chartConfig = computed(() => {
 /* Disable all transitions on SVG elements to prevent repositioning animation */
 :deep(.vue-ui-xy) svg rect {
   transition: none !important;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.chart-container {
-  animation: fadeInUp 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
 
