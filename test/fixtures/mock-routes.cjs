@@ -505,6 +505,18 @@ function matchGitHubApi(urlString) {
     return json(fixture || [])
   }
 
+  // Commits endpoint
+  const commitsMatch = pathname.match(/^\/repos\/([^/]+)\/([^/]+)\/commits$/)
+  if (commitsMatch) {
+    return json([{ sha: 'mock-commit' }])
+  }
+
+  // Search endpoint (issues, commits, etc.)
+  const searchMatch = pathname.match(/^\/search\/(.+)$/)
+  if (searchMatch) {
+    return json({ total_count: 0, incomplete_results: false, items: [] })
+  }
+
   return null
 }
 

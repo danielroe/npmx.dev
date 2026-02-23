@@ -464,6 +464,19 @@ async function handleGitHubApi(
     return { data: [] }
   }
 
+  // Commits endpoint: /repos/{owner}/{repo}/commits
+  const commitsMatch = pathname.match(/^\/repos\/([^/]+)\/([^/]+)\/commits$/)
+  if (commitsMatch) {
+    // Return a single-item array; fetchPageCount will use body.length when no Link header
+    return { data: [{ sha: 'mock-commit' }] }
+  }
+
+  // Search endpoint: /search/issues, /search/commits, etc.
+  const searchMatch = pathname.match(/^\/search\/(.+)$/)
+  if (searchMatch) {
+    return { data: { total_count: 0, incomplete_results: false, items: [] } }
+  }
+
   // Other GitHub API endpoints can be added here as needed
   return null
 }

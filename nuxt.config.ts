@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import { isCI, provider } from 'std-env'
+import { isCI, isTest, provider } from 'std-env'
 
 export default defineNuxtConfig({
   modules: [
@@ -215,6 +215,9 @@ export default defineNuxtConfig({
       tsConfig: {
         include: ['../test/unit/server/**/*.ts'],
       },
+    },
+    replace: {
+      'import.meta.test': isTest,
     },
   },
 
