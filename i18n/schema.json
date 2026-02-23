@@ -2473,9 +2473,6 @@
             "title": {
               "type": "string"
             },
-            "governance": {
-              "type": "string"
-            },
             "role_steward": {
               "type": "string"
             },

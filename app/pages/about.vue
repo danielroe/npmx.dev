@@ -446,6 +446,7 @@ function onMouseLeave() {
             <a
               v-if="activeContributor.sponsors_url"
               :href="activeContributor.sponsors_url"
+              :aria-label="$t('about.team.sponsor_aria', { name: activeContributor.login })"
               target="_blank"
               rel="noopener noreferrer"
               class="flex items-center gap-1 rounded border border-purple-700/30 bg-purple-700/5 text-purple-700 dark:border-purple-300/30 dark:bg-purple-300/5 dark:text-purple-300 px-2 py-0.5 text-4xs font-bold uppercase tracking-wider transition-colors hover:bg-purple-700/15 dark:hover:bg-purple-300/15"

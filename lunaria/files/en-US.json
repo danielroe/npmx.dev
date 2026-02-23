@@ -822,7 +822,6 @@
     },
     "team": {
       "title": "Team",
-      "governance": "Governance",
       "role_steward": "steward",
       "role_maintainer": "maintainer",
       "sponsor": "sponsor",
