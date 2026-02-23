@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { NO_DEPENDENCY_ID } from '~/composables/usePackageComparison'
 import { useRouteQuery } from '@vueuse/router'
-import { NPMX_SITE } from '#shared/utils/constants'
 
 definePageMeta({
   name: 'compare',
@@ -88,7 +87,8 @@ const gridHeaders = computed(() =>
 function exportComparisonDataAsMarkdown() {
   const mdData: Array<Array<string>> = []
   mdData.push(['', ...gridHeaders.value])
-  const maxLengths = gridHeaders.value.map(header => header.length)
+  const maxLengths = [0, ...gridHeaders.value.map(header => header.length)]
+  console.log(maxLengths)
 
   selectedFacets.value.forEach((facet, index) => {
     const label = facet.label
@@ -108,6 +108,7 @@ function exportComparisonDataAsMarkdown() {
     mdData?.[index + 1]?.forEach((item, index) => {
       if (item.length > (maxLengths?.[index] || 0)) {
         maxLengths[index] = item.length
+        console.log(maxLengths, index, item.length, item)
       }
     })
   })
