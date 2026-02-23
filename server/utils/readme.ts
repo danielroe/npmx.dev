@@ -239,8 +239,10 @@ const reservedPathsNpmJs = [
   'policies',
 ]
 
+const npmJsHosts = new Set(['www.npmjs.com', 'npmjs.com', 'www.npmjs.org', 'npmjs.org'])
+
 const isNpmJsUrlThatCanBeRedirected = (url: URL) => {
-  if (url.host !== 'www.npmjs.com' && url.host !== 'npmjs.com') {
+  if (!npmJsHosts.has(url.host)) {
     return false
   }
 
