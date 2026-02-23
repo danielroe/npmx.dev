@@ -15,7 +15,7 @@ interface PlaygroundProvider {
   id: string // Provider identifier
   name: string
   domains: string[] // Associated domains
-  path?: string
+  paths?: string[]
   icon?: string // Provider icon name
 }
 
@@ -81,8 +81,27 @@ const PLAYGROUND_PROVIDERS: PlaygroundProvider[] = [
     id: 'typescript-playground',
     name: 'TypeScript Playground',
     domains: ['typescriptlang.org'],
-    path: '/play',
+    paths: ['/play'],
     icon: 'typescript',
+  },
+  {
+    id: 'solid-playground',
+    name: 'Solid Playground',
+    domains: ['playground.solidjs.com'],
+    icon: 'solid',
+  },
+  {
+    id: 'svelte-playground',
+    name: 'Svelte Playground',
+    domains: ['svelte.dev'],
+    paths: ['/repl', '/playground'],
+    icon: 'svelte',
+  },
+  {
+    id: 'tailwind-playground',
+    name: 'Tailwind Play',
+    domains: ['play.tailwindcss.com'],
+    icon: 'tailwindcss',
   },
 ]
 
@@ -98,7 +117,7 @@ function matchPlaygroundProvider(url: string): PlaygroundProvider | null {
       for (const domain of provider.domains) {
         if (
           (hostname === domain || hostname.endsWith(`.${domain}`)) &&
-          (!provider.path || parsed.pathname.startsWith(provider.path))
+          (!provider.paths || provider.paths.some(path => parsed.pathname.startsWith(path)))
         ) {
           return provider
         }
