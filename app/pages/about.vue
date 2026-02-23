@@ -339,7 +339,7 @@ function getAriaLabel(c: GitHubContributor): string {
               {{ $t('about.contributors.error') }}
             </div>
             <ul
-              v-if="contributors.length"
+              v-else-if="contributors.length"
               class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0 overflow-visible"
             >
               <li
