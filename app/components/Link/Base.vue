@@ -36,9 +36,16 @@ const props = withDefaults(
 
       /** should only be used for links where the context makes it very clear they are clickable. Don't just use this, because you don't like underlines. */
       noUnderline?: boolean
+
+      /**
+       * should external link icon be displayed?.
+       *
+       * @default false
+       */
+      noExternalIcon?: boolean
     } & NuxtLinkProps
   >(),
-  { variant: 'link', size: 'medium' },
+  { variant: 'link', size: 'medium', noUnderline: false, noExternalIcon: false },
 )
 
 const isLinkExternal = computed(
@@ -101,7 +108,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
     <slot />
     <!-- automatically show icon indicating external link -->
     <span
-      v-if="isLinkExternal && !classicon"
+      v-if="isLinkExternal && !noExternalIcon && !classicon"
       class="i-lucide:external-link rtl-flip size-[1em] opacity-50"
       aria-hidden="true"
     />

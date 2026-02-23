@@ -2502,6 +2502,9 @@
             },
             "view_profile": {
               "type": "string"
+            },
+            "avatar": {
+              "type": "string"
             }
           },
           "additionalProperties": false

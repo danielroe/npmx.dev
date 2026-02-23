@@ -1,6 +1,16 @@
 export type Role = 'steward' | 'maintainer' | 'contributor'
 
-export interface GitHubContributor {
+export interface GitHubUserData {
+  name: string | null
+  bio: string | null
+  company: string | null
+  companyHTML: string | null
+  location: string | null
+  websiteUrl: string | null
+  twitterUsername: string | null
+}
+
+export interface GitHubContributor extends GitHubUserData {
   login: string
   id: number
   avatar_url: string
@@ -10,7 +20,11 @@ export interface GitHubContributor {
   sponsors_url: string | null
 }
 
-type GitHubAPIContributor = Omit<GitHubContributor, 'role' | 'sponsors_url'>
+/**
+ * Raw data coming from the GitHub REST API (/contributors).
+ * We exclude 'role', 'sponsors_url' AND all fields that only exist in GraphQL.
+ */
+type GitHubAPIContributor = Omit<GitHubContributor, 'role' | 'sponsors_url' | keyof GitHubUserData>
 
 // Fallback when no GitHub token is available (e.g. preview environments).
 // Only stewards are shown as maintainers; everyone else is a contributor.
@@ -61,15 +75,48 @@ async function fetchTeamMembers(token: string): Promise<TeamMembers | null> {
 }
 
 /**
- * Batch-query GitHub GraphQL API to check which users have sponsors enabled.
+ * Cleans GitHub HTML to remove tracking data and add security attributes.
+ * Specifically targets data-octo, data-hovercard, and keyboard shortcuts.
+ */
+function sanitizeGitHubHTML(html: string | null): string | null {
+  if (!html) return null
+
+  return (
+    html
+      // 1. Remove GitHub-specific tracking and metadata attributes
+      .replace(/\s(data-hovercard-[a-z-]+|data-octo-[a-z-]+|aria-keyshortcuts)="[^"]*"/gi, '')
+      // 2. Inject security and target attributes to all <a> tags
+      .replace(/<a /gi, '<a target="_blank" rel="noopener noreferrer" ')
+      // 3. Clean up any resulting double spaces
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+  )
+}
+
+/**
+ * Handles "undefined" strings, empty values, or purely whitespace strings.
+ * Prevents UI issues with empty icons or broken conditional logic.
+ */
+function cleanString(val: string | null): string | null {
+  if (!val || val === 'undefined' || val.trim() === '') return null
+  return val.trim()
+}
+
+/**
+ * Batch-query GitHub GraphQL API to check which users have sponsors enabled and getting user info.
  * Returns a Set of logins that have a sponsors listing.
  */
-async function fetchSponsorable(token: string, logins: string[]): Promise<Set<string>> {
+async function fetchGitHubUserData(
+  token: string,
+  logins: string[],
+  usersData: Map<string, GitHubUserData>,
+): Promise<Set<string>> {
   if (logins.length === 0) return new Set()
 
   // Build aliased GraphQL query: user0: user(login: "x") { hasSponsorsListing login }
   const fragments = logins.map(
-    (login, i) => `user${i}: user(login: "${login}") { hasSponsorsListing login }`,
+    (login, i) =>
+      `user${i}: user(login: "${login}") { hasSponsorsListing login name bio company companyHTML location websiteUrl twitterUsername }`,
   )
   const query = `{ ${fragments.join('\n')} }`
 
@@ -90,15 +137,31 @@ async function fetchSponsorable(token: string, logins: string[]): Promise<Set<st
     }
 
     const json = (await response.json()) as {
-      data?: Record<string, { login: string; hasSponsorsListing: boolean } | null>
+      data?: Record<
+        string,
+        (GitHubUserData & { login: string; hasSponsorsListing: boolean }) | null
+      >
     }
 
     const sponsorable = new Set<string>()
     if (json.data) {
       for (const user of Object.values(json.data)) {
-        if (user?.hasSponsorsListing) {
+        if (!user) continue
+        console.log(JSON.stringify(user))
+        if (user.hasSponsorsListing) {
           sponsorable.add(user.login)
         }
+        // --- SERVER-SIDE SANITIZATION AND BATCHING ---
+        usersData.set(user.login, {
+          name: cleanString(user.name),
+          bio: cleanString(user.bio),
+          company: cleanString(user.company),
+          // Rich HTML sanitization for company mentions/orgs
+          companyHTML: sanitizeGitHubHTML(user.companyHTML),
+          location: cleanString(user.location),
+          websiteUrl: cleanString(user.websiteUrl),
+          twitterUsername: cleanString(user.twitterUsername),
+        })
       }
     }
     return sponsorable
@@ -167,22 +230,24 @@ export default defineCachedEventHandler(
 
     const filtered = allContributors.filter(c => !c.login.includes('[bot]'))
 
-    // Identify maintainers (stewards + maintainers) and check their sponsors status
-    const maintainerLogins = filtered
-      .filter(c => teams.steward.has(c.login) || teams.maintainer.has(c.login))
-      .map(c => c.login)
+    const userData = new Map<string, GitHubUserData>()
 
     const sponsorable = githubToken
-      ? await fetchSponsorable(githubToken, maintainerLogins)
+      ? await fetchGitHubUserData(
+          githubToken,
+          filtered.map(c => c.login),
+          userData,
+        )
       : new Set<string>()
 
     return filtered
       .map(c => {
         const { role, order } = getRoleInfo(c.login, teams)
+        const userInfo = userData.get(c.login) || {}
         const sponsors_url = sponsorable.has(c.login)
           ? `https://github.com/sponsors/${c.login}`
           : null
-        Object.assign(c, { role, order, sponsors_url })
+        Object.assign(c, { role, order, sponsors_url, ...userInfo })
         return c as GitHubContributor & { order: number; sponsors_url: string | null; role: Role }
       })
       .sort((a, b) => a.order - b.order || b.contributions - a.contributions)
