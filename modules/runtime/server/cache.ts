@@ -866,7 +866,10 @@ export default defineNitroPlugin(nitroApp => {
           headers: { 'content-type': 'application/json' },
         })
       }
-      return new Response('Not Found', { status: 404 })
+      return new Response(JSON.stringify({ error: 'Not Found' }), {
+        status: 404,
+        headers: { 'content-type': 'application/json' },
+      })
     } catch (err: any) {
       // Convert createError exceptions to proper HTTP responses
       const statusCode = err?.statusCode || err?.status || 404
