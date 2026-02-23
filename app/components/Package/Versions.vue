@@ -22,6 +22,7 @@ const props = defineProps<{
   selectedVersion?: string
 }>()
 
+const QUERY_MODAL_VALUE = 'versions'
 const chartModal = useModal('chart-modal')
 const hasDistributionModalTransitioned = shallowRef(false)
 const isDistributionModalOpen = shallowRef(false)
@@ -34,12 +35,22 @@ function clearDistributionModalFallbackTimer() {
   }
 }
 
+const router = useRouter()
+const route = useRoute()
+
 async function openDistributionModal() {
   isDistributionModalOpen.value = true
   hasDistributionModalTransitioned.value = false
   // ensure the component renders before opening the dialog
   await nextTick()
   chartModal.open()
+
+  await router.replace({
+    query: {
+      ...route.query,
+      modal: QUERY_MODAL_VALUE,
+    },
+  })
 
   // Fallback: Force mount if transition event doesn't fire
   clearDistributionModalFallbackTimer()
@@ -52,9 +63,23 @@ async function openDistributionModal() {
 
 function closeDistributionModal() {
   isDistributionModalOpen.value = false
+
+  router.replace({
+    query: {
+      ...route.query,
+      modal: undefined,
+    },
+  })
+
   hasDistributionModalTransitioned.value = false
   clearDistributionModalFallbackTimer()
 }
+
+onMounted(() => {
+  if (route.query.modal === QUERY_MODAL_VALUE) {
+    openDistributionModal()
+  }
+})
 
 function handleDistributionModalTransitioned() {
   hasDistributionModalTransitioned.value = true

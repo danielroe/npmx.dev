@@ -776,7 +776,7 @@ const showSkeleton = shallowRef(false)
             v-if="resolvedVersion"
             as="nav"
             :aria-label="$t('package.navigation')"
-            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md"
+            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md ms-auto"
             :style="navExtraOffsetStyle"
             :class="$style.packageNav"
           >
@@ -999,7 +999,7 @@ const showSkeleton = shallowRef(false)
                   </ClientOnly>
                 </template>
               </span>
-              <ButtonGroup v-if="dependencyCount > 0">
+              <ButtonGroup v-if="dependencyCount > 0" class="ms-auto">
                 <LinkBase
                   variant="button-secondary"
                   size="small"

@@ -886,25 +886,40 @@
             "distribution_modal_title": {
               "type": "string"
             },
+            "distribution_range_date_same_year": {
+              "type": "string"
+            },
+            "distribution_range_date_multiple_years": {
+              "type": "string"
+            },
             "grouping_major": {
               "type": "string"
             },
             "grouping_minor": {
               "type": "string"
             },
-            "recent_versions_only": {
+            "grouping_versions_title": {
+              "type": "string"
+            },
+            "grouping_versions_all": {
+              "type": "string"
+            },
+            "grouping_versions_only_recent": {
+              "type": "string"
+            },
+            "grouping_usage_title": {
+              "type": "string"
+            },
+            "grouping_usage_all": {
+              "type": "string"
+            },
+            "grouping_usage_low": {
               "type": "string"
             },
             "recent_versions_only_tooltip": {
               "type": "string"
             },
-            "show_low_usage": {
-              "type": "string"
-            },
             "show_low_usage_tooltip": {
-              "type": "string"
-            },
-            "date_range_tooltip": {
               "type": "string"
             },
             "y_axis_label": {
