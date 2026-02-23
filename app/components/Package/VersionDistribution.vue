@@ -366,7 +366,7 @@ const chartConfig = computed(() => {
         >
           <span>{{ $t('package.versions.grouping_versions_title') }}</span>
           <TooltipApp
-            :text="$t('package.versions.date_range_tooltip')"
+            :text="$t('package.versions.recent_versions_only_tooltip')"
             interactive
             position="top"
             :to="inModal ? '#chart-modal' : undefined"
@@ -403,7 +403,7 @@ const chartConfig = computed(() => {
         >
           <span>{{ $t('package.versions.grouping_usage_title') }}</span>
           <TooltipApp
-            :text="$t('package.versions.date_range_tooltip')"
+            :text="$t('package.versions.show_low_usage_tooltip')"
             interactive
             position="top"
             :to="inModal ? '#chart-modal' : undefined"
