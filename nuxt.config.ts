@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import { isCI, provider } from 'std-env'
+import { isCI, isTest, provider } from 'std-env'
 
 const isStorybook = process.env.STORYBOOK === 'true' || process.env.VITEST_STORYBOOK === 'true'
 
@@ -102,7 +102,7 @@ export default defineNuxtConfig({
       isr: {
         expiration: 60 * 60 /* one hour */,
         passQuery: true,
-        allowQuery: ['color', 'labelColor', 'label', 'name'],
+        allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
       },
     },
     '/api/registry/downloads/**': {
@@ -215,9 +215,15 @@ export default defineNuxtConfig({
         include: ['../test/unit/server/**/*.ts'],
       },
     },
+    replace: {
+      'import.meta.test': isTest,
+    },
   },
 
   fonts: {
+    providers: {
+      fontshare: false,
+    },
     families: [
       {
         name: 'Geist',

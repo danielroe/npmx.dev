@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { IconClass } from '~/types'
+
 const props = withDefaults(
   defineProps<{
     disabled?: boolean
@@ -12,8 +14,8 @@ const props = withDefaults(
     ariaKeyshortcuts?: string
     /** Forces the button to occupy the entire width of its container. */
     block?: boolean
-    /** Icon class (e.g., i-carbon-add) applied to the left of the text. */
-    classicon?: string
+
+    classicon?: IconClass
   }>(),
   {
     type: 'button',

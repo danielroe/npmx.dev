@@ -36,6 +36,7 @@ export interface AppSettings {
   }
   sidebar: {
     collapsed: string[]
+    animateSparkline: boolean
   }
 }
 
@@ -52,6 +53,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   },
   sidebar: {
     collapsed: [],
+    animateSparkline: true,
   },
 }
 

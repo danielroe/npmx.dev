@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PlaygroundLink } from '#shared/types'
-import { decodeHtmlEntities } from '~/utils/formatters'
 
 const props = defineProps<{
   links: PlaygroundLink[]
@@ -130,7 +129,7 @@ function focusMenuItem(index: number) {
             :class="[getIcon(firstLink.provider), getColor(firstLink.provider), 'w-4 h-4 shrink-0']"
             aria-hidden="true"
           />
-          <span class="truncate text-fg-muted">{{ decodeHtmlEntities(firstLink.label) }}</span>
+          <span class="truncate text-fg-muted">{{ firstLink.label }}</span>
         </a>
       </TooltipApp>
 
@@ -186,7 +185,7 @@ function focusMenuItem(index: number) {
                 :class="[getIcon(link.provider), getColor(link.provider), 'w-4 h-4 shrink-0']"
                 aria-hidden="true"
               />
-              <span class="truncate">{{ decodeHtmlEntities(link.label) }}</span>
+              <span class="truncate">{{ link.label }}</span>
             </a>
           </TooltipApp>
         </div>

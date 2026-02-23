@@ -296,11 +296,8 @@
       "distribution_modal_title": "Versions",
       "grouping_major": "Majeure",
       "grouping_minor": "Mineure",
-      "recent_versions_only": "Versions récentes uniquement",
       "recent_versions_only_tooltip": "Ne montrer que les versions publiées durant l'année écoulée.",
-      "show_low_usage": "Montrer les versions à faible utilisation",
       "show_low_usage_tooltip": "Inclure les groupes de versions avec moins d'1% des téléchargements totaux.",
-      "date_range_tooltip": "Versions de la dernière semaine uniquement",
       "y_axis_label": "Téléchargements",
       "filter_placeholder": "Filtrer par plage semver (ex. ^3.0.0)",
       "filter_invalid": "Plage semver invalide",
@@ -367,12 +364,12 @@
         "downloads": "Téléchargements",
         "likes": "J'aime",
         "contributors": "Contributeurs"
-      }
+      },
+      "play_animation": "Lancer l'animation",
+      "pause_animation": "Mettre l'animation en pause"
     },
     "downloads": {
       "title": "Téléchargements hebdo.",
-      "modal_title": "Téléchargements hebdomadaires",
-      "analyze": "Analyser les téléchargements",
       "community_distribution": "Voir la distribution des versions téléchargées par la communauté"
     },
     "install_scripts": {

@@ -233,7 +233,6 @@ export interface NpmVersionDist {
 /**
  * Parsed provenance details for display (from attestation bundle SLSA predicate).
  * Used by the provenance API and PackageProvenanceSection.
- * @public
  */
 export interface ProvenanceDetails {
   /** Provider ID (e.g. "github", "gitlab") */
@@ -355,7 +354,7 @@ export interface PackageFileTree {
   path: string
   /** Node type */
   type: 'file' | 'directory'
-  /** File size in bytes (only for files) */
+  /** Node size in bytes (file size or recursive directory total) */
   size?: number
   /** Child nodes (only for directories) */
   children?: PackageFileTree[]
