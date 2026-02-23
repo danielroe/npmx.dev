@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VueUiXyConfig, VueUiXyDatapointItem, VueUiXyDatasetItem } from 'vue-data-ui'
+import type { VueUiXyConfig, VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
