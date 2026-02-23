@@ -99,8 +99,8 @@ importers:
         specifier: 1.1.1
         version: 1.1.1(@vite-pwa/assets-generator@1.0.2)(magicast@0.5.1)(vite@7.3.1(@types/node@24.10.13)(jiti@2.6.1)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2))(workbox-build@7.4.0)(workbox-window@7.4.0)
       '@voidzero-dev/vite-plus-core':
-        specifier: 0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab
-        version: 0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(typescript@5.9.3)(yaml@2.8.2)
+        specifier: 0.0.0-b1666489.20260220-0254
+        version: 0.0.0-b1666489.20260220-0254(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(typescript@5.9.3)(yaml@2.8.2)
       '@vueuse/core':
         specifier: 14.2.1
         version: 14.2.1(vue@3.5.28(typescript@5.9.3))
@@ -2656,6 +2656,10 @@ packages:
     resolution: {integrity: sha512-Hssa3lXfhczG0Qx0XB6NXLQTKrKeWSPDxcHqddCmBVnOQnlgE8Z+omcPHiewvvvZjSw8RgUPQCU5a+rx/vZ1YA==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
+  '@oxc-project/runtime@0.112.0':
+    resolution: {integrity: sha512-4vYtWXMnXM6EaweCxbJ6bISAhkNHeN33SihvuX3wrpqaSJA4ZEoW35i9mSvE74+GDf1yTeVE+aEHA+WBpjDk/g==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+
   '@oxc-project/types@0.111.0':
     resolution: {integrity: sha512-bh54LJMafgRGl2cPQ/QM+tI5rWaShm/wK9KywEj/w36MhiPKXYM67H2y3q+9pr4YO7ufwg2AKdBAZkhHBD8ClA==}
 
@@ -4576,6 +4580,63 @@ packages:
       '@arethetypeswrong/core': ^0.18.1
       '@types/node': ^20.19.0 || >=22.12.0
       '@vitejs/devtools': '*'
+      esbuild: ^0.27.0
+      jiti: '>=1.21.0'
+      less: ^4.0.0
+      publint: ^0.3.0
+      sass: ^1.70.0
+      sass-embedded: ^1.70.0
+      stylus: '>=0.54.8'
+      sugarss: ^5.0.0
+      terser: ^5.16.0
+      tsx: ^4.8.1
+      typescript: ^5.0.0
+      unplugin-lightningcss: ^0.4.0
+      unplugin-unused: ^0.5.0
+      yaml: ^2.4.2
+    peerDependenciesMeta:
+      '@arethetypeswrong/core':
+        optional: true
+      '@types/node':
+        optional: true
+      '@vitejs/devtools':
+        optional: true
+      esbuild:
+        optional: true
+      jiti:
+        optional: true
+      less:
+        optional: true
+      publint:
+        optional: true
+      sass:
+        optional: true
+      sass-embedded:
+        optional: true
+      stylus:
+        optional: true
+      sugarss:
+        optional: true
+      terser:
+        optional: true
+      tsx:
+        optional: true
+      typescript:
+        optional: true
+      unplugin-lightningcss:
+        optional: true
+      unplugin-unused:
+        optional: true
+      yaml:
+        optional: true
+
+  '@voidzero-dev/vite-plus-core@0.0.0-b1666489.20260220-0254':
+    resolution: {integrity: sha512-+HnSVd4qsqf1gMRmcrZRZAcjgduZshNxLY1rZ3+LMl4uYlHdwZxXlJSe1O+DSI0HfAuTaIkRr3p604JIpPQO1g==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    peerDependencies:
+      '@arethetypeswrong/core': ^0.18.1
+      '@types/node': ^20.19.0 || >=22.12.0
+      '@vitejs/devtools': ^0.0.0-alpha.24
       esbuild: ^0.27.0
       jiti: '>=1.21.0'
       less: ^4.0.0
@@ -13052,6 +13113,8 @@ snapshots:
 
   '@oxc-project/runtime@0.111.0': {}
 
+  '@oxc-project/runtime@0.112.0': {}
+
   '@oxc-project/types@0.111.0': {}
 
   '@oxc-project/types@0.112.0': {}
@@ -14646,6 +14709,21 @@ snapshots:
     dependencies:
       '@oxc-project/runtime': 0.111.0
       '@oxc-project/types': 0.111.0
+      lightningcss: 1.31.1
+      postcss: 8.5.6
+    optionalDependencies:
+      '@types/node': 24.10.13
+      esbuild: 0.27.3
+      fsevents: 2.3.3
+      jiti: 2.6.1
+      terser: 5.46.0
+      typescript: 5.9.3
+      yaml: 2.8.2
+
+  '@voidzero-dev/vite-plus-core@0.0.0-b1666489.20260220-0254(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(typescript@5.9.3)(yaml@2.8.2)':
+    dependencies:
+      '@oxc-project/runtime': 0.112.0
+      '@oxc-project/types': 0.112.0
       lightningcss: 1.31.1
       postcss: 8.5.6
     optionalDependencies:

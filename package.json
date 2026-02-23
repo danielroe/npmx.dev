@@ -75,7 +75,7 @@
     "@upstash/redis": "1.36.2",
     "@vite-pwa/assets-generator": "1.0.2",
     "@vite-pwa/nuxt": "1.1.1",
-    "@voidzero-dev/vite-plus-core": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
+    "@voidzero-dev/vite-plus-core": "0.0.0-b1666489.20260220-0254",
     "@vueuse/core": "14.2.1",
     "@vueuse/integrations": "14.2.1",
     "@vueuse/nuxt": "14.2.1",
@@ -136,7 +136,7 @@
     "schema-dts": "1.1.5",
     "simple-git-hooks": "2.13.1",
     "typescript": "5.9.3",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@0.0.0-b1666489.20260220-0254",
     "vitest-environment-nuxt": "1.0.1",
     "vue-i18n-extract": "2.0.7",
     "vue-tsc": "3.2.5"
