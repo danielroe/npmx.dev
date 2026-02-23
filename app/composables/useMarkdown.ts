@@ -41,7 +41,6 @@ function stripAndEscapeHtml(text: string, packageName?: string): string {
   )
 
   // Strip HTML comments: <!-- ... --> (including unclosed comments from truncation)
-  // Strip HTML comments: <!-- ... --> (including unclosed comments from truncation)
   stripped = stripped.replace(
     /(`[^`]*`)|<!--[\s\S]*?(-->|$)/g,
     (match, codeSpan: string | undefined) => codeSpan ?? '',
