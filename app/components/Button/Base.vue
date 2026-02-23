@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import type { IconClass } from '~/types'
+
 const props = withDefaults(
   defineProps<{
     disabled?: boolean
     type?: 'button' | 'submit'
     variant?: 'primary' | 'secondary'
     size?: 'small' | 'medium'
-    classicon?: string
     ariaKeyshortcuts?: string
     block?: boolean
+    classicon?: IconClass
   }>(),
   {
     type: 'button',

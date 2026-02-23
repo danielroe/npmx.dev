@@ -59,7 +59,8 @@
     "@iconify-json/svg-spinners": "1.2.4",
     "@iconify-json/vscode-icons": "1.2.40",
     "@intlify/shared": "11.2.8",
-    "@lunariajs/core": "https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@f07e1a3",
+    "@lunariajs/core": "https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935",
+    "@napi-rs/canvas": "0.1.92",
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/fonts": "0.13.0",
     "@nuxt/scripts": "0.13.2",
@@ -83,7 +84,7 @@
     "algoliasearch": "5.48.0",
     "defu": "6.1.4",
     "fast-npm-meta": "1.0.0",
-    "focus-trap": "^7.8.0",
+    "focus-trap": "^8.0.0",
     "gray-matter": "4.0.3",
     "marked": "17.0.1",
     "module-replacements": "2.11.0",
@@ -107,8 +108,8 @@
     "virtua": "0.48.5",
     "vite-plugin-pwa": "1.2.0",
     "vite-plus": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
-    "vue": "3.5.27",
-    "vue-data-ui": "3.15.0"
+    "vue": "3.5.28",
+    "vue-data-ui": "3.15.5"
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.1.4",
@@ -131,7 +132,7 @@
     "knip": "5.83.0",
     "lint-staged": "16.2.7",
     "oxfmt": "0.27.0",
-    "oxlint": "1.42.0",
+    "oxlint": "1.49.0",
     "schema-dts": "1.1.5",
     "simple-git-hooks": "2.13.1",
     "typescript": "5.9.3",

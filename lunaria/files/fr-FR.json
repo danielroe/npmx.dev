@@ -366,12 +366,12 @@
         "downloads": "Téléchargements",
         "likes": "J'aime",
         "contributors": "Contributeurs"
-      }
+      },
+      "play_animation": "Lancer l'animation",
+      "pause_animation": "Mettre l'animation en pause"
     },
     "downloads": {
       "title": "Téléchargements hebdo.",
-      "modal_title": "Téléchargements hebdomadaires",
-      "analyze": "Analyser les téléchargements",
       "community_distribution": "Voir la distribution des versions téléchargées par la communauté"
     },
     "install_scripts": {

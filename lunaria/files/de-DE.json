@@ -361,15 +361,15 @@
       "y_axis_label": "{granularity} {facet}",
       "facet": "Facette",
       "title": "Trends",
+      "contributors_skip": "Nicht angezeigt bei Mitwirkende (hat kein GitHub-Repository): | Nicht angezeigt bei Mitwirkende (haben kein GitHub-Repository):",
       "items": {
         "downloads": "Downloads",
-        "likes": "Likes"
+        "likes": "Likes",
+        "contributors": "Mitwirkende"
       }
     },
     "downloads": {
       "title": "Wöchentliche Downloads",
-      "modal_title": "Wöchentliche Downloads",
-      "analyze": "Downloads analysieren",
       "community_distribution": "Community-Adoptionsverteilung ansehen"
     },
     "install_scripts": {
@@ -623,6 +623,7 @@
       "invalid_name": "Ungültiger Paketname:",
       "available": "Dieser Name ist verfügbar!",
       "taken": "Dieser Name ist bereits vergeben.",
+      "missing_permission": "Du hast keine Berechtigung, ein Paket zum Scope {'@'}{scope} hinzuzufügen.",
       "similar_warning": "Ähnliche Pakete existieren - npm könnte diesen Namen ablehnen:",
       "related": "Verwandte Pakete:",
       "scope_warning_title": "Erwäge stattdessen ein Scoped-Paket",
@@ -1124,7 +1125,7 @@
     },
     "contact": {
       "title": "Feedback",
-      "p1": "Wenn du bei {app} auf eine Barriere stoßt, sag uns bitte Bescheid, indem du ein Ticket in unserem {link} eröffnest. Wir nehmen diese Meldungen ernst und werden unser Bestes tun, um sie zu beheben.",
+      "p1": "Wenn du bei {app} auf eine Barriere stößt, sag uns bitte Bescheid, indem du ein Ticket in unserem {link} eröffnest. Wir nehmen diese Meldungen ernst und werden unser Bestes tun, um sie zu beheben.",
       "link": "GitHub-Repository"
     }
   }
