@@ -8,7 +8,6 @@ interface UseMarkdownOptions {
   packageName?: string
 }
 
-/** @public */
 export function useMarkdown(options: MaybeRefOrGetter<UseMarkdownOptions>) {
   return computed(() => parseMarkdown(toValue(options)))
 }
