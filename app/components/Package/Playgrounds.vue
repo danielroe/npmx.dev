@@ -16,6 +16,10 @@ const providerIcons: Record<string, string> = {
   'nuxt-new': 'i-simple-icons:nuxtdotjs',
   'vite-new': 'i-simple-icons:vite',
   'jsfiddle': 'i-lucide:code',
+  'typescript-playground': 'i-simple-icons:typescript',
+  'solid-playground': 'i-simple-icons:solid',
+  'svelte-playground': 'i-simple-icons:svelte',
+  'tailwind-playground': 'i-simple-icons:tailwindcss',
 }
 
 // Map provider id to color class
@@ -29,6 +33,10 @@ const providerColors: Record<string, string> = {
   'nuxt-new': 'text-provider-nuxt',
   'vite-new': 'text-provider-vite',
   'jsfiddle': 'text-provider-jsfiddle',
+  'typescript-playground': 'text-provider-typescript',
+  'solid-playground': 'text-provider-solid',
+  'svelte-playground': 'text-provider-svelte',
+  'tailwind-playground': 'text-provider-tailwind',
 }
 
 function getIcon(provider: string): string {
