@@ -364,7 +364,7 @@ function getISRConfig(expirationSeconds: number, options: ISRConfigOptions = {})
         fallback:
           options.fallback === 'html' ? 'spa.prerender-fallback.html' : 'payload-fallback.json',
         initialHeaders: options.fallback === 'json' ? { 'content-type': 'application/json' } : {},
-        initialStatus: options.fallback === 'json' ? 400 : undefined,
+        initialStatus: options.fallback === 'json' ? 404 : undefined,
       } as { expiration: number },
     }
   }
