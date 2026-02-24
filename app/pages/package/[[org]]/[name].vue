@@ -109,18 +109,13 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
   { default: () => ({ html: '', mdExists: false, playgroundLinks: [], toc: [] }) },
 )
 
-const { data: packageJson } = useLazyFetch<{ storybook?: { title: string; url: string } }>(() => {
-  const version = requestedVersion.value ?? 'latest'
-  return `https://cdn.jsdelivr.net/npm/${packageName.value}@${version}/package.json`
-})
-
 const playgroundLinks = computed(() => [
   ...readmeData.value.playgroundLinks,
   // Libraries with a storybook field in package.json contain a link to their deployed playground
-  ...(packageJson.value?.storybook
+  ...(pkg.value?.storybook
     ? [
         {
-          url: packageJson.value.storybook.url,
+          url: pkg.value.storybook.url,
           provider: 'storybook',
           providerName: 'Storybook',
           label: 'Storybook',
