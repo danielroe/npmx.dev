@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VueUiXyDatasetItem } from 'vue-data-ui'
+import type { VueUiXyConfig, VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
@@ -1404,9 +1404,9 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
 }
 
 // VueUiXy chart component configuration
-const chartConfig = computed(() => {
+const chartConfig = computed<VueUiXyConfig>(() => {
   return {
-    theme: isDarkMode.value ? 'dark' : 'default',
+    theme: isDarkMode.value ? 'dark' : '',
     chart: {
       height: isMobile.value ? 950 : 600,
       backgroundColor: colors.value.bg,
@@ -1428,10 +1428,13 @@ const chartConfig = computed(() => {
           altCopy: undefined, // TODO: set to proper translation key
         },
         callbacks: {
-          img: ({ imageUri }: { imageUri: string }) => {
+          img: args => {
+            const imageUri = args?.imageUri
+            if (!imageUri) return
             loadFile(imageUri, buildExportFilename('png'))
           },
-          csv: (csvStr: string) => {
+          csv: csvStr => {
+            if (!csvStr) return
             const PLACEHOLDER_CHAR = '\0'
             const multilineDateTemplate = $t('package.trends.date_range_multiline', {
               start: PLACEHOLDER_CHAR,
@@ -1448,7 +1451,9 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }: { blob: Blob }) => {
+          svg: args => {
+            const blob = args?.blob
+            if (!blob) return
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
@@ -1510,10 +1515,9 @@ const chartConfig = computed(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: ({ datapoint }: { datapoint: Record<string, any> | any[] }) => {
-          if (!datapoint || pending.value) return ''
+        customFormat: ({ datapoint: items }) => {
+          if (!items || pending.value) return ''
 
-          const items = Array.isArray(datapoint) ? datapoint : [datapoint[0]]
           const hasMultipleItems = items.length > 1
 
           const rows = items

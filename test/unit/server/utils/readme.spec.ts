@@ -341,6 +341,20 @@ describe('Markdown File URL Resolution', () => {
 
       expect(result.html).toContain('href="https://www.npmjs.com/products"')
     })
+
+    it('redirects npmjs.org urls to local', async () => {
+      const markdown = `[Some npmjs.org link](https://www.npmjs.org/package/test-pkg)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('href="/package/test-pkg"')
+    })
+
+    it('redirects npmjs.org urls to local (no www and http)', async () => {
+      const markdown = `[Some npmjs.org link](http://npmjs.org/package/test-pkg)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('href="/package/test-pkg"')
+    })
   })
 })
 
