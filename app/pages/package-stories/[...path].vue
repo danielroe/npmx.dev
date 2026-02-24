@@ -365,6 +365,7 @@ defineOgImageComponent('Default', {
         class="w-64 lg:w-72 border-ie border-border shrink-0 hidden md:block bg-bg-subtle sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
       >
         <StorybookFileTree
+          data-story-tree-scroll
           :tree="storybookTree"
           :current-story-id="currentStoryId"
           :base-url="`/package-stories/${packageName}/v/${version}`"

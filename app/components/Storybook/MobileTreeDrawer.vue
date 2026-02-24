@@ -59,6 +59,7 @@ watch(isOpen, open => (isLocked.value = open))
     <aside
       v-if="isOpen"
       class="md:hidden fixed inset-y-0 inset-is-0 z-50 w-72 bg-bg-subtle border-ie border-border overflow-y-auto"
+      data-story-tree-scroll
     >
       <div
         class="sticky top-0 bg-bg-subtle border-b border-border px-4 py-3 flex items-center justify-start"

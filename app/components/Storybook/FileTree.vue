@@ -26,7 +26,7 @@ function isNodeActive(node: StorybookFileTree): boolean {
 
 // Build route object for a story
 function getStoryRoute(node: StorybookFileTree): RouteLocationRaw {
-  if (node.type === 'story') {
+  if (node.type === 'story' && node.storyId) {
     return {
       name: 'stories',
       params: { path: props.basePath },
@@ -36,7 +36,7 @@ function getStoryRoute(node: StorybookFileTree): RouteLocationRaw {
   // For directories - navigate to first story in that directory
   if (node.type === 'directory') {
     const firstStory = getFirstStoryInDirectory(node)
-    if (firstStory) {
+    if (firstStory?.storyId) {
       return {
         name: 'stories',
         params: { path: props.basePath },
@@ -68,6 +68,48 @@ function getNodeIcon(node: StorybookFileTree): string {
 }
 
 const { toggleDir, isExpanded, autoExpandAncestors } = useStoryTreeState(props.baseUrl)
+
+const storyRefs = shallowReactive(new Map<string, HTMLElement>())
+
+function setStoryRef(storyId: string | null) {
+  return (el: Element | { $el?: Element } | null) => {
+    if (!storyId) return
+    if (!el) {
+      storyRefs.delete(storyId)
+      return
+    }
+    const target = '$el' in el ? el.$el : el
+    if (target instanceof HTMLElement) storyRefs.set(storyId, target)
+  }
+}
+
+function findStoryPath(tree: StorybookFileTree[], storyId: string): string | null {
+  for (const node of tree) {
+    if (node.type === 'story' && node.storyId === storyId) return node.path
+    if (node.type === 'directory' && node.children) {
+      const found = findStoryPath(node.children, storyId)
+      if (found) return found
+    }
+  }
+  return null
+}
+
+watch(
+  [() => props.currentStoryId, () => props.tree],
+  ([storyId, tree]) => {
+    if (!storyId || !tree.length || depth.value !== 0) return
+    const storyPath = findStoryPath(tree, storyId)
+    if (!storyPath) return
+    autoExpandAncestors(storyPath)
+    nextTick(() => {
+      const target = storyRefs.get(storyId)
+      if (target) {
+        target.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+      }
+    })
+  },
+  { immediate: true },
+)
 
 // Handle directory click - toggle expansion and navigate to first story
 function handleDirectoryClick(node: StorybookFileTree) {
@@ -120,6 +162,7 @@ function handleDirectoryClick(node: StorybookFileTree) {
           block
           :style="{ paddingLeft: `${depth * 12 + 32}px` }"
           :classicon="getNodeIcon(node)"
+          :ref="setStoryRef(node.storyId)"
         >
           <span class="truncate">{{ node.name }}</span>
         </LinkBase>
