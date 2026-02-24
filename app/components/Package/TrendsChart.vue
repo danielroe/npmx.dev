@@ -1410,7 +1410,7 @@ const chartConfig = computed<VueUiXyConfig>(() => {
     chart: {
       height: isMobile.value ? 950 : 600,
       backgroundColor: colors.value.bg,
-      padding: { bottom: displayedGranularity.value === 'yearly' ? 84 : 64, right: 100 }, // padding right is set to leave space of last datapoint label(s)
+      padding: { bottom: displayedGranularity.value === 'yearly' ? 84 : 64, right: 128 }, // padding right is set to leave space of last datapoint label(s)
       userOptions: {
         buttons: {
           pdf: false,
@@ -1682,7 +1682,11 @@ watch(selectedMetric, value => {
     </h2>
 
     <!-- Chart panel (active metric) -->
-    <div role="region" aria-labelledby="trends-chart-title" class="min-h-[260px]">
+    <div
+      role="region"
+      aria-labelledby="trends-chart-title"
+      :class="isMobile === false && width > 0 ? 'min-h-[567px]' : 'min-h-[260px]'"
+    >
       <ClientOnly v-if="chartData.dataset">
         <div :data-pending="pending" :data-minimap-visible="maxDatapoints > 6">
           <VueUiXy
