@@ -34,5 +34,4 @@ export interface ResolvedAuthor extends Author {
 /**
  * Inferred type for blog post frontmatter
  */
-/** @public */
 export type BlogPostFrontmatter = InferOutput<typeof BlogPostSchema>

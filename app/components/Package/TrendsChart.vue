@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { VueUiXyDatasetItem } from 'vue-data-ui'
+import type { VueUiXyConfig, VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
-import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
+import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenOklch } from '~/utils/colors'
 import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
 import { drawNpmxLogoAndTaglineWatermark } from '~/composables/useChartWatermark'
 import type { RepoRef } from '#shared/utils/git-providers'
@@ -201,59 +201,41 @@ function formatXyDataset(
   dataset: EvolutionData,
   seriesName: string,
 ): { dataset: VueUiXyDatasetItem[] | null; dates: number[] } {
+  const lightColor = isDarkMode.value ? lightenOklch(accent.value, 0.618) : undefined
+
+  // Subtle path gradient applied in dark mode only
+  const temperatureColors = lightColor ? [lightColor, accent.value] : undefined
+
+  const datasetItem: VueUiXyDatasetItem = {
+    name: seriesName,
+    type: 'line',
+    series: dataset.map(d => d.value),
+    color: accent.value,
+    temperatureColors,
+    useArea: true,
+  }
+
   if (selectedGranularity === 'weekly' && isWeeklyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestampEnd),
     }
   }
   if (selectedGranularity === 'daily' && isDailyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
   if (selectedGranularity === 'monthly' && isMonthlyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
   if (selectedGranularity === 'yearly' && isYearlyDataset(dataset)) {
     return {
-      dataset: [
-        {
-          name: seriesName,
-          type: 'line',
-          series: dataset.map(d => d.value),
-          color: accent.value,
-          useArea: true,
-        },
-      ],
+      dataset: [datasetItem],
       dates: dataset.map(d => d.timestamp),
     }
   }
@@ -1422,9 +1404,9 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
 }
 
 // VueUiXy chart component configuration
-const chartConfig = computed(() => {
+const chartConfig = computed<VueUiXyConfig>(() => {
   return {
-    theme: isDarkMode.value ? 'dark' : 'default',
+    theme: isDarkMode.value ? 'dark' : '',
     chart: {
       height: isMobile.value ? 950 : 600,
       backgroundColor: colors.value.bg,
@@ -1446,10 +1428,13 @@ const chartConfig = computed(() => {
           altCopy: undefined, // TODO: set to proper translation key
         },
         callbacks: {
-          img: ({ imageUri }: { imageUri: string }) => {
+          img: args => {
+            const imageUri = args?.imageUri
+            if (!imageUri) return
             loadFile(imageUri, buildExportFilename('png'))
           },
-          csv: (csvStr: string) => {
+          csv: csvStr => {
+            if (!csvStr) return
             const PLACEHOLDER_CHAR = '\0'
             const multilineDateTemplate = $t('package.trends.date_range_multiline', {
               start: PLACEHOLDER_CHAR,
@@ -1466,7 +1451,9 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }: { blob: Blob }) => {
+          svg: args => {
+            const blob = args?.blob
+            if (!blob) return
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
@@ -1528,10 +1515,9 @@ const chartConfig = computed(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: ({ datapoint }: { datapoint: Record<string, any> | any[] }) => {
-          if (!datapoint) return ''
+        customFormat: ({ datapoint: items }) => {
+          if (!items || pending.value) return ''
 
-          const items = Array.isArray(datapoint) ? datapoint : [datapoint[0]]
           const hasMultipleItems = items.length > 1
 
           const rows = items
@@ -1575,6 +1561,7 @@ const chartConfig = computed(() => {
       zoom: {
         maxWidth: isMobile.value ? 350 : 500,
         highlightColor: colors.value.bgElevated,
+        useResetSlot: true,
         minimap: {
           show: true,
           lineColor: '#FAFAFA',
@@ -1803,6 +1790,19 @@ watch(selectedMetric, value => {
                   <span class="text-fg-subtle">{{ $t('package.trends.legend_estimation') }}</span>
                 </div>
               </div>
+            </template>
+
+            <!-- Custom minimap reset button -->
+            <template #reset-action="{ reset: resetMinimap }">
+              <button
+                type="button"
+                aria-label="reset minimap"
+                class="absolute inset-is-1/2 -translate-x-1/2 -bottom-18 sm:inset-is-unset sm:translate-x-0 sm:bottom-auto sm:-inset-ie-20 sm:-top-3 flex items-center justify-center px-2.5 py-1.75 border border-transparent rounded-md text-fg-subtle hover:text-fg transition-colors hover:border-border focus-visible:outline-accent/70 sm:mb-0"
+                style="pointer-events: all !important"
+                @click="resetMinimap"
+              >
+                <span class="i-lucide:undo-2 w-5 h-5" aria-hidden="true" />
+              </button>
             </template>
 
             <template #menuIcon="{ isOpen }">

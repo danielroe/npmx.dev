@@ -4,7 +4,7 @@ import { debounce } from 'perfect-debounce'
 // Pages that have their own local filter using ?q
 const pagesWithLocalFilter = new Set(['~username', 'org'])
 
-export function useGlobalSearch() {
+export function useGlobalSearch(place: 'header' | 'content' = 'content') {
   const { searchProvider } = useSearchProvider()
   const searchProviderValue = computed(() => {
     const p = normalizeSearchParam(route.query.p)
@@ -32,7 +32,7 @@ export function useGlobalSearch() {
   const updateUrlQueryImpl = (value: string, provider: 'npm' | 'algolia') => {
     const isSameQuery = route.query.q === value && route.query.p === provider
     // Don't navigate away from pages that use ?q for local filtering
-    if (pagesWithLocalFilter.has(route.name as string) || isSameQuery) {
+    if ((pagesWithLocalFilter.has(route.name as string) && place === 'content') || isSameQuery) {
       return
     }
 

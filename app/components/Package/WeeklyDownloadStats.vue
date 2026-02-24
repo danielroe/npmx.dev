@@ -4,6 +4,7 @@ import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
 import type { RepoRef } from '#shared/utils/git-providers'
+import type { VueUiSparklineConfig, VueUiSparklineDatasetItem } from 'vue-data-ui'
 
 const props = defineProps<{
   packageName: string
@@ -13,6 +14,7 @@ const props = defineProps<{
 
 const router = useRouter()
 const route = useRoute()
+const { settings } = useSettings()
 
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
@@ -86,6 +88,12 @@ const { colors } = useCssVariables(
     watchResize: false, // set to true only if a var changes color on resize
   },
 )
+
+function toggleSparklineAnimation() {
+  settings.value.sidebar.animateSparkline = !settings.value.sidebar.animateSparkline
+}
+
+const hasSparklineAnimation = computed(() => settings.value.sidebar.animateSparkline)
 
 const isDarkMode = computed(() => resolvedMode.value === 'dark')
 
@@ -169,7 +177,7 @@ watch(
   () => loadWeeklyDownloads(),
 )
 
-const dataset = computed(() =>
+const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
   weeklyDownloads.value.map(d => ({
     value: d?.value ?? 0,
     period: $t('package.trends.date_range', {
@@ -181,7 +189,7 @@ const dataset = computed(() =>
 
 const lastDatapoint = computed(() => dataset.value.at(-1)?.period ?? '')
 
-const config = computed(() => {
+const config = computed<VueUiSparklineConfig>(() => {
   return {
     theme: 'dark',
     /**
@@ -224,14 +232,14 @@ const config = computed(() => {
       line: {
         color: colors.value.borderHover,
         pulse: {
-          show: true, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
+          show: hasSparklineAnimation.value, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
           loop: true, // runs only once if false
           radius: 1.5,
-          color: pulseColor.value,
+          color: pulseColor.value!,
           easing: 'ease-in-out',
           trail: {
             show: true,
-            length: 20,
+            length: 30,
             opacity: 0.75,
           },
         },
@@ -241,7 +249,7 @@ const config = computed(() => {
         stroke: isDarkMode.value ? 'oklch(0.985 0 0)' : 'oklch(0.145 0 0)',
       },
       title: {
-        text: lastDatapoint.value,
+        text: String(lastDatapoint.value),
         fontSize: 12,
         color: colors.value.fgSubtle,
         bold: false,
@@ -302,6 +310,16 @@ const config = computed(() => {
               </div>
             </template>
           </ClientOnly>
+
+          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end p-1">
+            <ButtonBase size="small" @click="toggleSparklineAnimation">
+              {{
+                hasSparklineAnimation
+                  ? $t('package.trends.pause_animation')
+                  : $t('package.trends.play_animation')
+              }}
+            </ButtonBase>
+          </div>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
           {{ $t('package.trends.no_data') }}
@@ -362,6 +380,7 @@ const config = computed(() => {
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
+  @apply font-mono;
 }
 
 .vue-ui-sparkline text {
