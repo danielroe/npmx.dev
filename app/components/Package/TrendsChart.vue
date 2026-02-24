@@ -1708,46 +1708,18 @@ watch(selectedMetric, value => {
           />
           Filters
         </button>
-        <div v-if="showFilterControls" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div v-if="showFilterControls" class="max-w-xs">
           <label class="flex flex-col gap-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              Hampel window
-              <span class="text-fg-muted">({{ settings.chartFilter.hampelWindow }})</span>
+              Outlier sensitivity
+              <span class="text-fg-muted">({{ settings.chartFilter.iqrMultiplier }})</span>
             </span>
             <input
-              v-model.number="settings.chartFilter.hampelWindow"
+              v-model.number="settings.chartFilter.iqrMultiplier"
               type="range"
               min="0"
-              max="13"
-              step="1"
-              class="accent-[var(--accent-color,var(--fg-subtle))]"
-            />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              Outlier threshold
-              <span class="text-fg-muted">({{ settings.chartFilter.hampelThreshold }})</span>
-            </span>
-            <input
-              v-model.number="settings.chartFilter.hampelThreshold"
-              type="range"
-              min="0"
-              max="10"
+              max="5"
               step="0.5"
-              class="accent-[var(--accent-color,var(--fg-subtle))]"
-            />
-          </label>
-          <label class="flex flex-col gap-1">
-            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              Smoothing (tau)
-              <span class="text-fg-muted">({{ settings.chartFilter.smoothingTau }})</span>
-            </span>
-            <input
-              v-model.number="settings.chartFilter.smoothingTau"
-              type="range"
-              min="0"
-              max="26"
-              step="1"
               class="accent-[var(--accent-color,var(--fg-subtle))]"
             />
           </label>

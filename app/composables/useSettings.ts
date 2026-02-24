@@ -39,9 +39,7 @@ export interface AppSettings {
     animateSparkline: boolean
   }
   chartFilter: {
-    hampelWindow: number
-    hampelThreshold: number
-    smoothingTau: number
+    iqrMultiplier: number
   }
 }
 
@@ -61,9 +59,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     animateSparkline: true,
   },
   chartFilter: {
-    hampelWindow: 4,
-    hampelThreshold: 2,
-    smoothingTau: 1,
+    iqrMultiplier: 1.5,
   },
 }
 
