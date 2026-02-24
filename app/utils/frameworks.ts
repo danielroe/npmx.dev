@@ -63,7 +63,7 @@ export const SHOWCASED_FRAMEWORKS = [
   },
   {
     name: 'tanstack start',
-    package: '@tanstack/start-server-core',
+    package: '@tanstack/react-start',
     color: 'oklch(60.9% .126 221.723)',
   },
 ]
