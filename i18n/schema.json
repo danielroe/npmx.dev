@@ -2482,6 +2482,24 @@
           },
           "additionalProperties": false
         },
+        "sponsors": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "oss_partners": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "team": {
           "type": "object",
           "properties": {

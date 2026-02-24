@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import type { Role } from '#server/api/contributors.get'
+import LogoVercel from '~/assets/logos/sponsors/vercel.svg'
+import LogoVoidZero from '~/assets/logos/sponsors/void-zero.svg'
+import LogoNuxt from '~/assets/logos/oss-partners/nuxt.svg'
+import LogoOpenSourcePledge from '~/assets/logos/oss-partners/open-source-pledge.svg'
+import LogoOxC from '~/assets/logos/oss-partners/oxc.svg'
+import LogoRolldown from '~/assets/logos/oss-partners/rolldown.svg'
+import LogoStorybook from '~/assets/logos/oss-partners/storybook.svg'
+import LogoVite from '~/assets/logos/oss-partners/vite.svg'
+import LogoVitest from '~/assets/logos/oss-partners/vitest.svg'
+import LogoVue from '~/assets/logos/oss-partners/vue.svg'
 
 const router = useRouter()
 const canGoBack = useCanGoBack()
@@ -38,6 +48,62 @@ const communityContributors = computed(
   () => contributors.value?.filter(c => c.role === 'contributor') ?? [],
 )
 
+const SPONSOR = [
+  {
+    name: 'Vercel',
+    logo: LogoVercel,
+    url: 'https://vercel.com/',
+  },
+  {
+    name: 'Void Zero',
+    logo: LogoVoidZero,
+    url: 'https://voidzero.dev/',
+  },
+]
+
+const OSS_PARTNERS = [
+  {
+    name: 'Nuxt',
+    logo: LogoNuxt,
+    url: 'https://nuxt.com/',
+  },
+  {
+    name: 'Open Source Pledge',
+    logo: LogoOpenSourcePledge,
+    url: 'https://opensourcepledge.com/',
+  },
+  {
+    name: 'OxC',
+    logo: LogoOxC,
+    url: 'https://oxc.rs/',
+  },
+  {
+    name: 'Rolldown',
+    logo: LogoRolldown,
+    url: 'https://rolldown.rs/',
+  },
+  {
+    name: 'Storybook',
+    logo: LogoStorybook,
+    url: 'https://storybook.js.org/',
+  },
+  {
+    name: 'Vite',
+    logo: LogoVite,
+    url: 'https://vite.dev/',
+  },
+  {
+    name: 'Vitest',
+    logo: LogoVitest,
+    url: 'https://vitest.dev/',
+  },
+  {
+    name: 'Vue',
+    logo: LogoVue,
+    url: 'https://vuejs.org/',
+  },
+]
+
 const roleLabels = computed(
   () =>
     ({
@@ -57,7 +123,7 @@ const roleLabels = computed(
           </h1>
           <button
             type="button"
-            class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+            class="cursor-pointer inline-flex items-center gap-2 p-1.5 -mx-1.5 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
             @click="router.back()"
             v-if="canGoBack"
           >
@@ -70,9 +136,9 @@ const roleLabels = computed(
         </p>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-8">
+      <section class="prose prose-invert max-w-none space-y-12">
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
@@ -81,7 +147,7 @@ const roleLabels = computed(
                 <strong class="text-fg">{{ $t('about.what_we_are.better_ux_dx') }}</strong>
               </template>
               <template #jsr>
-                <LinkBase to="https://jsr.io/">JSR</LinkBase>
+                <LinkBase to="https://jsr.io/" no-new-tab-icon>JSR</LinkBase>
               </template>
             </i18n-t>
           </p>
@@ -95,7 +161,7 @@ const roleLabels = computed(
         </div>
 
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are_not.title') }}
           </h2>
           <ul class="space-y-3 text-fg-muted list-none p-0">
@@ -113,32 +179,32 @@ const roleLabels = computed(
                 >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
                   <template #people>
-                    <LinkBase :to="pmLinks.npm" class="font-sans">{{
+                    <LinkBase :to="pmLinks.npm" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.people')
                     }}</LinkBase>
                   </template>
                   <template #building>
-                    <LinkBase :to="pmLinks.pnpm" class="font-sans">{{
+                    <LinkBase :to="pmLinks.pnpm" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.building')
                     }}</LinkBase>
                   </template>
                   <template #really>
-                    <LinkBase :to="pmLinks.yarn" class="font-sans">{{
+                    <LinkBase :to="pmLinks.yarn" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.really')
                     }}</LinkBase>
                   </template>
                   <template #cool>
-                    <LinkBase :to="pmLinks.bun" class="font-sans">{{
+                    <LinkBase :to="pmLinks.bun" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.cool')
                     }}</LinkBase>
                   </template>
                   <template #package>
-                    <LinkBase :to="pmLinks.deno" class="font-sans">{{
+                    <LinkBase :to="pmLinks.deno" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.package')
                     }}</LinkBase>
                   </template>
                   <template #managers>
-                    <LinkBase :to="pmLinks.vlt" class="font-sans">{{
+                    <LinkBase :to="pmLinks.vlt" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.managers')
                     }}</LinkBase>
                   </template>
@@ -156,7 +222,57 @@ const roleLabels = computed(
         </div>
 
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.sponsors.title') }}
+          </h2>
+          <ul class="flex flex-wrap gap-2 md:gap-x-6 md:gap-y-4 list-none p-0 -mx-2">
+            <li v-for="sponsor in SPONSOR" :key="sponsor.name">
+              <a
+                :href="sponsor.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center h-full min-w-13 rounded-md hover:bg-fg/10 transition-colors p-2"
+              >
+                <img
+                  :src="sponsor.logo"
+                  loading="lazy"
+                  height="24"
+                  width="auto"
+                  :alt="sponsor.name"
+                  class="h-6 md:h-9 w-auto block"
+                />
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.oss_partners.title') }}
+          </h2>
+          <ul class="flex flex-wrap gap-2 md:gap-4 list-none p-0 -mx-2">
+            <li v-for="partner in OSS_PARTNERS" :key="partner.name">
+              <a
+                :href="partner.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center h-full min-w-10 md:min-w-13 rounded-md hover:bg-fg/10 transition-colors p-2"
+              >
+                <img
+                  :src="partner.logo"
+                  loading="lazy"
+                  height="24"
+                  width="auto"
+                  :alt="partner.name"
+                  class="h-6 md:h-9 w-auto block"
+                />
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h2 class="text-lg uppercase tracking-wider mb-4">
             {{ $t('about.team.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-6">
@@ -169,10 +285,7 @@ const roleLabels = computed(
             class="mb-12"
             aria-labelledby="governance-heading"
           >
-            <h3
-              id="governance-heading"
-              class="text-sm text-fg-subtle uppercase tracking-wider mb-4"
-            >
+            <h3 id="governance-heading" class="text-sm text-fg uppercase tracking-wider mb-4">
               {{ $t('about.team.governance') }}
             </h3>
 
@@ -224,10 +337,7 @@ const roleLabels = computed(
 
           <!-- Contributors cloud -->
           <section aria-labelledby="contributors-heading">
-            <h3
-              id="contributors-heading"
-              class="text-sm text-fg-subtle uppercase tracking-wider mb-4"
-            >
+            <h3 id="contributors-heading" class="text-sm uppercase tracking-wider mb-4">
               {{
                 $t(
                   'about.contributors.title',
@@ -258,20 +368,21 @@ const roleLabels = computed(
               <li
                 v-for="contributor in communityContributors"
                 :key="contributor.id"
-                class="group relative"
+                class="block group relative"
               >
-                <LinkBase
-                  :to="contributor.html_url"
-                  no-underline
-                  no-external-icon
+                <a
+                  :href="contributor.html_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
+                  class="block rounded-lg"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
                     :alt="`${contributor.login}'s avatar`"
                     width="48"
                     height="48"
-                    class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out hover:scale-125 will-change-transform"
+                    class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out group-hover:scale-125 will-change-transform"
                     loading="lazy"
                   />
                   <span
@@ -281,7 +392,7 @@ const roleLabels = computed(
                   >
                     @{{ contributor.login }}
                   </span>
-                </LinkBase>
+                </a>
               </li>
             </ul>
           </section>
