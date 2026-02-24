@@ -167,6 +167,8 @@ export default defineNuxtConfig({
   },
 
   experimental: {
+    entryImportMap: false,
+    typescriptPlugin: true,
     viteEnvironmentApi: !isStorybook,
     typedPages: true,
   },
