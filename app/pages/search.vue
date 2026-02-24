@@ -51,6 +51,9 @@ const parsedQuery = computed(() => {
   return { scope: scope ?? null, name: name, version: version || null, strippedQuery }
 })
 
+const packageScope = computed(() => parsedQuery.value.scope)
+const strippedQuery = computed(() => parsedQuery.value.strippedQuery)
+
 // Track if page just loaded (for hiding "Searching..." during view transition)
 const hasInteracted = shallowRef(false)
 onMounted(() => {
@@ -210,7 +213,7 @@ const {
   suggestions: validatedSuggestions,
   packageAvailability,
 } = useSearch(
-  query,
+  strippedQuery,
   searchProvider,
   () => ({
     size: requestedSize.value,
@@ -304,14 +307,6 @@ const isValidPackageName = computed(() => isValidNewPackageName(query.value.trim
 
 // Get connector state
 const { isConnected, npmUser, listOrgUsers } = useConnector()
-
-// Check if this is a scoped package and extract scope
-const packageScope = computed(() => {
-  const q = query.value.trim()
-  if (!q.startsWith('@')) return null
-  const match = q.match(/^@([^/]+)\//)
-  return match ? match[1] : null
-})
 
 // Track org membership for scoped packages
 const orgMembership = ref<Record<string, boolean>>({})
@@ -685,7 +680,7 @@ defineOgImageComponent('Default', {
           <!-- No results found -->
           <div v-else-if="status === 'success' || status === 'error'" role="status" class="py-12">
             <p class="text-fg-muted font-mono mb-6 text-center">
-              {{ $t('search.no_results', { query }) }}
+              {{ $t('search.no_results', { query: strippedQuery }) }}
             </p>
 
             <!-- User/Org suggestions when no packages found -->
