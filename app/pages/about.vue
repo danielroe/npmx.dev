@@ -237,7 +237,6 @@ const roleLabels = computed(
                   :src="sponsor.logo"
                   loading="lazy"
                   height="24"
-                  width="auto"
                   :alt="sponsor.name"
                   class="h-6 md:h-9 w-auto block"
                 />
@@ -262,7 +261,6 @@ const roleLabels = computed(
                   :src="partner.logo"
                   loading="lazy"
                   height="24"
-                  width="auto"
                   :alt="partner.name"
                   class="h-6 md:h-9 w-auto block"
                 />
