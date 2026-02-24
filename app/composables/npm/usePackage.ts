@@ -125,7 +125,7 @@ export function transformPackument(
   const rawStorybook = requestedPkgVersion?.storybook
   const storybook =
     rawStorybook && typeof rawStorybook === 'object' && 'url' in rawStorybook
-      ? (rawStorybook as { title?: string; url: string })
+      ? ({ url: rawStorybook.url } as { url: string })
       : undefined
 
   return {

@@ -112,7 +112,7 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
 const playgroundLinks = computed(() => [
   ...readmeData.value.playgroundLinks,
   // Libraries with a storybook field in package.json contain a link to their deployed playground
-  ...(pkg.value?.storybook
+  ...(pkg.value?.storybook?.url
     ? [
         {
           url: pkg.value.storybook.url,
