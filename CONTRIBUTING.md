@@ -137,6 +137,20 @@ rm -rf .nuxt/cache/nitro/handlers/
 rm -rf .nuxt/cache/nitro/handlers/npmx-picks/
 ```
 
+Alternatively, you can bypass the cache entirely in development by adding `shouldBypassCache: () => import.meta.dev` to your `defineCachedEventHandler` options:
+
+```ts
+export default defineCachedEventHandler(
+  async event => {
+    // ...
+  },
+  {
+    maxAge: 60 * 5,
+    shouldBypassCache: () => import.meta.dev,
+  },
+)
+```
+
 The `.cache/` directory is a separate storage mount used for fetch-cache and atproto data.
 
 ### Project structure
