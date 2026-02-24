@@ -38,6 +38,11 @@ export interface AppSettings {
     collapsed: string[]
     animateSparkline: boolean
   }
+  chartFilter: {
+    hampelWindow: number
+    hampelThreshold: number
+    smoothingTau: number
+  }
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -54,6 +59,11 @@ const DEFAULT_SETTINGS: AppSettings = {
   sidebar: {
     collapsed: [],
     animateSparkline: true,
+  },
+  chartFilter: {
+    hampelWindow: 4,
+    hampelThreshold: 2,
+    smoothingTau: 1,
   },
 }
 

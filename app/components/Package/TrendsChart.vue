@@ -18,6 +18,7 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
+import { applyDownloadFilter } from '~/utils/chart-filters'
 
 const props = withDefaults(
   defineProps<{
@@ -50,6 +51,7 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { settings } = useSettings()
 const colorMode = useColorMode()
 const resolvedMode = shallowRef<'light' | 'dark'>('light')
 const rootEl = shallowRef<HTMLElement | null>(null)
@@ -926,15 +928,27 @@ watch(
 
 const effectiveDataSingle = computed<EvolutionData>(() => {
   const state = activeMetricState.value
+  let data: EvolutionData
   if (
     selectedMetric.value === DEFAULT_METRIC_ID &&
     displayedGranularity.value === DEFAULT_GRANULARITY &&
     props.weeklyDownloads?.length
   ) {
-    if (isWeeklyDataset(state.evolution) && state.evolution.length) return state.evolution
-    return props.weeklyDownloads
+    data =
+      isWeeklyDataset(state.evolution) && state.evolution.length
+        ? state.evolution
+        : props.weeklyDownloads
+  } else {
+    data = state.evolution
   }
-  return state.evolution
+
+  if (isDownloadsMetric.value && data.length) {
+    return applyDownloadFilter(
+      data as Array<{ value: number }>,
+      settings.value.chartFilter,
+    ) as EvolutionData
+  }
+  return data
 })
 
 /**
@@ -968,7 +982,13 @@ const chartData = computed<{
   const pointsByPackage = new Map<string, Array<{ timestamp: number; value: number }>>()
 
   for (const pkg of names) {
-    const data = state.evolutionsByPackage[pkg] ?? []
+    let data = state.evolutionsByPackage[pkg] ?? []
+    if (isDownloadsMetric.value && data.length) {
+      data = applyDownloadFilter(
+        data as Array<{ value: number }>,
+        settings.value.chartFilter,
+      ) as EvolutionData
+    }
     const points = extractSeriesPoints(granularity, data)
     pointsByPackage.set(pkg, points)
     for (const p of points) timestampSet.add(p.timestamp)
@@ -1583,6 +1603,9 @@ const chartConfig = computed<VueUiXyConfig>(() => {
   }
 })
 
+const isDownloadsMetric = computed(() => selectedMetric.value === 'downloads')
+const showFilterControls = shallowRef(false)
+
 // Trigger data loading when the metric is switched
 watch(selectedMetric, value => {
   if (!isMounted.value) return
@@ -1669,6 +1692,66 @@ watch(selectedMetric, value => {
         >
           <span class="i-lucide:undo-2 w-5 h-5" aria-hidden="true" />
         </button>
+      </div>
+
+      <!-- Download filter controls -->
+      <div v-if="isDownloadsMetric" class="flex flex-col gap-2">
+        <button
+          type="button"
+          class="self-start flex items-center gap-1 text-2xs font-mono text-fg-subtle hover:text-fg transition-colors"
+          @click="showFilterControls = !showFilterControls"
+        >
+          <span
+            class="w-3.5 h-3.5 transition-transform"
+            :class="showFilterControls ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
+            aria-hidden="true"
+          />
+          Filters
+        </button>
+        <div v-if="showFilterControls" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <label class="flex flex-col gap-1">
+            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
+              Hampel window
+              <span class="text-fg-muted">({{ settings.chartFilter.hampelWindow }})</span>
+            </span>
+            <input
+              v-model.number="settings.chartFilter.hampelWindow"
+              type="range"
+              min="0"
+              max="13"
+              step="1"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
+              Outlier threshold
+              <span class="text-fg-muted">({{ settings.chartFilter.hampelThreshold }})</span>
+            </span>
+            <input
+              v-model.number="settings.chartFilter.hampelThreshold"
+              type="range"
+              min="0"
+              max="10"
+              step="0.5"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
+              Smoothing (tau)
+              <span class="text-fg-muted">({{ settings.chartFilter.smoothingTau }})</span>
+            </span>
+            <input
+              v-model.number="settings.chartFilter.smoothingTau"
+              type="range"
+              min="0"
+              max="26"
+              step="1"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+          </label>
+        </div>
       </div>
 
       <p v-if="skippedPackagesWithoutGitHub.length > 0" class="text-2xs font-mono text-fg-subtle">
