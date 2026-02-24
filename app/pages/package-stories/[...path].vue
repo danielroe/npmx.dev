@@ -62,20 +62,21 @@ const { data: packageJson } = useFetch<{ storybook: { title: string; url: string
   return url
 })
 
+const storybookUrl = computed(() => {
+  if (!packageJson.value?.storybook?.url) return ''
+  return `${packageJson.value.storybook.url}/index.json`
+})
+
 // Fetch Storybook index data
 const { data: storybookData, status: storybookStatus } = useLazyFetch<{
   v: number
   entries: Record<string, StorybookEntry>
-}>(
-  () => {
-    if (!packageJson.value?.storybook?.url) return ''
-    return packageJson.value.storybook.url + '/index.json'
-  },
-  {
-    key: computed(() => `storybook:${packageName.value}`),
-    server: false, // Storybook URLs are usually client-side only
-  },
-)
+}>(() => storybookUrl.value, {
+  watch: [storybookUrl],
+  immediate: !!storybookUrl.value,
+  key: computed(() => `storybook:${packageName.value}`),
+  server: false, // Storybook URLs are usually client-side only
+})
 
 // Transform Storybook entries to tree structure
 const storybookTree = computed(() => {
@@ -109,11 +110,14 @@ watch(
     if (tree.length && !storyId) {
       const first = getFirstStory(tree)
       if (first?.storyId) {
-        navigateTo({
-          name: 'stories',
-          params: { path: [...packageName.value.split('/'), 'v', version.value!] },
-          query: { storyid: first.storyId },
-        })
+        navigateTo(
+          {
+            name: 'stories',
+            params: { path: [...packageName.value.split('/'), 'v', version.value!] },
+            query: { storyid: first.storyId },
+          },
+          { replace: true },
+        )
       }
     }
   },
