@@ -3,7 +3,7 @@ const route = useRoute()
 
 // Pages where scroll-to-top should NOT be shown
 const excludedRoutes = new Set(['index', 'code'])
-const isPackagePage = computed(() => route.path.includes('/package/'))
+const isPackagePage = computed(() => route.name === 'package' || route.name === 'package-version')
 
 const isActive = computed(() => !excludedRoutes.has(route.name as string) && !isPackagePage.value)
 
