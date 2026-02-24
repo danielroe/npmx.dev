@@ -264,7 +264,7 @@ const config = computed<VueUiSparklineConfig>(() => {
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div class="space-y-8 h-[110px] motion-safe:h-[140px]">
     <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
       <template #actions>
         <ButtonBase
@@ -306,6 +306,10 @@ const config = computed<VueUiSparklineConfig>(() => {
                   <div class="flex-1 flex items-end pe-3">
                     <SkeletonInline class="h-px w-full" />
                   </div>
+                </div>
+                <!-- Animation toggle placeholder -->
+                <div class="w-full hidden motion-safe:flex flex-1 items-end justify-end">
+                  <SkeletonInline class="h-[20px] w-30" />
                 </div>
               </div>
             </template>
@@ -351,10 +355,7 @@ const config = computed<VueUiSparklineConfig>(() => {
 
     <!-- This placeholder bears the same dimensions as the PackageTrendsChart component -->
     <!-- Avoids CLS when the dialog has transitioned -->
-    <div
-      v-if="!hasChartModalTransitioned"
-      class="w-full aspect-[390/634.5] sm:aspect-[718/622.797]"
-    />
+    <div v-if="!hasChartModalTransitioned" class="w-full aspect-[390/634.5] sm:aspect-[718/647]" />
   </PackageChartModal>
 </template>
 
