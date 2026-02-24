@@ -351,10 +351,7 @@ const config = computed<VueUiSparklineConfig>(() => {
 
     <!-- This placeholder bears the same dimensions as the PackageTrendsChart component -->
     <!-- Avoids CLS when the dialog has transitioned -->
-    <div
-      v-if="!hasChartModalTransitioned"
-      class="w-full aspect-[390/634.5] sm:aspect-[718/622.797]"
-    />
+    <div v-if="!hasChartModalTransitioned" class="w-full aspect-[390/634.5] sm:aspect-[718/647]" />
   </PackageChartModal>
 </template>
 

@@ -1682,7 +1682,11 @@ watch(selectedMetric, value => {
     </h2>
 
     <!-- Chart panel (active metric) -->
-    <div role="region" aria-labelledby="trends-chart-title" class="min-h-[260px]">
+    <div
+      role="region"
+      aria-labelledby="trends-chart-title"
+      :class="isMobile ? 'min-h-[260px]' : 'min-h-[567px]'"
+    >
       <ClientOnly v-if="chartData.dataset">
         <div :data-pending="pending" :data-minimap-visible="maxDatapoints > 6">
           <VueUiXy
