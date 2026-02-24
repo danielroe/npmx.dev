@@ -109,6 +109,21 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
   { default: () => ({ html: '', mdExists: false, playgroundLinks: [], toc: [] }) },
 )
 
+const playgroundLinks = computed(() => [
+  ...readmeData.value.playgroundLinks,
+  // Libraries with a storybook field in package.json contain a link to their deployed playground
+  ...(pkg.value?.storybook?.url
+    ? [
+        {
+          url: pkg.value.storybook.url,
+          provider: 'storybook',
+          providerName: 'Storybook',
+          label: 'Storybook',
+        },
+      ]
+    : []),
+])
+
 const {
   data: readmeMarkdownData,
   status: readmeMarkdownStatus,
@@ -1357,10 +1372,7 @@ const showSkeleton = shallowRef(false)
           />
 
           <!-- Playground links -->
-          <PackagePlaygrounds
-            v-if="readmeData?.playgroundLinks?.length"
-            :links="readmeData.playgroundLinks"
-          />
+          <PackagePlaygrounds v-if="playgroundLinks.length" :links="playgroundLinks" />
 
           <PackageCompatibility :engines="displayVersion?.engines" />
 
