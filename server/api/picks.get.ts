@@ -28,7 +28,6 @@ interface AlgoliaHit {
   name: string
   downloadsLast30Days: number
   modified: string
-  deprecated?: string
   isDeprecated?: boolean
 }
 
@@ -52,13 +51,7 @@ export default defineCachedEventHandler(
         body: {
           query: '',
           hitsPerPage: ALGOLIA_POOL_SIZE,
-          attributesToRetrieve: [
-            'name',
-            'downloadsLast30Days',
-            'modified',
-            'deprecated',
-            'isDeprecated',
-          ],
+          attributesToRetrieve: ['name', 'downloadsLast30Days', 'modified', 'isDeprecated'],
           attributesToHighlight: [],
         },
       },
@@ -67,7 +60,7 @@ export default defineCachedEventHandler(
     // 2. Post-filter pool
     const now = Date.now()
     const pool = algoliaResponse.hits.filter(hit => {
-      if (hit.deprecated || hit.isDeprecated) return false
+      if (hit.isDeprecated) return false
       if (hit.downloadsLast30Days < MIN_DOWNLOADS_LAST_30_DAYS) return false
       if (now - new Date(hit.modified).getTime() > MAX_MODIFIED_AGE_MS) return false
       return true
