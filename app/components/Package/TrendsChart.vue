@@ -1685,7 +1685,7 @@ watch(selectedMetric, value => {
     <div
       role="region"
       aria-labelledby="trends-chart-title"
-      :class="isMobile ? 'min-h-[260px]' : 'min-h-[567px]'"
+      :class="isMobile === false && width > 0 ? 'min-h-[567px]' : 'min-h-[260px]'"
     >
       <ClientOnly v-if="chartData.dataset">
         <div :data-pending="pending" :data-minimap-visible="maxDatapoints > 6">
