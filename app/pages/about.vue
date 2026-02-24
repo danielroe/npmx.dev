@@ -53,11 +53,13 @@ const SPONSOR = [
     name: 'Vercel',
     logo: LogoVercel,
     url: 'https://vercel.com/',
+    colorScheme: 'dark',
   },
   {
     name: 'Void Zero',
     logo: LogoVoidZero,
     url: 'https://voidzero.dev/',
+    colorScheme: 'dark',
   },
 ]
 
@@ -66,6 +68,7 @@ const OSS_PARTNERS = [
     name: 'Open Source Pledge',
     logo: LogoOpenSourcePledge,
     url: 'https://opensourcepledge.com/',
+    colorScheme: 'dark',
   },
   {
     name: 'Void Zero',
@@ -74,21 +77,25 @@ const OSS_PARTNERS = [
         name: 'Vite',
         logo: LogoVite,
         url: 'https://vite.dev/',
+        colorScheme: 'light-dark',
       },
       {
         name: 'OxC',
         logo: LogoOxC,
         url: 'https://oxc.rs/',
+        colorScheme: 'light-dark',
       },
       {
         name: 'Vitest',
         logo: LogoVitest,
         url: 'https://vitest.dev/',
+        colorScheme: 'light-dark',
       },
       {
         name: 'Rolldown',
         logo: LogoRolldown,
         url: 'https://rolldown.rs/',
+        colorScheme: 'light-dark',
       },
     ],
   },
@@ -96,16 +103,19 @@ const OSS_PARTNERS = [
     name: 'Nuxt',
     logo: LogoNuxt,
     url: 'https://nuxt.com/',
+    colorScheme: 'light-dark',
   },
   {
     name: 'Storybook',
     logo: LogoStorybook,
     url: 'https://storybook.js.org/',
+    colorScheme: 'light-dark',
   },
   {
     name: 'Vue',
     logo: LogoVue,
     url: 'https://vuejs.org/',
+    colorScheme: 'light-dark',
   },
 ]
 
@@ -230,13 +240,20 @@ const roleLabels = computed(
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.sponsors.title') }}
           </h2>
-          <ul class="flex flex-wrap gap-2 md:gap-x-6 md:gap-y-4 list-none p-0 -mx-2">
+          <ul class="flex flex-wrap gap-2 md:gap-x-6 md:gap-y-4 list-none">
             <li v-for="sponsor in SPONSOR" :key="sponsor.name">
               <a
                 :href="sponsor.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center justify-center h-full min-w-13 rounded-md hover:bg-fg/10 transition-colors p-2"
+                class="flex items-center justify-center h-full min-w-13 rounded-md hover:opacity-80 transition-opacity p-2"
+                :class="
+                  sponsor.colorScheme === 'dark'
+                    ? 'light:bg-fg-muted'
+                    : sponsor.colorScheme === 'light'
+                      ? 'dark:bg-fg-muted'
+                      : undefined
+                "
               >
                 <img
                   :src="sponsor.logo"
@@ -261,7 +278,14 @@ const roleLabels = computed(
                 :href="partner.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center justify-center h-full min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
+                class="flex items-center justify-center h-full min-w-10 rounded-md hover:opacity-80 transition-opacity p-0.5"
+                :class="
+                  partner.colorScheme === 'dark'
+                    ? 'light:bg-fg-muted'
+                    : partner.colorScheme === 'light'
+                      ? 'dark:bg-fg-muted'
+                      : undefined
+                "
               >
                 <img
                   :src="partner.logo"
@@ -281,7 +305,7 @@ const roleLabels = computed(
                 >
                   <path
                     d="M5.62151 0C-1.8519 10.6931 -1.89574 27.2683 5.62151 37.9997H10.6709C3.15538 27.2683 3.19922 10.6931 10.6709 0H5.62151Z"
-                    fill="white"
+                    fill="currentColor"
                   />
                 </svg>
                 <ul class="flex items-center justify-center h-full gap-0.5 list-none">
@@ -290,7 +314,14 @@ const roleLabels = computed(
                       :href="item.url"
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="flex items-center justify-center h-full min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
+                      class="flex items-center justify-center h-full min-w-10 rounded-md hover:opacity-80 transition-opacity p-0.5"
+                      :class="
+                        item.colorScheme === 'dark'
+                          ? 'light:bg-fg-muted'
+                          : item.colorScheme === 'light'
+                            ? 'dark:bg-fg-muted'
+                            : undefined
+                      "
                     >
                       <img
                         :src="item.logo"
@@ -311,7 +342,7 @@ const roleLabels = computed(
                 >
                   <path
                     d="M5.04935 0H0C7.4734 10.6931 7.51725 27.2683 0 37.9997H5.04935C12.5648 27.2683 12.521 10.6931 5.04935 0Z"
-                    fill="white"
+                    fill="currentColor"
                   />
                 </svg>
               </div>
