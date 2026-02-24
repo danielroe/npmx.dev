@@ -155,31 +155,31 @@ export function sanitizeRawHTML(rawHtml: string, mdRepoInfo: MarkdownRepoInfo) {
         if (attribs['data-level']) return { tagName: 'h6', attribs: attribs }
         return { tagName: 'h6', attribs: { ...attribs, 'data-level': '6' } }
       },
-      // img: (tagName, attribs) => {
-      //   if (attribs.src) {
-      //     attribs.src = resolveImageUrl(attribs.src, packageName, repoInfo)
-      //   }
-      //   return { tagName, attribs }
-      // },
-      // source: (tagName, attribs) => {
-      //   if (attribs.src) {
-      //     attribs.src = resolveImageUrl(attribs.src, packageName, repoInfo)
-      //   }
-      //   if (attribs.srcset) {
-      //     attribs.srcset = attribs.srcset
-      //       .split(',')
-      //       .map(entry => {
-      //         const parts = entry.trim().split(/\s+/)
-      //         const url = parts[0]
-      //         if (!url) return entry.trim()
-      //         const descriptor = parts[1]
-      //         const resolvedUrl = resolveImageUrl(url, packageName, repoInfo)
-      //         return descriptor ? `${resolvedUrl} ${descriptor}` : resolvedUrl
-      //       })
-      //       .join(', ')
-      //   }
-      //   return { tagName, attribs }
-      // },
+      img: (tagName, attribs) => {
+        if (attribs.src) {
+          attribs.src = resolveUrl(attribs.src, mdRepoInfo)
+        }
+        return { tagName, attribs }
+      },
+      source: (tagName, attribs) => {
+        if (attribs.src) {
+          attribs.src = resolveUrl(attribs.src, mdRepoInfo)
+        }
+        if (attribs.srcset) {
+          attribs.srcset = attribs.srcset
+            .split(',')
+            .map(entry => {
+              const parts = entry.trim().split(/\s+/)
+              const url = parts[0]
+              if (!url) return entry.trim()
+              const descriptor = parts[1]
+              const resolvedUrl = resolveUrl(url, mdRepoInfo)
+              return descriptor ? `${resolvedUrl} ${descriptor}` : resolvedUrl
+            })
+            .join(', ')
+        }
+        return { tagName, attribs }
+      },
       a: (tagName, attribs) => {
         if (!attribs.href) {
           return { tagName, attribs }
@@ -250,11 +250,22 @@ function resolveUrl(url: string, repoInfo: MarkdownRepoInfo) {
   const baseUrl = isMarkdownFile ? repoInfo.blobBaseUrl : repoInfo.rawBaseUrl
   if (url.startsWith('./') || url.startsWith('../')) {
     // url constructor handles relative paths
-    return new URL(url, `${baseUrl}/${repoInfo.path ?? ''}`).href
+    return checkResolvedUrl(new URL(url, `${baseUrl}/${repoInfo.path ?? ''}`).href, baseUrl)
   }
   if (url.startsWith('/')) {
-    return new URL(`${baseUrl}${url}`).href
+    return checkResolvedUrl(new URL(`${baseUrl}${url}`).href, baseUrl)
   }
 
   return url
+}
+
+/**
+ * check resolved url that it still contains the base url
+ * @returns the resolved url if starting with baseUrl else baseUrl
+ */
+function checkResolvedUrl(resolved: string, baseUrl: string) {
+  if (resolved.startsWith(baseUrl)) {
+    return resolved
+  }
+  return baseUrl
 }
