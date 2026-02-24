@@ -127,7 +127,7 @@ pnpm test:perf        # Lighthouse performance audits (CLS)
 
 ### Clearing caches during development
 
-Nitro persists `defineCachedEventHandler` results to disk at `.nuxt/cache/nitro/`. This cache **survives dev server restarts**. If you're iterating on a cached API route and want fresh results, delete the relevant cache file:
+Nitro persists `defineCachedEventHandler` results to disk at `.nuxt/cache/nitro/`. This cache **survives dev server restarts**. If you're iterating on a cached API route and want fresh results, delete the relevant cache directory:
 
 ```bash
 # Clear all Nitro handler caches
