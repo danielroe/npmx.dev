@@ -33,6 +33,24 @@ const updateUrlPage = debounce((page: number) => {
 const { model: searchQuery, provider: searchProvider } = useGlobalSearch()
 const query = computed(() => searchQuery.value)
 
+// Parses the raw search query to extract package info, such as scope, name, version.
+// Uses this info to provide a strippedQuery (the query, but without version info) that is used for searching.
+const parsedQuery = computed(() => {
+  const q = query.value.trim()
+  // Regex matches a (un)scoped package and optionally extracts versioning info using the following syntax: @scope/specifier@version
+  // It makes use of 4 capture groups to extract this info.
+  const match = q.match(/^(?:@([^/]+)\/)?([^/@ ]+)(?:@([^ ]*))?(.*)/)
+  if (!match) return { scope: null, name: q, version: null, strippedQuery: q }
+
+  const [, scope, specifier, version, trailing] = match
+  // Reconstruct the query without the version info, essentially stripping the version data:
+  // anything directly after the @ for the version specifier is stripped.
+  const name = scope ? `@${scope}/${specifier}` : (specifier ?? '')
+  const strippedQuery = `${name} ${trailing ?? ''}`.trim()
+
+  return { scope: scope ?? null, name: name, version: version || null, strippedQuery }
+})
+
 // Track if page just loaded (for hiding "Searching..." during view transition)
 const hasInteracted = shallowRef(false)
 onMounted(() => {
