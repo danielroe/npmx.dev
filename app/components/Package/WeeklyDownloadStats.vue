@@ -294,8 +294,8 @@ const config = computed<VueUiSparklineConfig>(() => {
                 <!-- Skeleton matching VueUiSparkline layout (title 24px + SVG aspect 500:80) -->
                 <div class="max-w-xs">
                   <!-- Title row: fontSize * 2 = 24px -->
-                  <div class="h-6 flex items-center ps-3">
-                    <SkeletonInline class="h-3 w-36" />
+                  <div class="h-6 flex items-center">
+                    <SkeletonInline class="h-3 w-48" />
                   </div>
                   <!-- Chart area: matches SVG viewBox 500:80 -->
                   <div class="aspect-[500/80] flex items-center">
@@ -308,6 +308,10 @@ const config = computed<VueUiSparklineConfig>(() => {
                       <SkeletonInline class="h-px w-full" />
                     </div>
                   </div>
+                </div>
+                <!-- Animation toggle button placeholder (matches absolute top-right button) -->
+                <div class="hidden motion-safe:block absolute top-0 inset-ie-0 p-1">
+                  <SkeletonInline class="size-4 rounded" />
                 </div>
               </template>
             </ClientOnly>
