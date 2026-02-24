@@ -264,7 +264,7 @@ const config = computed<VueUiSparklineConfig>(() => {
 </script>
 
 <template>
-  <div class="space-y-8 h-[110px] motion-safe:h-[140px]">
+  <div class="space-y-8 h-[110px]">
     <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
       <template #actions>
         <ButtonBase
@@ -282,46 +282,57 @@ const config = computed<VueUiSparklineConfig>(() => {
 
       <div class="w-full overflow-hidden">
         <template v-if="isLoadingWeeklyDownloads || hasWeeklyDownloads">
-          <ClientOnly>
-            <VueUiSparkline class="w-full max-w-xs" :dataset :config>
-              <template #skeleton>
-                <!-- This empty div overrides the default built-in scanning animation on load -->
-                <div />
+          <div class="relative">
+            <ClientOnly>
+              <VueUiSparkline class="w-full max-w-xs" :dataset :config>
+                <template #skeleton>
+                  <!-- This empty div overrides the default built-in scanning animation on load -->
+                  <div />
+                </template>
+              </VueUiSparkline>
+              <template #fallback>
+                <!-- Skeleton matching VueUiSparkline layout (title 24px + SVG aspect 500:80) -->
+                <div class="max-w-xs">
+                  <!-- Title row: fontSize * 2 = 24px -->
+                  <div class="h-6 flex items-center ps-3">
+                    <SkeletonInline class="h-3 w-36" />
+                  </div>
+                  <!-- Chart area: matches SVG viewBox 500:80 -->
+                  <div class="aspect-[500/80] flex items-center">
+                    <!-- Data label (covers ~42% width, matching dataLabel.offsetX) -->
+                    <div class="w-[42%] flex items-center ps-0.5">
+                      <SkeletonInline class="h-7 w-24" />
+                    </div>
+                    <!-- Sparkline line placeholder -->
+                    <div class="flex-1 flex items-end pe-3">
+                      <SkeletonInline class="h-px w-full" />
+                    </div>
+                  </div>
+                </div>
               </template>
-            </VueUiSparkline>
-            <template #fallback>
-              <!-- Skeleton matching VueUiSparkline layout (title 24px + SVG aspect 500:80) -->
-              <div class="max-w-xs">
-                <!-- Title row: fontSize * 2 = 24px -->
-                <div class="h-6 flex items-center ps-3">
-                  <SkeletonInline class="h-3 w-36" />
-                </div>
-                <!-- Chart area: matches SVG viewBox 500:80 -->
-                <div class="aspect-[500/80] flex items-center">
-                  <!-- Data label (covers ~42% width, matching dataLabel.offsetX) -->
-                  <div class="w-[42%] flex items-center ps-0.5">
-                    <SkeletonInline class="h-7 w-24" />
-                  </div>
-                  <!-- Sparkline line placeholder -->
-                  <div class="flex-1 flex items-end pe-3">
-                    <SkeletonInline class="h-px w-full" />
-                  </div>
-                </div>
-                <!-- Animation toggle placeholder -->
-                <div class="w-full hidden motion-safe:flex flex-1 items-end justify-end">
-                  <SkeletonInline class="h-[20px] w-30" />
-                </div>
-              </div>
-            </template>
-          </ClientOnly>
+            </ClientOnly>
 
-          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end p-1">
-            <ButtonBase size="small" @click="toggleSparklineAnimation">
-              {{
+            <ButtonBase
+              v-if="hasWeeklyDownloads"
+              type="button"
+              size="small"
+              class="hidden motion-safe:inline-flex absolute top-0 inset-ie-0 !p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
+              :title="
                 hasSparklineAnimation
                   ? $t('package.trends.pause_animation')
                   : $t('package.trends.play_animation')
-              }}
+              "
+              :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
+              :aria-pressed="hasSparklineAnimation"
+              @click="toggleSparklineAnimation"
+            >
+              <span class="sr-only">
+                {{
+                  hasSparklineAnimation
+                    ? $t('package.trends.pause_animation')
+                    : $t('package.trends.play_animation')
+                }}
+              </span>
             </ButtonBase>
           </div>
         </template>
