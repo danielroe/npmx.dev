@@ -39,10 +39,12 @@ const parsedQuery = computed(() => {
   const q = query.value.trim()
   // Regex matches a (un)scoped package and optionally extracts versioning info using the following syntax: @scope/specifier@version
   // It makes use of 4 capture groups to extract this info.
-  const match = q.match(/^(?:@([^/]+)\/)?([^/@ ]+)(?:@([^ ]*))?(.*)/)
+  const match = q.match(
+    /^(?:@(?<scope>[^/]+)\/)?(?<specifier>[^/@ ]+)(?:@(?<version>[^ ]*))?(?<trailing>.*)/,
+  )
   if (!match) return { scope: null, name: q, version: null, strippedQuery: q }
 
-  const [, scope, specifier, version, trailing] = match
+  const { scope, specifier, version, trailing } = match.groups ?? {}
   // Reconstruct the query without the version info, essentially stripping the version data:
   // anything directly after the @ for the version specifier is stripped.
   const name = scope ? `@${scope}/${specifier}` : (specifier ?? '')
