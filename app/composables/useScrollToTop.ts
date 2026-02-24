@@ -1,23 +1,15 @@
-interface UseScrollToTopOptions {
-  /**
-   * Duration of the scroll animation in milliseconds.
-   */
-  duration?: number
-}
-
 // Easing function for the scroll animation
 const easeOutQuad = (t: number) => t * (2 - t)
 
 export const SCROLL_TO_TOP_THRESHOLD = 300
+const SCROLL_TO_TOP_DURATION = 500
 
 /**
  * Scroll to the top of the page with a smooth animation.
  * @param options - Configuration options for the scroll animation.
  * @returns An object containing the scrollToTop function and a cancel function.
  */
-export function useScrollToTop(options: UseScrollToTopOptions) {
-  const { duration = 500 } = options
-
+export const useScrollToTop = createSharedComposable(function useScrollToTop() {
   // Check if prefers-reduced-motion is enabled
   const preferReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
@@ -71,7 +63,7 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
     // Start the frame-by-frame scroll animation.
     function animate() {
       const elapsed = performance.now() - startTime
-      const t = Math.min(elapsed / duration, 1)
+      const t = Math.min(elapsed / SCROLL_TO_TOP_DURATION, 1)
       const y = start + change * easeOutQuad(t)
 
       window.scrollTo({ top: y })
@@ -98,4 +90,4 @@ export function useScrollToTop(options: UseScrollToTopOptions) {
     cancel,
     isTouchDeviceClient,
   }
-}
+})

@@ -7,10 +7,8 @@ const isPackagePage = computed(() => route.name === 'package' || route.name === 
 
 const isActive = computed(() => !excludedRoutes.has(route.name as string) && !isPackagePage.value)
 
-const SCROLL_TO_TOP_DURATION = 500
-
 const isMounted = useMounted()
-const { scrollToTop, isTouchDeviceClient } = useScrollToTop({ duration: SCROLL_TO_TOP_DURATION })
+const { scrollToTop, isTouchDeviceClient } = useScrollToTop()
 
 const { y: scrollTop } = useScroll(window)
 const isVisible = computed(() => {

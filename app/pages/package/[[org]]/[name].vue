@@ -251,7 +251,7 @@ const { copied: copiedVersion, copy: copyVersion } = useClipboard({
   copiedDuring: 2000,
 })
 
-const { scrollToTop, isTouchDeviceClient } = useScrollToTop({ duration: 500 })
+const { scrollToTop, isTouchDeviceClient } = useScrollToTop()
 
 const { y: scrollY } = useScroll(window)
 const showScrollToTop = computed(
