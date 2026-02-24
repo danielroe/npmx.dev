@@ -364,7 +364,9 @@
         "downloads": "Downloads",
         "likes": "Likes",
         "contributors": "Mitwirkende"
-      }
+      },
+      "play_animation": "Animation abspielen",
+      "pause_animation": "Animation pausieren"
     },
     "downloads": {
       "title": "Wöchentliche Downloads",

@@ -4,6 +4,7 @@ import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
 import type { RepoRef } from '#shared/utils/git-providers'
+import type { VueUiSparklineConfig, VueUiSparklineDatasetItem } from 'vue-data-ui'
 
 const props = defineProps<{
   packageName: string
@@ -176,7 +177,7 @@ watch(
   () => loadWeeklyDownloads(),
 )
 
-const dataset = computed(() =>
+const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
   weeklyDownloads.value.map(d => ({
     value: d?.value ?? 0,
     period: $t('package.trends.date_range', {
@@ -188,7 +189,7 @@ const dataset = computed(() =>
 
 const lastDatapoint = computed(() => dataset.value.at(-1)?.period ?? '')
 
-const config = computed(() => {
+const config = computed<VueUiSparklineConfig>(() => {
   return {
     theme: 'dark',
     /**
@@ -234,7 +235,7 @@ const config = computed(() => {
           show: hasSparklineAnimation.value, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
           loop: true, // runs only once if false
           radius: 1.5,
-          color: pulseColor.value,
+          color: pulseColor.value!,
           easing: 'ease-in-out',
           trail: {
             show: true,
@@ -248,7 +249,7 @@ const config = computed(() => {
         stroke: isDarkMode.value ? 'oklch(0.985 0 0)' : 'oklch(0.145 0 0)',
       },
       title: {
-        text: lastDatapoint.value,
+        text: String(lastDatapoint.value),
         fontSize: 12,
         color: colors.value.fgSubtle,
         bold: false,
@@ -263,7 +264,7 @@ const config = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-8">
+  <div class="space-y-8 h-[110px] motion-safe:h-[140px]">
     <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
       <template #actions>
         <ButtonBase
@@ -305,6 +306,10 @@ const config = computed(() => {
                   <div class="flex-1 flex items-end pe-3">
                     <SkeletonInline class="h-px w-full" />
                   </div>
+                </div>
+                <!-- Animation toggle placeholder -->
+                <div class="w-full hidden motion-safe:flex flex-1 items-end justify-end">
+                  <SkeletonInline class="h-[20px] w-30" />
                 </div>
               </div>
             </template>
@@ -350,10 +355,7 @@ const config = computed(() => {
 
     <!-- This placeholder bears the same dimensions as the PackageTrendsChart component -->
     <!-- Avoids CLS when the dialog has transitioned -->
-    <div
-      v-if="!hasChartModalTransitioned"
-      class="w-full aspect-[390/634.5] sm:aspect-[718/622.797]"
-    />
+    <div v-if="!hasChartModalTransitioned" class="w-full aspect-[390/634.5] sm:aspect-[718/647]" />
   </PackageChartModal>
 </template>
 

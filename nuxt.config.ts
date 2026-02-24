@@ -37,6 +37,7 @@ export default defineNuxtConfig({
     github: {
       orgToken: '',
     },
+    oauthJwkOne: process.env.OAUTH_JWK_ONE || undefined,
     // Upstash Redis for distributed OAuth token refresh locking in production
     upstash: {
       redisRestUrl: process.env.UPSTASH_KV_REST_API_URL || process.env.KV_REST_API_URL || '',
@@ -122,6 +123,7 @@ export default defineNuxtConfig({
     '/_avatar/**': { isr: 3600, proxy: 'https://www.gravatar.com/avatar/**' },
     '/opensearch.xml': { isr: true },
     '/oauth-client-metadata.json': { prerender: true },
+    '/.well-known/jwks.json': { prerender: true },
     // never cache
     '/api/auth/**': { isr: false, cache: false },
     '/api/social/**': { isr: false, cache: false },
@@ -133,13 +135,10 @@ export default defineNuxtConfig({
       },
     },
     // pages
-    '/package/:name': getISRConfig(60, { fallback: 'html' }),
+    '/package/**': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name': getISRConfig(60, { fallback: 'html' }),
     '/package/:org/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
     '/package/:org/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
