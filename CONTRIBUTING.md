@@ -31,6 +31,7 @@ This focus helps guide our project decisions as a community and what we choose t
   - [Setup](#setup)
 - [Development workflow](#development-workflow)
   - [Available commands](#available-commands)
+  - [Clearing caches during development](#clearing-caches-during-development)
   - [Project structure](#project-structure)
   - [Local connector CLI](#local-connector-cli)
   - [Mock connector (for local development)](#mock-connector-for-local-development)
@@ -123,6 +124,34 @@ pnpm test:browser     # Playwright E2E tests
 pnpm test:a11y        # Lighthouse accessibility audits
 pnpm test:perf        # Lighthouse performance audits (CLS)
 ```
+
+### Clearing caches during development
+
+Nitro persists `defineCachedEventHandler` results to disk at `.nuxt/cache/nitro/`. This cache **survives dev server restarts**. If you're iterating on a cached API route and want fresh results, delete the relevant cache directory:
+
+```bash
+# Clear all Nitro handler caches
+rm -rf .nuxt/cache/nitro/handlers/
+
+# Clear a specific handler cache (e.g. picks)
+rm -rf .nuxt/cache/nitro/handlers/npmx-picks/
+```
+
+Alternatively, you can bypass the cache entirely in development by adding `shouldBypassCache: () => import.meta.dev` to your `defineCachedEventHandler` options:
+
+```ts
+export default defineCachedEventHandler(
+  async event => {
+    // ...
+  },
+  {
+    maxAge: 60 * 5,
+    shouldBypassCache: () => import.meta.dev,
+  },
+)
+```
+
+The `.cache/` directory is a separate storage mount used for fetch-cache and atproto data.
 
 ### Project structure
 
