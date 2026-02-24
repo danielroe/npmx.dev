@@ -79,7 +79,7 @@
   "settings": {
     "title": "paramètres",
     "tagline": "personnalisez votre expérience npmx",
-    "meta_description": "Personnalisez votre expérience npmx.dev avec votre thème, langage et préférences d'affichage.",
+    "meta_description": "Personnalisez votre expérience npmx.dev avec les préférences de thème, de langue et d'affichage.",
     "sections": {
       "appearance": "Apparence",
       "display": "Affichage",
@@ -195,8 +195,8 @@
       "no_description": "Aucune description",
       "file_counts": {
         "scripts": "{count} script | {count} scripts",
-        "refs": "{count} ref | {count} refs",
-        "assets": "{count} asset | {count} assets"
+        "refs": "{count} référence | {count} références",
+        "assets": "{count} ressource | {count} ressources"
       },
       "view_source": "Voir la source"
     },
@@ -616,7 +616,7 @@
       "view_your_orgs": "Voir vos organisations",
       "loading": "Chargement des organisations...",
       "empty": "Aucune organisation trouvée.",
-      "empty_hint": "Les organisations sont détectées à partir de vos paquets scopés.",
+      "empty_hint": "Les organisations sont détectées à partir de vos paquets à portée limitée.",
       "count": "{count} Organisation | {count} Organisations",
       "packages_count": "{count} paquet | {count} paquets"
     }
@@ -634,8 +634,8 @@
       "missing_permission": "Vous n'avez pas la permission d'ajouter un paquet à la portée {'@'}{scope}.",
       "similar_warning": "Des paquets similaires existent — npm pourrait rejeter ce nom :",
       "related": "Paquets associés :",
-      "scope_warning_title": "Envisagez d'utiliser un paquet scopé",
-      "scope_warning_text": "Les noms de paquets non scopés sont une ressource partagée. Ne réservez un nom que si vous avez l'intention de publier et maintenir un paquet. Pour les projets personnels ou organisationnels, utilisez un nom scopé comme {'@'}{username}/{name}.",
+      "scope_warning_title": "Envisagez d'utiliser un paquet à portée limitée",
+      "scope_warning_text": "Les noms de paquets sans portée limitée sont une ressource partagée. Ne réservez un nom que si vous avez l'intention de publier et maintenir un paquet. Pour les projets personnels ou organisationnels, utilisez un nom à portée limitée comme {'@'}{username}/{name}.",
       "connect_required": "Connectez-vous au connecteur local pour réserver ce nom de paquet.",
       "connect_button": "Se connecter au connecteur",
       "publish_hint": "Cela publiera un paquet minimal de substitution.",
