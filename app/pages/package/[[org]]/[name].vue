@@ -910,42 +910,68 @@ const showSkeleton = shallowRef(false)
               class="self-baseline"
             />
 
-            <!-- Package likes -->
-            <TooltipApp
-              :text="
-                isLoadingLikeData
-                  ? $t('common.loading')
-                  : likesData?.userHasLiked
-                    ? $t('package.likes.unlike')
-                    : $t('package.likes.like')
-              "
-              position="bottom"
-              class="items-center"
-              strategy="fixed"
-            >
-              <ButtonBase
-                @click="likeAction"
-                size="small"
-                :aria-label="
-                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+            <div class="flex gap-1.5">
+              <!-- Package likes -->
+              <TooltipApp
+                :text="
+                  isLoadingLikeData
+                    ? $t('common.loading')
+                    : likesData?.userHasLiked
+                      ? $t('package.likes.unlike')
+                      : $t('package.likes.like')
                 "
-                :aria-pressed="likesData?.userHasLiked"
-                :classicon="
-                  likesData?.userHasLiked
-                    ? 'i-lucide:heart-minus text-red-500'
-                    : 'i-lucide:heart-plus'
-                "
+                position="bottom"
+                class="items-center"
+                strategy="fixed"
               >
-                <span
-                  v-if="isLoadingLikeData"
-                  class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
-                  aria-hidden="true"
-                />
-                <span v-else>
-                  {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
-                </span>
-              </ButtonBase>
-            </TooltipApp>
+                <ButtonBase
+                  @click="likeAction"
+                  size="small"
+                  :aria-label="
+                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                  "
+                  :aria-pressed="likesData?.userHasLiked"
+                  :classicon="
+                    likesData?.userHasLiked
+                      ? 'i-lucide:heart-minus text-red-500'
+                      : 'i-lucide:heart-plus'
+                  "
+                >
+                  <span
+                    v-if="isLoadingLikeData"
+                    class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
+                    aria-hidden="true"
+                  />
+                  <span v-else>
+                    {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
+                  </span>
+                </ButtonBase>
+              </TooltipApp>
+
+              <TooltipApp
+                v-if="isGitHubRepo && isGitHubConnected"
+                :text="
+                  isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
+                "
+                position="bottom"
+                strategy="fixed"
+              >
+                <ButtonBase
+                  @click="toggleStar"
+                  size="small"
+                  :title="
+                    isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
+                  "
+                  :aria-label="
+                    isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
+                  "
+                  :aria-pressed="isStarred"
+                  :disabled="isStarActionPending"
+                  :classicon="isStarred ? 'i-lucide:star text-yellow-400' : 'i-lucide:star'"
+                >
+                </ButtonBase>
+              </TooltipApp>
+            </div>
           </div>
         </div>
       </header>
@@ -976,31 +1002,7 @@ const showSkeleton = shallowRef(false)
               </LinkBase>
             </li>
             <li v-if="repositoryUrl && repoMeta && starsLink">
-              <TooltipApp
-                v-if="isGitHubRepo && isGitHubConnected"
-                :text="
-                  isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
-                "
-                position="bottom"
-                strategy="fixed"
-              >
-                <ButtonBase
-                  size="small"
-                  :title="
-                    isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
-                  "
-                  :aria-label="
-                    isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
-                  "
-                  :aria-pressed="isStarred"
-                  :disabled="isStarActionPending"
-                  :classicon="isStarred ? 'i-lucide:star text-yellow-400' : 'i-lucide:star'"
-                  @click="toggleStar"
-                >
-                  {{ compactNumberFormatter.format(stars) }}
-                </ButtonBase>
-              </TooltipApp>
-              <LinkBase v-else :to="starsLink" classicon="i-lucide:star">
+              <LinkBase :to="starsLink" classicon="i-lucide:star">
                 {{ compactNumberFormatter.format(stars) }}
               </LinkBase>
             </li>
