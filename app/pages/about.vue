@@ -63,39 +63,44 @@ const SPONSOR = [
 
 const OSS_PARTNERS = [
   {
-    name: 'Nuxt',
-    logo: LogoNuxt,
-    url: 'https://nuxt.com/',
-  },
-  {
     name: 'Open Source Pledge',
     logo: LogoOpenSourcePledge,
     url: 'https://opensourcepledge.com/',
   },
   {
-    name: 'OxC',
-    logo: LogoOxC,
-    url: 'https://oxc.rs/',
+    name: 'Void Zero',
+    items: [
+      {
+        name: 'Vite',
+        logo: LogoVite,
+        url: 'https://vite.dev/',
+      },
+      {
+        name: 'OxC',
+        logo: LogoOxC,
+        url: 'https://oxc.rs/',
+      },
+      {
+        name: 'Vitest',
+        logo: LogoVitest,
+        url: 'https://vitest.dev/',
+      },
+      {
+        name: 'Rolldown',
+        logo: LogoRolldown,
+        url: 'https://rolldown.rs/',
+      },
+    ],
   },
   {
-    name: 'Rolldown',
-    logo: LogoRolldown,
-    url: 'https://rolldown.rs/',
+    name: 'Nuxt',
+    logo: LogoNuxt,
+    url: 'https://nuxt.com/',
   },
   {
     name: 'Storybook',
     logo: LogoStorybook,
     url: 'https://storybook.js.org/',
-  },
-  {
-    name: 'Vite',
-    logo: LogoVite,
-    url: 'https://vite.dev/',
-  },
-  {
-    name: 'Vitest',
-    logo: LogoVitest,
-    url: 'https://vitest.dev/',
   },
   {
     name: 'Vue',
@@ -249,22 +254,67 @@ const roleLabels = computed(
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.oss_partners.title') }}
           </h2>
-          <ul class="flex flex-wrap gap-2 md:gap-4 list-none p-0 -mx-2">
+          <ul class="flex flex-wrap gap-5 md:gap-7 list-none">
             <li v-for="partner in OSS_PARTNERS" :key="partner.name">
               <a
+                v-if="partner.logo"
                 :href="partner.url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center justify-center h-full min-w-10 md:min-w-13 rounded-md hover:bg-fg/10 transition-colors p-2"
+                class="flex items-center justify-center h-full min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
               >
                 <img
                   :src="partner.logo"
                   loading="lazy"
-                  height="24"
+                  height="36"
                   :alt="partner.name"
-                  class="h-6 md:h-9 w-auto block"
+                  class="w-auto block"
                 />
               </a>
+              <div v-else-if="partner.items" class="relative flex items-center justify-center">
+                <svg
+                  width="11"
+                  height="38"
+                  viewBox="0 0 11 38"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.62151 0C-1.8519 10.6931 -1.89574 27.2683 5.62151 37.9997H10.6709C3.15538 27.2683 3.19922 10.6931 10.6709 0H5.62151Z"
+                    fill="white"
+                  />
+                </svg>
+                <ul class="flex items-center justify-center h-full gap-0.5 list-none">
+                  <li v-for="item in partner.items" :key="item.name">
+                    <a
+                      :href="item.url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="flex items-center justify-center h-full min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
+                    >
+                      <img
+                        :src="item.logo"
+                        loading="lazy"
+                        height="36"
+                        :alt="item.name"
+                        class="w-auto block"
+                      />
+                    </a>
+                  </li>
+                </ul>
+                <svg
+                  width="11"
+                  height="38"
+                  viewBox="0 0 11 38"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.04935 0H0C7.4734 10.6931 7.51725 27.2683 0 37.9997H5.04935C12.5648 27.2683 12.521 10.6931 5.04935 0Z"
+                    fill="white"
+                  />
+                </svg>
+              </div>
             </li>
           </ul>
         </div>
