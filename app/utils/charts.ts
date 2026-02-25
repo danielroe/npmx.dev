@@ -505,7 +505,7 @@ export function createAltTextForTrendLineChart({
   }))
 
   const granularityKeyByGranularity: Record<string, string> = {
-    daily: 'package.trends.granularity_dayly',
+    daily: 'package.trends.granularity_daily',
     weekly: 'package.trends.granularity_weekly',
     monthly: 'package.trends.granularity_monthly',
     yearly: 'package.trends.granularity_yearly',
