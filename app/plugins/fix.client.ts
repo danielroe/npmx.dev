@@ -14,6 +14,7 @@ export default defineNuxtPlugin({
       !Object.keys(nuxtApp.payload.data).length
     ) {
       nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
+        console.log('refreshing nuxt data')
         refreshNuxtData()
       })
     }
