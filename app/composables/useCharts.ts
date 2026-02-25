@@ -649,24 +649,27 @@ export function useCharts() {
 
     const granularity = String(config.$t(granularityKey)).toLocaleLowerCase()
 
-    const trendKeyByTrend: Record<string, string> = {
-      none: 'package.trends.copy_alt.trend_none',
-      weak: 'package.trends.copy_alt.trend_weak',
-      strong: 'package.trends.copy_alt.trend_strong',
-      undefined: 'package.trends.copy_alt.trend_undefined',
-    }
-
     const packages_analysis = analysis
       .map((pkg, i) => {
-        const trendKey =
-          trendKeyByTrend[pkg.interpretation.trend as unknown as string] ??
-          'package.trends.copy_alt.trend_undefined'
+        const trendText = (() => {
+          switch (pkg.interpretation.trend) {
+            case 'none':
+              return config.$t('package.trends.copy_alt.trend_none')
+            case 'weak':
+              return config.$t('package.trends.copy_alt.trend_weak')
+            case 'strong':
+              return config.$t('package.trends.copy_alt.trend_strong')
+            case 'undefined':
+            default:
+              return config.$t('package.trends.copy_alt.trend_undefined')
+          }
+        })()
 
         return config.$t('package.trends.copy_alt.analysis', {
           package_name: pkg.name,
           start_value: config.formattedDatasetValues[i]?.[0] ?? 0,
           end_value: config.formattedDatasetValues[i]?.at(-1) ?? 0,
-          trend: config.$t(trendKey),
+          trend: trendText,
           downloads_slope: compactNumberFormatter.value.format(pkg.slope),
           growth_percentage: `${pkg.progressionPercent?.toFixed(1)}%`,
         })
