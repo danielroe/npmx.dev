@@ -1,4 +1,4 @@
-import type { VueUiXyConfig, VueUiXyDatasetLineItem } from 'vue-data-ui'
+import type { AltCopyArgs, VueUiXyConfig, VueUiXyDatasetLineItem } from 'vue-data-ui'
 import type { ChartTimeGranularity } from '~/types/chart'
 
 export function sum(numbers: number[]): number {
@@ -488,4 +488,96 @@ export type TrendLineConfig = VueUiXyConfig & {
   granularity: ChartTimeGranularity // from the TrendsChart component
   copy: (text: string) => Promise<void>
   $t: TrendTranslateFunction
+  numberFormatter: (value: number) => string
+}
+
+export function createAltTextForTrendLineChart({
+  dataset,
+  config,
+}: AltCopyArgs<TrendLineDataset, TrendLineConfig>): string {
+  if (!dataset) return ''
+
+  const analysis = dataset.lines.map(({ name, series }) => ({
+    name,
+    ...computeLineChartAnalysis(series),
+    dates: config.formattedDates,
+    hasEstimation: config.hasEstimation,
+  }))
+
+  const granularityKeyByGranularity: Record<string, string> = {
+    daily: 'package.trends.granularity_dayly',
+    weekly: 'package.trends.granularity_weekly',
+    monthly: 'package.trends.granularity_monthly',
+    yearly: 'package.trends.granularity_yearly',
+  }
+
+  const granularityKey =
+    granularityKeyByGranularity[config.granularity as unknown as string] ??
+    'package.trends.granularity_weekly'
+
+  const granularity = String(config.$t(granularityKey)).toLocaleLowerCase()
+
+  const packages_analysis = analysis
+    .map((pkg, i) => {
+      const trendText = (() => {
+        switch (pkg.interpretation.trend) {
+          case 'none':
+            return config.$t('package.trends.copy_alt.trend_none')
+          case 'weak':
+            return config.$t('package.trends.copy_alt.trend_weak')
+          case 'strong':
+            return config.$t('package.trends.copy_alt.trend_strong')
+          case 'undefined':
+          default:
+            return config.$t('package.trends.copy_alt.trend_undefined')
+        }
+      })()
+
+      return config.$t('package.trends.copy_alt.analysis', {
+        package_name: pkg.name,
+        start_value: config.formattedDatasetValues[i]?.[0] ?? 0,
+        end_value: config.formattedDatasetValues[i]?.at(-1) ?? 0,
+        trend: trendText,
+        downloads_slope: config.numberFormatter(pkg.slope),
+        growth_percentage: `${pkg.progressionPercent?.toFixed(1)}%`,
+      })
+    })
+    .join(', ')
+
+  const isSinglePackage = analysis.length === 1
+
+  const estimation_notice = config.hasEstimation
+    ? ` ${
+        isSinglePackage
+          ? config.$t('package.trends.copy_alt.estimation')
+          : config.$t('package.trends.copy_alt.estimations')
+      }`
+    : ''
+
+  const compareText = `${config.$t('package.trends.copy_alt.compare', {
+    packages: analysis.map(a => a.name).join(', '),
+  })} `
+
+  const singlePackageText = `${config.$t('package.trends.copy_alt.single_package', {
+    package: analysis?.[0]?.name ?? '',
+  })} `
+
+  const generalAnalysis = config.$t('package.trends.copy_alt.general_description', {
+    start_date: analysis?.[0]?.dates[0]?.text,
+    end_date: analysis?.[0]?.dates.at(-1)?.text,
+    granularity,
+    packages_analysis,
+    watermark: config.$t('package.trends.copy_alt.watermark'),
+    estimation_notice,
+  })
+
+  return (isSinglePackage ? singlePackageText : compareText) + generalAnalysis
+}
+
+export async function copyAltTextForTrendLineChart({
+  dataset,
+  config,
+}: AltCopyArgs<TrendLineDataset, TrendLineConfig>) {
+  const altText = createAltTextForTrendLineChart({ dataset, config })
+  await config.copy(altText)
 }

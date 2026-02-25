@@ -18,6 +18,7 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
+import { copyAltTextForTrendLineChart } from '~/utils/charts'
 
 const props = withDefaults(
   defineProps<{
@@ -323,7 +324,6 @@ const {
   fetchPackageLikesEvolution,
   fetchRepoContributorsEvolution,
   fetchRepoRefsForPackages,
-  copyAltTextForTrendLineChart,
 } = useCharts()
 
 const repoRefsByPackage = shallowRef<Record<string, RepoRef | null>>({})
@@ -1474,6 +1474,7 @@ const chartConfig = computed<VueUiXyConfig>(() => {
                 granularity: displayedGranularity.value,
                 copy,
                 $t,
+                numberFormatter: compactNumberFormatter.value.format,
               },
             }),
         },
