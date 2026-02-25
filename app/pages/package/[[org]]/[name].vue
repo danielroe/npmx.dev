@@ -210,9 +210,16 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
-const { data: resolvedVersion } = await useResolvedVersion(packageName, requestedVersion)
+const { data: resolvedVersion, status: resolvedStatus } = await useResolvedVersion(
+  packageName,
+  requestedVersion,
+)
 
-if (resolvedVersion.value === null) {
+if (
+  import.meta.server &&
+  !resolvedVersion.value &&
+  ['success', 'error'].includes(resolvedStatus.value)
+) {
   throw createError({
     statusCode: 404,
     statusMessage: $t('package.not_found'),
@@ -220,11 +227,62 @@ if (resolvedVersion.value === null) {
   })
 }
 
+watch(
+  [resolvedStatus, resolvedVersion],
+  ([status, version]) => {
+    if ((!version && status === 'success') || status === 'error') {
+      showError({
+        statusCode: 404,
+        statusMessage: $t('package.not_found'),
+        message: $t('package.not_found_message'),
+      })
+    }
+  },
+  { immediate: true },
+)
+
 const {
   data: pkg,
   status,
   error,
 } = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
+
+// Detect two hydration scenarios where the external _payload.json is missing:
+//
+// 1. SPA fallback (200.html): No real content was server-rendered.
+//    → Show skeleton while data fetches on the client.
+//
+// 2. SSR-rendered HTML with missing payload: Content was rendered but the external _payload.json
+//    returned an ISR fallback.
+//    → Preserve the server-rendered DOM, don't flash to skeleton.
+const nuxtApp = useNuxtApp()
+const route = useRoute()
+const hasEmptyPayload =
+  import.meta.client &&
+  nuxtApp.isHydrating &&
+  nuxtApp.payload.serverRendered &&
+  !Object.keys(nuxtApp.payload.data ?? {}).length
+const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
+const isHydratingWithServerContent = shallowRef(
+  hasEmptyPayload && nuxtApp.payload.path === route.path,
+)
+// When we have server-rendered content but no payload data, capture the server
+// DOM before Vue's hydration replaces it. This lets us show the server-rendered
+// HTML as a static snapshot while data refetches, avoiding any visual flash.
+const serverRenderedHtml = shallowRef<string | null>(
+  isHydratingWithServerContent.value
+    ? (document.getElementById('package-article')?.innerHTML ?? null)
+    : null,
+)
+
+if (isSpaFallback.value || isHydratingWithServerContent.value) {
+  nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
+    isSpaFallback.value = false
+    isHydratingWithServerContent.value = false
+    serverRenderedHtml.value = null
+  })
+}
+
 const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
 const versionSecurityMetadata = computed<PackageVersionInfo[]>(() => {
   if (!pkg.value) return []
@@ -672,9 +730,30 @@ const showSkeleton = shallowRef(false)
     </ButtonBase>
   </DevOnly>
   <main class="container flex-1 w-full py-8">
-    <PackageSkeleton v-if="showSkeleton || status === 'pending'" />
+    <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
+    <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
+    <PackageSkeleton
+      v-if="
+        isSpaFallback || (!isHydratingWithServerContent && (showSkeleton || status === 'pending'))
+      "
+    />
 
-    <article v-else-if="status === 'success' && pkg" :class="$style.packagePage">
+    <!-- During hydration without payload, show captured server HTML as a static snapshot.
+         This avoids a visual flash: the user sees the server content while data refetches.
+         v-html is safe here: the content originates from the server's own SSR output,
+         captured from the DOM before hydration — it is not user-controlled input. -->
+    <article
+      v-else-if="isHydratingWithServerContent && serverRenderedHtml"
+      id="package-article"
+      :class="$style.packagePage"
+      v-html="serverRenderedHtml"
+    />
+
+    <article
+      v-else-if="status === 'success' && pkg"
+      id="package-article"
+      :class="$style.packagePage"
+    >
       <!-- Package header -->
       <header
         class="sticky top-14 z-1 bg-[--bg] py-2 border-border"

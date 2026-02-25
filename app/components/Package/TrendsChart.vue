@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VueUiXyConfig, VueUiXyDatasetItem } from 'vue-data-ui'
+import type { Theme as VueDataUiTheme, VueUiXyConfig, VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
@@ -18,6 +18,7 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
+import { copyAltTextForTrendLineChart } from '~/utils/charts'
 
 const props = withDefaults(
   defineProps<{
@@ -50,6 +51,8 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { copy, copied } = useClipboard()
+
 const colorMode = useColorMode()
 const resolvedMode = shallowRef<'light' | 'dark'>('light')
 const rootEl = shallowRef<HTMLElement | null>(null)
@@ -1406,7 +1409,7 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
 // VueUiXy chart component configuration
 const chartConfig = computed<VueUiXyConfig>(() => {
   return {
-    theme: isDarkMode.value ? 'dark' : '',
+    theme: isDarkMode.value ? 'dark' : ('' as VueDataUiTheme),
     chart: {
       height: isMobile.value ? 950 : 600,
       backgroundColor: colors.value.bg,
@@ -1418,14 +1421,14 @@ const chartConfig = computed<VueUiXyConfig>(() => {
           fullscreen: false,
           table: false,
           tooltip: false,
-          altCopy: false, // TODO: set to true to enable the alt copy feature
+          altCopy: true,
         },
         buttonTitles: {
           csv: $t('package.trends.download_file', { fileType: 'CSV' }),
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
-          altCopy: undefined, // TODO: set to proper translation key
+          altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
         },
         callbacks: {
           img: args => {
@@ -1458,10 +1461,22 @@ const chartConfig = computed<VueUiXyConfig>(() => {
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
           },
-          // altCopy: ({ dataset: dst, config: cfg }: { dataset: Array<VueUiXyDatasetItem>; config: VueUiXyConfig}) => {
-          //   // TODO: implement a reusable copy-alt-text-to-clipboard feature based on the dataset & configuration
-          //   console.log({ dst, cfg})
-          // }
+          altCopy: ({ dataset: dst, config: cfg }) =>
+            copyAltTextForTrendLineChart({
+              dataset: dst,
+              config: {
+                ...cfg,
+                formattedDatasetValues: (dst?.lines || []).map(d =>
+                  d.series.map(n => compactNumberFormatter.value.format(n ?? 0)),
+                ),
+                hasEstimation:
+                  supportsEstimation.value && !isEndDateOnPeriodEnd.value && !isZoomed.value,
+                granularity: displayedGranularity.value,
+                copy,
+                $t,
+                numberFormatter: compactNumberFormatter.value.format,
+              },
+            }),
         },
       },
       grid: {
@@ -1870,7 +1885,10 @@ watch(selectedMetric, value => {
             </template>
             <template #optionAltCopy>
               <span
-                class="i-lucide:person-standing w-6 h-6 text-fg-subtle"
+                class="w-6 h-6"
+                :class="
+                  copied ? 'i-lucide:check text-accent' : 'i-lucide:person-standing text-fg-subtle'
+                "
                 style="pointer-events: none"
                 aria-hidden="true"
               />
