@@ -19,6 +19,7 @@ import type {
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
 import { applyDownloadFilter } from '~/utils/chart-filters'
+import { applyBlocklistFilter } from '~/utils/download-anomalies'
 
 const props = withDefaults(
   defineProps<{
@@ -943,6 +944,10 @@ const effectiveDataSingle = computed<EvolutionData>(() => {
   }
 
   if (isDownloadsMetric.value && data.length) {
+    const pkg = effectivePackageNames.value[0] ?? props.packageName ?? ''
+    if (settings.value.chartFilter.anomaliesFixed) {
+      data = applyBlocklistFilter(data, pkg, displayedGranularity.value)
+    }
     return applyDownloadFilter(
       data as Array<{ value: number }>,
       settings.value.chartFilter,
@@ -984,6 +989,9 @@ const chartData = computed<{
   for (const pkg of names) {
     let data = state.evolutionsByPackage[pkg] ?? []
     if (isDownloadsMetric.value && data.length) {
+      if (settings.value.chartFilter.anomaliesFixed) {
+        data = applyBlocklistFilter(data, pkg, granularity)
+      }
       data = applyDownloadFilter(
         data as Array<{ value: number }>,
         settings.value.chartFilter,
@@ -1708,20 +1716,44 @@ watch(selectedMetric, value => {
           />
           Filters
         </button>
-        <div v-if="showFilterControls" class="max-w-xs">
-          <label class="flex flex-col gap-1">
+        <div v-if="showFilterControls" class="flex items-end gap-3">
+          <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              Outlier sensitivity
-              <span class="text-fg-muted">({{ settings.chartFilter.iqrMultiplier }})</span>
+              Average
+              <span class="text-fg-muted">({{ settings.chartFilter.averageWindow }})</span>
             </span>
             <input
-              v-model.number="settings.chartFilter.iqrMultiplier"
+              v-model.number="settings.chartFilter.averageWindow"
               type="range"
               min="0"
-              max="5"
-              step="0.5"
+              max="20"
+              step="1"
               class="accent-[var(--accent-color,var(--fg-subtle))]"
             />
+          </label>
+          <label class="flex flex-col gap-1 flex-1">
+            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
+              Smoothing
+              <span class="text-fg-muted">({{ settings.chartFilter.smoothingTau }})</span>
+            </span>
+            <input
+              v-model.number="settings.chartFilter.smoothingTau"
+              type="range"
+              min="0"
+              max="20"
+              step="1"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+          </label>
+          <label
+            class="flex items-center gap-1.5 text-2xs font-mono text-fg-subtle tracking-wide uppercase cursor-pointer shrink-0 -mb-0.5"
+          >
+            <input
+              v-model="settings.chartFilter.anomaliesFixed"
+              type="checkbox"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+            Anomalies fixed
           </label>
         </div>
       </div>

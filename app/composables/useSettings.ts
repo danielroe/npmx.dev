@@ -39,7 +39,9 @@ export interface AppSettings {
     animateSparkline: boolean
   }
   chartFilter: {
-    iqrMultiplier: number
+    averageWindow: number
+    smoothingTau: number
+    anomaliesFixed: boolean
   }
 }
 
@@ -59,7 +61,9 @@ const DEFAULT_SETTINGS: AppSettings = {
     animateSparkline: true,
   },
   chartFilter: {
-    iqrMultiplier: 1.5,
+    averageWindow: 0,
+    smoothingTau: 1,
+    anomaliesFixed: true,
   },
 }
 
