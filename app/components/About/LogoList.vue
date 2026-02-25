@@ -29,6 +29,7 @@ const props = defineProps<{
         target="_blank"
         rel="noopener noreferrer"
         class="flex items-center justify-center h-full min-w-11 rounded-md hover:bg-fg/10 transition-colors p-1"
+        :aria-label="item.name"
       >
         <AboutLogoImg :src="item.logo" :alt="item.name" />
       </a>
@@ -53,6 +54,7 @@ const props = defineProps<{
               target="_blank"
               rel="noopener noreferrer"
               class="flex items-center justify-center h-full min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
+              :aria-label="groupItem.name"
             >
               <AboutLogoImg :src="groupItem.logo" :alt="groupItem.name" />
             </a>

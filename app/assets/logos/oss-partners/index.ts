@@ -54,13 +54,13 @@ export const OSS_PARTNERS = [
     url: 'https://nuxt.com/',
   },
   {
-    name: 'Storybook',
-    logo: LogoStorybook,
-    url: 'https://storybook.js.org/',
-  },
-  {
     name: 'Vue',
     logo: LogoVue,
     url: 'https://vuejs.org/',
+  },
+  {
+    name: 'Storybook',
+    logo: LogoStorybook,
+    url: 'https://storybook.js.org/',
   },
 ]
