@@ -210,15 +210,24 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
-const { data: resolvedVersion } = await useResolvedVersion(packageName, requestedVersion)
+const { data: resolvedVersion, status: resolvedStatus } = await useResolvedVersion(
+  packageName,
+  requestedVersion,
+)
 
-if (resolvedVersion.value === null) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: $t('package.not_found'),
-    message: $t('package.not_found_message'),
-  })
-}
+watch(
+  [resolvedStatus, resolvedVersion],
+  ([status, version]) => {
+    if (version === null && status === 'success') {
+      throw createError({
+        statusCode: 404,
+        statusMessage: $t('package.not_found'),
+        message: $t('package.not_found_message'),
+      })
+    }
+  },
+  { immediate: true },
+)
 
 const {
   data: pkg,
@@ -672,7 +681,7 @@ const showSkeleton = shallowRef(false)
     </ButtonBase>
   </DevOnly>
   <main class="container flex-1 w-full py-8">
-    <PackageSkeleton v-if="showSkeleton || status === 'pending'" />
+    <PackageSkeleton v-if="showSkeleton || status === 'idle' || status === 'pending'" />
 
     <article v-else-if="status === 'success' && pkg" :class="$style.packagePage">
       <!-- Package header -->
