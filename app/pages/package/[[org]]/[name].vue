@@ -797,7 +797,7 @@ const showSkeleton = shallowRef(false)
     <article
       v-else-if="
         isHydratingWithServerContent ||
-        (hasServerContentOnly && serverRenderedHtml && (!pkg || !readmeData?.defaultValue))
+        (hasServerContentOnly && serverRenderedHtml && (!pkg || readmeData?.defaultValue))
       "
       id="package-article"
       :class="$style.packagePage"
