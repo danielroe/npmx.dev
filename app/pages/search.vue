@@ -8,7 +8,6 @@ import { isPlatformSpecificPackage } from '~/utils/platform-packages'
 import { normalizeSearchParam } from '#shared/utils/url'
 
 const route = useRoute()
-const router = useRouter()
 
 // Preferences (persisted to localStorage)
 const {

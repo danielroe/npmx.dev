@@ -4,11 +4,7 @@
   "private": true,
   "type": "module",
   "version": "0.0.0",
-  "author": {
-    "name": "Daniel Roe",
-    "email": "daniel@roe.dev",
-    "url": "https://roe.dev"
-  },
+  "author": "Daniel Roe <daniel@roe.dev> (https://roe.dev)",
   "scripts": {
     "build": "nuxt build",
     "build:lunaria": "node ./lunaria/lunaria.ts",
@@ -167,5 +163,19 @@
       "pnpm oxfmt"
     ]
   },
-  "packageManager": "pnpm@10.30.1"
+  "packageManager": "pnpm@10.30.1",
+  "description": "> A fast, modern browser for the npm registry.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marlonwq/npmx.dev.git"
+  },
+  "bugs": {
+    "url": "https://github.com/marlonwq/npmx.dev/issues"
+  },
+  "homepage": "https://github.com/marlonwq/npmx.dev#readme"
 }
