@@ -275,6 +275,7 @@ watch(
     () => isHydratingWithServerContent.value,
     () => status.value,
     () => pkg.value,
+    () => readmeData.value,
     () => Object.keys(nuxtApp.payload.data ?? {}).length,
     () => resolvedVersion.value,
     () => requestedVersion.value,
@@ -286,6 +287,7 @@ watch(
     isHydratingWithServerContentArg,
     statusArg,
     pkgArg,
+    readmeDataArg,
     dataLengthArg,
     resolvedVersionArg,
     requestedVersionArg,
@@ -297,6 +299,7 @@ watch(
       isHydratingWithServerContentArg,
       statusArg,
       pkgArg,
+      readmeDataArg,
       dataLengthArg,
       resolvedVersionArg,
       requestedVersionArg,
@@ -784,7 +787,10 @@ const showSkeleton = shallowRef(false)
          v-html is safe here: the content originates from the server's own SSR output,
          captured from the DOM before hydration — it is not user-controlled input. -->
     <article
-      v-else-if="hasServerContentOnly && serverRenderedHtml && (!pkg || !readmeData)"
+      v-else-if="
+        isHydratingWithServerContent ||
+        (hasServerContentOnly && serverRenderedHtml && (!pkg || !readmeData))
+      "
       id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
