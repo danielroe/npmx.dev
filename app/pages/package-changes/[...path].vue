@@ -68,13 +68,13 @@ watch(
 const { data: changelog, pending } = usePackageChangelog(packageName, version)
 
 const repoProviderIcon = useProviderIcon(() => changelog.value?.provider)
-const header = useTemplateRef('header')
+const tptoc = useTemplateRef('tptoc')
 </script>
 <template>
   <main class="flex-1 flex flex-col">
     <header class="border-b border-border bg-bg sticky top-14 z-20">
       <div class="container pt-4 pb-3">
-        <div class="flex items-center gap-2 mb-3 flex-wrap min-w-0" ref="header">
+        <div class="flex items-center gap-3 mb-3 flex-wrap min-w-0">
           <h1
             class="font-mono text-lg sm:text-xl font-semibold text-fg hover:text-fg-muted transition-colors truncate"
           >
@@ -100,6 +100,10 @@ const header = useTemplateRef('header')
           >
             {{ changelog.provider }}
           </LinkBase>
+
+          <div v-if="changelog?.type == 'md'" ref="tptoc" class="w-14 h-8">
+            <!-- prevents layout shift while loading -->
+          </div>
         </div>
       </div>
     </header>
@@ -109,7 +113,7 @@ const header = useTemplateRef('header')
       <LazyChangelogMarkdown
         v-else-if="changelog.type == 'md'"
         :info="changelog"
-        :tpTarget="header"
+        :tpTarget="tptoc"
       />
       <p v-else-if="!pending" class="mt-5">{{ $t('changelog.no_logs') }}</p>
     </section>

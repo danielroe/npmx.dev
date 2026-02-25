@@ -8,36 +8,48 @@ import { GithubReleaseCollectionSchama } from '~~/shared/schemas/changelog/relea
 import { parse } from 'valibot'
 import { changelogRenderer } from '~~/server/utils/changelog/markdown'
 
-export default defineCachedEventHandler(async event => {
-  const provider = getRouterParam(event, 'provider')
-  const repo = getRouterParam(event, 'repo')
-  const owner = getRouterParam(event, 'owner')
+export default defineCachedEventHandler(
+  async event => {
+    const provider = getRouterParam(event, 'provider')
+    const repo = getRouterParam(event, 'repo')
+    const owner = getRouterParam(event, 'owner')
 
-  if (!repo || !provider || !owner) {
-    throw createError({
-      status: 404,
-      statusMessage: ERROR_THROW_INCOMPLETE_PARAM,
-    })
-  }
-
-  try {
-    switch (provider as ProviderId) {
-      case 'github':
-        return await getReleasesFromGithub(owner, repo)
-
-      default:
-        throw createError({
-          status: 404,
-          statusMessage: ERROR_CHANGELOG_NOT_FOUND,
-        })
+    if (!repo || !provider || !owner) {
+      throw createError({
+        status: 404,
+        statusMessage: ERROR_THROW_INCOMPLETE_PARAM,
+      })
     }
-  } catch (error) {
-    handleApiError(error, {
-      statusCode: 502,
-      message: ERROR_CHANGELOG_RELEASES_FAILED,
-    })
-  }
-})
+
+    try {
+      switch (provider as ProviderId) {
+        case 'github':
+          return await getReleasesFromGithub(owner, repo)
+
+        default:
+          throw createError({
+            status: 404,
+            statusMessage: ERROR_CHANGELOG_NOT_FOUND,
+          })
+      }
+    } catch (error) {
+      handleApiError(error, {
+        statusCode: 502,
+        message: ERROR_CHANGELOG_RELEASES_FAILED,
+      })
+    }
+  },
+  {
+    maxAge: CACHE_MAX_AGE_ONE_HOUR * 2, // 2 hours
+    swr: true,
+    getKey: event => {
+      const provider = getRouterParam(event, 'provider')
+      const repo = getRouterParam(event, 'repo')
+      const owner = getRouterParam(event, 'owner')
+      return `changelogRelease:v1:${provider}:${owner}:${repo}`
+    },
+  },
+)
 
 async function getReleasesFromGithub(owner: string, repo: string) {
   const data = await $fetch(`https://ungh.cc/repos/${owner}/${repo}/releases`, {
