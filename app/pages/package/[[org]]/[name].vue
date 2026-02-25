@@ -106,7 +106,15 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', mdExists: false, playgroundLinks: [], toc: [] }) },
+  {
+    default: () => ({
+      html: '',
+      mdExists: false,
+      playgroundLinks: [],
+      toc: [],
+      defaultValue: true,
+    }),
+  },
 )
 
 const playgroundLinks = computed(() => [
@@ -789,7 +797,7 @@ const showSkeleton = shallowRef(false)
     <article
       v-else-if="
         isHydratingWithServerContent ||
-        (hasServerContentOnly && serverRenderedHtml && (!pkg || !readmeData))
+        (hasServerContentOnly && serverRenderedHtml && (!pkg || !readmeData?.defaultValue))
       "
       id="package-article"
       :class="$style.packagePage"
