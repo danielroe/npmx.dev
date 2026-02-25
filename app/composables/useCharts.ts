@@ -13,6 +13,12 @@ import { parseRepoUrl } from '#shared/utils/git-providers'
 import type { PackageMetaResponse } from '#shared/types'
 import { encodePackageName } from '#shared/utils/npm'
 import { fetchNpmDownloadsRange } from '~/utils/npm/api'
+import type { AltCopyArgs } from 'vue-data-ui'
+import {
+  computeLineChartAnalysis,
+  type TrendLineConfig,
+  type TrendLineDataset,
+} from '../utils/charts'
 
 export type PackumentLikeForTime = {
   time?: Record<string, string>
@@ -405,6 +411,9 @@ export function getNpmPackageCreationDate(packument: PackumentLikeForTime): stri
 }
 
 export function useCharts() {
+  const { t } = useI18n()
+  const compactNumberFormatter = useCompactNumberFormatter()
+
   function resolveDateRange(
     evolutionOptions: EvolutionOptions,
     packageCreatedIso: string | null,
@@ -615,11 +624,69 @@ export function useCharts() {
     return next
   }
 
+  function createAltTextForTrendLineChart({
+    dataset,
+    config,
+  }: AltCopyArgs<TrendLineDataset, TrendLineConfig>): string {
+    if (!dataset) return ''
+
+    const analysis = dataset.lines.map(({ name, series }) => ({
+      name,
+      ...computeLineChartAnalysis(series),
+      dates: config.formattedDates,
+      hasEstimation: config.hasEstimation,
+    }))
+
+    const granularity = t(`package.trends.granularity_${config.granularity}`).toLocaleLowerCase()
+
+    const packages_analysis = analysis
+      .map((pkg, i) =>
+        t(`package.trends.copy_alt.analysis`, {
+          package_name: pkg.name,
+          start_value: config.formattedDatasetValues[i]?.[0] ?? 0,
+          end_value: config.formattedDatasetValues[i]?.at(-1) ?? 0,
+          trend: t(`package.trends.copy_alt.trend_${pkg.interpretation.trend}`),
+          downloads_slope: compactNumberFormatter.value.format(pkg.slope),
+          growth_percentage: `${pkg.progressionPercent?.toFixed(1)}%`,
+        }),
+      )
+      .join(', ')
+
+    const isSinglePackage = analysis.length === 1
+
+    const estimation_notice = config.hasEstimation
+      ? ` ${isSinglePackage ? t('package.trends.copy_alt.estimation') : t('package.trends.copy_alt.estimations')}`
+      : ''
+
+    // Packages comparison
+    const compareText = `${t('package.trends.copy_alt.compare', { packages: analysis.map(a => a.name).join(', ') })} `
+    const singlePackageText = `${t('package.trends.copy_alt.single_package', { package: analysis?.[0]?.name ?? '' })} `
+    const generalAnalysis = t(`package.trends.copy_alt.general_description`, {
+      start_date: analysis?.[0]?.dates[0]?.text,
+      end_date: analysis?.[0]?.dates.at(-1)?.text,
+      granularity,
+      packages_analysis,
+      watermark: t('package.trends.copy_alt.watermark'),
+      estimation_notice,
+    })
+
+    return (isSinglePackage ? singlePackageText : compareText) + generalAnalysis
+  }
+
+  async function copyAltTextForTrendLineChart({
+    dataset,
+    config,
+  }: AltCopyArgs<TrendLineDataset, TrendLineConfig>) {
+    const altText = createAltTextForTrendLineChart({ dataset, config })
+    await config.copy(altText)
+  }
+
   return {
     fetchPackageDownloadEvolution,
     fetchPackageLikesEvolution,
     fetchRepoContributorsEvolution,
     fetchRepoRefsForPackages,
     getNpmPackageCreationDate,
+    copyAltTextForTrendLineChart,
   }
 }
