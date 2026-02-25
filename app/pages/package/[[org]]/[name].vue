@@ -275,52 +275,6 @@ const isHydratingWithServerContent = shallowRef(
 )
 const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
 
-watch(
-  [
-    () => hasEmptyPayload,
-    () => hasServerContentOnly.value,
-    () => isSpaFallback.value,
-    () => isHydratingWithServerContent.value,
-    () => status.value,
-    () => pkg.value,
-    () => readmeData.value,
-    () => Object.keys(nuxtApp.payload.data ?? {}).length,
-    () => resolvedVersion.value,
-    () => requestedVersion.value,
-  ],
-  ([
-    hasEmptyPayloadArg,
-    hasServerContentOnlyArg,
-    isSpaFallbackArg,
-    isHydratingWithServerContentArg,
-    statusArg,
-    pkgArg,
-    readmeDataArg,
-    dataLengthArg,
-    resolvedVersionArg,
-    requestedVersionArg,
-  ]) => {
-    console.log('main bunch', {
-      hasEmptyPayloadArg,
-      hasServerContentOnlyArg,
-      isSpaFallbackArg,
-      isHydratingWithServerContentArg,
-      statusArg,
-      pkgArg,
-      readmeDataArg,
-      dataLengthArg,
-      resolvedVersionArg,
-      requestedVersionArg,
-    })
-  },
-)
-watch(
-  () => nuxtApp.payload.data,
-  data => {
-    console.log('nuxtApp.payload.data', data, Object.keys(data ?? {}))
-  },
-  { immediate: true },
-)
 // When we have server-rendered content but no payload data, capture the server
 // DOM before Vue's hydration replaces it. This lets us show the server-rendered
 // HTML as a static snapshot while data refetches, avoiding any visual flash.
@@ -793,7 +747,9 @@ const showSkeleton = shallowRef(false)
     <!-- During hydration without payload, show captured server HTML as a static snapshot.
          This avoids a visual flash: the user sees the server content while data refetches.
          v-html is safe here: the content originates from the server's own SSR output,
-         captured from the DOM before hydration — it is not user-controlled input. -->
+         captured from the DOM before hydration — it is not user-controlled input.
+         We also show SSR output until critical data is loaded, so that after rendering dynamic
+         content, the user receives the same result as he received from the server-->
     <article
       v-else-if="
         isHydratingWithServerContent ||
