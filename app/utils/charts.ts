@@ -245,11 +245,7 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
   }
 
   if (n === 1) {
-    let onlyValue = 0
-    for (const entry of indexedValues) {
-      onlyValue = entry.value
-    }
-
+    const onlyValue = indexedValues[0]?.value ?? 0
     return {
       mean: onlyValue,
       standardDeviation: 0,
@@ -512,8 +508,7 @@ export function createAltTextForTrendLineChart({
   }
 
   const granularityKey =
-    granularityKeyByGranularity[config.granularity as unknown as string] ??
-    'package.trends.granularity_weekly'
+    granularityKeyByGranularity[config.granularity] ?? 'package.trends.granularity_weekly'
 
   const granularity = String(config.$t(granularityKey)).toLocaleLowerCase()
 
