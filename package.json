@@ -126,6 +126,7 @@
     "@vue/test-utils": "2.4.6",
     "axe-core": "4.11.1",
     "defu": "6.1.4",
+    "devalue": "5.6.3",
     "eslint-plugin-regexp": "3.0.0",
     "fast-check": "4.5.3",
     "h3": "1.15.5",
