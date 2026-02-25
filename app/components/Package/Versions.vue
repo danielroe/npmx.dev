@@ -511,7 +511,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
     <div class="space-y-0.5 min-w-0">
       <!-- Semver range filter -->
       <div>
-        <div class="flex items-center gap-2 py-1">
+        <div class="flex items-center gap-2 p-1">
           <InputBase
             v-model="semverFilter"
             type="text"
@@ -527,7 +527,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <TooltipApp interactive position="top">
             <span
               tabindex="0"
-              class="i-lucide:info w-3.5 h-3.5 me-2 text-fg-subtle cursor-help shrink-0 rounded-sm"
+              class="i-lucide:info w-3.5 h-3.5 me-1 text-fg-subtle cursor-help shrink-0 rounded-sm"
               role="img"
               :aria-label="$t('package.versions.filter_help')"
             />
