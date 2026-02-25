@@ -270,6 +270,7 @@ const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path 
 watch(
   [
     () => hasEmptyPayload,
+    () => hasServerContentOnly.value,
     () => isSpaFallback.value,
     () => isHydratingWithServerContent.value,
     () => status.value,
@@ -280,6 +281,7 @@ watch(
   ],
   ([
     hasEmptyPayloadArg,
+    hasServerContentOnlyArg,
     isSpaFallbackArg,
     isHydratingWithServerContentArg,
     statusArg,
@@ -290,6 +292,7 @@ watch(
   ]) => {
     console.log('main bunch', {
       hasEmptyPayloadArg,
+      hasServerContentOnlyArg,
       isSpaFallbackArg,
       isHydratingWithServerContentArg,
       statusArg,
