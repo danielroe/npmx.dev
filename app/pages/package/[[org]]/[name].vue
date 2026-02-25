@@ -215,7 +215,11 @@ const { data: resolvedVersion, status: resolvedStatus } = await useResolvedVersi
   requestedVersion,
 )
 
-if (import.meta.server && !resolvedVersion.value && resolvedStatus.value === 'success') {
+if (
+  import.meta.server &&
+  !resolvedVersion.value &&
+  ['success', 'error'].includes(resolvedStatus.value)
+) {
   throw createError({
     statusCode: 404,
     statusMessage: $t('package.not_found'),
@@ -226,7 +230,7 @@ if (import.meta.server && !resolvedVersion.value && resolvedStatus.value === 'su
 watch(
   [resolvedStatus, resolvedVersion],
   ([status, version]) => {
-    if (!version && status === 'success') {
+    if ((!version && status === 'success') || status === 'error') {
       showError({
         statusCode: 404,
         statusMessage: $t('package.not_found'),
