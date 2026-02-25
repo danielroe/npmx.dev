@@ -791,11 +791,7 @@ const showSkeleton = shallowRef(false)
       v-html="serverRenderedHtml"
     />
 
-    <article
-      v-else-if="status === 'success' && pkg"
-      id="package-article"
-      :class="$style.packagePage"
-    >
+    <article v-else-if="pkg?._id !== undefined" id="package-article" :class="$style.packagePage">
       <!-- Package header -->
       <header
         class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
