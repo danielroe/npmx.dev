@@ -22,7 +22,8 @@ export function handleApiError(error: unknown, fallback: ErrorOptions): never {
   if (error instanceof FetchError && error.statusCode) {
     throw createError({
       statusCode: error.statusCode,
-      message: error.statusMessage,
+      statusMessage: error.statusMessage,
+      message: error.message,
     })
   }
 
