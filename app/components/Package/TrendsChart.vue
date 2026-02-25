@@ -1473,6 +1473,7 @@ const chartConfig = computed<VueUiXyConfig>(() => {
                   supportsEstimation.value && !isEndDateOnPeriodEnd.value && !isZoomed.value,
                 granularity: displayedGranularity.value,
                 copy,
+                $t,
               },
             }),
         },

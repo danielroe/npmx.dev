@@ -487,4 +487,5 @@ export type TrendLineConfig = VueUiXyConfig & {
   formattedDatasetValues: Array<string[]>
   granularity: ChartTimeGranularity // from the TrendsChart component
   copy: (text: string) => Promise<void>
+  $t: TrendTranslateFunction
 }
