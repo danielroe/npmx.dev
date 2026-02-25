@@ -703,11 +703,7 @@ const showSkeleton = shallowRef(false)
     </ButtonBase>
   </DevOnly>
   <main class="container flex-1 w-full py-8">
-    <PackageSkeleton
-      v-if="
-        !isHydratingWithoutPayload && (showSkeleton || status === 'idle' || status === 'pending')
-      "
-    />
+    <PackageSkeleton v-if="!isHydratingWithoutPayload && (showSkeleton || status === 'pending')" />
 
     <article
       v-else-if="(status === 'success' && pkg) || isHydratingWithoutPayload"
