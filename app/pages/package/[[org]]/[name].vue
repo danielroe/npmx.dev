@@ -784,7 +784,7 @@ const showSkeleton = shallowRef(false)
          v-html is safe here: the content originates from the server's own SSR output,
          captured from the DOM before hydration — it is not user-controlled input. -->
     <article
-      v-else-if="hasServerContentOnly && !pkg && serverRenderedHtml"
+      v-else-if="hasServerContentOnly && serverRenderedHtml && (!pkg || !readmeData)"
       id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
