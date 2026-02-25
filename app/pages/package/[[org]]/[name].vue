@@ -106,7 +106,15 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', mdExists: false, playgroundLinks: [], toc: [] }) },
+  {
+    default: () => ({
+      html: '',
+      mdExists: false,
+      playgroundLinks: [],
+      toc: [],
+      defaultValue: true,
+    }),
+  },
 )
 
 const playgroundLinks = computed(() => [
@@ -259,18 +267,19 @@ const nuxtApp = useNuxtApp()
 const route = useRoute()
 const hasEmptyPayload =
   import.meta.client &&
-  nuxtApp.isHydrating &&
   nuxtApp.payload.serverRendered &&
   !Object.keys(nuxtApp.payload.data ?? {}).length
-const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
+const isSpaFallback = shallowRef(nuxtApp.isHydrating && hasEmptyPayload && !nuxtApp.payload.path)
 const isHydratingWithServerContent = shallowRef(
-  hasEmptyPayload && nuxtApp.payload.path === route.path,
+  nuxtApp.isHydrating && hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
+const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
+
 // When we have server-rendered content but no payload data, capture the server
 // DOM before Vue's hydration replaces it. This lets us show the server-rendered
 // HTML as a static snapshot while data refetches, avoiding any visual flash.
 const serverRenderedHtml = shallowRef<string | null>(
-  isHydratingWithServerContent.value
+  hasServerContentOnly.value
     ? (document.getElementById('package-article')?.innerHTML ?? null)
     : null,
 )
@@ -279,7 +288,6 @@ if (isSpaFallback.value || isHydratingWithServerContent.value) {
   nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
     isSpaFallback.value = false
     isHydratingWithServerContent.value = false
-    serverRenderedHtml.value = null
   })
 }
 
@@ -733,27 +741,26 @@ const showSkeleton = shallowRef(false)
     <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
     <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
     <PackageSkeleton
-      v-if="
-        isSpaFallback || (!isHydratingWithServerContent && (showSkeleton || status === 'pending'))
-      "
+      v-if="isSpaFallback || (!hasServerContentOnly && (showSkeleton || status === 'pending'))"
     />
 
     <!-- During hydration without payload, show captured server HTML as a static snapshot.
          This avoids a visual flash: the user sees the server content while data refetches.
          v-html is safe here: the content originates from the server's own SSR output,
-         captured from the DOM before hydration — it is not user-controlled input. -->
+         captured from the DOM before hydration — it is not user-controlled input.
+         We also show SSR output until critical data is loaded, so that after rendering dynamic
+         content, the user receives the same result as he received from the server-->
     <article
-      v-else-if="isHydratingWithServerContent && serverRenderedHtml"
+      v-else-if="
+        isHydratingWithServerContent ||
+        (hasServerContentOnly && serverRenderedHtml && (!pkg || readmeData?.defaultValue))
+      "
       id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
     />
 
-    <article
-      v-else-if="status === 'success' && pkg"
-      id="package-article"
-      :class="$style.packagePage"
-    >
+    <article v-else-if="pkg" id="package-article" :class="$style.packagePage">
       <!-- Package header -->
       <header
         class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
