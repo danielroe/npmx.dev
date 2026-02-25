@@ -574,7 +574,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <button
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
+            class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
             :aria-expanded="expandedTags.has(row.tag)"
             :aria-label="
               expandedTags.has(row.tag)
@@ -592,14 +592,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
             />
             <span
               v-else
-              class="w-3 h-3 transition-transform duration-200 rtl-flip"
+              class="size-3 transition-transform duration-200 rtl-flip"
               :class="
                 expandedTags.has(row.tag) ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'
               "
               aria-hidden="true"
             />
           </button>
-          <span v-else class="w-4" />
+          <span v-else class="w-5" />
 
           <!-- Version info -->
           <div class="flex-1 py-1.5 min-w-0 flex gap-2 justify-between items-center">
@@ -739,7 +739,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           @click="expandOtherVersions"
         >
           <span
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
+            class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
           >
             <span
               v-if="otherVersionsLoading"
