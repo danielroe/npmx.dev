@@ -156,6 +156,7 @@ export function usePackage(
   const asyncData = useLazyAsyncData(
     () => `package:${toValue(name)}:${toValue(requestedVersion) ?? ''}`,
     async ({ $npmRegistry }, { signal }) => {
+      console.log('fetching package')
       const encodedName = encodePackageName(toValue(name))
       const { data: r, isStale } = await $npmRegistry<Packument>(`/${encodedName}`, {
         signal,
@@ -168,6 +169,7 @@ export function usePackage(
 
   if (import.meta.client && asyncData.data.value?.isStale) {
     onMounted(() => {
+      console.log('refreshing package on mount')
       asyncData.refresh()
     })
   }
