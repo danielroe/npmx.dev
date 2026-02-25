@@ -306,7 +306,9 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
 
   let trend: LineChartAnalysis['interpretation']['trend'] = 'undefined'
 
-  if (rSquared !== null) {
+  if (standardDeviation === 0) {
+    trend = 'none'
+  } else if (rSquared !== null) {
     if (rSquared > 0.75) {
       trend = 'strong'
     } else if (rSquared > 0.4) {

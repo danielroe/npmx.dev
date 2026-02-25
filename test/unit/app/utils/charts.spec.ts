@@ -449,7 +449,7 @@ describe('computeLineChartAnalysis', () => {
     expect(result.slope).toBe(0)
     expect(result.rSquared).toBeNull()
     expect(result.interpretation.volatility).toBe('undefined')
-    expect(result.interpretation.trend).toBe('undefined')
+    expect(result.interpretation.trend).toBe('none')
   })
 
   it('handles two values where the first value is 0', () => {
@@ -521,7 +521,7 @@ describe('computeLineChartAnalysis', () => {
     expect(result.mean).toBe(5)
     expect(result.standardDeviation).toBe(0)
     expect(result.rSquared).toBeNull()
-    expect(result.interpretation.trend).toBe('undefined')
+    expect(result.interpretation.trend).toBe('none')
   })
 
   it('handles nulls within a perfect linear trend using original indexes', () => {
@@ -666,6 +666,6 @@ describe('computeLineChartAnalysis', () => {
 
     const undefinedTrend = computeLineChartAnalysis([0, 0, 0, 0])
     expect(undefinedTrend.rSquared).toBeNull()
-    expect(undefinedTrend.interpretation.trend).toBe('undefined')
+    expect(undefinedTrend.interpretation.trend).toBe('none')
   })
 })
