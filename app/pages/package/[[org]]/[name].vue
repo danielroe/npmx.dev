@@ -259,14 +259,13 @@ const nuxtApp = useNuxtApp()
 const route = useRoute()
 const hasEmptyPayload =
   import.meta.client &&
-  nuxtApp.isHydrating &&
   nuxtApp.payload.serverRendered &&
   !Object.keys(nuxtApp.payload.data ?? {}).length
-const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
-const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
+const isSpaFallback = shallowRef(nuxtApp.isHydrating && hasEmptyPayload && !nuxtApp.payload.path)
 const isHydratingWithServerContent = shallowRef(
-  hasEmptyPayload && nuxtApp.payload.path === route.path,
+  nuxtApp.isHydrating && hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
+const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
 
 watch(
   [
