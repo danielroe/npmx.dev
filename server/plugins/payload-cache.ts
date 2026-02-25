@@ -119,9 +119,10 @@ export default defineNitroPlugin(nitroApp => {
 
     if (isPayloadRequest) {
       // This was a _payload.json render — cache the response body directly
+      if (typeof response.body !== 'string') return
       const routePath = getRouteFromPayloadUrl(ctx.event.path)
       cachePayload(ctx.event, routePath, {
-        body: response.body as string,
+        body: response.body,
         statusCode: response.statusCode ?? 200,
         headers: {
           'content-type': 'application/json;charset=utf-8',
@@ -133,7 +134,8 @@ export default defineNitroPlugin(nitroApp => {
       // stashed a serialized payload on the event context
       const cachedPayload = ctx.event.context._cachedPayloadResponse
       if (cachedPayload) {
-        const routePath = ctx.event.path === '/' ? '/' : ctx.event.path.replace(/\/$/, '')
+        const pathWithoutQuery = ctx.event.path.replace(/\?.*$/, '')
+        const routePath = pathWithoutQuery === '/' ? '/' : pathWithoutQuery.replace(/\/$/, '')
         cachePayload(ctx.event, routePath, cachedPayload)
         // Clean up the stashed payload
         delete ctx.event.context._cachedPayloadResponse

@@ -271,7 +271,7 @@ const isHydratingWithServerContent = shallowRef(
 // HTML as a static snapshot while data refetches, avoiding any visual flash.
 const serverRenderedHtml = shallowRef<string | null>(
   isHydratingWithServerContent.value
-    ? (document.querySelector('article')?.innerHTML ?? null)
+    ? (document.getElementById('package-article')?.innerHTML ?? null)
     : null,
 )
 
@@ -739,14 +739,21 @@ const showSkeleton = shallowRef(false)
     />
 
     <!-- During hydration without payload, show captured server HTML as a static snapshot.
-         This avoids a visual flash: the user sees the server content while data refetches. -->
+         This avoids a visual flash: the user sees the server content while data refetches.
+         v-html is safe here: the content originates from the server's own SSR output,
+         captured from the DOM before hydration — it is not user-controlled input. -->
     <article
       v-else-if="isHydratingWithServerContent && serverRenderedHtml"
+      id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
     />
 
-    <article v-else-if="status === 'success' && pkg" :class="$style.packagePage">
+    <article
+      v-else-if="status === 'success' && pkg"
+      id="package-article"
+      :class="$style.packagePage"
+    >
       <!-- Package header -->
       <header
         class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
