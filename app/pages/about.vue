@@ -1,15 +1,7 @@
 <script setup lang="ts">
 import type { Role } from '#server/api/contributors.get'
-import LogoVercel from '~/assets/logos/sponsors/vercel.svg'
-import LogoVoidZero from '~/assets/logos/sponsors/void-zero.svg'
-import LogoNuxt from '~/assets/logos/oss-partners/nuxt.svg'
-import LogoOpenSourcePledge from '~/assets/logos/oss-partners/open-source-pledge.svg'
-import LogoOxC from '~/assets/logos/oss-partners/oxc.svg'
-import LogoRolldown from '~/assets/logos/oss-partners/rolldown.svg'
-import LogoStorybook from '~/assets/logos/oss-partners/storybook.svg'
-import LogoVite from '~/assets/logos/oss-partners/vite.svg'
-import LogoVitest from '~/assets/logos/oss-partners/vitest.svg'
-import LogoVue from '~/assets/logos/oss-partners/vue.svg'
+import { SPONSORS } from '~/assets/logos/sponsors'
+import { OSS_PARTNERS } from '~/assets/logos/oss-partners'
 
 const router = useRouter()
 const canGoBack = useCanGoBack()
@@ -47,77 +39,6 @@ const governanceMembers = computed(
 const communityContributors = computed(
   () => contributors.value?.filter(c => c.role === 'contributor') ?? [],
 )
-
-const SPONSOR = [
-  {
-    name: 'Vercel',
-    logo: LogoVercel,
-    url: 'https://vercel.com/',
-    colorScheme: 'dark',
-  },
-  {
-    name: 'Void Zero',
-    logo: LogoVoidZero,
-    url: 'https://voidzero.dev/',
-    colorScheme: 'dark',
-  },
-]
-
-const OSS_PARTNERS = [
-  {
-    name: 'Open Source Pledge',
-    logo: LogoOpenSourcePledge,
-    url: 'https://opensourcepledge.com/',
-    colorScheme: 'dark',
-  },
-  {
-    name: 'Void Zero',
-    items: [
-      {
-        name: 'Vite',
-        logo: LogoVite,
-        url: 'https://vite.dev/',
-        colorScheme: 'light-dark',
-      },
-      {
-        name: 'OxC',
-        logo: LogoOxC,
-        url: 'https://oxc.rs/',
-        colorScheme: 'light-dark',
-      },
-      {
-        name: 'Vitest',
-        logo: LogoVitest,
-        url: 'https://vitest.dev/',
-        colorScheme: 'light-dark',
-      },
-      {
-        name: 'Rolldown',
-        logo: LogoRolldown,
-        url: 'https://rolldown.rs/',
-        colorScheme: 'light-dark',
-      },
-    ],
-  },
-  {
-    name: 'Nuxt',
-    logo: LogoNuxt,
-    url: 'https://nuxt.com/',
-    colorScheme: 'light-dark',
-  },
-  {
-    name: 'Storybook',
-    logo: LogoStorybook,
-    url: 'https://storybook.js.org/',
-    colorScheme: 'light-dark',
-  },
-  {
-    name: 'Vue',
-    logo: LogoVue,
-    url: 'https://vuejs.org/',
-    colorScheme: 'light-dark',
-  },
-]
 
 const roleLabels = computed(
   () =>
@@ -240,116 +161,14 @@ const roleLabels = computed(
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.sponsors.title') }}
           </h2>
-          <ul class="flex flex-wrap gap-2 md:gap-x-6 md:gap-y-4 list-none">
-            <li v-for="sponsor in SPONSOR" :key="sponsor.name">
-              <a
-                :href="sponsor.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center justify-center h-full min-w-13 rounded-md hover:opacity-80 transition-opacity p-2"
-                :class="
-                  sponsor.colorScheme === 'dark'
-                    ? 'light:bg-fg-muted'
-                    : sponsor.colorScheme === 'light'
-                      ? 'dark:bg-fg-muted'
-                      : undefined
-                "
-              >
-                <img
-                  :src="sponsor.logo"
-                  loading="lazy"
-                  height="24"
-                  :alt="sponsor.name"
-                  class="h-6 md:h-9 w-auto block"
-                />
-              </a>
-            </li>
-          </ul>
+          <AboutLogoList :list="SPONSORS" />
         </div>
 
         <div>
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.oss_partners.title') }}
           </h2>
-          <ul class="flex flex-wrap gap-5 md:gap-7 list-none">
-            <li v-for="partner in OSS_PARTNERS" :key="partner.name">
-              <a
-                v-if="partner.logo"
-                :href="partner.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center justify-center h-full min-w-10 rounded-md hover:opacity-80 transition-opacity p-0.5"
-                :class="
-                  partner.colorScheme === 'dark'
-                    ? 'light:bg-fg-muted'
-                    : partner.colorScheme === 'light'
-                      ? 'dark:bg-fg-muted'
-                      : undefined
-                "
-              >
-                <img
-                  :src="partner.logo"
-                  loading="lazy"
-                  height="36"
-                  :alt="partner.name"
-                  class="w-auto block"
-                />
-              </a>
-              <div v-else-if="partner.items" class="relative flex items-center justify-center">
-                <svg
-                  width="11"
-                  height="38"
-                  viewBox="0 0 11 38"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M5.62151 0C-1.8519 10.6931 -1.89574 27.2683 5.62151 37.9997H10.6709C3.15538 27.2683 3.19922 10.6931 10.6709 0H5.62151Z"
-                    fill="currentColor"
-                  />
-                </svg>
-                <ul class="flex items-center justify-center h-full gap-0.5 list-none">
-                  <li v-for="item in partner.items" :key="item.name">
-                    <a
-                      :href="item.url"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="flex items-center justify-center h-full min-w-10 rounded-md hover:opacity-80 transition-opacity p-0.5"
-                      :class="
-                        item.colorScheme === 'dark'
-                          ? 'light:bg-fg-muted'
-                          : item.colorScheme === 'light'
-                            ? 'dark:bg-fg-muted'
-                            : undefined
-                      "
-                    >
-                      <img
-                        :src="item.logo"
-                        loading="lazy"
-                        height="36"
-                        :alt="item.name"
-                        class="w-auto block"
-                      />
-                    </a>
-                  </li>
-                </ul>
-                <svg
-                  width="11"
-                  height="38"
-                  viewBox="0 0 11 38"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M5.04935 0H0C7.4734 10.6931 7.51725 27.2683 0 37.9997H5.04935C12.5648 27.2683 12.521 10.6931 5.04935 0Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              </div>
-            </li>
-          </ul>
+          <AboutLogoList :list="OSS_PARTNERS" />
         </div>
 
         <div>
