@@ -243,16 +243,39 @@ const {
   error,
 } = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
 
+// Detect two hydration scenarios where the external _payload.json is missing:
+//
+// 1. SPA fallback (200.html): No real content was server-rendered.
+//    → Show skeleton while data fetches on the client.
+//
+// 2. SSR-rendered HTML with missing payload: Content was rendered but the external _payload.json
+//    returned an ISR fallback.
+//    → Preserve the server-rendered DOM, don't flash to skeleton.
 const nuxtApp = useNuxtApp()
-const isHydratingWithoutPayload = shallowRef(
+const route = useRoute()
+const hasEmptyPayload =
   import.meta.client &&
-    nuxtApp.isHydrating &&
-    nuxtApp.payload.serverRendered &&
-    !Object.keys(nuxtApp.payload.data ?? {}).length,
+  nuxtApp.isHydrating &&
+  nuxtApp.payload.serverRendered &&
+  !Object.keys(nuxtApp.payload.data ?? {}).length
+const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
+const isHydratingWithServerContent = shallowRef(
+  hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
-if (isHydratingWithoutPayload.value) {
+// When we have server-rendered content but no payload data, capture the server
+// DOM before Vue's hydration replaces it. This lets us show the server-rendered
+// HTML as a static snapshot while data refetches, avoiding any visual flash.
+const serverRenderedHtml = shallowRef<string | null>(
+  isHydratingWithServerContent.value
+    ? (document.querySelector('article')?.innerHTML ?? null)
+    : null,
+)
+
+if (isSpaFallback.value || isHydratingWithServerContent.value) {
   nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
-    isHydratingWithoutPayload.value = false
+    isSpaFallback.value = false
+    isHydratingWithServerContent.value = false
+    serverRenderedHtml.value = null
   })
 }
 
@@ -703,755 +726,760 @@ const showSkeleton = shallowRef(false)
     </ButtonBase>
   </DevOnly>
   <main class="container flex-1 w-full py-8">
-    <PackageSkeleton v-if="!isHydratingWithoutPayload && (showSkeleton || status === 'pending')" />
+    <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
+    <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
+    <PackageSkeleton
+      v-if="
+        isSpaFallback || (!isHydratingWithServerContent && (showSkeleton || status === 'pending'))
+      "
+    />
 
+    <!-- During hydration without payload, show captured server HTML as a static snapshot.
+         This avoids a visual flash: the user sees the server content while data refetches. -->
     <article
-      v-else-if="(status === 'success' && pkg) || isHydratingWithoutPayload"
+      v-else-if="isHydratingWithServerContent && serverRenderedHtml"
       :class="$style.packagePage"
-    >
-      <template v-if="pkg">
-        <!-- Package header -->
-        <header
-          class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
-          ref="header"
-          :class="[$style.areaHeader, { 'border-b': isHeaderPinned }]"
-        >
-          <!-- Package name and version -->
-          <div class="flex items-baseline gap-x-2 gap-y-1 sm:gap-x-3 flex-wrap min-w-0">
-            <CopyToClipboardButton
-              :copied="copiedPkgName"
-              :copy-text="$t('package.copy_name')"
-              class="flex flex-col items-start min-w-0"
-              @click="copyPkgName()"
+      v-html="serverRenderedHtml"
+    />
+
+    <article v-else-if="status === 'success' && pkg" :class="$style.packagePage">
+      <!-- Package header -->
+      <header
+        class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
+        ref="header"
+        :class="[$style.areaHeader, { 'border-b': isHeaderPinned }]"
+      >
+        <!-- Package name and version -->
+        <div class="flex items-baseline gap-x-2 gap-y-1 sm:gap-x-3 flex-wrap min-w-0">
+          <CopyToClipboardButton
+            :copied="copiedPkgName"
+            :copy-text="$t('package.copy_name')"
+            class="flex flex-col items-start min-w-0"
+            @click="copyPkgName()"
+          >
+            <h1
+              class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+              :title="pkg.name"
+              dir="ltr"
             >
-              <h1
-                class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-                :title="pkg.name"
-                dir="ltr"
-              >
-                <LinkBase v-if="orgName" :to="{ name: 'org', params: { org: orgName } }">
-                  @{{ orgName }}
-                </LinkBase>
-                <span v-if="orgName">/</span>
-                <span :class="{ 'text-fg-muted': orgName }">
-                  {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
-                </span>
-              </h1>
-            </CopyToClipboardButton>
+              <LinkBase v-if="orgName" :to="{ name: 'org', params: { org: orgName } }">
+                @{{ orgName }}
+              </LinkBase>
+              <span v-if="orgName">/</span>
+              <span :class="{ 'text-fg-muted': orgName }">
+                {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
+              </span>
+            </h1>
+          </CopyToClipboardButton>
 
-            <CopyToClipboardButton
-              v-if="resolvedVersion"
-              :copied="copiedVersion"
-              :copy-text="$t('package.copy_version')"
-              class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
-              @click="copyVersion()"
+          <CopyToClipboardButton
+            v-if="resolvedVersion"
+            :copied="copiedVersion"
+            :copy-text="$t('package.copy_version')"
+            class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
+            @click="copyVersion()"
+          >
+            <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
+            <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
+              <span class="font-mono text-fg-muted text-sm" dir="ltr">{{ requestedVersion }}</span>
+              <span class="i-lucide:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
+            </template>
+
+            <LinkBase
+              v-if="requestedVersion && resolvedVersion !== requestedVersion"
+              :to="packageRoute(pkg.name, resolvedVersion)"
+              :title="$t('package.view_permalink')"
+              dir="ltr"
+              >{{ resolvedVersion }}</LinkBase
             >
-              <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
-              <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
-                <span class="font-mono text-fg-muted text-sm" dir="ltr">{{
-                  requestedVersion
-                }}</span>
-                <span class="i-lucide:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
-              </template>
+            <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
 
-              <LinkBase
-                v-if="requestedVersion && resolvedVersion !== requestedVersion"
-                :to="packageRoute(pkg.name, resolvedVersion)"
-                :title="$t('package.view_permalink')"
-                dir="ltr"
-                >{{ resolvedVersion }}</LinkBase
-              >
-              <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
-
-              <template v-if="hasProvenance(displayVersion)">
-                <TooltipApp
-                  :text="
-                    provenanceData && provenanceStatus !== 'pending'
-                      ? $t('package.provenance_section.built_and_signed_on', {
-                          provider: provenanceData.providerLabel,
-                        })
-                      : $t('package.verified_provenance')
-                  "
-                  position="bottom"
-                  strategy="fixed"
-                >
-                  <LinkBase
-                    variant="button-secondary"
-                    size="small"
-                    to="#provenance"
-                    :aria-label="$t('package.provenance_section.view_more_details')"
-                    classicon="i-lucide:shield-check"
-                  />
-                </TooltipApp>
-              </template>
-              <span
-                v-if="
-                  requestedVersion && latestVersion && resolvedVersion !== latestVersion.version
-                "
-                class="text-fg-subtle text-sm shrink-0"
-                >{{ $t('package.not_latest') }}</span
-              >
-            </CopyToClipboardButton>
-
-            <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->
-            <ButtonGroup
-              v-if="resolvedVersion"
-              as="nav"
-              :aria-label="$t('package.navigation')"
-              class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md ms-auto"
-              :style="navExtraOffsetStyle"
-              :class="$style.packageNav"
-            >
-              <LinkBase
-                variant="button-secondary"
-                v-if="docsLink"
-                :to="docsLink"
-                aria-keyshortcuts="d"
-                classicon="i-lucide:file-text"
-                :title="$t('package.links.docs')"
-              >
-                <span class="max-sm:sr-only">{{ $t('package.links.docs') }}</span>
-              </LinkBase>
-              <LinkBase
-                v-if="codeLink"
-                variant="button-secondary"
-                :to="codeLink"
-                aria-keyshortcuts="."
-                classicon="i-lucide:code"
-                :title="$t('package.links.code')"
-              >
-                <span class="max-sm:sr-only">{{ $t('package.links.code') }}</span>
-              </LinkBase>
-              <LinkBase
-                variant="button-secondary"
-                :to="{ name: 'compare', query: { packages: pkg.name } }"
-                aria-keyshortcuts="c"
-                classicon="i-lucide:git-compare"
-                :title="$t('package.links.compare')"
-              >
-                <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
-              </LinkBase>
-              <ButtonBase
-                v-if="showScrollToTop"
-                variant="secondary"
-                :title="$t('common.scroll_to_top')"
-                :aria-label="$t('common.scroll_to_top')"
-                @click="() => scrollToTop()"
-                classicon="i-lucide:arrow-up"
-              />
-            </ButtonGroup>
-
-            <!-- Package metrics -->
-            <div class="basis-full flex gap-2 sm:gap-3 flex-wrap items-stretch">
-              <PackageMetricsBadges
-                v-if="resolvedVersion"
-                :package-name="pkg.name"
-                :version="resolvedVersion"
-                :is-binary="isBinaryOnly"
-                class="self-baseline"
-              />
-
-              <!-- Package likes -->
+            <template v-if="hasProvenance(displayVersion)">
               <TooltipApp
                 :text="
-                  isLoadingLikeData
-                    ? $t('common.loading')
-                    : likesData?.userHasLiked
-                      ? $t('package.likes.unlike')
-                      : $t('package.likes.like')
+                  provenanceData && provenanceStatus !== 'pending'
+                    ? $t('package.provenance_section.built_and_signed_on', {
+                        provider: provenanceData.providerLabel,
+                      })
+                    : $t('package.verified_provenance')
                 "
                 position="bottom"
-                class="items-center"
                 strategy="fixed"
               >
-                <ButtonBase
-                  @click="likeAction"
+                <LinkBase
+                  variant="button-secondary"
                   size="small"
-                  :title="
-                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                  "
-                  :aria-label="
-                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                  "
-                  :aria-pressed="likesData?.userHasLiked"
-                  :classicon="
-                    likesData?.userHasLiked
-                      ? 'i-lucide:heart-minus text-red-500'
-                      : 'i-lucide:heart-plus'
-                  "
-                >
-                  <span
-                    v-if="isLoadingLikeData"
-                    class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
-                    aria-hidden="true"
-                  />
-                  <span v-else>
-                    {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
-                  </span>
-                </ButtonBase>
+                  to="#provenance"
+                  :aria-label="$t('package.provenance_section.view_more_details')"
+                  classicon="i-lucide:shield-check"
+                />
               </TooltipApp>
-            </div>
-          </div>
-        </header>
-
-        <!-- Package details -->
-        <section :class="$style.areaDetails">
-          <div class="mb-4">
-            <!-- Description container with min-height to prevent CLS -->
-            <div class="max-w-2xl">
-              <p v-if="pkgDescription" class="text-fg-muted text-base m-0">
-                <span v-html="pkgDescription" />
-              </p>
-              <p v-else class="text-fg-subtle text-base m-0 italic">
-                {{ $t('package.no_description') }}
-              </p>
-            </div>
-
-            <!-- External links -->
-            <ul
-              class="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:gap-4 list-none m-0 p-0 mt-3 text-sm"
+            </template>
+            <span
+              v-if="requestedVersion && latestVersion && resolvedVersion !== latestVersion.version"
+              class="text-fg-subtle text-sm shrink-0"
+              >{{ $t('package.not_latest') }}</span
             >
-              <li v-if="repositoryUrl">
-                <LinkBase :to="repositoryUrl" :classicon="repoProviderIcon">
-                  <span v-if="repoRef">
-                    {{ repoRef.owner }}<span class="opacity-50">/</span>{{ repoRef.repo }}
-                  </span>
-                  <span v-else>{{ $t('package.links.repo') }}</span>
-                </LinkBase>
-              </li>
-              <li v-if="repositoryUrl && repoMeta && starsLink">
-                <LinkBase :to="starsLink" classicon="i-lucide:star">
-                  {{ compactNumberFormatter.format(stars) }}
-                </LinkBase>
-              </li>
-              <li v-if="forks && forksLink">
-                <LinkBase :to="forksLink" classicon="i-lucide:git-fork">
-                  {{ compactNumberFormatter.format(forks) }}
-                </LinkBase>
-              </li>
-              <li class="basis-full sm:hidden" />
-              <li v-if="homepageUrl">
-                <LinkBase :to="homepageUrl" classicon="i-lucide:link">
-                  {{ $t('package.links.homepage') }}
-                </LinkBase>
-              </li>
-              <li v-if="displayVersion?.bugs?.url">
-                <LinkBase :to="displayVersion.bugs.url" classicon="i-lucide:circle-alert">
-                  {{ $t('package.links.issues') }}
-                </LinkBase>
-              </li>
-              <li>
-                <LinkBase
-                  :to="`https://www.npmjs.com/package/${pkg.name}`"
-                  :title="$t('common.view_on_npm')"
-                  classicon="i-simple-icons:npm"
-                >
-                  npm
-                </LinkBase>
-              </li>
-              <li v-if="jsrInfo?.exists && jsrInfo.url">
-                <LinkBase
-                  :to="jsrInfo.url"
-                  :title="$t('badges.jsr.title')"
-                  classicon="i-simple-icons:jsr"
-                >
-                  {{ $t('package.links.jsr') }}
-                </LinkBase>
-              </li>
-              <li v-if="fundingUrl">
-                <LinkBase :to="fundingUrl" classicon="i-lucide:heart">
-                  {{ $t('package.links.fund') }}
-                </LinkBase>
-              </li>
-            </ul>
-          </div>
+          </CopyToClipboardButton>
 
-          <div
-            v-if="deprecationNotice"
-            class="border border-red-700 dark:border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-700 dark:text-red-400"
+          <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->
+          <ButtonGroup
+            v-if="resolvedVersion"
+            as="nav"
+            :aria-label="$t('package.navigation')"
+            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md ms-auto"
+            :style="navExtraOffsetStyle"
+            :class="$style.packageNav"
           >
-            <h2 class="font-medium mb-2">
-              {{
-                deprecationNotice.type === 'package'
-                  ? $t('package.deprecation.package')
-                  : $t('package.deprecation.version')
-              }}
-            </h2>
-            <p v-if="deprecationNoticeMessage" class="text-base m-0">
-              <span v-html="deprecationNoticeMessage" />
-            </p>
-            <p v-else class="text-base m-0 italic">
-              {{ $t('package.deprecation.no_reason') }}
-            </p>
-          </div>
+            <LinkBase
+              variant="button-secondary"
+              v-if="docsLink"
+              :to="docsLink"
+              aria-keyshortcuts="d"
+              classicon="i-lucide:file-text"
+              :title="$t('package.links.docs')"
+            >
+              <span class="max-sm:sr-only">{{ $t('package.links.docs') }}</span>
+            </LinkBase>
+            <LinkBase
+              v-if="codeLink"
+              variant="button-secondary"
+              :to="codeLink"
+              aria-keyshortcuts="."
+              classicon="i-lucide:code"
+              :title="$t('package.links.code')"
+            >
+              <span class="max-sm:sr-only">{{ $t('package.links.code') }}</span>
+            </LinkBase>
+            <LinkBase
+              variant="button-secondary"
+              :to="{ name: 'compare', query: { packages: pkg.name } }"
+              aria-keyshortcuts="c"
+              classicon="i-lucide:git-compare"
+              :title="$t('package.links.compare')"
+            >
+              <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
+            </LinkBase>
+            <ButtonBase
+              v-if="showScrollToTop"
+              variant="secondary"
+              :title="$t('common.scroll_to_top')"
+              :aria-label="$t('common.scroll_to_top')"
+              @click="() => scrollToTop()"
+              classicon="i-lucide:arrow-up"
+            />
+          </ButtonGroup>
 
-          <!-- Stats grid -->
-          <dl
-            class="grid grid-cols-2 sm:grid-cols-7 md:grid-cols-11 gap-3 sm:gap-4 py-4 sm:py-6 mt-4 sm:mt-6 border-t border-b border-border"
-          >
-            <div class="space-y-1 sm:col-span-2">
-              <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-                {{ $t('package.stats.license') }}
-              </dt>
-              <dd class="font-mono text-sm text-fg">
-                <LicenseDisplay v-if="pkg.license" :license="pkg.license" />
-                <span v-else>{{ $t('package.license.none') }}</span>
-              </dd>
-            </div>
+          <!-- Package metrics -->
+          <div class="basis-full flex gap-2 sm:gap-3 flex-wrap items-stretch">
+            <PackageMetricsBadges
+              v-if="resolvedVersion"
+              :package-name="pkg.name"
+              :version="resolvedVersion"
+              :is-binary="isBinaryOnly"
+              class="self-baseline"
+            />
 
-            <div class="space-y-1 sm:col-span-2">
-              <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-                {{ $t('package.stats.deps') }}
-              </dt>
-              <dd class="font-mono text-sm text-fg flex items-center justify-start gap-2">
-                <span class="flex items-center gap-1">
-                  <!-- Direct deps (muted) -->
-                  <span class="text-fg-muted">{{ numberFormatter.format(dependencyCount) }}</span>
-
-                  <!-- Separator and total transitive deps -->
-                  <template v-if="dependencyCount > 0 && dependencyCount !== totalDepsCount">
-                    <span class="text-fg-subtle">/</span>
-
-                    <ClientOnly>
-                      <span
-                        v-if="
-                          vulnTreeStatus === 'pending' ||
-                          (installSizeStatus === 'pending' && !vulnTree)
-                        "
-                        class="inline-flex items-center gap-1 text-fg-subtle"
-                      >
-                        <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
-                      </span>
-                      <span v-else-if="totalDepsCount !== null">{{
-                        numberFormatter.format(totalDepsCount)
-                      }}</span>
-                      <span v-else class="text-fg-subtle">-</span>
-                      <template #fallback>
-                        <span class="text-fg-subtle">-</span>
-                      </template>
-                    </ClientOnly>
-                  </template>
-                </span>
-                <ButtonGroup v-if="dependencyCount > 0" class="ms-auto">
-                  <LinkBase
-                    variant="button-secondary"
-                    size="small"
-                    :to="`https://npmgraph.js.org/?q=${pkg.name}`"
-                    :title="$t('package.stats.view_dependency_graph')"
-                    classicon="i-lucide:network -rotate-90"
-                  >
-                    <span class="sr-only">{{ $t('package.stats.view_dependency_graph') }}</span>
-                  </LinkBase>
-
-                  <LinkBase
-                    variant="button-secondary"
-                    size="small"
-                    :to="`https://node-modules.dev/grid/depth#install=${pkg.name}${resolvedVersion ? `@${resolvedVersion}` : ''}`"
-                    :title="$t('package.stats.inspect_dependency_tree')"
-                    classicon="i-lucide:table"
-                  >
-                    <span class="sr-only">{{ $t('package.stats.inspect_dependency_tree') }}</span>
-                  </LinkBase>
-                </ButtonGroup>
-              </dd>
-            </div>
-
-            <div class="space-y-1 sm:col-span-3">
-              <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
-                {{ $t('package.stats.install_size') }}
-                <TooltipApp :text="sizeTooltip">
-                  <span
-                    tabindex="0"
-                    class="inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 text-fg-subtle cursor-help focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
-                  >
-                    <span class="i-lucide:info w-3 h-3" aria-hidden="true" />
-                  </span>
-                </TooltipApp>
-              </dt>
-              <dd class="font-mono text-sm text-fg">
-                <!-- Package size (greyed out) -->
-                <span class="text-fg-muted" dir="ltr">
-                  <span v-if="displayVersion?.dist?.unpackedSize">
-                    {{ bytesFormatter.format(displayVersion.dist.unpackedSize) }}
-                  </span>
-                  <span v-else>-</span>
-                </span>
-
-                <!-- Separator and install size -->
-                <template v-if="displayVersion?.dist?.unpackedSize !== installSize?.totalSize">
-                  <span class="text-fg-subtle mx-1">/</span>
-
-                  <span
-                    v-if="installSizeStatus === 'pending'"
-                    class="inline-flex items-center gap-1 text-fg-subtle"
-                  >
-                    <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
-                  </span>
-                  <span v-else-if="installSize?.totalSize" dir="ltr">
-                    {{ bytesFormatter.format(installSize.totalSize) }}
-                  </span>
-                  <span v-else class="text-fg-subtle">-</span>
-                </template>
-              </dd>
-            </div>
-
-            <!-- Vulnerabilities count -->
-            <div class="space-y-1 sm:col-span-2">
-              <dt class="text-xs text-fg-subtle uppercase tracking-wider">
-                {{ $t('package.stats.vulns') }}
-              </dt>
-              <dd class="font-mono text-sm text-fg">
+            <!-- Package likes -->
+            <TooltipApp
+              :text="
+                isLoadingLikeData
+                  ? $t('common.loading')
+                  : likesData?.userHasLiked
+                    ? $t('package.likes.unlike')
+                    : $t('package.likes.like')
+              "
+              position="bottom"
+              class="items-center"
+              strategy="fixed"
+            >
+              <ButtonBase
+                @click="likeAction"
+                size="small"
+                :title="
+                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                "
+                :aria-label="
+                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                "
+                :aria-pressed="likesData?.userHasLiked"
+                :classicon="
+                  likesData?.userHasLiked
+                    ? 'i-lucide:heart-minus text-red-500'
+                    : 'i-lucide:heart-plus'
+                "
+              >
                 <span
-                  v-if="vulnTreeStatus === 'pending' || vulnTreeStatus === 'idle'"
+                  v-if="isLoadingLikeData"
+                  class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
+                  aria-hidden="true"
+                />
+                <span v-else>
+                  {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
+                </span>
+              </ButtonBase>
+            </TooltipApp>
+          </div>
+        </div>
+      </header>
+
+      <!-- Package details -->
+      <section :class="$style.areaDetails">
+        <div class="mb-4">
+          <!-- Description container with min-height to prevent CLS -->
+          <div class="max-w-2xl">
+            <p v-if="pkgDescription" class="text-fg-muted text-base m-0">
+              <span v-html="pkgDescription" />
+            </p>
+            <p v-else class="text-fg-subtle text-base m-0 italic">
+              {{ $t('package.no_description') }}
+            </p>
+          </div>
+
+          <!-- External links -->
+          <ul
+            class="flex flex-wrap items-center gap-x-3 gap-y-1.5 sm:gap-4 list-none m-0 p-0 mt-3 text-sm"
+          >
+            <li v-if="repositoryUrl">
+              <LinkBase :to="repositoryUrl" :classicon="repoProviderIcon">
+                <span v-if="repoRef">
+                  {{ repoRef.owner }}<span class="opacity-50">/</span>{{ repoRef.repo }}
+                </span>
+                <span v-else>{{ $t('package.links.repo') }}</span>
+              </LinkBase>
+            </li>
+            <li v-if="repositoryUrl && repoMeta && starsLink">
+              <LinkBase :to="starsLink" classicon="i-lucide:star">
+                {{ compactNumberFormatter.format(stars) }}
+              </LinkBase>
+            </li>
+            <li v-if="forks && forksLink">
+              <LinkBase :to="forksLink" classicon="i-lucide:git-fork">
+                {{ compactNumberFormatter.format(forks) }}
+              </LinkBase>
+            </li>
+            <li class="basis-full sm:hidden" />
+            <li v-if="homepageUrl">
+              <LinkBase :to="homepageUrl" classicon="i-lucide:link">
+                {{ $t('package.links.homepage') }}
+              </LinkBase>
+            </li>
+            <li v-if="displayVersion?.bugs?.url">
+              <LinkBase :to="displayVersion.bugs.url" classicon="i-lucide:circle-alert">
+                {{ $t('package.links.issues') }}
+              </LinkBase>
+            </li>
+            <li>
+              <LinkBase
+                :to="`https://www.npmjs.com/package/${pkg.name}`"
+                :title="$t('common.view_on_npm')"
+                classicon="i-simple-icons:npm"
+              >
+                npm
+              </LinkBase>
+            </li>
+            <li v-if="jsrInfo?.exists && jsrInfo.url">
+              <LinkBase
+                :to="jsrInfo.url"
+                :title="$t('badges.jsr.title')"
+                classicon="i-simple-icons:jsr"
+              >
+                {{ $t('package.links.jsr') }}
+              </LinkBase>
+            </li>
+            <li v-if="fundingUrl">
+              <LinkBase :to="fundingUrl" classicon="i-lucide:heart">
+                {{ $t('package.links.fund') }}
+              </LinkBase>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          v-if="deprecationNotice"
+          class="border border-red-700 dark:border-red-400 bg-red-400/10 rounded-lg px-3 py-2 text-base text-red-700 dark:text-red-400"
+        >
+          <h2 class="font-medium mb-2">
+            {{
+              deprecationNotice.type === 'package'
+                ? $t('package.deprecation.package')
+                : $t('package.deprecation.version')
+            }}
+          </h2>
+          <p v-if="deprecationNoticeMessage" class="text-base m-0">
+            <span v-html="deprecationNoticeMessage" />
+          </p>
+          <p v-else class="text-base m-0 italic">
+            {{ $t('package.deprecation.no_reason') }}
+          </p>
+        </div>
+
+        <!-- Stats grid -->
+        <dl
+          class="grid grid-cols-2 sm:grid-cols-7 md:grid-cols-11 gap-3 sm:gap-4 py-4 sm:py-6 mt-4 sm:mt-6 border-t border-b border-border"
+        >
+          <div class="space-y-1 sm:col-span-2">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
+              {{ $t('package.stats.license') }}
+            </dt>
+            <dd class="font-mono text-sm text-fg">
+              <LicenseDisplay v-if="pkg.license" :license="pkg.license" />
+              <span v-else>{{ $t('package.license.none') }}</span>
+            </dd>
+          </div>
+
+          <div class="space-y-1 sm:col-span-2">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
+              {{ $t('package.stats.deps') }}
+            </dt>
+            <dd class="font-mono text-sm text-fg flex items-center justify-start gap-2">
+              <span class="flex items-center gap-1">
+                <!-- Direct deps (muted) -->
+                <span class="text-fg-muted">{{ numberFormatter.format(dependencyCount) }}</span>
+
+                <!-- Separator and total transitive deps -->
+                <template v-if="dependencyCount > 0 && dependencyCount !== totalDepsCount">
+                  <span class="text-fg-subtle">/</span>
+
+                  <ClientOnly>
+                    <span
+                      v-if="
+                        vulnTreeStatus === 'pending' ||
+                        (installSizeStatus === 'pending' && !vulnTree)
+                      "
+                      class="inline-flex items-center gap-1 text-fg-subtle"
+                    >
+                      <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
+                    </span>
+                    <span v-else-if="totalDepsCount !== null">{{
+                      numberFormatter.format(totalDepsCount)
+                    }}</span>
+                    <span v-else class="text-fg-subtle">-</span>
+                    <template #fallback>
+                      <span class="text-fg-subtle">-</span>
+                    </template>
+                  </ClientOnly>
+                </template>
+              </span>
+              <ButtonGroup v-if="dependencyCount > 0" class="ms-auto">
+                <LinkBase
+                  variant="button-secondary"
+                  size="small"
+                  :to="`https://npmgraph.js.org/?q=${pkg.name}`"
+                  :title="$t('package.stats.view_dependency_graph')"
+                  classicon="i-lucide:network -rotate-90"
+                >
+                  <span class="sr-only">{{ $t('package.stats.view_dependency_graph') }}</span>
+                </LinkBase>
+
+                <LinkBase
+                  variant="button-secondary"
+                  size="small"
+                  :to="`https://node-modules.dev/grid/depth#install=${pkg.name}${resolvedVersion ? `@${resolvedVersion}` : ''}`"
+                  :title="$t('package.stats.inspect_dependency_tree')"
+                  classicon="i-lucide:table"
+                >
+                  <span class="sr-only">{{ $t('package.stats.inspect_dependency_tree') }}</span>
+                </LinkBase>
+              </ButtonGroup>
+            </dd>
+          </div>
+
+          <div class="space-y-1 sm:col-span-3">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
+              {{ $t('package.stats.install_size') }}
+              <TooltipApp :text="sizeTooltip">
+                <span
+                  tabindex="0"
+                  class="inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 text-fg-subtle cursor-help focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
+                >
+                  <span class="i-lucide:info w-3 h-3" aria-hidden="true" />
+                </span>
+              </TooltipApp>
+            </dt>
+            <dd class="font-mono text-sm text-fg">
+              <!-- Package size (greyed out) -->
+              <span class="text-fg-muted" dir="ltr">
+                <span v-if="displayVersion?.dist?.unpackedSize">
+                  {{ bytesFormatter.format(displayVersion.dist.unpackedSize) }}
+                </span>
+                <span v-else>-</span>
+              </span>
+
+              <!-- Separator and install size -->
+              <template v-if="displayVersion?.dist?.unpackedSize !== installSize?.totalSize">
+                <span class="text-fg-subtle mx-1">/</span>
+
+                <span
+                  v-if="installSizeStatus === 'pending'"
                   class="inline-flex items-center gap-1 text-fg-subtle"
                 >
                   <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
                 </span>
-                <span v-else-if="vulnTreeStatus === 'success'">
-                  <span v-if="hasVulnerabilities" class="text-amber-700 dark:text-amber-500">
-                    {{ numberFormatter.format(vulnCount) }}
-                  </span>
-                  <span v-else class="inline-flex items-center gap-1 text-fg-muted">
-                    <span class="i-lucide:check w-3 h-3" aria-hidden="true" />
-                    {{ numberFormatter.format(0) }}
-                  </span>
+                <span v-else-if="installSize?.totalSize" dir="ltr">
+                  {{ bytesFormatter.format(installSize.totalSize) }}
                 </span>
                 <span v-else class="text-fg-subtle">-</span>
-              </dd>
-            </div>
+              </template>
+            </dd>
+          </div>
 
-            <div
-              v-if="resolvedVersion && pkg.time?.[resolvedVersion]"
-              class="space-y-1 sm:col-span-2"
-            >
-              <dt
-                class="text-xs text-fg-subtle uppercase tracking-wider"
-                :title="
-                  $t('package.stats.published_tooltip', {
-                    package: pkg.name,
-                    version: resolvedVersion,
-                  })
-                "
+          <!-- Vulnerabilities count -->
+          <div class="space-y-1 sm:col-span-2">
+            <dt class="text-xs text-fg-subtle uppercase tracking-wider">
+              {{ $t('package.stats.vulns') }}
+            </dt>
+            <dd class="font-mono text-sm text-fg">
+              <span
+                v-if="vulnTreeStatus === 'pending' || vulnTreeStatus === 'idle'"
+                class="inline-flex items-center gap-1 text-fg-subtle"
               >
-                {{ $t('package.stats.published') }}
-              </dt>
-              <dd class="font-mono text-sm text-fg">
-                <DateTime :datetime="pkg.time[resolvedVersion]!" date-style="medium" />
-              </dd>
-            </div>
-          </dl>
+                <span class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
+              </span>
+              <span v-else-if="vulnTreeStatus === 'success'">
+                <span v-if="hasVulnerabilities" class="text-amber-700 dark:text-amber-500">
+                  {{ numberFormatter.format(vulnCount) }}
+                </span>
+                <span v-else class="inline-flex items-center gap-1 text-fg-muted">
+                  <span class="i-lucide:check w-3 h-3" aria-hidden="true" />
+                  {{ numberFormatter.format(0) }}
+                </span>
+              </span>
+              <span v-else class="text-fg-subtle">-</span>
+            </dd>
+          </div>
 
-          <!-- Skills Modal -->
+          <div
+            v-if="resolvedVersion && pkg.time?.[resolvedVersion]"
+            class="space-y-1 sm:col-span-2"
+          >
+            <dt
+              class="text-xs text-fg-subtle uppercase tracking-wider"
+              :title="
+                $t('package.stats.published_tooltip', {
+                  package: pkg.name,
+                  version: resolvedVersion,
+                })
+              "
+            >
+              {{ $t('package.stats.published') }}
+            </dt>
+            <dd class="font-mono text-sm text-fg">
+              <DateTime :datetime="pkg.time[resolvedVersion]!" date-style="medium" />
+            </dd>
+          </div>
+        </dl>
+
+        <!-- Skills Modal -->
+        <ClientOnly>
+          <PackageSkillsModal
+            :skills="skillsData?.skills ?? []"
+            :package-name="pkg.name"
+            :version="resolvedVersion || undefined"
+          />
+        </ClientOnly>
+      </section>
+
+      <!-- Binary-only packages: Show only execute command (no install) -->
+      <section v-if="isBinaryOnly" class="scroll-mt-20" :class="$style.areaInstall">
+        <div class="flex flex-wrap items-center justify-between mb-3">
+          <h2 id="run-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
+            {{ $t('package.run.title') }}
+          </h2>
+          <!-- Package manager dropdown -->
+          <PackageManagerSelect />
+        </div>
+        <div>
+          <TerminalExecute
+            :package-name="pkg.name"
+            :jsr-info="jsrInfo"
+            :is-create-package="isCreatePkg"
+          />
+        </div>
+      </section>
+
+      <!-- Regular packages: Install command with optional run command -->
+      <section v-else id="get-started" class="scroll-mt-20" :class="$style.areaInstall">
+        <div class="flex flex-wrap items-center justify-between mb-3">
+          <h2
+            id="get-started-heading"
+            class="group text-xs text-fg-subtle uppercase tracking-wider"
+          >
+            <LinkBase to="#get-started">
+              {{ $t('package.get_started.title') }}
+            </LinkBase>
+          </h2>
+          <!-- Package manager dropdown -->
+          <PackageManagerSelect />
+        </div>
+        <div>
+          <div
+            v-if="publishSecurityDowngrade"
+            role="alert"
+            class="mb-4 rounded-lg border border-amber-600/40 bg-amber-500/10 px-4 py-3 text-amber-700 dark:text-amber-400"
+          >
+            <h3 class="m-0 flex items-center gap-2 font-mono text-sm font-medium">
+              <span class="i-lucide:circle-alert w-4 h-4 shrink-0" aria-hidden="true" />
+              {{ $t('package.security_downgrade.title') }}
+            </h3>
+            <p class="mt-2 mb-0 text-sm">
+              <i18n-t
+                v-if="
+                  publishSecurityDowngrade.downgradedTrustLevel === 'none' &&
+                  publishSecurityDowngrade.trustedTrustLevel === 'provenance'
+                "
+                keypath="package.security_downgrade.description_to_none_provenance"
+                tag="span"
+                scope="global"
+              >
+                <template #provenance>
+                  <a
+                    href="https://docs.npmjs.com/generating-provenance-statements"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.provenance_link_text')
+                    }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+              </i18n-t>
+              <i18n-t
+                v-else-if="
+                  publishSecurityDowngrade.downgradedTrustLevel === 'none' &&
+                  publishSecurityDowngrade.trustedTrustLevel === 'trustedPublisher'
+                "
+                keypath="package.security_downgrade.description_to_none_trustedPublisher"
+                tag="span"
+                scope="global"
+              >
+                <template #trustedPublishing>
+                  <a
+                    href="https://docs.npmjs.com/trusted-publishers"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.trusted_publishing_link_text')
+                    }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+              </i18n-t>
+              <i18n-t
+                v-else-if="
+                  publishSecurityDowngrade.downgradedTrustLevel === 'provenance' &&
+                  publishSecurityDowngrade.trustedTrustLevel === 'trustedPublisher'
+                "
+                keypath="package.security_downgrade.description_to_provenance_trustedPublisher"
+                tag="span"
+                scope="global"
+              >
+                <template #provenance>
+                  <a
+                    href="https://docs.npmjs.com/generating-provenance-statements"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.provenance_link_text')
+                    }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+                <template #trustedPublishing>
+                  <a
+                    href="https://docs.npmjs.com/trusted-publishers"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
+                    >{{ $t('package.security_downgrade.trusted_publishing_link_text')
+                    }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
+                  /></a>
+                </template>
+              </i18n-t>
+              {{ ' ' }}
+              <template v-if="downgradeFallbackInstallText">
+                {{ downgradeFallbackInstallText }}
+              </template>
+            </p>
+          </div>
+          <TerminalInstall
+            :package-name="pkg.name"
+            :requested-version="requestedVersion"
+            :install-version-override="installVersionOverride"
+            :jsr-info="jsrInfo"
+            :dev-dependency-suggestion="packageAnalysis?.devDependencySuggestion"
+            :types-package-name="typesPackageName"
+            :executable-info="executableInfo"
+            :create-package-info="createPackageInfo"
+          />
+        </div>
+      </section>
+
+      <div class="space-y-6" :class="$style.areaVulns">
+        <!-- Bad package warning -->
+        <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
+        <!-- Vulnerability scan -->
+        <ClientOnly>
+          <PackageVulnerabilityTree
+            v-if="resolvedVersion"
+            :package-name="pkg.name"
+            :version="resolvedVersion"
+          />
+          <PackageDeprecatedTree
+            v-if="resolvedVersion"
+            :package-name="pkg.name"
+            :version="resolvedVersion"
+            class="mt-3"
+          />
+        </ClientOnly>
+      </div>
+
+      <!-- README -->
+      <section id="readme" class="min-w-0 scroll-mt-20" :class="$style.areaReadme">
+        <div class="flex flex-wrap items-center justify-between mb-3 px-1">
+          <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
+            <LinkBase to="#readme">
+              {{ $t('package.readme.title') }}
+            </LinkBase>
+          </h2>
+          <div class="flex gap-2">
+            <!-- Copy readme as Markdown button -->
+            <TooltipApp
+              v-if="readmeData?.mdExists"
+              :text="$t('package.readme.copy_as_markdown')"
+              position="bottom"
+            >
+              <ButtonBase
+                @mouseenter="prefetchReadmeMarkdown"
+                @focus="prefetchReadmeMarkdown"
+                @click="copyReadmeHandler()"
+                :aria-pressed="copiedReadme"
+                :aria-label="
+                  copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
+                "
+                :classicon="copiedReadme ? 'i-lucide:check' : 'i-simple-icons:markdown'"
+              >
+                {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
+              </ButtonBase>
+            </TooltipApp>
+            <ReadmeTocDropdown
+              v-if="readmeData?.toc && readmeData.toc.length > 1"
+              :toc="readmeData.toc"
+              :active-id="activeTocId"
+            />
+          </div>
+        </div>
+
+        <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
+        <Readme v-if="readmeData?.html" :html="readmeData.html" />
+        <p v-else class="text-fg-muted italic">
+          {{ $t('package.readme.no_readme') }}
+          <a
+            v-if="repositoryUrl"
+            :href="repositoryUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link text-fg underline underline-offset-4 decoration-fg-subtle hover:(decoration-fg text-fg) transition-colors duration-200"
+            >{{ $t('package.readme.view_on_github') }}</a
+          >
+        </p>
+
+        <section
+          v-if="hasProvenance(displayVersion) && isMounted"
+          id="provenance"
+          class="scroll-mt-20"
+        >
+          <div
+            v-if="provenanceStatus === 'pending'"
+            class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
+          >
+            <span class="i-svg-spinners:ring-resize w-4 h-4" aria-hidden="true" />
+            <span>{{ $t('package.provenance_section.title') }}…</span>
+          </div>
+          <PackageProvenanceSection
+            v-else-if="provenanceData"
+            :details="provenanceData"
+            class="mt-8"
+          />
+          <!-- Error state: provenance exists but details failed to load -->
+          <div
+            v-else-if="provenanceStatus === 'error'"
+            class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
+          >
+            <span class="i-lucide:circle-alert w-4 h-4" aria-hidden="true" />
+            <span>{{ $t('package.provenance_section.error_loading') }}</span>
+          </div>
+        </section>
+      </section>
+
+      <PackageSidebar :class="$style.areaSidebar">
+        <div class="flex flex-col gap-4 sm:gap-6 xl:(pt-2)">
+          <!-- Team access controls (for scoped packages when connected) -->
           <ClientOnly>
-            <PackageSkillsModal
-              :skills="skillsData?.skills ?? []"
+            <PackageAccessControls :package-name="pkg.name" />
+            <template #fallback>
+              <!-- Show skeleton loaders when SSR or access controls are loading -->
+            </template>
+          </ClientOnly>
+
+          <!-- Agent Skills -->
+          <ClientOnly>
+            <PackageSkillsCard
+              v-if="skillsData?.skills?.length"
+              :skills="skillsData.skills"
               :package-name="pkg.name"
               :version="resolvedVersion || undefined"
             />
+            <template #fallback>
+              <!-- Show skeleton loaders when SSR or access controls are loading -->
+            </template>
           </ClientOnly>
-        </section>
 
-        <!-- Binary-only packages: Show only execute command (no install) -->
-        <section v-if="isBinaryOnly" class="scroll-mt-20" :class="$style.areaInstall">
-          <div class="flex flex-wrap items-center justify-between mb-3">
-            <h2 id="run-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
-              {{ $t('package.run.title') }}
-            </h2>
-            <!-- Package manager dropdown -->
-            <PackageManagerSelect />
-          </div>
-          <div>
-            <TerminalExecute
-              :package-name="pkg.name"
-              :jsr-info="jsrInfo"
-              :is-create-package="isCreatePkg"
-            />
-          </div>
-        </section>
+          <!-- Download stats -->
+          <PackageWeeklyDownloadStats
+            :packageName
+            :createdIso="pkg?.time?.created ?? null"
+            :repoRef="repoRef"
+          />
 
-        <!-- Regular packages: Install command with optional run command -->
-        <section v-else id="get-started" class="scroll-mt-20" :class="$style.areaInstall">
-          <div class="flex flex-wrap items-center justify-between mb-3">
-            <h2
-              id="get-started-heading"
-              class="group text-xs text-fg-subtle uppercase tracking-wider"
-            >
-              <LinkBase to="#get-started">
-                {{ $t('package.get_started.title') }}
-              </LinkBase>
-            </h2>
-            <!-- Package manager dropdown -->
-            <PackageManagerSelect />
-          </div>
-          <div>
-            <div
-              v-if="publishSecurityDowngrade"
-              role="alert"
-              class="mb-4 rounded-lg border border-amber-600/40 bg-amber-500/10 px-4 py-3 text-amber-700 dark:text-amber-400"
-            >
-              <h3 class="m-0 flex items-center gap-2 font-mono text-sm font-medium">
-                <span class="i-lucide:circle-alert w-4 h-4 shrink-0" aria-hidden="true" />
-                {{ $t('package.security_downgrade.title') }}
-              </h3>
-              <p class="mt-2 mb-0 text-sm">
-                <i18n-t
-                  v-if="
-                    publishSecurityDowngrade.downgradedTrustLevel === 'none' &&
-                    publishSecurityDowngrade.trustedTrustLevel === 'provenance'
-                  "
-                  keypath="package.security_downgrade.description_to_none_provenance"
-                  tag="span"
-                  scope="global"
-                >
-                  <template #provenance>
-                    <a
-                      href="https://docs.npmjs.com/generating-provenance-statements"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
-                      >{{ $t('package.security_downgrade.provenance_link_text')
-                      }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
-                    /></a>
-                  </template>
-                </i18n-t>
-                <i18n-t
-                  v-else-if="
-                    publishSecurityDowngrade.downgradedTrustLevel === 'none' &&
-                    publishSecurityDowngrade.trustedTrustLevel === 'trustedPublisher'
-                  "
-                  keypath="package.security_downgrade.description_to_none_trustedPublisher"
-                  tag="span"
-                  scope="global"
-                >
-                  <template #trustedPublishing>
-                    <a
-                      href="https://docs.npmjs.com/trusted-publishers"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
-                      >{{ $t('package.security_downgrade.trusted_publishing_link_text')
-                      }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
-                    /></a>
-                  </template>
-                </i18n-t>
-                <i18n-t
-                  v-else-if="
-                    publishSecurityDowngrade.downgradedTrustLevel === 'provenance' &&
-                    publishSecurityDowngrade.trustedTrustLevel === 'trustedPublisher'
-                  "
-                  keypath="package.security_downgrade.description_to_provenance_trustedPublisher"
-                  tag="span"
-                  scope="global"
-                >
-                  <template #provenance>
-                    <a
-                      href="https://docs.npmjs.com/generating-provenance-statements"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
-                      >{{ $t('package.security_downgrade.provenance_link_text')
-                      }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
-                    /></a>
-                  </template>
-                  <template #trustedPublishing>
-                    <a
-                      href="https://docs.npmjs.com/trusted-publishers"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="inline-flex items-center gap-1 rounded-sm underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg focus-visible:decoration-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/70 transition-colors"
-                      >{{ $t('package.security_downgrade.trusted_publishing_link_text')
-                      }}<span class="i-lucide:external-link w-3 h-3" aria-hidden="true"
-                    /></a>
-                  </template>
-                </i18n-t>
-                {{ ' ' }}
-                <template v-if="downgradeFallbackInstallText">
-                  {{ downgradeFallbackInstallText }}
-                </template>
-              </p>
-            </div>
-            <TerminalInstall
-              :package-name="pkg.name"
-              :requested-version="requestedVersion"
-              :install-version-override="installVersionOverride"
-              :jsr-info="jsrInfo"
-              :dev-dependency-suggestion="packageAnalysis?.devDependencySuggestion"
-              :types-package-name="typesPackageName"
-              :executable-info="executableInfo"
-              :create-package-info="createPackageInfo"
-            />
-          </div>
-        </section>
+          <!-- Playground links -->
+          <PackagePlaygrounds v-if="playgroundLinks.length" :links="playgroundLinks" />
 
-        <div class="space-y-6" :class="$style.areaVulns">
-          <!-- Bad package warning -->
-          <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
-          <!-- Vulnerability scan -->
-          <ClientOnly>
-            <PackageVulnerabilityTree
-              v-if="resolvedVersion"
-              :package-name="pkg.name"
-              :version="resolvedVersion"
-            />
-            <PackageDeprecatedTree
-              v-if="resolvedVersion"
-              :package-name="pkg.name"
-              :version="resolvedVersion"
-              class="mt-3"
-            />
-          </ClientOnly>
+          <PackageCompatibility :engines="displayVersion?.engines" />
+
+          <!-- Versions (grouped by release channel) -->
+          <PackageVersions
+            v-if="pkg.versions && Object.keys(pkg.versions).length > 0"
+            :package-name="pkg.name"
+            :versions="pkg.versions"
+            :dist-tags="pkg['dist-tags'] ?? {}"
+            :time="pkg.time"
+            :selected-version="resolvedVersion ?? pkg['dist-tags']?.['latest']"
+          />
+
+          <!-- Install Scripts Warning -->
+          <PackageInstallScripts
+            v-if="displayVersion?.installScripts"
+            :package-name="pkg.name"
+            :version="displayVersion.version"
+            :install-scripts="displayVersion.installScripts"
+          />
+
+          <!-- Dependencies -->
+          <PackageDependencies
+            v-if="hasDependencies && resolvedVersion && displayVersion"
+            :package-name="pkg.name"
+            :version="resolvedVersion"
+            :dependencies="displayVersion.dependencies"
+            :peer-dependencies="displayVersion.peerDependencies"
+            :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
+            :optional-dependencies="displayVersion.optionalDependencies"
+          />
+
+          <!-- Keywords -->
+          <PackageKeywords :keywords="displayVersion?.keywords" />
+
+          <!-- Maintainers (with admin actions when connected) -->
+          <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
         </div>
-
-        <!-- README -->
-        <section id="readme" class="min-w-0 scroll-mt-20" :class="$style.areaReadme">
-          <div class="flex flex-wrap items-center justify-between mb-3 px-1">
-            <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
-              <LinkBase to="#readme">
-                {{ $t('package.readme.title') }}
-              </LinkBase>
-            </h2>
-            <div class="flex gap-2">
-              <!-- Copy readme as Markdown button -->
-              <TooltipApp
-                v-if="readmeData?.mdExists"
-                :text="$t('package.readme.copy_as_markdown')"
-                position="bottom"
-              >
-                <ButtonBase
-                  @mouseenter="prefetchReadmeMarkdown"
-                  @focus="prefetchReadmeMarkdown"
-                  @click="copyReadmeHandler()"
-                  :aria-pressed="copiedReadme"
-                  :aria-label="
-                    copiedReadme ? $t('common.copied') : $t('package.readme.copy_as_markdown')
-                  "
-                  :classicon="copiedReadme ? 'i-lucide:check' : 'i-simple-icons:markdown'"
-                >
-                  {{ copiedReadme ? $t('common.copied') : $t('common.copy') }}
-                </ButtonBase>
-              </TooltipApp>
-              <ReadmeTocDropdown
-                v-if="readmeData?.toc && readmeData.toc.length > 1"
-                :toc="readmeData.toc"
-                :active-id="activeTocId"
-              />
-            </div>
-          </div>
-
-          <!-- eslint-disable vue/no-v-html -- HTML is sanitized server-side -->
-          <Readme v-if="readmeData?.html" :html="readmeData.html" />
-          <p v-else class="text-fg-muted italic">
-            {{ $t('package.readme.no_readme') }}
-            <a
-              v-if="repositoryUrl"
-              :href="repositoryUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link text-fg underline underline-offset-4 decoration-fg-subtle hover:(decoration-fg text-fg) transition-colors duration-200"
-              >{{ $t('package.readme.view_on_github') }}</a
-            >
-          </p>
-
-          <section
-            v-if="hasProvenance(displayVersion) && isMounted"
-            id="provenance"
-            class="scroll-mt-20"
-          >
-            <div
-              v-if="provenanceStatus === 'pending'"
-              class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
-            >
-              <span class="i-svg-spinners:ring-resize w-4 h-4" aria-hidden="true" />
-              <span>{{ $t('package.provenance_section.title') }}…</span>
-            </div>
-            <PackageProvenanceSection
-              v-else-if="provenanceData"
-              :details="provenanceData"
-              class="mt-8"
-            />
-            <!-- Error state: provenance exists but details failed to load -->
-            <div
-              v-else-if="provenanceStatus === 'error'"
-              class="mt-8 flex items-center gap-2 text-fg-subtle text-sm"
-            >
-              <span class="i-lucide:circle-alert w-4 h-4" aria-hidden="true" />
-              <span>{{ $t('package.provenance_section.error_loading') }}</span>
-            </div>
-          </section>
-        </section>
-
-        <PackageSidebar :class="$style.areaSidebar">
-          <div class="flex flex-col gap-4 sm:gap-6 xl:(pt-2)">
-            <!-- Team access controls (for scoped packages when connected) -->
-            <ClientOnly>
-              <PackageAccessControls :package-name="pkg.name" />
-              <template #fallback>
-                <!-- Show skeleton loaders when SSR or access controls are loading -->
-              </template>
-            </ClientOnly>
-
-            <!-- Agent Skills -->
-            <ClientOnly>
-              <PackageSkillsCard
-                v-if="skillsData?.skills?.length"
-                :skills="skillsData.skills"
-                :package-name="pkg.name"
-                :version="resolvedVersion || undefined"
-              />
-              <template #fallback>
-                <!-- Show skeleton loaders when SSR or access controls are loading -->
-              </template>
-            </ClientOnly>
-
-            <!-- Download stats -->
-            <PackageWeeklyDownloadStats
-              :packageName
-              :createdIso="pkg?.time?.created ?? null"
-              :repoRef="repoRef"
-            />
-
-            <!-- Playground links -->
-            <PackagePlaygrounds v-if="playgroundLinks.length" :links="playgroundLinks" />
-
-            <PackageCompatibility :engines="displayVersion?.engines" />
-
-            <!-- Versions (grouped by release channel) -->
-            <PackageVersions
-              v-if="pkg.versions && Object.keys(pkg.versions).length > 0"
-              :package-name="pkg.name"
-              :versions="pkg.versions"
-              :dist-tags="pkg['dist-tags'] ?? {}"
-              :time="pkg.time"
-              :selected-version="resolvedVersion ?? pkg['dist-tags']?.['latest']"
-            />
-
-            <!-- Install Scripts Warning -->
-            <PackageInstallScripts
-              v-if="displayVersion?.installScripts"
-              :package-name="pkg.name"
-              :version="displayVersion.version"
-              :install-scripts="displayVersion.installScripts"
-            />
-
-            <!-- Dependencies -->
-            <PackageDependencies
-              v-if="hasDependencies && resolvedVersion && displayVersion"
-              :package-name="pkg.name"
-              :version="resolvedVersion"
-              :dependencies="displayVersion.dependencies"
-              :peer-dependencies="displayVersion.peerDependencies"
-              :peer-dependencies-meta="displayVersion.peerDependenciesMeta"
-              :optional-dependencies="displayVersion.optionalDependencies"
-            />
-
-            <!-- Keywords -->
-            <PackageKeywords :keywords="displayVersion?.keywords" />
-
-            <!-- Maintainers (with admin actions when connected) -->
-            <PackageMaintainers :package-name="pkg.name" :maintainers="pkg.maintainers" />
-          </div>
-        </PackageSidebar>
-      </template>
+      </PackageSidebar>
     </article>
 
     <!-- Error state -->
