@@ -636,33 +636,62 @@ export function useCharts() {
       hasEstimation: config.hasEstimation,
     }))
 
-    const granularity = config
-      .$t(`package.trends.granularity_${config.granularity}`)
-      .toLocaleLowerCase()
+    const granularityKeyByGranularity: Record<string, string> = {
+      daily: 'package.trends.granularity_dayly',
+      weekly: 'package.trends.granularity_weekly',
+      monthly: 'package.trends.granularity_monthly',
+      yearly: 'package.trends.granularity_yearly',
+    }
+
+    const granularityKey =
+      granularityKeyByGranularity[config.granularity as unknown as string] ??
+      'package.trends.granularity_day'
+
+    const granularity = String(config.$t(granularityKey)).toLocaleLowerCase()
+
+    const trendKeyByTrend: Record<string, string> = {
+      none: 'package.trends.copy_alt.trend_none',
+      weak: 'package.trends.copy_alt.trend_weak',
+      strong: 'package.trends.copy_alt.trend_strong',
+      undefined: 'package.trends.copy_alt.trend_undefined',
+    }
 
     const packages_analysis = analysis
-      .map((pkg, i) =>
-        config.$t(`package.trends.copy_alt.analysis`, {
+      .map((pkg, i) => {
+        const trendKey =
+          trendKeyByTrend[pkg.interpretation.trend as unknown as string] ??
+          'package.trends.copy_alt.trend_undefined'
+
+        return config.$t('package.trends.copy_alt.analysis', {
           package_name: pkg.name,
           start_value: config.formattedDatasetValues[i]?.[0] ?? 0,
           end_value: config.formattedDatasetValues[i]?.at(-1) ?? 0,
-          trend: config.$t(`package.trends.copy_alt.trend_${pkg.interpretation.trend}`),
+          trend: config.$t(trendKey),
           downloads_slope: compactNumberFormatter.value.format(pkg.slope),
           growth_percentage: `${pkg.progressionPercent?.toFixed(1)}%`,
-        }),
-      )
+        })
+      })
       .join(', ')
 
     const isSinglePackage = analysis.length === 1
 
     const estimation_notice = config.hasEstimation
-      ? ` ${isSinglePackage ? config.$t('package.trends.copy_alt.estimation') : config.$t('package.trends.copy_alt.estimations')}`
+      ? ` ${
+          isSinglePackage
+            ? config.$t('package.trends.copy_alt.estimation')
+            : config.$t('package.trends.copy_alt.estimations')
+        }`
       : ''
 
-    // Packages comparison
-    const compareText = `${config.$t('package.trends.copy_alt.compare', { packages: analysis.map(a => a.name).join(', ') })} `
-    const singlePackageText = `${config.$t('package.trends.copy_alt.single_package', { package: analysis?.[0]?.name ?? '' })} `
-    const generalAnalysis = config.$t(`package.trends.copy_alt.general_description`, {
+    const compareText = `${config.$t('package.trends.copy_alt.compare', {
+      packages: analysis.map(a => a.name).join(', '),
+    })} `
+
+    const singlePackageText = `${config.$t('package.trends.copy_alt.single_package', {
+      package: analysis?.[0]?.name ?? '',
+    })} `
+
+    const generalAnalysis = config.$t('package.trends.copy_alt.general_description', {
       start_date: analysis?.[0]?.dates[0]?.text,
       end_date: analysis?.[0]?.dates.at(-1)?.text,
       granularity,
