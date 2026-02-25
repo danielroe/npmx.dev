@@ -411,7 +411,6 @@ export function getNpmPackageCreationDate(packument: PackumentLikeForTime): stri
 }
 
 export function useCharts() {
-  const { t } = useI18n()
   const compactNumberFormatter = useCompactNumberFormatter()
 
   function resolveDateRange(
@@ -628,6 +627,7 @@ export function useCharts() {
     dataset,
     config,
   }: AltCopyArgs<TrendLineDataset, TrendLineConfig>): string {
+    const { t } = useI18n()
     if (!dataset) return ''
 
     const analysis = dataset.lines.map(({ name, series }) => ({
