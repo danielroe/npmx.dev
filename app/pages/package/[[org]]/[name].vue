@@ -266,6 +266,53 @@ const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
 const isHydratingWithServerContent = shallowRef(
   hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
+
+watch(isSpaFallback, value => {
+  console.log('isSpaFallback', value)
+})
+watch(isHydratingWithServerContent, value => {
+  console.log('isHydratingWithServerContent', value)
+})
+watch(
+  [
+    () => hasEmptyPayload,
+    () => isSpaFallback.value,
+    () => isHydratingWithServerContent.value,
+    () => status.value,
+  ],
+  ([hasEmptyPayloadArg, isSpaFallbackArg, isHydratingWithServerContentArg, statusArg]) => {
+    console.log(
+      'main bunch',
+      hasEmptyPayloadArg,
+      isSpaFallbackArg,
+      isHydratingWithServerContentArg,
+      statusArg,
+    )
+  },
+)
+watch(
+  [
+    () => import.meta.client,
+    () => nuxtApp.isHydrating,
+    () => nuxtApp.payload.serverRendered,
+    () => Object.keys(nuxtApp.payload.data ?? {}).length,
+  ],
+  ([importMetaClientArg, isHydratingArg, serverRenderedArg, dataLengthArg]) => {
+    console.log(
+      'additional bunch',
+      importMetaClientArg,
+      isHydratingArg,
+      serverRenderedArg,
+      dataLengthArg,
+    )
+  },
+)
+watch(
+  () => nuxtApp.payload.data,
+  data => {
+    console.log('nuxtApp.payload.data', data)
+  },
+)
 // When we have server-rendered content but no payload data, capture the server
 // DOM before Vue's hydration replaces it. This lets us show the server-rendered
 // HTML as a static snapshot while data refetches, avoiding any visual flash.
