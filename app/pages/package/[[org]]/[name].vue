@@ -774,7 +774,7 @@ const showSkeleton = shallowRef(false)
     <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
     <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
     <PackageSkeleton
-      v-if="showSkeleton || isSpaFallback || (!hasEmptyPayload && status === 'pending')"
+      v-if="isSpaFallback || (!hasEmptyPayload && (showSkeleton || status === 'pending'))"
     />
 
     <!-- During hydration without payload, show captured server HTML as a static snapshot.
