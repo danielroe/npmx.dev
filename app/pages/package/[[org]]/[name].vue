@@ -263,6 +263,7 @@ const hasEmptyPayload =
   nuxtApp.payload.serverRendered &&
   !Object.keys(nuxtApp.payload.data ?? {}).length
 const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
+const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
 const isHydratingWithServerContent = shallowRef(
   hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
@@ -311,7 +312,7 @@ watch(
 // DOM before Vue's hydration replaces it. This lets us show the server-rendered
 // HTML as a static snapshot while data refetches, avoiding any visual flash.
 const serverRenderedHtml = shallowRef<string | null>(
-  isHydratingWithServerContent.value
+  hasServerContentOnly.value
     ? (document.getElementById('package-article')?.innerHTML ?? null)
     : null,
 )
@@ -773,7 +774,7 @@ const showSkeleton = shallowRef(false)
     <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
     <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
     <PackageSkeleton
-      v-if="isSpaFallback || (!hasEmptyPayload && (showSkeleton || status === 'pending'))"
+      v-if="isSpaFallback || (!hasServerContentOnly && (showSkeleton || status === 'pending'))"
     />
 
     <!-- During hydration without payload, show captured server HTML as a static snapshot.
@@ -781,7 +782,7 @@ const showSkeleton = shallowRef(false)
          v-html is safe here: the content originates from the server's own SSR output,
          captured from the DOM before hydration — it is not user-controlled input. -->
     <article
-      v-else-if="isHydratingWithServerContent || (hasEmptyPayload && !pkg && serverRenderedHtml)"
+      v-else-if="hasServerContentOnly && !pkg && serverRenderedHtml"
       id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
