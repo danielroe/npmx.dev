@@ -273,6 +273,7 @@ watch(
     () => isSpaFallback.value,
     () => isHydratingWithServerContent.value,
     () => status.value,
+    () => pkg.value,
     () => Object.keys(nuxtApp.payload.data ?? {}).length,
     () => resolvedVersion.value,
     () => requestedVersion.value,
@@ -282,6 +283,7 @@ watch(
     isSpaFallbackArg,
     isHydratingWithServerContentArg,
     statusArg,
+    pkgArg,
     dataLengthArg,
     resolvedVersionArg,
     requestedVersionArg,
@@ -291,6 +293,7 @@ watch(
       isSpaFallbackArg,
       isHydratingWithServerContentArg,
       statusArg,
+      pkgArg,
       dataLengthArg,
       resolvedVersionArg,
       requestedVersionArg,
@@ -300,7 +303,7 @@ watch(
 watch(
   () => nuxtApp.payload.data,
   data => {
-    console.log('nuxtApp.payload.data', data)
+    console.log('nuxtApp.payload.data', data, Object.keys(data ?? {}))
   },
   { immediate: true },
 )
