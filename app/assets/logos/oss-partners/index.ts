@@ -7,6 +7,8 @@ import LogoStorybook from '~/assets/logos/oss-partners/storybook.svg'
 import LogoVite from '~/assets/logos/oss-partners/vite.svg'
 import LogoVitest from '~/assets/logos/oss-partners/vitest.svg'
 import LogoVue from '~/assets/logos/oss-partners/vue.svg'
+import LogoAlgolia from '~/assets/logos/oss-partners/algolia.svg'
+import LogoAlgoliaLight from '~/assets/logos/oss-partners/algolia-light.svg'
 
 // The list is used on the about page. To add, simply upload the logos nearby and add an entry here. Prefer SVGs.
 // For logo src, specify a string or object with the light and dark theme variants.
@@ -57,6 +59,14 @@ export const OSS_PARTNERS = [
     name: 'Vue',
     logo: LogoVue,
     url: 'https://vuejs.org/',
+  },
+  {
+    name: 'Algolia',
+    logo: {
+      dark: LogoAlgolia,
+      light: LogoAlgoliaLight,
+    },
+    url: 'https://algolia.com/',
   },
   {
     name: 'Storybook',
