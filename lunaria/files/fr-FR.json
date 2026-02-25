@@ -384,8 +384,8 @@
         "analysis": "{package_name} commence à {start_value} et se termine à {end_value}, affichant une tendance {trend} avec une pente de {downloads_slope} téléchargements par intervalle de temps, et une croissance globale de {growth_percentage}",
         "estimation": "La valeur finale est une estimation basée sur des données partielles pour la période en cours.",
         "estimations": "Les valeurs finales sont des estimations basées sur des données partielles pour la période en cours.",
-        "compare": "Graphique en courbes comparant les téléchargements des packages suivants : {packages}.",
-        "single_package": "Graphique en courbes des téléchargements pour le package {package}.",
+        "compare": "Graphique en courbes comparant les téléchargements des paquets suivants : {packages}.",
+        "single_package": "Graphique en courbes des téléchargements pour le paquet {package}.",
         "general_description": "L’axe Y représente le nombre de téléchargements. L’axe X représente la plage de dates, de {start_date} à {end_date}, avec une période de temps {granularity}.{estimation_notice} {packages_analysis}. {watermark}."
       }
     },
