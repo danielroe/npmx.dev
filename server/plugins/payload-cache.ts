@@ -20,6 +20,13 @@ const PAYLOAD_CACHE_STORAGE_KEY = 'payload-cache'
 /** Default TTL for cached payloads (seconds). Matches ISR expiration for package routes. */
 const PAYLOAD_CACHE_TTL = 60
 
+/**
+ * Grace period beyond TTL where stale payloads are still served (seconds).
+ * Prevents a race where the HTML is served from Vercel's ISR cache right before
+ * expiry, but the payload request arrives a moment later after our cache expires.
+ */
+const PAYLOAD_CACHE_STALE_TTL = PAYLOAD_CACHE_TTL * 2
+
 interface CachedPayload {
   body: string
   statusCode: number
@@ -74,9 +81,10 @@ export default defineNitroPlugin(nitroApp => {
       // Verify build ID matches (extra safety beyond cache key)
       if (cached.buildId !== buildId) return
 
-      // Check TTL
+      // Check TTL — serve stale payloads within the grace period to avoid
+      // a race where HTML is cached by Vercel but our payload has expired
       const age = (Date.now() - cached.cachedAt) / 1000
-      if (age > PAYLOAD_CACHE_TTL) return
+      if (age > PAYLOAD_CACHE_STALE_TTL) return
 
       if (import.meta.dev) {
         // eslint-disable-next-line no-console
@@ -103,8 +111,8 @@ export default defineNitroPlugin(nitroApp => {
   // render:response — Cache payloads after rendering
   // -------------------------------------------------------------------------
   nitroApp.hooks.hook('render:response', (response, ctx) => {
-    // Don't cache error responses
-    if (response.statusCode && response.statusCode >= 400) return
+    // Don't cache error or unknown responses
+    if (!response.statusCode || response.statusCode >= 400) return
 
     const isPayloadRequest = PAYLOAD_URL_RE.test(ctx.event.path)
     const isHtmlResponse = response.headers?.['content-type']?.includes('text/html')
