@@ -271,6 +271,9 @@ async function loadMore() {
   currentPage.value++
   await fetchMore(requestedSize.value)
 }
+onBeforeUnmount(() => {
+  updateUrlPage.cancel()
+})
 
 // Update URL when page changes from scrolling
 function handlePageChange(page: number) {
@@ -555,7 +558,15 @@ defineOgImageComponent('Default', {
       <section v-if="query" class="results-layout">
         <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 
-        <div v-show="results || displayResults.length > 0">
+        <div
+          v-show="
+            results ||
+            displayResults.length > 0 ||
+            isRateLimited ||
+            status === 'error' ||
+            status === 'success'
+          "
+        >
           <div
             v-if="validatedSuggestions.length > 0 && displayResults.length > 0"
             class="mb-6 space-y-3"
