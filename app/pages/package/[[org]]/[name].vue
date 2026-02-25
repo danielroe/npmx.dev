@@ -241,11 +241,9 @@ watch(
   { immediate: true },
 )
 
-const {
-  data: pkg,
-  status,
-  error,
-} = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
+const computedVersion = computed(() => resolvedVersion.value ?? requestedVersion.value)
+
+const { data: pkg, status, error } = usePackage(packageName, () => computedVersion.value)
 
 // Detect two hydration scenarios where the external _payload.json is missing:
 //
