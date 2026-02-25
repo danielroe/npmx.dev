@@ -169,7 +169,6 @@ export function usePackage(
 
   if (import.meta.client && asyncData.data.value?.isStale) {
     onMounted(() => {
-      console.log('refreshing package on mount')
       asyncData.refresh()
     })
   }

@@ -241,18 +241,11 @@ watch(
   { immediate: true },
 )
 
-const stableVersion = ref()
-watch(
-  () => resolvedVersion.value ?? requestedVersion.value,
-  (versionArg, versionPrevious) => {
-    if (versionArg !== versionPrevious) {
-      stableVersion.value = versionArg
-    }
-  },
-  { immediate: true },
-)
-
-const { data: pkg, status, error } = usePackage(packageName, () => stableVersion.value)
+const {
+  data: pkg,
+  status,
+  error,
+} = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
 
 // Detect two hydration scenarios where the external _payload.json is missing:
 //
@@ -782,7 +775,8 @@ const showSkeleton = shallowRef(false)
     <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
     <PackageSkeleton
       v-if="
-        isSpaFallback || (!isHydratingWithServerContent && (showSkeleton || status === 'pending'))
+        isSpaFallback ||
+        (!isHydratingWithServerContent && (showSkeleton || (status === 'pending' && !pkg)))
       "
     />
 
