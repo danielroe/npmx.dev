@@ -868,19 +868,13 @@
           },
           "additionalProperties": false
         },
-        "github_star": {
+        "github": {
           "type": "object",
           "properties": {
             "star": {
               "type": "string"
             },
             "unstar": {
-              "type": "string"
-            },
-            "connect_github": {
-              "type": "string"
-            },
-            "starred": {
               "type": "string"
             }
           },

@@ -961,21 +961,15 @@ const showSkeleton = shallowRef(false)
 
               <TooltipApp
                 v-if="isGitHubRepo && isGitHubConnected"
-                :text="
-                  isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
-                "
+                :text="isStarred ? $t('package.github.unstar') : $t('package.github.star')"
                 position="bottom"
                 strategy="fixed"
               >
                 <ButtonBase
                   @click="toggleStar"
                   size="small"
-                  :title="
-                    isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
-                  "
-                  :aria-label="
-                    isStarred ? $t('package.github_star.unstar') : $t('package.github_star.star')
-                  "
+                  :title="isStarred ? $t('package.github.unstar') : $t('package.github.star')"
+                  :aria-label="isStarred ? $t('package.github.unstar') : $t('package.github.star')"
                   :aria-pressed="isStarred"
                   :disabled="isStarActionPending"
                   :classicon="isStarred ? 'i-lucide:star text-yellow-400' : 'i-lucide:star'"

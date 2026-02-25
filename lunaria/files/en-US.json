@@ -224,11 +224,9 @@
       "like": "Like this package",
       "unlike": "Unlike this package"
     },
-    "github_star": {
+    "github": {
       "star": "Star this repository on GitHub",
-      "unstar": "Unstar this repository on GitHub",
-      "connect_github": "Connect GitHub to star repos",
-      "starred": "You starred this repo"
+      "unstar": "Unstar this repository on GitHub"
     },
     "docs": {
       "not_available": "Docs not available",
