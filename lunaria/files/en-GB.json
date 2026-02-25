@@ -839,6 +839,12 @@
         "managers": "package managers"
       }
     },
+    "sponsors": {
+      "title": "Sponsors"
+    },
+    "oss_partners": {
+      "title": "OSS Partners"
+    },
     "team": {
       "title": "Team",
       "governance": "Governance",
