@@ -373,7 +373,11 @@
         "contributors": "Contributors"
       },
       "play_animation": "Play animation",
-      "pause_animation": "Pause animation"
+      "pause_animation": "Pause animation",
+      "filters": "Filters",
+      "average": "Average",
+      "smoothing": "Smoothing",
+      "anomalies_fixed": "Anomalies fixed"
     },
     "downloads": {
       "title": "Weekly Downloads",

@@ -1128,6 +1128,18 @@
             },
             "pause_animation": {
               "type": "string"
+            },
+            "filters": {
+              "type": "string"
+            },
+            "average": {
+              "type": "string"
+            },
+            "smoothing": {
+              "type": "string"
+            },
+            "anomalies_fixed": {
+              "type": "string"
             }
           },
           "additionalProperties": false

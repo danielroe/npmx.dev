@@ -1714,12 +1714,12 @@ watch(selectedMetric, value => {
             :class="showFilterControls ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
             aria-hidden="true"
           />
-          Filters
+          {{ $t('package.trends.filters') }}
         </button>
         <div v-if="showFilterControls" class="flex items-end gap-3">
           <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              Average
+              {{ $t('package.trends.average') }}
               <span class="text-fg-muted">({{ settings.chartFilter.averageWindow }})</span>
             </span>
             <input
@@ -1733,7 +1733,7 @@ watch(selectedMetric, value => {
           </label>
           <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              Smoothing
+              {{ $t('package.trends.smoothing') }}
               <span class="text-fg-muted">({{ settings.chartFilter.smoothingTau }})</span>
             </span>
             <input
@@ -1753,7 +1753,7 @@ watch(selectedMetric, value => {
               type="checkbox"
               class="accent-[var(--accent-color,var(--fg-subtle))]"
             />
-            Anomalies fixed
+            {{ $t('package.trends.anomalies_fixed') }}
           </label>
         </div>
       </div>
