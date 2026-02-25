@@ -527,10 +527,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <TooltipApp interactive position="top">
             <span
               tabindex="0"
-              class="i-lucide:info w-3.5 h-3.5 me-1 text-fg-subtle cursor-help shrink-0 rounded-sm"
-              role="img"
-              :aria-label="$t('package.versions.filter_help')"
-            />
+              class="block cursor-help shrink-0 -m-2 p-2 -me-1 focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
+            >
+              <span
+                class="block i-lucide:info w-3.5 h-3.5 text-fg-subtle"
+                role="img"
+                :aria-label="$t('package.versions.filter_help')"
+              />
+            </span>
             <template #content>
               <p class="text-xs text-fg-muted">
                 <i18n-t keypath="package.versions.filter_tooltip" tag="span">
