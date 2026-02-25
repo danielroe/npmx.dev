@@ -386,7 +386,8 @@
         "estimations": "The final values are estimates based on partial data for the current period.",
         "compare": "Package download comparison line chart for: {packages}.",
         "single_package": "Downloads line chart for the {package} package.",
-        "general_description": "The Y axis represents the number of downloads. The X axis represents the date range, from {start_date} to {end_date}, with a {granularity} time period.{estimation_notice} {packages_analysis}. {watermark}."
+        "general_description": "The Y axis represents the number of downloads. The X axis represents the date range, from {start_date} to {end_date}, with a {granularity} time period.{estimation_notice} {packages_analysis}. {watermark}.",
+        "growth_unavailable": "N/A"
       }
     },
     "downloads": {

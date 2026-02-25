@@ -470,7 +470,7 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
 
 export type TrendLineDataset = {
   lines: VueUiXyDatasetLineItem[]
-  [key: string]: any
+  [key: string]: unknown
 } | null
 
 export type TrendTranslateKey = number | 'package.trends.y_axis_label' | (string & {})
@@ -539,7 +539,10 @@ export function createAltTextForTrendLineChart({
         end_value: config.formattedDatasetValues[i]?.at(-1) ?? 0,
         trend: trendText,
         downloads_slope: config.numberFormatter(pkg.slope),
-        growth_percentage: `${pkg.progressionPercent?.toFixed(1)}%`,
+        growth_percentage:
+          pkg.progressionPercent !== null
+            ? `${pkg.progressionPercent.toFixed(1)}%`
+            : config.$t('package.trends.copy_alt.growth_unavailable'),
       })
     })
     .join(', ')

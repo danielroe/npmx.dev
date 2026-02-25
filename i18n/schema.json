@@ -1167,6 +1167,9 @@
                 },
                 "general_description": {
                   "type": "string"
+                },
+                "growth_unavailable": {
+                  "type": "string"
                 }
               },
               "additionalProperties": false

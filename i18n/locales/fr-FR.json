@@ -387,7 +387,8 @@
         "estimations": "Les valeurs finales sont des estimations basées sur des données partielles pour la période en cours.",
         "compare": "Graphique en courbes comparant les téléchargements des paquets suivants : {packages}.",
         "single_package": "Graphique en courbes des téléchargements pour le paquet {package}.",
-        "general_description": "L’axe Y représente le nombre de téléchargements. L’axe X représente la plage de dates, de {start_date} à {end_date}, avec une période de temps {granularity}.{estimation_notice} {packages_analysis}. {watermark}."
+        "general_description": "L’axe Y représente le nombre de téléchargements. L’axe X représente la plage de dates, de {start_date} à {end_date}, avec une période de temps {granularity}.{estimation_notice} {packages_analysis}. {watermark}.",
+        "growth_unavailable": "N/A"
       }
     },
     "downloads": {
