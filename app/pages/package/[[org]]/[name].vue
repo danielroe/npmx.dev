@@ -267,44 +267,34 @@ const isHydratingWithServerContent = shallowRef(
   hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
 
-watch(isSpaFallback, value => {
-  console.log('isSpaFallback', value)
-})
-watch(isHydratingWithServerContent, value => {
-  console.log('isHydratingWithServerContent', value)
-})
 watch(
   [
     () => hasEmptyPayload,
     () => isSpaFallback.value,
     () => isHydratingWithServerContent.value,
     () => status.value,
+    () => Object.keys(nuxtApp.payload.data ?? {}).length,
+    () => resolvedVersion.value,
+    () => requestedVersion.value,
   ],
-  ([hasEmptyPayloadArg, isSpaFallbackArg, isHydratingWithServerContentArg, statusArg]) => {
-    console.log(
-      'main bunch',
+  ([
+    hasEmptyPayloadArg,
+    isSpaFallbackArg,
+    isHydratingWithServerContentArg,
+    statusArg,
+    dataLengthArg,
+    resolvedVersionArg,
+    requestedVersionArg,
+  ]) => {
+    console.log('main bunch', {
       hasEmptyPayloadArg,
       isSpaFallbackArg,
       isHydratingWithServerContentArg,
       statusArg,
-    )
-  },
-)
-watch(
-  [
-    () => import.meta.client,
-    () => nuxtApp.isHydrating,
-    () => nuxtApp.payload.serverRendered,
-    () => Object.keys(nuxtApp.payload.data ?? {}).length,
-  ],
-  ([importMetaClientArg, isHydratingArg, serverRenderedArg, dataLengthArg]) => {
-    console.log(
-      'additional bunch',
-      importMetaClientArg,
-      isHydratingArg,
-      serverRenderedArg,
       dataLengthArg,
-    )
+      resolvedVersionArg,
+      requestedVersionArg,
+    })
   },
 )
 watch(
@@ -312,6 +302,7 @@ watch(
   data => {
     console.log('nuxtApp.payload.data', data)
   },
+  { immediate: true },
 )
 // When we have server-rendered content but no payload data, capture the server
 // DOM before Vue's hydration replaces it. This lets us show the server-rendered
