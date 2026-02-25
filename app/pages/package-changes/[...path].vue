@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useProviderIcon } from '~/composables/useProviderIcon'
+
 definePageMeta({
   name: 'changes',
   path: '/package-changes/:path+',
@@ -63,9 +65,9 @@ watch(
 )
 
 // getting info
-
 const { data: changelog, pending } = usePackageChangelog(packageName, version)
 
+const repoProviderIcon = useProviderIcon(() => changelog.value?.provider)
 const header = useTemplateRef('header')
 </script>
 <template>
@@ -90,6 +92,14 @@ const header = useTemplateRef('header')
             :url-pattern="versionUrlPattern"
           />
           <div class="flex-1"></div>
+          <LinkBase
+            v-if="changelog?.link"
+            :to="changelog?.link"
+            :classicon="repoProviderIcon"
+            :title="$t('common.view_on', { site: changelog.provider })"
+          >
+            {{ changelog.provider }}
+          </LinkBase>
         </div>
       </div>
     </header>

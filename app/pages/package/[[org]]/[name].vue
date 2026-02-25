@@ -9,7 +9,6 @@ import type {
   SkillsListResponse,
 } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
-import type { IconClass } from '~/types'
 import { assertValidPackageName } from '#shared/utils/npm'
 import { joinURL } from 'ufo'
 import { areUrlsEquivalent } from '#shared/utils/url'
@@ -18,6 +17,7 @@ import { getDependencyCount } from '~/utils/npm/dependency-count'
 import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-security'
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
+import { useProviderIcon } from '~/composables/useProviderIcon'
 import { togglePackageLike } from '~/utils/atproto/likes'
 import type { RouteLocationRaw } from 'vue-router'
 
@@ -398,24 +398,7 @@ const repositoryUrl = computed(() => {
 
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 
-const PROVIDER_ICONS: Record<string, IconClass> = {
-  github: 'i-simple-icons:github',
-  gitlab: 'i-simple-icons:gitlab',
-  bitbucket: 'i-simple-icons:bitbucket',
-  codeberg: 'i-simple-icons:codeberg',
-  gitea: 'i-simple-icons:gitea',
-  forgejo: 'i-simple-icons:forgejo',
-  gitee: 'i-simple-icons:gitee',
-  sourcehut: 'i-simple-icons:sourcehut',
-  tangled: 'i-custom:tangled',
-  radicle: 'i-lucide:network', // Radicle is a P2P network, using network icon
-}
-
-const repoProviderIcon = computed((): IconClass => {
-  const provider = repoRef.value?.provider
-  if (!provider) return 'i-simple-icons:github'
-  return PROVIDER_ICONS[provider] ?? 'i-lucide:code'
-})
+const repoProviderIcon = useProviderIcon(() => repoRef.value?.provider)
 
 const homepageUrl = computed(() => {
   const homepage = displayVersion.value?.homepage
@@ -928,7 +911,7 @@ const showSkeleton = shallowRef(false)
             <li>
               <LinkBase
                 :to="`https://www.npmjs.com/package/${pkg.name}`"
-                :title="$t('common.view_on_npm')"
+                :title="$t('common.view_on', { site: 'npm' })"
                 classicon="i-simple-icons:npm"
               >
                 npm

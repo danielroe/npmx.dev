@@ -131,7 +131,7 @@
     "skip_link": "Zum Hauptinhalt springen",
     "warnings": "Warnungen:",
     "go_back_home": "Zur Startseite",
-    "view_on_npm": "Auf npm ansehen",
+    "view_on": "Auf {site} ansehen",
     "per_week": "/ Woche",
     "vanity_downloads_hint": "Prestige-Zahl: keine Pakete angezeigt | Prestige-Zahl: für das angezeigte Paket | Prestige-Zahl: Summe von {count} angezeigten Paketen",
     "sort": {

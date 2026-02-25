@@ -9,8 +9,6 @@ import { ERROR_CHANGELOG_NOT_FOUND } from '~~/shared/utils/constants'
 import * as v from 'valibot'
 import { GithubReleaseSchama } from '~~/shared/schemas/changelog/release'
 
-// ChangelogInfo
-
 /**
  * Detect whether changelogs/releases are available for this package
  *
@@ -78,20 +76,6 @@ async function checkReleases(ref: RepoRef): Promise<ChangelogInfo | false> {
 
 /// releases
 
-// /**
-//  * get the url to check if releases are being used.
-//  *
-//  * @returns returns an array so that if providers don't have a latest that we can check for versions
-//  */
-// function getLatestReleaseUrl(ref: RepoRef): null | string[] {
-//   switch (ref.provider) {
-//     case 'github':
-//       return [`https://ungh.cc/repos/${ref.owner}/${ref.repo}/releases/latest`]
-//   }
-
-//   return null
-// }
-
 const MD_REGEX = /(?<=\[.*?(changelog|releases|changes|history|news)\.md.*?\]\()(.*?)(?=\))/i
 
 function checkLatestGithubRelease(ref: RepoRef): Promise<ChangelogInfo | false> {
@@ -107,6 +91,7 @@ function checkLatestGithubRelease(ref: RepoRef): Promise<ChangelogInfo | false> 
           provider: ref.provider,
           type: 'release',
           repo: `${ref.owner}/${ref.repo}`,
+          link: `https://github.com/${ref.owner}/${ref.repo}/releases`,
         } satisfies ChangelogReleaseInfo
       }
 
@@ -142,7 +127,7 @@ async function checkChangelogFile(ref: RepoRef): Promise<ChangelogMarkdownInfo |
   }
 
   for (const fileName of CHANGELOG_FILENAMES) {
-    const exists = await fetch(`${baseUrl}/${fileName}`, {
+    const exists = await fetch(`${baseUrl.raw}/${fileName}`, {
       headers: {
         // GitHub API requires User-Agent
         'User-Agent': 'npmx.dev',
@@ -157,16 +142,25 @@ async function checkChangelogFile(ref: RepoRef): Promise<ChangelogMarkdownInfo |
         provider: ref.provider,
         path: fileName,
         repo: `${ref.owner}/${ref.repo}`,
+        link: `${baseUrl.blob}/${fileName}`,
       } satisfies ChangelogMarkdownInfo
     }
   }
   return false
 }
 
-function getBaseFileUrl(ref: RepoRef) {
+interface RepoFileUrl {
+  raw: string
+  blob: string
+}
+
+function getBaseFileUrl(ref: RepoRef): RepoFileUrl | null {
   switch (ref.provider) {
     case 'github':
-      return `https://ungh.cc/repos/${ref.owner}/${ref.repo}/files/HEAD`
+      return {
+        raw: `https://ungh.cc/repos/${ref.owner}/${ref.repo}/files/HEAD`,
+        blob: `https://github.com/${ref.owner}/${ref.repo}/blob/HEAD`,
+      }
   }
   return null
 }

@@ -5,6 +5,7 @@ export interface ChangelogReleaseInfo {
   type: 'release'
   provider: ProviderId
   repo: `${string}/${string}`
+  link: string
 }
 
 export interface ChangelogMarkdownInfo {
@@ -18,7 +19,7 @@ export interface ChangelogMarkdownInfo {
   /**
    * link to a rendered changelog markdown file
    */
-  link?: string
+  link: string
 }
 
 export type ChangelogInfo = ChangelogReleaseInfo | ChangelogMarkdownInfo

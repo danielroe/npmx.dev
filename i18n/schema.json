@@ -400,7 +400,7 @@
         "go_back_home": {
           "type": "string"
         },
-        "view_on_npm": {
+        "view_on": {
           "type": "string"
         },
         "per_week": {

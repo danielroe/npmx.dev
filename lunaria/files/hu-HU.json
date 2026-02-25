@@ -91,7 +91,7 @@
     "skip_link": "Ugrás a tartalomra",
     "warnings": "Figyelmeztetések:",
     "go_back_home": "Vissza a főoldalra",
-    "view_on_npm": "megtekintés npm-en",
+    "view_on": "megtekintés {site}-en",
     "per_week": "/ hét",
     "sort": {
       "name": "név",
