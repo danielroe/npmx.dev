@@ -320,7 +320,6 @@ if (isSpaFallback.value || isHydratingWithServerContent.value) {
   nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
     isSpaFallback.value = false
     isHydratingWithServerContent.value = false
-    serverRenderedHtml.value = null
   })
 }
 
@@ -782,7 +781,7 @@ const showSkeleton = shallowRef(false)
          v-html is safe here: the content originates from the server's own SSR output,
          captured from the DOM before hydration — it is not user-controlled input. -->
     <article
-      v-else-if="isHydratingWithServerContent || (hasEmptyPayload && !pkg)"
+      v-else-if="isHydratingWithServerContent || (hasEmptyPayload && !pkg && serverRenderedHtml)"
       id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
