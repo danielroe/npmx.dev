@@ -219,7 +219,7 @@ watch(
   [resolvedStatus, resolvedVersion],
   ([status, version]) => {
     if (version === null && status === 'success') {
-      throw createError({
+      showError({
         statusCode: 404,
         statusMessage: $t('package.not_found'),
         message: $t('package.not_found_message'),
