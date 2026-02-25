@@ -131,55 +131,6 @@ export type LineChartAnalysis = {
     volatility: 'very_stable' | 'moderate' | 'volatile' | 'undefined'
     trend: 'strong' | 'weak' | 'none' | 'undefined'
   }
-  progressionPercent: number | null
-}
-
-export function computeOverallProgressionPercentUsingLinearTrend(
-  indexedValues: Array<{ value: number; index: number }>,
-  yValues: number[],
-): number | null {
-  const count = indexedValues.length
-  if (count < 2) return null
-  if (yValues.length !== count) return null
-
-  let sumX = 0
-  let sumY = 0
-  let sumXY = 0
-  let sumXX = 0
-
-  for (let i = 0; i < count; i += 1) {
-    const entry = indexedValues[i]
-    const y = yValues[i]
-    if (entry === undefined || y === undefined) continue
-    const x = entry.index
-    sumX += x
-    sumY += y
-    sumXY += x * y
-    sumXX += x * x
-  }
-
-  const denominator = count * sumXX - sumX * sumX
-  if (denominator === 0) return null
-
-  const slope = (count * sumXY - sumX * sumY) / denominator
-  const intercept = (sumY - slope * sumX) / count
-
-  const firstIndex = indexedValues[0]?.index
-  const lastIndex = indexedValues[count - 1]?.index
-  if (firstIndex === undefined || lastIndex === undefined) return null
-
-  const predictedStart = slope * firstIndex + intercept
-  const predictedEnd = slope * lastIndex + intercept
-  const delta = predictedEnd - predictedStart
-
-  const meanLevel = sumY / count
-
-  const absolutePredictedStart = Math.abs(predictedStart)
-  const denominatorForPercent = absolutePredictedStart >= 1e-12 ? predictedStart : meanLevel
-
-  if (denominatorForPercent === 0) return null
-
-  return (delta / denominatorForPercent) * 100
 }
 
 /**
@@ -240,7 +191,6 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
         volatility: 'undefined',
         trend: 'undefined',
       },
-      progressionPercent: null,
     }
   }
 
@@ -256,7 +206,6 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
         volatility: 'very_stable',
         trend: 'none',
       },
-      progressionPercent: null,
     }
   }
 
@@ -373,11 +322,6 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
     }
   }
 
-  const progressionPercent = computeOverallProgressionPercentUsingLinearTrend(
-    indexedValues,
-    winsorizedYValues,
-  )
-
   return {
     mean,
 
@@ -422,8 +366,6 @@ export function computeLineChartAnalysis(values: Array<number | null>): LineChar
      * |---------------|----------------------------------------------------------|
      */
     rSquared,
-
-    progressionPercent,
 
     /**
      * Human readable trends interpretation from which translations can be generated
@@ -534,10 +476,6 @@ export function createAltTextForTrendLineChart({
         end_value: config.formattedDatasetValues[i]?.at(-1) ?? 0,
         trend: trendText,
         downloads_slope: config.numberFormatter(pkg.slope),
-        growth_percentage:
-          pkg.progressionPercent !== null
-            ? `${pkg.progressionPercent.toFixed(1)}%`
-            : config.$t('package.trends.copy_alt.growth_unavailable'),
       })
     })
     .join(', ')
@@ -561,8 +499,8 @@ export function createAltTextForTrendLineChart({
   })} `
 
   const generalAnalysis = config.$t('package.trends.copy_alt.general_description', {
-    start_date: analysis?.[0]?.dates[0]?.text,
-    end_date: analysis?.[0]?.dates.at(-1)?.text,
+    start_date: analysis?.[0]?.dates[0]?.text ?? '-',
+    end_date: analysis?.[0]?.dates.at(-1)?.text ?? '-',
     granularity,
     packages_analysis,
     watermark: config.$t('package.trends.copy_alt.watermark'),
