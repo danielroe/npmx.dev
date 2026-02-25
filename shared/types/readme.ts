@@ -29,7 +29,7 @@ export interface TocItem {
  */
 export interface ReadmeResponse {
   /** Whether the response is the default value */
-  defaultValue: boolean
+  defaultValue?: boolean
   /** Whether the README exists */
   mdExists?: boolean
   /** Rendered HTML content */
