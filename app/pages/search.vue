@@ -29,7 +29,7 @@ const updateUrlPage = debounce((page: number) => {
     url.searchParams.delete('page')
   }
   // This updates the address bar "silently"
-  window.history.replaceState({}, '', url)
+  window.history.replaceState(window.history.state, '', url)
 }, 500)
 
 const { model: searchQuery, provider: searchProvider } = useGlobalSearch()
@@ -393,20 +393,24 @@ const totalSelectableCount = computed(() => suggestionCount.value + resultCount.
  * Get all focusable result elements in DOM order (suggestions first, then packages)
  */
 function getFocusableElements(): HTMLElement[] {
-  const suggestions = Array.from(
-    document.querySelectorAll<HTMLElement>('[data-suggestion-index]'),
-  ).sort((a, b) => {
-    const aIdx = Number.parseInt(a.dataset.suggestionIndex ?? '0', 10)
-    const bIdx = Number.parseInt(b.dataset.suggestionIndex ?? '0', 10)
-    return aIdx - bIdx
-  })
-  const packages = Array.from(document.querySelectorAll<HTMLElement>('[data-result-index]')).sort(
-    (a, b) => {
+  const isVisible = (el: HTMLElement) => el.getClientRects().length > 0
+
+  const suggestions = Array.from(document.querySelectorAll<HTMLElement>('[data-suggestion-index]'))
+    .filter(isVisible)
+    .sort((a, b) => {
+      const aIdx = Number.parseInt(a.dataset.suggestionIndex ?? '0', 10)
+      const bIdx = Number.parseInt(b.dataset.suggestionIndex ?? '0', 10)
+      return aIdx - bIdx
+    })
+
+  const packages = Array.from(document.querySelectorAll<HTMLElement>('[data-result-index]'))
+    .filter(isVisible)
+    .sort((a, b) => {
       const aIdx = Number.parseInt(a.dataset.resultIndex ?? '0', 10)
       const bIdx = Number.parseInt(b.dataset.resultIndex ?? '0', 10)
       return aIdx - bIdx
-    },
-  )
+    })
+
   return [...suggestions, ...packages]
 }
 
@@ -549,13 +553,13 @@ defineOgImageComponent('Default', {
       </div>
 
       <section v-if="query" class="results-layout">
-        <LoadingSpinner
-          v-if="showSearching && displayResults.length === 0"
-          :text="$t('search.searching')"
-        />
+        <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 
         <div v-show="results || displayResults.length > 0">
-          <div v-if="validatedSuggestions.length > 0" class="mb-6 space-y-3">
+          <div
+            v-if="validatedSuggestions.length > 0 && displayResults.length > 0"
+            class="mb-6 space-y-3"
+          >
             <SearchSuggestionCard
               v-for="(suggestion, idx) in validatedSuggestions"
               :key="`${suggestion.type}-${suggestion.name}`"
@@ -570,7 +574,7 @@ defineOgImageComponent('Default', {
           </div>
 
           <div
-            v-if="showClaimPrompt && visibleResults && visibleResults.total > 0"
+            v-if="showClaimPrompt && visibleResults && displayResults.length > 0"
             class="mb-6 p-4 bg-bg-subtle border border-border rounded-lg sm:flex hidden flex-row sm:items-center gap-3 sm:gap-4"
           >
             <div class="flex-1 min-w-0">
@@ -594,7 +598,7 @@ defineOgImageComponent('Default', {
             </p>
           </div>
 
-          <div v-else-if="visibleResults && visibleResults.total > 0" class="mb-6">
+          <div v-else-if="visibleResults && displayResults.length > 0" class="mb-6">
             <PackageListToolbar
               :filters="filters"
               v-model:sort-option="sortOption"
@@ -744,11 +748,8 @@ defineOgImageComponent('Default', {
 </template>
 
 <style scoped>
-.search-page {
-  overflow-anchor: none;
-}
-
 .results-layout {
-  min-height: 100vh;
+  min-height: 50vh;
+  overflow-anchor: none;
 }
 </style>
