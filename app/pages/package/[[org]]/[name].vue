@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {
+  InstallSizeResult,
   NpmVersionDist,
   PackageVersionInfo,
   PackumentVersion,
@@ -19,6 +20,7 @@ import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-securi
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
+import { useInstallSizeDiff } from '~/composables/useInstallSizeDiff'
 import type { RouteLocationRaw } from 'vue-router'
 
 defineOgImageComponent('Package', {
@@ -182,13 +184,6 @@ const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${package
 })
 
 // Fetch total install size (lazy, can be slow for large dependency trees)
-interface InstallSizeResult {
-  package: string
-  version: string
-  selfSize: number
-  totalSize: number
-  dependencyCount: number
-}
 const {
   data: installSize,
   status: installSizeStatus,
@@ -254,6 +249,8 @@ const {
   status,
   error,
 } = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
+
+const { diff: sizeDiff } = useInstallSizeDiff(packageName, resolvedVersion, pkg, installSize)
 
 // Detect two hydration scenarios where the external _payload.json is missing:
 //
@@ -1333,6 +1330,8 @@ const showSkeleton = shallowRef(false)
       <div class="space-y-6" :class="$style.areaVulns">
         <!-- Bad package warning -->
         <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
+        <!-- Size / dependency increase notice -->
+        <PackageSizeIncrease v-if="sizeDiff" :diff="sizeDiff" />
         <!-- Vulnerability scan -->
         <ClientOnly>
           <PackageVulnerabilityTree
