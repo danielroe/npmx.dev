@@ -4,41 +4,28 @@ import { packageRoute } from '~/utils/router'
 
 definePageMeta({
   name: 'diff',
+  path: '/diff/:org?/:packageName/v/:versionRange',
+  alias: ['/diff/:packageName/v/:versionRange'],
 })
 
 const route = useRoute('diff')
 
-// Parse package name and version range from URL
-// Patterns:
-// -  /diff/nuxt/v/4.0.0...4.2.0
-// -  /diff/@nuxt/kit/v/1.0.0...2.0.0
-const parsedRoute = computed(() => {
-  const segments = route.params.path || []
+// Derive package name from typed route params
+// /diff/nuxt/v/4.0.0...4.2.0           → org: undefined, packageName: "nuxt"
+// /diff/@nuxt/kit/v/1.0.0...2.0.0      → org: "@nuxt", packageName: "kit"
+const packageName = computed(() =>
+  route.params.org ? `${route.params.org}/${route.params.packageName}` : route.params.packageName,
+)
 
-  // Find the /v/ separator
-  const vIndex = segments.indexOf('v')
-  if (vIndex === -1 || vIndex >= segments.length - 1) {
-    return { packageName: segments.join('/'), range: null }
-  }
-
-  const packageName = segments.slice(0, vIndex).join('/')
-  const rangeStr = segments[vIndex + 1] ?? ''
-
-  // Parse version range (from...to)
-  const parts = rangeStr.split('...')
-  if (parts.length !== 2) {
-    return { packageName, range: null }
-  }
-
-  return {
-    packageName,
-    range: { from: parts[0]!, to: parts[1]! },
-  }
+// Parse version range from the typed param (from...to)
+const versionRange = computed(() => {
+  const parts = route.params.versionRange.split('...')
+  if (parts.length !== 2) return null
+  return { from: parts[0]!, to: parts[1]! }
 })
 
-const packageName = computed(() => parsedRoute.value.packageName)
-const fromVersion = computed(() => parsedRoute.value.range?.from ?? '')
-const toVersion = computed(() => parsedRoute.value.range?.to ?? '')
+const fromVersion = computed(() => versionRange.value?.from ?? '')
+const toVersion = computed(() => versionRange.value?.to ?? '')
 
 const router = useRouter()
 const initializedFromQuery = ref(false)
@@ -47,7 +34,7 @@ const { data: pkg } = usePackage(packageName)
 const { data: compare, status: compareStatus } = useFetch<CompareResponse>(
   () => `/api/registry/compare/${packageName.value}/v/${fromVersion.value}...${toVersion.value}`,
   {
-    immediate: !!parsedRoute.value.range,
+    immediate: !!versionRange.value,
     timeout: 15000,
   },
 )
@@ -173,7 +160,7 @@ useSeoMeta({
     </header>
 
     <!-- Error: invalid route -->
-    <div v-if="!parsedRoute.range" class="container py-20 text-center">
+    <div v-if="!versionRange" class="container py-20 text-center">
       <p class="text-fg-muted mb-4">
         Invalid comparison URL. Use format: /diff/package/v/from...to
       </p>

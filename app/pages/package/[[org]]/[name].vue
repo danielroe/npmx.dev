@@ -884,7 +884,7 @@ const showSkeleton = shallowRef(false)
               "
               variant="button-secondary"
               :to="`/diff/${pkg.name}/v/${displayVersion.version}...${latestVersion.version}`"
-              classicon="i-carbon-text-align-mixed"
+              classicon="i-carbon:text-align-mixed"
             >
               {{ $t('compare.compare_versions') }}
             </LinkBase>
@@ -1026,11 +1026,8 @@ const showSkeleton = shallowRef(false)
                 {{ $t('package.links.docs') }}
               </LinkBase>
             </li>
-            <li v-if="resolvedVersion" class="sm:hidden">
-              <LinkBase
-                :to="{ name: 'code', params: { path: [pkg.name, 'v', resolvedVersion] } }"
-                classicon="i-carbon:code"
-              >
+            <li v-if="resolvedVersion && codeLink" class="sm:hidden">
+              <LinkBase :to="codeLink" classicon="i-carbon:code">
                 {{ $t('package.links.code') }}
               </LinkBase>
             </li>
