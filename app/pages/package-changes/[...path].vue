@@ -41,7 +41,6 @@ const parsedRoute = computed(() => {
 
 const packageName = computed(() => parsedRoute.value.packageName)
 const version = computed(() => parsedRoute.value.version)
-// const filePathOrig = computed(() => parsedRoute.value.filePath)
 const filePath = computed(() => parsedRoute.value.filePath?.replace(/\/$/, ''))
 
 const { data: pkg } = usePackage(packageName)
