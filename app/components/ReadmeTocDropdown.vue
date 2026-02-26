@@ -148,7 +148,7 @@ function handleKeydown(event: KeyboardEvent) {
     :aria-expanded="isOpen"
     aria-haspopup="listbox"
     :aria-label="$t('package.readme.toc_title')"
-    :aria-controls="listboxId"
+    :aria-controls="isOpen ? listboxId : undefined"
     @click="toggle"
     @keydown="handleKeydown"
     classicon="i-lucide:list"
@@ -175,25 +175,18 @@ function handleKeydown(event: KeyboardEvent) {
       :leave-to-class="prefersReducedMotion ? '' : 'opacity-0'"
     >
       <div
+        v-if="isOpen"
         :id="listboxId"
         ref="listRef"
         role="listbox"
-        :aria-hidden="!isOpen"
         :aria-activedescendant="
-          isOpen && highlightedIndex >= 0 && toc[highlightedIndex]?.id
+          highlightedIndex >= 0 && toc[highlightedIndex]?.id
             ? `${listboxId}-${toc[highlightedIndex]?.id}`
             : undefined
         "
         :aria-label="$t('package.readme.toc_title')"
-        :style="
-          isOpen
-            ? getDropdownStyle()
-            : { visibility: 'hidden', position: 'fixed', pointerEvents: 'none' }
-        "
-        :class="[
-          'fixed bg-bg-subtle border border-border rounded-md shadow-lg z-50 max-h-80 overflow-y-auto w-56 overscroll-contain',
-          !isOpen ? 'opacity-0' : prefersReducedMotion ? '' : 'transition-opacity duration-150',
-        ]"
+        :style="getDropdownStyle()"
+        class="fixed bg-bg-subtle border border-border rounded-md shadow-lg z-50 max-h-80 overflow-y-auto w-56 overscroll-contain"
       >
         <template v-for="node in tocTree" :key="node.id">
           <NuxtLink
