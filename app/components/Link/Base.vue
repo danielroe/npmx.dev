@@ -1,42 +1,46 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from '#app'
+import type { IconClass } from '~/types'
 
 const props = withDefaults(
-  defineProps<
-    {
-      /** Disabled links will be displayed as plain text */
-      disabled?: boolean
-      /**
-       * `type` should never be used, because this will always be a link.
-       * */
-      type?: never
-      variant?: 'button-primary' | 'button-secondary' | 'link'
-      size?: 'small' | 'medium'
-      block?: boolean
+  defineProps<{
+    /** Disabled links will be displayed as plain text */
+    disabled?: boolean
+    /**
+     * `type` should never be used, because this will always be a link.
+     * */
+    type?: never
+    variant?: 'button-primary' | 'button-secondary' | 'link'
+    size?: 'small' | 'medium'
+    block?: boolean
 
-      ariaKeyshortcuts?: string
+    ariaKeyshortcuts?: string
 
-      /**
-       * Don't use this directly. This will automatically be set to `_blank` for external links passed via `to`.
-       */
-      target?: never
+    /**
+     * Don't use this directly. This will automatically be set to `_blank` for external links passed via `to`.
+     */
+    target?: never
 
-      /**
-       * Don't use this directly. This will automatically be set for external links passed via `to`.
-       */
-      rel?: never
+    /**
+     * Don't use this directly. This will automatically be set for external links passed via `to`.
+     */
+    rel?: never
 
-      classicon?: string
+    classicon?: IconClass
 
-      to?: NuxtLinkProps['to']
+    to?: NuxtLinkProps['to']
 
-      /** always use `to` instead of `href` */
-      href?: never
+    /** always use `to` instead of `href` */
+    href?: never
 
-      /** should only be used for links where the context makes it very clear they are clickable. Don't just use this, because you don't like underlines. */
-      noUnderline?: boolean
-    } & NuxtLinkProps
-  >(),
+    /** should only be used for links where the context makes it very clear they are clickable. Don't just use this, because you don't like underlines. */
+    noUnderline?: boolean
+
+    /**
+     * @deprecated @todo remove this property and add separate clean component without this logic
+     */
+    noNewTabIcon?: boolean
+  }>(),
   { variant: 'link', size: 'medium' },
 )
 
@@ -73,6 +77,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
     ><slot
   /></span>
   <NuxtLink
+    v-bind="props"
     v-else
     class="group/link gap-x-1 items-center"
     :class="{
@@ -99,13 +104,13 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
     <slot />
     <!-- automatically show icon indicating external link -->
     <span
-      v-if="isLinkExternal && !classicon"
-      class="i-carbon:launch rtl-flip size-[1em] opacity-50"
+      v-if="isLinkExternal && !classicon && !noNewTabIcon"
+      class="i-lucide:external-link rtl-flip size-[1em] opacity-50"
       aria-hidden="true"
     />
     <span
       v-else-if="isLinkAnchor && isLink"
-      class="i-carbon:link size-[1em] opacity-0 group-hover/link:opacity-100 transition-opacity duration-200"
+      class="i-lucide:link size-[1em] opacity-0 group-hover/link:opacity-100 transition-opacity duration-200"
       aria-hidden="true"
     />
     <kbd

@@ -26,7 +26,7 @@ onPrehydrate(() => {
   const settings = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
   const collapsed: string[] = settings?.sidebar?.collapsed || []
   for (const id of collapsed) {
-    if (!document.documentElement.dataset.collapsed?.includes(id)) {
+    if (!document.documentElement.dataset.collapsed?.split(' ').includes(id)) {
       document.documentElement.dataset.collapsed = (
         document.documentElement.dataset.collapsed +
         ' ' +
@@ -38,7 +38,9 @@ onPrehydrate(() => {
 
 onMounted(() => {
   if (document?.documentElement) {
-    isOpen.value = !(document.documentElement.dataset.collapsed?.includes(props.id) ?? false)
+    isOpen.value = !(
+      document.documentElement.dataset.collapsed?.split(' ').includes(props.id) ?? false
+    )
   }
 })
 
@@ -84,21 +86,17 @@ useHead({
         <button
           :id="buttonId"
           type="button"
-          class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
+          class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
           :aria-expanded="isOpen"
           :aria-controls="contentId"
           :aria-label="ariaLabel"
           @click="toggle"
         >
-          <span
-            v-if="isLoading"
-            class="i-carbon:rotate-180 w-3 h-3 motion-safe:animate-spin"
-            aria-hidden="true"
-          />
+          <span v-if="isLoading" class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
           <span
             v-else
             class="w-3 h-3 transition-transform duration-200"
-            :class="isOpen ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
+            :class="isOpen ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
             aria-hidden="true"
           />
         </button>

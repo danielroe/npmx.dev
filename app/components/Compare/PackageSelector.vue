@@ -14,8 +14,14 @@ const maxPackages = computed(() => props.max ?? 4)
 const inputValue = shallowRef('')
 const isInputFocused = shallowRef(false)
 
+// Keyboard navigation state
+const highlightedIndex = shallowRef(-1)
+const listRef = useTemplateRef('listRef')
+const PAGE_JUMP = 5
+
 // Use the shared search composable (supports both npm and Algolia providers)
-const { data: searchData, status } = useSearch(inputValue, { size: 15 })
+const { searchProvider } = useSearchProvider()
+const { data: searchData, status } = useSearch(inputValue, searchProvider, { size: 15 })
 
 const isSearching = computed(() => status.value === 'pending')
 
@@ -53,6 +59,20 @@ const filteredResults = computed(() => {
     .filter(r => !packages.value.includes(r.name))
 })
 
+// Unified list of navigable items for keyboard navigation
+const navigableItems = computed(() => {
+  const items: { type: 'no-dependency' | 'package'; name: string }[] = []
+  if (showNoDependencyOption.value) {
+    items.push({ type: 'no-dependency', name: NO_DEPENDENCY_ID })
+  }
+  for (const r of filteredResults.value) {
+    items.push({ type: 'package', name: r.name })
+  }
+  return items
+})
+
+const resultIndexOffset = computed(() => (showNoDependencyOption.value ? 1 : 0))
+
 const numberFormatter = useNumberFormatter()
 
 function addPackage(name: string) {
@@ -70,6 +90,7 @@ function addPackage(name: string) {
     packages.value = [...packages.value, name]
   }
   inputValue.value = ''
+  highlightedIndex.value = -1
 }
 
 function removePackage(name: string) {
@@ -77,25 +98,102 @@ function removePackage(name: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  const inputValueTrim = inputValue.value.trim()
-  const hasMatchInPackages = filteredResults.value.find(result => {
-    return result.name === inputValueTrim
-  })
+  const items = navigableItems.value
+  const count = items.length
 
-  if (e.key === 'Enter' && inputValueTrim) {
-    e.preventDefault()
-    if (showNoDependencyOption.value) {
-      addPackage(NO_DEPENDENCY_ID)
-    } else if (hasMatchInPackages) {
-      addPackage(inputValueTrim)
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault()
+      if (count === 0) return
+      if (highlightedIndex.value < count - 1) {
+        highlightedIndex.value++
+      } else {
+        highlightedIndex.value = 0
+      }
+      break
+
+    case 'ArrowUp':
+      e.preventDefault()
+      if (count === 0) return
+      if (highlightedIndex.value > 0) {
+        highlightedIndex.value--
+      } else {
+        highlightedIndex.value = count - 1
+      }
+      break
+
+    case 'PageDown':
+      e.preventDefault()
+      if (count === 0) return
+      if (highlightedIndex.value === -1) {
+        highlightedIndex.value = Math.min(PAGE_JUMP - 1, count - 1)
+      } else {
+        highlightedIndex.value = Math.min(highlightedIndex.value + PAGE_JUMP, count - 1)
+      }
+      break
+
+    case 'PageUp':
+      e.preventDefault()
+      if (count === 0) return
+      highlightedIndex.value = Math.max(highlightedIndex.value - PAGE_JUMP, 0)
+      break
+
+    case 'Enter': {
+      const inputValueTrim = inputValue.value.trim()
+      if (!inputValueTrim) return
+
+      e.preventDefault()
+
+      // If an item is highlighted, select it
+      if (highlightedIndex.value >= 0 && highlightedIndex.value < count) {
+        addPackage(items[highlightedIndex.value]!.name)
+        return
+      }
+
+      // Fallback: exact match or easter egg (preserves existing behavior)
+      if (showNoDependencyOption.value) {
+        addPackage(NO_DEPENDENCY_ID)
+      } else {
+        const hasMatch = filteredResults.value.find(r => r.name === inputValueTrim)
+        if (hasMatch) {
+          addPackage(inputValueTrim)
+        }
+      }
+      break
     }
+
+    case 'Escape':
+      inputValue.value = ''
+      highlightedIndex.value = -1
+      break
   }
 }
 
+// Reset highlight when user types
+watch(inputValue, () => {
+  highlightedIndex.value = -1
+})
+
+// Scroll highlighted item into view
+watch(highlightedIndex, index => {
+  if (index >= 0 && listRef.value) {
+    const items = listRef.value.querySelectorAll('[data-navigable]')
+    const item = items[index] as HTMLElement | undefined
+    item?.scrollIntoView({ block: 'nearest' })
+  }
+})
+
+const { start, stop } = useTimeoutFn(() => {
+  isInputFocused.value = false
+}, 200)
+
 function handleBlur() {
-  useTimeoutFn(() => {
-    isInputFocused.value = false
-  }, 200)
+  start()
+}
+
+function handleFocus() {
+  stop()
+  isInputFocused.value = true
 }
 </script>
 
@@ -107,7 +205,7 @@ function handleBlur() {
         <!-- No dependency display -->
         <template v-if="pkg === NO_DEPENDENCY_ID">
           <span class="text-sm text-accent italic flex items-center gap-1.5">
-            <span class="i-carbon:clean w-3.5 h-3.5" aria-hidden="true" />
+            <span class="i-lucide:leaf w-3.5 h-3.5" aria-hidden="true" />
             {{ $t('compare.no_dependency.label') }}
           </span>
         </template>
@@ -122,7 +220,7 @@ function handleBlur() {
             })
           "
           @click="removePackage(pkg)"
-          classicon="i-carbon:close"
+          classicon="i-lucide:x"
         />
       </TagStatic>
     </div>
@@ -151,7 +249,7 @@ function handleBlur() {
           size="medium"
           class="w-full min-w-25 ps-7"
           aria-autocomplete="list"
-          @focus="isInputFocused = true"
+          @focus="handleFocus"
           @blur="handleBlur"
           @keydown="handleKeydown"
         />
@@ -166,40 +264,51 @@ function handleBlur() {
         leave-to-class="opacity-0"
       >
         <div
-          v-if="
-            isInputFocused && (filteredResults.length > 0 || isSearching || showNoDependencyOption)
-          "
+          v-if="isInputFocused && (navigableItems.length > 0 || isSearching)"
+          ref="listRef"
           class="absolute top-full inset-x-0 mt-1 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
         >
           <!-- No dependency option (easter egg with James) -->
           <ButtonBase
             v-if="showNoDependencyOption"
+            data-navigable
             class="block w-full text-start"
+            :class="highlightedIndex === 0 ? '!bg-accent/15' : ''"
             :aria-label="$t('compare.no_dependency.add_column')"
+            @mouseenter="highlightedIndex = 0"
             @click="addPackage(NO_DEPENDENCY_ID)"
           >
-            <div class="text-sm text-accent italic flex items-center gap-2">
-              <span class="i-carbon:clean w-4 h-4" aria-hidden="true" />
+            <span class="text-sm text-accent italic flex items-center gap-2">
+              <span class="i-lucide:leaf w-4 h-4" aria-hidden="true" />
               {{ $t('compare.no_dependency.typeahead_title') }}
-            </div>
-            <div class="text-xs text-fg-muted truncate mt-0.5">
+            </span>
+            <span class="text-xs text-fg-muted truncate mt-0.5">
               {{ $t('compare.no_dependency.typeahead_description') }}
-            </div>
+            </span>
           </ButtonBase>
 
-          <div v-if="isSearching" class="px-4 py-3 text-sm text-fg-muted">
+          <div
+            v-if="isSearching && navigableItems.length === 0"
+            class="px-4 py-3 text-sm text-fg-muted"
+          >
             {{ $t('compare.selector.searching') }}
           </div>
           <ButtonBase
-            v-for="result in filteredResults"
+            v-for="(result, index) in filteredResults"
             :key="result.name"
+            data-navigable
             class="block w-full text-start"
+            :class="highlightedIndex === index + resultIndexOffset ? '!bg-accent/15' : ''"
+            @mouseenter="highlightedIndex = index + resultIndexOffset"
             @click="addPackage(result.name)"
           >
-            <div class="font-mono text-sm text-fg">{{ result.name }}</div>
-            <div v-if="result.description" class="text-xs text-fg-muted truncate mt-0.5">
-              {{ result.description }}
-            </div>
+            <span class="font-mono text-sm text-fg block">{{ result.name }}</span>
+            <span
+              v-if="result.description"
+              class="text-xs text-fg-muted truncate mt-0.5 w-full block"
+            >
+              {{ decodeHtmlEntities(result.description) }}
+            </span>
           </ButtonBase>
         </div>
       </Transition>

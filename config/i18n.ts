@@ -116,6 +116,17 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     file: 'az-AZ.json',
     name: 'Azərbaycanca',
   },
+  {
+    code: 'bn-IN',
+    file: 'bn-IN.json',
+    name: 'বাংলা',
+  },
+  {
+    code: 'bg-BG',
+    file: 'bg-BG.json',
+    name: 'Български',
+    pluralRule: createPluralRule('bg-BG', { zero: 1, one: 0, two: 1, few: 1, many: 1, other: 1 }),
+  },
   /*{
     code: 'ckb',
     file: 'ckb.json',
@@ -150,6 +161,11 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     code: 'de-DE',
     file: 'de-DE.json',
     name: 'Deutsch',
+  },
+  {
+    code: 'ta-IN',
+    file: 'ta-IN.json',
+    name: 'தமிழ்',
   },
   {
     code: 'hi-IN',
@@ -328,9 +344,9 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
       name: 'Cymraeg',
     },*/
   {
-    code: 'no-NO',
-    file: 'no-NO.json',
-    name: 'Norsk',
+    code: 'nb-NO',
+    file: 'nb-NO.json',
+    name: 'Norsk (Bokmål)',
   },
 ]
 

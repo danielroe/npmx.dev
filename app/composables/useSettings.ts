@@ -29,8 +29,14 @@ export interface AppSettings {
   selectedLocale: LocaleObject['code'] | null
   /** Search provider for package search */
   searchProvider: SearchProvider
+  /** Connector preferences */
+  connector: {
+    /** Automatically open the web auth page in the browser */
+    autoOpenURL: boolean
+  }
   sidebar: {
     collapsed: string[]
+    animateSparkline: boolean
   }
 }
 
@@ -42,8 +48,12 @@ const DEFAULT_SETTINGS: AppSettings = {
   selectedLocale: null,
   preferredBackgroundTheme: null,
   searchProvider: import.meta.test ? 'npm' : 'algolia',
+  connector: {
+    autoOpenURL: false,
+  },
   sidebar: {
     collapsed: [],
+    animateSparkline: true,
   },
 }
 

@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
-import { normalizeSearchParam } from '#shared/utils/url'
-
 withDefaults(
   defineProps<{
     inputClass?: string
@@ -12,75 +9,17 @@ withDefaults(
 )
 
 const emit = defineEmits(['blur', 'focus'])
-
-const router = useRouter()
 const route = useRoute()
-
 const isSearchFocused = shallowRef(false)
 
 const showSearchBar = computed(() => {
   return route.name !== 'index'
 })
 
-// Local input value (updates immediately as user types)
-const searchQuery = shallowRef(normalizeSearchParam(route.query.q))
-
-// Pages that have their own local filter using ?q
-const pagesWithLocalFilter = new Set(['~username', 'org'])
-
-// Debounced URL update for search query
-const updateUrlQuery = debounce((value: string) => {
-  // Don't navigate away from pages that use ?q for local filtering
-  if (pagesWithLocalFilter.has(route.name as string)) {
-    return
-  }
-  if (route.name === 'search') {
-    router.replace({ query: { q: value || undefined } })
-    return
-  }
-  if (!value) {
-    return
-  }
-
-  router.push({
-    name: 'search',
-    query: {
-      q: value,
-    },
-  })
-}, 250)
-
-// Watch input and debounce URL updates
-watch(searchQuery, value => {
-  updateUrlQuery(value)
-})
-
-// Sync input with URL when navigating (e.g., back button)
-watch(
-  () => route.query.q,
-  urlQuery => {
-    // Don't sync from pages that use ?q for local filtering
-    if (pagesWithLocalFilter.has(route.name as string)) {
-      return
-    }
-    const value = normalizeSearchParam(urlQuery)
-    if (searchQuery.value !== value) {
-      searchQuery.value = value
-    }
-  },
-)
+const { model: searchQuery, flushUpdateUrlQuery } = useGlobalSearch('header')
 
 function handleSubmit() {
-  if (pagesWithLocalFilter.has(route.name as string)) {
-    router.push({
-      name: 'search',
-      query: {
-        q: searchQuery.value,
-      },
-    })
-  } else {
-    updateUrlQuery.flush()
-  }
+  flushUpdateUrlQuery()
 }
 
 // Expose focus method for parent components

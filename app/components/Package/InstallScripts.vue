@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { getOutdatedTooltip, getVersionClass } from '~/utils/npm/outdated-dependencies'
+import type { RouteLocationRaw } from 'vue-router'
 
 const props = defineProps<{
   packageName: string
@@ -11,12 +12,25 @@ const props = defineProps<{
   }
 }>()
 
-function getCodeLink(filePath: string): string {
-  return `/code/${props.packageName}/v/${props.version}/${filePath}`
+function getCodeLink(filePath: string): RouteLocationRaw {
+  const split = props.packageName.split('/')
+
+  return {
+    name: 'code',
+    params: {
+      org: split.length === 2 ? split[0] : null,
+      packageName: split.length === 2 ? split[1]! : split[0]!,
+      version: props.version,
+      filePath: filePath,
+    },
+  }
 }
 
 const scriptParts = computed(() => {
-  const parts: Record<string, { prefix: string | null; filePath: string | null; link: string }> = {}
+  const parts: Record<
+    string,
+    { prefix: string | null; filePath: string | null; link: RouteLocationRaw }
+  > = {}
   for (const scriptName of props.installScripts.scripts) {
     const content = props.installScripts.content?.[scriptName]
     if (!content) continue
@@ -47,7 +61,7 @@ const isExpanded = shallowRef(false)
   <CollapsibleSection
     :title="$t('package.install_scripts.title')"
     id="installScripts"
-    icon="i-carbon:warning-alt w-3 h-3 text-yellow-500"
+    icon="i-lucide:circle-alert w-3 h-3 text-yellow-500"
   >
     <!-- Script list: name as label, content below -->
     <dl class="space-y-2 m-0">
@@ -85,7 +99,7 @@ const isExpanded = shallowRef(false)
         @click="isExpanded = !isExpanded"
       >
         <span
-          class="i-carbon:chevron-right rtl-flip w-3 h-3 transition-transform duration-200"
+          class="i-lucide:chevron-right rtl-flip w-3 h-3 transition-transform duration-200"
           :class="{ 'rotate-90': isExpanded }"
           aria-hidden="true"
         />
@@ -115,18 +129,18 @@ const isExpanded = shallowRef(false)
             {{ dep }}
           </LinkBase>
           <span class="flex items-center gap-1">
-            <span
+            <TooltipApp
               v-if="
                 outdatedNpxDeps[dep] &&
                 outdatedNpxDeps[dep].resolved !== outdatedNpxDeps[dep].latest
               "
-              class="shrink-0"
+              class="shrink-0 p-2 -m-2"
               :class="getVersionClass(outdatedNpxDeps[dep])"
-              :title="getOutdatedTooltip(outdatedNpxDeps[dep], $t)"
               aria-hidden="true"
+              :text="getOutdatedTooltip(outdatedNpxDeps[dep], $t)"
             >
-              <span class="i-carbon:warning-alt w-3 h-3" />
-            </span>
+              <span class="i-lucide:circle-alert w-3 h-3" />
+            </TooltipApp>
             <span
               class="font-mono text-xs text-end truncate"
               :class="getVersionClass(outdatedNpxDeps[dep])"

@@ -82,8 +82,10 @@ export function detectModuleFormat(pkg: ExtendedPackageJson): ModuleFormat {
 
   // Legacy detection without exports field
   if (hasModule && hasMain) {
-    // Has both module (ESM) and main (CJS) fields
-    return 'dual'
+    // Check for dual packages (has module field and main points to cjs)
+    const mainIsCJS = pkg.main?.endsWith('.cjs') || (pkg.main?.endsWith('.js') && !isTypeModule)
+
+    return mainIsCJS ? 'dual' : 'esm'
   }
 
   if (hasModule || isTypeModule) {
@@ -124,7 +126,7 @@ function analyzeExports(exports: PackageExports, depth = 0): ExportsAnalysis {
 
   if (typeof exports === 'string') {
     // Check file extension for format hints
-    if (exports.endsWith('.mjs') || exports.endsWith('.mts')) {
+    if (exports.endsWith('.mjs') || exports.endsWith('.mts') || exports.endsWith('.json')) {
       result.hasImport = true
     } else if (exports.endsWith('.cjs') || exports.endsWith('.cts')) {
       result.hasRequire = true
