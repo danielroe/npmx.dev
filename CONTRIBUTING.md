@@ -1000,8 +1000,8 @@ Global application settings are added to the Storybook toolbar for easy testing 
 
 - Changing `i18n` in the toolbar doesn't update the language. A manual story reload is required.
 - `autodocs` currently is non-functional due bugs, its usage is discouraged at this time.
-- `pnpm build-storybook` currently fails, use `pnpm storybook` to view the stories for the time being.
 - `pnpm storybook` may log warnings or non-breaking errors for Nuxt modules due to the lack of mocks. If the UI renders correctly, these can be safely ignored.
+- Do not `import type` from `.vue` files. The `vue-docgen-api` parser used by `@storybook/addon-docs` cannot follow type imports across SFCs and will crash. Extract shared types into a separate `.ts` file instead.
 
 ## Submitting changes
 
