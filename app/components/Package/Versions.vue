@@ -614,7 +614,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                 class="text-sm after:absolute after:inset-0 after:content-['']"
                 :class="
                   row.primaryVersion.deprecated
-                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
+                    ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                     : undefined
                 "
                 :title="
@@ -683,7 +683,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                 class="text-xs after:absolute after:inset-0 after:content-['']"
                 :class="
                   v.deprecated
-                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
+                    ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                     : undefined
                 "
                 :title="
@@ -795,7 +795,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                 class="text-xs after:absolute after:inset-0 after:content-['']"
                 :class="
                   row.primaryVersion.deprecated
-                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
+                    ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                     : undefined
                 "
                 :title="
@@ -882,7 +882,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       class="text-xs after:absolute after:inset-0 after:content-['']"
                       :class="
                         group.versions[0]?.deprecated
-                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
+                          ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                           : undefined
                       "
                       :title="
@@ -949,7 +949,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       class="text-xs ms-6 after:absolute after:inset-0 after:content-['']"
                       :class="
                         group.versions[0]?.deprecated
-                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
+                          ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                           : undefined
                       "
                       :title="
@@ -1021,7 +1021,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       class="text-xs after:absolute after:inset-0 after:content-['']"
                       :class="
                         v.deprecated
-                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
+                          ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                           : undefined
                       "
                       :title="

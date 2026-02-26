@@ -101,7 +101,7 @@ describe('PackageVersions', () => {
       expect(versionLinks[0]?.text()).toBe('1.0.0')
     })
 
-    it('highlights the current version row when currentVersion prop matches', async () => {
+    it('highlights the current version row when selectedVersion prop matches', async () => {
       const component = await mountSuspended(PackageVersions, {
         props: {
           packageName: 'test-package',
@@ -114,11 +114,13 @@ describe('PackageVersions', () => {
             '2.0.0': '2024-01-15T12:00:00.000Z',
             '1.0.0': '2024-01-01T12:00:00.000Z',
           },
-          currentVersion: '1.0.0',
+          selectedVersion: '1.0.0',
         },
       })
 
-      const highlightedRows = component.findAll('.bg-bg-subtle')
+      // Find the version row divs that are direct children of the tag row containers
+      const versionRows = component.findAll('[class*="group/version-row"]')
+      const highlightedRows = versionRows.filter(row => row.classes().includes('bg-bg-subtle'))
       expect(highlightedRows.length).toBe(1)
       expect(highlightedRows[0]!.text()).toContain('1.0.0')
     })
@@ -136,7 +138,7 @@ describe('PackageVersions', () => {
             '2.0.0': '2024-01-15T12:00:00.000Z',
             '1.0.0': '2024-01-01T12:00:00.000Z',
           },
-          currentVersion: '1.0.0',
+          selectedVersion: '1.0.0',
         },
       })
 
