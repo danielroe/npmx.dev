@@ -339,13 +339,20 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
 //
 // External images are proxied through /api/registry/image-proxy to prevent
 // third-party servers from collecting visitor IP addresses and User-Agent data.
+// Proxy URLs are HMAC-signed to prevent open proxy abuse.
 // See: https://github.com/npmx-dev/npmx.dev/issues/1138
 function resolveImageUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
+  // Skip already-proxied URLs (from a previous resolveImageUrl call in the
+  // marked renderer — sanitizeHtml transformTags may call this again)
+  if (url.startsWith('/api/registry/image-proxy')) {
+    return url
+  }
   const resolved = resolveUrl(url, packageName, repoInfo)
   const rawUrl = repoInfo?.provider
     ? convertBlobOrFileToRawUrl(resolved, repoInfo.provider)
     : resolved
-  return toProxiedImageUrl(rawUrl)
+  const { imageProxySecret } = useRuntimeConfig()
+  return toProxiedImageUrl(rawUrl, imageProxySecret)
 }
 
 // Helper to prefix id attributes with 'user-content-'

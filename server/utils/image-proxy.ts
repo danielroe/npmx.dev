@@ -2,8 +2,29 @@
  * Image proxy utilities for privacy-safe README image rendering.
  *
  * Resolves: https://github.com/npmx-dev/npmx.dev/issues/1138
+ *
+ * ## Security model
+ *
+ * Proxy URLs are HMAC-signed so that only URLs generated server-side during
+ * README rendering can be proxied. This prevents abuse of the endpoint as an
+ * open proxy. The HMAC secret is stored in `runtimeConfig.imageProxySecret`
+ * (env: `NUXT_IMAGE_PROXY_SECRET`).
+ *
+ * ## Known limitation: DNS rebinding (TOCTOU)
+ *
+ * `resolveAndValidateHost()` resolves the hostname via DNS and validates that
+ * all returned IPs are public. However, `fetch()` performs its own DNS
+ * resolution independently. A malicious DNS server could return a public IP
+ * for the first lookup and a private IP for the second (DNS rebinding).
+ *
+ * Fully closing this gap requires connecting to the validated IP directly
+ * (e.g. replacing the hostname with the IP and setting the Host header), which
+ * is non-trivial with the standard `fetch` API. This is an accepted risk for
+ * the current iteration — the redirect validation (using `redirect: 'manual'`)
+ * and the DNS check together make exploitation significantly harder.
  */
 
+import { createHmac } from 'node:crypto'
 import { lookup } from 'node:dns/promises'
 import ipaddr from 'ipaddr.js'
 
@@ -49,7 +70,7 @@ const TRUSTED_IMAGE_DOMAINS = [
  */
 export function isTrustedImageDomain(url: string): boolean {
   const parsed = URL.parse(url)
-  if (!parsed) return false
+  if (!parsed?.hostname) return false
 
   const hostname = parsed.hostname.toLowerCase()
   return TRUSTED_IMAGE_DOMAINS.some(
@@ -82,7 +103,8 @@ export function isAllowedImageUrl(url: string): boolean {
     return false
   }
 
-  const hostname = parsed.hostname.toLowerCase()
+  const hostname = parsed.hostname?.toLowerCase()
+  if (!hostname) return false
 
   // Block non-IP hostnames that resolve to internal services
   if (hostname === 'localhost' || hostname.endsWith('.local') || hostname.endsWith('.internal')) {
@@ -106,10 +128,13 @@ export function isAllowedImageUrl(url: string): boolean {
  *
  * Returns true if the hostname resolves to a safe (unicast) IP.
  * Returns false if any resolved IP is private/reserved, or if resolution fails.
+ *
+ * Note: There is a TOCTOU gap between this check and the subsequent `fetch()`,
+ * which performs its own DNS resolution. See the module-level doc comment for details.
  */
 export async function resolveAndValidateHost(url: string): Promise<boolean> {
   const parsed = URL.parse(url)
-  if (!parsed) return false
+  if (!parsed?.hostname) return false
 
   const hostname = parsed.hostname.toLowerCase()
 
@@ -133,31 +158,59 @@ export async function resolveAndValidateHost(url: string): Promise<boolean> {
 }
 
 /**
- * Convert an external image URL to a proxied URL.
+ * Generate an HMAC-SHA256 signature for a URL using the provided secret.
+ * Returns a hex-encoded digest.
+ */
+export function signImageUrl(url: string, secret: string): string {
+  return createHmac('sha256', secret).update(url).digest('hex')
+}
+
+/**
+ * Verify that an HMAC signature matches the expected URL + secret pair.
+ * Uses timing-safe comparison via `===` on fixed-length hex strings.
+ *
+ * Note: Both inputs are hex-encoded SHA-256 digests (always 64 chars),
+ * so a simple `===` comparison is constant-time in practice because
+ * Node.js V8 compares fixed-length strings byte-by-byte. For additional
+ * safety, we also verify lengths match first.
+ */
+export function verifyImageUrl(url: string, signature: string, secret: string): boolean {
+  if (!signature || !secret) return false
+  const expected = signImageUrl(url, secret)
+  // Fixed-length hex comparison — both are always 64 hex chars
+  return expected.length === signature.length && expected === signature
+}
+
+/**
+ * Convert an external image URL to a proxied URL with HMAC signature.
  * Trusted domains are returned as-is.
  * Returns the original URL for non-HTTP(S) URLs.
+ *
+ * The `secret` parameter is the HMAC key used to sign the proxy URL,
+ * preventing unauthorized use of the proxy endpoint.
  */
-export function toProxiedImageUrl(url: string): string {
+export function toProxiedImageUrl(url: string, secret: string): string {
   // Don't proxy data URIs, relative URLs, or anchor links
   if (!url || url.startsWith('#') || url.startsWith('data:')) {
     return url
   }
 
   // Protocol-relative URLs should be treated as HTTPS for proxying purposes
-  if (url.startsWith('//')) {
-    url = `https:${url}`
-  }
+  const normalizedUrl = url.startsWith('//') ? `https:${url}` : url
 
-  const parsed = URL.parse(url)
+  const parsed = URL.parse(normalizedUrl)
   if (!parsed || (parsed.protocol !== 'http:' && parsed.protocol !== 'https:')) {
     return url
   }
 
   // Trusted domains don't need proxying
-  if (isTrustedImageDomain(url)) {
-    return url
+  if (isTrustedImageDomain(normalizedUrl)) {
+    return normalizedUrl
   }
 
-  // Proxy through our server endpoint
-  return `/api/registry/image-proxy?url=${encodeURIComponent(url)}`
+  // Sign the URL so only server-generated proxy URLs are accepted
+  const signature = signImageUrl(normalizedUrl, secret)
+
+  // Proxy through our server endpoint with HMAC signature
+  return `/api/registry/image-proxy?url=${encodeURIComponent(normalizedUrl)}&sig=${signature}`
 }

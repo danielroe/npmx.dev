@@ -4,7 +4,11 @@ import {
   isAllowedImageUrl,
   toProxiedImageUrl,
   resolveAndValidateHost,
+  signImageUrl,
+  verifyImageUrl,
 } from '../../../../server/utils/image-proxy'
+
+const TEST_SECRET = 'test-secret-key-for-unit-tests'
 
 describe('Image Proxy Utils', () => {
   describe('isTrustedImageDomain', () => {
@@ -157,55 +161,123 @@ describe('Image Proxy Utils', () => {
     })
   })
 
+  describe('signImageUrl / verifyImageUrl', () => {
+    it('produces a consistent hex signature for the same URL and secret', () => {
+      const sig1 = signImageUrl('https://example.com/img.png', TEST_SECRET)
+      const sig2 = signImageUrl('https://example.com/img.png', TEST_SECRET)
+      expect(sig1).toBe(sig2)
+      expect(sig1).toMatch(/^[0-9a-f]{64}$/) // SHA-256 hex = 64 chars
+    })
+
+    it('produces different signatures for different URLs', () => {
+      const sig1 = signImageUrl('https://example.com/a.png', TEST_SECRET)
+      const sig2 = signImageUrl('https://example.com/b.png', TEST_SECRET)
+      expect(sig1).not.toBe(sig2)
+    })
+
+    it('produces different signatures for different secrets', () => {
+      const sig1 = signImageUrl('https://example.com/img.png', 'secret-a')
+      const sig2 = signImageUrl('https://example.com/img.png', 'secret-b')
+      expect(sig1).not.toBe(sig2)
+    })
+
+    it('verifies a valid signature', () => {
+      const url = 'https://example.com/img.png'
+      const sig = signImageUrl(url, TEST_SECRET)
+      expect(verifyImageUrl(url, sig, TEST_SECRET)).toBe(true)
+    })
+
+    it('rejects an invalid signature', () => {
+      const url = 'https://example.com/img.png'
+      expect(verifyImageUrl(url, 'bad-signature', TEST_SECRET)).toBe(false)
+    })
+
+    it('rejects a signature from a different secret', () => {
+      const url = 'https://example.com/img.png'
+      const sig = signImageUrl(url, 'other-secret')
+      expect(verifyImageUrl(url, sig, TEST_SECRET)).toBe(false)
+    })
+
+    it('rejects empty signature', () => {
+      expect(verifyImageUrl('https://example.com/img.png', '', TEST_SECRET)).toBe(false)
+    })
+
+    it('rejects empty secret', () => {
+      const sig = signImageUrl('https://example.com/img.png', TEST_SECRET)
+      expect(verifyImageUrl('https://example.com/img.png', sig, '')).toBe(false)
+    })
+  })
+
   describe('toProxiedImageUrl', () => {
     it('returns trusted URLs as-is', () => {
       const url = 'https://raw.githubusercontent.com/owner/repo/main/image.png'
-      expect(toProxiedImageUrl(url)).toBe(url)
+      expect(toProxiedImageUrl(url, TEST_SECRET)).toBe(url)
     })
 
-    it('proxies untrusted external URLs', () => {
+    it('proxies untrusted external URLs with HMAC signature', () => {
       const url = 'https://evil-tracker.com/pixel.gif'
-      expect(toProxiedImageUrl(url)).toBe(
-        `/api/registry/image-proxy?url=${encodeURIComponent(url)}`,
-      )
+      const result = toProxiedImageUrl(url, TEST_SECRET)
+      const sig = signImageUrl(url, TEST_SECRET)
+      expect(result).toBe(`/api/registry/image-proxy?url=${encodeURIComponent(url)}&sig=${sig}`)
     })
 
-    it('proxies unknown third-party image hosts', () => {
+    it('proxies unknown third-party image hosts with HMAC signature', () => {
       const url = 'https://some-random-site.com/tracking-pixel.png'
-      expect(toProxiedImageUrl(url)).toBe(
-        `/api/registry/image-proxy?url=${encodeURIComponent(url)}`,
-      )
+      const result = toProxiedImageUrl(url, TEST_SECRET)
+      expect(result).toContain('/api/registry/image-proxy?url=')
+      expect(result).toContain('&sig=')
+    })
+
+    it('generates verifiable signatures in proxy URLs', () => {
+      const url = 'https://evil-tracker.com/pixel.gif'
+      const result = toProxiedImageUrl(url, TEST_SECRET)
+      const sigMatch = result.match(/&sig=([0-9a-f]+)$/)
+      expect(sigMatch).not.toBeNull()
+      expect(verifyImageUrl(url, sigMatch![1]!, TEST_SECRET)).toBe(true)
     })
 
     it('does not proxy shields.io badges', () => {
       const url = 'https://img.shields.io/badge/build-passing-green'
-      expect(toProxiedImageUrl(url)).toBe(url)
+      expect(toProxiedImageUrl(url, TEST_SECRET)).toBe(url)
     })
 
     it('does not proxy jsdelivr CDN images', () => {
       const url = 'https://cdn.jsdelivr.net/npm/pkg/logo.png'
-      expect(toProxiedImageUrl(url)).toBe(url)
+      expect(toProxiedImageUrl(url, TEST_SECRET)).toBe(url)
     })
 
     it('returns empty string for empty input', () => {
-      expect(toProxiedImageUrl('')).toBe('')
+      expect(toProxiedImageUrl('', TEST_SECRET)).toBe('')
     })
 
     it('returns anchor links as-is', () => {
-      expect(toProxiedImageUrl('#section')).toBe('#section')
+      expect(toProxiedImageUrl('#section', TEST_SECRET)).toBe('#section')
     })
 
     it('returns data URIs as-is', () => {
-      expect(toProxiedImageUrl('data:image/png;base64,abc')).toBe('data:image/png;base64,abc')
+      expect(toProxiedImageUrl('data:image/png;base64,abc', TEST_SECRET)).toBe(
+        'data:image/png;base64,abc',
+      )
     })
 
     it('returns relative URLs as-is', () => {
-      expect(toProxiedImageUrl('./images/logo.png')).toBe('./images/logo.png')
+      expect(toProxiedImageUrl('./images/logo.png', TEST_SECRET)).toBe('./images/logo.png')
     })
 
     it('does not proxy GitHub blob URLs', () => {
       const url = 'https://github.com/owner/repo/blob/main/assets/logo.png'
-      expect(toProxiedImageUrl(url)).toBe(url)
+      expect(toProxiedImageUrl(url, TEST_SECRET)).toBe(url)
+    })
+
+    it('normalizes protocol-relative URLs to HTTPS', () => {
+      const result = toProxiedImageUrl('//evil-tracker.com/pixel.gif', TEST_SECRET)
+      expect(result).toContain(encodeURIComponent('https://evil-tracker.com/pixel.gif'))
+      expect(result).toContain('&sig=')
+    })
+
+    it('returns trusted protocol-relative URLs normalized to HTTPS', () => {
+      const result = toProxiedImageUrl('//img.shields.io/badge/test', TEST_SECRET)
+      expect(result).toBe('https://img.shields.io/badge/test')
     })
   })
 })
