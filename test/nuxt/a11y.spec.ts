@@ -58,6 +58,11 @@ const allowedWarnings: RegExp[] = [
   // vue-i18n logs this when <i18n-t> is used outside a component-scoped i18n;
   // it falls back to the global scope and still renders correctly.
   /\[intlify\] Not found parent scope/,
+  // mountSuspended wraps each component instance and calls expose() after
+  // setup. For recursive components (e.g. DiffFileTree rendering child
+  // DiffFileTree instances), this triggers a duplicate expose() call on the
+  // inner wrapper. The warning does not affect test correctness.
+  /expose\(\) should be called only once/,
 ]
 
 beforeEach(() => {
