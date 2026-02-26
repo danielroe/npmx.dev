@@ -28,7 +28,6 @@ const fromVersion = computed(() => versionRange.value?.from ?? '')
 const toVersion = computed(() => versionRange.value?.to ?? '')
 
 const router = useRouter()
-const initializedFromQuery = ref(false)
 const { data: pkg } = usePackage(packageName)
 
 const { data: compare, status: compareStatus } = useFetch<CompareResponse>(
@@ -39,7 +38,7 @@ const { data: compare, status: compareStatus } = useFetch<CompareResponse>(
   },
 )
 
-const selectedFile = ref<FileChange | null>(null)
+const manualSelection = ref<FileChange | null>(null)
 const fileFilter = ref<'all' | 'added' | 'removed' | 'modified'>('all')
 const mobileDrawerOpen = ref(false)
 
@@ -52,17 +51,19 @@ const allChanges = computed(() => {
   ].sort((a, b) => a.path.localeCompare(b.path))
 })
 
-const selectedFromQuery = computed(() => {
-  const filePath = route.query.file
-  if (!filePath || !compare.value) return null
-  return allChanges.value.find(f => f.path === filePath) ?? null
-})
-
-// Sync selection with ?file= query for shareable links (SSR + client)
-watchEffect(() => {
-  if (initializedFromQuery.value || !selectedFromQuery.value) return
-  selectedFile.value = selectedFromQuery.value
-  initializedFromQuery.value = true
+// Derive selected file: manual selection takes priority, then ?file= query param.
+// Using a computed ensures the query-param file is resolved during SSR without
+// needing a watcher (which may not re-run before SSR rendering completes).
+const selectedFile = computed<FileChange | null>({
+  get: () => {
+    if (manualSelection.value) return manualSelection.value
+    const filePath = route.query.file
+    if (!filePath || !compare.value) return null
+    return allChanges.value.find(f => f.path === filePath) ?? null
+  },
+  set: file => {
+    manualSelection.value = file
+  },
 })
 
 if (import.meta.client) {
