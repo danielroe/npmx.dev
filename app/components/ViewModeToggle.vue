@@ -12,8 +12,12 @@ const viewMode = defineModel<ViewMode>({ default: 'cards' })
   >
     <button
       type="button"
-      class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-      :class="viewMode === 'cards' ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:text-fg'"
+      class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-sm border transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+      :class="
+        viewMode === 'cards'
+          ? 'bg-fg-subtle text-bg border-fg'
+          : 'text-fg-muted hover:text-fg border-transparent'
+      "
       :aria-pressed="viewMode === 'cards'"
       :aria-label="$t('filters.view_mode.cards')"
       @click="viewMode = 'cards'"
@@ -23,8 +27,12 @@ const viewMode = defineModel<ViewMode>({ default: 'cards' })
     </button>
     <button
       type="button"
-      class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-      :class="viewMode === 'table' ? 'bg-bg-muted text-fg' : 'text-fg-muted hover:text-fg'"
+      class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-sm border transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+      :class="
+        viewMode === 'table'
+          ? 'bg-fg-subtle text-bg border-fg'
+          : 'text-fg-muted hover:text-fg border-transparent'
+      "
       :aria-pressed="viewMode === 'table'"
       :aria-label="$t('filters.view_mode.table')"
       @click="viewMode = 'table'"
