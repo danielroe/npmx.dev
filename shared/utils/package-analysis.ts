@@ -219,12 +219,19 @@ export function getCreateShortName(createPackageName: string): string {
   return createPackageName
 }
 
+function hasImplicitTypesInFiles(files: Set<string>): boolean {
+  return Array.from(files).some(
+    p => p.endsWith('.d.ts') || p.endsWith('.d.mts') || p.endsWith('.d.cts'),
+  )
+}
+
 /**
  * Detect TypeScript types status for a package
  */
 export function detectTypesStatus(
   pkg: ExtendedPackageJson,
   typesPackageInfo?: TypesPackageInfo,
+  files?: Set<string>,
 ): TypesStatus {
   // Check for built-in types
   if (pkg.types || pkg.typings) {
@@ -237,6 +244,12 @@ export function detectTypesStatus(
     if (exportInfo.hasTypes) {
       return { kind: 'included' }
     }
+  }
+
+  // Check for implicit types (e.g. .d.mts next to .mjs, TypeScript automatic lookup)
+  // Collect paths from exports/main/module and check if declaration files exist
+  if (files && hasImplicitTypesInFiles(files)) {
+    return { kind: 'included' }
   }
 
   // Check for @types package
@@ -289,6 +302,8 @@ export function getTypesPackageName(packageName: string): string {
 export interface AnalyzePackageOptions {
   typesPackage?: TypesPackageInfo
   createPackage?: CreatePackageInfo
+  /** Flattened package file paths for implicit types detection (e.g. .d.mts next to .mjs) */
+  files?: Set<string>
 }
 
 /**
@@ -299,8 +314,7 @@ export function analyzePackage(
   options?: AnalyzePackageOptions,
 ): PackageAnalysis {
   const moduleFormat = detectModuleFormat(pkg)
-
-  const types = detectTypesStatus(pkg, options?.typesPackage)
+  const types = detectTypesStatus(pkg, options?.typesPackage, options?.files)
 
   return {
     moduleFormat,

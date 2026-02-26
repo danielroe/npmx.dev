@@ -166,6 +166,64 @@ describe('detectTypesStatus', () => {
   it('returns none when no types detected', () => {
     expect(detectTypesStatus({})).toEqual({ kind: 'none' })
   })
+
+  it('detects included types when declaration file exists in files', () => {
+    expect(
+      detectTypesStatus(
+        { type: 'module', exports: { '.': './dist/index.mjs' } },
+        undefined,
+        new Set(['dist/index.mjs', 'dist/index.d.mts']),
+      ),
+    ).toEqual({ kind: 'included' })
+  })
+})
+
+describe('detectTypesStatus implicit types (path derivation)', () => {
+  it('derives .d.mts from .mjs in exports', () => {
+    expect(
+      detectTypesStatus(
+        { type: 'module', exports: { '.': './dist/index.mjs' } },
+        undefined,
+        new Set(['dist/index.d.mts']),
+      ),
+    ).toEqual({ kind: 'included' })
+  })
+
+  it('derives .d.cts from .cjs in exports', () => {
+    expect(
+      detectTypesStatus(
+        { exports: { '.': { require: './dist/index.cjs' } } },
+        undefined,
+        new Set(['dist/index.d.cts']),
+      ),
+    ).toEqual({ kind: 'included' })
+  })
+
+  it('derives .d.mts from main when type is module', () => {
+    expect(
+      detectTypesStatus(
+        { type: 'module', main: 'dist/index.mjs' },
+        undefined,
+        new Set(['dist/index.d.mts']),
+      ),
+    ).toEqual({ kind: 'included' })
+  })
+})
+
+describe('analyzePackage with files (implicit types)', () => {
+  it('detects included types when declaration file exists in files', () => {
+    const pkg = { type: 'module' as const, exports: { '.': './dist/index.mjs' } }
+    const files = new Set(['dist/index.mjs', 'dist/index.d.mts'])
+    const result = analyzePackage(pkg, { files })
+    expect(result.types).toEqual({ kind: 'included' })
+  })
+
+  it('returns none when declaration file does not exist in files', () => {
+    const pkg = { type: 'module' as const, exports: { '.': './dist/index.mjs' } }
+    const files = new Set(['dist/index.mjs'])
+    const result = analyzePackage(pkg, { files })
+    expect(result.types).toEqual({ kind: 'none' })
+  })
 })
 
 describe('getTypesPackageName', () => {
