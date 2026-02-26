@@ -267,7 +267,7 @@ const sparklineSrc = computed(() => {
           <span>{{ formattedStars }}</span>
         </span>
 
-        <div v-if="pkg?.license" class="flex items-center gap-2" data-testid="license">
+        <div v-if="pkg?.license && !pkg.license.includes(' ')" class="flex items-center gap-2" data-testid="license">
           <div class="i-lucide:scale w-8 h-8 text-fg-subtle flex-shrink-0 self-center" />
           <span>{{ pkg.license }}</span>
         </div>
