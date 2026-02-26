@@ -3,32 +3,13 @@ import { PackageFileDiffQuerySchema } from '#shared/schemas/package'
 import type { FileDiffResponse, DiffHunk } from '#shared/types'
 import { CACHE_MAX_AGE_ONE_YEAR } from '#shared/utils/constants'
 import { createDiff, insertSkipBlocks, countDiffStats } from '#server/utils/diff'
+import { parseVersionRange } from '#server/utils/compare'
 
 const CACHE_VERSION = 1
 const DIFF_TIMEOUT = 15000 // 15 sec
 
 /** Maximum file size for diffing (250KB - smaller than viewing since we diff two files) */
 const MAX_DIFF_FILE_SIZE = 250 * 1024
-
-/**
- * Parse the version range from the URL.
- * Supports formats like: "1.0.0...2.0.0" or "1.0.0..2.0.0"
- */
-function parseVersionRange(versionRange: string): { from: string; to: string } | null {
-  // Try triple dot first (GitHub style)
-  let parts = versionRange.split('...')
-  if (parts.length === 2) {
-    return { from: parts[0]!, to: parts[1]! }
-  }
-
-  // Try double dot
-  parts = versionRange.split('..')
-  if (parts.length === 2) {
-    return { from: parts[0]!, to: parts[1]! }
-  }
-
-  return null
-}
 
 /**
  * Fetch file content from jsDelivr with size check
@@ -241,7 +222,13 @@ export default defineCachedEventHandler(
     getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       const query = getQuery(event)
-      const optionsKey = `${query.mergeModifiedLines}:${query.maxChangeRatio}:${query.maxDiffDistance}:${query.inlineMaxCharEdits}`
+      // Normalize option values to prevent cache pollution from arbitrary floats.
+      // These match the parsing logic used in the handler body.
+      const merge = query.mergeModifiedLines !== 'false'
+      const ratio = Math.round((parseFloat(query.maxChangeRatio as string) || 0.45) * 100)
+      const distance = parseInt(query.maxDiffDistance as string, 10) || 30
+      const charEdits = parseInt(query.inlineMaxCharEdits as string, 10) || 2
+      const optionsKey = `${merge}:${ratio}:${distance}:${charEdits}`
       return `compare-file:v${CACHE_VERSION}:${pkg.replace(/\/+$/, '').trim()}:${optionsKey}`
     },
   },

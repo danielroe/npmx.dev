@@ -2,7 +2,7 @@ import * as v from 'valibot'
 import { PackageCompareQuerySchema } from '#shared/schemas/package'
 import type { CompareResponse } from '#shared/types'
 import { CACHE_MAX_AGE_ONE_YEAR } from '#shared/utils/constants'
-import { buildCompareResponse } from '#server/utils/compare'
+import { buildCompareResponse, parseVersionRange } from '#server/utils/compare'
 
 const CACHE_VERSION = 1
 const COMPARE_TIMEOUT = 8000 // 8 seconds
@@ -23,26 +23,6 @@ async function fetchPackageJson(
   } catch {
     return null
   }
-}
-
-/**
- * Parse the version range from the URL.
- * Supports formats like: "1.0.0...2.0.0" or "1.0.0..2.0.0"
- */
-function parseVersionRange(versionRange: string): { from: string; to: string } | null {
-  // Try triple dot first (GitHub style)
-  let parts = versionRange.split('...')
-  if (parts.length === 2) {
-    return { from: parts[0]!, to: parts[1]! }
-  }
-
-  // Try double dot
-  parts = versionRange.split('..')
-  if (parts.length === 2) {
-    return { from: parts[0]!, to: parts[1]! }
-  }
-
-  return null
 }
 
 /**

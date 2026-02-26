@@ -374,6 +374,17 @@ export function countDiffStats(hunks: (DiffHunk | DiffSkipBlock)[]): {
       for (const line of hunk.lines) {
         if (line.type === 'insert') additions++
         else if (line.type === 'delete') deletions++
+        else if (line.type === 'normal') {
+          // Merged modified lines have type 'normal' but contain inline
+          // insert/delete segments. Count them as both an addition and deletion.
+          const hasInlineChanges = line.content.some(
+            seg => seg.type === 'insert' || seg.type === 'delete',
+          )
+          if (hasInlineChanges) {
+            additions++
+            deletions++
+          }
+        }
       }
     }
   }

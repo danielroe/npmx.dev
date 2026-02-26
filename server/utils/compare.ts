@@ -1,6 +1,19 @@
 import { diff as semverDiff } from 'semver'
 import type { PackageFileTree, DependencyChange, FileChange, CompareResponse } from '#shared/types'
 
+/**
+ * Parse a version range from a URL segment.
+ * Supports formats like: "1.0.0...2.0.0" (triple dot, GitHub style)
+ */
+export function parseVersionRange(versionRange: string): { from: string; to: string } | null {
+  const parts = versionRange.split('...')
+  if (parts.length === 2) {
+    return { from: parts[0]!, to: parts[1]! }
+  }
+
+  return null
+}
+
 /** Maximum number of files to include in comparison */
 const MAX_FILES_COMPARE = 1000
 

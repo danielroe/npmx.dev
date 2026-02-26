@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FileDiffResponse, FileChange, DiffHunk } from '#shared/types'
 import { createDiff, insertSkipBlocks, countDiffStats } from '#shared/utils/diff'
+import { onClickOutside } from '@vueuse/core'
 import { motion } from 'motion-v'
 
 const props = defineProps<{
@@ -16,6 +17,10 @@ const maxDiffDistance = ref(30)
 const inlineMaxCharEdits = ref(2)
 const wordWrap = ref(false)
 const showOptions = ref(false)
+const optionsDropdownRef = useTemplateRef('optionsDropdownRef')
+onClickOutside(optionsDropdownRef, () => {
+  showOptions.value = false
+})
 const loading = ref(true)
 const loadError = ref<Error | null>(null)
 const diff = ref<FileDiffResponse | null>(null)
@@ -192,8 +197,8 @@ function getStepMarks(min: number, max: number, step: number): number[] {
   return marks
 }
 
-const changeRatioMarks = computed(() => getStepMarks(0, 1, 0.01))
-const diffDistanceMarks = computed(() => getStepMarks(1, 60, 1))
+const changeRatioMarks = computed(() => getStepMarks(0, 1, 0.1))
+const diffDistanceMarks = computed(() => getStepMarks(1, 60, 10))
 const charEditMarks = computed(() => [] as number[]) // no dots for char edits slider
 const changeRatioPercent = computed(() => calcPercent(maxChangeRatio.value, 0, 1))
 const diffDistancePercent = computed(() => calcPercent(maxDiffDistance.value, 1, 60))
@@ -260,7 +265,7 @@ function getCodeUrl(version: string): string {
 
       <div class="flex items-center gap-2 shrink-0">
         <!-- Options dropdown -->
-        <div class="relative">
+        <div ref="optionsDropdownRef" class="relative">
           <button
             type="button"
             class="px-2 py-1 text-xs text-fg-muted hover:text-fg bg-bg-muted border border-border rounded transition-colors flex items-center gap-1.5"
@@ -278,7 +283,7 @@ function getCodeUrl(version: string): string {
           <!-- Dropdown menu -->
           <motion.div
             v-if="showOptions"
-            class="absolute right-0 top-full mt-2 z-20 p-4 bg-bg-elevated border border-border shadow-2xl overflow-auto"
+            class="absolute inset-ie-0 top-full mt-2 z-20 p-4 bg-bg-elevated border border-border shadow-2xl overflow-auto"
             :style="{
               width: mergeModifiedLines
                 ? 'min(420px, calc(100vw - 24px))'
