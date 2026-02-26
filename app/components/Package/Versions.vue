@@ -1010,9 +1010,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                   v-for="v in group.versions.slice(1)"
                   :key="v.version"
                   class="py-1 relative group/version-row hover:bg-bg-elevated/20 focus-within:bg-bg-elevated/20 transition-colors duration-200"
-                  :class="
-                    v.version === effectiveCurrentVersion ? 'bg-bg-elevated/20 rounded' : ''
-                  "
+                  :class="v.version === effectiveCurrentVersion ? 'bg-bg-elevated/20 rounded' : ''"
                 >
                   <div class="flex items-center justify-between gap-2">
                     <LinkBase
