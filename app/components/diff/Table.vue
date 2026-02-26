@@ -17,7 +17,7 @@ provide('diffContext', {
 
 <template>
   <table
-    class="diff-table font-mono text-sm w-full m-0 border-separate border-0 outline-none overflow-x-auto border-spacing-0"
+    class="diff-table shiki font-mono text-sm w-full m-0 border-separate border-0 outline-none overflow-x-auto border-spacing-0"
   >
     <tbody class="w-full box-border">
       <template v-for="(hunk, index) in hunks" :key="index">
