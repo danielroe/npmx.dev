@@ -540,14 +540,14 @@ export async function copyAltTextForTrendLineChart({
 export function createAltTextForVersionsBarChart({
   dataset,
   config,
-}: AltCopyArgs<VersionsBarDataset>) {
+}: AltCopyArgs<VersionsBarDataset, VersionsBarConfig>) {
   if (!dataset) return ''
 
   const series = dataset.bars[0]?.series
   const versions = series?.map((value, i) => ({
     name: config.datapointLabels[i] ?? '-',
     rawDownloads: value ?? 0,
-    downloads: config.numberFormatter(value),
+    downloads: config.numberFormatter(value ?? 0),
   }))
 
   const versionWithMaxDownloads = versions?.reduce((max, current) => {
