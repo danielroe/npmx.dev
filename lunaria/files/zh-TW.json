@@ -381,7 +381,7 @@
         "trend_undefined": "未定義（數據不足）",
         "button_label": "複製替代文字",
         "watermark": "底部附有「./npmx a fast, modern browser for the npm registry」浮水印",
-        "analysis": "{package_name} 的起始數值為 {start_value}，到 {end_value} 為止，呈現 {trend} 趨勢，平均每個時間間隔的增減率為 {downloads_slope} 次下載",
+        "analysis": "{package_name} 的起始數值為 {start_value}，到 {end_value} 為止， 呈現 {trend} 趨勢，平均每個時間間隔的增減率為 {downloads_slope} 次下載",
         "estimation": "最終數值是根據當前週期的部分數據所做的預估值。",
         "estimations": "最終數值是根據當前週期的部分數據所做的預估值。",
         "compare": "套件下載量比較折線圖：{package_name}。",
@@ -644,7 +644,7 @@
       "invalid_name": "無效的套件名稱：",
       "available": "這個名稱可用！",
       "taken": "這個名稱已被佔用。",
-      "missing_permission": "你沒有權限將套件加入 {'@'}{scope}。",
+      "missing_permission": "您沒有權限將套件加入 {'@'}{scope}。",
       "similar_warning": "存在相似套件 — npm 可能會拒絕這個名稱：",
       "related": "相關套件：",
       "scope_warning_title": "考慮改用具命名範圍的套件",
@@ -1153,7 +1153,7 @@
     },
     "contact": {
       "title": "意見回饋",
-      "p1": "如果你在 {app} 遇到無障礙障礙，請在我們的 {link} 提交 Issue 告知我們。我們非常重視這些報告，並會盡力解決問題。",
+      "p1": "如果您在 {app} 遇到無障礙障礙，請在我們的 {link} 提交 Issue 告知我們。我們非常重視這些報告，並會盡力解決問題。",
       "link": "GitHub 儲存庫"
     }
   }
