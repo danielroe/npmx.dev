@@ -148,25 +148,25 @@
     "node": "24"
   },
   "simple-git-hooks": {
-    "pre-commit": "./node_modules/.bin/lint-staged"
+    "pre-commit": "pnpm lint-staged"
   },
   "lint-staged": {
     "i18n/locales/*": [
       "node ./lunaria/lunaria.ts",
-      "./node_modules/.bin/oxfmt lunaria/files/",
+      "pnpm oxfmt lunaria/files/",
       "git add lunaria/files/",
       "node scripts/generate-i18n-schema.ts",
-      "./node_modules/.bin/oxfmt i18n/schema.json",
+      "pnpm oxfmt i18n/schema.json",
       "git add i18n/schema.json"
     ],
     "*.{js,ts,mjs,cjs,vue}": [
-      "./node_modules/.bin/oxlint --fix"
+      "pnpm oxlint --fix"
     ],
     "*.vue": [
-      "node scripts/unocss-checker.ts"
+      "pnpm lint:css"
     ],
     "*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
-      "./node_modules/.bin/oxfmt"
+      "pnpm oxfmt"
     ]
   },
   "packageManager": "pnpm@10.30.1"
