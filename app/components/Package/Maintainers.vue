@@ -189,7 +189,7 @@ watch(
               name: '~username',
               params: { username: maintainer.name },
             }"
-            class="link-subtle font-mono text-sm shrink-0"
+            class="link-subtle text-sm shrink-0"
             dir="ltr"
           >
             ~{{ maintainer.name }}
@@ -228,7 +228,7 @@ watch(
           "
           @click="handleRemoveOwner(maintainer.name)"
         >
-          <span class="i-carbon-close w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-lucide:x w-3.5 h-3.5" aria-hidden="true" />
         </ButtonBase>
       </li>
     </ul>
@@ -254,14 +254,15 @@ watch(
           <label for="add-owner-username" class="sr-only">{{
             $t('package.maintainers.username_to_add')
           }}</label>
-          <input
+          <InputBase
             id="add-owner-username"
             v-model="newOwnerUsername"
             type="text"
             name="add-owner-username"
             :placeholder="$t('package.maintainers.username_placeholder')"
-            v-bind="noCorrect"
-            class="flex-1 px-2 py-1 font-mono text-sm bg-bg-subtle border border-border rounded text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-accent/70"
+            no-correct
+            class="flex-1 min-w-25 m-1"
+            size="small"
           />
           <ButtonBase type="submit" :disabled="!newOwnerUsername.trim() || isAdding">
             {{ isAdding ? '…' : $t('package.maintainers.add_button') }}
@@ -269,7 +270,7 @@ watch(
           <ButtonBase
             :aria-label="$t('package.maintainers.cancel_add')"
             @click="showAddOwner = false"
-            classicon="i-carbon-close"
+            classicon="i-lucide:x"
           />
         </form>
       </div>

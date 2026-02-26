@@ -209,13 +209,29 @@ const logSection = (
 }
 
 const processLocale = async (
+  singleLocale: boolean,
   localeFile: string,
   referenceContent: NestedObject,
   fix = false,
 ): Promise<SyncStats> => {
   const filePath = join(LOCALES_DIRECTORY, localeFile)
   const localeInfo = checkJsonName(filePath)
+
+  // prevent updating wrong locale file:
+  // - language locale files at countries allowed: e.g. es.json
+  // - country locale file forbidden: e.g. es-ES.json
+  // - target locale file forbidden: e.g. es-419.json
+  if (fix && localeInfo.mergeLocale && singleLocale) {
+    console.error(
+      `${COLORS.red}Error: Locale "${localeInfo.locale}" cannot be fixed, fix the ${localeInfo.lang} locale instead!${COLORS.reset}`,
+    )
+    process.exit(1)
+  }
+
   const targetContent = await loadJson(localeInfo)
+
+  // $schema is a JSON Schema reference, not a translation key — preserve it but exclude from comparison
+  const { $schema: targetSchema, ...targetWithoutSchema } = targetContent
 
   const stats: SyncStats = {
     missing: [],
@@ -223,11 +239,12 @@ const processLocale = async (
     referenceKeys: [],
   }
 
-  const newContent = syncLocaleData(referenceContent, targetContent, stats, fix)
+  const newContent = syncLocaleData(referenceContent, targetWithoutSchema, stats, fix)
 
   // Write if there are removals (always) or we are in fix mode
-  if (stats.extra.length > 0 || fix) {
-    writeFileSync(filePath, JSON.stringify(newContent, null, 2) + '\n', 'utf-8')
+  if (!localeInfo.mergeLocale && (stats.extra.length > 0 || fix)) {
+    const output = targetSchema ? { $schema: targetSchema, ...newContent } : newContent
+    writeFileSync(filePath, JSON.stringify(output, null, 2) + '\n', 'utf-8')
   }
 
   return stats
@@ -246,7 +263,12 @@ const runSingleLocale = async (
     process.exit(1)
   }
 
-  const { missing, extra, referenceKeys } = await processLocale(localeFile, referenceContent, fix)
+  const { missing, extra, referenceKeys } = await processLocale(
+    true,
+    localeFile,
+    referenceContent,
+    fix,
+  )
 
   console.log(
     `${COLORS.cyan}=== Missing keys for ${localeFile}${fix ? ' (with --fix)' : ''} ===${COLORS.reset}`,
@@ -286,7 +308,7 @@ const runAllLocales = async (referenceContent: NestedObject, fix = false): Promi
   let totalAdded = 0
 
   for (const localeFile of localeFiles) {
-    const stats = await processLocale(localeFile, referenceContent, fix)
+    const stats = await processLocale(false, localeFile, referenceContent, fix)
     results.push({
       file: localeFile,
       ...stats,
@@ -362,6 +384,12 @@ const run = async (): Promise<void> => {
     locale: 'en',
     lang: 'en',
   })
+
+  // TODO: removing vacations entry key for temporal recharging page
+  delete referenceContent.vacations
+
+  // $schema is a JSON Schema reference, not a translation key
+  delete referenceContent.$schema
 
   const args = process.argv.slice(2)
   const fix = args.includes('--fix')

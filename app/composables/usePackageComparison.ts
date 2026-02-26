@@ -9,7 +9,6 @@ import type { PackageLikes } from '#shared/types/social'
 import { encodePackageName } from '#shared/utils/npm'
 import type { PackageAnalysisResponse } from './usePackageAnalysis'
 import { isBinaryOnlyPackage } from '#shared/utils/binary-detection'
-import { formatBytes } from '~/utils/formatters'
 import { getDependencyCount } from '~/utils/npm/dependency-count'
 
 /** Special identifier for the "What Would James Do?" comparison column */
@@ -71,6 +70,10 @@ export interface PackageComparisonData {
  */
 export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
   const { t } = useI18n()
+  const { $npmRegistry } = useNuxtApp()
+  const numberFormatter = useNumberFormatter()
+  const compactNumberFormatter = useCompactNumberFormatter()
+  const bytesFormatter = useBytesFormatter()
   const packages = computed(() => toValue(packageNames))
 
   // Cache of fetched data by package name (source of truth)
@@ -122,9 +125,7 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
         namesToFetch.map(async (name): Promise<PackageComparisonData | null> => {
           try {
             // Fetch basic package info first (required)
-            const pkgData = await $fetch<Packument>(
-              `https://registry.npmjs.org/${encodePackageName(name)}`,
-            )
+            const { data: pkgData } = await $npmRegistry<Packument>(`/${encodePackageName(name)}`)
 
             const latestVersion = pkgData['dist-tags']?.latest
             if (!latestVersion) return null
@@ -140,7 +141,9 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
               $fetch<VulnerabilityTreeResult>(
                 `/api/registry/vulnerabilities/${encodePackageName(name)}`,
               ).catch(() => null),
-              $fetch<PackageLikes>(`/api/social/likes/${name}`).catch(() => null),
+              $fetch<PackageLikes>(`/api/social/likes/${encodePackageName(name)}`).catch(
+                () => null,
+              ),
             ])
             const versionData = pkgData.versions[latestVersion]
             const packageSize = versionData?.dist?.unpackedSize
@@ -260,7 +263,14 @@ export function usePackageComparison(packageNames: MaybeRefOrGetter<string[]>) {
 
     return packagesData.value.map(pkg => {
       if (!pkg) return null
-      return computeFacetValue(facet, pkg, t)
+      return computeFacetValue(
+        facet,
+        pkg,
+        numberFormatter.value.format,
+        compactNumberFormatter.value.format,
+        bytesFormatter.format,
+        t,
+      )
     })
   }
 
@@ -342,6 +352,9 @@ function resolveNoDependencyDisplay(
 function computeFacetValue(
   facet: ComparisonFacet,
   data: PackageComparisonData,
+  formatNumber: (num: number) => string,
+  formatCompactNumber: (num: number) => string,
+  formatBytes: (num: number) => string,
   t: (key: string, params?: Record<string, unknown>) => string,
 ): FacetValue | null {
   const { isNoDependency } = data
@@ -513,7 +526,7 @@ function computeFacetValue(
       if (depCount == null) return null
       return {
         raw: depCount,
-        display: String(depCount),
+        display: formatNumber(depCount),
         status: depCount > 10 ? 'warning' : 'neutral',
       }
     }
@@ -532,7 +545,7 @@ function computeFacetValue(
       const totalDepCount = data.installSize.dependencyCount
       return {
         raw: totalDepCount,
-        display: String(totalDepCount),
+        display: formatNumber(totalDepCount),
         status: totalDepCount > 50 ? 'warning' : 'neutral',
       }
     }

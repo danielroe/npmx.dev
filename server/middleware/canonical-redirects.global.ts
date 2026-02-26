@@ -15,7 +15,9 @@
 const pages = [
   '/oauth-client-metadata.json',
   '/200.html',
+  '/opensearch.xml',
   '/about',
+  '/accessibility',
   '/compare',
   '/org',
   '/package',
@@ -24,6 +26,7 @@ const pages = [
   '/privacy',
   '/search',
   '/settings',
+  '/recharging',
 ]
 
 const cacheControl = 's-maxage=3600, stale-while-revalidate=36000'

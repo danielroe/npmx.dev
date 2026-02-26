@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, computed } from 'vue'
+import { LinkBase } from '#components'
 
 interface Props {
   title: string
@@ -18,7 +19,6 @@ const appSettings = useSettings()
 
 const buttonId = `${props.id}-collapsible-button`
 const contentId = `${props.id}-collapsible-content`
-const headingId = `${props.id}-heading`
 
 const isOpen = shallowRef(true)
 
@@ -26,7 +26,7 @@ onPrehydrate(() => {
   const settings = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
   const collapsed: string[] = settings?.sidebar?.collapsed || []
   for (const id of collapsed) {
-    if (!document.documentElement.dataset.collapsed?.includes(id)) {
+    if (!document.documentElement.dataset.collapsed?.split(' ').includes(id)) {
       document.documentElement.dataset.collapsed = (
         document.documentElement.dataset.collapsed +
         ' ' +
@@ -38,7 +38,9 @@ onPrehydrate(() => {
 
 onMounted(() => {
   if (document?.documentElement) {
-    isOpen.value = !(document.documentElement.dataset.collapsed?.includes(props.id) ?? false)
+    isOpen.value = !(
+      document.documentElement.dataset.collapsed?.split(' ').includes(props.id) ?? false
+    )
   }
 })
 
@@ -75,46 +77,33 @@ useHead({
 </script>
 
 <template>
-  <section class="scroll-mt-20" :data-anchor-id="id">
+  <section :id="id" :data-anchor-id="id" class="scroll-mt-20 xl:scroll-mt-0">
     <div class="flex items-center justify-between mb-3 px-1">
       <component
         :is="headingLevel"
-        :id="headingId"
         class="group text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-2"
       >
         <button
           :id="buttonId"
           type="button"
-          class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
+          class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
           :aria-expanded="isOpen"
           :aria-controls="contentId"
           :aria-label="ariaLabel"
           @click="toggle"
         >
-          <span
-            v-if="isLoading"
-            class="i-carbon:rotate-180 w-3 h-3 motion-safe:animate-spin"
-            aria-hidden="true"
-          />
+          <span v-if="isLoading" class="i-svg-spinners:ring-resize w-3 h-3" aria-hidden="true" />
           <span
             v-else
             class="w-3 h-3 transition-transform duration-200"
-            :class="isOpen ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
+            :class="isOpen ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
             aria-hidden="true"
           />
         </button>
 
-        <a
-          :href="`#${id}`"
-          class="inline-flex items-center gap-1.5 text-fg-subtle hover:text-fg-muted transition-colors duration-200 no-underline"
-        >
-          <span v-if="icon" :class="icon" aria-hidden="true" />
+        <LinkBase :to="`#${id}`">
           {{ title }}
-          <span
-            class="i-carbon:link w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            aria-hidden="true"
-          />
-        </a>
+        </LinkBase>
       </component>
 
       <!-- Actions slot for buttons or other elements -->

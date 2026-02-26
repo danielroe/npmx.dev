@@ -2,6 +2,8 @@
 import { SEVERITY_TEXT_COLORS, getHighestSeverity } from '#shared/utils/severity'
 import { getOutdatedTooltip, getVersionClass } from '~/utils/npm/outdated-dependencies'
 
+const { t } = useI18n()
+
 const props = defineProps<{
   packageName: string
   version: string
@@ -13,6 +15,9 @@ const props = defineProps<{
 
 // Fetch outdated info for dependencies
 const outdatedDeps = useOutdatedDependencies(() => props.dependencies)
+
+// Fetch replacement suggestions for dependencies
+const replacementDeps = useReplacementDependencies(() => props.dependencies)
 
 // Get vulnerability info from shared cache (already fetched by PackageVulnerabilityTree)
 const { data: vulnTree } = useDependencyAnalysis(
@@ -65,6 +70,26 @@ const sortedOptionalDependencies = computed(() => {
   if (!props.optionalDependencies) return []
   return Object.entries(props.optionalDependencies).sort(([a], [b]) => a.localeCompare(b))
 })
+
+// Get version tooltip
+function getDepVersionTooltip(dep: string, version: string) {
+  const outdated = outdatedDeps.value[dep]
+  if (outdated) return getOutdatedTooltip(outdated, t)
+  if (getVulnerableDepInfo(dep) || getDeprecatedDepInfo(dep)) return version
+  if (replacementDeps.value[dep]) return t('package.dependencies.has_replacement')
+  return version
+}
+
+// Get version class
+function getDepVersionClass(dep: string) {
+  const outdated = outdatedDeps.value[dep]
+  if (outdated) return getVersionClass(outdated)
+  if (getVulnerableDepInfo(dep) || getDeprecatedDepInfo(dep)) return getVersionClass(undefined)
+  if (replacementDeps.value[dep]) return 'text-amber-700 dark:text-amber-500'
+  return getVersionClass(undefined)
+}
+
+const numberFormatter = useNumberFormatter()
 </script>
 
 <template>
@@ -73,51 +98,77 @@ const sortedOptionalDependencies = computed(() => {
     <CollapsibleSection
       v-if="sortedDependencies.length > 0"
       id="dependencies"
-      :title="$t('package.dependencies.title', { count: sortedDependencies.length })"
+      :title="
+        $t(
+          'package.dependencies.title',
+          {
+            count: numberFormatter.format(sortedDependencies.length),
+          },
+          sortedDependencies.length,
+        )
+      "
     >
-      <ul class="space-y-1 list-none m-0" :aria-label="$t('package.dependencies.list_label')">
+      <ul class="px-1 space-y-1 list-none m-0" :aria-label="$t('package.dependencies.list_label')">
         <li
           v-for="[dep, version] in sortedDependencies.slice(0, depsExpanded ? undefined : 10)"
           :key="dep"
           class="flex items-center justify-between py-1 text-sm gap-2"
         >
-          <LinkBase :to="packageRoute(dep)" dir="ltr">
+          <LinkBase :to="packageRoute(dep)" class="block truncate" dir="ltr">
             {{ dep }}
           </LinkBase>
           <span class="flex items-center gap-1 max-w-[40%]" dir="ltr">
-            <span
+            <TooltipApp
               v-if="outdatedDeps[dep]"
               class="shrink-0"
               :class="getVersionClass(outdatedDeps[dep])"
-              :title="getOutdatedTooltip(outdatedDeps[dep], $t)"
-              aria-hidden="true"
+              :text="getOutdatedTooltip(outdatedDeps[dep], $t)"
             >
-              <span class="i-carbon:warning-alt w-3 h-3" />
-            </span>
+              <button
+                type="button"
+                class="p-2 -m-2"
+                :aria-label="getOutdatedTooltip(outdatedDeps[dep], $t)"
+              >
+                <span class="i-lucide:circle-alert w-3 h-3" aria-hidden="true" />
+              </button>
+            </TooltipApp>
+            <TooltipApp
+              v-if="replacementDeps[dep]"
+              class="shrink-0 text-amber-700 dark:text-amber-500"
+              :text="$t('package.dependencies.has_replacement')"
+            >
+              <button
+                type="button"
+                class="p-2 -m-2"
+                :aria-label="$t('package.dependencies.has_replacement')"
+              >
+                <span class="i-lucide:lightbulb w-3 h-3" aria-hidden="true" />
+              </button>
+            </TooltipApp>
             <LinkBase
               v-if="getVulnerableDepInfo(dep)"
               :to="packageRoute(dep, getVulnerableDepInfo(dep)!.version)"
               class="shrink-0"
               :class="SEVERITY_TEXT_COLORS[getHighestSeverity(getVulnerableDepInfo(dep)!.counts)]"
               :title="`${getVulnerableDepInfo(dep)!.counts.total} vulnerabilities`"
-              classicon="i-carbon:security"
+              classicon="i-lucide:shield-check"
             >
               <span class="sr-only">{{ $t('package.dependencies.view_vulnerabilities') }}</span>
             </LinkBase>
             <LinkBase
               v-if="getDeprecatedDepInfo(dep)"
               :to="packageRoute(dep, getDeprecatedDepInfo(dep)!.version)"
-              class="shrink-0 text-purple-500"
+              class="shrink-0 text-purple-700 dark:text-purple-500"
               :title="getDeprecatedDepInfo(dep)!.message"
-              classicon="i-carbon:warning-hex"
+              classicon="i-lucide:octagon-alert"
             >
               <span class="sr-only">{{ $t('package.deprecated.label') }}</span>
             </LinkBase>
             <LinkBase
               :to="packageRoute(dep, version)"
-              class="truncate"
-              :class="getVersionClass(outdatedDeps[dep])"
-              :title="outdatedDeps[dep] ? getOutdatedTooltip(outdatedDeps[dep], $t) : version"
+              class="block truncate"
+              :class="getDepVersionClass(dep)"
+              :title="getDepVersionTooltip(dep, version)"
             >
               {{ version }}
             </LinkBase>
@@ -137,9 +188,13 @@ const sortedOptionalDependencies = computed(() => {
         @click="depsExpanded = true"
       >
         {{
-          $t('package.dependencies.show_all', {
-            count: sortedDependencies.length,
-          })
+          $t(
+            'package.dependencies.show_all',
+            {
+              count: numberFormatter.format(sortedDependencies.length),
+            },
+            sortedDependencies.length,
+          )
         }}
       </button>
     </CollapsibleSection>
@@ -150,18 +205,21 @@ const sortedOptionalDependencies = computed(() => {
       id="peer-dependencies"
       :title="
         $t('package.peer_dependencies.title', {
-          count: sortedPeerDependencies.length,
+          count: numberFormatter.format(sortedPeerDependencies.length),
         })
       "
     >
-      <ul class="space-y-1 list-none m-0" :aria-label="$t('package.peer_dependencies.list_label')">
+      <ul
+        class="px-1 space-y-1 list-none m-0"
+        :aria-label="$t('package.peer_dependencies.list_label')"
+      >
         <li
           v-for="peer in sortedPeerDependencies.slice(0, peerDepsExpanded ? undefined : 10)"
           :key="peer.name"
           class="flex items-center justify-between py-1 text-sm gap-1 min-w-0"
         >
           <div class="flex items-center gap-1 min-w-0 flex-1">
-            <LinkBase :to="packageRoute(peer.name)" class="truncate" dir="ltr">
+            <LinkBase :to="packageRoute(peer.name)" class="block truncate" dir="ltr">
               {{ peer.name }}
             </LinkBase>
             <TagStatic v-if="peer.optional" :title="$t('package.dependencies.optional')">
@@ -170,7 +228,7 @@ const sortedOptionalDependencies = computed(() => {
           </div>
           <LinkBase
             :to="packageRoute(peer.name, peer.version)"
-            class="truncate"
+            class="block truncate max-w-[40%]"
             :title="peer.version"
             dir="ltr"
           >
@@ -185,9 +243,13 @@ const sortedOptionalDependencies = computed(() => {
         @click="peerDepsExpanded = true"
       >
         {{
-          $t('package.peer_dependencies.show_all', {
-            count: sortedPeerDependencies.length,
-          })
+          $t(
+            'package.peer_dependencies.show_all',
+            {
+              count: numberFormatter.format(sortedPeerDependencies.length),
+            },
+            sortedPeerDependencies.length,
+          )
         }}
       </button>
     </CollapsibleSection>
@@ -197,13 +259,17 @@ const sortedOptionalDependencies = computed(() => {
       v-if="sortedOptionalDependencies.length > 0"
       id="optional-dependencies"
       :title="
-        $t('package.optional_dependencies.title', {
-          count: sortedOptionalDependencies.length,
-        })
+        $t(
+          'package.optional_dependencies.title',
+          {
+            count: numberFormatter.format(sortedOptionalDependencies.length),
+          },
+          sortedOptionalDependencies.length,
+        )
       "
     >
       <ul
-        class="space-y-1 list-none m-0"
+        class="px-1 space-y-1 list-none m-0"
         :aria-label="$t('package.optional_dependencies.list_label')"
       >
         <li
@@ -214,10 +280,15 @@ const sortedOptionalDependencies = computed(() => {
           :key="dep"
           class="flex items-center justify-between py-1 text-sm gap-2"
         >
-          <LinkBase :to="packageRoute(dep)" class="truncate" dir="ltr">
+          <LinkBase :to="packageRoute(dep)" class="block truncate" dir="ltr">
             {{ dep }}
           </LinkBase>
-          <LinkBase :to="packageRoute(dep, version)" class="truncate" :title="version" dir="ltr">
+          <LinkBase
+            :to="packageRoute(dep, version)"
+            class="block truncate"
+            :title="version"
+            dir="ltr"
+          >
             {{ version }}
           </LinkBase>
         </li>
@@ -229,9 +300,13 @@ const sortedOptionalDependencies = computed(() => {
         @click="optionalDepsExpanded = true"
       >
         {{
-          $t('package.optional_dependencies.show_all', {
-            count: sortedOptionalDependencies.length,
-          })
+          $t(
+            'package.optional_dependencies.show_all',
+            {
+              count: numberFormatter.format(sortedOptionalDependencies.length),
+            },
+            sortedOptionalDependencies.length,
+          )
         }}
       </button>
     </CollapsibleSection>
