@@ -104,6 +104,7 @@ export default defineConfig({
         solid: '#2C4F7C',
         svelte: '#FF3E00',
         tailwind: '#06B6D4',
+        storybook: '#FF4785',
       },
     },
     animation: {

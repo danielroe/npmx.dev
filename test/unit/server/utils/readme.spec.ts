@@ -1,13 +1,19 @@
 import type { RepositoryInfo } from '#shared/utils/git-providers'
 import { describe, expect, it, vi, beforeAll } from 'vitest'
 
-// Mock the global Nuxt auto-import before importing the module
+// Mock the global Nuxt auto-imports before importing the module
 beforeAll(() => {
   vi.stubGlobal(
     'getShikiHighlighter',
     vi.fn().mockResolvedValue({
       getLoadedLanguages: () => [],
       codeToHtml: (code: string) => `<pre><code>${code}</code></pre>`,
+    }),
+  )
+  vi.stubGlobal(
+    'useRuntimeConfig',
+    vi.fn().mockReturnValue({
+      imageProxySecret: 'test-secret-for-readme-tests',
     }),
   )
 })
@@ -354,6 +360,68 @@ describe('Markdown File URL Resolution', () => {
       const result = await renderReadmeHtml(markdown, 'test-pkg')
 
       expect(result.html).toContain('href="/package/test-pkg"')
+    })
+  })
+})
+
+describe('Image Privacy Proxy', () => {
+  describe('trusted domains (not proxied)', () => {
+    it('does not proxy GitHub raw content images', async () => {
+      const repoInfo = createRepoInfo()
+      const markdown = `![logo](./assets/logo.png)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg', repoInfo)
+
+      expect(result.html).toContain(
+        'src="https://raw.githubusercontent.com/test-owner/test-repo/HEAD/assets/logo.png"',
+      )
+      expect(result.html).not.toContain('/api/registry/image-proxy')
+    })
+
+    it('does not proxy shields.io badge images', async () => {
+      const markdown = `![badge](https://img.shields.io/badge/build-passing-green)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('src="https://img.shields.io/badge/build-passing-green"')
+      expect(result.html).not.toContain('/api/registry/image-proxy')
+    })
+
+    it('does not proxy jsdelivr CDN images', async () => {
+      const markdown = `![logo](./logo.png)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('src="https://cdn.jsdelivr.net/npm/test-pkg/logo.png"')
+      expect(result.html).not.toContain('/api/registry/image-proxy')
+    })
+  })
+
+  describe('untrusted domains (proxied)', () => {
+    it('proxies images from unknown third-party domains with HMAC signature', async () => {
+      const markdown = `![tracker](https://evil-tracker.com/pixel.gif)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('/api/registry/image-proxy?url=')
+      expect(result.html).toContain(encodeURIComponent('https://evil-tracker.com/pixel.gif'))
+      // HTML attributes encode & as &amp;
+      expect(result.html).toMatch(/&amp;sig=[0-9a-f]{64}/)
+      expect(result.html).not.toContain('src="https://evil-tracker.com/pixel.gif"')
+    })
+
+    it('proxies images from arbitrary hosts with HMAC signature', async () => {
+      const markdown = `![img](https://some-random-host.com/image.png)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('/api/registry/image-proxy?url=')
+      expect(result.html).toContain(encodeURIComponent('https://some-random-host.com/image.png'))
+      expect(result.html).toMatch(/&amp;sig=[0-9a-f]{64}/)
+    })
+
+    it('proxies HTML img tags from untrusted domains with HMAC signature', async () => {
+      const markdown = `<img src="https://unknown-site.org/tracking.png" alt="test">`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('/api/registry/image-proxy?url=')
+      expect(result.html).toContain(encodeURIComponent('https://unknown-site.org/tracking.png'))
+      expect(result.html).toMatch(/&amp;sig=[0-9a-f]{64}/)
     })
   })
 })

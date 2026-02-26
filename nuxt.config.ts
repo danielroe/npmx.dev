@@ -34,6 +34,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     sessionPassword: '',
+    imageProxySecret: '',
     github: {
       orgToken: '',
     },
@@ -204,6 +205,10 @@ export default defineNuxtConfig({
       'fetch-cache': {
         driver: 'fsLite',
         base: './.cache/fetch',
+      },
+      'payload-cache': {
+        driver: 'fsLite',
+        base: './.cache/payload',
       },
       'atproto': {
         driver: 'fsLite',

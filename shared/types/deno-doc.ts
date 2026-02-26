@@ -35,6 +35,27 @@ export interface TsType {
     number?: number
     boolean?: boolean
   }
+  fnOrConstructor?: {
+    constructor: boolean
+    tsType: TsType
+    params: FunctionParam[]
+    typeParams?: Array<{ name: string; constraint?: TsType }>
+  }
+  indexedAccess?: {
+    objType: TsType
+    indexType: TsType
+  }
+  typeOperator?: {
+    operator: string
+    tsType: TsType
+  }
+  this?: boolean
+  typeLiteral?: {
+    properties: Array<{ name: string; tsType?: TsType; readonly?: boolean; optional?: boolean }>
+    methods: Array<{ name: string; params?: FunctionParam[]; returnType?: TsType }>
+    callSignatures: Array<{ params?: FunctionParam[]; tsType?: TsType }>
+    indexSignatures: Array<{ params: FunctionParam[]; tsType?: TsType }>
+  }
 }
 
 /** Function parameter from deno doc */
@@ -89,7 +110,7 @@ export interface DenoDocNode {
     constructors?: Array<{
       params?: FunctionParam[]
     }>
-    extends?: TsType
+    extends?: string
     implements?: TsType[]
   }
   interfaceDef?: {
