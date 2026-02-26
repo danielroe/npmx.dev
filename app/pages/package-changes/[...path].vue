@@ -115,7 +115,7 @@ const tptoc = useTemplateRef('tptoc')
         :info="changelog"
         :tpTarget="tptoc"
       />
-      <p class="mt-5">{{ $t('changelog.no_logs') }}</p>
+      <p class="mt-5" v-else>{{ $t('changelog.no_logs') }}</p>
     </section>
   </main>
 </template>
