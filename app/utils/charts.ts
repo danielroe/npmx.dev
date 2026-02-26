@@ -543,16 +543,17 @@ export function createAltTextForVersionsBarChart({
 }: AltCopyArgs<VersionsBarDataset, VersionsBarConfig>) {
   if (!dataset) return ''
 
-  const series = dataset.bars[0]?.series
-  const versions = series?.map((value, i) => ({
+  const series = dataset.bars[0]?.series ?? []
+  const versions = series.map((value, i) => ({
     name: config.datapointLabels[i] ?? '-',
     rawDownloads: value ?? 0,
     downloads: config.numberFormatter(value ?? 0),
   }))
 
-  const versionWithMaxDownloads = versions?.reduce((max, current) => {
-    return current.rawDownloads > max.rawDownloads ? current : max
-  })
+  const versionWithMaxDownloads =
+    versions.length > 0
+      ? versions.reduce((max, current) => (current.rawDownloads > max.rawDownloads ? current : max))
+      : undefined
 
   const per_version_analysis = versions
     ?.toReversed()
