@@ -259,12 +259,6 @@ function resolveUrl(url: string, repoInfo: MarkdownRepoInfo) {
 
   // Check if this is a markdown file link
   const isMarkdownFile = /\.md$/i.test(url.split('?')[0]?.split('#')[0] ?? '')
-
-  // if (url.startsWith('./') || url.startsWith('../')) {
-  //   // url constructor handles relative paths
-  //   return checkResolvedUrl(new URL(url, `${baseUrl}/${repoInfo.path ?? ''}`).href, baseUrl)
-  // }
-
   const baseUrl = isMarkdownFile ? repoInfo.blobBaseUrl : repoInfo.rawBaseUrl
 
   if (url.startsWith('/')) {
