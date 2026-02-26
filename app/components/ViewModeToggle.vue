@@ -6,7 +6,7 @@ const viewMode = defineModel<ViewMode>({ default: 'cards' })
 
 <template>
   <div
-    class="inline-flex rounded-md border border-border p-0.5 bg-bg-subtle"
+    class="inline-flex rounded-md border border-border p-0.5 bg-fg/10"
     role="group"
     :aria-label="$t('filters.view_mode.label')"
   >
@@ -15,7 +15,7 @@ const viewMode = defineModel<ViewMode>({ default: 'cards' })
       class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-sm border transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
       :class="
         viewMode === 'cards'
-          ? 'bg-fg-subtle text-bg border-fg'
+          ? 'bg-bg text-fg border-fg-subtle'
           : 'text-fg-muted hover:text-fg border-transparent'
       "
       :aria-pressed="viewMode === 'cards'"
@@ -30,7 +30,7 @@ const viewMode = defineModel<ViewMode>({ default: 'cards' })
       class="inline-flex items-center px-2.5 py-1.5 text-sm font-medium rounded-sm border transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
       :class="
         viewMode === 'table'
-          ? 'bg-fg-subtle text-bg border-fg'
+          ? 'bg-bg text-fg border-fg-subtle'
           : 'text-fg-muted hover:text-fg border-transparent'
       "
       :aria-pressed="viewMode === 'table'"
