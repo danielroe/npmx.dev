@@ -218,14 +218,14 @@ function getSortKeyLabelKey(key: SortKey): string {
 
         <!-- View mode toggle + Column picker - desktop (right side, row 1) -->
         <div class="hidden sm:flex items-center gap-3 order-2">
+          <ViewModeToggle v-model="viewMode" />
+
           <ColumnPicker
             v-if="viewMode === 'table'"
             :columns="columns"
             @toggle="emit('toggleColumn', $event)"
             @reset="emit('resetColumns')"
           />
-
-          <ViewModeToggle v-model="viewMode" />
         </div>
       </div>
     </div>
