@@ -157,6 +157,13 @@
       "version": "This version has been deprecated.",
       "no_reason": "No reason provided"
     },
+    "size_increase": {
+      "title_size": "Significant size increase since v{version}",
+      "title_deps": "Significant dependency count increase since v{version}",
+      "title_both": "Significant size and dependency increase since v{version}",
+      "size": "Install size increased by {percent} ({size} larger)",
+      "deps": "{count} more dependencies"
+    },
     "replacement": {
       "title": "You might not need this dependency.",
       "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
