@@ -15,6 +15,6 @@ export function useResolvedVersion(
       const data = await $fetch<ResolvedPackageVersion>(url)
       return data.version
     },
-    { default: () => null },
+    { default: () => undefined },
   )
 }

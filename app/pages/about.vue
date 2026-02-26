@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Role } from '#server/api/contributors.get'
+import { SPONSORS } from '~/assets/logos/sponsors'
+import { OSS_PARTNERS } from '~/assets/logos/oss-partners'
 
 const router = useRouter()
 const canGoBack = useCanGoBack()
@@ -56,7 +58,7 @@ const roleLabels = computed(
           </h1>
           <button
             type="button"
-            class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+            class="cursor-pointer inline-flex items-center gap-2 p-1.5 -mx-1.5 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
             @click="router.back()"
             v-if="canGoBack"
           >
@@ -69,9 +71,9 @@ const roleLabels = computed(
         </p>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-8">
+      <section class="prose prose-invert max-w-none space-y-12">
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
@@ -80,7 +82,7 @@ const roleLabels = computed(
                 <strong class="text-fg">{{ $t('about.what_we_are.better_ux_dx') }}</strong>
               </template>
               <template #jsr>
-                <LinkBase to="https://jsr.io/">JSR</LinkBase>
+                <LinkBase to="https://jsr.io/" no-new-tab-icon>JSR</LinkBase>
               </template>
             </i18n-t>
           </p>
@@ -94,7 +96,7 @@ const roleLabels = computed(
         </div>
 
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are_not.title') }}
           </h2>
           <ul class="space-y-3 text-fg-muted list-none p-0">
@@ -112,32 +114,32 @@ const roleLabels = computed(
                 >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
                   <template #people>
-                    <LinkBase :to="pmLinks.npm" class="font-sans">{{
+                    <LinkBase :to="pmLinks.npm" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.people')
                     }}</LinkBase>
                   </template>
                   <template #building>
-                    <LinkBase :to="pmLinks.pnpm" class="font-sans">{{
+                    <LinkBase :to="pmLinks.pnpm" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.building')
                     }}</LinkBase>
                   </template>
                   <template #really>
-                    <LinkBase :to="pmLinks.yarn" class="font-sans">{{
+                    <LinkBase :to="pmLinks.yarn" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.really')
                     }}</LinkBase>
                   </template>
                   <template #cool>
-                    <LinkBase :to="pmLinks.bun" class="font-sans">{{
+                    <LinkBase :to="pmLinks.bun" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.cool')
                     }}</LinkBase>
                   </template>
                   <template #package>
-                    <LinkBase :to="pmLinks.deno" class="font-sans">{{
+                    <LinkBase :to="pmLinks.deno" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.package')
                     }}</LinkBase>
                   </template>
                   <template #managers>
-                    <LinkBase :to="pmLinks.vlt" class="font-sans">{{
+                    <LinkBase :to="pmLinks.vlt" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.managers')
                     }}</LinkBase>
                   </template>
@@ -155,7 +157,21 @@ const roleLabels = computed(
         </div>
 
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.sponsors.title') }}
+          </h2>
+          <AboutLogoList :list="SPONSORS" />
+        </div>
+
+        <div>
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.oss_partners.title') }}
+          </h2>
+          <AboutLogoList :list="OSS_PARTNERS" />
+        </div>
+
+        <div>
+          <h2 class="text-lg uppercase tracking-wider mb-4">
             {{ $t('about.team.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-6">
@@ -168,10 +184,7 @@ const roleLabels = computed(
             class="mb-12"
             aria-labelledby="governance-heading"
           >
-            <h3
-              id="governance-heading"
-              class="text-sm text-fg-subtle uppercase tracking-wider mb-4"
-            >
+            <h3 id="governance-heading" class="text-sm text-fg uppercase tracking-wider mb-4">
               {{ $t('about.team.governance') }}
             </h3>
 
@@ -223,10 +236,7 @@ const roleLabels = computed(
 
           <!-- Contributors cloud -->
           <section aria-labelledby="contributors-heading">
-            <h3
-              id="contributors-heading"
-              class="text-sm text-fg-subtle uppercase tracking-wider mb-4"
-            >
+            <h3 id="contributors-heading" class="text-sm uppercase tracking-wider mb-4">
               {{
                 $t(
                   'about.contributors.title',
@@ -257,20 +267,21 @@ const roleLabels = computed(
               <li
                 v-for="contributor in communityContributors"
                 :key="contributor.id"
-                class="group relative"
+                class="block group relative"
               >
-                <LinkBase
-                  :to="contributor.html_url"
-                  no-underline
-                  no-external-icon
+                <a
+                  :href="contributor.html_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
+                  class="block rounded-lg"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
                     :alt="`${contributor.login}'s avatar`"
                     width="48"
                     height="48"
-                    class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out hover:scale-125 will-change-transform"
+                    class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out group-hover:scale-125 will-change-transform"
                     loading="lazy"
                   />
                   <span
@@ -280,7 +291,7 @@ const roleLabels = computed(
                   >
                     @{{ contributor.login }}
                   </span>
-                </LinkBase>
+                </a>
               </li>
             </ul>
           </section>
