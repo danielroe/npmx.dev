@@ -34,6 +34,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     sessionPassword: '',
+    imageProxySecret: '',
     github: {
       orgToken: '',
     },
