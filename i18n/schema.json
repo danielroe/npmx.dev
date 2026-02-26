@@ -1152,6 +1152,7 @@
             },
             "anomalies_fixed": {
               "type": "string"
+            },
             "copy_alt": {
               "type": "object",
               "properties": {
