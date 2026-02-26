@@ -942,6 +942,18 @@
             },
             "no_matches": {
               "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "per_version_analysis": {
+                  "type": "string"
+                },
+                "general_description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
