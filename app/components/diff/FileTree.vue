@@ -82,17 +82,18 @@ function isNodeActive(node: DiffTreeNode): boolean {
 
 const expandedDirs = ref<Set<string>>(new Set())
 
-// Auto-expand all directories on mount (only at root level)
-onMounted(() => {
-  if (props.depth === undefined || props.depth === 0) {
-    function collectDirs(nodes: DiffTreeNode[]) {
-      for (const node of nodes) {
-        if (node.type === 'directory') {
-          expandedDirs.value.add(node.path)
-          if (node.children) collectDirs(node.children)
-        }
-      }
+function collectDirs(nodes: DiffTreeNode[]) {
+  for (const node of nodes) {
+    if (node.type === 'directory') {
+      expandedDirs.value.add(node.path)
+      if (node.children) collectDirs(node.children)
     }
+  }
+}
+
+// Auto-expand all directories eagerly (runs on both SSR and client)
+watchEffect(() => {
+  if (props.depth === undefined || props.depth === 0) {
     collectDirs(tree.value)
   }
 })
