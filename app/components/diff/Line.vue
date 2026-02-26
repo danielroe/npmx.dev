@@ -109,12 +109,14 @@ async function highlightSegments() {
   })
 }
 
+const mounted = useMounted()
+
 watch(
-  () => [props.line, diffContext?.language?.value, colorMode.value],
+  () => [mounted.value, props.line, diffContext?.language?.value, colorMode.value],
   () => {
-    highlightSegments()
+    if (mounted.value) highlightSegments()
   },
-  { immediate: true, deep: true },
+  { deep: true },
 )
 </script>
 
