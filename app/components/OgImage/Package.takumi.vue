@@ -1,8 +1,21 @@
+<script lang="ts">
+const compactFormat = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
+
+const KIND_ICONS: Record<string, string> = {
+  function: 'i-lucide:parentheses',
+  class: 'i-lucide:box',
+  interface: 'i-lucide:puzzle',
+  typeAlias: 'i-lucide:type',
+  variable: 'i-lucide:variable',
+  enum: 'i-lucide:list',
+  namespace: 'i-lucide:package',
+}
+</script>
+
 <script setup lang="ts">
 import type { JsDelivrFileNode } from '#shared/types'
 import { joinURL } from 'ufo'
-import { buildRollingWeeklyEvolutionFromDaily, smoothPath } from '~/composables/useCharts'
-import { fetchNpmDownloadsRange } from '~/utils/npm/api'
+import { smoothPath, useCharts } from '~/composables/useCharts'
 import { useSiteConfig } from '#site-config/app/composables'
 
 const { name, version, variant } = defineProps<{
@@ -44,45 +57,29 @@ const repositoryUrl = computed(() => {
 
 const { repoRef, stars, refresh: refreshRepoMeta } = useRepoMeta(repositoryUrl)
 
-const compactFormat = new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 })
 const formattedStars = computed(() => (stars.value > 0 ? compactFormat.format(stars.value) : ''))
 
 const { name: siteName } = useSiteConfig()
 
-const pkgOrg = computed(() => {
+const pkgNameParts = computed(() => {
   const n = pkg.value?.name
-  if (!n?.startsWith('@')) return null
-  return n.slice(0, n.indexOf('/'))
-})
-const pkgShortName = computed(() => {
-  const n = pkg.value?.name
-  if (!n?.startsWith('@')) return n
-  return n.slice(n.indexOf('/') + 1)
+  if (!n?.startsWith('@')) return { org: null, short: n }
+  const slashIdx = n.indexOf('/')
+  return { org: n.slice(0, slashIdx), short: n.slice(slashIdx + 1) }
 })
 
 // Fetch 52 weeks of download evolution for sparkline
+const { fetchPackageDownloadEvolution } = useCharts()
 const weeklyValues = shallowRef<number[]>([])
 
 async function fetchWeeklyEvolution() {
-  const pkgName = name
-  if (!pkgName) return
-
-  const today = new Date()
-  const end = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
-  )
-  const start = new Date(end.getTime() - (52 * 7 - 1) * 86400000)
-
-  const startIso = start.toISOString().slice(0, 10)
-  const endIso = end.toISOString().slice(0, 10)
-
-  const resp = await fetchNpmDownloadsRange(pkgName, startIso, endIso).catch(() => null)
-
-  if (!resp?.downloads?.length) return
-
-  const daily = resp.downloads.map(d => ({ day: d.day, value: d.downloads }))
-  const weekly = buildRollingWeeklyEvolutionFromDaily(daily, startIso, endIso)
-  weeklyValues.value = weekly.map(w => w.value)
+  const evolution = await fetchPackageDownloadEvolution(name, null, {
+    granularity: 'week',
+    weeks: 52,
+  }).catch(() => null)
+  if (evolution?.length) {
+    weeklyValues.value = evolution.map(w => w.value)
+  }
 }
 
 // Flatten file tree into renderable rows for code-tree variant
@@ -95,7 +92,7 @@ const treeRows = shallowRef<TreeRow[]>([])
 
 async function fetchCodeTree() {
   const ver = resolvedVersion.value ?? version
-  if (!name || !ver) return
+  if (!ver) return
 
   // Call jsDelivr directly — $fetch to internal API can deadlock in OG image island context
   const resp = await $fetch<{ files: JsDelivrFileNode[] }>(
@@ -117,7 +114,7 @@ async function fetchCodeTree() {
   function walk(nodes: JsDelivrFileNode[], depth: number) {
     for (const node of sorted(nodes)) {
       if (rows.length >= MAX_ROWS) return
-      rows.push({ name: node.name, depth, isDir: node.type === 'directory' })
+      rows.push({ name: node.name, depth })
       if (node.files) walk(node.files, depth + 1)
     }
   }
@@ -133,19 +130,9 @@ interface SymbolRow {
 }
 const symbolRows = shallowRef<SymbolRow[]>([])
 
-const KIND_ICONS: Record<string, string> = {
-  function: 'i-lucide:parentheses',
-  class: 'i-lucide:box',
-  interface: 'i-lucide:puzzle',
-  typeAlias: 'i-lucide:type',
-  variable: 'i-lucide:variable',
-  enum: 'i-lucide:list',
-  namespace: 'i-lucide:package',
-}
-
 async function fetchFunctionTree() {
   const ver = resolvedVersion.value ?? version
-  if (!name || !ver) return
+  if (!ver) return
 
   const resp = await $fetch<{ toc: string | null }>(`/api/registry/docs/${name}/v/${ver}`).catch(
     () => null,
@@ -245,20 +232,20 @@ const sparklineSrc = computed(() => {
 
       <div class="flex flex-col max-w-full gap-3">
         <div
-          v-if="pkgOrg"
+          v-if="pkgNameParts.org"
           class="lg:text-5xl text-3xl opacity-50 font-mono tracking-tight leading-none"
           :style="{ textOverflow: 'ellipsis', lineClamp: 1 }"
         >
-          {{ pkgOrg }}
+          {{ pkgNameParts.org }}
         </div>
         <div
           class="tracking-tighter font-mono leading-none overflow-hidden"
           :class="
-            (pkgShortName?.length ?? 0) > 20 ? 'lg:text-6xl text-4xl' : 'lg:text-7xl text-5xl'
+            (pkgNameParts.short?.length ?? 0) > 20 ? 'lg:text-6xl text-4xl' : 'lg:text-7xl text-5xl'
           "
           :style="{ textOverflow: 'ellipsis', lineClamp: 1, wordBreak: 'break-all' }"
         >
-          {{ pkgShortName }}
+          {{ pkgNameParts.short }}
         </div>
         <div
           v-if="version"
@@ -271,7 +258,7 @@ const sparklineSrc = computed(() => {
 
       <div class="flex items-center gap-5 text-4xl text-fg-muted">
         <div v-if="repositoryUrl" class="flex items-center gap-2">
-          <div class="i-simple-icons:github w-8 h-8 text-white" />
+          <div class="i-simple-icons:github w-8 h-8 text-fg-muted" />
           <span v-if="repoRef" class="max-w-[500px]" :style="{ textOverflow: 'ellipsis' }">
             {{ repoRef.owner }}<span class="opacity-50">/</span>{{ repoRef.repo }}
           </span>
@@ -279,7 +266,7 @@ const sparklineSrc = computed(() => {
         </div>
 
         <span v-if="formattedStars" class="flex items-center gap-2" data-testid="stars">
-          <div class="i-lucide:star w-8 h-8 text-white" :style="{ fill: 'white' }" />
+          <div class="i-lucide:star w-8 h-8 text-fg-muted" :style="{ fill: 'white' }" />
           <span>{{ formattedStars }}</span>
         </span>
 
@@ -312,10 +299,8 @@ const sparklineSrc = computed(() => {
         class="flex items-center whitespace-nowrap text-fg"
         :style="{ paddingLeft: `${row.depth * 20}px` }"
       >
-        <span
-          class="w-5 h-5 shrink-0 force-mr-1.5"
-          :class="row.isDir ? 'i-lucide:folder' : 'i-lucide:file'"
-        />
+        <span v-if="row.isDir" class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:folder" />
+        <span v-else class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:file" />
         <span>{{ row.name }}</span>
       </div>
     </div>
@@ -332,9 +317,36 @@ const sparklineSrc = computed(() => {
         :style="{ paddingLeft: row.kind === 'symbol' ? '20px' : '0' }"
       >
         <span
-          v-if="row.kind === 'symbol'"
-          class="w-5 h-5 shrink-0 force-mr-1.5"
-          :class="row.icon"
+          v-if="row.icon === 'i-lucide:parentheses'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:parentheses"
+        />
+        <span
+          v-else-if="row.icon === 'i-lucide:box'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:box"
+        />
+        <span
+          v-else-if="row.icon === 'i-lucide:puzzle'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:puzzle"
+        />
+        <span
+          v-else-if="row.icon === 'i-lucide:type'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:type"
+        />
+        <span
+          v-else-if="row.icon === 'i-lucide:variable'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:variable"
+        />
+        <span
+          v-else-if="row.icon === 'i-lucide:list'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:list"
+        />
+        <span
+          v-else-if="row.icon === 'i-lucide:package'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:package"
+        />
+        <span
+          v-else-if="row.kind === 'symbol'"
+          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:code"
         />
         <span :class="row.kind === 'section' ? 'opacity-60 text-4 mt-1' : ''">{{ row.name }}</span>
       </div>
