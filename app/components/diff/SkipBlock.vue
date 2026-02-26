@@ -16,7 +16,7 @@ defineProps<{
       <span class="i-lucide-chevrons-up-down w-4 h-4" />
     </td>
     <td>
-      <span class="px-0 sticky left-2 italic opacity-50">
+      <span class="px-0 sticky inset-is-2 italic opacity-50">
         {{ content || $t('compare.lines_hidden', { count }) }}
       </span>
     </td>

@@ -196,7 +196,7 @@ useSeoMeta({
     <div v-else-if="compare" class="flex-1 flex flex-col md:flex-row min-h-0 overflow-hidden">
       <!-- Desktop sidebar -->
       <aside
-        class="hidden md:flex w-80 border-r border-border bg-bg-subtle flex-col shrink-0 min-h-0"
+        class="hidden md:flex w-80 border-ie border-border bg-bg-subtle flex-col shrink-0 min-h-0"
       >
         <DiffSidebarPanel
           :compare="compare"
@@ -214,7 +214,7 @@ useSeoMeta({
         <div
           class="md:hidden border-b border-border bg-bg-subtle px-4 py-3 flex items-center justify-between gap-3"
         >
-          <div class="flex items-center gap-2 text-[11px] font-mono text-fg-muted">
+          <div class="flex items-center gap-2 text-2xs font-mono text-fg-muted">
             <span class="flex items-center gap-1">
               <span class="text-green-500">+{{ compare.stats.filesAdded }}</span>
               <span class="text-fg-subtle">/</span>

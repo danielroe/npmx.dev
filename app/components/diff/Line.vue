@@ -49,7 +49,7 @@ const rowClasses = computed(() => {
 })
 
 const borderClasses = computed(() => {
-  const classes = ['border-transparent', 'w-1', 'border-l-3']
+  const classes = ['border-transparent', 'w-1', 'border-is-3']
 
   if (props.line.type === 'insert') {
     classes.push('border-[color:var(--code-added)]/60')
@@ -63,7 +63,7 @@ const borderClasses = computed(() => {
 
 const contentClasses = computed(() => {
   const shouldWrap = diffContext?.wordWrap?.value ?? false
-  return ['pr-6', shouldWrap ? 'whitespace-pre-wrap break-words' : 'text-nowrap']
+  return ['pe-6', shouldWrap ? 'whitespace-pre-wrap break-words' : 'text-nowrap']
 })
 
 type RenderedSegment = { html: string; type: 'insert' | 'delete' | 'normal' }
