@@ -83,7 +83,10 @@ export function useInstallSizeDiff(
     const cv = comparisonVersion.value
 
     if (!current || !previous || !cv) return null
-    if (previous.version !== cv || previous.package !== toValue(packageName)) return null
+    const name = toValue(packageName)
+    const version = toValue(resolvedVersion)
+    if (previous.version !== cv || previous.package !== name) return null
+    if (current.version !== version || current.package !== name) return null
 
     const sizeRatio =
       previous.totalSize > 0 ? (current.totalSize - previous.totalSize) / previous.totalSize : 0
