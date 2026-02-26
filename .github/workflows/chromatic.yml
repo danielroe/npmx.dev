@@ -17,7 +17,6 @@ jobs:
   chromatic:
     name: 📚 Chromatic
     runs-on: ubuntu-24.04-arm
-    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
 
     steps:
       - name: ☑️ Checkout
@@ -40,8 +39,6 @@ jobs:
 
       - name: 🧪 Run Chromatic Visual Tests
         uses: chromaui/action@a8ce9c58f59be5cc7090cadfc8f130fb08fcf0c3 # v15.1.0
-        with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
         env:
           CHROMATIC_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
           CHROMATIC_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
