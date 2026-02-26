@@ -5,7 +5,7 @@ const props = withDefaults(
   defineProps<{
     disabled?: boolean
     type?: 'button' | 'submit'
-    variant?: 'primary' | 'secondary'
+    variant?: 'primary' | 'secondary' | 'subtle'
     size?: 'small' | 'medium'
     ariaKeyshortcuts?: string
     block?: boolean
@@ -30,16 +30,21 @@ defineExpose({
 <template>
   <button
     ref="el"
-    class="group gap-x-1 items-center justify-center font-mono border border-border rounded-md transition-all duration-200 disabled:(opacity-40 cursor-not-allowed border-transparent)"
+    class="group gap-x-1 items-center justify-center font-mono border rounded-md transition-all duration-200 disabled:(opacity-40 cursor-not-allowed border-transparent)"
     :class="{
       'inline-flex': !block,
       'flex': block,
       'text-sm px-4 py-2': size === 'medium',
-      'text-xs px-2 py-0.5': size === 'small',
-      'bg-transparent text-fg hover:enabled:(bg-fg/10) focus-visible:enabled:(bg-fg/10) aria-pressed:(bg-fg/10 border-fg/20 hover:enabled:(bg-fg/20 text-fg/50))':
+      'text-xs px-2 py-0.5': size === 'small' && variant !== 'subtle',
+      'text-xs px-2 py-2': size === 'small' && variant === 'subtle',
+      'border-border': variant !== 'subtle',
+      'border-border-subtle': variant === 'subtle',
+      'bg-transparent text-fg hover:enabled:(bg-fg/10) aria-pressed:(bg-fg/10 border-fg/20 hover:enabled:(bg-fg/20 text-fg/50))':
         variant === 'secondary',
-      'text-bg bg-fg hover:enabled:(bg-fg/50) focus-visible:enabled:(bg-fg/50) aria-pressed:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))':
+      'text-bg bg-fg hover:enabled:(bg-fg/50) aria-pressed:(bg-fg text-bg border-fg hover:enabled:(text-bg/50))':
         variant === 'primary',
+      'bg-bg-subtle text-fg-muted hover:enabled:(text-fg border-border-hover) active:enabled:scale-95':
+        variant === 'subtle',
     }"
     :type="props.type"
     :disabled="

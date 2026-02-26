@@ -7,6 +7,7 @@ import type {
   ReadmeResponse,
   ReadmeMarkdownResponse,
   SkillsListResponse,
+  InstallSizeResult,
 } from '#shared/types'
 import type { JsrPackageInfo } from '#shared/types/jsr'
 import type { IconClass } from '~/types'
@@ -182,13 +183,6 @@ const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${package
 })
 
 // Fetch total install size (lazy, can be slow for large dependency trees)
-interface InstallSizeResult {
-  package: string
-  version: string
-  selfSize: number
-  totalSize: number
-  dependencyCount: number
-}
 const {
   data: installSize,
   status: installSizeStatus,
@@ -1227,8 +1221,17 @@ const showSkeleton = shallowRef(false)
               {{ $t('package.get_started.title') }}
             </LinkBase>
           </h2>
-          <!-- Package manager dropdown -->
-          <PackageManagerSelect />
+          <!-- Package manager dropdown + Download button -->
+          <div class="flex items-center gap-2">
+            <PackageDownloadButton
+              v-if="displayVersion && installSize"
+              :package-name="pkg.name"
+              :version="displayVersion"
+              :install-size="installSize"
+              size="small"
+            />
+            <PackageManagerSelect />
+          </div>
         </div>
         <div>
           <div
