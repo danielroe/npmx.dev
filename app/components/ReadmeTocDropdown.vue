@@ -166,85 +166,83 @@ function handleKeydown(event: KeyboardEvent) {
   </ButtonBase>
 
   <Teleport to="body">
-    <Transition
-      :enter-active-class="prefersReducedMotion ? '' : 'transition-opacity duration-150'"
-      :enter-from-class="prefersReducedMotion ? '' : 'opacity-0'"
-      enter-to-class="opacity-100"
-      :leave-active-class="prefersReducedMotion ? '' : 'transition-opacity duration-100'"
-      leave-from-class="opacity-100"
-      :leave-to-class="prefersReducedMotion ? '' : 'opacity-0'"
+    <div
+      :id="listboxId"
+      ref="listRef"
+      role="listbox"
+      :aria-hidden="!isOpen"
+      :aria-activedescendant="
+        isOpen && highlightedIndex >= 0 ? `${listboxId}-${toc[highlightedIndex]?.id}` : undefined
+      "
+      :aria-label="$t('package.readme.toc_title')"
+      :style="
+        isOpen
+          ? getDropdownStyle()
+          : { visibility: 'hidden', position: 'fixed', pointerEvents: 'none' }
+      "
+      :class="[
+        'fixed bg-bg-subtle border border-border rounded-md shadow-lg z-50 max-h-80 overflow-y-auto w-56 overscroll-contain',
+        !isOpen ? 'opacity-0' : prefersReducedMotion ? '' : 'transition-opacity duration-150',
+      ]"
     >
-      <div
-        v-if="isOpen"
-        :id="listboxId"
-        ref="listRef"
-        role="listbox"
-        :aria-activedescendant="
-          highlightedIndex >= 0 ? `${listboxId}-${toc[highlightedIndex]?.id}` : undefined
-        "
-        :aria-label="$t('package.readme.toc_title')"
-        :style="getDropdownStyle()"
-        class="fixed bg-bg-subtle border border-border rounded-md shadow-lg z-50 max-h-80 overflow-y-auto w-56 overscroll-contain"
-      >
-        <template v-for="node in tocTree" :key="node.id">
+      <template v-for="node in tocTree" :key="node.id">
+        <NuxtLink
+          :id="`${listboxId}-${node.id}`"
+          :to="`#${node.id}`"
+          role="option"
+          :aria-selected="activeId === node.id"
+          class="flex items-center gap-2 px-3 py-1.5 text-sm cursor-pointer transition-colors duration-150"
+          :class="[
+            activeId === node.id ? 'text-fg font-medium' : 'text-fg-muted',
+            highlightedIndex === getIndex(node.id) ? 'bg-bg-elevated' : 'hover:bg-bg-elevated',
+          ]"
+          dir="auto"
+          @click="select()"
+          @mouseenter="highlightedIndex = getIndex(node.id)"
+        >
+          <span class="truncate">{{ node.text }}</span>
+        </NuxtLink>
+
+        <template v-for="child in node.children" :key="child.id">
           <NuxtLink
-            :id="`${listboxId}-${node.id}`"
-            :to="`#${node.id}`"
+            :id="`${listboxId}-${child.id}`"
+            :to="`#${child.id}`"
             role="option"
-            :aria-selected="activeId === node.id"
-            class="flex items-center gap-2 px-3 py-1.5 text-sm cursor-pointer transition-colors duration-150"
+            :aria-selected="activeId === child.id"
+            class="flex items-center gap-2 px-3 py-1.5 ps-6 text-sm cursor-pointer transition-colors duration-150"
             :class="[
-              activeId === node.id ? 'text-fg font-medium' : 'text-fg-muted',
-              highlightedIndex === getIndex(node.id) ? 'bg-bg-elevated' : 'hover:bg-bg-elevated',
+              activeId === child.id ? 'text-fg font-medium' : 'text-fg-subtle',
+              highlightedIndex === getIndex(child.id) ? 'bg-bg-elevated' : 'hover:bg-bg-elevated',
             ]"
             dir="auto"
             @click="select()"
-            @mouseenter="highlightedIndex = getIndex(node.id)"
+            @mouseenter="highlightedIndex = getIndex(child.id)"
           >
-            <span class="truncate">{{ node.text }}</span>
+            <span class="truncate">{{ child.text }}</span>
           </NuxtLink>
 
-          <template v-for="child in node.children" :key="child.id">
-            <NuxtLink
-              :id="`${listboxId}-${child.id}`"
-              :to="`#${child.id}`"
-              role="option"
-              :aria-selected="activeId === child.id"
-              class="flex items-center gap-2 px-3 py-1.5 ps-6 text-sm cursor-pointer transition-colors duration-150"
-              :class="[
-                activeId === child.id ? 'text-fg font-medium' : 'text-fg-subtle',
-                highlightedIndex === getIndex(child.id) ? 'bg-bg-elevated' : 'hover:bg-bg-elevated',
-              ]"
-              dir="auto"
-              @click="select()"
-              @mouseenter="highlightedIndex = getIndex(child.id)"
-            >
-              <span class="truncate">{{ child.text }}</span>
-            </NuxtLink>
-
-            <NuxtLink
-              v-for="grandchild in child.children"
-              :id="`${listboxId}-${grandchild.id}`"
-              :to="`#${grandchild.id}`"
-              :key="grandchild.id"
-              role="option"
-              :aria-selected="activeId === grandchild.id"
-              class="flex items-center gap-2 px-3 py-1.5 ps-9 text-sm cursor-pointer transition-colors duration-150"
-              :class="[
-                activeId === grandchild.id ? 'text-fg font-medium' : 'text-fg-subtle',
-                highlightedIndex === getIndex(grandchild.id)
-                  ? 'bg-bg-elevated'
-                  : 'hover:bg-bg-elevated',
-              ]"
-              dir="auto"
-              @click="select()"
-              @mouseenter="highlightedIndex = getIndex(grandchild.id)"
-            >
-              <span class="truncate">{{ grandchild.text }}</span>
-            </NuxtLink>
-          </template>
+          <NuxtLink
+            v-for="grandchild in child.children"
+            :id="`${listboxId}-${grandchild.id}`"
+            :to="`#${grandchild.id}`"
+            :key="grandchild.id"
+            role="option"
+            :aria-selected="activeId === grandchild.id"
+            class="flex items-center gap-2 px-3 py-1.5 ps-9 text-sm cursor-pointer transition-colors duration-150"
+            :class="[
+              grandchild.id === activeId ? 'text-fg font-medium' : 'text-fg-subtle',
+              highlightedIndex === getIndex(grandchild.id)
+                ? 'bg-bg-elevated'
+                : 'hover:bg-bg-elevated',
+            ]"
+            dir="auto"
+            @click="select()"
+            @mouseenter="highlightedIndex = getIndex(grandchild.id)"
+          >
+            <span class="truncate">{{ grandchild.text }}</span>
+          </NuxtLink>
         </template>
-      </div>
-    </Transition>
+      </template>
+    </div>
   </Teleport>
 </template>
