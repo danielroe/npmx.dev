@@ -153,8 +153,6 @@ const { selectedPackages, isPackageSelected, togglePackageSelection } = usePacka
 
 <template>
   <div>
-    <PackageActionBar />
-
     <!-- Table View -->
     <template v-if="viewMode === 'table'">
       <PackageTable

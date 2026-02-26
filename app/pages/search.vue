@@ -533,6 +533,7 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
+  <PackageActionBar />
   <main class="flex-1 py-8" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
     <div class="container-sm">
       <div class="flex items-center justify-between gap-4 mb-4">
