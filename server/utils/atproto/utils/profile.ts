@@ -55,7 +55,7 @@ export class ProfileUtils {
    * @param handle
    * @returns
    */
-  async getProfile(handle: string) {
+  async getProfile(handle: string): Promise<NPMXProfile | undefined> {
     const profileKey = CACHE_PROFILE_KEY(handle)
     const cachedProfile = await this.cache.get<NPMXProfile>(profileKey)
 
@@ -78,6 +78,13 @@ export class ProfileUtils {
       }
     }
 
+    return profile
+  }
+
+  async updateProfileCache(handle: string, profile: NPMXProfile): Promise<NPMXProfile | undefined> {
+    const miniDoc = await this.slingshotMiniDoc(handle)
+    const profileKey = CACHE_PROFILE_KEY(miniDoc.handle)
+    await this.cache.set(profileKey, profile, CACHE_MAX_AGE)
     return profile
   }
 }

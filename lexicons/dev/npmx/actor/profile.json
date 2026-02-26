@@ -7,6 +7,7 @@
       "type": "record",
       "record": {
         "type": "object",
+        "required": ["displayName"],
         "properties": {
           "avatar": {
             "type": "blob",

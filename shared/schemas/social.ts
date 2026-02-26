@@ -9,3 +9,12 @@ export const PackageLikeBodySchema = v.object({
 })
 
 export type PackageLikeBody = v.InferOutput<typeof PackageLikeBodySchema>
+
+// TODO: add 'avatar'
+export const ProfileEditBodySchema = v.object({
+  displayName: v.string(),
+  website: v.optional(v.string()),
+  description: v.optional(v.string()),
+})
+
+export type ProfileEditBody = v.InferOutput<typeof ProfileEditBodySchema>
