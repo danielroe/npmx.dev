@@ -143,9 +143,6 @@ const {
   clearAllFilters,
 } = useStructuredFilters({
   packages: resultsArray,
-  initialFilters: {
-    ...parseSearchOperators(normalizeSearchParam(route.query.q)),
-  },
   initialSort: 'relevance-desc', // Default to search relevance
   searchQueryModel: searchQuery,
 })

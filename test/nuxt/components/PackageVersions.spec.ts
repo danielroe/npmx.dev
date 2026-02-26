@@ -100,6 +100,51 @@ describe('PackageVersions', () => {
       expect(versionLinks.length).toBeGreaterThan(0)
       expect(versionLinks[0]?.text()).toBe('1.0.0')
     })
+
+    it('highlights the current version row when selectedVersion prop matches', async () => {
+      const component = await mountSuspended(PackageVersions, {
+        props: {
+          packageName: 'test-package',
+          versions: {
+            '2.0.0': createVersion('2.0.0'),
+            '1.0.0': createVersion('1.0.0'),
+          },
+          distTags: { latest: '2.0.0', stable: '1.0.0' },
+          time: {
+            '2.0.0': '2024-01-15T12:00:00.000Z',
+            '1.0.0': '2024-01-01T12:00:00.000Z',
+          },
+          selectedVersion: '1.0.0',
+        },
+      })
+
+      // Find the version row divs that are direct children of the tag row containers
+      const versionRows = component.findAll('[class*="group/version-row"]')
+      const highlightedRows = versionRows.filter(row => row.classes().includes('bg-bg-subtle'))
+      expect(highlightedRows.length).toBe(1)
+      expect(highlightedRows[0]!.text()).toContain('1.0.0')
+    })
+
+    it('uses accent color for latest tag', async () => {
+      const component = await mountSuspended(PackageVersions, {
+        props: {
+          packageName: 'test-package',
+          versions: {
+            '2.0.0': createVersion('2.0.0'),
+            '1.0.0': createVersion('1.0.0'),
+          },
+          distTags: { latest: '2.0.0', stable: '1.0.0' },
+          time: {
+            '2.0.0': '2024-01-15T12:00:00.000Z',
+            '1.0.0': '2024-01-01T12:00:00.000Z',
+          },
+          selectedVersion: '1.0.0',
+        },
+      })
+
+      const latestTag = component.findAll('span').find(span => span.text() === 'latest')
+      expect(latestTag?.classes()).toContain('text-accent')
+    })
   })
 
   describe('dist-tag display', () => {

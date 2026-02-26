@@ -35,7 +35,7 @@
     "generate:fixtures": "node scripts/generate-fixtures.ts",
     "generate:lexicons": "lex build --lexicons lexicons --out shared/types/lexicons --clear",
     "generate:jwk": "node scripts/gen-jwk.ts",
-    "test": "vite test",
+    "test": "vp test",
     "test:a11y": "pnpm build:test && LIGHTHOUSE_COLOR_MODE=dark pnpm test:a11y:prebuilt && LIGHTHOUSE_COLOR_MODE=light pnpm test:a11y:prebuilt",
     "test:a11y:prebuilt": "./scripts/lighthouse.sh",
     "test:perf": "pnpm build:test && pnpm test:perf:prebuilt",
@@ -44,10 +44,13 @@
     "test:browser:prebuilt": "playwright test",
     "test:browser:ui": "pnpm build:test && pnpm test:browser:prebuilt --ui",
     "test:browser:update": "pnpm build:test && pnpm test:browser:prebuilt --update-snapshots",
-    "test:nuxt": "vite test --project nuxt",
+    "test:nuxt": "vp test --project nuxt",
     "test:types": "pnpm generate:lexicons && nuxt prepare && vue-tsc -b --noEmit && pnpm --filter npmx-connector test:types",
-    "test:unit": "vite test --project unit",
-    "start:playwright:webserver": "NODE_ENV=test pnpm preview --port 5678"
+    "test:unit": "vp test --project unit",
+    "start:playwright:webserver": "NODE_ENV=test pnpm preview --port 5678",
+    "storybook": "STORYBOOK=true storybook dev -p 6006",
+    "build-storybook": "STORYBOOK=true storybook build",
+    "chromatic": "chromatic"
   },
   "dependencies": {
     "@atproto/common": "0.5.13",
@@ -76,7 +79,7 @@
     "@upstash/redis": "1.36.2",
     "@vite-pwa/assets-generator": "1.0.2",
     "@vite-pwa/nuxt": "1.1.1",
-    "@voidzero-dev/vite-plus-core": "0.0.0-b1666489.20260220-0254",
+    "@voidzero-dev/vite-plus-core": "0.0.0-g52709db6.20260226-1136",
     "@vueuse/core": "14.2.1",
     "@vueuse/integrations": "14.2.1",
     "@vueuse/nuxt": "14.2.1",
@@ -88,6 +91,7 @@
     "fast-npm-meta": "1.2.1",
     "focus-trap": "^8.0.0",
     "gray-matter": "4.0.3",
+    "ipaddr.js": "2.3.0",
     "marked": "17.0.3",
     "module-replacements": "2.11.0",
     "nuxt": "4.3.1",
@@ -109,7 +113,7 @@
     "validate-npm-package-name": "7.0.2",
     "virtua": "0.48.6",
     "vite-plugin-pwa": "1.2.0",
-    "vite-plus": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
+    "vite-plus": "0.0.0-g52709db6.20260226-1136",
     "vue": "3.5.29",
     "vue-data-ui": "3.15.8"
   },
@@ -118,14 +122,17 @@
     "@intlify/core-base": "11.2.8",
     "@npm/types": "2.1.0",
     "@playwright/test": "1.58.2",
+    "@storybook-vue/nuxt": "9.0.1",
+    "@storybook/addon-a11y": "^10.2.7",
+    "@storybook/addon-docs": "^10.2.7",
     "@types/node": "24.10.13",
     "@types/sanitize-html": "2.16.0",
     "@types/semver": "7.7.1",
     "@types/validate-npm-package-name": "4.0.2",
-    "@vitest/browser-playwright": "4.0.18",
     "@vitest/coverage-v8": "4.0.18",
     "@vue/test-utils": "2.4.6",
     "axe-core": "4.11.1",
+    "chromatic": "15.1.0",
     "defu": "6.1.4",
     "devalue": "5.6.3",
     "eslint-plugin-regexp": "3.0.0",
@@ -138,8 +145,9 @@
     "oxlint": "1.50.0",
     "schema-dts": "1.1.5",
     "simple-git-hooks": "2.13.1",
+    "storybook": "^10.2.7",
     "typescript": "5.9.3",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@0.0.0-b1666489.20260220-0254",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@0.0.0-g52709db6.20260226-1136",
     "vitest-environment-nuxt": "1.0.1",
     "vue-i18n-extract": "2.0.7",
     "vue-tsc": "3.2.5"
@@ -148,25 +156,25 @@
     "node": "24"
   },
   "simple-git-hooks": {
-    "pre-commit": "./node_modules/.bin/lint-staged"
+    "pre-commit": "pnpm exec lint-staged"
   },
   "lint-staged": {
     "i18n/locales/*": [
       "node ./lunaria/lunaria.ts",
-      "./node_modules/.bin/oxfmt lunaria/files/",
+      "pnpm exec oxfmt lunaria/files/",
       "git add lunaria/files/",
       "node scripts/generate-i18n-schema.ts",
-      "./node_modules/.bin/oxfmt i18n/schema.json",
+      "pnpm exec oxfmt i18n/schema.json",
       "git add i18n/schema.json"
     ],
     "*.{js,ts,mjs,cjs,vue}": [
-      "./node_modules/.bin/oxlint --fix"
+      "pnpm exec oxlint --fix"
     ],
     "*.vue": [
       "node scripts/unocss-checker.ts"
     ],
     "*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
-      "./node_modules/.bin/oxfmt"
+      "pnpm exec oxfmt"
     ]
   },
   "packageManager": "pnpm@10.30.1"
