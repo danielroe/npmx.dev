@@ -61,7 +61,14 @@ const config: KnipConfig = {
     },
     'docs': {
       entry: ['app/**/*.{ts,vue,css}'],
-      ignoreDependencies: ['docus', 'better-sqlite3', '@nuxtjs/mdc', 'nuxt!'],
+      ignoreDependencies: [
+        'docus',
+        'better-sqlite3',
+        '@nuxtjs/mdc',
+        'nuxt!',
+        '@nuxt/ui',
+        'tailwindcss',
+      ],
     },
   },
 }
