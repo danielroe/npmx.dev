@@ -1,12 +1,10 @@
 name: chromatic
 
 on:
-  # Temporarily disabled until we can get Storybook to build properly.
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
