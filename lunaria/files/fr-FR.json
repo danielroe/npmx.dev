@@ -314,7 +314,7 @@
       "no_matches": "Aucune version ne correspond à cette plage",
       "copy_alt": {
         "per_version_analysis": "La version {version} a été téléchargée {downloads} fois",
-        "general_description": "Graphique en barres montrant les téléchargements par version pour {versions_count} versions {semver_grouping_mode} du paquet {package_name}, {date_range_label} de la version {first_version} à la version {last_version}. La version la plus téléchargée est {max_downloaded_version} avec {max_version_downloads} téléchargements. {per_version_analysis} {watermark}."
+        "general_description": "Graphique en barres montrant les téléchargements par version pour {versions_count} versions {semver_grouping_mode} du paquet {package_name}, {date_range_label} de la version {first_version} à la version {last_version}. La version la plus téléchargée est {max_downloaded_version} avec {max_version_downloads} téléchargements. {per_version_analysis}. {watermark}."
       }
     },
     "dependencies": {
