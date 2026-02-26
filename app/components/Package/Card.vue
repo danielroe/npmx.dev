@@ -14,8 +14,6 @@ const props = defineProps<{
   filters?: StructuredFilters
   /** Search query for highlighting exact matches */
   searchQuery?: string
-  /** Shows checkbox to all cards and the click will work as selection */
-  forceSelection?: boolean
 }>()
 
 const selected = defineModel<boolean>('selected', {
@@ -51,20 +49,10 @@ const numberFormatter = useNumberFormatter()
         :is="headingLevel ?? 'h3'"
         class="font-mono text-sm sm:text-base font-medium text-fg group-hover:text-fg transition-colors duration-200 min-w-0 break-all"
       >
-        <button
-          v-if="forceSelection"
-          @click="selected = !selected"
-          class="after:content-[''] after:absolute after:inset-0 cursor-pointer"
-          :data-result-index="index"
-          dir="ltr"
-        >
-          {{ result.package.name }}
-        </button>
         <NuxtLink
-          v-else
           :to="packageRoute(result.package.name)"
           :prefetch-on="prefetch ? 'visibility' : 'interaction'"
-          class="decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
+          class="decoration-none after:content-[''] after:absolute after:inset-0"
           :data-result-index="index"
           dir="ltr"
           >{{ result.package.name }}</NuxtLink
@@ -81,7 +69,6 @@ const numberFormatter = useNumberFormatter()
           <input
             data-package-card-checkbox
             class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
-            :class="{ 'opacity-100!': forceSelection }"
             type="checkbox"
             :checked="!!selected"
             v-model="selected"

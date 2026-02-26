@@ -148,7 +148,7 @@ defineExpose({
   scrollToIndex,
 })
 
-const { selectedPackages, isPackageSelected, togglePackageSelection } = usePackageSelection()
+const { isPackageSelected, togglePackageSelection } = usePackageSelection()
 </script>
 
 <template>
@@ -189,9 +189,8 @@ const { selectedPackages, isPackageSelected, togglePackageSelection } = usePacka
                 class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
                 :filters="filters"
                 :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
-                :selected="isPackageSelected(item)"
-                :force-selection="selectedPackages.length > 0"
-                @update:selected="togglePackageSelection(item)"
+                :selected="isPackageSelected(item.package.name)"
+                @update:selected="togglePackageSelection(item.package.name)"
                 @click-keyword="emit('clickKeyword', $event)"
               />
             </div>

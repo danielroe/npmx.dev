@@ -10,6 +10,15 @@ import { normalizeSearchParam } from '#shared/utils/url'
 const route = useRoute()
 const router = useRouter()
 
+const { selectedPackages } = usePackageSelection()
+const selectionView = useRouteQuery<string>('selection-view', '', { mode: 'push' })
+
+function toggleSelection() {
+  selectionView.value = selectionView.value === 'true' ? '' : 'true'
+}
+
+const isSelectioView = computed<boolean>(() => selectionView.value === 'true')
+
 // Preferences (persisted to localStorage)
 const {
   viewMode,
@@ -533,7 +542,8 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <PackageActionBar />
+  <PackageActionBar :hide="isSelectioView" />
+
   <main class="flex-1 py-8" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
     <div class="container-sm">
       <div class="flex items-center justify-between gap-4 mb-4">
@@ -543,7 +553,12 @@ defineOgImageComponent('Default', {
         <SearchProviderToggle />
       </div>
 
-      <section v-if="query">
+      <PackageSelectionView
+        :view-mode="viewMode"
+        v-if="isSelectioView && selectedPackages.length"
+      />
+
+      <section v-else-if="query">
         <!-- Initial loading (only after user interaction, not during view transition) -->
         <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 
@@ -606,6 +621,7 @@ defineOgImageComponent('Default', {
               :disabled-sort-keys="disabledSortKeys"
               search-context
               @toggle-column="toggleColumn"
+              @toggle-selection="toggleSelection"
               @reset-columns="resetColumns"
               @clear-filter="handleClearFilter"
               @clear-all-filters="clearAllFilters"

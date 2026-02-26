@@ -235,13 +235,13 @@ const { selectedPackages, clearSelectedPackages } = usePackageSelection()
           class="flex items-center order-3 border-is border-fg-subtle/20 ps-3"
           v-if="selectedPackages.length"
         >
-          <LinkBase
-            to="/package-selection"
-            variant="button-secondary"
+          <ButtonBase
+            variant="secondary"
+            @click="emit('toggleSelection')"
             classicon="i-lucide:package-check"
           >
             View selected ({{ selectedPackages.length }})
-          </LinkBase>
+          </ButtonBase>
           <button @click="clearSelectedPackages" class="flex items-center ms-2">
             <span class="i-lucide:x text-sm" aria-label="Close action bar" />
           </button>

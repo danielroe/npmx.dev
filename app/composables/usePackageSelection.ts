@@ -1,23 +1,36 @@
 export function usePackageSelection() {
-  const selectedPackages = useState<NpmSearchResult[]>('selected_packages', () => [])
+  const selectedPackagesParam = useRouteQuery<string>('selection', '', {
+    mode: 'replace',
+  })
 
-  function findPackageIndex(pkg: NpmSearchResult): number {
-    return selectedPackages.value.findIndex(
-      selectedPackage => selectedPackage.package.name === pkg.package.name,
-    )
+  const selectedPackages = computed<string[]>({
+    get() {
+      if (!selectedPackagesParam) {
+        return []
+      }
+
+      return selectedPackagesParam.value.split(',').map(p => p.trim())
+    },
+    set(value) {
+      selectedPackagesParam.value = value.length > 0 ? value.join(',') : ''
+    },
+  })
+
+  function findPackageIndex(name: string): number {
+    return selectedPackages.value.findIndex(selectedPackage => selectedPackage === name)
   }
 
-  function isPackageSelected(pkg: NpmSearchResult): boolean {
-    return findPackageIndex(pkg) !== -1
+  function isPackageSelected(name: string): boolean {
+    return findPackageIndex(name) !== -1
   }
 
-  function togglePackageSelection(pkg: NpmSearchResult) {
-    const itemIndex = findPackageIndex(pkg)
+  function togglePackageSelection(name: string) {
+    const itemIndex = findPackageIndex(name)
 
     if (itemIndex !== -1) {
-      selectedPackages.value.splice(itemIndex, 1)
+      selectedPackages.value = selectedPackages.value.filter((_, i) => i !== itemIndex)
     } else {
-      selectedPackages.value.push(pkg)
+      selectedPackages.value = [...selectedPackages.value, name]
     }
   }
 
@@ -27,6 +40,7 @@ export function usePackageSelection() {
 
   return {
     selectedPackages,
+    selectedPackagesParam,
     clearSelectedPackages,
     isPackageSelected,
     togglePackageSelection,
