@@ -1,6 +1,6 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import { isCI, isTest, provider } from 'std-env'
+import { isCI, isDevelopment, isWindows, isTest, provider } from 'std-env'
 
 export default defineNuxtConfig({
   modules: [
@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
     '@nuxtjs/color-mode',
+    ...(isDevelopment || isWindows ? [] : ['nuxt-security']),
   ],
 
   $test: {
