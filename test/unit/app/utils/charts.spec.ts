@@ -790,6 +790,18 @@ describe('computeLineChartAnalysis', () => {
 })
 
 describe('createAltTextForTrendLineChart', () => {
+  it('handles dataset with empty lines without throwing', () => {
+    const { translate } = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({ $t: translate })
+
+    expect(() =>
+      createAltTextForTrendLineChart({
+        dataset: { lines: [] },
+        config: trendLineConfig,
+      } as AltCopyArgs<TrendLineDataset, TrendLineConfig>),
+    ).not.toThrow()
+  })
+
   it('returns empty string when dataset is null', () => {
     const translateMock = createTranslateMock()
     const trendLineConfig = createTrendLineConfig({ $t: translateMock.translate })
@@ -1052,6 +1064,18 @@ describe('copyAltTextForTrendLineChart', () => {
 })
 
 describe('createAltTextForVersionsBarChart', () => {
+  it('handles dataset with empty bars without throwing', () => {
+    const { translate } = createTranslateMock()
+    const config = createVersionsBarConfigForTests({ $t: translate as any })
+
+    expect(() =>
+      createAltTextForVersionsBarChart({
+        dataset: { bars: [] },
+        config,
+      } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>),
+    ).not.toThrow()
+  })
+
   it('returns empty string when dataset is null (does not translate)', () => {
     const { translate, calls } = createTranslateMock()
     const config = createVersionsBarConfigForTests({ $t: translate as any })
