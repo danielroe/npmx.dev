@@ -2,12 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { SlimPackument, InstallSizeResult } from '#shared/types'
 
 function createPackage(
+  name: string,
   time: Record<string, string>,
   distTags: Record<string, string> = {},
 ): SlimPackument {
   return {
-    '_id': 'test',
-    'name': 'test',
+    '_id': name,
+    'name': name,
     'dist-tags': { latest: '1.0.0', ...distTags },
     'time': { created: '2020-01-01', ...time },
     'versions': {},
@@ -15,9 +16,12 @@ function createPackage(
   } as SlimPackument
 }
 
-function createInstallSize(overrides: Partial<InstallSizeResult> = {}): InstallSizeResult {
+function createInstallSize(
+  name: string,
+  overrides: Partial<InstallSizeResult> = {},
+): InstallSizeResult {
   return {
-    package: 'test',
+    package: name,
     version: '1.0.0',
     selfSize: 1000,
     totalSize: 5000,
@@ -31,7 +35,7 @@ describe('useInstallSizeDiff', () => {
   let fetchSpy: ReturnType<typeof vi.fn>
 
   beforeEach(() => {
-    fetchSpy = vi.fn().mockResolvedValue(createInstallSize())
+    fetchSpy = vi.fn().mockResolvedValue(createInstallSize('test'))
     vi.stubGlobal('$fetch', fetchSpy)
   })
 
@@ -41,7 +45,7 @@ describe('useInstallSizeDiff', () => {
 
   describe('comparisonVersion', () => {
     it('selects the semver-previous stable version', () => {
-      const pkg = createPackage({
+      const pkg = createPackage('test', {
         '1.0.0': '2020-01-01',
         '1.1.0': '2021-01-01',
         '1.2.0': '2022-01-01',
@@ -52,14 +56,14 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('returns null for the first ever stable version', () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01' })
+      const pkg = createPackage('test', { '1.0.0': '2020-01-01' })
 
       const { comparisonVersion } = useInstallSizeDiff('test', '1.0.0', pkg, null)
       expect(comparisonVersion.value).toBeNull()
     })
 
     it('skips prerelease versions when finding previous stable', () => {
-      const pkg = createPackage({
+      const pkg = createPackage('test', {
         '1.0.0': '2020-01-01',
         '2.0.0-beta.1': '2021-01-01',
         '2.0.0-beta.2': '2021-06-01',
@@ -72,6 +76,7 @@ describe('useInstallSizeDiff', () => {
 
     it('uses the latest dist-tag for a prerelease version', () => {
       const pkg = createPackage(
+        'test',
         { '1.0.0': '2020-01-01', '2.0.0-beta.1': '2021-01-01' },
         { latest: '1.0.0', next: '2.0.0-beta.1' },
       )
@@ -81,14 +86,18 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('returns null when the prerelease version is already latest', () => {
-      const pkg = createPackage({ '2.0.0-beta.1': '2021-01-01' }, { latest: '2.0.0-beta.1' })
+      const pkg = createPackage(
+        'test',
+        { '2.0.0-beta.1': '2021-01-01' },
+        { latest: '2.0.0-beta.1' },
+      )
 
       const { comparisonVersion } = useInstallSizeDiff('test', '2.0.0-beta.1', pkg, null)
       expect(comparisonVersion.value).toBeNull()
     })
 
     it('returns null for a prerelease when there is no latest tag', () => {
-      const pkg = createPackage({ '2.0.0-beta.1': '2021-01-01' }, {})
+      const pkg = createPackage('test', { '2.0.0-beta.1': '2021-01-01' }, {})
       pkg['dist-tags'] = {}
 
       const { comparisonVersion } = useInstallSizeDiff('test', '2.0.0-beta.1', pkg, null)
@@ -98,8 +107,8 @@ describe('useInstallSizeDiff', () => {
 
   describe('diff', () => {
     it('returns null when no comparison version exists', () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01' })
-      const current = createInstallSize({ version: '1.0.0' })
+      const pkg = createPackage('test', { '1.0.0': '2020-01-01' })
+      const current = createInstallSize('test', { version: '1.0.0' })
 
       const { diff } = useInstallSizeDiff('test', '1.0.0', pkg, current)
 
@@ -108,10 +117,21 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('returns null when both thresholds are not met', async () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
-      const current = createInstallSize({ version: '1.1.0', totalSize: 5100, dependencyCount: 4 })
+      const pkg = createPackage('pkg-no-threshold', {
+        '1.0.0': '2020-01-01',
+        '1.1.0': '2021-01-01',
+      })
+      const current = createInstallSize('pkg-no-threshold', {
+        version: '1.1.0',
+        totalSize: 5100,
+        dependencyCount: 4,
+      })
       fetchSpy.mockResolvedValue(
-        createInstallSize({ version: '1.0.0', totalSize: 5000, dependencyCount: 3 }),
+        createInstallSize('pkg-no-threshold', {
+          version: '1.0.0',
+          totalSize: 5000,
+          dependencyCount: 3,
+        }),
       )
 
       const { diff } = useInstallSizeDiff('pkg-no-threshold', '1.1.0', pkg, current)
@@ -121,10 +141,18 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('sets sizeThresholdExceeded when size increased by more than 25%', async () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
-      const current = createInstallSize({ version: '1.1.0', totalSize: 7000, dependencyCount: 4 })
+      const pkg = createPackage('pkg-size-only', { '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
+      const current = createInstallSize('pkg-size-only', {
+        version: '1.1.0',
+        totalSize: 7000,
+        dependencyCount: 4,
+      })
       fetchSpy.mockResolvedValue(
-        createInstallSize({ version: '1.0.0', totalSize: 5000, dependencyCount: 3 }),
+        createInstallSize('pkg-size-only', {
+          version: '1.0.0',
+          totalSize: 5000,
+          dependencyCount: 3,
+        }),
       )
 
       const { diff } = useInstallSizeDiff('pkg-size-only', '1.1.0', pkg, current)
@@ -145,10 +173,18 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('sets depThresholdExceeded when more than 5 dependencies were added', async () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
-      const current = createInstallSize({ version: '1.1.0', totalSize: 5100, dependencyCount: 10 })
+      const pkg = createPackage('pkg-deps-only', { '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
+      const current = createInstallSize('pkg-deps-only', {
+        version: '1.1.0',
+        totalSize: 5100,
+        dependencyCount: 10,
+      })
       fetchSpy.mockResolvedValue(
-        createInstallSize({ version: '1.0.0', totalSize: 5000, dependencyCount: 3 }),
+        createInstallSize('pkg-deps-only', {
+          version: '1.0.0',
+          totalSize: 5000,
+          dependencyCount: 3,
+        }),
       )
 
       const { diff } = useInstallSizeDiff('pkg-deps-only', '1.1.0', pkg, current)
@@ -169,10 +205,14 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('returns correct diff values', async () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
-      const current = createInstallSize({ version: '1.1.0', totalSize: 10000, dependencyCount: 15 })
+      const pkg = createPackage('pkg-both', { '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
+      const current = createInstallSize('pkg-both', {
+        version: '1.1.0',
+        totalSize: 10000,
+        dependencyCount: 15,
+      })
       fetchSpy.mockResolvedValue(
-        createInstallSize({ version: '1.0.0', totalSize: 5000, dependencyCount: 5 }),
+        createInstallSize('pkg-both', { version: '1.0.0', totalSize: 5000, dependencyCount: 5 }),
       )
 
       const { diff } = useInstallSizeDiff('pkg-both', '1.1.0', pkg, current)
@@ -195,9 +235,9 @@ describe('useInstallSizeDiff', () => {
 
   describe('fetch behavior', () => {
     it('calls the correct API endpoint for the comparison version', async () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
-      const current = createInstallSize({ version: '1.1.0', totalSize: 7000 })
-      fetchSpy.mockResolvedValue(createInstallSize({ version: '1.0.0', totalSize: 5000 }))
+      const pkg = createPackage('my-pkg', { '1.0.0': '2020-01-01', '1.1.0': '2021-01-01' })
+      const current = createInstallSize('my-pkg', { version: '1.1.0', totalSize: 7000 })
+      fetchSpy.mockResolvedValue(createInstallSize('my-pkg', { version: '1.0.0', totalSize: 5000 }))
 
       useInstallSizeDiff('my-pkg', '1.1.0', pkg, current)
 
@@ -206,7 +246,7 @@ describe('useInstallSizeDiff', () => {
     })
 
     it('does not fetch when there is no comparison version', () => {
-      const pkg = createPackage({ '1.0.0': '2020-01-01' })
+      const pkg = createPackage('my-pkg', { '1.0.0': '2020-01-01' })
 
       useInstallSizeDiff('my-pkg', '1.0.0', pkg, null)
 
