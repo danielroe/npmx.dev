@@ -30,7 +30,7 @@
     "mock-connector": "pnpm --filter npmx-connector dev:mock",
     "generate-pwa-icons": "pwa-assets-generator",
     "preview": "nuxt preview",
-    "postinstall": "pnpm generate:lexicons && nuxt prepare && pnpm generate:sprite && simple-git-hooks",
+    "postinstall": "pnpm generate:lexicons && pnpm generate:sprite && nuxt prepare && simple-git-hooks",
     "generate:sprite": "node scripts/generate-file-tree-sprite.ts",
     "generate:fixtures": "node scripts/generate-fixtures.ts",
     "generate:lexicons": "lex build --lexicons lexicons --out shared/types/lexicons --clear",
