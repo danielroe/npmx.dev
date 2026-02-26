@@ -1,6 +1,8 @@
+import type { ProviderId } from '#imports'
 import type { IconClass } from '~/types/icon'
+import { computed, toValue } from 'vue'
 
-const PROVIDER_ICONS: Record<string, IconClass> = {
+const PROVIDER_ICONS: Record<ProviderId, IconClass> = {
   github: 'i-simple-icons:github',
   gitlab: 'i-simple-icons:gitlab',
   bitbucket: 'i-simple-icons:bitbucket',

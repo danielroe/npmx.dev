@@ -108,14 +108,14 @@ const tptoc = useTemplateRef('tptoc')
       </div>
     </header>
 
-    <section class="container w-full" v-if="changelog">
-      <LazyChangelogReleases v-if="changelog.type == 'release'" :info="changelog" />
+    <section class="container w-full" v-if="!pending">
+      <LazyChangelogReleases v-if="changelog?.type == 'release'" :info="changelog" />
       <LazyChangelogMarkdown
-        v-else-if="changelog.type == 'md'"
+        v-else-if="changelog?.type == 'md'"
         :info="changelog"
         :tpTarget="tptoc"
       />
-      <p v-else-if="!pending" class="mt-5">{{ $t('changelog.no_logs') }}</p>
+      <p class="mt-5">{{ $t('changelog.no_logs') }}</p>
     </section>
   </main>
 </template>

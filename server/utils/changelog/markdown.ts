@@ -25,7 +25,7 @@ export async function changelogRenderer(mdRepoInfo: MarkdownRepoInfo) {
     const titleAttr = title ? ` title="${title}"` : ''
     const plainText = text.replace(/<[^>]*>/g, '').trim()
 
-    if (href.startsWith('mailto:') && !EMAIL_REGEX.test(text)) {
+    if (href.startsWith('mailto:') && !EMAIL_REGEX.test(plainText)) {
       return text
     }
 
@@ -260,13 +260,20 @@ function resolveUrl(url: string, repoInfo: MarkdownRepoInfo) {
   // Check if this is a markdown file link
   const isMarkdownFile = /\.md$/i.test(url.split('?')[0]?.split('#')[0] ?? '')
 
+  // if (url.startsWith('./') || url.startsWith('../')) {
+  //   // url constructor handles relative paths
+  //   return checkResolvedUrl(new URL(url, `${baseUrl}/${repoInfo.path ?? ''}`).href, baseUrl)
+  // }
+
   const baseUrl = isMarkdownFile ? repoInfo.blobBaseUrl : repoInfo.rawBaseUrl
-  if (url.startsWith('./') || url.startsWith('../')) {
-    // url constructor handles relative paths
-    return checkResolvedUrl(new URL(url, `${baseUrl}/${repoInfo.path ?? ''}`).href, baseUrl)
-  }
+
   if (url.startsWith('/')) {
     return checkResolvedUrl(new URL(`${baseUrl}${url}`).href, baseUrl)
+  }
+
+  if (!hasProtocol(url)) {
+    // the '/' ensure bare relative links stay after "....../HEAD"
+    return checkResolvedUrl(new URL(url, `${baseUrl}/${repoInfo.path ?? '/'}`).href, baseUrl)
   }
 
   return url

@@ -9,7 +9,7 @@ const formattedDate = useDateFormat(() => release.publishedAt, 'YYYY-MM-DD', {})
 
 const cardId = computed(() => (release.publishedAt ? `date-${formattedDate.value}` : undefined))
 
-const navId = computed(() => `releaae-${encodeURIComponent(release.title)}`)
+const navId = computed(() => `release-${encodeURIComponent(release.title)}`)
 
 function navigateToTitle() {
   navigateTo(`#${navId.value}`)
@@ -28,10 +28,10 @@ function navigateToTitle() {
           {{ release.title }}
         </a>
       </h2>
-      <TagStatic v-if="release.prerelease" variant="default" :tabindex="0" class="h-unset">
+      <TagStatic v-if="release.prerelease" variant="default" class="h-unset">
         {{ $t('changelog.pre_release') }}
       </TagStatic>
-      <TagStatic v-if="release.draft" variant="default" :tabindex="0" class="h-unset">
+      <TagStatic v-if="release.draft" variant="default" class="h-unset">
         {{ $t('changelog.draft') }}
       </TagStatic>
       <div class="flex-1" aria-hidden="true"></div>
