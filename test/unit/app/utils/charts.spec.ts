@@ -12,6 +12,10 @@ import {
   copyAltTextForTrendLineChart,
   createAltTextForVersionsBarChart,
   copyAltTextForVersionsBarChart,
+  type TrendLineConfig,
+  type TrendLineDataset,
+  type VersionsBarConfig,
+  type VersionsBarDataset,
 } from '../../../../app/utils/charts'
 import type { AltCopyArgs } from 'vue-data-ui'
 
