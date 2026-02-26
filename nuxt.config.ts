@@ -12,9 +12,10 @@ export default defineNuxtConfig({
     '@nuxt/a11y',
     'nuxt-og-image',
     '@nuxt/test-utils',
+    '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    ...(isStorybook ? [] : ['@nuxt/fonts', '@vite-pwa/nuxt', '@nuxtjs/color-mode']),
+    ...(isStorybook ? [] : ['@nuxt/fonts', '@nuxtjs/color-mode']),
   ],
 
   $test: {
@@ -254,6 +255,7 @@ export default defineNuxtConfig({
   },
 
   ogImage: {
+    enabled: !isStorybook,
     defaults: {
       component: 'Default',
     },
@@ -272,6 +274,7 @@ export default defineNuxtConfig({
     // Disable service worker
     disable: true,
     pwaAssets: {
+      disabled: isStorybook,
       config: false,
     },
     manifest: {
