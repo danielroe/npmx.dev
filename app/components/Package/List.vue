@@ -147,10 +147,14 @@ function scrollToIndex(index: number, smooth = true) {
 defineExpose({
   scrollToIndex,
 })
+
+const { selectedPackages, isPackageSelected, togglePackageSelection } = usePackageSelection()
 </script>
 
 <template>
   <div>
+    <PackageActionBar />
+
     <!-- Table View -->
     <template v-if="viewMode === 'table'">
       <PackageTable
@@ -179,7 +183,7 @@ defineExpose({
           <template #default="{ item, index }">
             <div class="pb-4">
               <PackageCard
-                :result="item as NpmSearchResult"
+                :result="item"
                 :heading-level="headingLevel"
                 :show-publisher="showPublisher"
                 :index="index"
@@ -187,6 +191,9 @@ defineExpose({
                 class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
                 :filters="filters"
                 :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
+                :selected="isPackageSelected(item)"
+                :force-selection="selectedPackages.length > 0"
+                @update:selected="togglePackageSelection(item)"
                 @click-keyword="emit('clickKeyword', $event)"
               />
             </div>

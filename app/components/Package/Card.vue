@@ -14,7 +14,13 @@ const props = defineProps<{
   filters?: StructuredFilters
   /** Search query for highlighting exact matches */
   searchQuery?: string
+  /** Shows checkbox to all cards and the click will work as selection */
+  forceSelection?: boolean
 }>()
+
+const selected = defineModel<boolean>('selected', {
+  default: false,
+})
 
 const emit = defineEmits<{
   clickKeyword: [keyword: string]
@@ -39,13 +45,23 @@ const numberFormatter = useNumberFormatter()
 </script>
 
 <template>
-  <BaseCard :isExactMatch="isExactMatch">
-    <div class="mb-2 flex items-baseline justify-start gap-2">
+  <BaseCard :selected :isExactMatch="isExactMatch">
+    <header class="mb-4 flex items-baseline justify-between gap-2">
       <component
         :is="headingLevel ?? 'h3'"
         class="font-mono text-sm sm:text-base font-medium text-fg group-hover:text-fg transition-colors duration-200 min-w-0 break-all"
       >
+        <button
+          v-if="forceSelection"
+          @click="selected = !selected"
+          class="after:content-[''] after:absolute after:inset-0 cursor-pointer"
+          :data-result-index="index"
+          dir="ltr"
+        >
+          {{ result.package.name }}
+        </button>
         <NuxtLink
+          v-else
           :to="packageRoute(result.package.name)"
           :prefetch-on="prefetch ? 'visibility' : 'interaction'"
           class="decoration-none scroll-mt-48 scroll-mb-6 after:content-[''] after:absolute after:inset-0"
@@ -59,28 +75,23 @@ const numberFormatter = useNumberFormatter()
           >{{ $t('search.exact_match') }}</span
         >
       </component>
-      <span aria-hidden="true" class="flex-shrink-1 flex-grow-1" />
-      <!-- Mobile: version next to package name -->
-      <div class="sm:hidden text-fg-subtle flex items-center gap-1.5 shrink-0">
-        <span
-          v-if="result.package.version"
-          class="font-mono text-xs truncate max-w-20"
-          :title="result.package.version"
-        >
-          v{{ result.package.version }}
-        </span>
-        <ProvenanceBadge
-          v-if="result.package.publisher?.trustedPublisher"
-          :provider="result.package.publisher.trustedPublisher.id"
-          :package-name="result.package.name"
-          :version="result.package.version"
-          :linked="false"
-          compact
-        />
+
+      <div class="flex items-center gap-4">
+        <div class="relative z-1">
+          <input
+            data-package-card-checkbox
+            class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
+            :class="{ 'opacity-100!': forceSelection }"
+            type="checkbox"
+            :checked="!!selected"
+            v-model="selected"
+          />
+        </div>
       </div>
-    </div>
-    <div class="flex justify-start items-start gap-4 sm:gap-8">
-      <div class="min-w-0">
+    </header>
+
+    <div class="flex flex-col sm:flex-row sm:justify-start sm:items-start gap-6 sm:gap-8">
+      <div class="min-w-0 w-full">
         <p v-if="pkgDescription" class="text-fg-muted text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3">
           <span v-html="pkgDescription" />
         </p>
@@ -124,10 +135,9 @@ const numberFormatter = useNumberFormatter()
           </div>
         </dl>
       </div>
-      <span aria-hidden="true" class="flex-shrink-1 flex-grow-1" />
-      <!-- Desktop: version and downloads on right side -->
-      <div class="hidden sm:flex flex-col gap-2 shrink-0">
-        <div class="text-fg-subtle flex items-start gap-2 justify-end">
+
+      <div class="flex flex-col gap-2 shrink-0">
+        <div class="text-fg-subtle flex items-start gap-2 sm:justify-end">
           <span
             v-if="result.package.version"
             class="font-mono text-xs truncate max-w-32"
@@ -150,7 +160,7 @@ const numberFormatter = useNumberFormatter()
         </div>
         <div
           v-if="result.downloads?.weekly"
-          class="text-fg-subtle gap-2 flex items-center justify-end"
+          class="text-fg-subtle gap-2 flex items-center sm:justify-end"
         >
           <span class="i-lucide:chart-line w-3.5 h-3.5" aria-hidden="true" />
           <span class="font-mono text-xs">

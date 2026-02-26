@@ -1160,5 +1160,9 @@
       "p1": "If you encounter an accessibility barrier on {app}, please let us know by opening an issue on our {link}. We take these reports seriously and will do our best to address them.",
       "link": "GitHub repository"
     }
+  },
+  "action_bar": {
+    "selection": "0 selected | 1 selected | {count} selected",
+    "shortcut": "Press \"{key}\" to focus actions"
   }
 }

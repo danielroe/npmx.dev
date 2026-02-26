@@ -3592,6 +3592,18 @@
       },
       "additionalProperties": false
     },
+    "action_bar": {
+      "type": "object",
+      "properties": {
+        "selection": {
+          "type": "string"
+        },
+        "shortcut": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "$schema": {
       "type": "string"
     }
