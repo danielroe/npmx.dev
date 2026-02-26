@@ -2,7 +2,6 @@
 import type { FileDiffResponse, FileChange, DiffHunk } from '#shared/types'
 import { createDiff, insertSkipBlocks, countDiffStats } from '#shared/utils/diff'
 import { onClickOutside } from '@vueuse/core'
-import { motion } from 'motion-v'
 
 const props = defineProps<{
   packageName: string
@@ -281,134 +280,139 @@ function getCodeUrl(version: string): string {
           </button>
 
           <!-- Dropdown menu -->
-          <motion.div
-            v-if="showOptions"
-            class="absolute inset-ie-0 top-full mt-2 z-20 p-4 bg-bg-elevated border border-border shadow-2xl overflow-auto"
-            :style="{
-              width: mergeModifiedLines
-                ? 'min(420px, calc(100vw - 24px))'
-                : 'min(320px, calc(100vw - 24px))',
-              maxWidth: 'calc(100vw - 24px)',
-              maxHeight: '70vh',
-              borderRadius: mergeModifiedLines ? '14px' : '20px',
-            }"
-            :initial="{ opacity: 0, y: -4, scale: 0.98 }"
-            :animate="{ opacity: 1, y: 0, scale: 1 }"
-            :transition="{ type: 'spring', stiffness: 550, damping: 45, mass: 0.7 }"
+          <Transition
+            enter-active-class="transition duration-150 ease-out motion-reduce:transition-none"
+            enter-from-class="opacity-0 scale-95 motion-reduce:scale-100"
+            enter-to-class="opacity-100 scale-100"
+            leave-active-class="transition duration-100 ease-in motion-reduce:transition-none"
+            leave-from-class="opacity-100 scale-100"
+            leave-to-class="opacity-0 scale-95 motion-reduce:scale-100"
           >
-            <div class="flex flex-col gap-2">
-              <!-- Merge modified lines toggle -->
-              <SettingsToggle label="Merge modified lines" v-model="mergeModifiedLines" />
+            <div
+              v-if="showOptions"
+              class="absolute inset-ie-0 top-full mt-2 z-20 p-4 bg-bg-elevated border border-border rounded-xl shadow-2xl overflow-auto"
+              :style="{
+                width: mergeModifiedLines
+                  ? 'min(420px, calc(100vw - 24px))'
+                  : 'min(320px, calc(100vw - 24px))',
+                maxWidth: 'calc(100vw - 24px)',
+                maxHeight: '70vh',
+              }"
+            >
+              <div class="flex flex-col gap-2">
+                <!-- Merge modified lines toggle -->
+                <SettingsToggle label="Merge modified lines" v-model="mergeModifiedLines" />
 
-              <!-- Word wrap toggle -->
-              <SettingsToggle label="Word wrap" v-model="wordWrap" />
+                <!-- Word wrap toggle -->
+                <SettingsToggle label="Word wrap" v-model="wordWrap" />
 
-              <!-- Sliders -->
-              <motion.div
-                class="flex flex-col gap-2"
-                :animate="{ opacity: mergeModifiedLines ? 1 : 0 }"
-              >
-                <!-- Change ratio slider -->
-                <div class="sr-only">
-                  <label for="change-ratio">Change ratio</label>
-                </div>
+                <!-- Sliders -->
                 <div
-                  class="slider-shell w-full min-w-0"
-                  :class="{ 'is-disabled': !mergeModifiedLines }"
+                  class="flex flex-col gap-2 transition-opacity duration-150"
+                  :class="mergeModifiedLines ? 'opacity-100' : 'opacity-0'"
                 >
-                  <div class="slider-labels">
-                    <span class="slider-label">Change ratio</span>
-                    <span class="slider-value tabular-nums">{{ maxChangeRatio.toFixed(2) }}</span>
+                  <!-- Change ratio slider -->
+                  <div class="sr-only">
+                    <label for="change-ratio">Change ratio</label>
                   </div>
-                  <div class="slider-track">
-                    <div
-                      v-for="mark in changeRatioMarks"
-                      :key="`cr-${mark}`"
-                      class="slider-mark"
-                      :style="{ left: `calc(${mark}% - 11px)` }"
+                  <div
+                    class="slider-shell w-full min-w-0"
+                    :class="{ 'is-disabled': !mergeModifiedLines }"
+                  >
+                    <div class="slider-labels">
+                      <span class="slider-label">Change ratio</span>
+                      <span class="slider-value tabular-nums">{{ maxChangeRatio.toFixed(2) }}</span>
+                    </div>
+                    <div class="slider-track">
+                      <div
+                        v-for="mark in changeRatioMarks"
+                        :key="`cr-${mark}`"
+                        class="slider-mark"
+                        :style="{ left: `calc(${mark}% - 11px)` }"
+                      />
+                      <div class="slider-range" :style="{ width: `${changeRatioPercent}%` }" />
+                    </div>
+                    <input
+                      id="change-ratio"
+                      v-model.number="maxChangeRatio"
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="0.01"
+                      :disabled="!mergeModifiedLines"
+                      class="slider-input"
                     />
-                    <div class="slider-range" :style="{ width: `${changeRatioPercent}%` }" />
                   </div>
-                  <input
-                    id="change-ratio"
-                    v-model.number="maxChangeRatio"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    :disabled="!mergeModifiedLines"
-                    class="slider-input"
-                  />
-                </div>
 
-                <!-- Diff distance slider -->
-                <div class="sr-only">
-                  <label for="diff-distance">Diff distance</label>
-                </div>
-                <div
-                  class="slider-shell w-full min-w-0"
-                  :class="{ 'is-disabled': !mergeModifiedLines }"
-                >
-                  <div class="slider-labels">
-                    <span class="slider-label">Diff distance</span>
-                    <span class="slider-value tabular-nums">{{ maxDiffDistance }}</span>
+                  <!-- Diff distance slider -->
+                  <div class="sr-only">
+                    <label for="diff-distance">Diff distance</label>
                   </div>
-                  <div class="slider-track">
-                    <div
-                      v-for="mark in diffDistanceMarks"
-                      :key="`dd-${mark}`"
-                      class="slider-mark"
-                      :style="{ left: `calc(${mark}% - 11px)` }"
+                  <div
+                    class="slider-shell w-full min-w-0"
+                    :class="{ 'is-disabled': !mergeModifiedLines }"
+                  >
+                    <div class="slider-labels">
+                      <span class="slider-label">Diff distance</span>
+                      <span class="slider-value tabular-nums">{{ maxDiffDistance }}</span>
+                    </div>
+                    <div class="slider-track">
+                      <div
+                        v-for="mark in diffDistanceMarks"
+                        :key="`dd-${mark}`"
+                        class="slider-mark"
+                        :style="{ left: `calc(${mark}% - 11px)` }"
+                      />
+                      <div class="slider-range" :style="{ width: `${diffDistancePercent}%` }" />
+                    </div>
+                    <input
+                      id="diff-distance"
+                      v-model.number="maxDiffDistance"
+                      type="range"
+                      min="1"
+                      max="60"
+                      step="1"
+                      :disabled="!mergeModifiedLines"
+                      class="slider-input"
                     />
-                    <div class="slider-range" :style="{ width: `${diffDistancePercent}%` }" />
                   </div>
-                  <input
-                    id="diff-distance"
-                    v-model.number="maxDiffDistance"
-                    type="range"
-                    min="1"
-                    max="60"
-                    step="1"
-                    :disabled="!mergeModifiedLines"
-                    class="slider-input"
-                  />
-                </div>
 
-                <!-- Char edits slider -->
-                <div class="sr-only">
-                  <label for="char-edits">Char edits</label>
-                </div>
-                <div
-                  class="slider-shell w-full min-w-0"
-                  :class="{ 'is-disabled': !mergeModifiedLines }"
-                >
-                  <div class="slider-labels">
-                    <span class="slider-label">Char edits</span>
-                    <span class="slider-value tabular-nums">{{ inlineMaxCharEdits }}</span>
+                  <!-- Char edits slider -->
+                  <div class="sr-only">
+                    <label for="char-edits">Char edits</label>
                   </div>
-                  <div class="slider-track">
-                    <div
-                      v-for="mark in charEditMarks"
-                      :key="`ce-${mark}`"
-                      class="slider-mark"
-                      :style="{ left: `calc(${mark}% - 11px)` }"
+                  <div
+                    class="slider-shell w-full min-w-0"
+                    :class="{ 'is-disabled': !mergeModifiedLines }"
+                  >
+                    <div class="slider-labels">
+                      <span class="slider-label">Char edits</span>
+                      <span class="slider-value tabular-nums">{{ inlineMaxCharEdits }}</span>
+                    </div>
+                    <div class="slider-track">
+                      <div
+                        v-for="mark in charEditMarks"
+                        :key="`ce-${mark}`"
+                        class="slider-mark"
+                        :style="{ left: `calc(${mark}% - 11px)` }"
+                      />
+                      <div class="slider-range" :style="{ width: `${charEditPercent}%` }" />
+                    </div>
+                    <input
+                      id="char-edits"
+                      v-model.number="inlineMaxCharEdits"
+                      type="range"
+                      min="0"
+                      max="10"
+                      step="1"
+                      :disabled="!mergeModifiedLines"
+                      class="slider-input"
                     />
-                    <div class="slider-range" :style="{ width: `${charEditPercent}%` }" />
                   </div>
-                  <input
-                    id="char-edits"
-                    v-model.number="inlineMaxCharEdits"
-                    type="range"
-                    min="0"
-                    max="10"
-                    step="1"
-                    :disabled="!mergeModifiedLines"
-                    class="slider-input"
-                  />
                 </div>
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </Transition>
         </div>
 
         <!-- View in code browser -->
