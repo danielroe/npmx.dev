@@ -510,8 +510,8 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
     </template>
     <div class="space-y-0.5 min-w-0">
       <!-- Semver range filter -->
-      <div class="px-1 pb-1">
-        <div class="flex items-center gap-1.5 py-1">
+      <div>
+        <div class="flex items-center gap-2 p-1">
           <InputBase
             v-model="semverFilter"
             type="text"
@@ -527,10 +527,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <TooltipApp interactive position="top">
             <span
               tabindex="0"
-              class="i-lucide:info w-3.5 h-3.5 text-fg-subtle cursor-help shrink-0 rounded-sm"
-              role="img"
-              :aria-label="$t('package.versions.filter_help')"
-            />
+              class="block cursor-help shrink-0 -m-2 p-2 -me-1 focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
+            >
+              <span
+                class="block i-lucide:info w-3.5 h-3.5 text-fg-subtle"
+                role="img"
+                :aria-label="$t('package.versions.filter_help')"
+              />
+            </span>
             <template #content>
               <p class="text-xs text-fg-muted">
                 <i18n-t keypath="package.versions.filter_tooltip" tag="span">
@@ -574,7 +578,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <button
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
+            class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
             :aria-expanded="expandedTags.has(row.tag)"
             :aria-label="
               expandedTags.has(row.tag)
@@ -592,14 +596,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
             />
             <span
               v-else
-              class="w-3 h-3 transition-transform duration-200 rtl-flip"
+              class="size-3 transition-transform duration-200 rtl-flip"
               :class="
                 expandedTags.has(row.tag) ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'
               "
               aria-hidden="true"
             />
           </button>
-          <span v-else class="w-4" />
+          <span v-else class="w-5" />
 
           <!-- Version info -->
           <div class="flex-1 py-1.5 min-w-0 flex gap-2 justify-between items-center">
@@ -739,7 +743,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           @click="expandOtherVersions"
         >
           <span
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
+            class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
           >
             <span
               v-if="otherVersionsLoading"

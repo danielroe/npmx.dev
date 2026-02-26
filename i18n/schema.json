@@ -1128,6 +1128,48 @@
             },
             "pause_animation": {
               "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "trend_none": {
+                  "type": "string"
+                },
+                "trend_strong": {
+                  "type": "string"
+                },
+                "trend_weak": {
+                  "type": "string"
+                },
+                "trend_undefined": {
+                  "type": "string"
+                },
+                "button_label": {
+                  "type": "string"
+                },
+                "watermark": {
+                  "type": "string"
+                },
+                "analysis": {
+                  "type": "string"
+                },
+                "estimation": {
+                  "type": "string"
+                },
+                "estimations": {
+                  "type": "string"
+                },
+                "compare": {
+                  "type": "string"
+                },
+                "single_package": {
+                  "type": "string"
+                },
+                "general_description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
@@ -2482,6 +2524,24 @@
           },
           "additionalProperties": false
         },
+        "sponsors": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "oss_partners": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "team": {
           "type": "object",
           "properties": {
@@ -2756,6 +2816,9 @@
               "type": "string"
             },
             "section_comparison": {
+              "type": "string"
+            },
+            "copy_as_markdown": {
               "type": "string"
             },
             "loading": {
