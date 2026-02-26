@@ -1,35 +1,28 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import { isCI, provider } from 'std-env'
+import { isCI, isTest, provider } from 'std-env'
+
+const isStorybook = process.env.STORYBOOK === 'true' || process.env.VITEST_STORYBOOK === 'true'
 
 export default defineNuxtConfig({
   modules: [
-    // Workaround for Nuxt 4.3.0 regression: https://github.com/nuxt/nuxt/issues/34140
-    // shared-imports.d.ts pulls in app composables during type-checking of shared context,
-    // but the shared context doesn't have access to auto-import globals.
-    // TODO: Remove when Nuxt fixes this upstream
-    function (_, nuxt) {
-      nuxt.hook('prepare:types', ({ sharedReferences }) => {
-        const idx = sharedReferences.findIndex(
-          ref => 'path' in ref && ref.path.endsWith('shared-imports.d.ts'),
-        )
-        if (idx !== -1) {
-          sharedReferences.splice(idx, 1)
-        }
-      })
-    },
     '@unocss/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
     '@nuxt/a11y',
-    '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    '@nuxtjs/color-mode',
+    ...(isStorybook ? [] : ['@nuxt/fonts', '@nuxtjs/color-mode']),
   ],
+
+  $test: {
+    debug: {
+      hydration: true,
+    },
+  },
 
   colorMode: {
     preference: 'system',
@@ -42,10 +35,23 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     sessionPassword: '',
+    imageProxySecret: '',
+    github: {
+      orgToken: '',
+    },
+    oauthJwkOne: process.env.OAUTH_JWK_ONE || undefined,
     // Upstash Redis for distributed OAuth token refresh locking in production
     upstash: {
-      redisRestUrl: process.env.KV_REST_API_URL || '',
-      redisRestToken: process.env.KV_REST_API_TOKEN || '',
+      redisRestUrl: process.env.UPSTASH_KV_REST_API_URL || process.env.KV_REST_API_URL || '',
+      redisRestToken: process.env.UPSTASH_KV_REST_API_TOKEN || process.env.KV_REST_API_TOKEN || '',
+    },
+    public: {
+      // Algolia npm-search index (maintained by Algolia & jsDelivr, used by yarnpkg.com et al.)
+      algolia: {
+        appId: 'OFCNCOG2CU',
+        apiKey: 'f54e21fa3a2a0160595bb058179bfb1e',
+        indexName: 'npm-search',
+      },
     },
   },
 
@@ -85,19 +91,41 @@ export default defineNuxtConfig({
     description: 'A fast, modern browser for the npm registry',
   },
 
+  router: {
+    options: {
+      scrollBehaviorType: 'smooth',
+    },
+  },
+
   routeRules: {
     // API routes
     '/api/**': { isr: 60 },
+    '/api/registry/badge/**': {
+      isr: {
+        expiration: 60 * 60 /* one hour */,
+        passQuery: true,
+        allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
+      },
+    },
+    '/api/registry/downloads/**': {
+      isr: {
+        expiration: 60 * 60 /* one hour */,
+        passQuery: true,
+        allowQuery: ['mode', 'filterOldVersions', 'filterThreshold'],
+      },
+    },
     '/api/registry/docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/file/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/provenance/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/api/registry/files/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/api/registry/package-meta/**': { isr: 300 },
     '/:pkg/.well-known/skills/**': { isr: 3600 },
     '/:scope/:pkg/.well-known/skills/**': { isr: 3600 },
-    '/__og-image__/**': { isr: getISRConfig(60) },
+    '/__og-image__/**': getISRConfig(60),
     '/_avatar/**': { isr: 3600, proxy: 'https://www.gravatar.com/avatar/**' },
     '/opensearch.xml': { isr: true },
     '/oauth-client-metadata.json': { prerender: true },
+    '/.well-known/jwks.json': { prerender: true },
     // never cache
     '/api/auth/**': { isr: false, cache: false },
     '/api/social/**': { isr: false, cache: false },
@@ -109,33 +137,40 @@ export default defineNuxtConfig({
       },
     },
     // pages
-    '/package/:name': { isr: getISRConfig(60, true) },
-    '/package/:name/v/:version': { isr: getISRConfig(60, true) },
-    '/package/:org/:name': { isr: getISRConfig(60, true) },
-    '/package/:org/:name/v/:version': { isr: getISRConfig(60, true) },
+    '/package/**': getISRConfig(60, { fallback: 'html' }),
+    '/package/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
+    '/package/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
+    '/package/:org/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
+    '/package/:org/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/package-docs/:name/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/package-docs/:org/:name/v/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/package-docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     // static pages
     '/': { prerender: true },
     '/200.html': { prerender: true },
     '/about': { prerender: true },
+    '/accessibility': { prerender: true },
     '/privacy': { prerender: true },
     '/search': { isr: false, cache: false }, // never cache
     '/settings': { prerender: true },
+    '/recharging': { prerender: true },
     // proxy for insights
     '/_v/script.js': { proxy: 'https://npmx.dev/_vercel/insights/script.js' },
     '/_v/view': { proxy: 'https://npmx.dev/_vercel/insights/view' },
     '/_v/event': { proxy: 'https://npmx.dev/_vercel/insights/event' },
     '/_v/session': { proxy: 'https://npmx.dev/_vercel/insights/session' },
+    // lunaria status.json
+    '/lunaria/status.json': {
+      headers: {
+        'Cache-Control': 'public, max-age=0, must-revalidate',
+      },
+    },
   },
 
   experimental: {
     entryImportMap: false,
     typescriptPlugin: true,
-    viteEnvironmentApi: true,
-    viewTransition: true,
+    viteEnvironmentApi: !isStorybook,
     typedPages: true,
   },
 
@@ -153,6 +188,11 @@ export default defineNuxtConfig({
       ],
       external: ['@deno/doc'],
     },
+    esbuild: {
+      options: {
+        target: 'es2024',
+      },
+    },
     rollupConfig: {
       output: {
         paths: {
@@ -167,6 +207,10 @@ export default defineNuxtConfig({
         driver: 'fsLite',
         base: './.cache/fetch',
       },
+      'payload-cache': {
+        driver: 'fsLite',
+        base: './.cache/payload',
+      },
       'atproto': {
         driver: 'fsLite',
         base: './.cache/atproto',
@@ -177,9 +221,15 @@ export default defineNuxtConfig({
         include: ['../test/unit/server/**/*.ts'],
       },
     },
+    replace: {
+      'import.meta.test': isTest,
+    },
   },
 
   fonts: {
+    providers: {
+      fontshare: false,
+    },
     families: [
       {
         name: 'Geist',
@@ -198,19 +248,33 @@ export default defineNuxtConfig({
 
   htmlValidator: {
     enabled: !isCI || (provider !== 'vercel' && !!process.env.VALIDATE_HTML),
+    options: {
+      rules: { 'meta-refresh': 'off' },
+    },
     failOnError: true,
   },
 
   ogImage: {
+    enabled: !isStorybook,
     defaults: {
       component: 'Default',
     },
+    fonts: [
+      { name: 'Geist', weight: 400, path: '/fonts/Geist-Regular.ttf' },
+      { name: 'Geist', weight: 500, path: '/fonts/Geist-Medium.ttf' },
+      { name: 'Geist', weight: 600, path: '/fonts/Geist-SemiBold.ttf' },
+      { name: 'Geist', weight: 700, path: '/fonts/Geist-Bold.ttf' },
+      { name: 'Geist Mono', weight: 400, path: '/fonts/GeistMono-Regular.ttf' },
+      { name: 'Geist Mono', weight: 500, path: '/fonts/GeistMono-Medium.ttf' },
+      { name: 'Geist Mono', weight: 700, path: '/fonts/GeistMono-Bold.ttf' },
+    ],
   },
 
   pwa: {
     // Disable service worker
     disable: true,
     pwaAssets: {
+      disabled: isStorybook,
       config: false,
     },
     manifest: {
@@ -251,6 +315,9 @@ export default defineNuxtConfig({
       compilerOptions: {
         noUnusedLocals: true,
         allowImportingTsExtensions: true,
+        paths: {
+          '#cli/*': ['../cli/src/*'],
+        },
       },
       include: ['../test/unit/app/**/*.ts'],
     },
@@ -260,8 +327,13 @@ export default defineNuxtConfig({
     nodeTsConfig: {
       compilerOptions: {
         allowImportingTsExtensions: true,
+        paths: {
+          '#cli/*': ['../cli/src/*'],
+          '#server/*': ['../server/*'],
+          '#shared/*': ['../shared/*'],
+        },
       },
-      include: ['../*.ts'],
+      include: ['../*.ts', '../test/e2e/**/*.ts'],
     },
   },
 
@@ -270,6 +342,7 @@ export default defineNuxtConfig({
       include: [
         '@vueuse/core',
         '@vueuse/integrations/useFocusTrap',
+        '@vueuse/integrations/useFocusTrap/component',
         'vue-data-ui/vue-ui-sparkline',
         'vue-data-ui/vue-ui-xy',
         'virtua/vue',
@@ -278,6 +351,7 @@ export default defineNuxtConfig({
         '@atproto/lex',
         'fast-npm-meta',
         '@floating-ui/vue',
+        'algoliasearch/lite',
       ],
     },
   },
@@ -295,14 +369,23 @@ export default defineNuxtConfig({
   },
 })
 
-function getISRConfig(expirationSeconds: number, fallback = false) {
-  if (fallback) {
+interface ISRConfigOptions {
+  fallback?: 'html' | 'json'
+}
+function getISRConfig(expirationSeconds: number, options: ISRConfigOptions = {}) {
+  if (options.fallback) {
     return {
-      expiration: expirationSeconds,
-      fallback: 'spa.prerender-fallback.html',
-    } as { expiration: number }
+      isr: {
+        expiration: expirationSeconds,
+        fallback:
+          options.fallback === 'html' ? 'spa.prerender-fallback.html' : 'payload-fallback.json',
+        initialHeaders: options.fallback === 'json' ? { 'content-type': 'application/json' } : {},
+      } as { expiration: number },
+    }
   }
   return {
-    expiration: expirationSeconds,
+    isr: {
+      expiration: expirationSeconds,
+    },
   }
 }

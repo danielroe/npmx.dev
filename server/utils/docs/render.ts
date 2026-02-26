@@ -10,7 +10,7 @@ import type { DenoDocNode, JsDocTag } from '#shared/types/deno-doc'
 import { highlightCodeBlock } from '../shiki'
 import { formatParam, formatType, getNodeSignature } from './format'
 import { groupMergedByKind } from './processing'
-import { createSymbolId, escapeHtml, parseJsDocLinks, renderMarkdown } from './text'
+import { escapeHtml, createSymbolId, parseJsDocLinks, renderMarkdown } from './text'
 import type { MergedSymbol, SymbolLookup } from './types'
 
 // =============================================================================

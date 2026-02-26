@@ -34,6 +34,8 @@ const pkgDescription = useMarkdown(() => ({
   plain: true,
   packageName: props.result.package.name,
 }))
+
+const numberFormatter = useNumberFormatter()
 </script>
 
 <template>
@@ -82,7 +84,7 @@ const pkgDescription = useMarkdown(() => ({
         <p v-if="pkgDescription" class="text-fg-muted text-xs sm:text-sm line-clamp-2 mb-2 sm:mb-3">
           <span v-html="pkgDescription" />
         </p>
-        <div class="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-xs text-fg-subtle">
+        <div class="flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-2 text-xs text-fg-muted">
           <dl v-if="showPublisher || result.package.date" class="flex items-center gap-4 m-0">
             <div
               v-if="showPublisher && result.package.publisher?.username"
@@ -111,12 +113,12 @@ const pkgDescription = useMarkdown(() => ({
         <!-- Mobile: downloads on separate row -->
         <dl
           v-if="result.downloads?.weekly"
-          class="sm:hidden flex items-center gap-4 mt-2 text-xs text-fg-subtle m-0"
+          class="sm:hidden flex items-center gap-4 mt-2 text-xs text-fg-muted m-0"
         >
           <div class="flex items-center gap-1.5">
             <dt class="sr-only">{{ $t('package.card.weekly_downloads') }}</dt>
             <dd class="flex items-center gap-1.5">
-              <span class="i-carbon:chart-line w-3.5 h-3.5" aria-hidden="true" />
+              <span class="i-lucide:chart-line w-3.5 h-3.5" aria-hidden="true" />
               <span class="font-mono">{{ $n(result.downloads.weekly) }}/w</span>
             </dd>
           </div>
@@ -150,7 +152,7 @@ const pkgDescription = useMarkdown(() => ({
           v-if="result.downloads?.weekly"
           class="text-fg-subtle gap-2 flex items-center justify-end"
         >
-          <span class="i-carbon:chart-line w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-lucide:chart-line w-3.5 h-3.5" aria-hidden="true" />
           <span class="font-mono text-xs">
             {{ $n(result.downloads.weekly) }} {{ $t('common.per_week') }}
           </span>
@@ -158,29 +160,33 @@ const pkgDescription = useMarkdown(() => ({
       </div>
     </div>
 
-    <div
+    <ul
+      role="list"
       v-if="result.package.keywords?.length"
       :aria-label="$t('package.card.keywords')"
       class="relative z-10 flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-border list-none m-0 p-0 pointer-events-none items-center"
     >
-      <TagButton
-        v-for="keyword in result.package.keywords.slice(0, 5)"
-        class="pointer-events-auto"
-        :key="keyword"
-        :pressed="props.filters?.keywords.includes(keyword)"
-        :title="`Filter by ${keyword}`"
-        :data-result-index="index"
-        @click.stop="emit('clickKeyword', keyword)"
-      >
-        {{ keyword }}
-      </TagButton>
-      <span
-        v-if="result.package.keywords.length > 5"
-        class="text-fg-subtle text-xs pointer-events-auto"
-        :title="result.package.keywords.slice(5).join(', ')"
-      >
-        +{{ result.package.keywords.length - 5 }}
-      </span>
-    </div>
+      <li v-for="keyword in result.package.keywords.slice(0, 5)" :key="keyword">
+        <ButtonBase
+          class="pointer-events-auto"
+          size="small"
+          :aria-pressed="props.filters?.keywords.includes(keyword)"
+          :title="`Filter by ${keyword}`"
+          :data-result-index="index"
+          @click.stop="emit('clickKeyword', keyword)"
+        >
+          {{ keyword }}
+        </ButtonBase>
+      </li>
+      <li>
+        <span
+          v-if="result.package.keywords.length > 5"
+          class="text-fg-subtle text-xs pointer-events-auto"
+          :title="result.package.keywords.slice(5).join(', ')"
+        >
+          +{{ numberFormatter.format(result.package.keywords.length - 5) }}
+        </span>
+      </li>
+    </ul>
   </BaseCard>
 </template>
