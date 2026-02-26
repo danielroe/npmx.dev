@@ -1,4 +1,9 @@
-import type { AltCopyArgs, VueUiXyConfig, VueUiXyDatasetLineItem } from 'vue-data-ui'
+import type {
+  AltCopyArgs,
+  VueUiXyConfig,
+  VueUiXyDatasetBarItem,
+  VueUiXyDatasetLineItem,
+} from 'vue-data-ui'
 import type { ChartTimeGranularity } from '~/types/chart'
 
 export function sum(numbers: number[]): number {
@@ -413,6 +418,11 @@ export type TrendLineDataset = {
   [key: string]: unknown
 } | null
 
+export type VersionsBarDataset = {
+  bars: VueUiXyDatasetBarItem[]
+  [key: string]: unknown
+} | null
+
 export type TrendTranslateKey = number | 'package.trends.y_axis_label' | (string & {})
 
 export type TrendTranslateFunction = {
@@ -431,6 +441,12 @@ export type TrendLineConfig = VueUiXyConfig & {
   numberFormatter: (value: number) => string
 }
 
+export type VersionsBarConfig = Omit<
+  TrendLineConfig,
+  'formattedDates' | 'hasEstimation' | 'formattedDatasetValues' | 'granularity'
+> & { datapointLabels: string[]; dateRangeLabel: string; semverGroupingMode: string }
+
+// Used for TrendsChart.vue
 export function createAltTextForTrendLineChart({
   dataset,
   config,
@@ -517,5 +533,65 @@ export async function copyAltTextForTrendLineChart({
   config,
 }: AltCopyArgs<TrendLineDataset, TrendLineConfig>) {
   const altText = createAltTextForTrendLineChart({ dataset, config })
+  await config.copy(altText)
+}
+
+// Used for VersionDistribution.vue
+export function createAltTextForVersionsBarChart({
+  dataset,
+  config,
+}: AltCopyArgs<VersionsBarDataset, VersionsBarConfig>) {
+  if (!dataset) return ''
+
+  const series = dataset.bars[0]?.series ?? []
+  const versions = series.map((value, index) => ({
+    index,
+    name: config.datapointLabels[index] ?? '-',
+    rawDownloads: value ?? 0,
+    downloads: config.numberFormatter(value ?? 0),
+  }))
+
+  const versionWithMaxDownloads =
+    versions.length > 0
+      ? versions.reduce((max, current) => (current.rawDownloads > max.rawDownloads ? current : max))
+      : undefined
+
+  const per_version_analysis = versions
+    .toReversed()
+    .filter(v => v.index !== versionWithMaxDownloads?.index)
+    .map(v =>
+      config.$t(`package.versions.copy_alt.per_version_analysis`, {
+        version: v?.name ?? '-',
+        downloads: v?.downloads ?? '-',
+      }),
+    )
+    .join(', ')
+
+  const semver_grouping_mode =
+    config.semverGroupingMode === 'major'
+      ? config.$t('package.versions.grouping_major')
+      : config.$t('package.versions.grouping_minor')
+
+  const altText = `${config.$t('package.versions.copy_alt.general_description', {
+    package_name: dataset?.bars[0]?.name ?? '-',
+    versions_count: versions?.length,
+    semver_grouping_mode: semver_grouping_mode.toLocaleLowerCase(),
+    first_version: versions[0]?.name ?? '-',
+    last_version: versions.at(-1)?.name ?? '-',
+    date_range_label: config.dateRangeLabel ?? '-',
+    max_downloaded_version: versionWithMaxDownloads?.name ?? '-',
+    max_version_downloads: versionWithMaxDownloads?.downloads ?? '-',
+    per_version_analysis,
+    watermark: config.$t('package.trends.copy_alt.watermark'),
+  })}`
+
+  return altText
+}
+
+export async function copyAltTextForVersionsBarChart({
+  dataset,
+  config,
+}: AltCopyArgs<VersionsBarDataset, VersionsBarConfig>) {
+  const altText = createAltTextForVersionsBarChart({ dataset, config })
   await config.copy(altText)
 }

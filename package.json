@@ -87,6 +87,7 @@
     "fast-npm-meta": "1.2.1",
     "focus-trap": "^8.0.0",
     "gray-matter": "4.0.3",
+    "ipaddr.js": "2.3.0",
     "marked": "17.0.3",
     "module-replacements": "2.11.0",
     "nuxt": "4.3.1",
@@ -147,25 +148,25 @@
     "node": "24"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "./node_modules/.bin/lint-staged"
   },
   "lint-staged": {
     "i18n/locales/*": [
       "node ./lunaria/lunaria.ts",
-      "pnpm oxfmt lunaria/files/",
+      "./node_modules/.bin/oxfmt lunaria/files/",
       "git add lunaria/files/",
       "node scripts/generate-i18n-schema.ts",
-      "pnpm oxfmt i18n/schema.json",
+      "./node_modules/.bin/oxfmt i18n/schema.json",
       "git add i18n/schema.json"
     ],
     "*.{js,ts,mjs,cjs,vue}": [
-      "pnpm oxlint --fix"
+      "./node_modules/.bin/oxlint --fix"
     ],
     "*.vue": [
-      "pnpm lint:css"
+      "node scripts/unocss-checker.ts"
     ],
     "*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
-      "pnpm oxfmt"
+      "./node_modules/.bin/oxfmt"
     ]
   },
   "packageManager": "pnpm@10.30.1"
