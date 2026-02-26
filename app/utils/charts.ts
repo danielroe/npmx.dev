@@ -544,8 +544,9 @@ export function createAltTextForVersionsBarChart({
   if (!dataset) return ''
 
   const series = dataset.bars[0]?.series ?? []
-  const versions = series.map((value, i) => ({
-    name: config.datapointLabels[i] ?? '-',
+  const versions = series.map((value, index) => ({
+    index,
+    name: config.datapointLabels[index] ?? '-',
     rawDownloads: value ?? 0,
     downloads: config.numberFormatter(value ?? 0),
   }))
@@ -557,7 +558,7 @@ export function createAltTextForVersionsBarChart({
 
   const per_version_analysis = versions
     ?.toReversed()
-    .filter(v => v.name !== versionWithMaxDownloads?.name)
+    .filter(v => v.index !== versionWithMaxDownloads?.index)
     .map(v =>
       config.$t(`package.versions.copy_alt.per_version_analysis`, {
         version: v?.name ?? '-',
