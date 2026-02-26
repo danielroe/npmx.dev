@@ -10,12 +10,11 @@ export default defineNuxtConfig({
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
     '@nuxt/a11y',
-    '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    ...(isStorybook ? [] : ['@vite-pwa/nuxt', '@nuxtjs/color-mode']),
+    ...(isStorybook ? [] : ['@nuxt/fonts', '@vite-pwa/nuxt', '@nuxtjs/color-mode']),
   ],
 
   $test: {
