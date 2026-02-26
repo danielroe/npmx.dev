@@ -382,7 +382,7 @@
       "filters": "Filters",
       "average": "Average",
       "smoothing": "Smoothing",
-      "anomalies_fixed": "Anomalies fixed"
+      "anomalies_fixed": "Anomalies fixed",
       "copy_alt": {
         "trend_none": "mostly flat",
         "trend_strong": "strong",
