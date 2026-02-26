@@ -229,10 +229,10 @@ function getCodeUrl(version: string): string {
           :class="[
             'w-4 h-4 shrink-0',
             file.type === 'added'
-              ? 'i-carbon-add-alt text-green-500'
+              ? 'i-lucide:plus text-green-500'
               : file.type === 'removed'
-                ? 'i-carbon-subtract-alt text-red-500'
-                : 'i-carbon-edit text-yellow-500',
+                ? 'i-lucide:minus text-red-500'
+                : 'i-lucide:pen text-yellow-500',
           ]"
         />
 
@@ -272,10 +272,10 @@ function getCodeUrl(version: string): string {
             :class="{ 'bg-bg-elevated text-fg': showOptions }"
             @click="showOptions = !showOptions"
           >
-            <span class="i-carbon-settings w-3.5 h-3.5" />
+            <span class="i-lucide:settings w-3.5 h-3.5" />
             Options
             <span
-              class="i-carbon-chevron-down w-3 h-3 transition-transform"
+              class="i-lucide:chevron-down w-3 h-3 transition-transform"
               :class="{ 'rotate-180': showOptions }"
             />
           </button>
@@ -433,7 +433,7 @@ function getCodeUrl(version: string): string {
 
       <!-- Error state -->
       <div v-else-if="status === 'error'" class="py-8 text-center">
-        <span class="i-carbon-warning-alt w-8 h-8 mx-auto text-fg-subtle mb-2 block" />
+        <span class="i-lucide:triangle-alert w-8 h-8 mx-auto text-fg-subtle mb-2 block" />
         <p class="text-fg-muted text-sm mb-2">
           {{ loadError?.message || 'Failed to load diff' }}
         </p>

@@ -73,7 +73,7 @@ watch(open, value => {
           :aria-label="$t('compare.close_files_panel')"
           @click="open = false"
         >
-          <span class="i-carbon:close w-5 h-5" />
+          <span class="i-lucide:x w-5 h-5" />
         </button>
       </div>
 

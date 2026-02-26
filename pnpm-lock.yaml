@@ -35,15 +35,9 @@ importers:
       '@floating-ui/vue':
         specifier: 1.1.10
         version: 1.1.10(vue@3.5.29(typescript@5.9.3))
-      '@iconify-json/carbon':
-        specifier: 1.2.18
-        version: 1.2.18
       '@iconify-json/lucide':
         specifier: 1.2.93
         version: 1.2.93
-      '@iconify-json/octicon':
-        specifier: 1.2.20
-        version: 1.2.20
       '@iconify-json/simple-icons':
         specifier: 1.2.71
         version: 1.2.71
@@ -1582,14 +1576,8 @@ packages:
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
 
-  '@iconify-json/carbon@1.2.18':
-    resolution: {integrity: sha512-Grb13E6r/RqTEV4Sqd/BQR2FUt57U2WLuticJ5H8JbTdHLop1LmdePu3EJJA3Xi8DcWRbD6OnC133hKfOwlgtg==}
-
   '@iconify-json/lucide@1.2.93':
     resolution: {integrity: sha512-xMbNHP3uS0c/jkgmj6k/9DcuqW7Ey88R0bM2hV5rOJ8wDARql6kM0UC/WCHOyfjh+7OIJnRuDqUvvStx2NHbNw==}
-
-  '@iconify-json/octicon@1.2.20':
-    resolution: {integrity: sha512-BCIWoh06jlOKMY3JCDx547g+4a0TOj96cdrtD1N4gz3oNlWF7yXdrK9WbqYN4ykmDl+KdJYRtOYIFP1AvGXgVA==}
 
   '@iconify-json/simple-icons@1.2.71':
     resolution: {integrity: sha512-rNoDFbq1fAYiEexBvrw613/xiUOPEu5MKVV/X8lI64AgdTzLQUUemr9f9fplxUMPoxCBP2rWzlhOEeTHk/Sf0Q==}
@@ -11601,15 +11589,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iconify-json/carbon@1.2.18':
-    dependencies:
-      '@iconify/types': 2.0.0
-
   '@iconify-json/lucide@1.2.93':
-    dependencies:
-      '@iconify/types': 2.0.0
-
-  '@iconify-json/octicon@1.2.20':
     dependencies:
       '@iconify/types': 2.0.0
 

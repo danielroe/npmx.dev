@@ -141,7 +141,7 @@ useSeoMeta({
             <span v-else class="font-mono text-sm text-fg-muted">{{ fromVersion }}</span>
           </div>
 
-          <span class="i-carbon-arrow-right w-4 h-4 text-fg-subtle" />
+          <span class="i-lucide:arrow-right w-4 h-4 text-fg-subtle" />
 
           <div class="flex items-center gap-2">
             <span class="text-xs text-fg-subtle uppercase tracking-wide">To</span>
@@ -217,7 +217,7 @@ useSeoMeta({
             class="px-2 py-1 inline-flex items-center gap-1.5 font-mono text-xs bg-bg-muted border border-border rounded text-fg-muted hover:text-fg hover:border-border-hover transition-colors"
             @click="mobileDrawerOpen = true"
           >
-            <span class="i-carbon:document w-3.5 h-3.5" />
+            <span class="i-lucide:file-text w-3.5 h-3.5" />
             {{ $t('compare.files_button') }}
           </button>
         </div>
@@ -233,9 +233,7 @@ useSeoMeta({
           />
           <div v-else class="h-full flex items-center justify-center text-center p-8">
             <div>
-              <span
-                class="i-carbon-document-blank w-16 h-16 mx-auto text-fg-subtle/50 block mb-4"
-              />
+              <span class="i-lucide:file-text w-16 h-16 mx-auto text-fg-subtle/50 block mb-4" />
               <p class="text-fg-muted">{{ $t('compare.select_file_prompt') }}</p>
             </div>
           </div>

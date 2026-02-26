@@ -112,11 +112,11 @@ function isExpanded(path: string): boolean {
 function getChangeIcon(type: 'added' | 'removed' | 'modified') {
   switch (type) {
     case 'added':
-      return 'i-octicon-diff-added-16 text-green-500'
+      return 'i-lucide:file-plus text-green-500'
     case 'removed':
-      return 'i-octicon-diff-removed-16 text-red-500'
+      return 'i-lucide:file-minus text-red-500'
     case 'modified':
-      return 'i-octicon-diff-modified-16 text-yellow-500'
+      return 'i-lucide:file-diff text-yellow-500'
   }
 }
 
@@ -140,14 +140,14 @@ function handleFileClick(node: DiffTreeNode) {
         >
           <span
             class="w-4 h-4 shrink-0 transition-transform"
-            :class="[isExpanded(node.path) ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right']"
+            :class="[isExpanded(node.path) ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right']"
           />
           <span
             class="w-4 h-4 shrink-0"
             :class="
               isExpanded(node.path)
-                ? 'i-carbon:folder-open text-yellow-500'
-                : 'i-carbon:folder text-yellow-600'
+                ? 'i-lucide:folder-open text-yellow-500'
+                : 'i-lucide:folder text-yellow-600'
             "
           />
           <span class="truncate">{{ node.name }}</span>

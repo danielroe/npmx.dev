@@ -21,10 +21,10 @@ const fileFilter = defineModel<'all' | 'added' | 'removed' | 'modified'>('fileFi
 const sectionOrder = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 const { t } = useI18n()
 const sectionMeta = computed<Record<string, { label: string; icon: string }>>(() => ({
-  dependencies: { label: t('compare.dependencies'), icon: 'i-carbon-cube' },
-  devDependencies: { label: t('compare.dev_dependencies'), icon: 'i-carbon-tools' },
-  peerDependencies: { label: t('compare.peer_dependencies'), icon: 'i-carbon-user-multiple' },
-  optionalDependencies: { label: t('compare.optional_dependencies'), icon: 'i-carbon-help' },
+  dependencies: { label: t('compare.dependencies'), icon: 'i-lucide:box' },
+  devDependencies: { label: t('compare.dev_dependencies'), icon: 'i-lucide:wrench' },
+  peerDependencies: { label: t('compare.peer_dependencies'), icon: 'i-lucide:users' },
+  optionalDependencies: { label: t('compare.optional_dependencies'), icon: 'i-lucide:circle-help' },
 }))
 
 const sectionList = computed(() => {
@@ -34,7 +34,7 @@ const sectionList = computed(() => {
       key,
       changes,
       label: sectionMeta.value[key]?.label ?? key,
-      icon: sectionMeta.value[key]?.icon ?? 'i-carbon-cube',
+      icon: sectionMeta.value[key]?.icon ?? 'i-lucide:box',
       order: sectionOrder.indexOf(key) === -1 ? sectionOrder.length + 1 : sectionOrder.indexOf(key),
     }))
     .sort((a, b) => a.order - b.order)
@@ -105,7 +105,7 @@ function handleFileSelect(file: FileChange) {
         class="px-3 py-2 bg-yellow-500/5 border-b border-border"
       >
         <div class="flex items-start gap-2">
-          <span class="i-carbon-warning w-3.5 h-3.5 text-yellow-500 shrink-0 mt-0.5" />
+          <span class="i-lucide:triangle-alert w-3.5 h-3.5 text-yellow-500 shrink-0 mt-0.5" />
           <div class="text-3xs text-fg-muted">
             <p v-for="warning in compare.meta.warnings" :key="warning">{{ warning }}</p>
           </div>
@@ -118,7 +118,7 @@ function handleFileSelect(file: FileChange) {
             class="cursor-pointer list-none flex items-center gap-2 text-xs font-medium mb-2 hover:text-fg transition-colors"
           >
             <span
-              class="i-carbon-chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90"
+              class="i-lucide:chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90"
             />
             <span :class="section.icon" class="w-3.5 h-3.5" />
             {{ section.label }} ({{ section.changes.length }})
@@ -134,10 +134,10 @@ function handleFileSelect(file: FileChange) {
                 :class="[
                   'w-3 h-3 shrink-0',
                   dep.type === 'added'
-                    ? 'i-carbon-add-alt text-green-500'
+                    ? 'i-lucide:plus text-green-500'
                     : dep.type === 'removed'
-                      ? 'i-carbon-subtract-alt text-red-500'
-                      : 'i-carbon-arrows-horizontal text-yellow-500',
+                      ? 'i-lucide:minus text-red-500'
+                      : 'i-lucide:arrow-left-right text-yellow-500',
                 ]"
               />
 
@@ -157,7 +157,7 @@ function handleFileSelect(file: FileChange) {
                 >
                   {{ dep.from }}
                 </span>
-                <span v-if="dep.type === 'updated'" class="i-carbon-arrow-right w-2.5 h-2.5" />
+                <span v-if="dep.type === 'updated'" class="i-lucide:arrow-right w-2.5 h-2.5" />
                 <span v-if="dep.to">{{ dep.to }}</span>
               </div>
 
@@ -187,18 +187,18 @@ function handleFileSelect(file: FileChange) {
         class="border-b border-border px-3 py-2 shrink-0 cursor-pointer list-none flex items-center justify-between gap-2"
       >
         <span class="text-xs font-medium flex items-center gap-1.5">
-          <span class="i-carbon-document w-3.5 h-3.5" />
+          <span class="i-lucide:file-text w-3.5 h-3.5" />
           {{ $t('compare.file_changes') }}
         </span>
         <span
-          class="i-carbon-chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90"
+          class="i-lucide:chevron-right w-3.5 h-3.5 transition-transform group-open:rotate-90"
         />
       </summary>
 
       <div class="border-b border-border px-3 py-2 shrink-0 space-y-2">
         <div class="relative">
           <span
-            class="absolute inset-is-2 top-1/2 -translate-y-1/2 i-carbon-search w-3 h-3 text-fg-subtle pointer-events-none"
+            class="absolute inset-is-2 top-1/2 -translate-y-1/2 i-lucide:search w-3 h-3 text-fg-subtle pointer-events-none"
           />
           <input
             v-model="fileSearch"

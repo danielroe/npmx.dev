@@ -884,7 +884,7 @@ const showSkeleton = shallowRef(false)
               "
               variant="button-secondary"
               :to="`/diff/${pkg.name}/v/${displayVersion.version}...${latestVersion.version}`"
-              classicon="i-carbon:text-align-mixed"
+              classicon="i-lucide:diff"
             >
               {{ $t('compare.compare_versions') }}
             </LinkBase>
@@ -1022,19 +1022,19 @@ const showSkeleton = shallowRef(false)
             </li>
             <!-- Mobile-only: Docs + Code + Compare links -->
             <li v-if="docsLink && displayVersion" class="sm:hidden">
-              <LinkBase :to="docsLink" classicon="i-carbon:document">
+              <LinkBase :to="docsLink" classicon="i-lucide:file-text">
                 {{ $t('package.links.docs') }}
               </LinkBase>
             </li>
             <li v-if="resolvedVersion && codeLink" class="sm:hidden">
-              <LinkBase :to="codeLink" classicon="i-carbon:code">
+              <LinkBase :to="codeLink" classicon="i-lucide:code">
                 {{ $t('package.links.code') }}
               </LinkBase>
             </li>
             <li class="sm:hidden">
               <LinkBase
                 :to="{ name: 'compare', query: { packages: pkg.name } }"
-                classicon="i-carbon:compare"
+                classicon="i-lucide:git-compare"
               >
                 {{ $t('package.links.compare') }}
               </LinkBase>
@@ -1049,7 +1049,7 @@ const showSkeleton = shallowRef(false)
                 :to="`/diff/${pkg.name}/v/${displayVersion.version}...${latestVersion.version}`"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
-                <span class="i-carbon-text-align-mixed w-4 h-4" aria-hidden="true" />
+                <span class="i-lucide:diff w-4 h-4" aria-hidden="true" />
                 {{ $t('compare.compare_versions') }}
               </NuxtLink>
             </li>
