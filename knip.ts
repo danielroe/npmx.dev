@@ -60,7 +60,7 @@ const config: KnipConfig = {
       project: ['src/**/*.ts!', '!src/mock-*.ts'],
     },
     'docs': {
-      entry: ['app/**/*.{ts,vue}'],
+      entry: ['app/**/*.{ts,vue,css}'],
       ignoreDependencies: ['docus', 'better-sqlite3', '@nuxtjs/mdc', 'nuxt!'],
     },
   },
