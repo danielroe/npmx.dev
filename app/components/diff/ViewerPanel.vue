@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { FileDiffResponse, FileChange, DiffHunk } from '#shared/types'
-import { createDiff, insertSkipBlocks, countDiffStats } from '#shared/utils/diff'
+import type { FileDiffResponse, FileChange } from '#shared/types'
 import { onClickOutside } from '@vueuse/core'
 
 const props = defineProps<{
@@ -20,159 +19,26 @@ const optionsDropdownRef = useTemplateRef('optionsDropdownRef')
 onClickOutside(optionsDropdownRef, () => {
   showOptions.value = false
 })
-const loading = ref(true)
-const loadError = ref<Error | null>(null)
-const diff = ref<FileDiffResponse | null>(null)
-const fromContent = ref<string | null>(null)
-const toContent = ref<string | null>(null)
-const loadToken = ref(0)
 
-const DIFF_TIMEOUT = 15000
-const MAX_DIFF_FILE_SIZE = 250 * 1024
-
-const optionsParams = computed(() => ({
-  mergeModifiedLines: mergeModifiedLines.value,
-  maxChangeRatio: maxChangeRatio.value,
-  maxDiffDistance: maxDiffDistance.value,
-  inlineMaxCharEdits: inlineMaxCharEdits.value,
-}))
-
-const status = computed(() => {
-  if (loadError.value) return 'error'
-  if (loading.value) return 'pending'
-  return 'success'
-})
-
-async function fetchFileContent(version: string): Promise<string | null> {
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), DIFF_TIMEOUT)
-  const url = `https://cdn.jsdelivr.net/npm/${props.packageName}@${version}/${props.file.path}`
-  try {
-    const res = await fetch(url, { signal: controller.signal })
-    if (res.status === 404) return null
-    if (!res.ok) throw new Error(`Failed to fetch file (status ${res.status})`)
-
-    const length = res.headers.get('content-length')
-    if (length && parseInt(length, 10) > MAX_DIFF_FILE_SIZE) {
-      throw new Error(
-        `File too large to diff (${(parseInt(length, 10) / 1024).toFixed(0)}KB). Maximum is ${
-          MAX_DIFF_FILE_SIZE / 1024
-        }KB.`,
-      )
-    }
-
-    const text = await res.text()
-    if (text.length > MAX_DIFF_FILE_SIZE) {
-      throw new Error(
-        `File too large to diff (${(text.length / 1024).toFixed(0)}KB). Maximum is ${
-          MAX_DIFF_FILE_SIZE / 1024
-        }KB.`,
-      )
-    }
-
-    return text
-  } catch (err) {
-    // Provide specific error message for timeout
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error(`Request timed out after ${DIFF_TIMEOUT / 1000}s`, { cause: err })
-    }
-    throw err
-  } finally {
-    clearTimeout(timeoutId)
-  }
-}
-
-function computeDiff() {
-  if (loadError.value) return
-  if (loading.value && fromContent.value === null && toContent.value === null) return
-
-  const oldContent = fromContent.value ?? ''
-  const newContent = toContent.value ?? ''
-
-  // Determine diff type based on content availability
-  // Note: FileDiffResponse uses 'add'/'delete'/'modify' while FileChange uses
-  // 'added'/'removed'/'modified' - this is intentional to distinguish between
-  // the file-level change info (FileChange) and the diff content type (FileDiff)
-  let type: FileDiffResponse['type'] = 'modify'
-  if (fromContent.value === null && toContent.value !== null) type = 'add'
-  else if (fromContent.value !== null && toContent.value === null) type = 'delete'
-
-  const parsed = createDiff(oldContent, newContent, props.file.path, optionsParams.value)
-
-  if (!parsed) {
-    diff.value = {
-      package: props.packageName,
-      from: props.fromVersion,
-      to: props.toVersion,
-      path: props.file.path,
-      type,
-      hunks: [],
-      stats: { additions: 0, deletions: 0 },
-      meta: {},
-    }
-    return
-  }
-
-  const hunksWithSkips = insertSkipBlocks(
-    parsed.hunks.filter((h): h is DiffHunk => h.type === 'hunk'),
-  )
-  const stats = countDiffStats(hunksWithSkips)
-
-  diff.value = {
-    package: props.packageName,
-    from: props.fromVersion,
-    to: props.toVersion,
-    path: props.file.path,
-    // Use the type computed from file existence (modify/add/delete) rather than
-    // parsed.type which incorrectly classifies addition-only modifications as 'add'.
-    // This matters because DiffLine skips green background highlighting when
-    // fileStatus is 'add' (since for truly new files all lines are additions).
-    type,
-    hunks: hunksWithSkips,
-    stats,
-    meta: {},
-  }
-}
-
-async function loadContents() {
-  const token = ++loadToken.value
-  loading.value = true
-  loadError.value = null
-  try {
-    const [from, to] = await Promise.all([
-      fetchFileContent(props.fromVersion),
-      fetchFileContent(props.toVersion),
-    ])
-
-    if (token !== loadToken.value) return
-
-    fromContent.value = from
-    toContent.value = to
-
-    if (from === null && to === null) {
-      throw new Error('File not found in either version')
-    }
-
-    computeDiff()
-  } catch (err) {
-    if (token !== loadToken.value) return
-    loadError.value = err as Error
-    diff.value = null
-  } finally {
-    if (token === loadToken.value) loading.value = false
-  }
-}
-
-watch(
-  [() => props.file.path, () => props.fromVersion, () => props.toVersion],
-  () => {
-    loadContents()
-  },
-  { immediate: true },
+const apiUrl = computed(
+  () =>
+    `/api/registry/compare-file/${props.packageName}/v/${props.fromVersion}...${props.toVersion}/${props.file.path}`,
 )
 
-watch([mergeModifiedLines, maxChangeRatio, maxDiffDistance, inlineMaxCharEdits], () => {
-  computeDiff()
+const apiQuery = computed(() => ({
+  mergeModifiedLines: String(mergeModifiedLines.value),
+  maxChangeRatio: String(maxChangeRatio.value),
+  maxDiffDistance: String(maxDiffDistance.value),
+  inlineMaxCharEdits: String(inlineMaxCharEdits.value),
+}))
+
+const {
+  data: diff,
+  status,
+  error: loadError,
+} = useFetch<FileDiffResponse>(apiUrl, {
+  query: apiQuery,
+  timeout: 15000,
 })
 
 function calcPercent(value: number, min: number, max: number): number {
@@ -466,7 +332,6 @@ function getCodeUrl(version: string): string {
         :hunks="diff.hunks"
         :type="diff.type"
         :file-name="file.path"
-        :enable-shiki="true"
         :word-wrap="wordWrap"
       />
     </div>

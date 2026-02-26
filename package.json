@@ -59,7 +59,6 @@
     "@iconify-json/simple-icons": "1.2.71",
     "@iconify-json/svg-spinners": "1.2.4",
     "@iconify-json/vscode-icons": "1.2.43",
-    "@intlify/core-base": "11.2.8",
     "@intlify/shared": "11.2.8",
     "@lunariajs/core": "https://pkg.pr.new/lunariajs/lunaria/@lunariajs/core@904b935",
     "@napi-rs/canvas": "0.1.94",

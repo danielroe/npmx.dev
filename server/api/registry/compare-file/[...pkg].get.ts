@@ -4,6 +4,7 @@ import type { FileDiffResponse, DiffHunk } from '#shared/types'
 import { CACHE_MAX_AGE_ONE_YEAR } from '#shared/utils/constants'
 import { createDiff, insertSkipBlocks, countDiffStats } from '#server/utils/diff'
 import { parseVersionRange } from '#server/utils/compare'
+import { getLanguageFromPath } from '#server/utils/code-highlight'
 
 const CACHE_VERSION = 1
 const DIFF_TIMEOUT = 15000 // 15 sec
@@ -184,6 +185,34 @@ export default defineCachedEventHandler(
         const hunkOnly = diff.hunks.filter((h): h is DiffHunk => h.type === 'hunk')
         const hunksWithSkips = insertSkipBlocks(hunkOnly)
         const stats = countDiffStats(hunksWithSkips)
+
+        // Syntax-highlight diff segments using server-side Shiki
+        const language = getLanguageFromPath(filePath)
+        const shiki = await getShikiHighlighter()
+        const loadedLangs = shiki.getLoadedLanguages()
+        const canHighlight = loadedLangs.includes(language as never)
+
+        if (canHighlight) {
+          for (const hunk of hunksWithSkips) {
+            if (hunk.type !== 'hunk') continue
+            for (const line of hunk.lines) {
+              line.content = line.content.map(seg => {
+                const code = seg.value.length ? seg.value : ' '
+                try {
+                  const raw = shiki.codeToHtml(code, {
+                    lang: language,
+                    themes: { light: 'github-light', dark: 'github-dark' },
+                    defaultColor: 'dark',
+                  })
+                  const html = raw.match(/<code[^>]*>([\s\S]*?)<\/code>/)?.[1]
+                  return html ? { ...seg, html } : seg
+                } catch {
+                  return seg
+                }
+              })
+            }
+          }
+        }
 
         return {
           package: packageName,

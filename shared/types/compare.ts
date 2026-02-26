@@ -70,6 +70,8 @@ export interface CompareResponse {
 export interface DiffLineSegment {
   value: string
   type: 'insert' | 'delete' | 'normal'
+  /** Pre-rendered syntax-highlighted HTML (set by ViewerPanel after diff computation) */
+  html?: string
 }
 
 /** A single line in the diff */

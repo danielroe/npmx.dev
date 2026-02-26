@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { DiffLine as DiffLineType } from '#shared/types'
-import { getClientHighlighter } from '~/utils/shiki-client'
 
 const props = defineProps<{
   line: DiffLineType
@@ -8,12 +7,8 @@ const props = defineProps<{
 
 const diffContext = inject<{
   fileStatus: ComputedRef<'add' | 'delete' | 'modify'>
-  language?: ComputedRef<string>
-  enableShiki?: ComputedRef<boolean>
   wordWrap?: ComputedRef<boolean>
 }>('diffContext')
-
-const colorMode = useColorMode()
 
 const lineNumberNew = computed(() => {
   if (props.line.type === 'normal') {
@@ -66,57 +61,17 @@ const contentClasses = computed(() => {
   return ['pe-6', shouldWrap ? 'whitespace-pre-wrap break-words' : 'text-nowrap']
 })
 
-type RenderedSegment = { html: string; type: 'insert' | 'delete' | 'normal' }
-const renderedSegments = shallowRef<RenderedSegment[]>(
-  props.line.content.map(seg => ({ html: escapeHtml(seg.value), type: seg.type })),
-)
-
-function normalizeLanguage(raw?: string): 'javascript' | 'typescript' | 'json' | 'plaintext' {
-  if (!raw) return 'plaintext'
-  const lang = raw.toLowerCase()
-  if (lang.includes('json')) return 'json'
-  if (lang === 'ts' || lang.includes('typescript') || lang.includes('tsx')) return 'typescript'
-  if (lang === 'js' || lang.includes('javascript') || lang.includes('mjs') || lang.includes('cjs'))
-    return 'javascript'
-  return 'plaintext'
-}
-
 function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 }
 
-async function highlightSegments() {
-  if (!import.meta.client) return
-
-  const lang = normalizeLanguage(diffContext?.language?.value)
-  // If language unsupported, keep escaped plain text
-  if (lang === 'plaintext') {
-    renderedSegments.value = props.line.content.map(seg => ({
-      html: escapeHtml(seg.value),
-      type: seg.type,
-    }))
-    return
-  }
-
-  const theme = colorMode.value === 'light' ? 'github-light' : 'github-dark'
-  const highlighter = await getClientHighlighter()
-
-  renderedSegments.value = props.line.content.map(seg => {
-    const code = seg.value.length ? seg.value : ' '
-    const html = highlighter.codeToHtml(code, { lang, theme })
-    const inner = html.match(/<code[^>]*>([\s\S]*?)<\/code>/)?.[1] ?? escapeHtml(code)
-    return { html: inner, type: seg.type }
-  })
-}
-
-const mounted = useMounted()
-
-watch(
-  () => [mounted.value, props.line, diffContext?.language?.value, colorMode.value],
-  () => {
-    if (mounted.value) highlightSegments()
-  },
-  { deep: true },
+// Segments carry pre-highlighted HTML from the server API. Fall back to
+// escaped plain text for unsupported languages.
+const renderedSegments = computed(() =>
+  props.line.content.map(seg => ({
+    html: seg.html ?? escapeHtml(seg.value),
+    type: seg.type,
+  })),
 )
 </script>
 
