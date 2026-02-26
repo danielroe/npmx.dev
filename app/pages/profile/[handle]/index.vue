@@ -96,10 +96,6 @@ defineOgImageComponent('Default', {
     <header class="mb-8 pb-8 border-b border-border">
       <!-- Editing Profile -->
       <div v-if="isEditing" class="flex flex-col flex-wrap gap-4">
-        <button @click="isEditing = false">Cancel</button>
-        <button @click.prevent="updateProfile" :disabled="isUpdateProfileActionPending">
-          Save
-        </button>
         <label for="displayName" class="text-sm flex flex-col gap-2">
           Display Name
           <input
@@ -120,26 +116,38 @@ defineOgImageComponent('Default', {
             class="w-full min-w-25 bg-bg-subtle border border-border rounded-md ps-3 pe-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
           />
         </label>
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
           <div class="link-subtle font-mono text-sm inline-flex items-center gap-1.5">
             <span class="i-carbon:link w-4 h-4" aria-hidden="true" />
             <input
               name="website"
-              type=""
+              type="url"
               v-model="websiteInput"
               class="w-full min-w-25 bg-bg-subtle border border-border rounded-md ps-3 pe-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
             />
           </div>
+          <button
+            @click="isEditing = false"
+            class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+          >
+            Cancel
+          </button>
+          <button
+            @click.prevent="updateProfile"
+            :disabled="isUpdateProfileActionPending"
+            class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+          >
+            Save
+          </button>
         </div>
       </div>
 
       <!-- Display Profile -->
       <div v-else class="flex flex-col flex-wrap gap-4">
-        <button v-if="user?.handle === handle" @click="isEditing = true">Edit</button>
         <h1 class="font-mono text-2xl sm:text-3xl font-medium">{{ profile.displayName }}</h1>
         <p v-if="profile.description">{{ profile.description }}</p>
-        <div class="flex gap-4">
+        <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
           <a
             v-if="profile.website"
@@ -151,6 +159,13 @@ defineOgImageComponent('Default', {
             <span class="i-carbon:link w-4 h-4" aria-hidden="true" />
             {{ profile.website }}
           </a>
+          <button
+            v-if="user?.handle === handle"
+            @click="isEditing = true"
+            class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+          >
+            Edit
+          </button>
         </div>
       </div>
     </header>
