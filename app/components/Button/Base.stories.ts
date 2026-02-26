@@ -39,7 +39,7 @@ export const Disabled: Story = {
 export const WithIcon: Story = {
   args: {
     default: 'Search',
-    classicon: 'i-carbon:search',
+    classicon: 'i-lucide:search',
     variant: 'secondary',
   },
 }
