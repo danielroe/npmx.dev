@@ -205,6 +205,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
           </div>
         </section>
 
+        <!-- LANGUAGE Section -->
         <section>
           <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
             {{ $t('settings.sections.language') }}
@@ -258,6 +259,20 @@ const setLocale: typeof setNuxti18nLocale = locale => {
                 {{ $t('settings.help_translate') }}
               </a>
             </template>
+          </div>
+        </section>
+
+        <!-- KEYBOARD SHORTCUTS Section -->
+        <section>
+          <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
+            {{ $t('settings.sections.keyboard_shortcuts') }}
+          </h2>
+          <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6">
+            <SettingsToggle
+              :label="$t('settings.keyboard_shortcuts_enabled')"
+              :description="$t('settings.keyboard_shortcuts_enabled_description')"
+              v-model="settings.keyboardShortcuts"
+            />
           </div>
         </section>
       </div>

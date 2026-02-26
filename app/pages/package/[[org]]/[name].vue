@@ -683,8 +683,10 @@ const codeLink = computed((): RouteLocationRaw | null => {
   }
 })
 
+const keyboardShortcuts = useKeyboardShortcuts()
+
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
   e => {
     if (codeLink.value === null) return
     e.preventDefault()
@@ -695,7 +697,7 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
   e => {
     if (!docsLink.value) return
     e.preventDefault()
@@ -705,7 +707,7 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
   e => {
     if (!pkg.value) return
     e.preventDefault()

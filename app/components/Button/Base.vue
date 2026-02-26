@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ClientOnly } from '#components'
 import type { IconClass } from '~/types'
 
 const props = withDefaults(
@@ -20,6 +21,8 @@ const props = withDefaults(
 )
 
 const el = useTemplateRef('el')
+
+const keyboardShortcutsEnabled = computed(() => import.meta.client && useKeyboardShortcuts().value)
 
 defineExpose({
   focus: () => el.value?.focus(),
@@ -51,16 +54,18 @@ defineExpose({
        */
       disabled ? true : undefined
     "
-    :aria-keyshortcuts="ariaKeyshortcuts"
+    :aria-keyshortcuts="keyboardShortcutsEnabled ? ariaKeyshortcuts : undefined"
   >
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
-    <kbd
-      v-if="ariaKeyshortcuts"
-      class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
-      aria-hidden="true"
-    >
-      {{ ariaKeyshortcuts }}
-    </kbd>
+    <ClientOnly>
+      <kbd
+        v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+        class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
+        aria-hidden="true"
+      >
+        {{ ariaKeyshortcuts }}
+      </kbd>
+    </ClientOnly>
   </button>
 </template>

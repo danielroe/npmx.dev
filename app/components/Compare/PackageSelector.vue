@@ -98,6 +98,8 @@ function removePackage(name: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
+  if (!useKeyboardShortcuts().value) return
+
   const items = navigableItems.value
   const count = items.length
 

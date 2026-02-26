@@ -105,6 +105,12 @@
         },
         "open_docs": {
           "type": "string"
+        },
+        "disable_shortcuts": {
+          "type": "string"
+        },
+        "disable_shortcuts_description": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -258,6 +264,9 @@
             },
             "language": {
               "type": "string"
+            },
+            "keyboard_shortcuts": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -329,6 +338,12 @@
           "type": "string"
         },
         "background_themes": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled_description": {
           "type": "string"
         }
       },
