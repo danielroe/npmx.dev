@@ -1,4 +1,4 @@
-import type { Preview } from '@nuxtjs/storybook'
+import type { Preview } from '@storybook-vue/nuxt'
 import { currentLocales } from '../config/i18n'
 import { fn } from 'storybook/test'
 import { ACCENT_COLORS } from '../shared/utils/constants'

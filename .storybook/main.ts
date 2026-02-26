@@ -1,4 +1,4 @@
-import type { StorybookConfig } from '@nuxtjs/storybook'
+import type { StorybookConfig } from '@storybook-vue/nuxt'
 
 const config = {
   stories: ['../app/**/*.stories.@(js|ts)'],
@@ -8,4 +8,5 @@ const config = {
     backgrounds: false,
   },
 } satisfies StorybookConfig
+
 export default config

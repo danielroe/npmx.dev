@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@nuxtjs/storybook'
+import type { Meta, StoryObj } from '@storybook-vue/nuxt'
 import Component from './Base.vue'
 
 const meta = {

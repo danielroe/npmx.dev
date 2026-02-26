@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@nuxtjs/storybook'
+import type { Meta, StoryObj } from '@storybook-vue/nuxt'
 import { expect, fn, userEvent } from 'storybook/test'
 import Component from './Base.vue'
 
