@@ -1,0 +1,27 @@
+{
+  "_id": "typescript-eslint-parser-for-extra-long-name",
+  "name": "typescript-eslint-parser-for-extra-long-name",
+  "description": "This is an intentionally long description to test how the OG image handles text overflow when the description wraps to multiple lines and potentially breaks the layout of the card",
+  "dist-tags": {
+    "latest": "1.0.0"
+  },
+  "time": {
+    "1.0.0": "2025-02-20T00:00:00.000Z"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "typescript-eslint-parser-for-extra-long-name",
+      "version": "1.0.0",
+      "description": "This is an intentionally long description to test how the OG image handles text overflow when the description wraps to multiple lines and potentially breaks the layout of the card",
+      "license": "MIT",
+      "repository": {
+        "type": "git",
+        "url": "git+https://github.com/test-org/typescript-eslint-parser-for-extra-long-name.git"
+      },
+      "dist": {
+        "tarball": "https://registry.npmjs.org/typescript-eslint-parser-for-extra-long-name/-/typescript-eslint-parser-for-extra-long-name-1.0.0.tgz",
+        "shasum": "abc123"
+      }
+    }
+  }
+}

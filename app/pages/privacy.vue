@@ -8,7 +8,7 @@ useSeoMeta({
   description: () => $t('privacy_policy.welcome', { app: 'npmx' }),
 })
 
-defineOgImageComponent('Default', {
+defineOgImage('Page.takumi', {
   title: () => $t('privacy_policy.title'),
   description: () => $t('privacy_policy.welcome', { app: 'npmx' }),
 })

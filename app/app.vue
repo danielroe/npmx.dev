@@ -116,6 +116,10 @@ if (import.meta.client) {
     useEventListener(document, 'click', handleModalLightDismiss)
   }
 }
+
+// title and description will be inferred
+// this will be overriden by upstream pages that use different templates
+defineOgImage('Page.takumi')
 </script>
 
 <template>

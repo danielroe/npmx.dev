@@ -1,14 +1,38 @@
 import { expect, test } from './test-utils'
 
 // TODO(serhalp): The nuxt@3.20.2 fixture has no stars. Update fixture to have stars coverage here.
-const paths = ['/', '/package/nuxt/v/3.20.2']
 
-for (const path of paths) {
-  test.describe(path, () => {
-    test(`og image for ${path}`, async ({ page, goto, baseURL }) => {
+/**
+ * OG image snapshot tests.
+ *
+ * Each entry tests a different visual edge case to catch layout/overflow regressions:
+ * - Home page (Default template)
+ * - Standard packages (Package template with various name lengths, scopes, descriptions)
+ */
+const testCases = [
+  // Default OG image template
+  { path: '/', label: 'home page' },
+
+  // Package OG image template — covers key visual edge cases
+  { path: '/package/vue', label: 'unscoped package' },
+  { path: '/package/nuxt/v/4.3.1', label: 'unscoped with explicit version' },
+  { path: '/package/@nuxt/kit', label: 'scoped package' },
+  { path: '/package/@anthropic-ai/claude-code', label: 'scoped with long name' },
+  { path: '/package/typescript-eslint-parser-for-extra-long-name', label: 'extremely long name' },
+
+  // Package code-tree variant (file tree decoration)
+  { path: '/package-code/vue/v/3.5.27', label: 'code-tree variant' },
+
+  // Package function-tree variant (API symbols decoration)
+  { path: '/package-docs/ufo/v/1.6.3', label: 'function-tree variant' },
+] as const
+
+for (const { path, label } of testCases) {
+  test.describe(`${label} (${path})`, () => {
+    test(`og image snapshot`, async ({ page, goto, baseURL }) => {
       await goto(path, { waitUntil: 'domcontentloaded' })
 
-      const ogImageUrl = await page.locator('meta[property="og:image"]').getAttribute('content')
+      const ogImageUrl = await page.locator('meta[property="og:image"]').first().getAttribute('content')
       expect(ogImageUrl).toBeTruthy()
 
       const ogImagePath = new URL(ogImageUrl!).pathname
@@ -22,7 +46,7 @@ for (const path of paths) {
 
       const imageBuffer = await response.body()
       expect(imageBuffer).toMatchSnapshot({
-        name: `og-image-for-${path.replace(/\//g, '-')}.png`,
+        name: `og-image-${path.replace(/\//g, '-').replace(/^-/, '')}.png`,
       })
     })
   })
