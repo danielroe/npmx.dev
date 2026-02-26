@@ -315,7 +315,7 @@
       "no_matches": "No versions match this range",
       "copy_alt": {
         "per_version_analysis": "{version} version was downloaded {downloads} times",
-        "general_description": "Bar chart showing per-version downloads for {versions_count} {semver_grouping_mode} versions of the {package_name} package, {date_range_label} from the {first_version} version to the {last_version} version. The most downloaded version is {max_downloaded_version} with {max_version_downloads} downloads. {per_version_analysis} {watermark}."
+        "general_description": "Bar chart showing per-version downloads for {versions_count} {semver_grouping_mode} versions of the {package_name} package, {date_range_label} from the {first_version} version to the {last_version} version. The most downloaded version is {max_downloaded_version} with {max_version_downloads} downloads. {per_version_analysis}. {watermark}."
       }
     },
     "dependencies": {
