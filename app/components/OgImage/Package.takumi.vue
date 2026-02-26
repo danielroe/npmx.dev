@@ -114,7 +114,7 @@ async function fetchCodeTree() {
   function walk(nodes: JsDelivrFileNode[], depth: number) {
     for (const node of sorted(nodes)) {
       if (rows.length >= MAX_ROWS) return
-      rows.push({ name: node.name, depth })
+      rows.push({ name: node.name, depth, isDir: node.type === 'directory' })
       if (node.files) walk(node.files, depth + 1)
     }
   }

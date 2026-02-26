@@ -11,7 +11,7 @@ const { name, description } = useSiteConfig()
 
     <div class="flex flex-col">
       <div class="flex items-center gap-4">
-        <img src="/logo.svg" width="100" height="100" />
+        <img src="/logo.svg" width="100" height="100" alt="npmx logo" />
         <h1 class="text-8xl pb-3 font-mono">{{ name }}</h1>
       </div>
       <div class="text-4xl text-fg-muted gap-3">

@@ -3,11 +3,12 @@ import { expect, test } from './test-utils'
 // TODO(serhalp): The nuxt@3.20.2 fixture has no stars. Update fixture to have stars coverage here.
 
 /**
- * OG image snapshot tests.
+ * OG image snapshot tests (Takumi templates).
  *
  * Each entry tests a different visual edge case to catch layout/overflow regressions:
- * - Home page (Default template)
- * - Standard packages (Package template with various name lengths, scopes, descriptions)
+ * - Home page (Splash.takumi)
+ * - Static pages (Page.takumi)
+ * - Packages (Package.takumi with download-chart, code-tree, function-tree variants)
  */
 const testCases = [
   // Default OG image template

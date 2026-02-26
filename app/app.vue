@@ -118,7 +118,7 @@ if (import.meta.client) {
 }
 
 // title and description will be inferred
-// this will be overriden by upstream pages that use different templates
+// this will be overridden by upstream pages that use different templates
 defineOgImage('Page.takumi')
 </script>
 
