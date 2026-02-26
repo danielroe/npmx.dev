@@ -49,12 +49,12 @@ export const LIKES_SCOPE = `repo:${dev.npmx.feed.like.$nsid}`
 // Theming
 export const ACCENT_COLORS = {
   light: {
-    sky: 'oklch(0.70 0.15 230.318)',
-    coral: 'oklch(0.70 0.19 14.75)',
-    amber: 'oklch(0.8 0.25 84.429)',
-    emerald: 'oklch(0.70 0.17 166.95)',
-    violet: 'oklch(0.70 0.17 286.067)',
-    magenta: 'oklch(0.75 0.18 330)',
+    sky: 'oklch(0.56 0.16 242.21)',
+    coral: 'oklch(0.56 0.17 10.75)',
+    amber: 'oklch(0.58 0.18 46.34)',
+    emerald: 'oklch(0.51 0.13 162.4)',
+    violet: 'oklch(0.56 0.13 282.067)',
+    magenta: 'oklch(0.56 0.14 325)',
     neutral: 'oklch(0.145 0 0)',
   },
   dark: {
