@@ -29,7 +29,7 @@ export async function changelogRenderer(mdRepoInfo: MarkdownRepoInfo) {
       return text
     }
 
-    const intermediateTitleAttr = `${` data-title-intermediate="${plainText || title}"`}`
+    const intermediateTitleAttr = `data-title-intermediate="${plainText || title}"`
 
     return `<a href="${href}"${titleAttr}${intermediateTitleAttr} target="_blank">${text}</a>`
   }
