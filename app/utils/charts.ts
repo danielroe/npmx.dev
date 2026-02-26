@@ -557,7 +557,7 @@ export function createAltTextForVersionsBarChart({
       : undefined
 
   const per_version_analysis = versions
-    ?.toReversed()
+    .toReversed()
     .filter(v => v.index !== versionWithMaxDownloads?.index)
     .map(v =>
       config.$t(`package.versions.copy_alt.per_version_analysis`, {
@@ -574,10 +574,10 @@ export function createAltTextForVersionsBarChart({
 
   const altText = `${config.$t('package.versions.copy_alt.general_description', {
     package_name: dataset?.bars[0]?.name ?? '-',
-    versions_count: versions?.length ?? '0',
+    versions_count: versions?.length,
     semver_grouping_mode: semver_grouping_mode.toLocaleLowerCase(),
-    first_version: versions?.[0]?.name ?? '-',
-    last_version: versions?.at(-1)?.name ?? '-',
+    first_version: versions[0]?.name ?? '-',
+    last_version: versions.at(-1)?.name ?? '-',
     date_range_label: config.dateRangeLabel ?? '-',
     max_downloaded_version: versionWithMaxDownloads?.name ?? '-',
     max_version_downloads: versionWithMaxDownloads?.downloads ?? '-',
