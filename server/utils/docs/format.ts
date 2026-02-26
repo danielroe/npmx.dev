@@ -25,7 +25,7 @@ export function getNodeSignature(node: DenoDocNode): string | null {
       return `${asyncStr}function ${name}${typeParamsStr}(${params}): ${ret}`
     }
     case 'class': {
-      const ext = node.classDef?.extends ? ` extends ${formatType(node.classDef.extends)}` : ''
+      const ext = node.classDef?.extends ? ` extends ${node.classDef.extends}` : ''
       const impl = node.classDef?.implements?.map(t => formatType(t)).join(', ')
       const implStr = impl ? ` implements ${impl}` : ''
       const abstractStr = node.classDef?.isAbstract ? 'abstract ' : ''
@@ -72,9 +72,6 @@ export function formatParam(param: FunctionParam): string {
 export function formatType(type?: TsType): string {
   if (!type) return ''
 
-  // Strip ANSI codes from repr (deno doc may include terminal colors since it's built for that)
-  if (type.repr) return stripAnsi(type.repr)
-
   if (type.kind === 'keyword' && type.keyword) {
     return type.keyword
   }
@@ -90,6 +87,42 @@ export function formatType(type?: TsType): string {
 
   if (type.kind === 'union' && type.union) {
     return type.union.map(t => formatType(t)).join(' | ')
+  }
+
+  if (type.kind === 'this') {
+    return 'this'
+  }
+
+  if (type.kind === 'indexedAccess' && type.indexedAccess) {
+    return `${formatType(type.indexedAccess.objType)}[${formatType(type.indexedAccess.indexType)}]`
+  }
+
+  if (type.kind === 'typeOperator' && type.typeOperator) {
+    return `${type.typeOperator.operator} ${formatType(type.typeOperator.tsType)}`
+  }
+
+  if (type.kind === 'fnOrConstructor' && type.fnOrConstructor) {
+    const { fnOrConstructor: fn } = type
+    const typeParams = fn.typeParams?.map(t => t.name).join(', ')
+    const typeParamsStr = typeParams ? `<${typeParams}>` : ''
+    const params = fn.params.map(p => formatParam(p)).join(', ')
+    const ret = formatType(fn.tsType) || 'void'
+    return `${typeParamsStr}(${params}) => ${ret}`
+  }
+
+  if (type.kind === 'typeLiteral' && type.typeLiteral) {
+    const parts: string[] = []
+    for (const prop of type.typeLiteral.properties) {
+      const opt = prop.optional ? '?' : ''
+      const ro = prop.readonly ? 'readonly ' : ''
+      parts.push(`${ro}${prop.name}${opt}: ${formatType(prop.tsType) || 'unknown'}`)
+    }
+    for (const method of type.typeLiteral.methods) {
+      const params = method.params?.map(p => formatParam(p)).join(', ') || ''
+      const ret = formatType(method.returnType) || 'void'
+      parts.push(`${method.name}(${params}): ${ret}`)
+    }
+    return `{ ${parts.join('; ')} }`
   }
 
   return type.repr ? stripAnsi(type.repr) : 'unknown'
