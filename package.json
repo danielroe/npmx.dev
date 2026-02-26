@@ -110,7 +110,7 @@
     "vite-plugin-pwa": "1.2.0",
     "vite-plus": "0.0.0-833c515fa25cef20905a7f9affb156dfa6f151ab",
     "vue": "3.5.29",
-    "vue-data-ui": "3.15.6"
+    "vue-data-ui": "3.15.8"
   },
   "devDependencies": {
     "@e18e/eslint-plugin": "0.2.0",
@@ -126,6 +126,7 @@
     "@vue/test-utils": "2.4.6",
     "axe-core": "4.11.1",
     "defu": "6.1.4",
+    "devalue": "5.6.3",
     "eslint-plugin-regexp": "3.0.0",
     "fast-check": "4.5.3",
     "h3": "1.15.5",
@@ -146,25 +147,25 @@
     "node": "24"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "./node_modules/.bin/lint-staged"
   },
   "lint-staged": {
     "i18n/locales/*": [
       "node ./lunaria/lunaria.ts",
-      "pnpm oxfmt lunaria/files/",
+      "./node_modules/.bin/oxfmt lunaria/files/",
       "git add lunaria/files/",
       "node scripts/generate-i18n-schema.ts",
-      "pnpm oxfmt i18n/schema.json",
+      "./node_modules/.bin/oxfmt i18n/schema.json",
       "git add i18n/schema.json"
     ],
     "*.{js,ts,mjs,cjs,vue}": [
-      "pnpm oxlint --fix"
+      "./node_modules/.bin/oxlint --fix"
     ],
     "*.vue": [
-      "pnpm lint:css"
+      "node scripts/unocss-checker.ts"
     ],
     "*.{js,ts,mjs,cjs,vue,json,yml,md,html,css}": [
-      "pnpm oxfmt"
+      "./node_modules/.bin/oxfmt"
     ]
   },
   "packageManager": "pnpm@10.30.1"

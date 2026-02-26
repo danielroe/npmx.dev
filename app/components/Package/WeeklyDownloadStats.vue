@@ -276,7 +276,7 @@ const config = computed<VueUiSparklineConfig>(() => {
 </script>
 
 <template>
-  <div class="space-y-8 h-[110px] motion-safe:h-[140px]">
+  <div class="space-y-8">
     <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
       <template #actions>
         <ButtonBase
@@ -292,7 +292,7 @@ const config = computed<VueUiSparklineConfig>(() => {
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
 
-      <div class="w-full overflow-hidden">
+      <div class="w-full overflow-hidden h-[110px] motion-safe:h-[140px]">
         <template v-if="isLoadingWeeklyDownloads || hasWeeklyDownloads">
           <ClientOnly>
             <VueUiSparkline class="w-full max-w-xs" :dataset :config>
