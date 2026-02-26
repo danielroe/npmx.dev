@@ -457,6 +457,9 @@
         "copy_name": {
           "type": "string"
         },
+        "copy_version": {
+          "type": "string"
+        },
         "deprecation": {
           "type": "object",
           "properties": {
@@ -709,6 +712,12 @@
             "copy_command": {
               "type": "string"
             },
+            "copy_dev_command": {
+              "type": "string"
+            },
+            "dev_dependency_hint": {
+              "type": "string"
+            },
             "view_types": {
               "type": "string"
             }
@@ -919,29 +928,74 @@
             "distribution_modal_title": {
               "type": "string"
             },
+            "distribution_range_date_same_year": {
+              "type": "string"
+            },
+            "distribution_range_date_multiple_years": {
+              "type": "string"
+            },
             "grouping_major": {
               "type": "string"
             },
             "grouping_minor": {
               "type": "string"
             },
-            "recent_versions_only": {
+            "grouping_versions_title": {
+              "type": "string"
+            },
+            "grouping_versions_all": {
+              "type": "string"
+            },
+            "grouping_versions_only_recent": {
+              "type": "string"
+            },
+            "grouping_usage_title": {
+              "type": "string"
+            },
+            "grouping_usage_all": {
+              "type": "string"
+            },
+            "grouping_usage_low": {
               "type": "string"
             },
             "recent_versions_only_tooltip": {
               "type": "string"
             },
-            "show_low_usage": {
-              "type": "string"
-            },
             "show_low_usage_tooltip": {
-              "type": "string"
-            },
-            "date_range_tooltip": {
               "type": "string"
             },
             "y_axis_label": {
               "type": "string"
+            },
+            "filter_placeholder": {
+              "type": "string"
+            },
+            "filter_invalid": {
+              "type": "string"
+            },
+            "filter_help": {
+              "type": "string"
+            },
+            "filter_tooltip": {
+              "type": "string"
+            },
+            "filter_tooltip_link": {
+              "type": "string"
+            },
+            "no_matches": {
+              "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "per_version_analysis": {
+                  "type": "string"
+                },
+                "general_description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
@@ -971,6 +1025,9 @@
               "type": "string"
             },
             "outdated_patch": {
+              "type": "string"
+            },
+            "has_replacement": {
               "type": "string"
             }
           },
@@ -1102,6 +1159,9 @@
             "title": {
               "type": "string"
             },
+            "contributors_skip": {
+              "type": "string"
+            },
             "items": {
               "type": "object",
               "properties": {
@@ -1109,6 +1169,57 @@
                   "type": "string"
                 },
                 "likes": {
+                  "type": "string"
+                },
+                "contributors": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "play_animation": {
+              "type": "string"
+            },
+            "pause_animation": {
+              "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "trend_none": {
+                  "type": "string"
+                },
+                "trend_strong": {
+                  "type": "string"
+                },
+                "trend_weak": {
+                  "type": "string"
+                },
+                "trend_undefined": {
+                  "type": "string"
+                },
+                "button_label": {
+                  "type": "string"
+                },
+                "watermark": {
+                  "type": "string"
+                },
+                "analysis": {
+                  "type": "string"
+                },
+                "estimation": {
+                  "type": "string"
+                },
+                "estimations": {
+                  "type": "string"
+                },
+                "compare": {
+                  "type": "string"
+                },
+                "single_package": {
+                  "type": "string"
+                },
+                "general_description": {
                   "type": "string"
                 }
               },
@@ -1121,12 +1232,6 @@
           "type": "object",
           "properties": {
             "title": {
-              "type": "string"
-            },
-            "modal_title": {
-              "type": "string"
-            },
-            "analyze": {
               "type": "string"
             },
             "community_distribution": {
@@ -1888,6 +1993,9 @@
             "taken": {
               "type": "string"
             },
+            "missing_permission": {
+              "type": "string"
+            },
             "similar_warning": {
               "type": "string"
             },
@@ -2470,6 +2578,48 @@
           },
           "additionalProperties": false
         },
+        "sponsors": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "oss_partners": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "team": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "governance": {
+              "type": "string"
+            },
+            "role_steward": {
+              "type": "string"
+            },
+            "role_maintainer": {
+              "type": "string"
+            },
+            "sponsor": {
+              "type": "string"
+            },
+            "sponsor_aria": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "contributors": {
           "type": "object",
           "properties": {
@@ -2720,6 +2870,9 @@
               "type": "string"
             },
             "section_comparison": {
+              "type": "string"
+            },
+            "copy_as_markdown": {
               "type": "string"
             },
             "loading": {
@@ -3372,6 +3525,108 @@
             },
             "link": {
               "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "vacations": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "heading": {
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "illustration_alt": {
+          "type": "string"
+        },
+        "poke_log": {
+          "type": "string"
+        },
+        "what": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "p1": {
+              "type": "string"
+            },
+            "dates": {
+              "type": "string"
+            },
+            "p2": {
+              "type": "string"
+            },
+            "garden": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "meantime": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "p1": {
+              "type": "string"
+            },
+            "repo_link": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "return": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "p1": {
+              "type": "string"
+            },
+            "social_link": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "contributors": {
+              "type": "string"
+            },
+            "commits": {
+              "type": "string"
+            },
+            "pr": {
+              "type": "string"
+            },
+            "subtitle": {
+              "type": "object",
+              "properties": {
+                "some": {
+                  "type": "string"
+                },
+                "all": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false

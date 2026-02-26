@@ -1,23 +1,15 @@
 <script setup lang="ts">
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
-import type {
-  VueUiXyDatasetItem,
-  VueUiXyDatasetBarItem,
-  VueUiXyDatapointItem,
-  MinimalCustomFormatParams,
-} from 'vue-data-ui'
+import { type VueUiXyDatasetItem, type VueUiXyConfig } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
-import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch } from '~/utils/colors'
+import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenHex } from '~/utils/colors'
 import {
   drawSvgPrintLegend,
   drawNpmxLogoAndTaglineWatermark,
 } from '~/composables/useChartWatermark'
 import TooltipApp from '~/components/Tooltip/App.vue'
-
-type TooltipParams = MinimalCustomFormatParams<VueUiXyDatapointItem[]> & {
-  bars: VueUiXyDatasetBarItem[]
-}
+import { copyAltTextForVersionsBarChart } from '~/utils/charts'
 
 const props = defineProps<{
   packageName: string
@@ -25,6 +17,8 @@ const props = defineProps<{
 }>()
 
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { copy, copied } = useClipboard()
+
 const colorMode = useColorMode()
 const resolvedMode = shallowRef<'light' | 'dark'>('light')
 const rootEl = shallowRef<HTMLElement | null>(null)
@@ -107,23 +101,90 @@ const sanitise = (value: string) =>
     .replace(/[\\/:"*?<>|]/g, '-')
     .replace(/\//g, '-')
 
+const { locale } = useI18n()
+function formatDate(date: Date) {
+  return date.toLocaleString(locale.value, {
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  })
+}
+
+const endDate = computed(() => {
+  const t = new Date()
+  return new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate() - 1))
+})
+
+const startDate = computed(() => {
+  const start = new Date(endDate.value)
+  start.setUTCDate(start.getUTCDate() - 6)
+  return start
+})
+
+const { t } = useI18n()
+const dateRangeLabel = computed(() => {
+  const from = formatDate(startDate.value)
+  const to = formatDate(endDate.value)
+  const endYear = endDate.value.getUTCFullYear()
+  const startYear = startDate.value.getUTCFullYear()
+
+  if (startYear !== endYear) {
+    return t('package.versions.distribution_range_date_multiple_years', {
+      from,
+      to,
+      startYear,
+      endYear,
+    })
+  }
+
+  return t('package.versions.distribution_range_date_same_year', { from, to, endYear })
+})
+
 function buildExportFilename(extension: string): string {
-  const range = `${startDate.value}_${endDate.value}`
+  const range = dateRangeLabel.value.replaceAll(' ', '_').replaceAll(',', '')
 
   const label = props.packageName
   return `${sanitise(label ?? '')}_${range}.${extension}`
 }
 
-const chartConfig = computed(() => {
+// VueUiXy expects one series with multiple values for bar charts
+const xyDataset = computed<VueUiXyDatasetItem[]>(() => {
+  if (!chartDataset.value.length) return []
+
+  return [
+    {
+      name: props.packageName,
+      series: chartDataset.value.map(item => item.downloads),
+      type: 'bar' as const,
+      color: accent.value,
+    },
+  ]
+})
+
+const xAxisLabels = computed(() => {
+  return chartDataset.value.map(item => item.name)
+})
+
+const hasMinimap = computed<boolean>(() => {
+  const series = xyDataset.value[0]?.series ?? []
+  return series.length > 6
+})
+
+const chartConfig = computed<VueUiXyConfig>(() => {
   return {
-    theme: isDarkMode.value ? 'dark' : 'default',
+    theme: isDarkMode.value ? 'dark' : '',
     chart: {
-      height: isMobile.value ? 750 : 500,
+      title: {
+        text: dateRangeLabel.value,
+        fontSize: isMobile.value ? 24 : 16,
+        bold: false,
+      },
+      height: isMobile.value ? 750 : hasMinimap.value ? 500 : 611,
       backgroundColor: colors.value.bg,
       padding: {
         top: 24,
         right: 24,
-        bottom: xAxisLabels.value.length > 10 ? 84 : 72, // Space for rotated labels + watermark
+        bottom: 60,
       },
       userOptions: {
         buttons: {
@@ -132,18 +193,23 @@ const chartConfig = computed(() => {
           fullscreen: false,
           table: false,
           tooltip: false,
+          altCopy: true,
         },
         buttonTitles: {
           csv: $t('package.trends.download_file', { fileType: 'CSV' }),
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
+          altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
         },
         callbacks: {
-          img: ({ imageUri }: { imageUri: string }) => {
+          img: args => {
+            const imageUri = args?.imageUri
+            if (!imageUri) return
             loadFile(imageUri, buildExportFilename('png'))
           },
-          csv: (csvStr: string) => {
+          csv: csvStr => {
+            if (!csvStr) return
             const PLACEHOLDER_CHAR = '\0'
             const multilineDateTemplate = $t('package.trends.date_range_multiline', {
               start: PLACEHOLDER_CHAR,
@@ -160,11 +226,26 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }: { blob: Blob }) => {
+          svg: args => {
+            const blob = args?.blob
+            if (!blob) return
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
           },
+          altCopy: ({ dataset: dst, config: cfg }) =>
+            copyAltTextForVersionsBarChart({
+              dataset: dst,
+              config: {
+                ...cfg,
+                datapointLabels: xAxisLabels.value,
+                dateRangeLabel: dateRangeLabel.value,
+                semverGroupingMode: groupingMode.value,
+                copy,
+                $t,
+                numberFormatter: compactNumberFormatter.value.format,
+              },
+            }),
         },
       },
       grid: {
@@ -204,9 +285,8 @@ const chartConfig = computed(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: (params: TooltipParams) => {
-          const { datapoint, absoluteIndex, bars } = params
-          if (!datapoint) return ''
+        customFormat: ({ datapoint, absoluteIndex, bars }) => {
+          if (!datapoint || pending.value) return ''
 
           // Use absoluteIndex to get the correct version from chartDataset
           const index = Number(absoluteIndex)
@@ -237,12 +317,16 @@ const chartConfig = computed(() => {
       zoom: {
         maxWidth: isMobile.value ? 350 : 500,
         highlightColor: colors.value.bgElevated,
+        useResetSlot: true,
         minimap: {
           show: true,
           lineColor: '#FAFAFA',
           selectedColor: accent.value,
           selectedColorOpacity: 0.06,
           frameColor: colors.value.border,
+          handleWidth: isMobile.value ? 40 : 20, // does not affect the size of the touch area
+          handleBorderColor: colors.value.fgSubtle,
+          handleType: 'grab', // 'empty' | 'chevron' | 'arrow' | 'grab'
         },
         preview: {
           fill: transparentizeOklch(accent.value, isDarkMode.value ? 0.95 : 0.92),
@@ -252,61 +336,7 @@ const chartConfig = computed(() => {
         },
       },
     },
-    table: {
-      show: false,
-    },
   }
-})
-
-// VueUiXy expects one series with multiple values for bar charts
-const xyDataset = computed<VueUiXyDatasetItem[]>(() => {
-  if (!chartDataset.value.length) return []
-
-  return [
-    {
-      name: props.packageName,
-      series: chartDataset.value.map(item => item.downloads),
-      type: 'bar' as const,
-      color: accent.value,
-    },
-  ]
-})
-
-const xAxisLabels = computed(() => {
-  return chartDataset.value.map(item => item.name)
-})
-
-// Handle keyboard navigation for semver group toggle
-function handleGroupingKeydown(event: KeyboardEvent) {
-  if (pending.value) return
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    // Toggle between major and minor
-    groupingMode.value = groupingMode.value === 'major' ? 'minor' : 'major'
-  } else if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-    event.preventDefault()
-    // Arrow keys also toggle
-    groupingMode.value = groupingMode.value === 'major' ? 'minor' : 'major'
-  }
-}
-
-// Calculate last week date range (matches npm's "last-week" API)
-const startDate = computed(() => {
-  const today = new Date()
-  const yesterday = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
-  )
-  const startObj = new Date(yesterday)
-  startObj.setUTCDate(startObj.getUTCDate() - 6)
-  return startObj.toISOString().slice(0, 10)
-})
-
-const endDate = computed(() => {
-  const today = new Date()
-  const yesterday = new Date(
-    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 1),
-  )
-  return yesterday.toISOString().slice(0, 10)
 })
 </script>
 
@@ -316,147 +346,100 @@ const endDate = computed(() => {
     id="version-distribution"
     :aria-busy="pending ? 'true' : 'false'"
   >
-    <div class="w-full mb-4 flex flex-col gap-3">
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-2 sm:items-end">
-        <div class="flex flex-col gap-1 w-fit sm:shrink-0">
-          <label class="text-3xs font-mono text-fg-subtle tracking-wide uppercase">
-            {{ $t('package.versions.distribution_title') }}
-          </label>
-          <div
-            class="flex items-center bg-bg-subtle border border-border rounded-md"
-            role="group"
-            :aria-label="$t('package.versions.distribution_title')"
-            tabindex="0"
-            @keydown="handleGroupingKeydown"
-          >
-            <button
-              type="button"
-              :class="[
-                'px-4 py-1.75 font-mono text-sm transition-colors rounded-s-md',
-                groupingMode === 'major'
-                  ? 'bg-accent text-bg font-medium'
-                  : 'text-fg-subtle hover:text-fg hover:bg-bg-subtle/50',
-              ]"
-              :aria-pressed="groupingMode === 'major'"
-              :disabled="pending"
-              tabindex="-1"
-              @click="groupingMode = 'major'"
-            >
-              {{ $t('package.versions.grouping_major') }}
-            </button>
-            <button
-              type="button"
-              :class="[
-                'px-4 py-1.75 font-mono text-sm transition-colors rounded-e-md border-is border-border',
-                groupingMode === 'minor'
-                  ? 'bg-accent text-bg font-medium'
-                  : 'text-fg-subtle hover:text-fg hover:bg-bg-subtle/50',
-              ]"
-              :aria-pressed="groupingMode === 'minor'"
-              :disabled="pending"
-              tabindex="-1"
-              @click="groupingMode = 'minor'"
-            >
-              {{ $t('package.versions.grouping_minor') }}
-            </button>
-          </div>
-        </div>
+    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:items-end mb-6">
+      <div class="flex flex-col gap-1">
+        <label class="text-3xs font-mono text-fg-subtle tracking-wide uppercase">
+          {{ $t('package.versions.distribution_title') }}
+        </label>
 
-        <div class="grid grid-cols-2 gap-2 flex-1">
-          <TooltipApp
-            :text="$t('package.versions.date_range_tooltip')"
-            position="bottom"
-            :to="inModal ? '#chart-modal' : undefined"
-            :offset="8"
-            class="w-full"
+        <ButtonGroup>
+          <ButtonBase
+            @click="groupingMode = 'major'"
+            :variant="groupingMode === 'major' ? 'primary' : 'secondary'"
           >
-            <div class="flex flex-col gap-1 w-full">
-              <label
-                for="versionDistStartDate"
-                class="text-3xs font-mono text-fg-subtle tracking-wide uppercase"
-              >
-                {{ $t('package.trends.start_date') }}
-              </label>
-              <div class="relative flex items-center">
-                <span
-                  class="absolute inset-is-2 i-carbon:calendar w-4 h-4 text-fg-subtle shrink-0 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <InputBase
-                  id="versionDistStartDate"
-                  :model-value="startDate"
-                  disabled
-                  type="date"
-                  class="w-full min-w-0 bg-transparent ps-7"
-                  size="medium"
-                />
-              </div>
-            </div>
-          </TooltipApp>
+            {{ $t('package.versions.grouping_major') }}
+          </ButtonBase>
 
-          <TooltipApp
-            :text="$t('package.versions.date_range_tooltip')"
-            position="bottom"
-            :to="inModal ? '#chart-modal' : undefined"
-            :offset="8"
-            class="w-full"
+          <ButtonBase
+            @click="groupingMode = 'minor'"
+            :variant="groupingMode === 'minor' ? 'primary' : 'secondary'"
           >
-            <div class="flex flex-col gap-1 w-full">
-              <label
-                for="versionDistEndDate"
-                class="text-3xs font-mono text-fg-subtle tracking-wide uppercase"
-              >
-                {{ $t('package.trends.end_date') }}
-              </label>
-              <div class="relative flex items-center">
-                <span
-                  class="absolute inset-is-2 i-carbon:calendar w-4 h-4 text-fg-subtle shrink-0 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <InputBase
-                  id="versionDistEndDate"
-                  :model-value="endDate"
-                  disabled
-                  type="date"
-                  class="w-full min-w-0 bg-transparent ps-7"
-                  size="medium"
-                />
-              </div>
-            </div>
-          </TooltipApp>
-        </div>
+            {{ $t('package.versions.grouping_minor') }}
+          </ButtonBase>
+        </ButtonGroup>
       </div>
 
-      <div class="flex flex-col gap-4 w-full">
-        <TooltipApp
-          :text="$t('package.versions.recent_versions_only_tooltip')"
-          position="bottom"
-          :to="inModal ? '#chart-modal' : undefined"
-          :offset="8"
+      <div class="flex flex-col gap-1">
+        <label
+          class="text-3xs font-mono text-fg-subtle tracking-wide uppercase flex items-center gap-2"
         >
-          <SettingsToggle
-            v-model="showRecentOnly"
-            :label="$t('package.versions.recent_versions_only')"
-            justify="start"
-            reverse-order
-            :class="pending ? 'opacity-50 pointer-events-none' : ''"
-          />
-        </TooltipApp>
+          <span>{{ $t('package.versions.grouping_versions_title') }}</span>
+          <TooltipApp
+            :text="$t('package.versions.recent_versions_only_tooltip')"
+            interactive
+            position="top"
+            :to="inModal ? '#chart-modal' : undefined"
+            :offset="8"
+          >
+            <span
+              tabindex="0"
+              class="i-lucide:info w-3.5 h-3.5 text-fg-subtle cursor-help shrink-0 rounded-sm"
+              role="img"
+              aria-label="versions info"
+            />
+          </TooltipApp>
+        </label>
 
-        <TooltipApp
-          :text="$t('package.versions.show_low_usage_tooltip')"
-          position="bottom"
-          :to="inModal ? '#chart-modal' : undefined"
-          :offset="8"
+        <ButtonGroup>
+          <ButtonBase
+            @click="showRecentOnly = false"
+            :variant="showRecentOnly ? 'secondary' : 'primary'"
+          >
+            {{ $t('package.versions.grouping_versions_all') }}
+          </ButtonBase>
+          <ButtonBase
+            @click="showRecentOnly = true"
+            :variant="showRecentOnly ? 'primary' : 'secondary'"
+          >
+            {{ $t('package.versions.grouping_versions_only_recent') }}
+          </ButtonBase>
+        </ButtonGroup>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label
+          class="text-3xs font-mono text-fg-subtle tracking-wide uppercase flex items-center gap-2"
         >
-          <SettingsToggle
-            v-model="showLowUsageVersions"
-            :label="$t('package.versions.show_low_usage')"
-            justify="start"
-            reverse-order
-            :class="pending ? 'opacity-50 pointer-events-none' : ''"
-          />
-        </TooltipApp>
+          <span>{{ $t('package.versions.grouping_usage_title') }}</span>
+          <TooltipApp
+            :text="$t('package.versions.show_low_usage_tooltip')"
+            interactive
+            position="top"
+            :to="inModal ? '#chart-modal' : undefined"
+            :offset="8"
+          >
+            <span
+              tabindex="0"
+              class="i-lucide:info w-3.5 h-3.5 text-fg-subtle cursor-help shrink-0 rounded-sm"
+              role="img"
+              aria-label="versions info"
+            />
+          </TooltipApp>
+        </label>
+        <ButtonGroup>
+          <ButtonBase
+            @click="showLowUsageVersions = false"
+            :variant="showLowUsageVersions ? 'secondary' : 'primary'"
+          >
+            {{ $t('package.versions.grouping_usage_all') }}
+          </ButtonBase>
+          <ButtonBase
+            @click="showLowUsageVersions = true"
+            :variant="showLowUsageVersions ? 'primary' : 'secondary'"
+          >
+            {{ $t('package.versions.grouping_usage_low') }}
+          </ButtonBase>
+        </ButtonGroup>
       </div>
     </div>
 
@@ -468,7 +451,7 @@ const endDate = computed(() => {
       role="region"
       aria-labelledby="version-distribution-title"
       class="relative"
-      :class="isMobile ? 'min-h-[260px]' : 'min-h-[400px]'"
+      :class="isMobile ? 'min-h-[260px]' : 'min-h-[520px]'"
     >
       <!-- Chart content -->
       <ClientOnly v-if="xyDataset.length > 0 && !error">
@@ -484,19 +467,30 @@ const endDate = computed(() => {
                 v-if="svg.isPrintingSvg || svg.isPrintingImg"
                 v-html="drawNpmxLogoAndTaglineWatermark(svg, watermarkColors, $t, 'bottom')"
               />
+
+              <!-- Overlay covering the chart area to hide line resizing when switching granularities recalculates VueUiXy scaleMax when estimation lines are necessary -->
+              <rect
+                v-if="pending"
+                :x="svg.drawingArea.left"
+                :y="svg.drawingArea.top - 12"
+                :width="svg.drawingArea.width + 12"
+                :height="svg.drawingArea.height + 48"
+                :fill="colors.bg"
+              />
             </template>
 
-            <!-- Subtle gradient applied for area charts -->
-            <template #area-gradient="{ series: chartModalSeries, id: gradientId }">
-              <linearGradient :id="gradientId" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" :stop-color="chartModalSeries.color" stop-opacity="0.2" />
-                <stop offset="100%" :stop-color="colors.bg" stop-opacity="0" />
+            <!-- Custom bar gradient based on the series color -->
+            <template #bar-gradient="{ series, positiveId }">
+              <linearGradient :id="positiveId" x1="0" x2="0" y1="0" y2="1">
+                <!-- vue-data-ui exposes hex-normalized colors -->
+                <stop offset="0%" :stop-color="lightenHex(series.color, 0.618)" />
+                <stop offset="100%" :stop-color="series.color" stop-opacity="0.618" />
               </linearGradient>
             </template>
 
             <!-- Custom legend for single series (non-interactive) -->
             <template #legend="{ legend }">
-              <div class="flex gap-4 flex-wrap justify-center">
+              <div class="flex gap-4 flex-wrap justify-center pt-8">
                 <template v-if="legend.length > 0">
                   <div class="flex gap-1 place-items-center">
                     <div class="h-3 w-3">
@@ -512,53 +506,52 @@ const endDate = computed(() => {
               </div>
             </template>
 
+            <!-- Custom minimap reset button -->
+            <template #reset-action="{ reset: resetMinimap }">
+              <button
+                type="button"
+                aria-label="reset minimap"
+                class="absolute inset-is-1/2 -translate-x-1/2 -bottom-18 sm:inset-is-unset sm:translate-x-0 sm:bottom-auto sm:-inset-ie-20 sm:-top-3 flex items-center justify-center px-2.5 py-1.75 border border-transparent rounded-md text-fg-subtle hover:text-fg transition-colors hover:border-border focus-visible:outline-accent/70 sm:mb-0"
+                style="pointer-events: all !important"
+                @click="resetMinimap"
+              >
+                <span class="i-lucide:undo-2 w-5 h-5" aria-hidden="true" />
+              </button>
+            </template>
+
             <!-- Contextual menu icon -->
             <template #menuIcon="{ isOpen }">
-              <span v-if="isOpen" class="i-carbon:close w-6 h-6" aria-hidden="true" />
-              <span v-else class="i-carbon:overflow-menu-vertical w-6 h-6" aria-hidden="true" />
+              <span v-if="isOpen" class="i-lucide:x w-6 h-6" aria-hidden="true" />
+              <span v-else class="i-lucide:ellipsis-vertical w-6 h-6" aria-hidden="true" />
             </template>
 
             <!-- Export options -->
             <template #optionCsv>
-              <span
-                class="i-carbon:csv w-6 h-6 text-fg-subtle"
-                style="pointer-events: none"
-                aria-hidden="true"
-              />
+              <span class="text-fg-subtle font-mono pointer-events-none">CSV</span>
             </template>
-
             <template #optionImg>
-              <span
-                class="i-carbon:png w-6 h-6 text-fg-subtle"
-                style="pointer-events: none"
-                aria-hidden="true"
-              />
+              <span class="text-fg-subtle font-mono pointer-events-none">PNG</span>
             </template>
-
             <template #optionSvg>
-              <span
-                class="i-carbon:svg w-6 h-6 text-fg-subtle"
-                style="pointer-events: none"
-                aria-hidden="true"
-              />
+              <span class="text-fg-subtle font-mono pointer-events-none">SVG</span>
             </template>
 
             <!-- Annotator action icons -->
             <template #annotator-action-close>
               <span
-                class="i-carbon:close w-6 h-6 text-fg-subtle"
+                class="i-lucide:x w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
             </template>
 
             <template #annotator-action-color="{ color }">
-              <span class="i-carbon:color-palette w-6 h-6" :style="{ color }" aria-hidden="true" />
+              <span class="i-lucide:palette w-6 h-6" :style="{ color }" aria-hidden="true" />
             </template>
 
             <template #annotator-action-undo>
               <span
-                class="i-carbon:undo w-6 h-6 text-fg-subtle"
+                class="i-lucide:undo-2 w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
@@ -566,7 +559,7 @@ const endDate = computed(() => {
 
             <template #annotator-action-redo>
               <span
-                class="i-carbon:redo w-6 h-6 text-fg-subtle"
+                class="i-lucide:redo-2 w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
@@ -574,7 +567,7 @@ const endDate = computed(() => {
 
             <template #annotator-action-delete>
               <span
-                class="i-carbon:trash-can w-6 h-6 text-fg-subtle"
+                class="i-lucide:trash w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
@@ -583,13 +576,23 @@ const endDate = computed(() => {
             <template #optionAnnotator="{ isAnnotator }">
               <span
                 v-if="isAnnotator"
-                class="i-carbon:edit-off w-6 h-6 text-fg-subtle"
+                class="i-lucide:pen-off w-6 h-6 text-fg-subtle"
                 style="pointer-events: none"
                 aria-hidden="true"
               />
               <span
                 v-else
-                class="i-carbon:edit w-6 h-6 text-fg-subtle"
+                class="i-lucide:pen w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #optionAltCopy>
+              <span
+                class="w-6 h-6"
+                :class="
+                  copied ? 'i-lucide:check text-accent' : 'i-lucide:person-standing text-fg-subtle'
+                "
                 style="pointer-events: none"
                 aria-hidden="true"
               />
@@ -605,7 +608,7 @@ const endDate = computed(() => {
       <!-- No-data state -->
       <div v-if="!hasData && !pending && !error" class="flex items-center justify-center h-full">
         <div class="text-sm text-fg-subtle font-mono text-center flex flex-col items-center gap-2">
-          <span class="i-carbon:data-vis-4 w-8 h-8" />
+          <span class="i-lucide:database w-8 h-8" />
           <p>{{ $t('package.trends.no_data') }}</p>
         </div>
       </div>
@@ -613,7 +616,7 @@ const endDate = computed(() => {
       <!-- Error state -->
       <div v-if="error" class="flex items-center justify-center h-full" role="alert">
         <div class="text-sm text-fg-subtle font-mono text-center flex flex-col items-center gap-2">
-          <span class="i-carbon:warning-hex w-8 h-8 text-red-400" />
+          <span class="i-lucide:octagon-alert w-8 h-8 text-red-400" />
           <p>{{ error.message }}</p>
           <p class="text-xs">Package: {{ packageName }}</p>
         </div>
@@ -641,21 +644,6 @@ const endDate = computed(() => {
 :deep(.vue-ui-xy) svg rect {
   transition: none !important;
 }
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.chart-container {
-  animation: fadeInUp 350ms cubic-bezier(0.4, 0, 0.2, 1);
-}
 </style>
 
 <style>
@@ -663,7 +651,12 @@ const endDate = computed(() => {
 @media screen and (min-width: 767px) {
   #version-distribution .vue-data-ui-refresh-button {
     top: -0.6rem !important;
-    left: calc(100% + 2rem) !important;
+    left: calc(100% + 4rem) !important;
   }
+}
+
+/* Adds padding to graph title in absence of a configurable css property */
+#version-distribution .atom-title {
+  padding-top: 20px;
 }
 </style>

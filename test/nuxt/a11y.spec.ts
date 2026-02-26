@@ -114,7 +114,10 @@ import {
   AppFooter,
   AppHeader,
   AppLogo,
+  AboutLogoImg,
+  AboutLogoList,
   BaseCard,
+  BlueskyPostEmbed,
   BuildEnvironment,
   ButtonBase,
   LinkBase,
@@ -123,6 +126,7 @@ import {
   CodeFileTree,
   CodeMobileTreeDrawer,
   CodeViewer,
+  CopyToClipboardButton,
   CollapsibleSection,
   ColumnPicker,
   CompareComparisonGrid,
@@ -196,6 +200,7 @@ import {
 
 // Server variant components must be imported directly to test the server-side render
 // The #components import automatically provides the client variant
+import LogoNuxt from '~/assets/logos/oss-partners/nuxt.svg'
 import HeaderAccountMenuServer from '~/components/Header/AccountMenu.server.vue'
 import ToggleServer from '~/components/Settings/Toggle.server.vue'
 import SearchProviderToggleServer from '~/components/SearchProviderToggle.server.vue'
@@ -297,6 +302,88 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations with custom class', async () => {
       const component = await mountSuspended(AppLogo, {
         props: { class: 'h-6 w-6 text-accent' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('AboutLogoImg', () => {
+    it('should have no accessibility violations with string src', async () => {
+      const component = await mountSuspended(AboutLogoImg, {
+        props: {
+          src: LogoNuxt,
+          alt: 'Nuxt logo',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with dark/light src', async () => {
+      const component = await mountSuspended(AboutLogoImg, {
+        props: {
+          src: {
+            dark: LogoNuxt,
+            light: 'auto',
+          },
+          alt: 'Nuxt logo',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('AboutLogoList', () => {
+    it('should have no accessibility violations with direct logo items', async () => {
+      const component = await mountSuspended(AboutLogoList, {
+        props: {
+          list: [
+            {
+              name: 'Nuxt',
+              url: 'https://nuxt.com',
+              logo: LogoNuxt,
+            },
+            {
+              name: 'Nuxt',
+              url: 'https://nuxt.com',
+              logo: {
+                dark: LogoNuxt,
+                light: 'auto',
+              },
+            },
+          ],
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with grouped items', async () => {
+      const component = await mountSuspended(AboutLogoList, {
+        props: {
+          list: [
+            {
+              name: 'OSS Partners',
+              items: [
+                {
+                  name: 'Nuxt',
+                  url: 'https://nuxt.com',
+                  logo: LogoNuxt,
+                },
+                {
+                  name: 'Nuxt',
+                  url: 'https://nuxt.com',
+                  logo: {
+                    dark: LogoNuxt,
+                    light: 'auto',
+                  },
+                },
+              ],
+            },
+          ],
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
@@ -1028,6 +1115,8 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageClaimPackageModal, {
         props: {
           packageName: 'test-package',
+          packageScope: undefined,
+          canPublishToScope: true,
           open: false,
         },
       })
@@ -1039,6 +1128,8 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageClaimPackageModal, {
         props: {
           packageName: 'test-package',
+          packageScope: undefined,
+          canPublishToScope: true,
           open: true,
         },
       })
@@ -1918,6 +2009,26 @@ describe('component accessibility audits', () => {
     })
   })
 
+  describe('CopyToClipboardButton', () => {
+    it('should have no accessibility violations in default state', async () => {
+      const component = await mountSuspended(CopyToClipboardButton, {
+        props: { copied: false },
+        slots: { default: '<code>npm install vue</code>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations in copied state', async () => {
+      const component = await mountSuspended(CopyToClipboardButton, {
+        props: { copied: true },
+        slots: { default: '<code>npm install vue</code>' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
   describe('CollapsibleSection', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(CollapsibleSection, {
@@ -2484,6 +2595,18 @@ describe('component accessibility audits', () => {
           versions: mockVersions,
           distTags: mockDistTags,
           urlPattern: '/package/vue/v/{version}',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('BlueskyPostEmbed', () => {
+    it('should have no accessibility violations in pending state', async () => {
+      const component = await mountSuspended(BlueskyPostEmbed, {
+        props: {
+          uri: 'at://did:plc:u5zp7npt5kpueado77kuihyz/app.bsky.feed.post/3mejzn5mrcc2g',
         },
       })
       const results = await runAxe(component)

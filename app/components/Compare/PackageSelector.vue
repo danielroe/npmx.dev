@@ -105,7 +105,11 @@ function handleKeydown(e: KeyboardEvent) {
     case 'ArrowDown':
       e.preventDefault()
       if (count === 0) return
-      highlightedIndex.value = Math.min(highlightedIndex.value + 1, count - 1)
+      if (highlightedIndex.value < count - 1) {
+        highlightedIndex.value++
+      } else {
+        highlightedIndex.value = 0
+      }
       break
 
     case 'ArrowUp':
@@ -113,6 +117,8 @@ function handleKeydown(e: KeyboardEvent) {
       if (count === 0) return
       if (highlightedIndex.value > 0) {
         highlightedIndex.value--
+      } else {
+        highlightedIndex.value = count - 1
       }
       break
 
@@ -199,7 +205,7 @@ function handleFocus() {
         <!-- No dependency display -->
         <template v-if="pkg === NO_DEPENDENCY_ID">
           <span class="text-sm text-accent italic flex items-center gap-1.5">
-            <span class="i-carbon:clean w-3.5 h-3.5" aria-hidden="true" />
+            <span class="i-lucide:leaf w-3.5 h-3.5" aria-hidden="true" />
             {{ $t('compare.no_dependency.label') }}
           </span>
         </template>
@@ -214,7 +220,7 @@ function handleFocus() {
             })
           "
           @click="removePackage(pkg)"
-          classicon="i-carbon:close"
+          classicon="i-lucide:x"
         />
       </TagStatic>
     </div>
@@ -273,7 +279,7 @@ function handleFocus() {
             @click="addPackage(NO_DEPENDENCY_ID)"
           >
             <span class="text-sm text-accent italic flex items-center gap-2">
-              <span class="i-carbon:clean w-4 h-4" aria-hidden="true" />
+              <span class="i-lucide:leaf w-4 h-4" aria-hidden="true" />
               {{ $t('compare.no_dependency.typeahead_title') }}
             </span>
             <span class="text-xs text-fg-muted truncate mt-0.5">
@@ -301,7 +307,7 @@ function handleFocus() {
               v-if="result.description"
               class="text-xs text-fg-muted truncate mt-0.5 w-full block"
             >
-              {{ result.description }}
+              {{ decodeHtmlEntities(result.description) }}
             </span>
           </ButtonBase>
         </div>

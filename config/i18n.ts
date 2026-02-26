@@ -121,6 +121,12 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     file: 'bn-IN.json',
     name: 'বাংলা',
   },
+  {
+    code: 'bg-BG',
+    file: 'bg-BG.json',
+    name: 'Български',
+    pluralRule: createPluralRule('bg-BG', { zero: 1, one: 0, two: 1, few: 1, many: 1, other: 1 }),
+  },
   /*{
     code: 'ckb',
     file: 'ckb.json',
@@ -155,6 +161,11 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     code: 'de-DE',
     file: 'de-DE.json',
     name: 'Deutsch',
+  },
+  {
+    code: 'ta-IN',
+    file: 'ta-IN.json',
+    name: 'தமிழ்',
   },
   {
     code: 'hi-IN',

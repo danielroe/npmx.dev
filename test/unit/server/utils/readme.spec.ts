@@ -62,6 +62,19 @@ describe('Playground Link Extraction', () => {
       expect(result.playgroundLinks).toHaveLength(1)
       expect(result.playgroundLinks[0]!.provider).toBe('codesandbox')
     })
+
+    it('extracts label from image link', async () => {
+      const markdown = `[![Edit CodeSandbox](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/example-abc123)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.playgroundLinks).toHaveLength(1)
+      expect(result.playgroundLinks[0]).toMatchObject({
+        provider: 'codesandbox',
+        providerName: 'CodeSandbox',
+        label: 'Edit CodeSandbox',
+        url: 'https://codesandbox.io/s/example-abc123',
+      })
+    })
   })
 
   describe('Other Providers', () => {
@@ -328,6 +341,20 @@ describe('Markdown File URL Resolution', () => {
 
       expect(result.html).toContain('href="https://www.npmjs.com/products"')
     })
+
+    it('redirects npmjs.org urls to local', async () => {
+      const markdown = `[Some npmjs.org link](https://www.npmjs.org/package/test-pkg)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('href="/package/test-pkg"')
+    })
+
+    it('redirects npmjs.org urls to local (no www and http)', async () => {
+      const markdown = `[Some npmjs.org link](http://npmjs.org/package/test-pkg)`
+      const result = await renderReadmeHtml(markdown, 'test-pkg')
+
+      expect(result.html).toContain('href="/package/test-pkg"')
+    })
   })
 })
 
@@ -375,7 +402,8 @@ describe('HTML output', () => {
     const markdown = `# Title\n\nSome **bold** text and a [link](https://example.com).`
     const result = await renderReadmeHtml(markdown, 'test-pkg')
 
-    expect(result.html).toBe(`<h3 id="user-content-title" data-level="1">Title</h3>
+    expect(result.html)
+      .toBe(`<h3 id="user-content-title" data-level="1"><a href="#user-content-title">Title</a></h3>
 <p>Some <strong>bold</strong> text and a <a href="https://example.com" rel="nofollow noreferrer noopener" target="_blank">link</a>.</p>
 `)
   })

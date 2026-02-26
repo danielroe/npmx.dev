@@ -3,8 +3,10 @@ import sanitizeHtml from 'sanitize-html'
 import { hasProtocol } from 'ufo'
 import type { ReadmeResponse, TocItem } from '#shared/types/readme'
 import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
-import { highlightCodeSync } from './shiki'
+import { decodeHtmlEntities } from '#shared/utils/html'
 import { convertToEmoji } from '#shared/utils/emoji'
+
+import { highlightCodeSync } from './shiki'
 
 /**
  * Playground provider configuration
@@ -13,7 +15,7 @@ interface PlaygroundProvider {
   id: string // Provider identifier
   name: string
   domains: string[] // Associated domains
-  path?: string
+  paths?: string[]
   icon?: string // Provider icon name
 }
 
@@ -79,8 +81,27 @@ const PLAYGROUND_PROVIDERS: PlaygroundProvider[] = [
     id: 'typescript-playground',
     name: 'TypeScript Playground',
     domains: ['typescriptlang.org'],
-    path: '/play',
+    paths: ['/play'],
     icon: 'typescript',
+  },
+  {
+    id: 'solid-playground',
+    name: 'Solid Playground',
+    domains: ['playground.solidjs.com'],
+    icon: 'solid',
+  },
+  {
+    id: 'svelte-playground',
+    name: 'Svelte Playground',
+    domains: ['svelte.dev'],
+    paths: ['/repl', '/playground'],
+    icon: 'svelte',
+  },
+  {
+    id: 'tailwind-playground',
+    name: 'Tailwind Play',
+    domains: ['play.tailwindcss.com'],
+    icon: 'tailwindcss',
   },
 ]
 
@@ -96,7 +117,7 @@ function matchPlaygroundProvider(url: string): PlaygroundProvider | null {
       for (const domain of provider.domains) {
         if (
           (hostname === domain || hostname.endsWith(`.${domain}`)) &&
-          (!provider.path || parsed.pathname.startsWith(provider.path))
+          (!provider.paths || provider.paths.some(path => parsed.pathname.startsWith(path)))
         ) {
           return provider
         }
@@ -172,8 +193,21 @@ const ALLOWED_ATTR: Record<string, string[]> = {
   'p': ['align'],
 }
 
-// GitHub-style callout types
-// Format: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
+/**
+ * Strip all HTML tags from a string, looping until stable to prevent
+ * incomplete sanitization from nested/interleaved tags
+ * (e.g. `<scr<script>ipt>` → `<script>` after one pass).
+ */
+function stripHtmlTags(text: string): string {
+  const tagPattern = /<[^>]*>/g
+  let result = text
+  let previous: string
+  do {
+    previous = result
+    result = result.replace(tagPattern, '')
+  } while (result !== previous)
+  return result
+}
 
 /**
  * Generate a GitHub-style slug from heading text.
@@ -184,8 +218,7 @@ const ALLOWED_ATTR: Record<string, string[]> = {
  * - Collapse multiple hyphens
  */
 function slugify(text: string): string {
-  return text
-    .replace(/<[^>]*>/g, '') // Strip HTML tags
+  return stripHtmlTags(text)
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-') // Spaces to hyphens
@@ -206,8 +239,10 @@ const reservedPathsNpmJs = [
   'policies',
 ]
 
+const npmJsHosts = new Set(['www.npmjs.com', 'npmjs.com', 'www.npmjs.org', 'npmjs.org'])
+
 const isNpmJsUrlThatCanBeRedirected = (url: URL) => {
-  if (url.host !== 'www.npmjs.com' && url.host !== 'npmjs.com') {
+  if (!npmJsHosts.has(url.host)) {
     return false
   }
 
@@ -219,16 +254,6 @@ const isNpmJsUrlThatCanBeRedirected = (url: URL) => {
   }
 
   return true
-}
-
-const replaceHtmlLink = (html: string) => {
-  return html.replace(/href="([^"]+)"/g, (match, href) => {
-    if (isNpmJsUrlThatCanBeRedirected(new URL(href, 'https://www.npmjs.com'))) {
-      const newHref = href.replace(/^https?:\/\/(www\.)?npmjs\.com/, '')
-      return `href="${newHref}"`
-    }
-    return match
-  })
 }
 
 /**
@@ -381,13 +406,14 @@ export async function renderReadmeHtml(
     // (e.g., #install, #dependencies, #versions are used by the package page)
     const id = `user-content-${uniqueSlug}`
 
-    // Collect TOC item with plain text (HTML stripped)
-    const plainText = text.replace(/<[^>]*>/g, '').trim()
+    // Collect TOC item with plain text (HTML stripped, entities decoded)
+    const plainText = decodeHtmlEntities(stripHtmlTags(text).trim())
     if (plainText) {
       toc.push({ text: plainText, id, depth })
     }
 
-    return `<h${semanticLevel} id="${id}" data-level="${depth}">${text}</h${semanticLevel}>\n`
+    /** The link href uses the unique slug WITHOUT the 'user-content-' prefix, because that will later be added for all links. */
+    return `<h${semanticLevel} id="${id}" data-level="${depth}"><a href="#${uniqueSlug}">${plainText}</a></h${semanticLevel}>\n`
   }
 
   // Syntax highlighting for code blocks (uses shared highlighter)
@@ -395,8 +421,8 @@ export async function renderReadmeHtml(
     const html = highlightCodeSync(shiki, text, lang || 'text')
     // Add copy button
     return `<div class="readme-code-block" >
-<button type="button" class="readme-copy-button" aria-label="Copy code" check-icon="i-carbon:checkmark" copy-icon="i-carbon:copy" data-copy>
-<span class="i-carbon:copy" aria-hidden="true"></span>
+<button type="button" class="readme-copy-button" aria-label="Copy code" check-icon="i-lucide:check" copy-icon="i-lucide:copy" data-copy>
+<span class="i-lucide:copy" aria-hidden="true"></span>
 <span class="sr-only">Copy code</span>
 </button>
 ${html}
@@ -411,13 +437,19 @@ ${html}
     return `<img src="${resolvedHref}"${altAttr}${titleAttr}>`
   }
 
-  // // Resolve link URLs, add security attributes, and collect playground links
+  // Resolve link URLs, add security attributes, and collect playground links
   renderer.link = function ({ href, title, tokens }: Tokens.Link) {
     const text = this.parser.parseInline(tokens)
     const titleAttr = title ? ` title="${title}"` : ''
-    const plainText = text.replace(/<[^>]*>/g, '').trim()
+    let plainText = stripHtmlTags(text).trim()
 
-    const intermediateTitleAttr = `${` data-title-intermediate="${plainText || title}"`}`
+    // If plain text is empty, check if we have an image with alt text
+    if (!plainText && tokens.length === 1 && tokens[0]?.type === 'image') {
+      plainText = tokens[0].text
+    }
+
+    const intermediateTitleAttr =
+      plainText || title ? ` data-title-intermediate="${plainText || title}"` : ''
 
     return `<a href="${href}"${titleAttr}${intermediateTitleAttr}>${text}</a>`
   }
@@ -437,14 +469,7 @@ ${html}
     return `<blockquote>${body}</blockquote>\n`
   }
 
-  marked.setOptions({
-    renderer,
-    walkTokens: token => {
-      if (token.type === 'html') {
-        token.text = replaceHtmlLink(token.text)
-      }
-    },
-  })
+  marked.setOptions({ renderer })
 
   const rawHtml = marked.parse(content) as string
 
@@ -521,7 +546,7 @@ ${html}
              * provide the text of the element. This will automatically be removed, because there
              * is an allow list for link attributes.
              * */
-            label: attribs['data-title-intermediate'] || provider.name,
+            label: decodeHtmlEntities(attribs['data-title-intermediate'] || provider.name),
           })
         }
 

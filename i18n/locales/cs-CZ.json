@@ -16,10 +16,24 @@
     "docs": "dokumentace",
     "source": "zdrojový kód",
     "social": "sociální sítě",
-    "chat": "chat"
+    "chat": "chat",
+    "keyboard_shortcuts": "klávesové zkratky"
   },
   "shortcuts": {
-    "section": {}
+    "section": {
+      "global": "Globální",
+      "search": "Hledání",
+      "package": "Balíček"
+    },
+    "focus_search": "Zaměřit hledání",
+    "show_kbd_hints": "Zvýraznit klávesové zkratky",
+    "settings": "Otevřít nastavení",
+    "compare": "Otevřít porovnání",
+    "compare_from_package": "Otevřít porovnání (předvyplněno aktuálním balíčkem)",
+    "navigate_results": "Procházet výsledky",
+    "go_to_result": "Přejít na výsledek",
+    "open_code_view": "Otevřít zobrazení kódu",
+    "open_docs": "Otevřít dokumentaci"
   },
   "search": {
     "label": "Hledat npm balíčky",
@@ -27,14 +41,21 @@
     "button": "Hledat",
     "searching": "Hledání...",
     "found_packages": "Nalezen {count} balíček | Nalezeny {count} balíčky | Nalezeno {count} balíčků",
+    "found_packages_sorted": "Srovnání nejlepšího {count} výsledku | Srovnání nejlepších {count} výsledků | Srovnání nejlepších {count} výsledků",
     "updating": "(aktualizace...)",
     "no_results": "Žádné výsledky pro \"{query}\"",
+    "rate_limited": "Dosaženo limitu npm, zkuste to znovu za chvíli",
     "title": "hledání",
+    "title_search": "hledání: {search}",
+    "title_packages": "hledání balíčků",
+    "meta_description": "Výsledky hledání pro '{search}'",
+    "meta_description_packages": "Hledat npm balíčky",
     "not_taken": "{name} není rezervováno",
     "claim_prompt": "Nárokovat toto jméno balíčku na npm",
     "claim_button": "Nárokovat \"{name}\"",
     "want_to_claim": "Chcete nárokovat toto jméno balíčku?",
     "start_typing": "Začněte psát pro hledání balíčků",
+    "algolia_disclaimer": "Poháněno pomocí Algolia",
     "exact_match": "přesná shoda",
     "suggestion": {
       "user": "uživatel",
@@ -62,9 +83,17 @@
     "sections": {
       "appearance": "Vzhled",
       "display": "Zobrazení",
+      "search": "Zdroj dat",
       "language": "Jazyk"
     },
-    "data_source": {},
+    "data_source": {
+      "label": "Zdroj dat",
+      "description": "Vyberte, odkud npmx získává data pro vyhledávání. Stránky jednotlivých balíčků vždy používají přímo registr npm.",
+      "npm": "Registr npm",
+      "npm_description": "Získává výsledky hledání, seznamy organizací a uživatelů přímo z oficiálního registru npm. Autoritativní, ale může být pomalejší.",
+      "algolia": "Algolia",
+      "algolia_description": "Používá Algolia pro rychlejší vyhledávání, stránky organizací a uživatelů."
+    },
     "relative_dates": "Relativní data",
     "include_types": "Zahrnout {'@'}types při instalaci",
     "include_types_description": "Přidat balíček {'@'}types do instalačních příkazů pro balíčky bez integrovaných typů",
@@ -96,6 +125,7 @@
     "end_of_results": "Konec výsledků",
     "try_again": "Zkuste to znovu",
     "close": "Zavřít",
+    "or": "nebo",
     "retry": "Opakovat",
     "copy": "zkopírovat",
     "copied": "zkopírováno!",
@@ -121,6 +151,7 @@
     "view_permalink": "Zobrazit trvalý odkaz na tuto verzi",
     "navigation": "Navigace balíčku",
     "copy_name": "Zkopírovat název balíčku",
+    "copy_version": "Zkopírovat verzi balíčku",
     "deprecation": {
       "package": "Tento balíček byl označen jako zastaralý.",
       "version": "Tato verze byla označena jako zastaralá.",
@@ -133,8 +164,10 @@
       "documented": "{community} označila tento balíček jako mající výkonnější alternativy.",
       "none": "Tento balíček byl označen jako již nepotřebný a jeho funkčnost je pravděpodobně dostupná nativně ve všech enginech.",
       "learn_more": "Zjistit více",
+      "learn_more_above": "Zjistit více výše.",
       "mdn": "MDN",
-      "community": "komunita"
+      "community": "komunita",
+      "consider_no_dep": "+ Zvážit žádnou závislost?"
     },
     "stats": {
       "license": "Licence",
@@ -177,7 +210,10 @@
       "fund": "financovat",
       "compare": "porovnat"
     },
-    "likes": {},
+    "likes": {
+      "like": "Líbí se mi tento balíček",
+      "unlike": "Nelíbí se mi tento balíček"
+    },
     "docs": {
       "not_available": "Dokumentace není k dispozici",
       "not_available_detail": "Nepodařilo se nám vygenerovat dokumentaci pro tuto verzi."
@@ -186,11 +222,14 @@
       "title": "Začínáme",
       "pm_label": "Správce balíčků",
       "copy_command": "Zkopírovat příkaz pro instalaci",
+      "copy_dev_command": "Zkopírovat příkaz pro instalaci vývojové verze",
+      "dev_dependency_hint": "Obvykle instalováno jako vývojová závislost",
       "view_types": "Zobrazit {package}"
     },
     "create": {
       "title": "Vytvořit nový projekt",
-      "copy_command": "Zkopírovat příkaz pro vytvoření"
+      "copy_command": "Zkopírovat příkaz pro vytvoření",
+      "view": "{packageName} má stejného správce. Klikněte pro více informací."
     },
     "run": {
       "title": "Spustit",
@@ -200,10 +239,37 @@
       "title": "ČTI MĚ",
       "no_readme": "Žádné ČTI MĚ NENÍ k dispozici.",
       "view_on_github": "Zobrazit na GitHubu",
-      "callout": {}
+      "toc_title": "Obsah",
+      "callout": {
+        "note": "Poznámka",
+        "tip": "Tip",
+        "important": "Důležité",
+        "warning": "Varování",
+        "caution": "Upozornění"
+      },
+      "copy_as_markdown": "Zkopírovat ČTI MĚ jako Markdown"
     },
-    "provenance_section": {},
-    "security_downgrade": {},
+    "provenance_section": {
+      "title": "Původ",
+      "built_and_signed_on": "Sestaveno a podepsáno na {provider}",
+      "view_build_summary": "Zobrazit souhrn sestavení",
+      "source_commit": "Zdrojový commit",
+      "build_file": "Soubor sestavení",
+      "public_ledger": "Veřejný účetní deník",
+      "transparency_log_entry": "Záznam v deníku transparentnosti",
+      "view_more_details": "Zobrazit více podrobností",
+      "error_loading": "Nepodařilo se načíst podrobnosti o původu"
+    },
+    "security_downgrade": {
+      "title": "Snížení důvěryhodnosti",
+      "description_to_none_provenance": "Tato verze byla publikována bez {provenance}.",
+      "description_to_none_trustedPublisher": "Tato verze byla publikována bez {trustedPublishing}.",
+      "description_to_provenance_trustedPublisher": "Tato verze používá {provenance}, ale ne {trustedPublishing}.",
+      "fallback_install_provenance": "Instalační příkazy jsou připnuty na {version}, poslední verzi s původem.",
+      "fallback_install_trustedPublisher": "Instalační příkazy jsou připnuty na {version}, poslední verzi s důvěryhodným publikováním.",
+      "provenance_link_text": "původ",
+      "trusted_publishing_link_text": "důvěryhodné publikování"
+    },
     "keywords_title": "Klíčová slova",
     "compatibility": "Kompatibilita",
     "card": {
@@ -225,7 +291,20 @@
       "more_tagged": "{count} další tag | {count} další tagy | {count} dalších tagů",
       "all_covered": "Všechny verze jsou pokryty výše uvedenými tagy",
       "deprecated_title": "{version} (zastaralá)",
-      "view_all": "Zobrazit {count} verzi | Zobrazit {count} verze | Zobrazit {count} verzí"
+      "view_all": "Zobrazit {count} verzi | Zobrazit {count} verze | Zobrazit {count} verzí",
+      "distribution_title": "Skupina Semver",
+      "distribution_modal_title": "Verze",
+      "grouping_major": "Hlavní",
+      "grouping_minor": "Vedlejší",
+      "recent_versions_only_tooltip": "Zobrazit pouze verze zveřejněné v posledním roce.",
+      "show_low_usage_tooltip": "Zahrnout skupiny verzí s méně než 1 % celkových stažení.",
+      "y_axis_label": "Stažení",
+      "filter_placeholder": "Filtrovat podle semver (např. ^3.0.0)",
+      "filter_invalid": "Neplatný rozsah semver",
+      "filter_help": "Pomoc s filtrováním rozsahu semver",
+      "filter_tooltip": "Filtrovat verze pomocí {link}. Například ^3.0.0 zobrazí všechny verze 3.x.",
+      "filter_tooltip_link": "semver rozsahu",
+      "no_matches": "Žádné verze neodpovídají tomuto rozsahu"
     },
     "dependencies": {
       "title": "Závislosti ({count})",
@@ -235,7 +314,8 @@
       "view_vulnerabilities": "Zobrazit zranitelnosti",
       "outdated_major": "o {count} hlavní verzi pozadu (nejnovější: {latest}) | o {count} hlavní verze pozadu (nejnovější: {latest}) | o {count} hlavních verzích pozadu (nejnovější: {latest})",
       "outdated_minor": "o {count} vedlejší verzi pozadu (nejnovější: {latest}) | o {count} vedlejší verze pozadu (nejnovější: {latest}) | o {count} vedlejších verzích pozadu (nejnovější: {latest})",
-      "outdated_patch": "Aktualizace záplaty dostupná (nejnovější: {latest})"
+      "outdated_patch": "Aktualizace záplaty dostupná (nejnovější: {latest})",
+      "has_replacement": "Tato závislost má navrhované náhrady"
     },
     "peer_dependencies": {
       "title": "Požadované závislosti ({count})",
@@ -274,11 +354,21 @@
       "date_range_multiline": "od {start}\ndo {end}",
       "download_file": "Stáhnout {fileType}",
       "toggle_annotator": "Přepnout popisovač",
-      "items": {}
+      "legend_estimation": "Odhad",
+      "no_data": "Žádná dostupná data",
+      "y_axis_label": "{facet} - {granularity}",
+      "facet": "Data",
+      "title": "Trendy",
+      "contributors_skip": "Nezobrazeno v Přispěvatelích (žádné GitHub repo):",
+      "items": {
+        "downloads": "Stažení",
+        "likes": "Lajky",
+        "contributors": "Přispěvatelé"
+      }
     },
     "downloads": {
       "title": "Týdenní stažení",
-      "analyze": "Analyzovat stažení"
+      "community_distribution": "Zobrazit rozložení adopce v komunitě"
     },
     "install_scripts": {
       "title": "Instalační skripty",
@@ -315,7 +405,8 @@
         "high": "vysoká",
         "moderate": "střední",
         "low": "nízká"
-      }
+      },
+      "fixed_in_title": "Opraveno ve verzi {version}"
     },
     "deprecated": {
       "label": "Zastaralé",
@@ -362,7 +453,11 @@
       "name_asc": "Název (A-Z)",
       "name_desc": "Název (Z-A)"
     },
-    "size": {}
+    "size": {
+      "b": "{size} B",
+      "kb": "{size} kB",
+      "mb": "{size} MB"
+    }
   },
   "connector": {
     "modal": {
@@ -385,7 +480,8 @@
       "warning": "VAROVÁNÍ",
       "warning_text": "Toto umožňuje npmx přístup k vašemu npm CLI. Připojujte se pouze k důvěryhodným stránkám.",
       "connect": "Připojit",
-      "connecting": "Připojování..."
+      "connecting": "Připojování...",
+      "auto_open_url": "Automaticky otevřít stránku pro autentizaci"
     }
   },
   "operations": {
@@ -401,7 +497,9 @@
       "otp_placeholder": "Zadejte OTP kód...",
       "otp_label": "Jednorázové heslo",
       "retry_otp": "Zkusit znovu s OTP",
+      "retry_web_auth": "Zkusit znovu s webovou autentizací",
       "retrying": "Znovu se pokouším...",
+      "open_web_auth": "Otevřít odkaz pro webovou autentizaci",
       "approve_operation": "Schválit operaci",
       "remove_operation": "Odebrat operaci",
       "approve_all": "Schválit vše",
@@ -717,6 +815,14 @@
         "managers": "správce balíčků"
       }
     },
+    "team": {
+      "title": "Tým",
+      "governance": "Správa",
+      "role_steward": "Vedoucí",
+      "role_maintainer": "Správce",
+      "sponsor": "Sponzor",
+      "sponsor_aria": "Sponzor {name} na GitHubu"
+    },
     "contributors": {
       "title": "Přispěvatelé | {count} přispěvatelé | {count} přispěvatelů",
       "description": "npmx je plně open source, postavený úžasnou komunitou přispěvatelů. Přidejte se k nám a společně vytvořme npm prohlížeč, jaký jsme vždy chtěli.",
@@ -767,7 +873,8 @@
       "create_account": "Vytvořit nový účet",
       "connect_bluesky": "Připojit k Bluesky",
       "what_is_atmosphere": "Co je účet Atmosphere?",
-      "atmosphere_explanation": "{npmx} používá {atproto} k pohánění mnoha svých sociálních funkcí, což uživatelům umožňuje vlastnit svá data a používat jeden účet pro všechny kompatibilní aplikace. Jakmile si vytvoříte účet, můžete používat i jiné aplikace jako {bluesky} a {tangled} se stejným účtem."
+      "atmosphere_explanation": "{npmx} používá {atproto} k pohánění mnoha svých sociálních funkcí, což uživatelům umožňuje vlastnit svá data a používat jeden účet pro všechny kompatibilní aplikace. Jakmile si vytvoříte účet, můžete používat i jiné aplikace jako {bluesky} a {tangled} se stejným účtem.",
+      "default_input_error": "Zadejte platný handle, DID nebo úplnou URL PDS"
     }
   },
   "header": {
@@ -814,7 +921,15 @@
       "packages_selected": "Vybrané balíčky: {count}/{max}.",
       "add_hint": "Přidejte alespoň 2 balíčky ke srovnání."
     },
-    "no_dependency": {},
+    "no_dependency": {
+      "label": "(Žádná závislost)",
+      "typeahead_title": "Co by udělal James?",
+      "typeahead_description": "Porovnat s nepoužíváním závislosti! Schváleno e18e.",
+      "tooltip_title": "Možná nepotřebujete závislost",
+      "tooltip_description": "Porovnat s nepoužíváním závislosti! {link} udržuje seznam balíčků, které lze nahradit nativními API nebo jednoduššími alternativami.",
+      "e18e_community": "Komunita e18e",
+      "add_column": "Přidat sloupec bez závislosti do porovnání"
+    },
     "facets": {
       "group_label": "Kategorie vlastností",
       "all": "Vše",
@@ -852,7 +967,10 @@
           "label": "Stažení/týden",
           "description": "Počet stažení za týden"
         },
-        "totalLikes": {},
+        "totalLikes": {
+          "label": "Lajky",
+          "description": "Počet lajků"
+        },
         "lastUpdated": {
           "label": "Publikováno",
           "description": "Kdy byla tato verze publikována"
@@ -890,23 +1008,122 @@
         "not_deprecated": "Ne",
         "types_included": "Zahrnuté",
         "types_none": "Žádné",
-        "vulnerabilities_summary": "{count} ({critical}C/{high}H)"
+        "vulnerabilities_summary": "{count} ({critical}C/{high}H)",
+        "up_to_you": "To je na vás!"
       },
-      "trends": {}
+      "trends": {
+        "title": "Porovnat trendy"
+      }
     }
   },
   "privacy_policy": {
+    "title": "Zásady ochrany osobních údajů",
+    "last_updated": "Poslední aktualizace: {date}",
+    "welcome": "Vítejte na {app}. Zavazujeme se chránit vaše soukromí. Tyto zásady vysvětlují, jaké údaje shromažďujeme, jak je používáme a jaká máte práva ohledně vašich informací.",
     "cookies": {
-      "what_are": {},
-      "types": {},
-      "local_storage": {},
-      "management": {}
+      "what_are": {
+        "title": "Co jsou cookies?",
+        "p1": "Cookies jsou malé textové soubory uložené ve vašem zařízení při návštěvě webové stránky. Jejich účelem je zlepšit váš zážitek z prohlížení tím, že si pamatují určité preference a nastavení."
+      },
+      "types": {
+        "title": "Jaké cookies používáme?",
+        "p1": "Používáme pouze {bold} pro účely nezbytné pro funkčnost webu. Nepoužíváme cookies třetích stran ani reklamní cookies.",
+        "bold": "nezbytné technické cookies",
+        "li1": "{li11}{separator} {li12}",
+        "li2": "{li21}{separator} {li22}",
+        "separator": ":",
+        "cookie_vdpl": "__vdpl",
+        "cookie_vdpl_desc": "Tento cookie je používán naším poskytovatelem hostingu (Vercel) pro ochranu proti nesouladu verzí. Zajišťuje, že načítáte zdroje z správné verze nasazení, pokud je během prohlížení vydána nová aktualizace. Nesleduje vás.",
+        "cookie_h3": "h3",
+        "cookie_h3_desc": "Toto je náš bezpečný session cookie. Ukládá OAuth přístupový token při připojení vašeho účtu Atmosphere. Je nezbytný pro udržení autentizované relace."
+      },
+      "local_storage": {
+        "title": "Místní úložiště",
+        "p1": "Kromě session cookies používáme {bold} vašeho prohlížeče k ukládání vašich preferencí zobrazení. To nám umožňuje pamatovat si téma (světlé/tmavé) a některá další {settings}, která jste vybrali, takže je nemusíte při každé návštěvě znovu nastavovat.",
+        "bold": "místní úložiště",
+        "p2": "Tyto informace jsou čistě funkční, ukládají se pouze na vašem zařízení a {bold2}. Používáme je výhradně ke zlepšení vašeho zážitku na našich webových stránkách.",
+        "bold2": "neobsahují žádné osobní údaje ani se nepoužívají k vašemu sledování",
+        "settings": "nastavení"
+      },
+      "management": {
+        "title": "Správa cookies",
+        "p1": "Můžete nakonfigurovat svůj prohlížeč tak, aby přijímal, odmítal nebo mazal cookies podle vašich preferencí. Upozorňujeme však, že {bold}.",
+        "bold": "odmítnutí nezbytných cookies může zabránit plnému přístupu k aplikaci",
+        "p2": "Níže jsou odkazy s pokyny pro správu cookies v nejběžněji používaných prohlížečích:",
+        "chrome": "Google Chrome (otevře se v novém okně)",
+        "firefox": "Mozilla Firefox (otevře se v novém okně)",
+        "edge": "Microsoft Edge (otevře se v novém okně)"
+      }
     },
-    "analytics": {},
-    "authenticated": {},
-    "data_retention": {},
-    "your_rights": {},
-    "contact": {},
-    "changes": {}
+    "analytics": {
+      "title": "Analytika",
+      "p1": "Používáme {bold} k pochopení, jak návštěvníci používají naše webové stránky. To nám pomáhá zlepšit uživatelský zážitek a identifikovat problémy.",
+      "bold": "Vercel Web Analytics",
+      "p2": "Vercel Analytics je navržena s ohledem na soukromí:",
+      "li1": "Nepoužívá cookies",
+      "li2": "Neshromažďuje osobní identifikátory",
+      "li3": "Nesleduje uživatele napříč webovými stránkami",
+      "li4": "Všechna data jsou agregována a anonymizována",
+      "p3": "Jediné informace, které jsou shromažďovány, zahrnují: adresy stránek, referrer, zemi/region, typ zařízení, prohlížeč a operační systém. Tato data nelze použít k identifikaci jednotlivých uživatelů."
+    },
+    "authenticated": {
+      "title": "Ověření uživatelé",
+      "p1": "Když připojíte svůj {bold} účet k npmx, ukládáme váš OAuth přístupový token do zabezpečeného, pouze HTTP session cookie. Tento token se používá výhradně k autentizaci požadavků vaším jménem.",
+      "bold": "Atmosphere",
+      "p2": "Neukládáme vaše přihlašovací údaje a nepřistupujeme k žádným datům nad rámec toho, co je nezbytné pro poskytování funkcí, které používáte. Svůj účet můžete kdykoli odpojit na stránce {settings}.",
+      "settings": "nastavení"
+    },
+    "data_retention": {
+      "title": "Uchovávání dat",
+      "p1": "Relace cookies jsou automaticky mazány při zavření prohlížeče nebo po určité době nečinnosti. Preference uložené v lokálním úložišti zůstávají na vašem zařízení, dokud nevymažete data prohlížeče. Analytická data jsou uchovávána v agregované formě a nelze je spojit s jednotlivými uživateli."
+    },
+    "your_rights": {
+      "title": "Vaše práva",
+      "p1": "Máte právo:",
+      "li1": "Získat informace o tom, jaká data shromažďujeme",
+      "li2": "Vymazat své lokální úložiště a cookies kdykoli",
+      "li3": "Odpojit svou ověřenou relaci",
+      "li4": "Požádat o informace o našich postupech týkajících se dat",
+      "p2": "Vzhledem k tomu, že neshromažďujeme osobní údaje, obvykle neexistují žádné osobní informace k odstranění nebo exportu."
+    },
+    "contact": {
+      "title": "Kontaktujte nás",
+      "p1": "Pro jakékoli dotazy nebo obavy ohledně této zásady ochrany osobních údajů nás můžete kontaktovat otevřením problému na našem {link}.",
+      "link": "GitHub repozitáři"
+    },
+    "changes": {
+      "title": "Změny této zásady",
+      "p1": "Tuto zásadu ochrany osobních údajů můžeme čas od času aktualizovat. Jakékoli změny budou zveřejněny na této stránce s aktualizovaným datem revize."
+    }
+  },
+  "a11y": {
+    "title": "Přístupnost",
+    "footer_title": "a11y",
+    "welcome": "Chceme, aby {app} bylo použitelné pro co největší počet lidí.",
+    "approach": {
+      "title": "Náš přístup",
+      "p1": "Snažíme se dodržovat Směrnice pro přístupnost webového obsahu (WCAG) 2.2 a používáme je jako referenci při vytváření funkcí. Neprohlašujeme úplnou shodu s žádnou úrovní WCAG — přístupnost je neustálý proces a vždy je co zlepšovat.",
+      "p2": "Tento web je {about}. Zlepšení přístupnosti jsou prováděna postupně jako součást našeho pravidelného vývoje.",
+      "about_link": "otevřený, komunitou řízený projekt"
+    },
+    "measures": {
+      "title": "Co děláme",
+      "p1": "Některé z věcí, které se snažíme dělat na celém webu:",
+      "li1": "Používat sémantický HTML a atributy ARIA tam, kde je to vhodné.",
+      "li2": "Používat relativní velikosti textu, aby je bylo možné upravit v prohlížeči.",
+      "li3": "Podporovat navigaci pomocí klávesnice v celém rozhraní.",
+      "li4": "Respektovat mediální dotazy prefers-reduced-motion a prefers-color-scheme.",
+      "li5": "Navrhovat s dostatečným kontrastem barev.",
+      "li6": "Zajistit, aby byl základní obsah dostupný bez JavaScriptu, i když některé interaktivní funkce jej vyžadují."
+    },
+    "limitations": {
+      "title": "Známá omezení",
+      "p1": "Některé části webu — zejména obsah třetích stran, jako jsou README balíčků — nemusí splňovat standardy přístupnosti. Pracujeme na zlepšení těchto oblastí postupně."
+    },
+    "contact": {
+      "title": "Zpětná vazba",
+      "p1": "Pokud narazíte na překážku v přístupnosti na {app}, dejte nám prosím vědět otevřením problému na našem {link}. Tyto zprávy bereme vážně a uděláme vše pro to, abychom je řešili.",
+      "link": "GitHub repozitáři"
+    }
   }
 }

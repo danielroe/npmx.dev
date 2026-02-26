@@ -193,14 +193,14 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
       @click="isExpanded = !isExpanded"
     >
       <span class="flex items-center gap-2 text-sm font-mono text-fg shrink-0">
-        <span class="i-carbon-filter w-4 h-4" aria-hidden="true" />
+        <span class="i-lucide:funnel w-4 h-4" aria-hidden="true" />
         {{ $t('filters.title') }}
       </span>
       <span v-if="!isExpanded && hasActiveFilters" class="text-xs font-mono text-fg-muted truncate">
         {{ filterSummary }}
       </span>
       <span
-        class="i-carbon-chevron-down w-4 h-4 text-fg-subtle transition-transform duration-200 shrink-0 ms-auto"
+        class="i-lucide:chevron-down w-4 h-4 text-fg-subtle transition-transform duration-200 shrink-0 ms-auto"
         :class="{ 'rotate-180': isExpanded }"
         aria-hidden="true"
       />
@@ -217,7 +217,7 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             </label>
             <!-- Search scope toggle -->
             <div
-              class="inline-flex rounded-md border border-border p-0.5 bg-bg"
+              class="inline-flex rounded-md border border-border p-0.5 bg-bg-muted"
               role="group"
               :aria-label="$t('filters.search_scope')"
             >
@@ -225,11 +225,11 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
                 v-for="scope in SEARCH_SCOPE_VALUES"
                 :key="scope"
                 type="button"
-                class="px-2 py-0.5 text-xs font-mono rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+                class="px-2 py-0.5 text-xs font-mono rounded-sm border transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
                 :class="
                   filters.searchScope === scope
-                    ? 'bg-bg-muted text-fg'
-                    : 'text-fg-muted hover:text-fg'
+                    ? 'bg-bg-subtle text-fg border-fg-subtle'
+                    : 'text-fg-muted hover:text-fg border-transparent'
                 "
                 :aria-pressed="filters.searchScope === scope"
                 :title="getScopeDescriptionKey(scope)"
