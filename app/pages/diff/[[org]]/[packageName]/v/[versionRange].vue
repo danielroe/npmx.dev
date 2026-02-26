@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { CompareResponse, FileChange } from '#shared/types'
-import { packageRoute } from '~/utils/router'
+import { diffRoute, packageRoute } from '~/utils/router'
 
 definePageMeta({
   name: 'diff',
@@ -91,10 +91,10 @@ const groupedDeps = computed(() => {
 })
 
 const fromVersionUrlPattern = computed(() => {
-  return `/diff/${packageName.value}/v/{version}...${toVersion.value}`
+  return router.resolve(diffRoute(packageName.value, '{version}', toVersion.value)).href
 })
 const toVersionUrlPattern = computed(() => {
-  return `/diff/${packageName.value}/v/${fromVersion.value}...{version}`
+  return router.resolve(diffRoute(packageName.value, fromVersion.value, '{version}')).href
 })
 
 useSeoMeta({

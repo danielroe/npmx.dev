@@ -883,7 +883,7 @@ const showSkeleton = shallowRef(false)
                 displayVersion && latestVersion && displayVersion.version !== latestVersion.version
               "
               variant="button-secondary"
-              :to="`/diff/${pkg.name}/v/${displayVersion.version}...${latestVersion.version}`"
+              :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
               classicon="i-lucide:diff"
             >
               {{ $t('compare.compare_versions') }}
@@ -1046,7 +1046,7 @@ const showSkeleton = shallowRef(false)
               class="sm:hidden"
             >
               <NuxtLink
-                :to="`/diff/${pkg.name}/v/${displayVersion.version}...${latestVersion.version}`"
+                :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
                 class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
               >
                 <span class="i-lucide:diff w-4 h-4" aria-hidden="true" />
