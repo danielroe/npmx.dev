@@ -69,8 +69,8 @@ export function useInstallSizeDiff(
 
   if (import.meta.client) {
     watch(
-      comparisonVersion,
-      v => {
+      [comparisonVersion, () => toValue(packageName)],
+      ([v]) => {
         if (v) fetchComparisonSize()
       },
       { immediate: true },
@@ -83,6 +83,7 @@ export function useInstallSizeDiff(
     const cv = comparisonVersion.value
 
     if (!current || !previous || !cv) return null
+    if (previous.version !== cv || previous.package !== toValue(packageName)) return null
 
     const sizeRatio =
       previous.totalSize > 0 ? (current.totalSize - previous.totalSize) / previous.totalSize : 0
