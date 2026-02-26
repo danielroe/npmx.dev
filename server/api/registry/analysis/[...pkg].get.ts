@@ -58,14 +58,19 @@ export default defineCachedEventHandler(
       // Only check for @types and files when the package doesn't ship its own types
       if (!hasBuiltInTypes(pkg)) {
         const typesPkgName = getTypesPackageName(packageName)
-        typesPackage = await fetchTypesPackageInfo(typesPkgName)
-
         const resolvedVersion = pkg.version ?? version ?? 'latest'
-        try {
-          const fileTreeResponse = await getPackageFileTree(packageName, resolvedVersion)
-          files = flattenFileTree(fileTreeResponse.tree)
-        } catch {
-          // File tree fetch failed - skip implicit types check
+
+        // Fetch @types info and file tree in parallel — they are independent
+        const [typesResult, fileTreeResult] = await Promise.allSettled([
+          fetchTypesPackageInfo(typesPkgName),
+          getPackageFileTree(packageName, resolvedVersion),
+        ])
+
+        if (typesResult.status === 'fulfilled') {
+          typesPackage = typesResult.value
+        }
+        if (fileTreeResult.status === 'fulfilled') {
+          files = flattenFileTree(fileTreeResult.value.tree)
         }
       }
 
