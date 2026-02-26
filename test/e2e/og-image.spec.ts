@@ -21,7 +21,7 @@ const testCases = [
   { path: '/package/vue', label: 'unscoped package' },
   { path: '/package/nuxt/v/4.3.1', label: 'unscoped with explicit version' },
   { path: '/package/@nuxt/kit', label: 'scoped package' },
-  { path: '/package/@anthropic-ai/claude-code', label: 'scoped with long name' },
+  { path: '/package/@tanstack/react-query', label: 'scoped with long name' },
   {
     path: '/package/@babel/plugin-transform-exponentiation-operator',
     label: 'extremely long name',

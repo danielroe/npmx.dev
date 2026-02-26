@@ -59,6 +59,11 @@ const { repoRef, stars, refresh: refreshRepoMeta } = useRepoMeta(repositoryUrl)
 
 const formattedStars = computed(() => (stars.value > 0 ? compactFormat.format(stars.value) : ''))
 
+const totalLikes = shallowRef(0)
+const formattedLikes = computed(() =>
+  totalLikes.value ? compactFormat.format(totalLikes.value) : '',
+)
+
 const { name: siteName } = useSiteConfig()
 
 const pkgNameParts = computed(() => {
@@ -176,8 +181,14 @@ function fetchVariantData() {
   return fetchWeeklyEvolution()
 }
 
+const fetchLikes = $fetch<{ totalLikes: number }>(`/api/social/likes/${name}`)
+  .then(d => {
+    totalLikes.value = d?.totalLikes ?? 0
+  })
+  .catch(() => {})
+
 try {
-  await Promise.all([refreshPkg().then(() => refreshRepoMeta()), fetchVariantData()])
+  await Promise.all([refreshPkg().then(() => refreshRepoMeta()), fetchVariantData(), fetchLikes])
 } catch (err) {
   console.warn('[og-image-package] Failed to load data server-side:', err)
   throw createError({
@@ -272,6 +283,11 @@ const sparklineSrc = computed(() => {
           <span>{{ formattedStars }}</span>
         </span>
 
+        <span v-if="formattedLikes" class="flex items-center gap-2" data-testid="likes">
+          <div class="i-lucide:heart w-8 h-8 text-fg-muted" :style="{ fill: 'white' }" />
+          <span>{{ formattedLikes }}</span>
+        </span>
+
         <div
           v-if="pkg?.license && !pkg.license.includes(' ')"
           class="flex items-center gap-2"
@@ -287,13 +303,13 @@ const sparklineSrc = computed(() => {
     <img
       v-if="variant === 'download-chart' && sparklineSrc"
       :src="sparklineSrc"
-      class="absolute force-left-0 bottom-0 w-full h-[65%] opacity-45"
+      class="absolute force-left-0 bottom-0 w-full h-[65%] opacity-30"
     />
 
     <!-- Code tree variant -->
     <div
-      v-if="variant === 'code-tree' && treeRows.length"
-      class="absolute force-right-8 top-8 bottom-8 w-[340px] flex flex-col gap-0 opacity-25 overflow-hidden font-mono text-4.5 leading-7"
+      v-else-if="variant === 'code-tree' && treeRows.length"
+      class="text-fg-muted absolute force-right-8 top-8 bottom-8 w-[340px] flex flex-col gap-0 opacity-30 overflow-hidden font-mono text-4.5 leading-7"
     >
       <div
         v-for="(row, i) in treeRows"
@@ -301,16 +317,19 @@ const sparklineSrc = computed(() => {
         class="flex items-center whitespace-nowrap text-fg"
         :style="{ paddingLeft: `${row.depth * 20}px` }"
       >
-        <span v-if="row.isDir" class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:folder" />
-        <span v-else class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:file" />
+        <span
+          v-if="row.isDir"
+          class="w-5 h-5 text-fg-muted shrink-0 force-mr-1.5 i-lucide:folder"
+        />
+        <span v-else class="w-5 h-5 text-fg-muted shrink-0 force-mr-1.5 i-lucide:file" />
         <span>{{ row.name }}</span>
       </div>
     </div>
 
     <!-- Function tree variant (API symbols) -->
     <div
-      v-if="variant === 'function-tree' && symbolRows.length"
-      class="absolute force-right-8 top-8 bottom-8 w-[340px] flex flex-col gap-0 opacity-25 overflow-hidden font-mono text-4.5 leading-7"
+      v-else-if="variant === 'function-tree' && symbolRows.length"
+      class="absolute force-right-8 top-8 bottom-8 w-[340px] flex flex-col gap-0 opacity-30 overflow-hidden font-mono text-4.5 leading-7"
     >
       <div
         v-for="(row, i) in symbolRows"
@@ -320,37 +339,39 @@ const sparklineSrc = computed(() => {
       >
         <span
           v-if="row.icon === 'i-lucide:parentheses'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:parentheses"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:parentheses"
         />
         <span
           v-else-if="row.icon === 'i-lucide:box'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:box"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:box"
         />
         <span
           v-else-if="row.icon === 'i-lucide:puzzle'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:puzzle"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:puzzle"
         />
         <span
           v-else-if="row.icon === 'i-lucide:type'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:type"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:type"
         />
         <span
           v-else-if="row.icon === 'i-lucide:variable'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:variable"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:variable"
         />
         <span
           v-else-if="row.icon === 'i-lucide:list'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:list"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:list"
         />
         <span
           v-else-if="row.icon === 'i-lucide:package'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:package"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:package"
         />
         <span
           v-else-if="row.kind === 'symbol'"
-          class="w-5 h-5 shrink-0 force-mr-1.5 i-lucide:code"
+          class="w-5 h-5 shrink-0 text-fg-muted force-mr-1.5 i-lucide:code"
         />
-        <span :class="row.kind === 'section' ? 'opacity-60 text-4 mt-1' : ''">{{ row.name }}</span>
+        <span class="text-fg-muted" :class="row.kind === 'section' ? 'text-4 mt-1' : ''">{{
+          row.name
+        }}</span>
       </div>
     </div>
   </div>
