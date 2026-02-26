@@ -382,6 +382,14 @@ const isCurrentVersionDeprecated = computed(() => {
   return !!(ver && pkg.value?.versions?.[ver]?.deprecated)
 })
 
+/** Version strings that are already deprecated; passed to DeprecatePackageModal to avoid extra fetch. */
+const deprecatedVersions = computed(() => {
+  if (!pkg.value?.versions) return []
+  return Object.entries(pkg.value.versions)
+    .filter(([, metadata]) => !!metadata.deprecated)
+    .map(([version]) => version)
+})
+
 const deprecationNotice = computed(() => {
   if (!displayVersion.value?.deprecated) return null
 
@@ -1522,7 +1530,7 @@ const showSkeleton = shallowRef(false)
           >
             <button
               type="button"
-              class="flex items-center justify-center w-full px-3 py-1.5 bg-bg-subtle rounded text-sm font-mono text-red-400 hover:text-red-500 transition-colors inline-flex items-center gap-1.5 w-full"
+              class="flex items-center justify-center gap-1.5 w-full px-3 py-1.5 bg-bg-subtle rounded text-sm font-mono text-red-400 hover:text-red-500 transition-colors"
               @click="deprecateModal?.open()"
             >
               <span class="i-carbon-warning-alt w-4 h-4 shrink-0" aria-hidden="true" />
@@ -1556,6 +1564,7 @@ const showSkeleton = shallowRef(false)
         :package-name="pkg.name"
         :version="resolvedVersion ?? ''"
         :is-already-deprecated="isCurrentVersionDeprecated"
+        :deprecated-versions="deprecatedVersions"
       />
     </ClientOnly>
   </main>

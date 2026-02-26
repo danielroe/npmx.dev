@@ -817,10 +817,11 @@ async function executeOperation(
     case 'package:deprecate': {
       const dryRun = params.dryRun === 'true'
       const registry = params.registry?.trim() ?? undefined
-      return packageDeprecate(params.pkg, params.message, params.version, options.otp, {
-        dryRun: dryRun ?? undefined,
+      result = await packageDeprecate(params.pkg, params.message, params.version, options.otp, {
+        dryRun: dryRun || undefined,
         registry,
       })
+      break
     }
     default:
       return {

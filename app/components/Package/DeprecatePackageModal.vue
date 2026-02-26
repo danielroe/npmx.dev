@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { NewOperation } from '~/composables/useConnector'
-import type Modal from '~/components/Modal.client.vue'
 import { PackageDeprecateParamsSchema, safeParse } from '~~/cli/src/schemas'
-import { fetchAllPackageVersions } from '~/utils/npm/api'
 
 const DEPRECATE_MESSAGE_MAX_LENGTH = 500
 
@@ -12,8 +10,10 @@ const props = withDefaults(
     version?: string
     /** When true, the package or version is already deprecated; form is hidden and state cannot be changed. */
     isAlreadyDeprecated?: boolean
+    /** Version strings that are already deprecated (computed by parent from pkg.versions). */
+    deprecatedVersions?: string[]
   }>(),
-  { version: '', isAlreadyDeprecated: false },
+  { version: '', isAlreadyDeprecated: false, deprecatedVersions: () => [] },
 )
 
 const { t } = useI18n()
@@ -28,18 +28,6 @@ const deprecateError = shallowRef<string | null>(null)
 
 const connectorModal = useModal('connector-modal')
 
-/** Full version list (same as "Other versions"); fetched in modal for deprecated check. */
-const allPackageVersions = shallowRef<Awaited<ReturnType<typeof fetchAllPackageVersions>> | null>(
-  null,
-)
-
-/** Deprecated version strings from fetched full list (includes Other versions). */
-const effectiveDeprecatedVersions = computed(() => {
-  const list = allPackageVersions.value
-  if (!list) return []
-  return list.filter(v => v.deprecated).map(v => v.version)
-})
-
 const modalTitle = computed(() =>
   deprecateVersion.value
     ? `${t('package.deprecation.modal.title')} ${props.packageName}@${deprecateVersion.value}`
@@ -49,23 +37,9 @@ const modalTitle = computed(() =>
 /** True when the user has entered a version in the form that is already deprecated. */
 const isSelectedVersionDeprecated = computed(() => {
   const v = deprecateVersion.value.trim()
-  if (!v || !effectiveDeprecatedVersions.value.length) return false
-  return effectiveDeprecatedVersions.value.includes(v)
+  if (!v || !props.deprecatedVersions.length) return false
+  return props.deprecatedVersions.includes(v)
 })
-
-// Load full version list so deprecated check includes "Other versions"
-watch(
-  () => props.packageName,
-  async name => {
-    if (!name) return
-    try {
-      allPackageVersions.value = await fetchAllPackageVersions(name)
-    } catch {
-      allPackageVersions.value = null
-    }
-  },
-  { immediate: true },
-)
 
 async function handleDeprecate() {
   if (props.isAlreadyDeprecated || isSelectedVersionDeprecated.value) return
@@ -137,7 +111,7 @@ async function handleDeprecate() {
   }
 }
 
-const dialogRef = ref<InstanceType<typeof Modal> | undefined>()
+const dialogRef = useTemplateRef('dialogRef')
 
 function open() {
   deprecateError.value = null
@@ -226,7 +200,10 @@ defineExpose({ open, close })
         </div>
       </div>
       <div>
-        <label for="deprecate-message" class="block text-sm font-medium text-fg mb-1">
+        <label
+          for="deprecate-message"
+          class="block text-xs text-fg-subtle uppercase tracking-wider mb-1.5"
+        >
           {{ $t('package.deprecation.modal.reason') }}
         </label>
         <textarea
@@ -235,7 +212,7 @@ defineExpose({ open, close })
           rows="3"
           :maxlength="DEPRECATE_MESSAGE_MAX_LENGTH"
           :disabled="isSelectedVersionDeprecated"
-          class="w-full px-3 py-2 font-mono text-sm bg-bg border border-border rounded-md text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 focus:ring-fg/50 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="w-full appearance-none bg-bg-subtle border border-border font-mono text-sm leading-none px-3 py-2.5 rounded-lg text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent outline-offset-2 focus:border-accent focus-visible:outline-accent/70 disabled:(opacity-50 cursor-not-allowed)"
           :placeholder="$t('package.deprecation.modal.reason_placeholder')"
           :aria-describedby="
             deprecateMessage.length >= DEPRECATE_MESSAGE_MAX_LENGTH
@@ -252,15 +229,20 @@ defineExpose({ open, close })
         </p>
       </div>
       <div>
-        <label for="deprecate-version" class="block text-sm font-medium text-fg mb-1">
+        <label
+          for="deprecate-version"
+          class="block text-xs text-fg-subtle uppercase tracking-wider mb-1.5"
+        >
           {{ $t('package.deprecation.modal.version') }}
         </label>
-        <input
+        <InputBase
           id="deprecate-version"
           v-model="deprecateVersion"
           type="text"
+          name="deprecate-version"
           :disabled="isSelectedVersionDeprecated"
-          class="w-full px-3 py-2 font-mono text-sm bg-bg border border-border rounded-md text-fg placeholder:text-fg-muted focus:outline-none focus:ring-2 focus:ring-fg/50 disabled:opacity-60 disabled:cursor-not-allowed"
+          class="w-full"
+          size="medium"
           :placeholder="$t('package.deprecation.modal.version_placeholder')"
         />
       </div>
