@@ -204,6 +204,7 @@ import HeaderAccountMenuServer from '~/components/Header/AccountMenu.server.vue'
 import ToggleServer from '~/components/Settings/Toggle.server.vue'
 import SearchProviderToggleServer from '~/components/SearchProviderToggle.server.vue'
 import PackageTrendsChart from '~/components/Package/TrendsChart.vue'
+import SizeIncrease from '~/components/Package/SizeIncrease.vue'
 
 describe('component accessibility audits', () => {
   describe('DateTime', () => {
@@ -2610,6 +2611,71 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations with long username', async () => {
       const component = await mountSuspended(UserAvatar, {
         props: { username: 'verylongusernameexample' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('SizeIncrease', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(SizeIncrease, {
+        props: {
+          diff: {
+            comparisonVersion: '1.0.0',
+            sizeRatio: 1,
+            sizeIncrease: 200,
+            currentSize: 400,
+            previousSize: 200,
+            depDiff: 5,
+            currentDeps: 10,
+            previousDeps: 5,
+            sizeThresholdExceeded: true,
+            depThresholdExceeded: true,
+          },
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with only size increase', async () => {
+      const component = await mountSuspended(SizeIncrease, {
+        props: {
+          diff: {
+            comparisonVersion: '1.0.0',
+            sizeRatio: 1,
+            sizeIncrease: 200,
+            currentSize: 400,
+            previousSize: 200,
+            depDiff: 0,
+            currentDeps: 5,
+            previousDeps: 5,
+            sizeThresholdExceeded: true,
+            depThresholdExceeded: false,
+          },
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with only dependency increase', async () => {
+      const component = await mountSuspended(SizeIncrease, {
+        props: {
+          diff: {
+            comparisonVersion: '1.0.0',
+            sizeRatio: 0,
+            sizeIncrease: 0,
+            currentSize: 200,
+            previousSize: 200,
+            depDiff: 5,
+            currentDeps: 10,
+            previousDeps: 5,
+            sizeThresholdExceeded: false,
+            depThresholdExceeded: true,
+          },
+        },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
