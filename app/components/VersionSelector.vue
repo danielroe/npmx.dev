@@ -476,7 +476,7 @@ watch(
       @click="isOpen = !isOpen"
       @keydown="handleButtonKeydown"
     >
-      <span>{{ currentVersion }}</span>
+      <span dir="ltr">{{ currentVersion }}</span>
       <span
         v-if="currentVersion === latestVersion"
         class="text-xs px-1.5 py-0.5 rounded badge-green font-sans font-medium"
@@ -484,7 +484,7 @@ watch(
         latest
       </span>
       <span
-        class="i-carbon:chevron-down w-3.5 h-3.5 transition-[transform] duration-200 motion-reduce:transition-none"
+        class="i-lucide:chevron-down w-3.5 h-3.5 transition-[transform] duration-200 motion-reduce:transition-none"
         :class="{ 'rotate-180': isOpen }"
         aria-hidden="true"
       />
@@ -506,7 +506,7 @@ watch(
         :aria-activedescendant="
           focusedIndex >= 0 ? `version-${flatItems[focusedIndex]?.version?.version}` : undefined
         "
-        class="absolute top-full inset-is-0 mt-2 min-w-[220px] bg-bg-elevated border border-border rounded-lg shadow-lg z-50 py-1 max-h-[400px] overflow-y-auto overscroll-contain focus-visible:outline-none"
+        class="absolute top-full inset-is-0 mt-2 min-w-[220px] bg-bg-subtle/80 backdrop-blur-sm border border-border-subtle rounded-lg shadow-lg shadow-fg-subtle/10 z-50 py-1 max-h-[400px] overflow-y-auto overscroll-contain focus-visible:outline-none"
         @keydown="handleListboxKeydown"
       >
         <!-- Version groups -->
@@ -520,7 +520,7 @@ watch(
               flatItems[focusedIndex]?.groupId === group.id &&
               flatItems[focusedIndex]?.type === 'group'
             "
-            class="flex items-center gap-2 px-3 py-2 text-sm font-mono hover:bg-bg-muted transition-[color,background-color] focus-visible:outline-none cursor-pointer"
+            class="flex items-center gap-2 px-3 py-2 text-sm font-mono hover:bg-bg-muted transition-[color,background-color] focus-visible:outline-none"
             :class="[
               group.primaryVersion.isCurrent ? 'text-fg bg-bg-muted' : 'text-fg-muted',
               flatItems[focusedIndex]?.groupId === group.id &&
@@ -540,13 +540,13 @@ watch(
             >
               <span
                 v-if="group.isLoading"
-                class="i-carbon:rotate-180 w-3 h-3 motion-safe:animate-spin"
+                class="i-svg-spinners:ring-resize w-3 h-3"
                 aria-hidden="true"
               />
               <span
                 v-else
                 class="w-3 h-3 transition-transform duration-200 rtl-flip"
-                :class="group.isExpanded ? 'i-carbon:chevron-down' : 'i-carbon:chevron-right'"
+                :class="group.isExpanded ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
                 aria-hidden="true"
               />
             </button>
@@ -558,7 +558,9 @@ watch(
               class="flex-1 truncate hover:text-fg transition-colors"
               @click="isOpen = false"
             >
-              {{ group.primaryVersion.version }}
+              <span dir="ltr">
+                {{ group.primaryVersion.version }}
+              </span>
             </NuxtLink>
 
             <!-- Tags -->
@@ -597,12 +599,12 @@ watch(
                 ]"
                 @click="isOpen = false"
               >
-                <span class="truncate">{{ v.version }}</span>
+                <span class="truncate" dir="ltr">{{ v.version }}</span>
                 <span v-if="v.tags?.length" class="flex items-center gap-1 shrink-0">
                   <span
                     v-for="tag in v.tags"
                     :key="tag"
-                    class="text-[9px] px-1 py-0.5 rounded font-sans font-medium"
+                    class="text-4xs px-1 py-0.5 rounded font-sans font-medium"
                     :class="
                       tag === 'latest'
                         ? 'bg-emerald-500/10 text-emerald-400'

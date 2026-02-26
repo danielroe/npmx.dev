@@ -81,6 +81,8 @@ async function loadOrgs() {
   }
 }
 
+error.value = $t('header.orgs_dropdown.error')
+
 // Load on mount and when connection status changes
 watch(isOwnProfile, loadOrgs, { immediate: true })
 
@@ -138,7 +140,7 @@ defineOgImageComponent('Default', {
           id="back-to-profile"
           class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
         >
-          <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
+          <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
           {{ $t('user.orgs_page.back_to_profile') }}
         </NuxtLink>
       </nav>
@@ -158,10 +160,11 @@ defineOgImageComponent('Default', {
       <!-- Not own profile state -->
       <div v-else-if="!isOwnProfile" class="py-12 text-center">
         <p class="text-fg-muted">{{ $t('user.orgs_page.own_orgs_only') }}</p>
-        <NuxtLink
+        <LinkBase
+          variant="button-secondary"
           :to="{ name: '~username-orgs', params: { username: npmUser! } }"
-          class="btn mt-4"
-          >{{ $t('user.orgs_page.view_your_orgs') }}</NuxtLink
+          class="mt-4"
+          >{{ $t('user.orgs_page.view_your_orgs') }}</LinkBase
         >
       </div>
 
@@ -171,7 +174,7 @@ defineOgImageComponent('Default', {
       <!-- Error state -->
       <div v-else-if="error" role="alert" class="py-12 text-center">
         <p class="text-fg-muted mb-4">{{ error }}</p>
-        <button type="button" class="btn" @click="loadOrgs">{{ $t('common.try_again') }}</button>
+        <ButtonBase @click="loadOrgs">{{ $t('common.try_again') }}</ButtonBase>
       </div>
 
       <!-- Empty state -->
@@ -221,7 +224,7 @@ defineOgImageComponent('Default', {
               <!-- Stats -->
               <div class="flex items-center gap-4 text-sm text-fg-muted">
                 <div class="flex items-center gap-1.5">
-                  <span class="i-carbon:cube w-4 h-4" aria-hidden="true" />
+                  <span class="i-lucide:box w-4 h-4" aria-hidden="true" />
                   <span v-if="org.packageCount !== null">
                     {{
                       $t(

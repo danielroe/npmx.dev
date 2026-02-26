@@ -19,8 +19,9 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
-    "better-sqlite3": "12.5.0",
-    "docus": "5.4.4",
-    "nuxt": "4.3.0"
+    "@nuxtjs/mdc": "0.20.1",
+    "better-sqlite3": "12.6.2",
+    "docus": "5.6.1",
+    "nuxt": "4.3.1"
   }
 }

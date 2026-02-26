@@ -9,9 +9,11 @@ export const CACHE_MAX_AGE_ONE_YEAR = 60 * 60 * 24 * 365
 
 // API Strings
 export const NPMX_SITE = 'https://npmx.dev'
-export const BLUESKY_API = 'https://public.api.bsky.app/xrpc/'
+export const NPMX_DOCS_SITE = 'https://docs.npmx.dev'
+export const BLUESKY_API = 'https://public.api.bsky.app'
 export const BLUESKY_COMMENTS_REQUEST = '/api/atproto/bluesky-comments'
 export const NPM_REGISTRY = 'https://registry.npmjs.org'
+export const NPM_API = 'https://api.npmjs.org'
 export const ERROR_PACKAGE_ANALYSIS_FAILED = 'Failed to analyze package.'
 export const ERROR_PACKAGE_VERSION_AND_FILE_FAILED = 'Version and file path are required.'
 export const ERROR_PACKAGE_REQUIREMENTS_FAILED =
@@ -19,6 +21,8 @@ export const ERROR_PACKAGE_REQUIREMENTS_FAILED =
 export const ERROR_FILE_LIST_FETCH_FAILED = 'Failed to fetch file list.'
 export const ERROR_CALC_INSTALL_SIZE_FAILED = 'Failed to calculate install size.'
 export const NPM_MISSING_README_SENTINEL = 'ERROR: No README data found!'
+/** The npm registry truncates the packument readme field at 65,536 characters (2^16) */
+export const NPM_README_TRUNCATION_THRESHOLD = 64_000
 export const ERROR_JSR_FETCH_FAILED = 'Failed to fetch package from JSR registry.'
 export const ERROR_NPM_FETCH_FAILED = 'Failed to fetch package from npm registry.'
 export const ERROR_PROVENANCE_FETCH_FAILED = 'Failed to fetch provenance.'
@@ -27,9 +31,7 @@ export const ERROR_SUGGESTIONS_FETCH_FAILED = 'Failed to fetch suggestions.'
 export const ERROR_SKILLS_FETCH_FAILED = 'Failed to fetch skills.'
 export const ERROR_SKILL_NOT_FOUND = 'Skill not found.'
 export const ERROR_SKILL_FILE_NOT_FOUND = 'Skill file not found.'
-/** @public */
 export const ERROR_GRAVATAR_FETCH_FAILED = 'Failed to fetch Gravatar profile.'
-/** @public */
 export const ERROR_GRAVATAR_EMAIL_UNAVAILABLE = "User's email not accessible."
 export const ERROR_NEED_REAUTH = 'User needs to reauthenticate'
 
@@ -73,4 +75,5 @@ export const BACKGROUND_THEMES = {
 } as const
 
 // Regex
-export const AT_URI_REGEX = /^at:\/\/(did:plc:[a-z0-9]+)\/app\.bsky\.feed\.post\/([a-z0-9]+)$/
+export const BSKY_POST_AT_URI_REGEX =
+  /^at:\/\/(did:plc:[a-z0-9]+)\/app\.bsky\.feed\.post\/([a-z0-9]+)$/
