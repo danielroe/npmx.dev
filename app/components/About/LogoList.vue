@@ -21,7 +21,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <ul class="flex items-center flex-wrap gap-4 md:gap-x-6 md:gap-y-4 list-none">
+  <ul class="flex flex-wrap gap-4 md:gap-x-6 md:gap-y-4 list-none">
     <li v-for="item in list" :key="item.name">
       <a
         v-if="'logo' in item"
