@@ -2,7 +2,7 @@
   "seo": {
     "home": {
       "title": "npmx - Explorador de Paquetes para el Registro npm",
-      "description": "Un mejor explorador para el registro npm. Busca, navega y explora paquetes con una interfaz moderna."
+      "description": "un navegador rápido y moderno para el registro npm. Busca, navega y explora paquetes con una interfaz moderna."
     }
   },
   "built_at": "construido {0}",
