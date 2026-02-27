@@ -667,7 +667,7 @@
       "invalid_name": "Nombre de paquete inválido:",
       "available": "¡Este nombre está disponible!",
       "taken": "Este nombre ya está ocupado.",
-      "missing_permission": "No tienes permiso para añadir un paquete al ámbito '@'{scope}.",
+      "missing_permission": "No tienes permiso para añadir un paquete al ámbito {'@'}{scope}.",
       "similar_warning": "Existen paquetes similares - npm puede rechazar este nombre:",
       "related": "Paquetes relacionados:",
       "scope_warning_title": "Considera usar un paquete con ámbito en su lugar",
