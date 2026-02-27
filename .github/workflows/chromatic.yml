@@ -38,7 +38,7 @@ jobs:
       - name: 📦 Install dependencies
         run: pnpm install
 
-      - name: 🧪 Run Chromatic Visual Tests
+      - name: 🧪 Run Chromatic Visual and Accessibility Tests
         uses: chromaui/action@a8ce9c58f59be5cc7090cadfc8f130fb08fcf0c3 # v15.1.0
         env:
           CHROMATIC_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
