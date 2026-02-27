@@ -22,3 +22,20 @@ export function packageRoute(packageName: string, version?: string | null): Rout
     },
   }
 }
+
+export function diffRoute(
+  packageName: string,
+  fromVersion: string,
+  toVersion: string,
+): RouteLocationRaw {
+  const [org, name = ''] = packageName.startsWith('@') ? packageName.split('/') : ['', packageName]
+
+  return {
+    name: 'diff',
+    params: {
+      org: org || undefined,
+      packageName: name,
+      versionRange: `${fromVersion}...${toVersion}`,
+    },
+  }
+}

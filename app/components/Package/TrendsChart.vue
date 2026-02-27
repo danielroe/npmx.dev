@@ -18,6 +18,8 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
+import { applyDataCorrection } from '~/utils/chart-data-correction'
+import { applyBlocklistCorrection, getAnomaliesForPackages } from '~/utils/download-anomalies'
 import { copyAltTextForTrendLineChart } from '~/utils/charts'
 
 const props = withDefaults(
@@ -51,6 +53,7 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { settings } = useSettings()
 const { copy, copied } = useClipboard()
 
 const colorMode = useColorMode()
@@ -929,15 +932,35 @@ watch(
 
 const effectiveDataSingle = computed<EvolutionData>(() => {
   const state = activeMetricState.value
+  let data: EvolutionData
   if (
     selectedMetric.value === DEFAULT_METRIC_ID &&
     displayedGranularity.value === DEFAULT_GRANULARITY &&
     props.weeklyDownloads?.length
   ) {
-    if (isWeeklyDataset(state.evolution) && state.evolution.length) return state.evolution
-    return props.weeklyDownloads
+    data =
+      isWeeklyDataset(state.evolution) && state.evolution.length
+        ? state.evolution
+        : props.weeklyDownloads
+  } else {
+    data = state.evolution
   }
-  return state.evolution
+
+  if (isDownloadsMetric.value && data.length) {
+    const pkg = effectivePackageNames.value[0] ?? props.packageName ?? ''
+    if (settings.value.chartFilter.anomaliesFixed) {
+      data = applyBlocklistCorrection({
+        data,
+        packageName: pkg,
+        granularity: displayedGranularity.value,
+      })
+    }
+    return applyDataCorrection(
+      data as Array<{ value: number }>,
+      settings.value.chartFilter,
+    ) as EvolutionData
+  }
+  return data
 })
 
 /**
@@ -971,7 +994,16 @@ const chartData = computed<{
   const pointsByPackage = new Map<string, Array<{ timestamp: number; value: number }>>()
 
   for (const pkg of names) {
-    const data = state.evolutionsByPackage[pkg] ?? []
+    let data = state.evolutionsByPackage[pkg] ?? []
+    if (isDownloadsMetric.value && data.length) {
+      if (settings.value.chartFilter.anomaliesFixed) {
+        data = applyBlocklistCorrection({ data, packageName: pkg, granularity })
+      }
+      data = applyDataCorrection(
+        data as Array<{ value: number }>,
+        settings.value.chartFilter,
+      ) as EvolutionData
+    }
     const points = extractSeriesPoints(granularity, data)
     pointsByPackage.set(pkg, points)
     for (const p of points) timestampSet.add(p.timestamp)
@@ -1428,6 +1460,7 @@ const chartConfig = computed<VueUiXyConfig>(() => {
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
+          stack: $t('package.trends.toggle_stack_mode'),
           altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
         },
         callbacks: {
@@ -1598,6 +1631,23 @@ const chartConfig = computed<VueUiXyConfig>(() => {
   }
 })
 
+const isDownloadsMetric = computed(() => selectedMetric.value === 'downloads')
+const showCorrectionControls = shallowRef(false)
+
+const packageAnomalies = computed(() => getAnomaliesForPackages(effectivePackageNames.value))
+const hasAnomalies = computed(() => packageAnomalies.value.length > 0)
+
+function formatAnomalyDate(dateStr: string) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  if (!y || !m || !d) return dateStr
+  return new Intl.DateTimeFormat(locale.value, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y, m - 1, d)))
+}
+
 // Trigger data loading when the metric is switched
 watch(selectedMetric, value => {
   if (!isMounted.value) return
@@ -1684,6 +1734,117 @@ watch(selectedMetric, value => {
         >
           <span class="i-lucide:undo-2 w-5 h-5" aria-hidden="true" />
         </button>
+      </div>
+
+      <!-- Download filter controls -->
+      <div v-if="isDownloadsMetric" class="flex flex-col gap-2">
+        <button
+          type="button"
+          class="self-start flex items-center gap-1 text-2xs font-mono text-fg-subtle hover:text-fg transition-colors"
+          @click="showCorrectionControls = !showCorrectionControls"
+        >
+          <span
+            class="w-3.5 h-3.5 transition-transform"
+            :class="showCorrectionControls ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
+            aria-hidden="true"
+          />
+          {{ $t('package.trends.data_correction') }}
+        </button>
+        <div v-if="showCorrectionControls" class="flex items-end gap-3">
+          <label class="flex flex-col gap-1 flex-1">
+            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
+              {{ $t('package.trends.average_window') }}
+              <span class="text-fg-muted">({{ settings.chartFilter.averageWindow }})</span>
+            </span>
+            <input
+              v-model.number="settings.chartFilter.averageWindow"
+              type="range"
+              min="0"
+              max="20"
+              step="1"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+          </label>
+          <label class="flex flex-col gap-1 flex-1">
+            <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
+              {{ $t('package.trends.smoothing') }}
+              <span class="text-fg-muted">({{ settings.chartFilter.smoothingTau }})</span>
+            </span>
+            <input
+              v-model.number="settings.chartFilter.smoothingTau"
+              type="range"
+              min="0"
+              max="20"
+              step="1"
+              class="accent-[var(--accent-color,var(--fg-subtle))]"
+            />
+          </label>
+          <div class="flex flex-col gap-1 shrink-0">
+            <span
+              class="text-2xs font-mono text-fg-subtle tracking-wide uppercase flex items-center justify-between"
+            >
+              {{ $t('package.trends.known_anomalies') }}
+              <TooltipApp interactive :to="inModal ? '#chart-modal' : undefined">
+                <button
+                  type="button"
+                  class="i-lucide:info w-3.5 h-3.5 text-fg-muted cursor-help"
+                  :aria-label="$t('package.trends.known_anomalies')"
+                />
+                <template #content>
+                  <div class="flex flex-col gap-3">
+                    <p class="text-xs text-fg-muted">
+                      {{ $t('package.trends.known_anomalies_description') }}
+                    </p>
+                    <div v-if="hasAnomalies">
+                      <p class="text-xs text-fg-subtle font-medium">
+                        {{ $t('package.trends.known_anomalies_ranges') }}
+                      </p>
+                      <ul class="text-xs text-fg-subtle list-disc list-inside">
+                        <li v-for="a in packageAnomalies" :key="`${a.packageName}-${a.start}`">
+                          {{
+                            isMultiPackageMode
+                              ? $t('package.trends.known_anomalies_range_named', {
+                                  packageName: a.packageName,
+                                  start: formatAnomalyDate(a.start),
+                                  end: formatAnomalyDate(a.end),
+                                })
+                              : $t('package.trends.known_anomalies_range', {
+                                  start: formatAnomalyDate(a.start),
+                                  end: formatAnomalyDate(a.end),
+                                })
+                          }}
+                        </li>
+                      </ul>
+                    </div>
+                    <p v-else class="text-xs text-fg-muted">
+                      {{ $t('package.trends.known_anomalies_none', effectivePackageNames.length) }}
+                    </p>
+                    <div class="flex justify-end">
+                      <LinkBase
+                        to="https://github.com/npmx-dev/npmx.dev/edit/main/app/utils/download-anomalies.data.ts"
+                        class="text-xs text-accent"
+                      >
+                        {{ $t('package.trends.known_anomalies_contribute') }}
+                      </LinkBase>
+                    </div>
+                  </div>
+                </template>
+              </TooltipApp>
+            </span>
+            <label
+              class="flex items-center gap-1.5 text-2xs font-mono text-fg-subtle cursor-pointer"
+              :class="{ 'opacity-50 pointer-events-none': !hasAnomalies }"
+            >
+              <input
+                v-model="settings.chartFilter.anomaliesFixed"
+                type="checkbox"
+                :disabled="!hasAnomalies"
+                class="accent-[var(--accent-color,var(--fg-subtle))]"
+              />
+              {{ $t('package.trends.apply_correction') }}
+            </label>
+          </div>
+        </div>
       </div>
 
       <p v-if="skippedPackagesWithoutGitHub.length > 0" class="text-2xs font-mono text-fg-subtle">

@@ -156,6 +156,13 @@
       "version": "This version has been deprecated.",
       "no_reason": "No reason provided"
     },
+    "size_increase": {
+      "title_size": "Significant size increase since v{version}",
+      "title_deps": "Significant dependency count increase since v{version}",
+      "title_both": "Significant size and dependency increase since v{version}",
+      "size": "Install size increased by {percent} ({size} larger)",
+      "deps": "{count} more dependencies"
+    },
     "replacement": {
       "title": "You might not need this dependency.",
       "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
@@ -314,7 +321,7 @@
       "no_matches": "No versions match this range",
       "copy_alt": {
         "per_version_analysis": "{version} version was downloaded {downloads} times",
-        "general_description": "Bar chart showing per-version downloads for {versions_count} {semver_grouping_mode} versions of the {package_name} package, {date_range_label} from the {first_version} version to the {last_version} version. The most downloaded version is {max_downloaded_version} with {max_version_downloads} downloads. {per_version_analysis} {watermark}."
+        "general_description": "Bar chart showing per-version downloads for {versions_count} {semver_grouping_mode} versions of the {package_name} package, {date_range_label} from the {first_version} version to the {last_version} version. The most downloaded version is {max_downloaded_version} with {max_version_downloads} downloads. {per_version_analysis}. {watermark}."
       }
     },
     "dependencies": {
@@ -365,6 +372,7 @@
       "date_range_multiline": "{start}\nto {end}",
       "download_file": "Download {fileType}",
       "toggle_annotator": "Toggle annotator",
+      "toggle_stack_mode": "Toggle stack mode",
       "legend_estimation": "Estimation",
       "no_data": "No data available",
       "y_axis_label": "{granularity} {facet}",
@@ -378,6 +386,17 @@
       },
       "play_animation": "Play animation",
       "pause_animation": "Pause animation",
+      "data_correction": "Data correction",
+      "average_window": "Average window",
+      "smoothing": "Smoothing",
+      "known_anomalies": "Known anomalies",
+      "known_anomalies_description": "Interpolates over known download spikes caused by bots or CI issues.",
+      "known_anomalies_ranges": "Anomaly ranges",
+      "known_anomalies_range": "From {start} to {end}",
+      "known_anomalies_range_named": "{packageName}: from {start} to {end}",
+      "known_anomalies_none": "No known anomalies for this package. | No known anomalies for these packages.",
+      "known_anomalies_contribute": "Contribute anomaly data",
+      "apply_correction": "Apply correction",
       "copy_alt": {
         "trend_none": "mostly flat",
         "trend_strong": "strong",
@@ -1049,7 +1068,37 @@
       "trends": {
         "title": "Compare Trends"
       }
-    }
+    },
+    "file_changes": "File Changes",
+    "files_count": "{count} files",
+    "lines_hidden": "{count} lines hidden",
+    "compare_versions": "diff",
+    "summary": "Summary",
+    "deps_count": "{count} deps",
+    "dependencies": "Dependencies",
+    "dev_dependencies": "Dev Dependencies",
+    "peer_dependencies": "Peer Dependencies",
+    "optional_dependencies": "Optional Dependencies",
+    "no_dependency_changes": "No dependency changes",
+    "file_filter_option": {
+      "all": "All ({count})",
+      "added": "Added ({count})",
+      "removed": "Removed ({count})",
+      "modified": "Modified ({count})"
+    },
+    "search_files_placeholder": "Search files...",
+    "no_files_all": "No files",
+    "no_files_search": "No files matching \"{query}\"",
+    "no_files_filtered": "No {filter} files",
+    "filter": {
+      "added": "added",
+      "removed": "removed",
+      "modified": "modified"
+    },
+    "files_button": "Files",
+    "select_file_prompt": "Select a file from the sidebar to view its diff",
+    "close_files_panel": "Close files panel",
+    "filter_files_label": "Filter files by change type"
   },
   "privacy_policy": {
     "title": "privacy policy",
