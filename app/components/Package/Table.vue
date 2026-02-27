@@ -102,6 +102,7 @@ const columnLabels = computed(() => ({
   maintenanceScore: t('filters.columns.maintenance_score'),
   combinedScore: t('filters.columns.combined_score'),
   security: t('filters.columns.security'),
+  selection: t('filters.columns.selection'),
 }))
 
 function getColumnLabel(id: ColumnId): string {
@@ -298,6 +299,9 @@ function getColumnLabel(id: ColumnId): string {
             class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
             {{ getColumnLabel('security') }}
+          </th>
+          <th class="w-8">
+            <span class="sr-only">{{ getColumnLabel('selection') }}</span>
           </th>
         </tr>
       </thead>

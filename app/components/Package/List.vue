@@ -147,8 +147,6 @@ function scrollToIndex(index: number, smooth = true) {
 defineExpose({
   scrollToIndex,
 })
-
-const { isPackageSelected, togglePackageSelection } = usePackageSelection()
 </script>
 
 <template>
@@ -190,8 +188,6 @@ const { isPackageSelected, togglePackageSelection } = usePackageSelection()
                 class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
                 :filters="filters"
                 :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
-                :selected="isPackageSelected(item)"
-                @update:selected="togglePackageSelection(item)"
                 @click-keyword="emit('clickKeyword', $event)"
               />
             </div>

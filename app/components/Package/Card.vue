@@ -16,8 +16,9 @@ const props = defineProps<{
   searchQuery?: string
 }>()
 
-const selected = defineModel<boolean>('selected', {
-  default: false,
+const { isPackageSelected, togglePackageSelection } = usePackageSelection()
+const isSelected = computed<boolean>(() => {
+  return isPackageSelected(props.result)
 })
 
 const emit = defineEmits<{
@@ -43,7 +44,7 @@ const numberFormatter = useNumberFormatter()
 </script>
 
 <template>
-  <BaseCard :selected :isExactMatch="isExactMatch">
+  <BaseCard :selected="isSelected" :isExactMatch="isExactMatch">
     <header class="mb-4 flex items-baseline justify-between gap-2">
       <component
         :is="headingLevel ?? 'h3'"
@@ -64,16 +65,14 @@ const numberFormatter = useNumberFormatter()
         >
       </component>
 
-      <div class="flex items-center gap-4">
-        <div class="relative z-1">
-          <input
-            data-package-card-checkbox
-            class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
-            type="checkbox"
-            :checked="!!selected"
-            v-model="selected"
-          />
-        </div>
+      <div class="relative z-1">
+        <input
+          data-package-card-checkbox
+          class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
+          type="checkbox"
+          :checked="isSelected"
+          @change="togglePackageSelection(result)"
+        />
       </div>
     </header>
 

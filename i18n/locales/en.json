@@ -807,7 +807,8 @@
       "popularity_score": "Popularity score",
       "maintenance_score": "Maintenance score",
       "combined_score": "Combined score",
-      "security": "Security"
+      "security": "Security",
+      "selection": "Select package"
     },
     "view_mode": {
       "label": "View mode",

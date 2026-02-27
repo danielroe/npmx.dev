@@ -2427,6 +2427,9 @@
             },
             "security": {
               "type": "string"
+            },
+            "selection": {
+              "type": "string"
             }
           },
           "additionalProperties": false
