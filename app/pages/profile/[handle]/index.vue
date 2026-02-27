@@ -68,7 +68,7 @@ async function updateProfile() {
   }
 }
 
-const { data: likesData, status } = useProfileLikes(handle)
+const { data: likes, status } = useProfileLikes(handle)
 
 useSeoMeta({
   title: () => $t('profile.seo_title', { handle: handle.value }),
@@ -122,19 +122,16 @@ defineOgImageComponent('Default', {
         </label>
         <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
-          <button
-            @click="isEditing = false"
-            class="link-subtle font-mono text-sm inline-flex items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
-          >
+          <ButtonBase @click="isEditing = false">
             {{ $t('common.cancel') }}
-          </button>
-          <button
+          </ButtonBase>
+          <ButtonBase
             @click="updateProfile"
+            variant="primary"
             :disabled="isUpdateProfileActionPending"
-            class="link-subtle font-mono text-sm inline-flex items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           >
             {{ $t('common.save') }}
-          </button>
+          </ButtonBase>
         </div>
       </div>
 
@@ -149,13 +146,13 @@ defineOgImageComponent('Default', {
           <LinkBase v-if="profile.website" :to="profile.website" classicon="i-lucide:link">
             {{ profile.website }}
           </LinkBase>
-          <button
+          <ButtonBase
             v-if="user?.handle === handle"
             @click="isEditing = true"
-            class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+            class="hidden sm:inline-flex"
           >
             {{ $t('common.edit') }}
-          </button>
+          </ButtonBase>
         </div>
       </div>
     </header>
@@ -167,7 +164,7 @@ defineOgImageComponent('Default', {
         dir="ltr"
       >
         {{ $t('profile.likes') }}
-        <span v-if="likesData">({{ likesData.likes?.records?.length ?? 0 }})</span>
+        <span v-if="likes">({{ likes.records?.length ?? 0 }})</span>
       </h2>
       <div v-if="status === 'pending'" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <SkeletonBlock v-for="i in 4" :key="i" class="h-16 rounded-lg" />
@@ -175,11 +172,8 @@ defineOgImageComponent('Default', {
       <div v-else-if="status === 'error'">
         <p>{{ $t('common.error') }}</p>
       </div>
-      <div v-else-if="likesData?.likes?.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <PackageLikeCard
-          v-for="like in likesData.likes.records"
-          :packageUrl="like.value.subjectRef"
-        />
+      <div v-else-if="likes?.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <PackageLikeCard v-for="like in likes.records" :packageUrl="like.value.subjectRef" />
       </div>
     </section>
   </main>

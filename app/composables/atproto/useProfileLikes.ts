@@ -7,13 +7,7 @@ export type LikesResult = {
 }
 
 export function useProfileLikes(handle: MaybeRefOrGetter<string>) {
-  const cachedFetch = useCachedFetch()
-  return useLazyAsyncData(`profile:${toValue(handle)}:likes`, async (_nuxtApp, { signal }) => {
-    const { data: likes, isStale } = await cachedFetch<LikesResult>(
-      `/api/social/profile/${toValue(handle)}/likes`,
-      { signal },
-    )
+  const asyncData = useLazyFetch<LikesResult>(() => `/api/social/profile/${toValue(handle)}/likes`)
 
-    return { likes, isStale }
-  })
+  return asyncData
 }
