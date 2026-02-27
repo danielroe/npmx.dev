@@ -87,6 +87,7 @@
     "@vueuse/shared": "14.2.1",
     "algoliasearch": "5.49.0",
     "defu": "6.1.4",
+    "diff": "^8.0.3",
     "fast-npm-meta": "1.2.1",
     "focus-trap": "^8.0.0",
     "gray-matter": "4.0.3",

@@ -157,6 +157,13 @@
       "version": "This version has been deprecated.",
       "no_reason": "No reason provided"
     },
+    "size_increase": {
+      "title_size": "Significant size increase since v{version}",
+      "title_deps": "Significant dependency count increase since v{version}",
+      "title_both": "Significant size and dependency increase since v{version}",
+      "size": "Install size increased by {percent} ({size} larger)",
+      "deps": "{count} more dependencies"
+    },
     "replacement": {
       "title": "You might not need this dependency.",
       "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
@@ -1050,7 +1057,37 @@
       "trends": {
         "title": "Compare Trends"
       }
-    }
+    },
+    "file_changes": "File Changes",
+    "files_count": "{count} files",
+    "lines_hidden": "{count} lines hidden",
+    "compare_versions": "diff",
+    "summary": "Summary",
+    "deps_count": "{count} deps",
+    "dependencies": "Dependencies",
+    "dev_dependencies": "Dev Dependencies",
+    "peer_dependencies": "Peer Dependencies",
+    "optional_dependencies": "Optional Dependencies",
+    "no_dependency_changes": "No dependency changes",
+    "file_filter_option": {
+      "all": "All ({count})",
+      "added": "Added ({count})",
+      "removed": "Removed ({count})",
+      "modified": "Modified ({count})"
+    },
+    "search_files_placeholder": "Search files...",
+    "no_files_all": "No files",
+    "no_files_search": "No files matching \"{query}\"",
+    "no_files_filtered": "No {filter} files",
+    "filter": {
+      "added": "added",
+      "removed": "removed",
+      "modified": "modified"
+    },
+    "files_button": "Files",
+    "select_file_prompt": "Select a file from the sidebar to view its diff",
+    "close_files_panel": "Close files panel",
+    "filter_files_label": "Filter files by change type"
   },
   "privacy_policy": {
     "title": "privacy policy",

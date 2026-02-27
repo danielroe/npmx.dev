@@ -475,6 +475,27 @@
           },
           "additionalProperties": false
         },
+        "size_increase": {
+          "type": "object",
+          "properties": {
+            "title_size": {
+              "type": "string"
+            },
+            "title_deps": {
+              "type": "string"
+            },
+            "title_both": {
+              "type": "string"
+            },
+            "size": {
+              "type": "string"
+            },
+            "deps": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "replacement": {
           "type": "object",
           "properties": {
@@ -3156,6 +3177,96 @@
             }
           },
           "additionalProperties": false
+        },
+        "file_changes": {
+          "type": "string"
+        },
+        "files_count": {
+          "type": "string"
+        },
+        "lines_hidden": {
+          "type": "string"
+        },
+        "compare_versions": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "deps_count": {
+          "type": "string"
+        },
+        "dependencies": {
+          "type": "string"
+        },
+        "dev_dependencies": {
+          "type": "string"
+        },
+        "peer_dependencies": {
+          "type": "string"
+        },
+        "optional_dependencies": {
+          "type": "string"
+        },
+        "no_dependency_changes": {
+          "type": "string"
+        },
+        "file_filter_option": {
+          "type": "object",
+          "properties": {
+            "all": {
+              "type": "string"
+            },
+            "added": {
+              "type": "string"
+            },
+            "removed": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "search_files_placeholder": {
+          "type": "string"
+        },
+        "no_files_all": {
+          "type": "string"
+        },
+        "no_files_search": {
+          "type": "string"
+        },
+        "no_files_filtered": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "added": {
+              "type": "string"
+            },
+            "removed": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "files_button": {
+          "type": "string"
+        },
+        "select_file_prompt": {
+          "type": "string"
+        },
+        "close_files_panel": {
+          "type": "string"
+        },
+        "filter_files_label": {
+          "type": "string"
         }
       },
       "additionalProperties": false
