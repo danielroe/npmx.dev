@@ -2,12 +2,12 @@
   "seo": {
     "home": {
       "title": "npmx - Explorador de Paquetes para el Registro npm",
-      "description": "Un mejor explorador para el registro npm. Busca, navega y explora paquetes con una interfaz moderna."
+      "description": "Un navegador rápido y moderno para el registro npm. Busca, navega y explora paquetes con una interfaz moderna."
     }
   },
   "built_at": "generado {0}",
   "alt_logo": "logo de npmx",
-  "tagline": "un mejor explorador para el registro npm",
+  "tagline": "un navegador rápido y moderno para el registro npm",
   "non_affiliation_disclaimer": "no afiliado con npm, Inc.",
   "trademark_disclaimer": "npm es una marca registrada de npm, Inc. Este sitio no está afiliado con npm, Inc.",
   "footer": {
@@ -150,10 +150,18 @@
     "view_permalink": "Ver enlace permanente para esta versión",
     "navigation": "Navegación del paquete",
     "copy_name": "Copiar nombre del paquete",
+    "copy_version": "Copiar versión del paquete",
     "deprecation": {
-      "package": "Este paquete ha sido obsoleto.",
-      "version": "Esta versión ha sido obsoleta.",
+      "package": "Este paquete está obsoleto.",
+      "version": "Esta versión está obsoleta.",
       "no_reason": "Sin razón proporcionada"
+    },
+    "size_increase": {
+      "title_size": "Aumento significativo del tamaño desde v{version}",
+      "title_deps": "Aumento significativo del número de dependencias desde v{version}",
+      "title_both": "Aumento significativo del tamaño y de las dependencias desde v{version}",
+      "size": "El tamaño de instalación aumentó un {percent} ({size} más grande)",
+      "deps": "{count} dependencias más"
     },
     "replacement": {
       "title": "Es posible que no necesite esta dependencia.",
@@ -292,8 +300,16 @@
       "view_all": "Ver {count} versión | Ver todas las {count} versiones",
       "distribution_title": "Grupo Semver",
       "distribution_modal_title": "Versiones",
+      "distribution_range_date_same_year": "de {from} a {to}, {endYear}",
+      "distribution_range_date_multiple_years": "de {from}, {startYear} a {to}, {endYear}",
       "grouping_major": "Mayor",
       "grouping_minor": "Menor",
+      "grouping_versions_title": "Versiones",
+      "grouping_versions_all": "Todas",
+      "grouping_versions_only_recent": "Solo recientes",
+      "grouping_usage_title": "Uso",
+      "grouping_usage_all": "Todo",
+      "grouping_usage_low": "Bajo",
       "recent_versions_only_tooltip": "Mostrar solo versiones publicadas en el último año.",
       "show_low_usage_tooltip": "Incluir grupos de versiones con menos del 1% de las descargas totales.",
       "y_axis_label": "Descargas",
@@ -302,7 +318,11 @@
       "filter_help": "Usa sintaxis semver estándar",
       "filter_tooltip": "Filtra versiones usando rangos semver. Ejemplos:",
       "filter_tooltip_link": "Calculadora Semver",
-      "no_matches": "Ninguna versión coincide con el filtro"
+      "no_matches": "Ninguna versión coincide con el filtro",
+      "copy_alt": {
+        "per_version_analysis": "La versión {version} se descargó {downloads} veces",
+        "general_description": "Gráfica de barras que muestra las descargas por versión para {versions_count} versiones {semver_grouping_mode} del paquete {package_name}, {date_range_label} desde la versión {first_version} hasta la versión {last_version}. La versión más descargada es {max_downloaded_version} con {max_version_downloads} descargas. {per_version_analysis}. {watermark}."
+      }
     },
     "dependencies": {
       "title": "Dependencias ({count})",
@@ -312,7 +332,8 @@
       "view_vulnerabilities": "Ver vulnerabilidades",
       "outdated_major": "{count} versión mayor por detrás (última: {latest}) | {count} versiones mayores por detrás (última: {latest})",
       "outdated_minor": "{count} versión menor por detrás (última: {latest}) | {count} versiones menores por detrás (última: {latest})",
-      "outdated_patch": "Actualización de parche disponible (última: {latest})"
+      "outdated_patch": "Actualización de parche disponible (última: {latest})",
+      "has_replacement": "Existen sugerencias para reemplazar esta dependencia"
     },
     "peer_dependencies": {
       "title": "Dependencias Peer ({count})",
@@ -351,14 +372,44 @@
       "date_range_multiline": "{start}\na {end}",
       "download_file": "Descargar {fileType}",
       "toggle_annotator": "Alternar anotador",
+      "toggle_stack_mode": "Alternar modo apilado",
       "legend_estimation": "Estimación",
       "no_data": "No hay datos disponibles",
       "y_axis_label": "{facet} {granularity}",
       "facet": "Faceta",
       "title": "Tendencias",
+      "contributors_skip": "No se muestra en Colaboradores (sin repositorio de GitHub):",
       "items": {
         "downloads": "Descargas",
-        "likes": "Me gusta"
+        "likes": "Me gusta",
+        "contributors": "Colaboradores"
+      },
+      "play_animation": "Reproducir animación",
+      "pause_animation": "Pausar animación",
+      "data_correction": "Corrección de datos",
+      "average_window": "Ventana de promedio",
+      "smoothing": "Suavizado",
+      "known_anomalies": "Anomalías conocidas",
+      "known_anomalies_description": "Interpola sobre picos de descarga conocidos causados por bots o problemas de CI.",
+      "known_anomalies_ranges": "Rangos de anomalías",
+      "known_anomalies_range": "Desde {start} hasta {end}",
+      "known_anomalies_range_named": "{packageName}: desde {start} hasta {end}",
+      "known_anomalies_none": "No hay anomalías conocidas para este paquete. | No hay anomalías conocidas para estos paquetes.",
+      "known_anomalies_contribute": "Contribuir con datos de anomalías",
+      "apply_correction": "Aplicar corrección",
+      "copy_alt": {
+        "trend_none": "mayormente plano",
+        "trend_strong": "fuerte",
+        "trend_weak": "débil",
+        "trend_undefined": "indefinido (datos insuficientes)",
+        "button_label": "Copiar texto alternativo",
+        "watermark": "En la parte inferior, una marca de agua dice \"./npmx un navegador rápido y moderno para el registro de npm\"",
+        "analysis": "{package_name} comienza en {start_value} y termina en {end_value}, mostrando una tendencia {trend} con una pendiente de {downloads_slope} descargas por intervalo de tiempo",
+        "estimation": "El valor final es una estimación basada en datos parciales para el período actual.",
+        "estimations": "Los valores finales son estimaciones basadas en datos parciales para el período actual.",
+        "compare": "Gráfica de líneas de comparación de descargas de paquetes para: {packages}.",
+        "single_package": "Gráfico de líneas de descargas para el paquete {package}.",
+        "general_description": "El eje Y representa el número de descargas. El eje X representa el rango de fechas, desde {start_date} hasta {end_date}, con un período de tiempo {granularity}.{estimation_notice} {packages_analysis}. {watermark}."
       }
     },
     "downloads": {
@@ -616,6 +667,7 @@
       "invalid_name": "Nombre de paquete inválido:",
       "available": "¡Este nombre está disponible!",
       "taken": "Este nombre ya está ocupado.",
+      "missing_permission": "No tienes permiso para añadir un paquete al ámbito {'@'}{scope}.",
       "similar_warning": "Existen paquetes similares - npm puede rechazar este nombre:",
       "related": "Paquetes relacionados:",
       "scope_warning_title": "Considera usar un paquete con ámbito en su lugar",
@@ -810,6 +862,12 @@
         "managers": "geniales"
       }
     },
+    "sponsors": {
+      "title": "Patrocinadores"
+    },
+    "oss_partners": {
+      "title": "Socios de OSS"
+    },
     "team": {
       "title": "Equipo",
       "governance": "Gobernanza",
@@ -902,6 +960,7 @@
       "section_packages": "Paquetes",
       "section_facets": "Facetas",
       "section_comparison": "Comparación",
+      "copy_as_markdown": "Copiar tabla",
       "loading": "Cargando datos del paquete...",
       "error": "Error al cargar datos del paquete. Por favor, inténtalo de nuevo.",
       "empty_title": "Selecciona paquetes para comparar",
@@ -1007,9 +1066,39 @@
         "up_to_you": "¡Depende de ti!"
       },
       "trends": {
-        "title": "Tendencias comparativas"
+        "title": "Comparar tendencias"
       }
-    }
+    },
+    "file_changes": "Cambios en archivos",
+    "files_count": "{count} archivos",
+    "lines_hidden": "{count} líneas ocultas",
+    "compare_versions": "diferencia",
+    "summary": "Resumen",
+    "deps_count": "{count} dependencias",
+    "dependencies": "Dependencias",
+    "dev_dependencies": "Dependencias de desarrollo",
+    "peer_dependencies": "Dependencias de pares",
+    "optional_dependencies": "Dependencias opcionales",
+    "no_dependency_changes": "Sin cambios en las dependencias",
+    "file_filter_option": {
+      "all": "Todos ({count})",
+      "added": "Agregados ({count})",
+      "removed": "Eliminados ({count})",
+      "modified": "Modificados ({count})"
+    },
+    "search_files_placeholder": "Buscar archivos...",
+    "no_files_all": "No hay archivos",
+    "no_files_search": "No hay archivos que coincidan con \"{query}\"",
+    "no_files_filtered": "No hay archivos {filter}",
+    "filter": {
+      "added": "agregado",
+      "removed": "eliminado",
+      "modified": "modificado"
+    },
+    "files_button": "Archivos",
+    "select_file_prompt": "Selecciona un archivo de la barra lateral para ver sus diferencias",
+    "close_files_panel": "Cerrar panel de archivos",
+    "filter_files_label": "Filtrar archivos por tipo de cambio"
   },
   "privacy_policy": {
     "title": "política de privacidad",

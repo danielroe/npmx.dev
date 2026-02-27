@@ -53,5 +53,10 @@ export function initPreferencesOnPrehydrate() {
     document.documentElement.dataset.pm = pm
 
     document.documentElement.dataset.collapsed = settings.sidebar?.collapsed?.join(' ') ?? ''
+
+    // Keyboard shortcuts (default: true)
+    if (settings.keyboardShortcuts === false) {
+      document.documentElement.dataset.kbdShortcuts = 'false'
+    }
   })
 }
