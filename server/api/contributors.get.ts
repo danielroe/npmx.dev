@@ -10,6 +10,8 @@ export interface GitHubUserData {
   location: string | null
   websiteUrl: string | null
   twitterUsername: string | null
+  blueskyHandle: string | null
+  mastodonUrl: string | null
 }
 
 export interface GitHubContributor extends GitHubUserData {
@@ -30,7 +32,7 @@ type GitHubAPIContributor = Omit<GitHubContributor, 'role' | 'sponsors_url' | ke
 
 // Fallback when no GitHub token is available (e.g. preview environments).
 // Only stewards are shown as maintainers; everyone else is a contributor.
-const FALLBACK_STEWARDS = new Set(['danielroe', 'patak-dev'])
+const FALLBACK_STEWARDS = new Set(['danielroe', 'patak-cat'])
 
 const DEFAULT_USER_INFO: GitHubUserData = {
   name: null,
@@ -40,6 +42,8 @@ const DEFAULT_USER_INFO: GitHubUserData = {
   location: null,
   websiteUrl: null,
   twitterUsername: null,
+  blueskyHandle: null,
+  mastodonUrl: null,
 }
 
 // Configure sanitize-html for GitHub's companyHTML and company fields
@@ -142,7 +146,7 @@ async function fetchGitHubUserData(
   // Build aliased GraphQL query: user0: user(login: "x") { hasSponsorsListing login }
   const fragments = logins.map(
     (login, i) =>
-      `user${i}: user(login: "${login}") { hasSponsorsListing login name bio company companyHTML location websiteUrl twitterUsername }`,
+      `user${i}: user(login: "${login}") { hasSponsorsListing login name bio company companyHTML location websiteUrl twitterUsername socialAccounts(first: 10) { nodes { provider url } } }`,
   )
   const query = `{ ${fragments.join('\n')} }`
 
@@ -165,7 +169,12 @@ async function fetchGitHubUserData(
     const json = (await response.json()) as {
       data?: Record<
         string,
-        (GitHubUserData & { login: string; hasSponsorsListing: boolean }) | null
+        | (GitHubUserData & {
+            login: string
+            hasSponsorsListing: boolean
+            socialAccounts: { nodes: { provider: string; url: string }[] }
+          })
+        | null
       >
     }
 
@@ -176,6 +185,25 @@ async function fetchGitHubUserData(
         if (user.hasSponsorsListing) {
           sponsorable.add(user.login)
         }
+
+        // Extract Bluesky and Mastodon from socialAccounts
+        let blueskyHandle: string | null = null
+        let mastodonUrl: string | null = null
+
+        if (user.socialAccounts?.nodes) {
+          for (const account of user.socialAccounts.nodes) {
+            if (account.url.includes('bsky.app')) {
+              // Extract handle from URL: https://bsky.app/profile/handle.bsky.social
+              const match = account.url.match(/bsky\.app\/profile\/([^/?]+)/)
+              if (match) {
+                blueskyHandle = match[1] as string
+              }
+            } else if (account.provider === 'MASTODON') {
+              mastodonUrl = account.url
+            }
+          }
+        }
+
         // --- SERVER-SIDE SANITIZATION AND BATCHING ---
         usersData.set(user.login, {
           name: cleanString(user.name),
@@ -186,6 +214,8 @@ async function fetchGitHubUserData(
           location: cleanString(user.location),
           websiteUrl: cleanString(user.websiteUrl, true),
           twitterUsername: cleanString(user.twitterUsername),
+          blueskyHandle,
+          mastodonUrl,
         })
       }
     }
@@ -272,11 +302,30 @@ export default defineCachedEventHandler(
         const sponsors_url = sponsorable.has(c.login)
           ? `https://github.com/sponsors/${c.login}`
           : null
-        Object.assign(c, { role, order, sponsors_url, ...userInfo })
-        return c as GitHubContributor & { order: number; sponsors_url: string | null; role: Role }
+
+        // Construct the final object with only necessary fields
+        return {
+          id: c.id,
+          login: c.login,
+          name: userInfo.name,
+          avatar_url: c.avatar_url,
+          html_url: c.html_url,
+          role,
+          bio: userInfo.bio,
+          company: userInfo.company,
+          companyHTML: userInfo.companyHTML,
+          location: userInfo.location,
+          websiteUrl: userInfo.websiteUrl,
+          twitterUsername: userInfo.twitterUsername,
+          blueskyHandle: userInfo.blueskyHandle,
+          mastodonUrl: userInfo.mastodonUrl,
+          sponsors_url,
+          contributions: c.contributions,
+          order, // kept for sorting, removed in next step
+        }
       })
       .sort((a, b) => a.order - b.order || b.contributions - a.contributions)
-      .map(({ order: _, ...rest }) => rest)
+      .map(({ order: _, ...rest }) => rest) as GitHubContributor[]
   },
   {
     maxAge: 3600, // Cache for 1 hour
