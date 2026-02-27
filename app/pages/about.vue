@@ -135,7 +135,8 @@ function toggle(c: GitHubContributor, btnEl: HTMLElement) {
 
 function onDocumentPointerDown(e: PointerEvent) {
   if (!activeContributor.value) return
-  const t = e.target as HTMLElement
+  const t = e.target
+  if (!(t instanceof Element)) return
   if (
     !t.closest('[data-popover-panel]') &&
     !t.closest(`[data-cid="${activeContributor.value.id}"]`)
