@@ -26,8 +26,7 @@ const props = withDefaults(
 
 const el = useTemplateRef('el')
 
-const keyboardShortcuts = useKeyboardShortcuts()
-const keyboardShortcutsEnabled = computed(() => import.meta.client && keyboardShortcuts.value)
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 
 defineExpose({
   focus: () => el.value?.focus(),
@@ -63,14 +62,12 @@ defineExpose({
   >
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
-    <ClientOnly>
-      <kbd
-        v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
-        class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
-        aria-hidden="true"
-      >
-        {{ ariaKeyshortcuts }}
-      </kbd>
-    </ClientOnly>
+    <kbd
+      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
+      aria-hidden="true"
+    >
+      {{ ariaKeyshortcuts }}
+    </kbd>
   </button>
 </template>

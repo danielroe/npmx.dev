@@ -59,8 +59,7 @@ const isLink = computed(() => props.variant === 'link')
 const isButton = computed(() => !isLink.value)
 const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
-const keyboardShortcuts = useKeyboardShortcuts()
-const keyboardShortcutsEnabled = computed(() => import.meta.client && keyboardShortcuts.value)
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 </script>
 
 <template>
@@ -115,14 +114,12 @@ const keyboardShortcutsEnabled = computed(() => import.meta.client && keyboardSh
       class="i-lucide:link size-[1em] opacity-0 group-hover/link:opacity-100 transition-opacity duration-200"
       aria-hidden="true"
     />
-    <ClientOnly>
-      <kbd
-        v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
-        class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
-        aria-hidden="true"
-      >
-        {{ ariaKeyshortcuts }}
-      </kbd>
-    </ClientOnly>
+    <kbd
+      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
+      aria-hidden="true"
+    >
+      {{ ariaKeyshortcuts }}
+    </kbd>
   </NuxtLink>
 </template>
