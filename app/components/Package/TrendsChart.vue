@@ -1637,11 +1637,14 @@ const packageAnomalies = computed(() => getAnomaliesForPackages(effectivePackage
 const hasAnomalies = computed(() => packageAnomalies.value.length > 0)
 
 function formatAnomalyDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString(locale.value, {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  if (!y || !m || !d) return dateStr
+  return new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  })
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(y, m - 1, d)))
 }
 
 // Trigger data loading when the metric is switched
@@ -1781,7 +1784,11 @@ watch(selectedMetric, value => {
             >
               {{ $t('package.trends.known_anomalies') }}
               <TooltipApp interactive :to="inModal ? '#chart-modal' : undefined">
-                <span class="i-lucide:info w-3.5 h-3.5 text-fg-muted cursor-help" tabindex="0" />
+                <button
+                  type="button"
+                  class="i-lucide:info w-3.5 h-3.5 text-fg-muted cursor-help"
+                  :aria-label="$t('package.trends.known_anomalies')"
+                />
                 <template #content>
                   <div class="flex flex-col gap-3">
                     <p class="text-xs text-fg-muted">
@@ -1794,16 +1801,22 @@ watch(selectedMetric, value => {
                       <ul class="text-xs text-fg-subtle list-disc list-inside">
                         <li v-for="a in packageAnomalies" :key="`${a.packageName}-${a.start}`">
                           {{
-                            $t('package.trends.known_anomalies_range', {
-                              start: formatAnomalyDate(a.start),
-                              end: formatAnomalyDate(a.end),
-                            })
+                            isMultiPackageMode
+                              ? $t('package.trends.known_anomalies_range_named', {
+                                  packageName: a.packageName,
+                                  start: formatAnomalyDate(a.start),
+                                  end: formatAnomalyDate(a.end),
+                                })
+                              : $t('package.trends.known_anomalies_range', {
+                                  start: formatAnomalyDate(a.start),
+                                  end: formatAnomalyDate(a.end),
+                                })
                           }}
                         </li>
                       </ul>
                     </div>
                     <p v-else class="text-xs text-fg-muted">
-                      {{ $t('package.trends.known_anomalies_none') }}
+                      {{ $t('package.trends.known_anomalies_none', effectivePackageNames.length) }}
                     </p>
                     <div class="flex justify-end">
                       <LinkBase

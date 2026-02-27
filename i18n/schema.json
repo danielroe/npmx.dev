@@ -1183,6 +1183,9 @@
             "known_anomalies_range": {
               "type": "string"
             },
+            "known_anomalies_range_named": {
+              "type": "string"
+            },
             "known_anomalies_none": {
               "type": "string"
             },
