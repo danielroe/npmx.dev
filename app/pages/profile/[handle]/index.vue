@@ -147,8 +147,8 @@ defineOgImageComponent('Default', {
             {{ profile.website }}
           </LinkBase>
           <ButtonBase
-            v-if="user?.handle === handle"
             @click="isEditing = true"
+            :class="user?.handle === handle ? '' : 'invisible'"
             class="hidden sm:inline-flex"
           >
             {{ $t('common.edit') }}
