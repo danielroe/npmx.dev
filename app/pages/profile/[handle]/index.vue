@@ -1,18 +1,7 @@
 <script setup lang="ts">
-import { debounce } from 'perfect-debounce'
 import { updateProfile as updateProfileUtil } from '~/utils/atproto/profile'
-import { normalizeSearchParam } from '#shared/utils/url'
-
-type LikesResult = {
-  records: {
-    value: {
-      subjectRef: string
-    }
-  }[]
-}
 
 const route = useRoute('/profile/[handle]')
-const router = useRouter()
 const handle = computed(() => route.params.handle)
 
 const { data: profile }: { data?: NPMXProfile } = useFetch(
@@ -168,7 +157,7 @@ defineOgImageComponent('Default', {
     <section class="flex flex-col gap-8">
       <h2
         class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-        :title="Likes"
+        title="Likes"
         dir="ltr"
       >
         Likes <span v-if="likesData">({{ likesData.likes.records.length ?? 0 }})</span>
