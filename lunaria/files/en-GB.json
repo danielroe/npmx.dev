@@ -921,7 +921,7 @@
     "connect_npm_cli": "Connect to npm CLI",
     "connect_atmosphere": "Connect to Atmosphere",
     "github": "GitHub",
-    "github_desc": "Star repos & integrations",
+    "github_desc": "Star repositories from npmx",
     "connect_github": "Connect to GitHub",
     "connecting": "Connecting...",
     "ops": "{count} op | {count} ops"
