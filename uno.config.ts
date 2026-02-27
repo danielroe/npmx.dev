@@ -21,12 +21,6 @@ const customIcons = {
 }
 
 export default defineConfig({
-  // og-image uses hardcoded classes we don't want bundled into main app
-  content: {
-    pipeline: {
-      exclude: ['**/OgImage/*.takumi.vue'],
-    },
-  },
   presets: [
     presetWind4(),
     presetIcons({
