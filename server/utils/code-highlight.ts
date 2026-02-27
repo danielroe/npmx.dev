@@ -167,7 +167,7 @@ interface LinkifyOptions {
  * @param html - The HTML to process
  * @param options - Dependencies map and optional relative import resolver
  */
-function linkifyModuleSpecifiers(html: string, options?: LinkifyOptions): string {
+export function linkifyModuleSpecifiers(html: string, options?: LinkifyOptions): string {
   const { dependencies, resolveRelative } = options ?? {}
 
   const getHref = (moduleSpecifier: string): string | null => {
