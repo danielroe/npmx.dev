@@ -453,7 +453,24 @@ watch(displayResults, results => {
   }
 })
 
+/**
+ * Focus the header search input
+ */
+function focusSearchInput() {
+  const searchInput = document.querySelector<HTMLInputElement>(
+    'input[type="search"], input[name="q"]',
+  )
+  searchInput?.focus()
+}
+
 function handleResultsKeydown(e: KeyboardEvent) {
+  // Escape returns focus to the search input from anywhere on the page
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    focusSearchInput()
+    return
+  }
+
   // If the active element is an input, navigate to exact match or wait for results
   if (e.key === 'Enter' && document.activeElement?.tagName === 'INPUT') {
     // Get value directly from input (not from route query, which may be debounced)
@@ -489,7 +506,12 @@ function handleResultsKeydown(e: KeyboardEvent) {
 
   if (e.key === 'ArrowUp') {
     e.preventDefault()
-    const nextIndex = currentIndex < 0 ? 0 : Math.max(currentIndex - 1, 0)
+    // At first result or no result focused: return focus to search input
+    if (currentIndex <= 0) {
+      focusSearchInput()
+      return
+    }
+    const nextIndex = currentIndex - 1
     const el = elements[nextIndex]
     if (el) focusElement(el)
     return
@@ -508,7 +530,7 @@ function handleResultsKeydown(e: KeyboardEvent) {
   }
 }
 
-onKeyDown(['ArrowDown', 'ArrowUp', 'Enter'], handleResultsKeydown)
+onKeyDown(['ArrowDown', 'ArrowUp', 'Enter', 'Escape'], handleResultsKeydown)
 
 useSeoMeta({
   title: () =>
