@@ -8,8 +8,7 @@ const props = defineProps<{
 const compactNumberFormatter = useCompactNumberFormatter()
 
 function extractPackageFromRef(ref: string) {
-  const { pkg } = /https:\/\/npmx.dev\/package\/(?<pkg>.*)/.exec(ref).groups
-  return pkg
+  return /https:\/\/npmx.dev\/package\/(?<pkg>.*)/.exec(ref)?.groups?.pkg ?? ref
 }
 
 const name = computed(() => extractPackageFromRef(props.packageUrl))
