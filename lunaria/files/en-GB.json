@@ -163,7 +163,7 @@
     "invite": {
       "message": "It doesn't look like they're using npmx yet. Want to tell them about it?",
       "share_button": "Share on Bluesky",
-      "compose_text": "Hey {'@'}{handle}! Have you checked out npmx.dev yet? It's a fast, modern browser for the npm registry.\nhttps://npmx.dev"
+      "compose_text": "Hey {'@'}{handle}! Have you checked out npmx.dev yet? It's a browser for the npm registry that's fast, modern, and open-source.\nhttps://npmx.dev"
     }
   },
   "package": {
