@@ -49,19 +49,21 @@ const populateLocaleCountries = (): void => {
         countries
           .get(lang)!
           .set(lang, createVariantInfo(lang, { forCountry: true, mergeLocale: false }))
-        countries
-          .get(lang)!
-          .set(
-            variant.code,
-            createVariantInfo(variant.code, { forCountry: true, mergeLocale: true }),
-          )
+        countries.get(lang)!.set(
+          variant.code,
+          createVariantInfo(variant.code, {
+            forCountry: true,
+            mergeLocale: true,
+          }),
+        )
       } else {
-        countries
-          .get(lang)!
-          .set(
-            variant.code,
-            createVariantInfo(variant.code, { forCountry: false, mergeLocale: true }),
-          )
+        countries.get(lang)!.set(
+          variant.code,
+          createVariantInfo(variant.code, {
+            forCountry: false,
+            mergeLocale: true,
+          }),
+        )
       }
     }
   }
@@ -384,9 +386,6 @@ const run = async (): Promise<void> => {
     locale: 'en',
     lang: 'en',
   })
-
-  // TODO: removing vacations entry key for temporal recharging page
-  delete referenceContent.vacations
 
   // $schema is a JSON Schema reference, not a translation key
   delete referenceContent.$schema

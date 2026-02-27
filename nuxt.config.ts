@@ -114,10 +114,22 @@ export default defineNuxtConfig({
         allowQuery: ['mode', 'filterOldVersions', 'filterThreshold'],
       },
     },
-    '/api/registry/docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/api/registry/file/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/api/registry/provenance/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
-    '/api/registry/files/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
+    '/api/registry/docs/**': {
+      isr: true,
+      cache: { maxAge: 365 * 24 * 60 * 60 },
+    },
+    '/api/registry/file/**': {
+      isr: true,
+      cache: { maxAge: 365 * 24 * 60 * 60 },
+    },
+    '/api/registry/provenance/**': {
+      isr: true,
+      cache: { maxAge: 365 * 24 * 60 * 60 },
+    },
+    '/api/registry/files/**': {
+      isr: true,
+      cache: { maxAge: 365 * 24 * 60 * 60 },
+    },
     '/api/registry/package-meta/**': { isr: 300 },
     '/:pkg/.well-known/skills/**': { isr: 3600 },
     '/:scope/:pkg/.well-known/skills/**': { isr: 3600 },
@@ -139,9 +151,13 @@ export default defineNuxtConfig({
     // pages
     '/package/**': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
+    '/package/:name/v/:version/_payload.json': getISRConfig(60, {
+      fallback: 'json',
+    }),
     '/package/:org/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
+    '/package/:org/:name/v/:version/_payload.json': getISRConfig(60, {
+      fallback: 'json',
+    }),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
     '/package-docs/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -153,7 +169,6 @@ export default defineNuxtConfig({
     '/privacy': { prerender: true },
     '/search': { isr: false, cache: false }, // never cache
     '/settings': { prerender: true },
-    '/recharging': { prerender: true },
     // proxy for insights
     '/_v/script.js': { proxy: 'https://npmx.dev/_vercel/insights/script.js' },
     '/_v/view': { proxy: 'https://npmx.dev/_vercel/insights/view' },
