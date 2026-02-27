@@ -35,7 +35,7 @@ async function handleLogin() {
         locale: locale.value,
       })
     } else {
-      errorMessage.value = $t('auth.modal.default_input_error')
+      errorMessage.value = $t('auth.modal.atmosphere.default_input_error')
     }
   }
 }
@@ -62,13 +62,13 @@ watch(user, async newUser => {
 
 <template>
   <!-- Modal -->
-  <Modal :modalTitle="$t('auth.modal.title')" class="max-w-lg" id="auth-modal">
+  <Modal :modalTitle="$t('auth.modal.atmosphere.title')" class="max-w-lg" id="atproto-modal">
     <div v-if="user?.handle" class="space-y-4">
       <div class="flex items-center gap-3 p-4 bg-bg-subtle border border-border rounded-lg">
         <span class="w-3 h-3 rounded-full bg-green-500" aria-hidden="true" />
         <div>
           <p class="font-mono text-xs text-fg-muted">
-            {{ $t('auth.modal.connected_as', { handle: user.handle }) }}
+            {{ $t('auth.modal.atmosphere.connected_as', { handle: user.handle }) }}
           </p>
         </div>
       </div>
@@ -79,7 +79,7 @@ watch(user, async newUser => {
 
     <!-- Disconnected state -->
     <form v-else class="space-y-4" @submit.prevent="handleLogin">
-      <p class="text-sm text-fg-muted">{{ $t('auth.modal.connect_prompt') }}</p>
+      <p class="text-sm text-fg-muted">{{ $t('auth.modal.atmosphere.connect_prompt') }}</p>
 
       <div class="space-y-3">
         <div>
@@ -87,14 +87,14 @@ watch(user, async newUser => {
             for="handle-input"
             class="block text-xs text-fg-subtle uppercase tracking-wider mb-1.5"
           >
-            {{ $t('auth.modal.handle_label') }}
+            {{ $t('auth.modal.atmosphere.handle_label') }}
           </label>
           <InputBase
             id="handle-input"
             v-model="handleInput"
             type="text"
             name="handle"
-            :placeholder="$t('auth.modal.handle_placeholder')"
+            :placeholder="$t('auth.modal.atmosphere.handle_placeholder')"
             no-correct
             class="w-full"
             size="medium"
@@ -108,10 +108,10 @@ watch(user, async newUser => {
           <summary
             class="text-fg-subtle hover:text-fg-muted transition-colors duration-200 focus-visible:(outline-2 outline-accent/70)"
           >
-            {{ $t('auth.modal.what_is_atmosphere') }}
+            {{ $t('auth.modal.atmosphere.what_is_atmosphere') }}
           </summary>
           <div class="mt-3">
-            <i18n-t keypath="auth.modal.atmosphere_explanation" tag="p" scope="global">
+            <i18n-t keypath="auth.modal.atmosphere.explanation" tag="p" scope="global">
               <template #npmx>
                 <span class="font-bold">npmx.dev</span>
               </template>
@@ -133,7 +133,7 @@ watch(user, async newUser => {
         {{ $t('auth.modal.connect') }}
       </ButtonBase>
       <ButtonBase type="button" class="w-full" @click="handleCreateAccount">
-        {{ $t('auth.modal.create_account') }}
+        {{ $t('auth.modal.atmosphere.create_account') }}
       </ButtonBase>
       <hr class="color-border" />
       <ButtonBase
@@ -142,7 +142,7 @@ watch(user, async newUser => {
         @click="handleBlueskySignIn"
         classicon="i-simple-icons:bluesky"
       >
-        {{ $t('auth.modal.connect_bluesky') }}
+        {{ $t('auth.modal.atmosphere.connect_bluesky') }}
       </ButtonBase>
     </form>
   </Modal>

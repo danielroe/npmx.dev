@@ -224,6 +224,10 @@
       "like": "Like this package",
       "unlike": "Unlike this package"
     },
+    "github": {
+      "star": "Star this repository on GitHub",
+      "unstar": "Unstar this repository on GitHub"
+    },
     "docs": {
       "not_available": "Docs not available",
       "not_available_detail": "We could not generate docs for this version."
@@ -916,23 +920,33 @@
     "atmosphere_desc": "Social features & identity",
     "connect_npm_cli": "Connect to npm CLI",
     "connect_atmosphere": "Connect to Atmosphere",
+    "github": "GitHub",
+    "github_desc": "Star repositories from npmx",
+    "connect_github": "Connect to GitHub",
     "connecting": "Connecting...",
     "ops": "{count} op | {count} ops"
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Connected as {'@'}{handle}",
-      "disconnect": "Disconnect",
-      "connect_prompt": "Connect with your Atmosphere account",
-      "handle_label": "Handle",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Connect",
-      "create_account": "Create a new account",
-      "connect_bluesky": "Connect with Bluesky",
-      "what_is_atmosphere": "What is an Atmosphere account?",
-      "atmosphere_explanation": "{npmx} uses the {atproto} to power many of its social features, allowing users to own their data and use one account for all compatible applications. Once you create an account, you can use other apps like {bluesky} and {tangled} with the same account.",
-      "default_input_error": "Please enter a valid handle, DID, or a full PDS URL"
+      "disconnect": "Disconnect",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Connected as {'@'}{handle}",
+        "connect_prompt": "Connect with your Atmosphere account",
+        "handle_label": "Handle",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Create a new account",
+        "connect_bluesky": "Connect with Bluesky",
+        "what_is_atmosphere": "What is an Atmosphere account?",
+        "explanation": "{npmx} uses the {atproto} to power many of its social features, allowing users to own their data and use one account for all compatible applications. Once you create an account, you can use other apps like {bluesky} and {tangled} with the same account.",
+        "default_input_error": "Please enter a valid handle, DID, or a full PDS URL"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Connected as {username}",
+        "connect_prompt": "Connect your GitHub account to star repositories directly from npmx."
+      }
     }
   },
   "header": {

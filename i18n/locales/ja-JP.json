@@ -917,18 +917,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} として接続済み",
-      "disconnect": "切断",
-      "connect_prompt": "Atmosphereアカウントで接続",
-      "handle_label": "ハンドル",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "接続",
-      "create_account": "アカウントを新規作成",
-      "connect_bluesky": "Blueskyで接続",
-      "what_is_atmosphere": "Atmosphereアカウントとは？",
-      "atmosphere_explanation": "{npmx} は多くのソーシャル機能に {atproto} を利用しています。AT Protocolにより、ユーザーは自分自身のデータを所有し、1つのアカウントでAT Protocolに対応するすべてのアプリケーションを利用できるようになります。アカウントを作成すると、{bluesky} や {tangled} などの他のアプリでも同じアカウントを使用できます。",
-      "default_input_error": "有効なハンドル、DID、または完全なPDS URLを入力してください"
+      "disconnect": "切断",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "{'@'}{handle} として接続済み",
+        "connect_prompt": "Atmosphereアカウントで接続",
+        "handle_label": "ハンドル",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "アカウントを新規作成",
+        "connect_bluesky": "Blueskyで接続",
+        "what_is_atmosphere": "Atmosphereアカウントとは？",
+        "explanation": "{npmx} は多くのソーシャル機能に {atproto} を利用しています。AT Protocolにより、ユーザーは自分自身のデータを所有し、1つのアカウントでAT Protocolに対応するすべてのアプリケーションを利用できるようになります。アカウントを作成すると、{bluesky} や {tangled} などの他のアプリでも同じアカウントを使用できます。",
+        "default_input_error": "有効なハンドル、DID、または完全なPDS URLを入力してください"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "{username} として接続済み"
+      }
     }
   },
   "header": {

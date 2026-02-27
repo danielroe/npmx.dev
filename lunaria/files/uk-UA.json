@@ -862,18 +862,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Підключено як {'@'}{handle}",
-      "disconnect": "Відключити",
-      "connect_prompt": "Підключіться за допомогою облікового запису Atmosphere",
-      "handle_label": "Ідентифікатор",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Підключити",
-      "create_account": "Створити новий обліковий запис",
-      "connect_bluesky": "Підключитися через Bluesky",
-      "what_is_atmosphere": "Що таке обліковий запис Atmosphere?",
-      "atmosphere_explanation": "{npmx} використовує {atproto} для забезпечення багатьох соціальних функцій, дозволяючи користувачам володіти своїми даними та використовувати один обліковий запис для всіх сумісних додатків. Після створення облікового запису ви можете використовувати інші додатки, такі як {bluesky} та {tangled}, з одним обліковим записом.",
-      "default_input_error": "Будь ласка, введіть дійсний ідентифікатор, DID або повну URL-адресу PDS"
+      "disconnect": "Відключити",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Підключено як {'@'}{handle}",
+        "connect_prompt": "Підключіться за допомогою облікового запису Atmosphere",
+        "handle_label": "Ідентифікатор",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Створити новий обліковий запис",
+        "connect_bluesky": "Підключитися через Bluesky",
+        "what_is_atmosphere": "Що таке обліковий запис Atmosphere?",
+        "explanation": "{npmx} використовує {atproto} для забезпечення багатьох соціальних функцій, дозволяючи користувачам володіти своїми даними та використовувати один обліковий запис для всіх сумісних додатків. Після створення облікового запису ви можете використовувати інші додатки, такі як {bluesky} та {tangled}, з одним обліковим записом.",
+        "default_input_error": "Будь ласка, введіть дійсний ідентифікатор, DID або повну URL-адресу PDS"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Підключено як {username}"
+      }
     }
   },
   "header": {

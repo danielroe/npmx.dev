@@ -679,6 +679,18 @@
           },
           "additionalProperties": false
         },
+        "github": {
+          "type": "object",
+          "properties": {
+            "star": {
+              "type": "string"
+            },
+            "unstar": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "docs": {
           "type": "object",
           "properties": {
@@ -2755,6 +2767,15 @@
         "connect_atmosphere": {
           "type": "string"
         },
+        "github": {
+          "type": "string"
+        },
+        "github_desc": {
+          "type": "string"
+        },
+        "connect_github": {
+          "type": "string"
+        },
         "connecting": {
           "type": "string"
         },
@@ -2770,41 +2791,62 @@
         "modal": {
           "type": "object",
           "properties": {
-            "title": {
-              "type": "string"
-            },
-            "connected_as": {
+            "connect": {
               "type": "string"
             },
             "disconnect": {
               "type": "string"
             },
-            "connect_prompt": {
-              "type": "string"
+            "atmosphere": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "connected_as": {
+                  "type": "string"
+                },
+                "connect_prompt": {
+                  "type": "string"
+                },
+                "handle_label": {
+                  "type": "string"
+                },
+                "handle_placeholder": {
+                  "type": "string"
+                },
+                "create_account": {
+                  "type": "string"
+                },
+                "connect_bluesky": {
+                  "type": "string"
+                },
+                "what_is_atmosphere": {
+                  "type": "string"
+                },
+                "explanation": {
+                  "type": "string"
+                },
+                "default_input_error": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             },
-            "handle_label": {
-              "type": "string"
-            },
-            "handle_placeholder": {
-              "type": "string"
-            },
-            "connect": {
-              "type": "string"
-            },
-            "create_account": {
-              "type": "string"
-            },
-            "connect_bluesky": {
-              "type": "string"
-            },
-            "what_is_atmosphere": {
-              "type": "string"
-            },
-            "atmosphere_explanation": {
-              "type": "string"
-            },
-            "default_input_error": {
-              "type": "string"
+            "github": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "connected_as": {
+                  "type": "string"
+                },
+                "connect_prompt": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false

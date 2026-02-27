@@ -123,6 +123,7 @@
       "version": "ಈ ಆವೃತ್ತಿ ಅಮಾನ್ಯಗೊಳಿಸಲಾಗಿದೆ.",
       "no_reason": "ಕಾರಣ ನೀಡಲಾಗಿಲ್ಲ"
     },
+    "size_increase": {},
     "replacement": {
       "title": "ನಿಮಗೆ ಈ ಅವಲಂಬನೆ ಅಗತ್ಯವಿಲ್ಲದಿರಬಹುದು.",
       "native": "ಇದನ್ನು {replacement} ಮೂಲಕ ಬದಲಾಯಿಸಬಹುದು, ಇದು Node {nodeVersion} ರಿಂದ ಲಭ್ಯವಿದೆ.",
@@ -173,6 +174,7 @@
       "compare": "ಹೋಲಿಸಿ"
     },
     "likes": {},
+    "github": {},
     "docs": {
       "not_available": "ದಸ್ತಾವೇಜುಗಳು ಲಭ್ಯವಿಲ್ಲ",
       "not_available_detail": "ಈ ಆವೃತ್ತಿಗಾಗಿ ದಸ್ತಾವೇಜುಗಳನ್ನು ರಚಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ."
@@ -219,7 +221,8 @@
       "more_tagged": "{count} ಇನ್ನಷ್ಟು ಟ್ಯಾಗ್ ಮಾಡಲಾಗಿದೆ",
       "all_covered": "ಎಲ್ಲಾ ಆವೃತ್ತಿಗಳು ಮೇಲಿನ ಟ್ಯಾಗ್‌ಗಳಿಂದ ಒಳಗೊಂಡಿವೆ",
       "deprecated_title": "{version} (ಅಮಾನ್ಯಗೊಳಿಸಲಾಗಿದೆ)",
-      "view_all": "{count} ಆವೃತ್ತಿ ನೋಡಿ | ಎಲ್ಲಾ {count} ಆವೃತ್ತಿಗಳನ್ನು ನೋಡಿ"
+      "view_all": "{count} ಆವೃತ್ತಿ ನೋಡಿ | ಎಲ್ಲಾ {count} ಆವೃತ್ತಿಗಳನ್ನು ನೋಡಿ",
+      "copy_alt": {}
     },
     "dependencies": {
       "title": "ಅವಲಂಬನೆಗಳು ({count})",
@@ -268,7 +271,8 @@
       "date_range_multiline": "{start}\nರಿಂದ {end}",
       "download_file": "{fileType} ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
       "toggle_annotator": "ಅನೋಟೇಟರ್ ಟಾಗಲ್ ಮಾಡಿ",
-      "items": {}
+      "items": {},
+      "copy_alt": {}
     },
     "downloads": {
       "title": "ವಾರದ ಡೌನ್‌ಲೋಡ್‌ಗಳು"
@@ -701,6 +705,8 @@
         "managers": "ನಿರ್ವಾಹಕರು"
       }
     },
+    "sponsors": {},
+    "oss_partners": {},
     "team": {},
     "contributors": {
       "title": "ಸಹಯೋಗಿಗಳು",
@@ -742,17 +748,10 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} ಎಂದು ಸಂಪರ್ಕಿಸಲಾಗಿದೆ",
-      "disconnect": "ಸಂಪರ್ಕ ಕಡಿತಗೊಳಿಸಿ",
-      "connect_prompt": "ನಿಮ್ಮ Atmosphere ಖಾತೆಯೊಂದಿಗೆ ಸಂಪರ್ಕಿಸಿ",
-      "handle_label": "ಹ್ಯಾಂಡಲ್",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "ಸಂಪರ್ಕಿಸಿ",
-      "create_account": "ಹೊಸ ಖಾತೆ ರಚಿಸಿ",
-      "connect_bluesky": "Bluesky ಜೊತೆ ಸಂಪರ್ಕಿಸಿ",
-      "what_is_atmosphere": "Atmosphere ಖಾತೆ ಎಂದರೇನು?",
-      "atmosphere_explanation": "{npmx} ತನ್ನ ಹಲವಾರು ಸಾಮಾಜಿಕ ವೈಶಿಷ್ಟ್ಯಗಳನ್ನು ನಿರ್ವಹಿಸಲು {atproto} ಬಳಸುತ್ತದೆ. ಇದು ಬಳಕೆದಾರರಿಗೆ ತಮ್ಮ ಡೇಟಾದ ಮಾಲೀಕರಾಗಲು ಮತ್ತು ಎಲ್ಲಾ ಹೊಂದಾಣಿಕೆಯ ಅಪ್ಲಿಕೇಶನ್‌ಗಳಿಗೆ ಒಂದೇ ಖಾತೆಯನ್ನು ಬಳಸಲು ಅವಕಾಶ ನೀಡುತ್ತದೆ. ನೀವು ಖಾತೆ ರಚಿಸಿದ ನಂತರ, {bluesky} ಮತ್ತು {tangled} ಮುಂತಾದ ಇತರ ಅಪ್ಲಿಕೇಶನ್‌ಗಳನ್ನು ಅದೇ ಖಾತೆಯಿಂದ ಬಳಸಬಹುದು."
+      "disconnect": "ಸಂಪರ್ಕ ಕಡಿತಗೊಳಿಸಿ",
+      "atmosphere": {},
+      "github": {}
     }
   },
   "header": {
@@ -832,7 +831,9 @@
       },
       "values": {},
       "trends": {}
-    }
+    },
+    "file_filter_option": {},
+    "filter": {}
   },
   "privacy_policy": {
     "cookies": {

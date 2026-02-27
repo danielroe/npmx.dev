@@ -220,6 +220,7 @@
       "like": "Bu paketi bəyən",
       "unlike": "Bəyənməni geri al"
     },
+    "github": {},
     "docs": {
       "not_available": "Sənədlər mövcud deyil",
       "not_available_detail": "Bu versiya üçün sənədlər yaradıla bilmədi."
@@ -904,18 +905,10 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} kimi qoşulub",
-      "disconnect": "Ayrıl",
-      "connect_prompt": "Atmosphere hesabınızla qoşulun",
-      "handle_label": "İstifadəçi adı",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Qoşul",
-      "create_account": "Yeni hesab yarat",
-      "connect_bluesky": "Bluesky ilə qoşul",
-      "what_is_atmosphere": "Atmosphere hesabı nədir?",
-      "atmosphere_explanation": "{npmx} sosial funksiyalarını gücləndirmək üçün {atproto} istifadə edir, istifadəçilərə öz məlumatlarına sahib olmağa və bütün uyğun tətbiqlər üçün bir hesab istifadə etməyə imkan verir. Hesab yaratdıqdan sonra eyni hesabla {bluesky} və {tangled} kimi digər tətbiqlərdən istifadə edə bilərsiniz.",
-      "default_input_error": "Xahiş edirik düzgün istifadəçi adı, DID və ya tam PDS URL daxil edin"
+      "disconnect": "Ayrıl",
+      "atmosphere": {},
+      "github": {}
     }
   },
   "header": {

@@ -744,17 +744,23 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosfera",
-      "connected_as": "Conectado como {'@'}{handle}",
-      "disconnect": "Desconectar",
-      "connect_prompt": "Conecte-se com sua conta da Atmosfera",
-      "handle_label": "Nome de identificação",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Conectar",
-      "create_account": "Criar uma nova conta",
-      "connect_bluesky": "Conectar com Bluesky",
-      "what_is_atmosphere": "O que é uma conta da Atmosfera?",
-      "atmosphere_explanation": "{npmx} usa o {atproto} para alimentar muitos de seus recursos sociais, permitindo que os usuários possuam seus dados e usem uma conta para todos os aplicativos compatíveis. Depois de criar uma conta, você pode usar outros aplicativos como {bluesky} e {tangled} com a mesma conta."
+      "disconnect": "Desconectar",
+      "atmosphere": {
+        "title": "Atmosfera",
+        "connected_as": "Conectado como {'@'}{handle}",
+        "connect_prompt": "Conecte-se com sua conta da Atmosfera",
+        "handle_label": "Nome de identificação",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Criar uma nova conta",
+        "connect_bluesky": "Conectar com Bluesky",
+        "what_is_atmosphere": "O que é uma conta da Atmosfera?",
+        "explanation": "{npmx} usa o {atproto} para alimentar muitos de seus recursos sociais, permitindo que os usuários possuam seus dados e usem uma conta para todos os aplicativos compatíveis. Depois de criar uma conta, você pode usar outros aplicativos como {bluesky} e {tangled} com a mesma conta."
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Conectado como {username}"
+      }
     }
   },
   "header": {

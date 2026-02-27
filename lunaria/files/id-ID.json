@@ -727,17 +727,23 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Terhubung sebagai {'@'}{handle}",
-      "disconnect": "Putuskan",
-      "connect_prompt": "Hubungkan dengan akun Atmosphere Anda",
-      "handle_label": "Handle",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Hubungkan",
-      "create_account": "Buat akun baru",
-      "connect_bluesky": "Hubungkan dengan Bluesky",
-      "what_is_atmosphere": "Apa itu akun Atmosphere?",
-      "atmosphere_explanation": "{npmx} menggunakan {atproto} untuk mendukung berbagai fitur sosialnya, memungkinkan pengguna memiliki data mereka sendiri dan menggunakan satu akun untuk semua aplikasi yang kompatibel. Setelah membuat akun, Anda dapat menggunakan aplikasi lain seperti {bluesky} dan {tangled} dengan akun yang sama."
+      "disconnect": "Putuskan",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Terhubung sebagai {'@'}{handle}",
+        "connect_prompt": "Hubungkan dengan akun Atmosphere Anda",
+        "handle_label": "Handle",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Buat akun baru",
+        "connect_bluesky": "Hubungkan dengan Bluesky",
+        "what_is_atmosphere": "Apa itu akun Atmosphere?",
+        "explanation": "{npmx} menggunakan {atproto} untuk mendukung berbagai fitur sosialnya, memungkinkan pengguna memiliki data mereka sendiri dan menggunakan satu akun untuk semua aplikasi yang kompatibel. Setelah membuat akun, Anda dapat menggunakan aplikasi lain seperti {bluesky} dan {tangled} dengan akun yang sama."
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Terhubung sebagai {username}"
+      }
     }
   },
   "header": {

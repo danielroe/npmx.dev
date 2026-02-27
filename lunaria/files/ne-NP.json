@@ -727,17 +727,23 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} रूपमा कनेक्ट",
-      "disconnect": "डिस्कनेक्ट",
-      "connect_prompt": "आफ्नो Atmosphere अकाउन्टसँग कनेक्ट गर्नुहोस्",
-      "handle_label": "Handle",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "कनेक्ट",
-      "create_account": "नयाँ अकाउन्ट बनाउनुहोस्",
-      "connect_bluesky": "Bluesky सँग कनेक्ट",
-      "what_is_atmosphere": "Atmosphere अकाउन्ट भनेको के हो?",
-      "atmosphere_explanation": "{npmx} ले आफ्ना धेरै सामाजिक सुविधाहरू चलाउन {atproto} प्रयोग गर्छ, जसले प्रयोगकर्तालाई आफ्ना डेटा स्वामित्व गर्न र सबै कम्प्याटिबल एपहरूका लागि एउटै अकाउन्ट प्रयोग गर्न दिन्छ। एकपटक अकाउन्ट बनाएपछि, त्यही अकाउन्ट प्रयोग गरेर {bluesky} र {tangled} जस्ता अन्य एपहरू पनि चलाउन सक्नुहुन्छ।"
+      "disconnect": "डिस्कनेक्ट",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "{'@'}{handle} रूपमा कनेक्ट",
+        "connect_prompt": "आफ्नो Atmosphere अकाउन्टसँग कनेक्ट गर्नुहोस्",
+        "handle_label": "Handle",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "नयाँ अकाउन्ट बनाउनुहोस्",
+        "connect_bluesky": "Bluesky सँग कनेक्ट",
+        "what_is_atmosphere": "Atmosphere अकाउन्ट भनेको के हो?",
+        "explanation": "{npmx} ले आफ्ना धेरै सामाजिक सुविधाहरू चलाउन {atproto} प्रयोग गर्छ, जसले प्रयोगकर्तालाई आफ्ना डेटा स्वामित्व गर्न र सबै कम्प्याटिबल एपहरूका लागि एउटै अकाउन्ट प्रयोग गर्न दिन्छ। एकपटक अकाउन्ट बनाएपछि, त्यही अकाउन्ट प्रयोग गरेर {bluesky} र {tangled} जस्ता अन्य एपहरू पनि चलाउन सक्नुहुन्छ।"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "रूपमा कनेक्ट {username}"
+      }
     }
   },
   "header": {

@@ -475,6 +475,12 @@ const repositoryUrl = computed(() => {
 
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 
+const { isConnected: isGitHubConnected } = useGitHub()
+const { isStarred, isStarActionPending, isGitHubRepo, starChange, toggleStar } =
+  useGitHubStar(repoRef)
+
+const displayStars = computed(() => Math.max(0, stars.value + starChange.value))
+
 const PROVIDER_ICONS: Record<string, IconClass> = {
   github: 'i-simple-icons:github',
   gitlab: 'i-simple-icons:gitlab',
@@ -594,7 +600,7 @@ const canonicalUrl = computed(() => {
 // TODO: Maybe set this where it's not loaded here every load?
 const { user } = useAtproto()
 
-const authModal = useModal('auth-modal')
+const atprotoModal = useModal('atproto-modal')
 
 const { data: likesData, status: likeStatus } = useFetch(
   () => `/api/social/likes/${packageName.value}`,
@@ -611,7 +617,7 @@ const isLikeActionPending = shallowRef(false)
 
 const likeAction = async () => {
   if (user.value?.handle == null) {
-    authModal.open()
+    atprotoModal.open()
     return
   }
 
@@ -907,42 +913,61 @@ const showSkeleton = shallowRef(false)
               class="self-baseline"
             />
 
-            <!-- Package likes -->
-            <TooltipApp
-              :text="
-                isLoadingLikeData
-                  ? $t('common.loading')
-                  : likesData?.userHasLiked
-                    ? $t('package.likes.unlike')
-                    : $t('package.likes.like')
-              "
-              position="bottom"
-              class="items-center"
-              strategy="fixed"
-            >
-              <ButtonBase
-                @click="likeAction"
-                size="small"
-                :aria-label="
-                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+            <div class="flex gap-1.5">
+              <!-- Package likes -->
+              <TooltipApp
+                :text="
+                  isLoadingLikeData
+                    ? $t('common.loading')
+                    : likesData?.userHasLiked
+                      ? $t('package.likes.unlike')
+                      : $t('package.likes.like')
                 "
-                :aria-pressed="likesData?.userHasLiked"
-                :classicon="
-                  likesData?.userHasLiked
-                    ? 'i-lucide:heart-minus text-red-500'
-                    : 'i-lucide:heart-plus'
-                "
+                position="bottom"
+                class="items-center"
+                strategy="fixed"
               >
-                <span
-                  v-if="isLoadingLikeData"
-                  class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
-                  aria-hidden="true"
-                />
-                <span v-else>
-                  {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
-                </span>
-              </ButtonBase>
-            </TooltipApp>
+                <ButtonBase
+                  @click="likeAction"
+                  size="small"
+                  :aria-label="
+                    likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
+                  "
+                  :aria-pressed="likesData?.userHasLiked"
+                  :classicon="
+                    likesData?.userHasLiked
+                      ? 'i-lucide:heart-minus text-red-500'
+                      : 'i-lucide:heart-plus'
+                  "
+                >
+                  <span
+                    v-if="isLoadingLikeData"
+                    class="i-svg-spinners:ring-resize w-3 h-3 my-0.5"
+                    aria-hidden="true"
+                  />
+                  <span v-else>
+                    {{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}
+                  </span>
+                </ButtonBase>
+              </TooltipApp>
+
+              <TooltipApp
+                v-if="isGitHubRepo && isGitHubConnected"
+                :text="isStarred ? $t('package.github.unstar') : $t('package.github.star')"
+                position="bottom"
+                strategy="fixed"
+              >
+                <ButtonBase
+                  @click="toggleStar"
+                  size="small"
+                  :aria-label="isStarred ? $t('package.github.unstar') : $t('package.github.star')"
+                  :aria-pressed="isStarred"
+                  :disabled="isStarActionPending"
+                  :classicon="isStarred ? 'i-lucide:star text-yellow-400' : 'i-lucide:star'"
+                >
+                </ButtonBase>
+              </TooltipApp>
+            </div>
           </div>
         </div>
       </header>
@@ -974,7 +999,7 @@ const showSkeleton = shallowRef(false)
             </li>
             <li v-if="repositoryUrl && repoMeta && starsLink">
               <LinkBase :to="starsLink" classicon="i-lucide:star">
-                {{ compactNumberFormatter.format(stars) }}
+                {{ compactNumberFormatter.format(displayStars) }}
               </LinkBase>
             </li>
             <li v-if="forks && forksLink">

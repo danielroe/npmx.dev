@@ -742,17 +742,23 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} হিসাবে সংযুক্ত",
-      "disconnect": "সংযোগ বিচ্ছিন্ন করুন",
-      "connect_prompt": "আপনার Atmosphere অ্যাকাউন্টের সাথে সংযোগ করুন",
-      "handle_label": "হ্যান্ডেল",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "সংযোগ করুন",
-      "create_account": "নতুন অ্যাকাউন্ট তৈরি করুন",
-      "connect_bluesky": "Bluesky এর সাথে সংযোগ করুন",
-      "what_is_atmosphere": "Atmosphere অ্যাকাউন্ট কী?",
-      "atmosphere_explanation": "{npmx} তার অনেক সোশ্যাল ফিচার চালানোর জন্য {atproto} ব্যবহার করে, যা ব্যবহারকারীদের তাদের ডেটার মালিক হতে এবং সব কাস্টম অ্যাপ্লিকেশনের জন্য একটি অ্যাকাউন্ট ব্যবহার করতে দেয়। আপনি অ্যাকাউন্ট তৈরি করার পর, আপনি {bluesky} এবং {tangled} এর মতো অন্যান্য অ্যাপ্লিকেশন একই অ্যাকাউন্ট দিয়ে ব্যবহার করতে পারবেন।"
+      "disconnect": "সংযোগ বিচ্ছিন্ন করুন",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "{'@'}{handle} হিসাবে সংযুক্ত",
+        "connect_prompt": "আপনার Atmosphere অ্যাকাউন্টের সাথে সংযোগ করুন",
+        "handle_label": "হ্যান্ডেল",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "নতুন অ্যাকাউন্ট তৈরি করুন",
+        "connect_bluesky": "Bluesky এর সাথে সংযোগ করুন",
+        "what_is_atmosphere": "Atmosphere অ্যাকাউন্ট কী?",
+        "explanation": "{npmx} তার অনেক সোশ্যাল ফিচার চালানোর জন্য {atproto} ব্যবহার করে, যা ব্যবহারকারীদের তাদের ডেটার মালিক হতে এবং সব কাস্টম অ্যাপ্লিকেশনের জন্য একটি অ্যাকাউন্ট ব্যবহার করতে দেয়। আপনি অ্যাকাউন্ট তৈরি করার পর, আপনি {bluesky} এবং {tangled} এর মতো অন্যান্য অ্যাপ্লিকেশন একই অ্যাকাউন্ট দিয়ে ব্যবহার করতে পারবেন।"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "{username} হিসাবে সংযুক্ত"
+      }
     }
   },
   "header": {

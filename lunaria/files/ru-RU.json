@@ -699,17 +699,23 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Вы вошли как {'@'}{handle}",
-      "disconnect": "Выйти",
-      "connect_prompt": "Войдите через аккаунт Atmosphere",
-      "handle_label": "Хендл",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Подключить",
-      "create_account": "Создать новый аккаунт",
-      "connect_bluesky": "Войти через Bluesky",
-      "what_is_atmosphere": "Что такое аккаунт Atmosphere?",
-      "atmosphere_explanation": "{npmx} использует протокол {atproto} для работы многих социальных функций, позволяя пользователям владеть своими данными и использовать единый аккаунт для всех совместимых приложений. Создав аккаунт, вы сможете использовать другие приложения, такие как {bluesky} и {tangled}, с той же учетной записью."
+      "disconnect": "Выйти",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Вы вошли как {'@'}{handle}",
+        "connect_prompt": "Войдите через аккаунт Atmosphere",
+        "handle_label": "Хендл",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Создать новый аккаунт",
+        "connect_bluesky": "Войти через Bluesky",
+        "what_is_atmosphere": "Что такое аккаунт Atmosphere?",
+        "explanation": "{npmx} использует протокол {atproto} для работы многих социальных функций, позволяя пользователям владеть своими данными и использовать единый аккаунт для всех совместимых приложений. Создав аккаунт, вы сможете использовать другие приложения, такие как {bluesky} и {tangled}, с той же учетной записью."
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Вы вошли как {username}"
+      }
     }
   },
   "header": {

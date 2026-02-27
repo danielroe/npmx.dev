@@ -893,18 +893,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "已連線為 {'@'}{handle}",
-      "disconnect": "中斷連線",
-      "connect_prompt": "使用 Atmosphere 帳戶連線",
-      "handle_label": "帳號",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "連線",
-      "create_account": "建立新帳戶",
-      "connect_bluesky": "使用 Bluesky 連線",
-      "what_is_atmosphere": "什麼是 Atmosphere 帳戶？",
-      "atmosphere_explanation": "{npmx} 使用 {atproto} 為其多項社交功能提供支援，讓使用者真正擁有自己的資料並使用一個帳戶登入所有相容的應用程式。一旦建立帳戶，你便可以使用其他應用程式，例如 {bluesky} 和 {tangled}。",
-      "default_input_error": "請輸入有效的 Bluesky 用戶名、DID（去中心化識別） 或完整的 PDS URL"
+      "disconnect": "中斷連線",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "已連線為 {'@'}{handle}",
+        "connect_prompt": "使用 Atmosphere 帳戶連線",
+        "handle_label": "帳號",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "建立新帳戶",
+        "connect_bluesky": "使用 Bluesky 連線",
+        "what_is_atmosphere": "什麼是 Atmosphere 帳戶？",
+        "explanation": "{npmx} 使用 {atproto} 為其多項社交功能提供支援，讓使用者真正擁有自己的資料並使用一個帳戶登入所有相容的應用程式。一旦建立帳戶，你便可以使用其他應用程式，例如 {bluesky} 和 {tangled}。",
+        "default_input_error": "請輸入有效的 Bluesky 用戶名、DID（去中心化識別） 或完整的 PDS URL"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "已連線為 {username}"
+      }
     }
   },
   "header": {
