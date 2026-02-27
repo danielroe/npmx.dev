@@ -83,7 +83,7 @@ export default defineEventHandler(async event => {
       try {
         const state = decodeOAuthState(event, result.state)
         const profile = await getMiniProfile(result.session)
-        const npmxProfile = await getNpmxProfile(query.handle as string, result.session)
+        const npmxProfile = await getNpmxProfile(profile.handle, result.session)
 
         await session.update({
           public: profile,
