@@ -181,6 +181,7 @@ const { isPackageSelected, togglePackageSelection } = usePackageSelection()
           <template #default="{ item, index }">
             <div class="pb-4">
               <PackageCard
+                :key="item.package.name"
                 :result="item"
                 :heading-level="headingLevel"
                 :show-publisher="showPublisher"
@@ -189,8 +190,8 @@ const { isPackageSelected, togglePackageSelection } = usePackageSelection()
                 class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
                 :filters="filters"
                 :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
-                :selected="isPackageSelected(item.package.name)"
-                @update:selected="togglePackageSelection(item.package.name)"
+                :selected="isPackageSelected(item)"
+                @update:selected="togglePackageSelection(item)"
                 @click-keyword="emit('clickKeyword', $event)"
               />
             </div>

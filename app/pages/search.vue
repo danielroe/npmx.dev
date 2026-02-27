@@ -10,13 +10,20 @@ import { normalizeSearchParam } from '#shared/utils/url'
 const route = useRoute()
 
 const { selectedPackages } = usePackageSelection()
-const selectionView = useRouteQuery<string>('selection-view', '', { mode: 'push' })
+const isSelectioView = ref<boolean>(false)
 
-function toggleSelection() {
-  selectionView.value = selectionView.value === 'true' ? '' : 'true'
+watch(selectedPackages, packages => {
+  if (packages.length === 0) {
+    isSelectioView.value = false
+  }
+})
+
+function showSelectionView() {
+  isSelectioView.value = true
 }
-
-const isSelectioView = computed<boolean>(() => selectionView.value === 'true')
+function hideSelectionView() {
+  isSelectioView.value = false
+}
 
 // Preferences (persisted to localStorage)
 const {
@@ -552,7 +559,7 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <PackageActionBar />
+  <PackageActionBar v-if="!isSelectioView" />
 
   <main class="flex-1 py-8 search-page" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
     <div class="container-sm">
@@ -560,15 +567,25 @@ defineOgImageComponent('Default', {
         <h1 class="font-mono text-2xl sm:text-3xl font-medium">
           {{ $t('search.title') }}
         </h1>
-        <SearchProviderToggle />
+        <button
+          v-if="isSelectioView"
+          type="button"
+          class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+          @click="hideSelectionView"
+        >
+          <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
+          <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+        </button>
+        <SearchProviderToggle v-else />
       </div>
 
       <PackageSelectionView
-        :view-mode="viewMode"
+        @back="hideSelectionView"
         v-if="isSelectioView && selectedPackages.length"
+        :view-mode="viewMode"
       />
 
-      <section v-if="query" class="results-layout">
+      <section v-else-if="query" class="results-layout">
         <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 
         <div
@@ -637,7 +654,7 @@ defineOgImageComponent('Default', {
               :disabled-sort-keys="disabledSortKeys"
               search-context
               @toggle-column="toggleColumn"
-              @toggle-selection="toggleSelection"
+              @toggle-selection="showSelectionView"
               @reset-columns="resetColumns"
               @clear-filter="handleClearFilter"
               @clear-all-filters="clearAllFilters"

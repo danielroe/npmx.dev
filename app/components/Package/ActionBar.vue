@@ -20,13 +20,13 @@ onKeyStroke(
   <Transition name="action-bar-slide" appear>
     <div
       v-if="selectedPackages.length"
-      class="fixed bottom-12 inset-is-0 w-full flex items-center justify-center z-36 pointer-events-none"
+      class="fixed bottom-10 inset-is-0 w-full flex items-center justify-center z-36 pointer-events-none"
     >
       <div
         ref="actionBarRef"
         tabindex="-1"
         aria-keyshortcuts="b"
-        class="pointer-events-auto bg-bg shadow-2xl border border-fg-muted/20 p-2.5 min-w-[280px] rounded-xl flex gap-2 items-center justify-between animate-in"
+        class="pointer-events-auto bg-bg shadow-xl shadow-accent/5 border border-fg-muted/20 p-2.5 min-w-[300px] rounded-xl flex gap-2 items-center justify-between animate-in"
       >
         <div aria-live="polite" aria-atomic="true" class="sr-only">
           {{ $t('action_bar.selection', selectedPackages.length) }}.
@@ -38,21 +38,17 @@ onKeyStroke(
             {{ $t('action_bar.selection', selectedPackages.length) }}
           </span>
           <button @click="clearSelectedPackages" class="flex items-center ms-2 hover:text-fg-muted">
-            <span class="i-lucide:x text-sm" aria-label="Close action bar" />
+            <span class="i-lucide:x text-xs relative top-px" aria-label="Close action bar" />
           </button>
         </div>
 
-        <span class="w-px h-8 bg-fg-subtle/40" />
-
-        <div>
-          <LinkBase
-            :to="{ name: 'compare', query: { packages: selectedPackagesParam } }"
-            variant="button-secondary"
-            classicon="i-lucide:git-compare"
-          >
-            Compare
-          </LinkBase>
-        </div>
+        <LinkBase
+          :to="{ name: 'compare', query: { packages: selectedPackagesParam } }"
+          variant="button-secondary"
+          classicon="i-lucide:git-compare"
+        >
+          Compare
+        </LinkBase>
       </div>
     </div>
   </Transition>

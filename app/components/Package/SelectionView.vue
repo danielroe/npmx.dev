@@ -3,25 +3,35 @@ defineProps<{
   viewMode?: ViewMode
 }>()
 
-const { selectedPackages } = usePackageSelection()
-const packages = ref<NpmSearchResult[]>([])
+const { selectedPackages, clearSelectedPackages, selectedPackagesParam } = usePackageSelection()
 </script>
 
 <template>
   <section>
-    <p class="text-fg-muted text-sm mt-4 font-mono">
-      {{
-        $t('search.found_packages', { count: $n(selectedPackages.length) }, selectedPackages.length)
-      }}
-    </p>
+    <header class="mb-6 flex items-center justify-end">
+      <div class="flex items-center gap-2">
+        <ButtonBase variant="secondary" @click="clearSelectedPackages" classicon="i-lucide:x"
+          >Clear all</ButtonBase
+        >
+        <LinkBase
+          :to="{ name: 'compare', query: { packages: selectedPackagesParam } }"
+          variant="button-primary"
+          classicon="i-lucide:git-compare"
+        >
+          Compare
+        </LinkBase>
+      </div>
+    </header>
 
-    {{ selectedPackages }}
+    <p class="text-fg-muted text-sm font-mono">
+      {{ $t('action_bar.selection', selectedPackages.length) }}
+    </p>
 
     <div class="mt-6">
       <PackageList
-        v-if="packages.length > 0"
+        v-if="selectedPackages.length > 0"
         :view-mode="viewMode"
-        :results="packages"
+        :results="selectedPackages"
         search-context
         heading-level="h2"
         show-publisher
