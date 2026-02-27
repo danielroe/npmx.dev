@@ -60,6 +60,13 @@ This focus helps guide our project decisions as a community and what we choose t
   - [Lighthouse performance tests](#lighthouse-performance-tests)
   - [End to end tests](#end-to-end-tests)
   - [Test fixtures (mocking external APIs)](#test-fixtures-mocking-external-apis)
+- [Storybook](#storybook)
+  - [Component categories](#component-categories)
+  - [Coverage guidelines](#coverage-guidelines)
+  - [Project conventions](#project-conventions)
+  - [Configuration](#configuration)
+  - [Global app settings](#global-app-settings)
+  - [Known limitations](#known-limitations)
 - [Submitting changes](#submitting-changes)
   - [Before submitting](#before-submitting)
   - [Pull request process](#pull-request-process)
@@ -884,6 +891,117 @@ The mock connector supports test endpoints for state manipulation:
 - `/__test__/user-orgs` - Set user's organizations
 - `/__test__/user-packages` - Set user's packages
 - `/__test__/package` - Set package collaborators
+
+## Storybook
+
+Storybook is a development environment for UI components that helps catch UI changes and provides integrations for various testing types. For testing, Storybook offers:
+
+- **Accessibility tests** - Built-in a11y checks
+- **Visual tests** - Compare JPG screenshots
+- **Vitest tests** - Use stories directly in the unit tests
+
+### Component categories
+
+The plan is to organize components into 3 categories.
+
+#### UI Library Components
+
+Generic and reusable components used throughout the application.
+
+- Examples: Button, Input, Modal, Card
+- **Testing focus:** Props, variants, accessibility
+- **Coverage:** All variants and states
+
+#### Composite Components
+
+Single-use components that encapsulate one feature.
+
+- Examples: UserProfile, WeeklyDownloadStats
+- **Testing focus:** Integration patterns, user interactions
+- **Coverage:** Common usage scenarios
+
+#### Page Components
+
+**Full-page layouts** should match what the users see.
+
+- Examples: HomePage, Dashboard, CheckoutPage
+- **Testing focus:** Layout, responsive behavior, integration testing
+- **Coverage:** Critical user flows and breakpoints
+
+### Coverage guidelines
+
+#### Which Components Need Stories?
+
+TBD
+
+### Project conventions
+
+#### Place `.stories.ts` files next to the component
+
+```sh
+components/
+├── Button.vue
+└── Button.stories.ts
+```
+
+#### Story Template
+
+```ts
+// *.stories.ts
+import type { Meta, StoryObj } from '@storybook-vue/nuxt'
+import Component from './Button.vue'
+
+const meta = {
+  component: Component,
+  // component scope configuration goes here
+} satisfies Meta<typeof Component>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
+  // story scope configuration goes here
+}
+```
+
+#### JSDocs Annotation
+
+The component should include descriptive comments.
+
+```ts
+// Button.vue
+<script setup lang="ts">
+const props = withDefaults(
+  defineProps<{
+    /** Whether the button is disabled */
+    disabled?: boolean
+    /**
+     * HTML button type attribute
+     * @default "button"
+    type?: 'button' | 'submit'
+    // ...
+  }>)
+</script>
+```
+
+### Configuration
+
+Stories can be configured at three levels:
+
+- **Global scope** (`.storybook/preview.ts`) - Applies to all stories
+- **Component scope** - Applies to all stories for a specific component
+- **Story scope** - Applies to individual stories only
+
+### Global app settings
+
+Global application settings are added to the Storybook toolbar for easy testing and viewing. Configure these in `.storybook/preview.ts` under the `globalTypes` and `decorators` properties.
+
+### Known limitations
+
+- Changing `i18n` in the toolbar doesn't update the language. A manual story reload is required.
+- `autodocs` currently is non-functional due bugs, its usage is discouraged at this time.
+- `pnpm storybook` may log warnings or non-breaking errors for Nuxt modules due to the lack of mocks. If the UI renders correctly, these can be safely ignored.
+- Do not `import type` from `.vue` files. The `vue-docgen-api` parser used by `@storybook/addon-docs` cannot follow type imports across SFCs and will crash. Extract shared types into a separate `.ts` file instead.
 
 ## Submitting changes
 
