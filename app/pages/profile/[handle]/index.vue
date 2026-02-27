@@ -48,12 +48,13 @@ async function updateProfile() {
       website: websiteInput.value,
     })
 
-    if (!result.success) {
+    if (result.success) {
+      isEditing.value = false
+    } else {
       profile.value = currentProfile
     }
 
     isUpdateProfileActionPending.value = false
-    isEditing.value = false
   } catch (e) {
     profile.value = currentProfile
     isUpdateProfileActionPending.value = false
@@ -158,7 +159,7 @@ defineOgImageComponent('Default', {
         dir="ltr"
       >
         {{ $t('profile.likes') }}
-        <span v-if="likesData">({{ likesData.likes.records.length ?? 0 }})</span>
+        <span v-if="likesData">({{ likesData.likes?.records?.length ?? 0 }})</span>
       </h2>
       <div v-if="status === 'pending'">
         <p>{{ $t('common.loading') }}</p>
@@ -166,9 +167,8 @@ defineOgImageComponent('Default', {
       <div v-else-if="status === 'error'">
         <p>{{ $t('common.error') }}</p>
       </div>
-      <div v-else-if="likesData.likes.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div v-else-if="likesData?.likes?.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PackageLikeCard
-          v-if="likesData.likes.records"
           v-for="like in likesData.likes.records"
           :packageUrl="like.value.subjectRef"
         />
