@@ -599,10 +599,10 @@ function matchRoute(url) {
  * @returns {boolean}
  */
 function urlMatchesPattern(url, pattern) {
-  // Convert "https://example.com/**" to a prefix check
-  if (pattern.endsWith('/**')) {
-    const prefix = pattern.slice(0, -2)
-    return url.startsWith(prefix)
+  // Support wildcard patterns (e.g. https://*-dsn.algolia.net/**)
+  if (pattern.includes('*')) {
+    const escaped = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')
+    return new RegExp(`^${escaped}$`).test(url)
   }
   return url === pattern
 }
