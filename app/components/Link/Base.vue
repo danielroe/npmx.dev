@@ -59,7 +59,8 @@ const isLink = computed(() => props.variant === 'link')
 const isButton = computed(() => !isLink.value)
 const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
-const keyboardShortcutsEnabled = computed(() => import.meta.client && useKeyboardShortcuts().value)
+const keyboardShortcuts = useKeyboardShortcuts()
+const keyboardShortcutsEnabled = computed(() => import.meta.client && keyboardShortcuts.value)
 </script>
 
 <template>

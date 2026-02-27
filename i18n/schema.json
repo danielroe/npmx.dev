@@ -108,9 +108,6 @@
         },
         "disable_shortcuts": {
           "type": "string"
-        },
-        "disable_shortcuts_description": {
-          "type": "string"
         }
       },
       "additionalProperties": false
