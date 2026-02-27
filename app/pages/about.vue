@@ -161,7 +161,7 @@ const roleLabels = computed(
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.sponsors.title') }}
           </h2>
-          <AboutLogoList :list="SPONSORS" />
+          <AboutLogoList :list="SPONSORS" class="flex-col md:flex-row" />
         </div>
 
         <div>
