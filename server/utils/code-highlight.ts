@@ -196,7 +196,7 @@ function linkifyModuleSpecifiers(html: string, options?: LinkifyOptions): string
   // Match: from keyword span followed by string span containing module specifier
   // Pattern: <span style="...">from</span><span style="..."> 'module'</span>
   let result = html.replace(
-    /(<span[^>]*>from<\/span>)(<span[^>]*>) (['"][^'"]+['"])<\/span>/g,
+    /(<span[^>]*> ?from<\/span>)(<span[^>]*>) (['"][^'"]+['"])<\/span>/g,
     (match, fromSpan, stringSpanOpen, moduleSpecifier) => {
       const href = getHref(moduleSpecifier)
       if (!href) return match
