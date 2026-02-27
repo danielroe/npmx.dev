@@ -454,6 +454,12 @@
         "no_description": {
           "type": "string"
         },
+        "website": {
+          "type": "string"
+        },
+        "website_placeholder": {
+          "type": "string"
+        },
         "likes": {
           "type": "string"
         },

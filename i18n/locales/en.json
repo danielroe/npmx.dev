@@ -150,6 +150,8 @@
     "display_name": "Display Name",
     "description": "Description",
     "no_description": "No description",
+    "website": "Website",
+    "website_placeholder": "https://example.com",
     "likes": "Likes",
     "seo_title": "{handle} - npmx",
     "seo_description": "npmx profile by {handle}"

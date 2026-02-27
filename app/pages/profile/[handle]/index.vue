@@ -37,15 +37,15 @@ async function updateProfile() {
   // optimistic update
   profile.value = {
     displayName: displayNameInput.value,
-    description: descriptionInput.value,
-    website: websiteInput.value,
+    description: descriptionInput.value || undefined,
+    website: websiteInput.value || undefined,
   }
 
   try {
     const result = await updateProfileUtil(handle.value, {
       displayName: displayNameInput.value,
-      description: descriptionInput.value,
-      website: websiteInput.value,
+      description: descriptionInput.value || undefined,
+      website: websiteInput.value || undefined,
     })
 
     if (result.success) {
@@ -103,27 +103,28 @@ defineOgImageComponent('Default', {
             class="w-full min-w-25 bg-bg-subtle border border-border rounded-md ps-3 pe-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
           />
         </label>
+        <label for="website" class="text-sm flex flex-col gap-2">
+          {{ $t('profile.website') }}
+          <input
+            name="website"
+            type="url"
+            :placeholder="$t('profile.website_placeholder')"
+            v-model="websiteInput"
+            class="w-full min-w-25 bg-bg-subtle border border-border rounded-md ps-3 pe-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
+          />
+        </label>
         <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
-          <div class="link-subtle font-mono text-sm inline-flex items-center gap-1.5">
-            <span class="text-white i-carbon:link w-4 h-4" aria-hidden="true" />
-            <input
-              name="website"
-              type="url"
-              v-model="websiteInput"
-              class="w-full min-w-25 bg-bg-subtle border border-border rounded-md ps-3 pe-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
-            />
-          </div>
           <button
             @click="isEditing = false"
-            class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+            class="link-subtle font-mono text-sm inline-flex items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           >
             {{ $t('common.cancel') }}
           </button>
           <button
-            @click.prevent="updateProfile"
+            @click="updateProfile"
             :disabled="isUpdateProfileActionPending"
-            class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
+            class="link-subtle font-mono text-sm inline-flex items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           >
             {{ $t('common.save') }}
           </button>
