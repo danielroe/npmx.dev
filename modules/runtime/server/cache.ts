@@ -241,7 +241,8 @@ function getMockForUrl(url: string): MockResult | null {
   }
 
   // Algolia npm-search API - return mock popular packages
-  if (host.endsWith('-dsn.algolia.net') && pathname.endsWith('/query')) {
+  const algoliaHost = `${useRuntimeConfig().public.algolia.appId.toLowerCase()}-dsn.algolia.net`
+  if (host === algoliaHost && pathname.endsWith('/query')) {
     return {
       data: {
         hits: [
