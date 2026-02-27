@@ -65,7 +65,7 @@ function scaleWeeklyValue(weeklyValue: number, granularity: ChartTimeGranularity
   }
 }
 
-export function applyBlocklistFilter(
+export function applyBlocklistCorrection(
   data: EvolutionData,
   packageName: string,
   granularity: ChartTimeGranularity,

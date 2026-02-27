@@ -85,7 +85,7 @@ export interface ChartFilterSettings {
 /**
  * Applies moving average then smoothing in sequence.
  */
-export function applyDownloadFilter<T extends { value: number }>(
+export function applyDataCorrection<T extends { value: number }>(
   data: T[],
   settings: ChartFilterSettings,
 ): T[] {

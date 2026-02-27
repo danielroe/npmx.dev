@@ -2,9 +2,9 @@
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
-import { applyDownloadFilter } from '~/utils/chart-data-correction'
+import { applyDataCorrection } from '~/utils/chart-data-correction'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
-import { applyBlocklistFilter } from '~/utils/download-anomalies'
+import { applyBlocklistCorrection } from '~/utils/download-anomalies'
 import type { RepoRef } from '#shared/utils/git-providers'
 import type { VueUiSparklineConfig, VueUiSparklineDatasetItem } from 'vue-data-ui'
 
@@ -179,18 +179,18 @@ watch(
   () => loadWeeklyDownloads(),
 )
 
-const filteredDownloads = computed<WeeklyDataPoint[]>(() => {
+const correctedDownloads = computed<WeeklyDataPoint[]>(() => {
   let data = weeklyDownloads.value as WeeklyDataPoint[]
   if (!data.length) return data
   if (settings.value.chartFilter.anomaliesFixed) {
-    data = applyBlocklistFilter(data, props.packageName, 'weekly') as WeeklyDataPoint[]
+    data = applyBlocklistCorrection(data, props.packageName, 'weekly') as WeeklyDataPoint[]
   }
-  data = applyDownloadFilter(data, settings.value.chartFilter) as WeeklyDataPoint[]
+  data = applyDataCorrection(data, settings.value.chartFilter) as WeeklyDataPoint[]
   return data
 })
 
 const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
-  filteredDownloads.value.map(d => ({
+  correctedDownloads.value.map(d => ({
     value: d?.value ?? 0,
     period: $t('package.trends.date_range', {
       start: d.weekStart ?? '-',

@@ -18,8 +18,8 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
-import { applyDownloadFilter } from '~/utils/chart-data-correction'
-import { applyBlocklistFilter } from '~/utils/download-anomalies'
+import { applyDataCorrection } from '~/utils/chart-data-correction'
+import { applyBlocklistCorrection } from '~/utils/download-anomalies'
 
 const props = withDefaults(
   defineProps<{
@@ -946,9 +946,9 @@ const effectiveDataSingle = computed<EvolutionData>(() => {
   if (isDownloadsMetric.value && data.length) {
     const pkg = effectivePackageNames.value[0] ?? props.packageName ?? ''
     if (settings.value.chartFilter.anomaliesFixed) {
-      data = applyBlocklistFilter(data, pkg, displayedGranularity.value)
+      data = applyBlocklistCorrection(data, pkg, displayedGranularity.value)
     }
-    return applyDownloadFilter(
+    return applyDataCorrection(
       data as Array<{ value: number }>,
       settings.value.chartFilter,
     ) as EvolutionData
@@ -990,9 +990,9 @@ const chartData = computed<{
     let data = state.evolutionsByPackage[pkg] ?? []
     if (isDownloadsMetric.value && data.length) {
       if (settings.value.chartFilter.anomaliesFixed) {
-        data = applyBlocklistFilter(data, pkg, granularity)
+        data = applyBlocklistCorrection(data, pkg, granularity)
       }
-      data = applyDownloadFilter(
+      data = applyDataCorrection(
         data as Array<{ value: number }>,
         settings.value.chartFilter,
       ) as EvolutionData
