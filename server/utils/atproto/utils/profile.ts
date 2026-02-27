@@ -1,4 +1,7 @@
-import type { MiniDoc, NPMXProfile } from '~~/shared/types/social'
+import type { MiniDoc, NPMXProfile } from '#shared/types/social'
+import * as blue from '#shared/types/lexicons/blue'
+import * as dev from '#shared/types/lexicons/dev'
+import { Client, isAtIdentifierString, isAtUriString } from '@atproto/lex'
 
 //Cache keys and helpers
 const CACHE_PREFIX = 'atproto-profile:'
@@ -12,10 +15,11 @@ const CACHE_MAX_AGE = CACHE_MAX_AGE_ONE_MINUTE * 5
  */
 export class ProfileUtils {
   private readonly cache: CacheAdapter
-  // TODO: create Slingshot client (like Constellation class)
+  private readonly slingshotClient: Client
 
   constructor() {
     this.cache = getCacheAdapter('generic')
+    this.slingshotClient = new Client({ service: `https://${SLINGSHOT_HOST}` })
   }
 
   private async slingshotMiniDoc(handle: string) {
@@ -26,20 +30,26 @@ export class ProfileUtils {
     if (cachedMiniDoc) {
       miniDoc = cachedMiniDoc
     } else {
-      const resolveUrl = `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.identity.resolveMiniDoc?identifier=${encodeURIComponent(handle)}`
-      const response = await fetch(resolveUrl, {
-        headers: { 'User-Agent': 'npmx' },
-      })
-      if (!response.ok) {
+      if (!isAtIdentifierString(handle)) {
         throw createError({
-          status: response.status,
+          status: 400,
+          message: `Invalid at-identifier: ${handle}`,
+        })
+      }
+
+      const response = await this.slingshotClient.xrpcSafe(blue.microcosm.identity.resolveMiniDoc, {
+        headers: { 'User-Agent': 'npmx' },
+        params: { identifier: handle },
+      })
+      if (!response.success) {
+        throw createError({
+          status: 400,
           message: `Failed to resolve MiniDoc for ${handle}`,
         })
       }
-      const value = (await response.json()) as MiniDoc
 
-      miniDoc = value
-      await this.cache.set(miniDocKey, value, CACHE_MAX_AGE)
+      miniDoc = response.body
+      await this.cache.set(miniDocKey, miniDoc, CACHE_MAX_AGE)
     }
 
     return miniDoc
@@ -60,16 +70,21 @@ export class ProfileUtils {
       profile = cachedProfile
     } else {
       const profileUri = `at://${miniDoc.did}/dev.npmx.actor.profile/self`
-      const response = await fetch(
-        `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${profileUri}`,
-        {
-          headers: { 'User-Agent': 'npmx' },
-        },
-      )
-      if (response.ok) {
-        const { value } = (await response.json()) as { value: NPMXProfile }
-        profile = value
+      if (!isAtUriString(profileUri)) {
+        throw new Error(`Invalid at-uri: ${profileUri}`)
+      }
+
+      const response = await this.slingshotClient.xrpcSafe(blue.microcosm.repo.getRecordByUri, {
+        headers: { 'User-Agent': 'npmx' },
+        params: { at_uri: profileUri },
+      })
+
+      if (response.success) {
+        const validationResult = dev.npmx.actor.profile.$validate(response.body.value)
+        profile = validationResult
         await this.cache.set(profileKey, profile, CACHE_MAX_AGE)
+      } else {
+        throw new Error(`Failed to fetch profile: ${response.error}`)
       }
     }
 
