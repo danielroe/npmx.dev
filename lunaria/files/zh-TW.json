@@ -156,6 +156,7 @@
       "version": "此版本已被棄用。",
       "no_reason": "未提供原因"
     },
+    "size_increase": {},
     "replacement": {
       "title": "你可能不需要這個相依套件。",
       "native": "此功能自 Node.js {nodeVersion} 起已內建，可直接使用 {replacement} 取代。",
@@ -311,7 +312,8 @@
       "filter_help": "語義化版本範圍篩選說明",
       "filter_tooltip": "使用 {link} 篩選版本。例如：^3.0.0 會顯示所有 3.x 版本。",
       "filter_tooltip_link": "語義化版本範圍",
-      "no_matches": "沒有符合此範圍的版本"
+      "no_matches": "沒有符合此範圍的版本",
+      "copy_alt": {}
     },
     "dependencies": {
       "title": "相依（{count} 個）",
@@ -847,7 +849,6 @@
     },
     "team": {
       "title": "團隊",
-      "governance": "治理",
       "role_steward": "管理者",
       "role_maintainer": "維護者",
       "sponsor": "贊助",
@@ -1045,7 +1046,9 @@
       "trends": {
         "title": "每週下載"
       }
-    }
+    },
+    "file_filter_option": {},
+    "filter": {}
   },
   "privacy_policy": {
     "title": "隱私權政策",
