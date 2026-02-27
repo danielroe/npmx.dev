@@ -3,12 +3,12 @@
   "seo": {
     "home": {
       "title": "npmx - Paket-Browser für die npm Registry",
-      "description": "Ein schnellerer, modernerer Browser für die npm Registry. Pakete suchen, durchstöbern und erkunden mit einer modernen Oberfläche."
+      "description": "Ein schneller, moderner Browser für die npm Registry. Pakete suchen, durchstöbern und erkunden mit einer modernen Oberfläche."
     }
   },
   "built_at": "erstellt {0}",
   "alt_logo": "npmx Logo",
-  "tagline": "ein schnellerer, modernerer Browser für die npm Registry",
+  "tagline": "ein schneller, moderner Browser für die npm Registry",
   "non_affiliation_disclaimer": "nicht verbunden mit npm, Inc.",
   "trademark_disclaimer": "npm ist eine eingetragene Marke von npm, Inc. Diese Seite ist nicht mit npm, Inc. verbunden.",
   "footer": {
@@ -55,7 +55,7 @@
     "claim_button": "\"{name}\" beanspruchen",
     "want_to_claim": "Möchtest du diesen Paketnamen beanspruchen?",
     "start_typing": "Tippe, um Pakete zu suchen",
-    "algolia_disclaimer": "Powered by Algolia",
+    "algolia_disclaimer": "Bereitgestellt von Algolia",
     "exact_match": "exakt",
     "suggestion": {
       "user": "Benutzer",
@@ -134,7 +134,7 @@
     "go_back_home": "Zur Startseite",
     "view_on_npm": "Auf npm ansehen",
     "per_week": "/ Woche",
-    "vanity_downloads_hint": "Prestige-Zahl: keine Pakete angezeigt | Prestige-Zahl: für das angezeigte Paket | Prestige-Zahl: Summe von {count} angezeigten Paketen",
+    "vanity_downloads_hint": "Vanity-Zahl: keine Pakete angezeigt | Vanity-Zahl: für das angezeigte Paket | Vanity-Zahl: Summe von {count} angezeigten Paketen",
     "sort": {
       "name": "Name",
       "role": "Rolle",
@@ -161,8 +161,8 @@
       "title": "Du brauchst diese Abhängigkeit vielleicht nicht.",
       "native": "Dies kann durch {replacement} ersetzt werden, verfügbar seit Node {nodeVersion}.",
       "simple": "Die {community} hat dieses Paket als überflüssig markiert und empfiehlt: {replacement}.",
-      "documented": "Die {community} hat dieses Paket als eines mit leistungsstärkeren Alternativen markiert.",
-      "none": "Dieses Paket wurde als nicht mehr nötig markiert, und seine Funktionen sind wahrscheinlich in allen Engines nativ verfügbar.",
+      "documented": "Die {community} hat leistungsstärkere Alternativen für dieses Paket aufgezeigt.",
+      "none": "Dieses Paket wurde als nicht mehr nötig markiert, und seine Funktionalität ist wahrscheinlich in allen Engines nativ verfügbar.",
       "learn_more": "Mehr erfahren",
       "learn_more_above": "Erfahre oben mehr.",
       "mdn": "MDN",
@@ -180,7 +180,7 @@
       "inspect_dependency_tree": "Abhängigkeitsbaum untersuchen",
       "size_tooltip": {
         "unpacked": "{size} Größe nach dem Entpacken (dieses Paket)",
-        "total": "{size} Gesamtgröße nach dem Entpacken (inklusive aller {count} Abhängigkeiten für linux-x64)"
+        "total": "{size} Gesamtgröße nach dem Entpacken (inklusive {count} Abhängigkeit für linux-x64) | {size} Gesamtgröße nach dem Entpacken (inklusive aller {count} Abhängigkeiten für linux-x64)"
       }
     },
     "skills": {
@@ -312,7 +312,11 @@
       "filter_help": "Hilfe zum SemVer-Filter",
       "filter_tooltip": "Filtere Versionen mit einem {link}. Zum Beispiel zeigt ^3.0.0 alle 3.x-Versionen.",
       "filter_tooltip_link": "SemVer-Bereich",
-      "no_matches": "Keine Versionen entsprechen diesem Bereich"
+      "no_matches": "Keine Versionen entsprechen diesem Bereich",
+      "copy_alt": {
+        "per_version_analysis": "Die Version {version} wurde {downloads} mal heruntergeladen",
+        "general_description": "Balkendiagramm, das die Downloads pro Version für {versions_count} {semver_grouping_mode} Versionen des Pakets {package_name} anzeigt, {date_range_label} von der Version {first_version} bis zur Version {last_version}. Die am häufigsten heruntergeladene Version ist {max_downloaded_version} mit {max_version_downloads} Downloads. {per_version_analysis}. {watermark}."
+      }
     },
     "dependencies": {
       "title": "Abhängigkeit ({count}) | Abhängigkeiten ({count})",
@@ -374,7 +378,21 @@
         "contributors": "Mitwirkende"
       },
       "play_animation": "Animation abspielen",
-      "pause_animation": "Animation pausieren"
+      "pause_animation": "Animation pausieren",
+      "copy_alt": {
+        "trend_none": "weitgehend gleichbleibenden",
+        "trend_strong": "starken",
+        "trend_weak": "schwachen",
+        "trend_undefined": "undefinierten (unzureichende Daten)",
+        "button_label": "Alt-Text kopieren",
+        "watermark": "Unten befindet sich ein Wasserzeichen mit der Aufschrift \"./npmx a fast, modern browser for the npm registry\"",
+        "analysis": "{package_name} startet bei {start_value} und endet bei {end_value}, was einen {trend} Trend mit einer Steigung von {downloads_slope} Downloads pro Zeitintervall zeigt",
+        "estimation": "Der Endwert ist eine Schätzung basierend auf Teildaten für den aktuellen Zeitraum.",
+        "estimations": "Die Endwerte sind Schätzungen basierend auf Teildaten für den aktuellen Zeitraum.",
+        "compare": "Vergleichsdiagramm für Paket-Downloads für: {packages}.",
+        "single_package": "Download-Liniendiagramm für das Paket {package}.",
+        "general_description": "Die Y-Achse stellt die Anzahl der Downloads dar. Die X-Achse stellt den Datumsbereich dar, von {start_date} bis {end_date}, mit einem {granularity}en Zeitraum.{estimation_notice} {packages_analysis}. {watermark}."
+      }
     },
     "downloads": {
       "title": "Wöchentliche Downloads",
@@ -821,10 +839,16 @@
         "people": "bereits",
         "building": "Leute,",
         "really": "die",
-        "cool": "richtig",
+        "cool": "wirklich",
         "package": "coole",
         "managers": "Paketmanager bauen"
       }
+    },
+    "sponsors": {
+      "title": "Sponsoren"
+    },
+    "oss_partners": {
+      "title": "OSS-Partner"
     },
     "team": {
       "title": "Team",
@@ -1045,9 +1069,9 @@
         "li2": "{li21}{separator} {li22}",
         "separator": ":",
         "cookie_vdpl": "__vdpl",
-        "cookie_vdpl_desc": "Dieser Cookie wird von unserem Hosting-Anbieter (Vercel) zum Schutz vor Skew-Effekten verwendet. Er stellt sicher, dass du Assets der korrekten Deployment-Version lädst, wenn während deines Besuchs ein neues Update veröffentlicht wird. Er dient nicht dem Tracking.",
+        "cookie_vdpl_desc": "Dieser Cookie wird von unserem Hosting-Anbieter (Vercel) für den Skew-Schutz verwendet. Er stellt sicher, dass du Assets der korrekten Deployment-Version lädst, wenn während deines Besuchs ein neues Update veröffentlicht wird. Er dient nicht dem Tracking.",
         "cookie_h3": "h3",
-        "cookie_h3_desc": "Dies ist unser sicheres Sitzungs-Cookie. Es speichert den OAuth-Access-Token, wenn du dein Atmosphere-Konto verbindest. Es ist unerlässlich, um deine authentifizierte Sitzung aufrechtzuerhalten."
+        "cookie_h3_desc": "Dies ist unser sicheres Sitzungs-Cookie. Es speichert das OAuth-Access-Token, wenn du dein Atmosphere-Konto verbindest. Es ist unerlässlich, um deine authentifizierte Sitzung aufrechtzuerhalten."
       },
       "local_storage": {
         "title": "Lokaler Speicher",

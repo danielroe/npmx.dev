@@ -8,7 +8,6 @@ import { isPlatformSpecificPackage } from '~/utils/platform-packages'
 import { normalizeSearchParam } from '#shared/utils/url'
 
 const route = useRoute()
-const router = useRouter()
 
 // Preferences (persisted to localStorage)
 const {
@@ -21,13 +20,16 @@ const {
 } = usePackageListPreferences()
 
 // Debounced URL update for page (less aggressive to avoid too many URL changes)
+//Use History API directly to update URL without triggering Router's scroll-to-top
 const updateUrlPage = debounce((page: number) => {
-  router.replace({
-    query: {
-      ...route.query,
-      page: page > 1 ? page : undefined,
-    },
-  })
+  const url = new URL(window.location.href)
+  if (page > 1) {
+    url.searchParams.set('page', page.toString())
+  } else {
+    url.searchParams.delete('page')
+  }
+  // This updates the address bar "silently"
+  window.history.replaceState(window.history.state, '', url)
 }, 500)
 
 const { model: searchQuery, provider: searchProvider } = useGlobalSearch()
@@ -266,6 +268,9 @@ async function loadMore() {
   currentPage.value++
   await fetchMore(requestedSize.value)
 }
+onBeforeUnmount(() => {
+  updateUrlPage.cancel()
+})
 
 // Update URL when page changes from scrolling
 function handlePageChange(page: number) {
@@ -273,7 +278,8 @@ function handlePageChange(page: number) {
 }
 
 // Reset page when query changes
-watch(query, () => {
+watch(query, (newQuery, oldQuery) => {
+  if (newQuery.trim() === (oldQuery || '').trim()) return
   currentPage.value = 1
   hasInteracted.value = true
 })
@@ -387,20 +393,24 @@ const totalSelectableCount = computed(() => suggestionCount.value + resultCount.
  * Get all focusable result elements in DOM order (suggestions first, then packages)
  */
 function getFocusableElements(): HTMLElement[] {
-  const suggestions = Array.from(
-    document.querySelectorAll<HTMLElement>('[data-suggestion-index]'),
-  ).sort((a, b) => {
-    const aIdx = Number.parseInt(a.dataset.suggestionIndex ?? '0', 10)
-    const bIdx = Number.parseInt(b.dataset.suggestionIndex ?? '0', 10)
-    return aIdx - bIdx
-  })
-  const packages = Array.from(document.querySelectorAll<HTMLElement>('[data-result-index]')).sort(
-    (a, b) => {
+  const isVisible = (el: HTMLElement) => el.getClientRects().length > 0
+
+  const suggestions = Array.from(document.querySelectorAll<HTMLElement>('[data-suggestion-index]'))
+    .filter(isVisible)
+    .sort((a, b) => {
+      const aIdx = Number.parseInt(a.dataset.suggestionIndex ?? '0', 10)
+      const bIdx = Number.parseInt(b.dataset.suggestionIndex ?? '0', 10)
+      return aIdx - bIdx
+    })
+
+  const packages = Array.from(document.querySelectorAll<HTMLElement>('[data-result-index]'))
+    .filter(isVisible)
+    .sort((a, b) => {
       const aIdx = Number.parseInt(a.dataset.resultIndex ?? '0', 10)
       const bIdx = Number.parseInt(b.dataset.resultIndex ?? '0', 10)
       return aIdx - bIdx
-    },
-  )
+    })
+
   return [...suggestions, ...packages]
 }
 
@@ -533,7 +543,7 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <main class="flex-1 py-8" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
+  <main class="flex-1 py-8 search-page" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
     <div class="container-sm">
       <div class="flex items-center justify-between gap-4 mb-4">
         <h1 class="font-mono text-2xl sm:text-3xl font-medium">
@@ -542,13 +552,22 @@ defineOgImageComponent('Default', {
         <SearchProviderToggle />
       </div>
 
-      <section v-if="query">
-        <!-- Initial loading (only after user interaction, not during view transition) -->
+      <section v-if="query" class="results-layout">
         <LoadingSpinner v-if="showSearching" :text="$t('search.searching')" />
 
-        <div v-else-if="visibleResults">
-          <!-- User/Org search suggestions -->
-          <div v-if="validatedSuggestions.length > 0" class="mb-6 space-y-3">
+        <div
+          v-show="
+            results ||
+            displayResults.length > 0 ||
+            isRateLimited ||
+            status === 'error' ||
+            status === 'success'
+          "
+        >
+          <div
+            v-if="validatedSuggestions.length > 0 && displayResults.length > 0"
+            class="mb-6 space-y-3"
+          >
             <SearchSuggestionCard
               v-for="(suggestion, idx) in validatedSuggestions"
               :key="`${suggestion.type}-${suggestion.name}`"
@@ -562,9 +581,8 @@ defineOgImageComponent('Default', {
             />
           </div>
 
-          <!-- Claim prompt - shown at top when valid name but no exact match -->
           <div
-            v-if="showClaimPrompt && visibleResults.total > 0"
+            v-if="showClaimPrompt && visibleResults && displayResults.length > 0"
             class="mb-6 p-4 bg-bg-subtle border border-border rounded-lg sm:flex hidden flex-row sm:items-center gap-3 sm:gap-4"
           >
             <div class="flex-1 min-w-0">
@@ -582,15 +600,13 @@ defineOgImageComponent('Default', {
             </button>
           </div>
 
-          <!-- Rate limited by npm - check FIRST before showing any results -->
           <div v-if="isRateLimited" role="status" class="py-12">
             <p class="text-fg-muted font-mono mb-6 text-center">
               {{ $t('search.rate_limited') }}
             </p>
           </div>
 
-          <!-- Enhanced toolbar -->
-          <div v-else-if="visibleResults.total > 0" class="mb-6">
+          <div v-else-if="visibleResults && displayResults.length > 0" class="mb-6">
             <PackageListToolbar
               :filters="filters"
               v-model:sort-option="sortOption"
@@ -615,7 +631,6 @@ defineOgImageComponent('Default', {
               @update:updated-within="setUpdatedWithin"
               @toggle-keyword="toggleKeyword"
             />
-            <!-- Show count status (infinite scroll mode only) -->
             <p
               v-if="viewMode === 'cards' && paginationMode === 'infinite'"
               role="status"
@@ -639,7 +654,6 @@ defineOgImageComponent('Default', {
                 $t('search.updating')
               }}</span>
             </p>
-            <!-- Show "x of y" (paginated/table mode only) -->
             <p
               v-if="viewMode === 'table' || paginationMode === 'paginated'"
               role="status"
@@ -661,13 +675,11 @@ defineOgImageComponent('Default', {
             </p>
           </div>
 
-          <!-- No results found -->
           <div v-else-if="status === 'success' || status === 'error'" role="status" class="py-12">
             <p class="text-fg-muted font-mono mb-6 text-center">
               {{ $t('search.no_results', { query }) }}
             </p>
 
-            <!-- User/Org suggestions when no packages found -->
             <div v-if="validatedSuggestions.length > 0" class="max-w-md mx-auto mb-6 space-y-3">
               <SearchSuggestionCard
                 v-for="(suggestion, idx) in validatedSuggestions"
@@ -682,7 +694,6 @@ defineOgImageComponent('Default', {
               />
             </div>
 
-            <!-- Offer to claim the package name if it's valid -->
             <div v-if="showClaimPrompt" class="max-w-md mx-auto text-center hidden sm:block">
               <div class="p-4 bg-bg-subtle border border-border rounded-lg">
                 <p class="text-sm text-fg-muted mb-3">{{ $t('search.want_to_claim') }}</p>
@@ -698,7 +709,7 @@ defineOgImageComponent('Default', {
           </div>
 
           <PackageList
-            v-if="displayResults.length > 0 && !isRateLimited"
+            v-show="displayResults.length > 0 && !isRateLimited"
             :results="displayResults"
             :search-query="query"
             :filters="filters"
@@ -719,7 +730,6 @@ defineOgImageComponent('Default', {
             @click-keyword="toggleKeyword"
           />
 
-          <!-- Pagination controls -->
           <PaginationControls
             v-if="displayResults.length > 0 && !isRateLimited"
             v-model:mode="paginationMode"
@@ -736,7 +746,6 @@ defineOgImageComponent('Default', {
       </section>
     </div>
 
-    <!-- Claim package modal -->
     <PackageClaimPackageModal
       ref="claimPackageModalRef"
       :package-name="query"
@@ -745,3 +754,10 @@ defineOgImageComponent('Default', {
     />
   </main>
 </template>
+
+<style scoped>
+.results-layout {
+  min-height: 50vh;
+  overflow-anchor: none;
+}
+</style>
