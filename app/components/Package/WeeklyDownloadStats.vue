@@ -327,7 +327,6 @@ const config = computed<VueUiSparklineConfig>(() => {
                   : $t('package.trends.play_animation')
               "
               :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
-              :aria-pressed="hasSparklineAnimation"
               @click="toggleSparklineAnimation"
             >
               <span class="sr-only">
