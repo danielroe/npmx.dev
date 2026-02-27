@@ -380,7 +380,7 @@
       "toggle_stack_mode": "Gestapelte Ansicht ein-/ausschalten",
       "legend_estimation": "Schätzung",
       "no_data": "Keine Daten vorhanden",
-      "y_axis_label": "{granularity} {facet}",
+      "y_axis_label": "{facet} {granularity}",
       "facet": "Facette",
       "title": "Trends",
       "contributors_skip": "Nicht angezeigt bei Mitwirkende (hat kein GitHub-Repository): | Nicht angezeigt bei Mitwirkende (haben kein GitHub-Repository):",
