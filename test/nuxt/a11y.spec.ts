@@ -217,6 +217,7 @@ import HeaderAccountMenuServer from '~/components/Header/AccountMenu.server.vue'
 import ToggleServer from '~/components/Settings/Toggle.server.vue'
 import SearchProviderToggleServer from '~/components/SearchProviderToggle.server.vue'
 import PackageTrendsChart from '~/components/Package/TrendsChart.vue'
+import PackageLikeCard from '~/components/Package/LikeCard.vue'
 import SizeIncrease from '~/components/Package/SizeIncrease.vue'
 
 describe('component accessibility audits', () => {
@@ -682,6 +683,16 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations showing publisher', async () => {
       const component = await mountSuspended(PackageCard, {
         props: { result: mockResult, showPublisher: true },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('PackageLikeCard', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(PackageLikeCard, {
+        props: { packageUrl: 'https://npmx.dev/package/vue' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
