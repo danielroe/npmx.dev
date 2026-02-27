@@ -316,26 +316,26 @@ const config = computed<VueUiSparklineConfig>(() => {
               </template>
             </ClientOnly>
 
-            <ButtonBase
+            <TooltipApp
               v-if="hasWeeklyDownloads"
-              size="small"
-              class="hidden motion-safe:inline-flex absolute top-0 inset-ie-0 !p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
-              :title="
+              :text="
                 hasSparklineAnimation
                   ? $t('package.trends.pause_animation')
                   : $t('package.trends.play_animation')
               "
-              :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
-              @click="toggleSparklineAnimation"
             >
-              <span class="sr-only">
-                {{
+              <ButtonBase
+                size="small"
+                class="hidden motion-safe:inline-flex absolute top-0 inset-ie-0 !p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
+                :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
+                :aria-label="
                   hasSparklineAnimation
                     ? $t('package.trends.pause_animation')
                     : $t('package.trends.play_animation')
-                }}
-              </span>
-            </ButtonBase>
+                "
+                @click="toggleSparklineAnimation"
+              />
+            </TooltipApp>
           </div>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
