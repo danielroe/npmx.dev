@@ -13,7 +13,7 @@ test.describe('Homepage Picks', () => {
 
     // Each pick should contain a bold highlighted letter
     for (let i = 0; i < 4; i++) {
-      const highlightedLetter = pickItems.nth(i).locator('span.font-bold')
+      const highlightedLetter = pickItems.nth(i).locator('span.font-semibold')
       await expect(highlightedLetter).toBeVisible()
     }
 
