@@ -145,7 +145,9 @@ defineOgImageComponent('Default', {
 
       <!-- Display Profile -->
       <div v-else class="flex flex-col flex-wrap gap-4">
-        <h1 class="font-mono text-2xl sm:text-3xl font-medium">{{ profile.displayName }}</h1>
+        <h1 v-if="profile.displayName" class="font-mono text-2xl sm:text-3xl font-medium">
+          {{ profile.displayName }}
+        </h1>
         <p v-if="profile.description">{{ profile.description }}</p>
         <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
@@ -184,7 +186,7 @@ defineOgImageComponent('Default', {
       <div v-else-if="status === 'error'">
         <p>Error</p>
       </div>
-      <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div v-else-if="likesData.likes.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PackageLikeCard
           v-if="likesData.likes.records"
           v-for="like in likesData.likes.records"

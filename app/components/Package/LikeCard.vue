@@ -5,6 +5,8 @@ const props = defineProps<{
   packageUrl: string
 }>()
 
+const compactNumberFormatter = useCompactNumberFormatter()
+
 function extractPackageFromRef(ref: string) {
   const { pkg } = /https:\/\/npmx.dev\/package\/(?<pkg>.*)/.exec(ref).groups
   return pkg
@@ -72,7 +74,7 @@ const likeAction = async () => {
   <NuxtLink :to="packageRoute(name)">
     <BaseCard class="group font-mono flex justify-between">
       {{ name }}
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 justify-between">
         <ClientOnly>
           <TooltipApp
             :text="likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')"
@@ -98,11 +100,13 @@ const likeAction = async () => {
                 class="w-4 h-4"
                 aria-hidden="true"
               />
-              <span>{{ formatCompactNumber(likesData?.totalLikes ?? 0, { decimals: 1 }) }}</span>
+              <span>{{
+                compactNumberFormatter.format(likesData?.totalLikes ?? 0, { decimals: 1 })
+              }}</span>
             </button>
           </TooltipApp>
         </ClientOnly>
-        <p class="transition-transform duration-150 group-hover:rotate-45 pt-1">↗</p>
+        <p class="transition-transform duration-150 group-hover:rotate-45 pb-1">↗</p>
       </div>
     </BaseCard>
   </NuxtLink>

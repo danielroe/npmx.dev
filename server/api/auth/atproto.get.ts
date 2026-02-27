@@ -15,6 +15,8 @@ import { UNSET_NUXT_SESSION_PASSWORD } from '#shared/utils/constants'
 // @ts-expect-error virtual file from oauth module
 import { clientUri } from '#oauth/config'
 
+const OAUTH_REQUEST_COOKIE_PREFIX = 'atproto_oauth_req'
+
 export default defineEventHandler(async event => {
   const config = useRuntimeConfig(event)
   if (!config.sessionPassword) {
@@ -81,8 +83,12 @@ export default defineEventHandler(async event => {
       try {
         const state = decodeOAuthState(event, result.state)
         const profile = await getMiniProfile(result.session)
+        const npmxProfile = await getNpmxProfile(query.handle as string, result.session)
 
-        await session.update({ public: profile })
+        await session.update({
+          public: profile,
+          profile: npmxProfile,
+        })
         return sendRedirect(event, state.redirectPath)
       } catch (error) {
         // If we are unable to cleanly handle the callback, meaning that the
@@ -117,15 +123,6 @@ export default defineEventHandler(async event => {
 type OAuthStateData = {
   redirectPath: string
 }
-
-  const miniDocResponse = await fetch(
-    `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.identity.resolveMiniDoc?identifier=${agent.did}`,
-    { headers: { 'User-Agent': 'npmx' } },
-  )
-
-  if (miniDocResponse.ok) {
-    const miniDoc: PublicUserSession = await miniDocResponse.json()
-    const OAUTH_REQUEST_COOKIE_PREFIX = 'atproto_oauth_req'
 
 /**
  * This function encodes the OAuth state by generating a random SID, storing it
@@ -175,46 +172,6 @@ function generateRandomHexString(byteLength: number = 16): string {
   ).join('')
 }
 
-    // get existing npmx profile OR create a new one
-    const profileUri = `at://${agent.did}/dev.npmx.actor.profile/self`
-    const profileResponse = await fetch(
-      `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${profileUri}`,
-      { headers: { 'User-Agent': 'npmx' } },
-    )
-
-    if (profileResponse.ok) {
-      const profile = await profileResponse.json()
-      await session.update({
-        public: {
-          ...miniDoc,
-          avatar,
-        },
-        profile: profile.value,
-      })
-    } else {
-      const profile = {
-        website: '',
-        displayName: miniDoc.handle,
-        description: '',
-      }
-
-      await agent.com.atproto.repo.createRecord({
-        repo: miniDoc.handle,
-        collection: 'dev.npmx.actor.profile',
-        rkey: 'self',
-        record: {
-          $type: 'dev.npmx.actor.profile',
-          ...profile,
-        },
-      })
-
-      await session.update({
-        public: {
-          ...miniDoc,
-          avatar,
-        },
-        profile: profile,
-      })
 /**
  * This function ensures that an oauth state was indeed encoded for the browser
  * session performing the oauth callback.
@@ -325,4 +282,36 @@ async function getAvatar(did: DidString, pds: string) {
     // Avatar fetch failed, continue without it
   }
   return avatar
+}
+
+async function getNpmxProfile(handle: string, authSession: OAuthSession) {
+  const client = new Client(authSession)
+
+  // get existing npmx profile OR create a new one
+  const profileUri = `at://${client.did}/dev.npmx.actor.profile/self`
+  const profileResponse = await fetch(
+    `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${profileUri}`,
+    { headers: { 'User-Agent': 'npmx' } },
+  )
+
+  if (profileResponse.ok) {
+    const profile = await profileResponse.json()
+    return profile
+  } else {
+    const profile = {
+      website: '',
+      displayName: handle,
+      description: '',
+    }
+
+    await client.createRecord(
+      {
+        $type: 'dev.npmx.actor.profile',
+        ...profile,
+      },
+      'self',
+    )
+
+    return profile
+  }
 }

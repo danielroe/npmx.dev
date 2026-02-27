@@ -290,7 +290,7 @@ export class PackageLikesUtils {
    * @returns
    */
   async getUserLikes(
-    miniDoc: blue.microcosm.identity.resolveMiniDoc.OutputBody,
+    miniDoc: blue.microcosm.identity.resolveMiniDoc.$OutputBody,
     limit: number = 10,
   ) {
     const client = new Client(miniDoc.pds, {
@@ -300,7 +300,10 @@ export class PackageLikesUtils {
       limit,
       repo: miniDoc.did,
     })
+    return result
+  }
 
+  /*
    * Gets the likes evolution for a package as daily {day, likes} points.
    * Fetches ALL backlinks via paginated constellation calls, decodes TID
    * timestamps from each rkey, and groups by day.
