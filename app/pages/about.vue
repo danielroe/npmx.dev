@@ -157,13 +157,13 @@ const roleLabels = computed(
           </ul>
         </div>
 
-        <div>
+        <div class="sponsors-logos">
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.sponsors.title') }}
           </h2>
           <AboutLogoList
             :list="SPONSORS"
-            class="flex-col items-start md:flex-row md:items-center"
+            class="flex-col gap-8 items-start md:flex-row md:items-center md:gap-4"
           />
         </div>
 
@@ -306,3 +306,17 @@ const roleLabels = computed(
     </article>
   </main>
 </template>
+
+<style scoped>
+.sponsors-logos :deep(a) {
+  width: 8rem;
+  height: 2.5rem;
+}
+
+.sponsors-logos :deep(img) {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+</style>
