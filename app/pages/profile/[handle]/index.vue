@@ -66,8 +66,8 @@ async function updateProfile() {
 const { data: likesData, status } = await useProfileLikes(handle)
 
 useSeoMeta({
-  title: () => `${handle.value} - npmx`,
-  description: () => `npmx profile by ${handle.value}`,
+  title: () => $t('profile.seo_title', { handle: handle.value }),
+  description: () => $t('profile.seo_description', { handle: handle.value }),
 })
 
 /**
@@ -86,7 +86,7 @@ defineOgImageComponent('Default', {
       <!-- Editing Profile -->
       <div v-if="isEditing" class="flex flex-col flex-wrap gap-4">
         <label for="displayName" class="text-sm flex flex-col gap-2">
-          Display Name
+          {{ $t('profile.display_name') }}
           <input
             required
             name="displayName"
@@ -96,11 +96,11 @@ defineOgImageComponent('Default', {
           />
         </label>
         <label for="description" class="text-sm flex flex-col gap-2">
-          Description
+          {{ $t('profile.description') }}
           <input
             name="description"
             type="text"
-            placeholder="No description"
+            :placeholder="$t('profile.no_description')"
             v-model="descriptionInput"
             class="w-full min-w-25 bg-bg-subtle border border-border rounded-md ps-3 pe-3 py-1.5 font-mono text-sm text-fg placeholder:text-fg-subtle transition-[border-color,outline-color] duration-300 hover:border-fg-subtle outline-2 outline-transparent focus:border-accent focus-visible:(outline-2 outline-accent/70)"
           />
@@ -120,14 +120,14 @@ defineOgImageComponent('Default', {
             @click="isEditing = false"
             class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </button>
           <button
             @click.prevent="updateProfile"
             :disabled="isUpdateProfileActionPending"
             class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           >
-            Save
+            {{ $t('common.save') }}
           </button>
         </div>
       </div>
@@ -148,7 +148,7 @@ defineOgImageComponent('Default', {
             @click="isEditing = true"
             class="hidden sm:inline-flex link-subtle font-mono text-sm items-center gap-2 px-2 py-1.5 hover:bg-bg-subtle focus-visible:outline-accent/70 rounded"
           >
-            Edit
+            {{ $t('common.edit') }}
           </button>
         </div>
       </div>
@@ -157,16 +157,17 @@ defineOgImageComponent('Default', {
     <section class="flex flex-col gap-8">
       <h2
         class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
-        title="Likes"
+        :title="$t('profile.likes')"
         dir="ltr"
       >
-        Likes <span v-if="likesData">({{ likesData.likes.records.length ?? 0 }})</span>
+        {{ $t('profile.likes') }}
+        <span v-if="likesData">({{ likesData.likes.records.length ?? 0 }})</span>
       </h2>
       <div v-if="status === 'pending'">
-        <p>Loading...</p>
+        <p>{{ $t('common.loading') }}</p>
       </div>
       <div v-else-if="status === 'error'">
-        <p>Error</p>
+        <p>{{ $t('common.error') }}</p>
       </div>
       <div v-else-if="likesData.likes.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PackageLikeCard

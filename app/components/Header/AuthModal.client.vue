@@ -84,7 +84,7 @@ watch(user, async newUser => {
             class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
             @click="authModal.close()"
           >
-            Profile
+            {{ $t('auth.modal.profile') }}
           </button>
         </NuxtLink>
 
