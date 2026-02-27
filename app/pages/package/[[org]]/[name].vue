@@ -886,7 +886,7 @@ const showSkeleton = shallowRef(false)
               classicon="i-lucide:diff"
               :title="$t('compare.compare_versions_title')"
             >
-              {{ $t('compare.compare_versions') }}
+              <span class="max-sm:sr-only">{{ $t('compare.compare_versions') }}</span>
             </LinkBase>
             <ButtonBase
               v-if="showScrollToTop"
