@@ -65,6 +65,16 @@ function scaleWeeklyValue(weeklyValue: number, granularity: ChartTimeGranularity
   }
 }
 
+export function getAnomaliesForPackages(
+  packageNames: string[],
+): { packageName: string; start: string; end: string }[] {
+  return DOWNLOAD_ANOMALIES.filter(a => packageNames.includes(a.packageName)).map(a => ({
+    packageName: a.packageName,
+    start: a.start.date,
+    end: a.end.date,
+  }))
+}
+
 export function applyBlocklistCorrection(opts: {
   data: EvolutionData
   packageName: string

@@ -1171,7 +1171,25 @@
             "smoothing": {
               "type": "string"
             },
-            "anomalies_fixed": {
+            "known_anomalies": {
+              "type": "string"
+            },
+            "known_anomalies_description": {
+              "type": "string"
+            },
+            "known_anomalies_ranges": {
+              "type": "string"
+            },
+            "known_anomalies_range": {
+              "type": "string"
+            },
+            "known_anomalies_none": {
+              "type": "string"
+            },
+            "known_anomalies_contribute": {
+              "type": "string"
+            },
+            "apply_correction": {
               "type": "string"
             },
             "copy_alt": {
