@@ -921,9 +921,6 @@ const showSkeleton = shallowRef(false)
               <ButtonBase
                 @click="likeAction"
                 size="small"
-                :title="
-                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                "
                 :aria-label="
                   likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                 "
