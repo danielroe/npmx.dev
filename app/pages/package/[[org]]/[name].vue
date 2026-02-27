@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {
+  InstallSizeResult,
   NpmVersionDist,
   PackageVersionInfo,
   PackumentVersion,
@@ -19,6 +20,7 @@ import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-securi
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
+import { useInstallSizeDiff } from '~/composables/useInstallSizeDiff'
 import type { RouteLocationRaw } from 'vue-router'
 
 defineOgImageComponent('Package', {
@@ -182,13 +184,6 @@ const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${package
 })
 
 // Fetch total install size (lazy, can be slow for large dependency trees)
-interface InstallSizeResult {
-  package: string
-  version: string
-  selfSize: number
-  totalSize: number
-  dependencyCount: number
-}
 const {
   data: installSize,
   status: installSizeStatus,
@@ -254,6 +249,8 @@ const {
   status,
   error,
 } = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
+
+const { diff: sizeDiff } = useInstallSizeDiff(packageName, resolvedVersion, pkg, installSize)
 
 // Detect two hydration scenarios where the external _payload.json is missing:
 //
@@ -878,6 +875,16 @@ const showSkeleton = shallowRef(false)
             >
               <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
             </LinkBase>
+            <LinkBase
+              v-if="
+                displayVersion && latestVersion && displayVersion.version !== latestVersion.version
+              "
+              variant="button-secondary"
+              :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
+              classicon="i-lucide:diff"
+            >
+              {{ $t('compare.compare_versions') }}
+            </LinkBase>
             <ButtonBase
               v-if="showScrollToTop"
               variant="secondary"
@@ -1009,6 +1016,39 @@ const showSkeleton = shallowRef(false)
               <LinkBase :to="fundingUrl" classicon="i-lucide:heart">
                 {{ $t('package.links.fund') }}
               </LinkBase>
+            </li>
+            <!-- Mobile-only: Docs + Code + Compare links -->
+            <li v-if="docsLink && displayVersion" class="sm:hidden">
+              <LinkBase :to="docsLink" classicon="i-lucide:file-text">
+                {{ $t('package.links.docs') }}
+              </LinkBase>
+            </li>
+            <li v-if="resolvedVersion && codeLink" class="sm:hidden">
+              <LinkBase :to="codeLink" classicon="i-lucide:code">
+                {{ $t('package.links.code') }}
+              </LinkBase>
+            </li>
+            <li class="sm:hidden">
+              <LinkBase
+                :to="{ name: 'compare', query: { packages: pkg.name } }"
+                classicon="i-lucide:git-compare"
+              >
+                {{ $t('package.links.compare') }}
+              </LinkBase>
+            </li>
+            <li
+              v-if="
+                displayVersion && latestVersion && displayVersion.version !== latestVersion.version
+              "
+              class="sm:hidden"
+            >
+              <NuxtLink
+                :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-lucide:diff w-4 h-4" aria-hidden="true" />
+                {{ $t('compare.compare_versions') }}
+              </NuxtLink>
             </li>
           </ul>
         </div>
@@ -1333,6 +1373,8 @@ const showSkeleton = shallowRef(false)
       <div class="space-y-6" :class="$style.areaVulns">
         <!-- Bad package warning -->
         <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
+        <!-- Size / dependency increase notice -->
+        <PackageSizeIncrease v-if="sizeDiff" :diff="sizeDiff" />
         <!-- Vulnerability scan -->
         <ClientOnly>
           <PackageVulnerabilityTree

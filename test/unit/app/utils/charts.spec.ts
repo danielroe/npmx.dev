@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
   sum,
   chunkIntoWeeks,
@@ -8,7 +8,126 @@ import {
   quantile,
   winsorize,
   computeLineChartAnalysis,
+  createAltTextForTrendLineChart,
+  copyAltTextForTrendLineChart,
+  createAltTextForVersionsBarChart,
+  copyAltTextForVersionsBarChart,
+  type TrendLineConfig,
+  type TrendLineDataset,
+  type VersionsBarConfig,
+  type VersionsBarDataset,
 } from '../../../../app/utils/charts'
+import type { AltCopyArgs } from 'vue-data-ui'
+
+type TranslateCall = { key: string | number; named?: Record<string, unknown> }
+
+function createTranslateMock() {
+  const calls: TranslateCall[] = []
+
+  const translate = ((key: string | number, named?: Record<string, unknown>) => {
+    calls.push({ key, named })
+    return typeof key === 'string' ? `t:${key}` : `t:${String(key)}`
+  }) as TrendLineConfig['$t']
+
+  return { translate, calls }
+}
+
+function createTrendLineConfig(overrides: Partial<TrendLineConfig> = {}): TrendLineConfig {
+  const { translate } = createTranslateMock()
+
+  const trendLineConfig: TrendLineConfig = {
+    formattedDates: [
+      { text: '2026-03-01', absoluteIndex: 0 },
+      { text: '2026-03-10', absoluteIndex: 9 },
+    ],
+    hasEstimation: false,
+    formattedDatasetValues: [['1', '2']],
+    granularity: 'weekly',
+    copy: vi.fn(async () => undefined),
+    $t: translate,
+    numberFormatter: (value: number) => `nf:${value}`,
+  } as unknown as TrendLineConfig
+
+  return { ...trendLineConfig, ...overrides }
+}
+
+function createDatasetWithSingleLine(values: Array<number | null>): TrendLineDataset {
+  return {
+    lines: [
+      {
+        name: 'nuxt',
+        series: values,
+      } as any,
+    ],
+  }
+}
+
+function createDatasetWithTwoLines(
+  firstValues: Array<number | null>,
+  secondValues: Array<number | null>,
+): TrendLineDataset {
+  return {
+    lines: [
+      { name: 'nuxt', series: firstValues } as any,
+      { name: 'svelte', series: secondValues } as any,
+    ],
+  }
+}
+
+function createConfig(overrides: Partial<TrendLineConfig> = {}): TrendLineConfig {
+  const config: TrendLineConfig = {
+    theme: 'dark',
+    chart: {},
+    formattedDates: [],
+    hasEstimation: false,
+    formattedDatasetValues: [],
+    granularity: 'weekly',
+    copy: vi.fn(async () => undefined),
+    $t: ((key: string | number) => String(key)) as any,
+    numberFormatter: (value: number) => String(value),
+  } as unknown as TrendLineConfig
+
+  return { ...config, ...overrides }
+}
+
+function createDataset(): TrendLineDataset {
+  return {
+    lines: [{ name: 'nuxt', series: [1, 2, 3] } as any],
+  }
+}
+
+function createVersionsBarConfigForTests(
+  overrides: Partial<VersionsBarConfig> = {},
+): VersionsBarConfig {
+  const { translate } = createTranslateMock()
+
+  const base: VersionsBarConfig = {
+    theme: 'dark',
+    chart: {},
+    copy: vi.fn(async () => undefined),
+    $t: translate as any,
+    numberFormatter: (value: number) => `nf:${value}`,
+    datapointLabels: [],
+    dateRangeLabel: 'RANGE',
+    semverGroupingMode: 'major',
+  } as unknown as VersionsBarConfig
+
+  return { ...base, ...overrides }
+}
+
+function createVersionsBarDatasetForTests(
+  values: Array<number | null | undefined>,
+  packageName?: string,
+): VersionsBarDataset {
+  return {
+    bars: [
+      {
+        name: packageName,
+        series: values,
+      } as any,
+    ],
+  }
+}
 
 describe('sum', () => {
   it('returns 0 for an empty array', () => {
@@ -667,5 +786,453 @@ describe('computeLineChartAnalysis', () => {
     const undefinedTrend = computeLineChartAnalysis([0, 0, 0, 0])
     expect(undefinedTrend.rSquared).toBeNull()
     expect(undefinedTrend.interpretation.trend).toBe('none')
+  })
+})
+
+describe('createAltTextForTrendLineChart', () => {
+  it('handles dataset with empty lines without throwing', () => {
+    const { translate } = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({ $t: translate })
+
+    expect(() =>
+      createAltTextForTrendLineChart({
+        dataset: { lines: [] },
+        config: trendLineConfig,
+      } as AltCopyArgs<TrendLineDataset, TrendLineConfig>),
+    ).not.toThrow()
+  })
+
+  it('returns empty string when dataset is null', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({ $t: translateMock.translate })
+
+    const result = createAltTextForTrendLineChart({
+      dataset: null,
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    expect(result).toBe('')
+    expect(translateMock.calls).toHaveLength(0)
+  })
+
+  it('uses single-package prefix when there is one line', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({ $t: translateMock.translate })
+
+    const result = createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([10, 20, 30, 40]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    expect(result.startsWith('t:package.trends.copy_alt.single_package')).toBe(true)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.copy_alt.single_package')
+    expect(keys).toContain('package.trends.copy_alt.general_description')
+    expect(keys).toContain('package.trends.copy_alt.analysis')
+  })
+
+  it('uses compare prefix when there are multiple lines', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({ $t: translateMock.translate })
+
+    const result = createAltTextForTrendLineChart({
+      dataset: createDatasetWithTwoLines([10, 20, 30, 40], [40, 30, 20, 10]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    expect(result.startsWith('t:package.trends.copy_alt.compare')).toBe(true)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.copy_alt.compare')
+    expect(keys).toContain('package.trends.copy_alt.general_description')
+    expect(keys).toContain('package.trends.copy_alt.analysis')
+  })
+
+  it('translates granularity through the static map for weekly', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      granularity: 'weekly',
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([10, 20, 30, 40]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.granularity_weekly')
+  })
+
+  it('falls back to weekly granularity key when granularity is not in the map', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      granularity: 'day' as unknown as TrendLineConfig['granularity'],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([10, 20, 30, 40]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.granularity_weekly')
+  })
+
+  it('includes estimation notice when hasEstimation is true', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      hasEstimation: true,
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([10, 20, 30, 40]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.copy_alt.estimation')
+  })
+
+  it('uses plural estimation key when hasEstimation is true and multiple lines exist', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      hasEstimation: true,
+      formattedDatasetValues: [
+        ['1', '2'],
+        ['3', '4'],
+      ],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithTwoLines([10, 20, 30, 40], [40, 30, 20, 10]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.copy_alt.estimations')
+  })
+
+  it('uses the correct trend translation key for a strong trend', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      formattedDatasetValues: [['10', '40']],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([10, 20, 30, 40]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.copy_alt.trend_strong')
+  })
+
+  it('uses the correct trend translation key for undefined trend (flat series)', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      formattedDatasetValues: [['5', '5']],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([5, 5, 5, 5]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const keys = translateMock.calls.map(call => call.key)
+    expect(keys).toContain('package.trends.copy_alt.trend_none')
+  })
+
+  it('passes expected named parameters into analysis translation', () => {
+    const translateMock = createTranslateMock()
+    const numberFormatter = vi.fn((value: number) => `formatted:${value}`)
+
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      numberFormatter,
+      formattedDatasetValues: [['100', '200']],
+      formattedDates: [
+        { text: '2026-03-01', absoluteIndex: 0 },
+        { text: '2026-03-10', absoluteIndex: 9 },
+      ],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([100, 120, 140, 160, 180, 200]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const analysisCall = translateMock.calls.find(
+      call => call.key === 'package.trends.copy_alt.analysis',
+    )
+    expect(analysisCall).toBeTruthy()
+
+    const named = analysisCall?.named ?? {}
+    expect(named).toHaveProperty('package_name', 'nuxt')
+    expect(named).toHaveProperty('start_value', '100')
+    expect(named).toHaveProperty('end_value', '200')
+    expect(named).toHaveProperty('trend')
+    expect(named).toHaveProperty('downloads_slope')
+
+    expect(numberFormatter).toHaveBeenCalledTimes(1)
+    expect(String(named.downloads_slope)).toMatch(/^formatted:/)
+  })
+
+  it('uses "-" fallback for missing formatted dates in general_description named parameters', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      formattedDates: [],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithSingleLine([10, 20, 30, 40]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const generalDescriptionCall = translateMock.calls.find(
+      call => call.key === 'package.trends.copy_alt.general_description',
+    )
+    expect(generalDescriptionCall).toBeTruthy()
+
+    const named = generalDescriptionCall?.named ?? {}
+    expect(named).toHaveProperty('start_date', '-')
+    expect(named).toHaveProperty('end_date', '-')
+  })
+
+  it('passes watermark, granularity, and packages_analysis into general_description', () => {
+    const translateMock = createTranslateMock()
+    const trendLineConfig = createTrendLineConfig({
+      $t: translateMock.translate,
+      granularity: 'weekly',
+      formattedDatasetValues: [
+        ['10', '40'],
+        ['40', '10'],
+      ],
+    })
+
+    createAltTextForTrendLineChart({
+      dataset: createDatasetWithTwoLines([10, 20, 30, 40], [40, 30, 20, 10]),
+      config: trendLineConfig,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    const generalDescriptionCall = translateMock.calls.find(
+      call => call.key === 'package.trends.copy_alt.general_description',
+    )
+    expect(generalDescriptionCall).toBeTruthy()
+
+    const named = generalDescriptionCall?.named ?? {}
+    expect(named).toHaveProperty('granularity')
+    expect(named).toHaveProperty('packages_analysis')
+    expect(named).toHaveProperty('watermark')
+  })
+})
+
+describe('copyAltTextForTrendLineChart', () => {
+  it('forwards createAltTextForTrendLineChart result to config.copy', async () => {
+    const copyMock = vi.fn(async () => undefined)
+    const config = createConfig({
+      copy: copyMock,
+      $t: ((key: string | number) => `t:${String(key)}`) as any,
+      formattedDates: [{ text: '2026-03-01', absoluteIndex: 0 }],
+      formattedDatasetValues: [['1', '2', '3']],
+      numberFormatter: (value: number) => `nf:${value}`,
+      granularity: 'weekly',
+    })
+
+    const dataset = createDataset()
+
+    const expected = createAltTextForTrendLineChart({
+      dataset,
+      config,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    await copyAltTextForTrendLineChart({
+      dataset,
+      config,
+    } as AltCopyArgs<TrendLineDataset, TrendLineConfig>)
+
+    expect(copyMock).toHaveBeenCalledTimes(1)
+    expect(copyMock).toHaveBeenCalledWith(expected)
+  })
+})
+
+describe('createAltTextForVersionsBarChart', () => {
+  it('handles dataset with empty bars without throwing', () => {
+    const { translate } = createTranslateMock()
+    const config = createVersionsBarConfigForTests({ $t: translate as any })
+
+    expect(() =>
+      createAltTextForVersionsBarChart({
+        dataset: { bars: [] },
+        config,
+      } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>),
+    ).not.toThrow()
+  })
+
+  it('returns empty string when dataset is null (does not translate)', () => {
+    const { translate, calls } = createTranslateMock()
+    const config = createVersionsBarConfigForTests({ $t: translate as any })
+
+    const result = createAltTextForVersionsBarChart({
+      dataset: null,
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    expect(result).toBe('')
+    expect(calls).toHaveLength(0)
+  })
+
+  it('calls general_description with expected named params (major grouping)', () => {
+    const { translate, calls } = createTranslateMock()
+
+    const config = createVersionsBarConfigForTests({
+      $t: translate as any,
+      semverGroupingMode: 'major',
+      dateRangeLabel: 'from 19 Feb to 25 Feb, 2026',
+      datapointLabels: ['2.0.x', '3.0.x', '4.0.x'],
+      numberFormatter: (value: number) => `${value}M`,
+    })
+
+    const dataset = createVersionsBarDatasetForTests([10, 20, 30], 'nuxt')
+
+    const result = createAltTextForVersionsBarChart({
+      dataset,
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    expect(result).toBe('t:package.versions.copy_alt.general_description')
+
+    const keys = calls.map(c => c.key)
+    expect(keys).toContain('package.versions.grouping_major')
+    expect(keys).toContain('package.trends.copy_alt.watermark')
+    expect(keys).toContain('package.versions.copy_alt.general_description')
+
+    const generalCall = calls.find(c => c.key === 'package.versions.copy_alt.general_description')
+    expect(generalCall).toBeTruthy()
+
+    expect(generalCall?.named).toMatchObject({
+      package_name: 'nuxt',
+      versions_count: 3,
+      first_version: '2.0.x',
+      last_version: '4.0.x',
+      date_range_label: 'from 19 Feb to 25 Feb, 2026',
+      max_downloaded_version: '4.0.x',
+      max_version_downloads: '30M',
+    })
+
+    expect(generalCall?.named).toHaveProperty(
+      'semver_grouping_mode',
+      't:package.versions.grouping_major',
+    )
+    expect(generalCall?.named).toHaveProperty('watermark', 't:package.trends.copy_alt.watermark')
+  })
+
+  it('uses grouping_minor when semverGroupingMode is not "major"', () => {
+    const { translate, calls } = createTranslateMock()
+
+    const config = createVersionsBarConfigForTests({
+      $t: translate as any,
+      semverGroupingMode: 'minor',
+    })
+
+    createAltTextForVersionsBarChart({
+      dataset: createVersionsBarDatasetForTests([1, 2], 'pkg'),
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    const keys = calls.map(c => c.key)
+    expect(keys).toContain('package.versions.grouping_minor')
+  })
+
+  it('builds per_version_analysis in reverse order and excludes the max version', () => {
+    const { translate, calls } = createTranslateMock()
+
+    const config = createVersionsBarConfigForTests({
+      $t: translate as any,
+      datapointLabels: ['v1', 'v2', 'v3', 'v4'],
+      numberFormatter: (value: number) => `${value}M`,
+    })
+
+    createAltTextForVersionsBarChart({
+      dataset: createVersionsBarDatasetForTests([10, 20, 999, 40], 'pkg'),
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    const perVersionCalls = calls.filter(
+      c => c.key === 'package.versions.copy_alt.per_version_analysis',
+    )
+    expect(perVersionCalls).toHaveLength(3)
+
+    expect(perVersionCalls[0]?.named).toMatchObject({ version: 'v4', downloads: '40M' })
+    expect(perVersionCalls[1]?.named).toMatchObject({ version: 'v2', downloads: '20M' })
+    expect(perVersionCalls[2]?.named).toMatchObject({ version: 'v1', downloads: '10M' })
+
+    const generalCall = calls.find(c => c.key === 'package.versions.copy_alt.general_description')
+    expect(generalCall).toBeTruthy()
+
+    expect(generalCall?.named).toHaveProperty(
+      'per_version_analysis',
+      Array.from({ length: 3 }, () => 't:package.versions.copy_alt.per_version_analysis').join(
+        ', ',
+      ),
+    )
+  })
+
+  it('treats null/undefined series values as 0 for max selection and formatting', () => {
+    const { translate, calls } = createTranslateMock()
+
+    const config = createVersionsBarConfigForTests({
+      $t: translate as any,
+      datapointLabels: ['v1', 'v2', 'v3'],
+      numberFormatter: (value: number) => `${value}M`,
+    })
+
+    createAltTextForVersionsBarChart({
+      dataset: createVersionsBarDatasetForTests([null, 5, undefined], 'pkg'),
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    const generalCall = calls.find(c => c.key === 'package.versions.copy_alt.general_description')
+    expect(generalCall?.named).toMatchObject({
+      max_downloaded_version: 'v2',
+      max_version_downloads: '5M',
+    })
+  })
+})
+
+describe('copyAltTextForVersionsBarChart', () => {
+  it('forwards createAltTextForVersionsBarChart result to config.copy', async () => {
+    const copyMock = vi.fn(async () => undefined)
+
+    const config = createVersionsBarConfigForTests({
+      copy: copyMock,
+      $t: ((key: string | number) => `t:${String(key)}`) as any,
+      numberFormatter: (value: number) => `${value}M`,
+      datapointLabels: ['v1', 'v2', 'v3'],
+      dateRangeLabel: 'RANGE',
+      semverGroupingMode: 'major',
+    })
+
+    const dataset = createVersionsBarDatasetForTests([1, 2, 3], 'pkg')
+
+    const expected = createAltTextForVersionsBarChart({
+      dataset,
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    await copyAltTextForVersionsBarChart({
+      dataset,
+      config,
+    } as AltCopyArgs<VersionsBarDataset, VersionsBarConfig>)
+
+    expect(copyMock).toHaveBeenCalledTimes(1)
+    expect(copyMock).toHaveBeenCalledWith(expected)
   })
 })

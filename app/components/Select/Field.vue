@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { SelectBaseProps } from './Base.vue'
+import type { SelectBaseProps } from './types'
 
 const SELECT_FIELD_SIZES = {
   sm: 'text-xs py-1.75 ps-2 pe-6 rounded-md',
