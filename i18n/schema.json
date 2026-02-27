@@ -486,6 +486,21 @@
         },
         "not_found_message": {
           "type": "string"
+        },
+        "invite": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "share_button": {
+              "type": "string"
+            },
+            "compose_text": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

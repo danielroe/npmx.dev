@@ -160,7 +160,12 @@
     "seo_title": "{handle} - npmx",
     "seo_description": "npmx profile by {handle}",
     "not_found": "Profile Not Found",
-    "not_found_message": "The profile for {handle} could not be found."
+    "not_found_message": "The profile for {handle} could not be found.",
+    "invite": {
+      "message": "It doesn't look like they're using npmx yet. Want to tell them about it?",
+      "share_button": "Share on Bluesky",
+      "compose_text": "Hey {'@'}{handle}! Have you checked out npmx.dev yet? It's a browser for the npm registry that's fast, modern, and open-source.\nhttps://npmx.dev"
+    }
   },
   "package": {
     "not_found": "Package Not Found",

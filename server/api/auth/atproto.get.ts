@@ -6,9 +6,9 @@ import { SLINGSHOT_HOST } from '#shared/utils/constants'
 import { useServerSession } from '#server/utils/server-session'
 import { handleApiError } from '#server/utils/error-handler'
 import type { DidString } from '@atproto/lex'
-import { Client } from '@atproto/lex'
-import * as com from '#shared/types/lexicons/com'
+import { Client, isAtUriString } from '@atproto/lex'
 import * as app from '#shared/types/lexicons/app'
+import * as blue from '#shared/types/lexicons/blue'
 import { isAtIdentifierString } from '@atproto/lex'
 import { scope } from '#server/utils/atproto/oauth'
 import { UNSET_NUXT_SESSION_PASSWORD } from '#shared/utils/constants'
@@ -16,6 +16,7 @@ import { UNSET_NUXT_SESSION_PASSWORD } from '#shared/utils/constants'
 import { clientUri } from '#oauth/config'
 
 const OAUTH_REQUEST_COOKIE_PREFIX = 'atproto_oauth_req'
+const slingshotClient = new Client({ service: `https://${SLINGSHOT_HOST}` })
 
 export default defineEventHandler(async event => {
   const config = useRuntimeConfig(event)
@@ -224,8 +225,7 @@ function decodeOAuthState(event: H3Event, state: string | null): OAuthStateData 
  * @returns An object containing the user's DID, handle, PDS, and avatar URL (if available)
  */
 async function getMiniProfile(authSession: OAuthSession) {
-  const client = new Client({ service: `https://${SLINGSHOT_HOST}` })
-  const response = await client.xrpcSafe(com['bad-example'].identity.resolveMiniDoc, {
+  const response = await slingshotClient.xrpcSafe(blue.microcosm.identity.resolveMiniDoc, {
     headers: { 'User-Agent': 'npmx' },
     params: { identifier: authSession.did },
   })
@@ -289,16 +289,17 @@ async function getNpmxProfile(handle: string, authSession: OAuthSession) {
 
   // get existing npmx profile OR create a new one
   const profileUri = `at://${client.did}/dev.npmx.actor.profile/self`
+  if (!isAtUriString(profileUri)) {
+    throw new Error(`Invalid at-uri: ${profileUri}`)
+  }
 
-  // TODO: update with safe client rpc, see `getMiniProfile` response variable
-  const profileResponse = await fetch(
-    `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${encodeURIComponent(profileUri)}`,
-    { headers: { 'User-Agent': 'npmx' }, signal: AbortSignal.timeout(5_000) },
-  )
+  const profileResult = await slingshotClient.xrpcSafe(blue.microcosm.repo.getRecordByUri, {
+    headers: { 'User-Agent': 'npmx' },
+    params: { at_uri: profileUri },
+  })
 
-  if (profileResponse.ok) {
-    const profile = await profileResponse.json()
-    return profile
+  if (profileResult.success) {
+    return profileResult.body.value
   } else {
     const profile = {
       website: '',

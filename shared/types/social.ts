@@ -27,4 +27,6 @@ export type NPMXProfile = {
   displayName: string
   website?: string
   description?: string
+  // If the atproto record exists for the profile
+  recordExists: boolean
 }
