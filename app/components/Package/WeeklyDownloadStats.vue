@@ -318,7 +318,6 @@ const config = computed<VueUiSparklineConfig>(() => {
 
             <ButtonBase
               v-if="hasWeeklyDownloads"
-              type="button"
               size="small"
               class="hidden motion-safe:inline-flex absolute top-0 inset-ie-0 !p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
               :title="
