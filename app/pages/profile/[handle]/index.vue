@@ -53,6 +53,7 @@ async function updateProfile() {
     displayName: displayNameInput.value,
     description: descriptionInput.value || undefined,
     website: websiteInput.value || undefined,
+    recordExists: true,
   }
 
   try {
@@ -76,6 +77,20 @@ async function updateProfile() {
 }
 
 const { data: likes, status } = useProfileLikes(handle)
+
+const showInviteSection = computed(() => {
+  return (
+    profile.value.recordExists === false &&
+    status.value === 'success' &&
+    !likes.value?.records?.length &&
+    user.value?.handle !== handle.value
+  )
+})
+
+const inviteUrl = computed(() => {
+  const text = $t('profile.invite.compose_text', { handle: handle.value })
+  return `https://bsky.app/intent/compose?text=${encodeURIComponent(text)}`
+})
 
 useSeoMeta({
   title: () => $t('profile.seo_title', { handle: handle.value }),
@@ -181,6 +196,19 @@ defineOgImageComponent('Default', {
       </div>
       <div v-else-if="likes?.records" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <PackageLikeCard v-for="like in likes.records" :packageUrl="like.value.subjectRef" />
+      </div>
+
+      <!-- Invite section: shown when user does not have npmx profile or any like lexicons -->
+      <div
+        v-if="showInviteSection"
+        class="flex flex-col items-start gap-4 p-6 bg-bg-subtle border border-border rounded-lg"
+      >
+        <p class="text-fg-muted">
+          {{ $t('profile.invite.message') }}
+        </p>
+        <LinkBase variant="button-secondary" classicon="i-simple-icons:bluesky" :to="inviteUrl">
+          {{ $t('profile.invite.share_button') }}
+        </LinkBase>
       </div>
     </section>
   </main>
