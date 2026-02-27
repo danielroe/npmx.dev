@@ -2103,6 +2103,9 @@
         },
         "file_path": {
           "type": "string"
+        },
+        "scroll_to_top": {
+          "type": "string"
         }
       },
       "additionalProperties": false
