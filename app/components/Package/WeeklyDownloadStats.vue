@@ -20,6 +20,7 @@ const { settings } = useSettings()
 
 const chartModal = useModal('chart-modal')
 const hasChartModalTransitioned = shallowRef(false)
+const numberFormatter = useNumberFormatter()
 
 const modalTitle = computed(() => {
   const facet = route.query.facet as string | undefined
@@ -244,6 +245,9 @@ const config = computed<VueUiSparklineConfig>(() => {
         fontSize: 28,
         bold: false,
         color: colors.value.fg,
+        formatter: ({ value }) => {
+          return numberFormatter.value.format(value)
+        },
       },
       line: {
         color: colors.value.borderHover,

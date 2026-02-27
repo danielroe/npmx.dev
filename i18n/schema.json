@@ -322,6 +322,12 @@
         "language": {
           "type": "string"
         },
+        "use_system_locale": {
+          "type": "string"
+        },
+        "use_system_locale_description": {
+          "type": "string"
+        },
         "help_translate": {
           "type": "string"
         },
