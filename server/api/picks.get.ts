@@ -3,7 +3,6 @@ import {
   NPMX_LETTERS,
   ALGOLIA_POOL_SIZE,
   MIN_DOWNLOADS_LAST_30_DAYS,
-  MAX_MODIFIED_AGE_MS,
   LIKES_SAMPLE_SIZE,
   selectPicks,
   type NpmxLetter,
@@ -27,7 +26,6 @@ function randomSample<T>(arr: T[], n: number): T[] {
 interface AlgoliaHit {
   name: string
   downloadsLast30Days: number
-  modified: string
   isDeprecated?: boolean
 }
 
@@ -62,7 +60,6 @@ export default defineCachedEventHandler(
     const pool = algoliaResponse.hits.filter(hit => {
       if (hit.isDeprecated) return false
       if (hit.downloadsLast30Days < MIN_DOWNLOADS_LAST_30_DAYS) return false
-      if (now - new Date(hit.modified).getTime() > MAX_MODIFIED_AGE_MS) return false
       return true
     })
 

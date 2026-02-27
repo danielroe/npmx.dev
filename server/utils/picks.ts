@@ -5,7 +5,6 @@ export type NpmxLetter = (typeof NPMX_LETTERS)[number]
 
 export const MIN_LIKES = 5
 export const MIN_DOWNLOADS_LAST_30_DAYS = 10_000
-export const MAX_MODIFIED_AGE_MS = 730 * 24 * 60 * 60 * 1000
 export const ALGOLIA_POOL_SIZE = 500
 export const LIKES_SAMPLE_SIZE = 30
 
