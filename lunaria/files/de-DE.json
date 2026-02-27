@@ -1078,6 +1078,7 @@
     "files_count": "{count} Datei | {count} Dateien",
     "lines_hidden": "{count} Zeile ausgeblendet | {count} Zeilen ausgeblendet",
     "compare_versions": "Diff",
+    "compare_versions_title": "Mit neuester Version vergleichen",
     "summary": "Zusammenfassung",
     "deps_count": "{count} Abh.",
     "dependencies": "Abhängigkeiten",

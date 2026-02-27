@@ -884,6 +884,7 @@ const showSkeleton = shallowRef(false)
               variant="button-secondary"
               :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
               classicon="i-lucide:diff"
+              :title="$t('compare.compare_versions_title')"
             >
               {{ $t('compare.compare_versions') }}
             </LinkBase>

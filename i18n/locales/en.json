@@ -1079,6 +1079,7 @@
     "files_count": "{count} file | {count} files",
     "lines_hidden": "{count} line hidden | {count} lines hidden",
     "compare_versions": "diff",
+    "compare_versions_title": "Compare with latest version",
     "summary": "Summary",
     "deps_count": "{count} dep | {count} deps",
     "dependencies": "Dependencies",
