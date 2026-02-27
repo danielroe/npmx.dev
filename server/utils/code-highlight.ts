@@ -167,7 +167,7 @@ interface LinkifyOptions {
  * @param html - The HTML to process
  * @param options - Dependencies map and optional relative import resolver
  */
-function linkifyImports(html: string, options?: LinkifyOptions): string {
+function linkifyModuleSpecifiers(html: string, options?: LinkifyOptions): string {
   const { dependencies, resolveRelative } = options ?? {}
 
   const getHref = (moduleSpecifier: string): string | null => {
@@ -285,7 +285,7 @@ export async function highlightCode(
 
       // Make import statements clickable for JS/TS languages
       if (IMPORT_LANGUAGES.has(language)) {
-        html = linkifyImports(html, {
+        html = linkifyModuleSpecifiers(html, {
           dependencies: options?.dependencies,
           resolveRelative: options?.resolveRelative,
         })
