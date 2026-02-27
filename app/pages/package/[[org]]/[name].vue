@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {
+  InstallSizeResult,
   NpmVersionDist,
   PackageVersionInfo,
   PackumentVersion,
@@ -19,6 +20,7 @@ import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-securi
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
+import { useInstallSizeDiff } from '~/composables/useInstallSizeDiff'
 import type { RouteLocationRaw } from 'vue-router'
 
 defineOgImageComponent('Package', {
@@ -106,7 +108,15 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', mdExists: false, playgroundLinks: [], toc: [] }) },
+  {
+    default: () => ({
+      html: '',
+      mdExists: false,
+      playgroundLinks: [],
+      toc: [],
+      defaultValue: true,
+    }),
+  },
 )
 
 const playgroundLinks = computed(() => [
@@ -174,13 +184,6 @@ const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${package
 })
 
 // Fetch total install size (lazy, can be slow for large dependency trees)
-interface InstallSizeResult {
-  package: string
-  version: string
-  selfSize: number
-  totalSize: number
-  dependencyCount: number
-}
 const {
   data: installSize,
   status: installSizeStatus,
@@ -247,6 +250,8 @@ const {
   error,
 } = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
 
+const { diff: sizeDiff } = useInstallSizeDiff(packageName, resolvedVersion, pkg, installSize)
+
 // Detect two hydration scenarios where the external _payload.json is missing:
 //
 // 1. SPA fallback (200.html): No real content was server-rendered.
@@ -259,18 +264,19 @@ const nuxtApp = useNuxtApp()
 const route = useRoute()
 const hasEmptyPayload =
   import.meta.client &&
-  nuxtApp.isHydrating &&
   nuxtApp.payload.serverRendered &&
   !Object.keys(nuxtApp.payload.data ?? {}).length
-const isSpaFallback = shallowRef(hasEmptyPayload && !nuxtApp.payload.path)
+const isSpaFallback = shallowRef(nuxtApp.isHydrating && hasEmptyPayload && !nuxtApp.payload.path)
 const isHydratingWithServerContent = shallowRef(
-  hasEmptyPayload && nuxtApp.payload.path === route.path,
+  nuxtApp.isHydrating && hasEmptyPayload && nuxtApp.payload.path === route.path,
 )
+const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
+
 // When we have server-rendered content but no payload data, capture the server
 // DOM before Vue's hydration replaces it. This lets us show the server-rendered
 // HTML as a static snapshot while data refetches, avoiding any visual flash.
 const serverRenderedHtml = shallowRef<string | null>(
-  isHydratingWithServerContent.value
+  hasServerContentOnly.value
     ? (document.getElementById('package-article')?.innerHTML ?? null)
     : null,
 )
@@ -279,7 +285,6 @@ if (isSpaFallback.value || isHydratingWithServerContent.value) {
   nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
     isSpaFallback.value = false
     isHydratingWithServerContent.value = false
-    serverRenderedHtml.value = null
   })
 }
 
@@ -735,27 +740,26 @@ const showSkeleton = shallowRef(false)
     <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
     <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
     <PackageSkeleton
-      v-if="
-        isSpaFallback || (!isHydratingWithServerContent && (showSkeleton || status === 'pending'))
-      "
+      v-if="isSpaFallback || (!hasServerContentOnly && (showSkeleton || status === 'pending'))"
     />
 
     <!-- During hydration without payload, show captured server HTML as a static snapshot.
          This avoids a visual flash: the user sees the server content while data refetches.
          v-html is safe here: the content originates from the server's own SSR output,
-         captured from the DOM before hydration — it is not user-controlled input. -->
+         captured from the DOM before hydration — it is not user-controlled input.
+         We also show SSR output until critical data is loaded, so that after rendering dynamic
+         content, the user receives the same result as he received from the server-->
     <article
-      v-else-if="isHydratingWithServerContent && serverRenderedHtml"
+      v-else-if="
+        isHydratingWithServerContent ||
+        (hasServerContentOnly && serverRenderedHtml && (!pkg || readmeData?.defaultValue))
+      "
       id="package-article"
       :class="$style.packagePage"
       v-html="serverRenderedHtml"
     />
 
-    <article
-      v-else-if="status === 'success' && pkg"
-      id="package-article"
-      :class="$style.packagePage"
-    >
+    <article v-else-if="pkg" id="package-article" :class="$style.packagePage">
       <!-- Package header -->
       <header
         class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
@@ -872,6 +876,16 @@ const showSkeleton = shallowRef(false)
               :title="$t('package.links.compare')"
             >
               <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
+            </LinkBase>
+            <LinkBase
+              v-if="
+                displayVersion && latestVersion && displayVersion.version !== latestVersion.version
+              "
+              variant="button-secondary"
+              :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
+              classicon="i-lucide:diff"
+            >
+              {{ $t('compare.compare_versions') }}
             </LinkBase>
             <ButtonBase
               v-if="showScrollToTop"
@@ -1004,6 +1018,39 @@ const showSkeleton = shallowRef(false)
               <LinkBase :to="fundingUrl" classicon="i-lucide:heart">
                 {{ $t('package.links.fund') }}
               </LinkBase>
+            </li>
+            <!-- Mobile-only: Docs + Code + Compare links -->
+            <li v-if="docsLink && displayVersion" class="sm:hidden">
+              <LinkBase :to="docsLink" classicon="i-lucide:file-text">
+                {{ $t('package.links.docs') }}
+              </LinkBase>
+            </li>
+            <li v-if="resolvedVersion && codeLink" class="sm:hidden">
+              <LinkBase :to="codeLink" classicon="i-lucide:code">
+                {{ $t('package.links.code') }}
+              </LinkBase>
+            </li>
+            <li class="sm:hidden">
+              <LinkBase
+                :to="{ name: 'compare', query: { packages: pkg.name } }"
+                classicon="i-lucide:git-compare"
+              >
+                {{ $t('package.links.compare') }}
+              </LinkBase>
+            </li>
+            <li
+              v-if="
+                displayVersion && latestVersion && displayVersion.version !== latestVersion.version
+              "
+              class="sm:hidden"
+            >
+              <NuxtLink
+                :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-lucide:diff w-4 h-4" aria-hidden="true" />
+                {{ $t('compare.compare_versions') }}
+              </NuxtLink>
             </li>
           </ul>
         </div>
@@ -1328,6 +1375,8 @@ const showSkeleton = shallowRef(false)
       <div class="space-y-6" :class="$style.areaVulns">
         <!-- Bad package warning -->
         <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
+        <!-- Size / dependency increase notice -->
+        <PackageSizeIncrease v-if="sizeDiff" :diff="sizeDiff" />
         <!-- Vulnerability scan -->
         <ClientOnly>
           <PackageVulnerabilityTree
