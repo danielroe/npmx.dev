@@ -335,6 +335,11 @@ input[type='search']::-webkit-search-results-decoration {
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Hide keyboard shortcut hints before hydration when user disabled them */
+:root[data-kbd-shortcuts='false'] [data-kbd-hint] {
+  display: none;
+}
+
 /* Locking the scroll whenever any of the modals are open */
 html:has(dialog:modal) {
   overflow: hidden;
