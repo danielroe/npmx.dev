@@ -2,6 +2,8 @@ import LogoVercel from './vercel.svg'
 import LogoVercelLight from './vercel-light.svg'
 import LogoVoidZero from './void-zero.svg'
 import LogoVoidZeroLight from './void-zero-light.svg'
+import LogoVlt from './vlt.svg'
+import LogoVltLight from './vlt-light.svg'
 
 // The list is used on the about page. To add, simply upload the logos nearby and add an entry here. Prefer SVGs.
 // For logo src, specify a string or object with the light and dark theme variants.
@@ -25,5 +27,13 @@ export const SPONSORS = [
       light: LogoVoidZeroLight,
     },
     url: 'https://voidzero.dev/',
+  },
+  {
+    name: 'vlt',
+    logo: {
+      dark: LogoVlt,
+      light: LogoVltLight,
+    },
+    url: 'https://vlt.sh/',
   },
 ]
