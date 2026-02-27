@@ -2,7 +2,7 @@
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
-import { applyDownloadFilter } from '~/utils/chart-filters'
+import { applyDownloadFilter } from '~/utils/chart-data-correction'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
 import { applyBlocklistFilter } from '~/utils/download-anomalies'
 import type { RepoRef } from '#shared/utils/git-providers'

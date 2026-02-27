@@ -18,7 +18,7 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
-import { applyDownloadFilter } from '~/utils/chart-filters'
+import { applyDownloadFilter } from '~/utils/chart-data-correction'
 import { applyBlocklistFilter } from '~/utils/download-anomalies'
 
 const props = withDefaults(
