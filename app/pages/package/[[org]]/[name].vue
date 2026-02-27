@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {
+  InstallSizeResult,
   NpmVersionDist,
   PackageVersionInfo,
   PackumentVersion,
@@ -19,6 +20,7 @@ import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-securi
 import { useModal } from '~/composables/useModal'
 import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
+import { useInstallSizeDiff } from '~/composables/useInstallSizeDiff'
 import type { RouteLocationRaw } from 'vue-router'
 
 defineOgImageComponent('Package', {
@@ -106,8 +108,31 @@ const { data: readmeData } = useLazyFetch<ReadmeResponse>(
     const version = requestedVersion.value
     return version ? `${base}/v/${version}` : base
   },
-  { default: () => ({ html: '', mdExists: false, playgroundLinks: [], toc: [] }) },
+  {
+    default: () => ({
+      html: '',
+      mdExists: false,
+      playgroundLinks: [],
+      toc: [],
+      defaultValue: true,
+    }),
+  },
 )
+
+const playgroundLinks = computed(() => [
+  ...readmeData.value.playgroundLinks,
+  // Libraries with a storybook field in package.json contain a link to their deployed playground
+  ...(pkg.value?.storybook?.url
+    ? [
+        {
+          url: pkg.value.storybook.url,
+          provider: 'storybook',
+          providerName: 'Storybook',
+          label: 'Storybook',
+        },
+      ]
+    : []),
+])
 
 const {
   data: readmeMarkdownData,
@@ -159,13 +184,6 @@ const { data: jsrInfo } = useLazyFetch<JsrPackageInfo>(() => `/api/jsr/${package
 })
 
 // Fetch total install size (lazy, can be slow for large dependency trees)
-interface InstallSizeResult {
-  package: string
-  version: string
-  selfSize: number
-  totalSize: number
-  dependencyCount: number
-}
 const {
   data: installSize,
   status: installSizeStatus,
@@ -195,17 +213,15 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 
-const {
-  data: resolvedVersion,
-  status: versionStatus,
-  error: versionError,
-} = await useResolvedVersion(packageName, requestedVersion)
+const { data: resolvedVersion, status: resolvedStatus } = await useResolvedVersion(
+  packageName,
+  requestedVersion,
+)
 
 if (
-  versionStatus.value === 'error' &&
-  versionError.value?.statusCode &&
-  versionError.value.statusCode >= 400 &&
-  versionError.value.statusCode < 500
+  import.meta.server &&
+  !resolvedVersion.value &&
+  ['success', 'error'].includes(resolvedStatus.value)
 ) {
   throw createError({
     statusCode: 404,
@@ -214,11 +230,64 @@ if (
   })
 }
 
+watch(
+  [resolvedStatus, resolvedVersion],
+  ([status, version]) => {
+    if ((!version && status === 'success') || status === 'error') {
+      showError({
+        statusCode: 404,
+        statusMessage: $t('package.not_found'),
+        message: $t('package.not_found_message'),
+      })
+    }
+  },
+  { immediate: true },
+)
+
 const {
   data: pkg,
   status,
   error,
 } = usePackage(packageName, () => resolvedVersion.value ?? requestedVersion.value)
+
+const { diff: sizeDiff } = useInstallSizeDiff(packageName, resolvedVersion, pkg, installSize)
+
+// Detect two hydration scenarios where the external _payload.json is missing:
+//
+// 1. SPA fallback (200.html): No real content was server-rendered.
+//    → Show skeleton while data fetches on the client.
+//
+// 2. SSR-rendered HTML with missing payload: Content was rendered but the external _payload.json
+//    returned an ISR fallback.
+//    → Preserve the server-rendered DOM, don't flash to skeleton.
+const nuxtApp = useNuxtApp()
+const route = useRoute()
+const hasEmptyPayload =
+  import.meta.client &&
+  nuxtApp.payload.serverRendered &&
+  !Object.keys(nuxtApp.payload.data ?? {}).length
+const isSpaFallback = shallowRef(nuxtApp.isHydrating && hasEmptyPayload && !nuxtApp.payload.path)
+const isHydratingWithServerContent = shallowRef(
+  nuxtApp.isHydrating && hasEmptyPayload && nuxtApp.payload.path === route.path,
+)
+const hasServerContentOnly = shallowRef(hasEmptyPayload && nuxtApp.payload.path === route.path)
+
+// When we have server-rendered content but no payload data, capture the server
+// DOM before Vue's hydration replaces it. This lets us show the server-rendered
+// HTML as a static snapshot while data refetches, avoiding any visual flash.
+const serverRenderedHtml = shallowRef<string | null>(
+  hasServerContentOnly.value
+    ? (document.getElementById('package-article')?.innerHTML ?? null)
+    : null,
+)
+
+if (isSpaFallback.value || isHydratingWithServerContent.value) {
+  nuxtApp.hooks.hookOnce('app:suspense:resolve', () => {
+    isSpaFallback.value = false
+    isHydratingWithServerContent.value = false
+  })
+}
+
 const displayVersion = computed(() => pkg.value?.requestedVersion ?? null)
 const versionSecurityMetadata = computed<PackageVersionInfo[]>(() => {
   if (!pkg.value) return []
@@ -250,6 +319,13 @@ const { copied: copiedVersion, copy: copyVersion } = useClipboard({
   source: () => resolvedVersion.value ?? '',
   copiedDuring: 2000,
 })
+
+const { scrollToTop, isTouchDeviceClient } = useScrollToTop()
+
+const { y: scrollY } = useScroll(window)
+const showScrollToTop = computed(
+  () => isTouchDeviceClient.value && scrollY.value > SCROLL_TO_TOP_THRESHOLD,
+)
 
 // Fetch dependency analysis (lazy, client-side)
 // This is the same composable used by PackageVulnerabilityTree and PackageDeprecatedTree
@@ -612,8 +688,10 @@ const codeLink = computed((): RouteLocationRaw | null => {
   }
 })
 
+const keyboardShortcuts = useKeyboardShortcuts()
+
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
   e => {
     if (codeLink.value === null) return
     e.preventDefault()
@@ -624,7 +702,7 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
   e => {
     if (!docsLink.value) return
     e.preventDefault()
@@ -634,7 +712,7 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
   e => {
     if (!pkg.value) return
     e.preventDefault()
@@ -659,9 +737,29 @@ const showSkeleton = shallowRef(false)
     </ButtonBase>
   </DevOnly>
   <main class="container flex-1 w-full py-8">
-    <PackageSkeleton v-if="showSkeleton || status === 'pending'" />
+    <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
+    <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
+    <PackageSkeleton
+      v-if="isSpaFallback || (!hasServerContentOnly && (showSkeleton || status === 'pending'))"
+    />
 
-    <article v-else-if="status === 'success' && pkg" :class="$style.packagePage">
+    <!-- During hydration without payload, show captured server HTML as a static snapshot.
+         This avoids a visual flash: the user sees the server content while data refetches.
+         v-html is safe here: the content originates from the server's own SSR output,
+         captured from the DOM before hydration — it is not user-controlled input.
+         We also show SSR output until critical data is loaded, so that after rendering dynamic
+         content, the user receives the same result as he received from the server-->
+    <article
+      v-else-if="
+        isHydratingWithServerContent ||
+        (hasServerContentOnly && serverRenderedHtml && (!pkg || readmeData?.defaultValue))
+      "
+      id="package-article"
+      :class="$style.packagePage"
+      v-html="serverRenderedHtml"
+    />
+
+    <article v-else-if="pkg" id="package-article" :class="$style.packagePage">
       <!-- Package header -->
       <header
         class="sticky top-14 z-1 bg-[--bg] py-2 border-border"
@@ -670,7 +768,12 @@ const showSkeleton = shallowRef(false)
       >
         <!-- Package name and version -->
         <div class="flex items-baseline gap-x-2 gap-y-1 sm:gap-x-3 flex-wrap min-w-0">
-          <div class="group relative flex flex-col items-start min-w-0">
+          <CopyToClipboardButton
+            :copied="copiedPkgName"
+            :copy-text="$t('package.copy_name')"
+            class="flex flex-col items-start min-w-0"
+            @click="copyPkgName()"
+          >
             <h1
               class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
               :title="pkg.name"
@@ -684,30 +787,14 @@ const showSkeleton = shallowRef(false)
                 {{ orgName ? pkg.name.replace(`@${orgName}/`, '') : pkg.name }}
               </span>
             </h1>
+          </CopyToClipboardButton>
 
-            <!-- Floating copy name button -->
-            <button
-              type="button"
-              @click="copyPkgName()"
-              class="absolute z-20 inset-is-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap transition-all duration-150 opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto"
-              :class="[
-                $style.copyButton,
-                copiedPkgName ? 'text-accent bg-accent/10' : 'text-fg-muted bg-bg border-border',
-              ]"
-              :aria-label="copiedPkgName ? $t('common.copied') : $t('package.copy_name')"
-            >
-              <span
-                :class="copiedPkgName ? 'i-lucide:check' : 'i-lucide:copy'"
-                class="w-3.5 h-3.5"
-                aria-hidden="true"
-              />
-              {{ copiedPkgName ? $t('common.copied') : $t('package.copy_name') }}
-            </button>
-          </div>
-
-          <span
+          <CopyToClipboardButton
             v-if="resolvedVersion"
-            class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0 relative group"
+            :copied="copiedVersion"
+            :copy-text="$t('package.copy_version')"
+            class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
+            @click="copyVersion()"
           >
             <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
             <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
@@ -750,33 +837,14 @@ const showSkeleton = shallowRef(false)
               class="text-fg-subtle text-sm shrink-0"
               >{{ $t('package.not_latest') }}</span
             >
-
-            <!-- Floating copy version button -->
-            <button
-              type="button"
-              @click="copyVersion()"
-              class="absolute z-20 inset-is-0 top-full inline-flex items-center gap-1 px-2 py-1 rounded border text-xs font-mono whitespace-nowrap transition-all duration-150 opacity-0 -translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto focus-visible:opacity-100 focus-visible:translate-y-0 focus-visible:pointer-events-auto"
-              :class="[
-                $style.copyButton,
-                copiedVersion ? 'text-accent bg-accent/10' : 'text-fg-muted bg-bg border-border',
-              ]"
-              :aria-label="copiedVersion ? $t('common.copied') : $t('package.copy_version')"
-            >
-              <span
-                :class="copiedVersion ? 'i-lucide:check' : 'i-lucide:copy'"
-                class="w-3.5 h-3.5"
-                aria-hidden="true"
-              />
-              {{ copiedVersion ? $t('common.copied') : $t('package.copy_version') }}
-            </button>
-          </span>
+          </CopyToClipboardButton>
 
           <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->
           <ButtonGroup
             v-if="resolvedVersion"
             as="nav"
             :aria-label="$t('package.navigation')"
-            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md"
+            class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md ms-auto"
             :style="navExtraOffsetStyle"
             :class="$style.packageNav"
           >
@@ -786,8 +854,9 @@ const showSkeleton = shallowRef(false)
               :to="docsLink"
               aria-keyshortcuts="d"
               classicon="i-lucide:file-text"
+              :title="$t('package.links.docs')"
             >
-              {{ $t('package.links.docs') }}
+              <span class="max-sm:sr-only">{{ $t('package.links.docs') }}</span>
             </LinkBase>
             <LinkBase
               v-if="codeLink"
@@ -795,17 +864,37 @@ const showSkeleton = shallowRef(false)
               :to="codeLink"
               aria-keyshortcuts="."
               classicon="i-lucide:code"
+              :title="$t('package.links.code')"
             >
-              {{ $t('package.links.code') }}
+              <span class="max-sm:sr-only">{{ $t('package.links.code') }}</span>
             </LinkBase>
             <LinkBase
               variant="button-secondary"
               :to="{ name: 'compare', query: { packages: pkg.name } }"
               aria-keyshortcuts="c"
               classicon="i-lucide:git-compare"
+              :title="$t('package.links.compare')"
             >
-              {{ $t('package.links.compare') }}
+              <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
             </LinkBase>
+            <LinkBase
+              v-if="
+                displayVersion && latestVersion && displayVersion.version !== latestVersion.version
+              "
+              variant="button-secondary"
+              :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
+              classicon="i-lucide:diff"
+            >
+              {{ $t('compare.compare_versions') }}
+            </LinkBase>
+            <ButtonBase
+              v-if="showScrollToTop"
+              variant="secondary"
+              :title="$t('common.scroll_to_top')"
+              :aria-label="$t('common.scroll_to_top')"
+              @click="() => scrollToTop()"
+              classicon="i-lucide:arrow-up"
+            />
           </ButtonGroup>
 
           <!-- Package metrics -->
@@ -834,9 +923,6 @@ const showSkeleton = shallowRef(false)
               <ButtonBase
                 @click="likeAction"
                 size="small"
-                :title="
-                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                "
                 :aria-label="
                   likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                 "
@@ -930,6 +1016,39 @@ const showSkeleton = shallowRef(false)
                 {{ $t('package.links.fund') }}
               </LinkBase>
             </li>
+            <!-- Mobile-only: Docs + Code + Compare links -->
+            <li v-if="docsLink && displayVersion" class="sm:hidden">
+              <LinkBase :to="docsLink" classicon="i-lucide:file-text">
+                {{ $t('package.links.docs') }}
+              </LinkBase>
+            </li>
+            <li v-if="resolvedVersion && codeLink" class="sm:hidden">
+              <LinkBase :to="codeLink" classicon="i-lucide:code">
+                {{ $t('package.links.code') }}
+              </LinkBase>
+            </li>
+            <li class="sm:hidden">
+              <LinkBase
+                :to="{ name: 'compare', query: { packages: pkg.name } }"
+                classicon="i-lucide:git-compare"
+              >
+                {{ $t('package.links.compare') }}
+              </LinkBase>
+            </li>
+            <li
+              v-if="
+                displayVersion && latestVersion && displayVersion.version !== latestVersion.version
+              "
+              class="sm:hidden"
+            >
+              <NuxtLink
+                :to="diffRoute(pkg.name, displayVersion.version, latestVersion.version)"
+                class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
+              >
+                <span class="i-lucide:diff w-4 h-4" aria-hidden="true" />
+                {{ $t('compare.compare_versions') }}
+              </NuxtLink>
+            </li>
           </ul>
         </div>
 
@@ -999,7 +1118,7 @@ const showSkeleton = shallowRef(false)
                   </ClientOnly>
                 </template>
               </span>
-              <ButtonGroup v-if="dependencyCount > 0">
+              <ButtonGroup v-if="dependencyCount > 0" class="ms-auto">
                 <LinkBase
                   variant="button-secondary"
                   size="small"
@@ -1253,6 +1372,8 @@ const showSkeleton = shallowRef(false)
       <div class="space-y-6" :class="$style.areaVulns">
         <!-- Bad package warning -->
         <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
+        <!-- Size / dependency increase notice -->
+        <PackageSizeIncrease v-if="sizeDiff" :diff="sizeDiff" />
         <!-- Vulnerability scan -->
         <ClientOnly>
           <PackageVulnerabilityTree
@@ -1378,10 +1499,7 @@ const showSkeleton = shallowRef(false)
           />
 
           <!-- Playground links -->
-          <PackagePlaygrounds
-            v-if="readmeData?.playgroundLinks?.length"
-            :links="readmeData.playgroundLinks"
-          />
+          <PackagePlaygrounds v-if="playgroundLinks.length" :links="playgroundLinks" />
 
           <PackageCompatibility :engines="displayVersion?.engines" />
 
@@ -1540,39 +1658,6 @@ const showSkeleton = shallowRef(false)
 
 .areaSidebar {
   grid-area: sidebar;
-}
-
-.copyButton {
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  height: 1px;
-  overflow: hidden;
-  width: 1px;
-  transition:
-    opacity 0.25s 0.1s,
-    translate 0.15s 0.1s,
-    clip 0.01s 0.34s allow-discrete,
-    clip-path 0.01s 0.34s allow-discrete,
-    height 0.01s 0.34s allow-discrete,
-    width 0.01s 0.34s allow-discrete;
-}
-
-:global(.group):hover .copyButton,
-.copyButton:focus-visible {
-  clip: auto;
-  clip-path: none;
-  height: auto;
-  overflow: visible;
-  width: auto;
-  transition:
-    opacity 0.15s,
-    translate 0.15s;
-}
-
-@media (hover: none) {
-  .copyButton {
-    display: none;
-  }
 }
 
 /* Mobile floating nav: safe-area positioning + kbd hiding */

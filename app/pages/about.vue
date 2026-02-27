@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Role, GitHubContributor } from '#server/api/contributors.get'
+import { SPONSORS } from '~/assets/logos/sponsors'
+import { OSS_PARTNERS } from '~/assets/logos/oss-partners'
 
 const router = useRouter()
 const canGoBack = useCanGoBack()
@@ -192,7 +194,7 @@ onDeactivated(() => {
           <button
             v-if="canGoBack"
             type="button"
-            class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+            class="cursor-pointer inline-flex items-center gap-2 p-1.5 -mx-1.5 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
             @click="router.back()"
           >
             <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
@@ -204,9 +206,9 @@ onDeactivated(() => {
         </p>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-8">
+      <section class="prose prose-invert max-w-none space-y-12">
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
@@ -215,7 +217,7 @@ onDeactivated(() => {
                 <strong class="text-fg">{{ $t('about.what_we_are.better_ux_dx') }}</strong>
               </template>
               <template #jsr>
-                <LinkBase to="https://jsr.io/">JSR</LinkBase>
+                <LinkBase to="https://jsr.io/" no-new-tab-icon>JSR</LinkBase>
               </template>
             </i18n-t>
           </p>
@@ -229,7 +231,7 @@ onDeactivated(() => {
         </div>
 
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are_not.title') }}
           </h2>
           <ul class="space-y-3 text-fg-muted list-none p-0">
@@ -246,36 +248,36 @@ onDeactivated(() => {
                   scope="global"
                 >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
-                  <template #people
-                    ><LinkBase :to="pmLinks.npm" class="font-sans">{{
+                  <template #people>
+                    <LinkBase :to="pmLinks.npm" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.people')
-                    }}</LinkBase></template
-                  >
-                  <template #building
-                    ><LinkBase :to="pmLinks.pnpm" class="font-sans">{{
+                    }}</LinkBase>
+                  </template>
+                  <template #building>
+                    <LinkBase :to="pmLinks.pnpm" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.building')
-                    }}</LinkBase></template
-                  >
-                  <template #really
-                    ><LinkBase :to="pmLinks.yarn" class="font-sans">{{
+                    }}</LinkBase>
+                  </template>
+                  <template #really>
+                    <LinkBase :to="pmLinks.yarn" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.really')
-                    }}</LinkBase></template
-                  >
-                  <template #cool
-                    ><LinkBase :to="pmLinks.bun" class="font-sans">{{
+                    }}</LinkBase>
+                  </template>
+                  <template #cool>
+                    <LinkBase :to="pmLinks.bun" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.cool')
-                    }}</LinkBase></template
-                  >
-                  <template #package
-                    ><LinkBase :to="pmLinks.deno" class="font-sans">{{
+                    }}</LinkBase>
+                  </template>
+                  <template #package>
+                    <LinkBase :to="pmLinks.deno" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.package')
-                    }}</LinkBase></template
-                  >
-                  <template #managers
-                    ><LinkBase :to="pmLinks.vlt" class="font-sans">{{
+                    }}</LinkBase>
+                  </template>
+                  <template #managers>
+                    <LinkBase :to="pmLinks.vlt" class="font-sans" no-new-tab-icon>{{
                       $t('about.what_we_are_not.words.managers')
-                    }}</LinkBase></template
-                  >
+                    }}</LinkBase>
+                  </template>
                 </i18n-t>
               </span>
             </li>
@@ -289,8 +291,25 @@ onDeactivated(() => {
           </ul>
         </div>
 
+        <div class="sponsors-logos">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.sponsors.title') }}
+          </h2>
+          <AboutLogoList
+            :list="SPONSORS"
+            class="flex-col gap-6 items-start md:flex-row md:items-center md:gap-4"
+          />
+        </div>
+
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.oss_partners.title') }}
+          </h2>
+          <AboutLogoList :list="OSS_PARTNERS" class="items-center" />
+        </div>
+
+        <div>
+          <h2 class="text-lg uppercase tracking-wider mb-4">
             {{ $t('about.team.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-6">
@@ -299,7 +318,7 @@ onDeactivated(() => {
           <section aria-labelledby="contributors-heading">
             <h3
               id="contributors-heading"
-              class="text-sm text-fg-subtle uppercase tracking-wider mb-4"
+              class="text-sm text-fg uppercase tracking-wider mb-4"
             >
               {{
                 $t(

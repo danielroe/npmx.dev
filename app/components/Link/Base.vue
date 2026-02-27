@@ -37,13 +37,11 @@ const props = withDefaults(
     noUnderline?: boolean
 
     /**
-     * When `true`, suppresses the external-link icon even for external `to` URLs.
-     *
-     * @default false
+     * @deprecated @todo remove this property and add separate clean component without this logic
      */
-    noExternalIcon?: boolean
+    noNewTabIcon?: boolean
   }>(),
-  { variant: 'link', size: 'medium', noUnderline: false, noExternalIcon: false },
+  { variant: 'link', size: 'medium' },
 )
 
 const isLinkExternal = computed(
@@ -61,6 +59,7 @@ const isLink = computed(() => props.variant === 'link')
 const isButton = computed(() => !isLink.value)
 const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 </script>
 
 <template>
@@ -99,14 +98,14 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
         variant === 'button-primary',
     }"
     :to="to"
-    :aria-keyshortcuts="ariaKeyshortcuts"
+    :aria-keyshortcuts="keyboardShortcutsEnabled ? ariaKeyshortcuts : undefined"
     :target="isLinkExternal ? '_blank' : undefined"
   >
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
     <!-- automatically show icon indicating external link -->
     <span
-      v-if="isLinkExternal && !noExternalIcon && !classicon"
+      v-if="isLinkExternal && !classicon && !noNewTabIcon"
       class="i-lucide:external-link rtl-flip size-[1em] opacity-50"
       aria-hidden="true"
     />
@@ -116,7 +115,8 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
       aria-hidden="true"
     />
     <kbd
-      v-if="ariaKeyshortcuts"
+      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      data-kbd-hint
       class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >

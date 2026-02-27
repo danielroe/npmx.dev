@@ -2,8 +2,11 @@
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
+import { applyDataCorrection } from '~/utils/chart-data-correction'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
+import { applyBlocklistCorrection } from '~/utils/download-anomalies'
 import type { RepoRef } from '#shared/utils/git-providers'
+import type { VueUiSparklineConfig, VueUiSparklineDatasetItem } from 'vue-data-ui'
 
 const props = defineProps<{
   packageName: string
@@ -176,8 +179,22 @@ watch(
   () => loadWeeklyDownloads(),
 )
 
-const dataset = computed(() =>
-  weeklyDownloads.value.map(d => ({
+const correctedDownloads = computed<WeeklyDataPoint[]>(() => {
+  let data = weeklyDownloads.value as WeeklyDataPoint[]
+  if (!data.length) return data
+  if (settings.value.chartFilter.anomaliesFixed) {
+    data = applyBlocklistCorrection({
+      data,
+      packageName: props.packageName,
+      granularity: 'weekly',
+    }) as WeeklyDataPoint[]
+  }
+  data = applyDataCorrection(data, settings.value.chartFilter) as WeeklyDataPoint[]
+  return data
+})
+
+const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
+  correctedDownloads.value.map(d => ({
     value: d?.value ?? 0,
     period: $t('package.trends.date_range', {
       start: d.weekStart ?? '-',
@@ -188,7 +205,7 @@ const dataset = computed(() =>
 
 const lastDatapoint = computed(() => dataset.value.at(-1)?.period ?? '')
 
-const config = computed(() => {
+const config = computed<VueUiSparklineConfig>(() => {
   return {
     theme: 'dark',
     /**
@@ -234,7 +251,7 @@ const config = computed(() => {
           show: hasSparklineAnimation.value, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
           loop: true, // runs only once if false
           radius: 1.5,
-          color: pulseColor.value,
+          color: pulseColor.value!,
           easing: 'ease-in-out',
           trail: {
             show: true,
@@ -248,7 +265,7 @@ const config = computed(() => {
         stroke: isDarkMode.value ? 'oklch(0.985 0 0)' : 'oklch(0.145 0 0)',
       },
       title: {
-        text: lastDatapoint.value,
+        text: String(lastDatapoint.value),
         fontSize: 12,
         color: colors.value.fgSubtle,
         bold: false,
@@ -279,7 +296,7 @@ const config = computed(() => {
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
 
-      <div class="w-full overflow-hidden">
+      <div class="w-full overflow-hidden h-[76px] motion-safe:h-[calc(92px+0.75rem)]">
         <template v-if="isLoadingWeeklyDownloads || hasWeeklyDownloads">
           <ClientOnly>
             <VueUiSparkline class="w-full max-w-xs" :dataset :config>
@@ -305,6 +322,10 @@ const config = computed(() => {
                   <div class="flex-1 flex items-end pe-3">
                     <SkeletonInline class="h-px w-full" />
                   </div>
+                </div>
+                <!-- Animation toggle placeholder -->
+                <div class="w-full hidden motion-safe:flex flex-1 items-end justify-end">
+                  <SkeletonInline class="h-[20px] w-30" />
                 </div>
               </div>
             </template>
@@ -350,10 +371,7 @@ const config = computed(() => {
 
     <!-- This placeholder bears the same dimensions as the PackageTrendsChart component -->
     <!-- Avoids CLS when the dialog has transitioned -->
-    <div
-      v-if="!hasChartModalTransitioned"
-      class="w-full aspect-[390/634.5] sm:aspect-[718/622.797]"
-    />
+    <div v-if="!hasChartModalTransitioned" class="w-full aspect-[390/634.5] sm:aspect-[718/647]" />
   </PackageChartModal>
 </template>
 

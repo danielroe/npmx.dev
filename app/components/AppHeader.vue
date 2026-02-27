@@ -4,6 +4,8 @@ import type { NavigationConfig, NavigationConfigWithGroups } from '~/types'
 import { isEditableElement } from '~/utils/input'
 import { NPMX_DOCS_SITE } from '#shared/utils/constants'
 
+const keyboardShortcuts = useKeyboardShortcuts()
+
 withDefaults(
   defineProps<{
     showLogo?: boolean
@@ -175,7 +177,7 @@ function handleSearchFocus() {
 
 onKeyStroke(
   e => {
-    if (isEditableElement(e.target)) {
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) {
       return
     }
 
