@@ -937,6 +937,111 @@
           },
           "additionalProperties": false
         },
+        "bulk": {
+          "type": "object",
+          "properties": {
+            "select_mode": {
+              "type": "string"
+            },
+            "exit_select_mode": {
+              "type": "string"
+            },
+            "selected_count": {
+              "type": "string"
+            },
+            "select_package": {
+              "type": "string"
+            },
+            "select_all": {
+              "type": "string"
+            },
+            "grant_access": {
+              "type": "string"
+            },
+            "copy_access": {
+              "type": "string"
+            },
+            "clear_selection": {
+              "type": "string"
+            },
+            "grant_access_title": {
+              "type": "string"
+            },
+            "copy_access_title": {
+              "type": "string"
+            },
+            "select_team": {
+              "type": "string"
+            },
+            "choose_team": {
+              "type": "string"
+            },
+            "no_teams_available": {
+              "type": "string"
+            },
+            "select_permission": {
+              "type": "string"
+            },
+            "permission_read": {
+              "type": "string"
+            },
+            "permission_write": {
+              "type": "string"
+            },
+            "selected_packages_count": {
+              "type": "string"
+            },
+            "and_more": {
+              "type": "string"
+            },
+            "grant_access_button": {
+              "type": "string"
+            },
+            "granting": {
+              "type": "string"
+            },
+            "operations_queued": {
+              "type": "string"
+            },
+            "operations_queued_detail": {
+              "type": "string"
+            },
+            "review_operations_hint": {
+              "type": "string"
+            },
+            "source_package": {
+              "type": "string"
+            },
+            "search_source_package": {
+              "type": "string"
+            },
+            "clear_source": {
+              "type": "string"
+            },
+            "loading_access": {
+              "type": "string"
+            },
+            "teams_to_copy": {
+              "type": "string"
+            },
+            "no_teams_found": {
+              "type": "string"
+            },
+            "copy_to_packages": {
+              "type": "string"
+            },
+            "copy_access_button": {
+              "type": "string"
+            },
+            "copying": {
+              "type": "string"
+            },
+            "copy_operations_queued_detail": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "versions": {
           "type": "object",
           "properties": {
@@ -1876,6 +1981,45 @@
           },
           "additionalProperties": false
         },
+        "team_access": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "refresh": {
+              "type": "string"
+            },
+            "select_team": {
+              "type": "string"
+            },
+            "select_team_hint": {
+              "type": "string"
+            },
+            "filter_packages": {
+              "type": "string"
+            },
+            "filter_packages_placeholder": {
+              "type": "string"
+            },
+            "loading_packages": {
+              "type": "string"
+            },
+            "no_packages": {
+              "type": "string"
+            },
+            "no_match": {
+              "type": "string"
+            },
+            "packages_list": {
+              "type": "string"
+            },
+            "package_count": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "members": {
           "type": "object",
           "properties": {
@@ -1982,6 +2126,9 @@
               "type": "string"
             },
             "teams_tab": {
+              "type": "string"
+            },
+            "team_access_tab": {
               "type": "string"
             },
             "no_packages": {

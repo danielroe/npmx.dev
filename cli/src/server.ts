@@ -26,6 +26,7 @@ const _endpointCheck: AssertEndpointsImplemented<
   | 'GET /org/:org/users'
   | 'GET /org/:org/teams'
   | 'GET /team/:scopeTeam/users'
+  | 'GET /team/:scopeTeam/packages'
   | 'GET /package/:pkg/collaborators'
   | 'GET /user/packages'
   | 'GET /user/orgs'
@@ -604,6 +605,52 @@ export function createConnectorApp(expectedToken: string) {
       return {
         success: false,
         error: 'Failed to parse team users',
+      } as ApiResponse
+    }
+  })
+
+  app.get('/team/:scopeTeam/packages', async event => {
+    const auth = event.req.headers.get('authorization')
+    if (!validateToken(auth)) {
+      throw new HTTPError({ statusCode: 401, message: 'Unauthorized' })
+    }
+
+    const scopeTeamRaw = event.context.params?.scopeTeam
+    if (!scopeTeamRaw) {
+      throw new HTTPError({ statusCode: 400, message: 'Team name required' })
+    }
+
+    // Decode the team name (handles encoded colons like nuxt%3Adevelopers)
+    const scopeTeam = decodeURIComponent(scopeTeamRaw)
+
+    const validationResult = safeParse(ScopeTeamSchema, scopeTeam)
+    if (!validationResult.success) {
+      logError('scope:team validation failed')
+      logDebug(validationResult.error, { scopeTeamRaw, scopeTeam })
+      throw new HTTPError({
+        statusCode: 400,
+        message: `Invalid scope:team format: ${scopeTeam}. Expected @scope:team`,
+      })
+    }
+
+    const result = await listTeamPackages(scopeTeam)
+    if (result.exitCode !== 0) {
+      return {
+        success: false,
+        error: result.stderr || 'Failed to list team packages',
+      } as ApiResponse
+    }
+
+    try {
+      const packages = JSON.parse(result.stdout) as Record<string, 'read-only' | 'read-write'>
+      return {
+        success: true,
+        data: packages,
+      } satisfies ApiResponse<ConnectorEndpoints['GET /team/:scopeTeam/packages']['data']>
+    } catch {
+      return {
+        success: false,
+        error: 'Failed to parse team packages',
       } as ApiResponse
     }
   })

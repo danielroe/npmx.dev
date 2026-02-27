@@ -30,6 +30,7 @@ const _endpointCheck: AssertEndpointsImplemented<
   | 'GET /org/:org/users'
   | 'GET /org/:org/teams'
   | 'GET /team/:scopeTeam/users'
+  | 'GET /team/:scopeTeam/packages'
   | 'GET /package/:pkg/collaborators'
   | 'GET /user/packages'
   | 'GET /user/orgs'
@@ -310,6 +311,33 @@ function createMockConnectorApp(stateManager: MockConnectorStateManager) {
     const users = stateManager.getTeamUsers(scope, team)
     return { success: true, data: users ?? [] } satisfies ApiResponse<
       ConnectorEndpoints['GET /team/:scopeTeam/users']['data']
+    >
+  })
+
+  // GET /team/:scopeTeam/packages
+  app.get('/team/:scopeTeam/packages', (event: H3Event) => {
+    requireAuth(event)
+
+    const scopeTeam = event.context.params?.scopeTeam
+    if (!scopeTeam) {
+      throw new HTTPError({ statusCode: 400, message: 'Missing scopeTeam parameter' })
+    }
+
+    if (!scopeTeam.startsWith('@') || !scopeTeam.includes(':')) {
+      throw new HTTPError({
+        statusCode: 400,
+        message: 'Invalid scope:team format (expected @scope:team)',
+      })
+    }
+
+    const [scope, team] = scopeTeam.split(':')
+    if (!scope || !team) {
+      throw new HTTPError({ statusCode: 400, message: 'Invalid scope:team format' })
+    }
+
+    const packages = stateManager.getTeamPackages(scope, team)
+    return { success: true, data: packages ?? {} } satisfies ApiResponse<
+      ConnectorEndpoints['GET /team/:scopeTeam/packages']['data']
     >
   })
 

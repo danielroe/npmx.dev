@@ -43,6 +43,10 @@ const props = defineProps<{
   currentPage?: number
   /** When true, shows search-specific UI (relevance sort, no filters) */
   searchContext?: boolean
+  /** Whether selection mode is enabled */
+  selectionMode?: boolean
+  /** Set of selected package names */
+  selectedPackages?: Set<string>
 }>()
 
 const emit = defineEmits<{
@@ -54,6 +58,10 @@ const emit = defineEmits<{
   'update:sortOption': [option: SortOption]
   /** Emitted when a keyword is clicked */
   'clickKeyword': [keyword: string]
+  /** Emitted when a package selection is toggled */
+  'toggleSelect': [packageName: string]
+  /** Emitted when select all is toggled */
+  'toggleSelectAll': []
 }>()
 
 // Reference to WindowVirtualizer for infinite scroll detection
@@ -159,7 +167,11 @@ defineExpose({
         :columns="columns"
         v-model:sort-option="sortOption"
         :is-loading="isLoading"
+        :selection-mode="selectionMode"
+        :selected-packages="selectedPackages"
         @click-keyword="emit('clickKeyword', $event)"
+        @toggle-select="emit('toggleSelect', $event)"
+        @toggle-select-all="emit('toggleSelectAll')"
       />
     </template>
 
@@ -187,7 +199,12 @@ defineExpose({
                 class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
                 :filters="filters"
                 :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
+                :selection-mode="selectionMode"
+                :is-selected="
+                  selectionMode && selectedPackages?.has((item as NpmSearchResult).package.name)
+                "
                 @click-keyword="emit('clickKeyword', $event)"
+                @toggle-select="emit('toggleSelect', $event)"
               />
             </div>
           </template>
@@ -205,7 +222,10 @@ defineExpose({
                   :index="index"
                   :search-query="searchQuery"
                   :filters="filters"
+                  :selection-mode="selectionMode"
+                  :is-selected="selectionMode && selectedPackages?.has(item.package.name)"
                   @click-keyword="emit('clickKeyword', $event)"
+                  @toggle-select="emit('toggleSelect', $event)"
                 />
               </div>
             </li>
@@ -239,7 +259,10 @@ defineExpose({
             class="motion-safe:animate-fade-in motion-safe:animate-fill-both"
             :style="{ animationDelay: `${Math.min(index * 0.02, 0.3)}s` }"
             :filters="filters"
+            :selection-mode="selectionMode"
+            :is-selected="selectionMode && selectedPackages?.has(item.package.name)"
             @click-keyword="emit('clickKeyword', $event)"
+            @toggle-select="emit('toggleSelect', $event)"
           />
         </li>
       </ol>
