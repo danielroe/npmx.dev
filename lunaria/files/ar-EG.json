@@ -862,18 +862,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "متصل كـ {'@'}{handle}",
-      "disconnect": "قطع الاتصال",
-      "connect_prompt": "اتصل بحساب Atmosphere الخاص بك",
-      "handle_label": "المعرّف",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "اتصال",
-      "create_account": "إنشاء حساب جديد",
-      "connect_bluesky": "الاتصال عبر Bluesky",
-      "what_is_atmosphere": "ما هو حساب Atmosphere؟",
-      "atmosphere_explanation": "{npmx} يستخدم {atproto} لتشغيل العديد من ميزاته الاجتماعية، مما يسمح للمستخدمين بامتلاك بياناتهم واستخدام حساب واحد لكل التطبيقات المتوافقة. بعد إنشاء حساب، يمكنك استخدام تطبيقات أخرى مثل {bluesky} و {tangled} بالحساب نفسه.",
-      "default_input_error": "الرجاء إدخال معرّف صالح أو DID أو رابط PDS كامل"
+      "disconnect": "قطع الاتصال",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "متصل كـ {'@'}{handle}",
+        "connect_prompt": "اتصل بحساب Atmosphere الخاص بك",
+        "handle_label": "المعرّف",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "إنشاء حساب جديد",
+        "connect_bluesky": "الاتصال عبر Bluesky",
+        "what_is_atmosphere": "ما هو حساب Atmosphere؟",
+        "explanation": "{npmx} يستخدم {atproto} لتشغيل العديد من ميزاته الاجتماعية، مما يسمح للمستخدمين بامتلاك بياناتهم واستخدام حساب واحد لكل التطبيقات المتوافقة. بعد إنشاء حساب، يمكنك استخدام تطبيقات أخرى مثل {bluesky} و {tangled} بالحساب نفسه.",
+        "default_input_error": "الرجاء إدخال معرّف صالح أو DID أو رابط PDS كامل"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "متصل كـ {username}"
+      }
     }
   },
   "header": {

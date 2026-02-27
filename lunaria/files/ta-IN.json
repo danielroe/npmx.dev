@@ -829,18 +829,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} ஆக இணைக்கப்பட்டது",
-      "disconnect": "துண்டி",
-      "connect_prompt": "உங்கள் Atmosphere கணக்குடன் இணைக்கவும்",
-      "handle_label": "கைப்பிடி",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "இணை",
-      "create_account": "புதிய கணக்கை உருவாக்கு",
-      "connect_bluesky": "Bluesky மூலம் இணை",
-      "what_is_atmosphere": "Atmosphere கணக்கு என்றால் என்ன?",
-      "atmosphere_explanation": "{npmx} தனது சமூக அம்சங்களுக்கு {atproto}-ஐப் பயன்படுத்துகிறது, பயனர்கள் தங்கள் தரவை சொந்தமாக வைத்திருக்கவும், அனைத்து இணக்கமான பயன்பாடுகளுக்கும் ஒரே கணக்கைப் பயன்படுத்தவும் அனுமதிக்கிறது. ஒரு கணக்கை உருவாக்கியவுடன், {bluesky} மற்றும் {tangled} போன்ற மற்ற பயன்பாடுகளையும் அதே கணக்குடன் பயன்படுத்தலாம்.",
-      "default_input_error": "சரியான கைப்பிடி, DID அல்லது முழு PDS URL-ஐ உள்ளிடவும்"
+      "disconnect": "துண்டி",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "{'@'}{handle} ஆக இணைக்கப்பட்டது",
+        "connect_prompt": "உங்கள் Atmosphere கணக்குடன் இணைக்கவும்",
+        "handle_label": "கைப்பிடி",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "புதிய கணக்கை உருவாக்கு",
+        "connect_bluesky": "Bluesky மூலம் இணை",
+        "what_is_atmosphere": "Atmosphere கணக்கு என்றால் என்ன?",
+        "explanation": "{npmx} தனது சமூக அம்சங்களுக்கு {atproto}-ஐப் பயன்படுத்துகிறது, பயனர்கள் தங்கள் தரவை சொந்தமாக வைத்திருக்கவும், அனைத்து இணக்கமான பயன்பாடுகளுக்கும் ஒரே கணக்கைப் பயன்படுத்தவும் அனுமதிக்கிறது. ஒரு கணக்கை உருவாக்கியவுடன், {bluesky} மற்றும் {tangled} போன்ற மற்ற பயன்பாடுகளையும் அதே கணக்குடன் பயன்படுத்தலாம்.",
+        "default_input_error": "சரியான கைப்பிடி, DID அல்லது முழு PDS URL-ஐ உள்ளிடவும்"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "ஆக இணைக்கப்பட்டது {username}"
+      }
     }
   },
   "header": {

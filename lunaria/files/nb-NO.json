@@ -809,18 +809,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Koblet til som {'@'}{handle}",
-      "disconnect": "Koble fra",
-      "connect_prompt": "Koble til med din Atmosphere-konto",
-      "handle_label": "Brukernavn (handle)",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Koble til",
-      "create_account": "Opprett en ny konto",
-      "connect_bluesky": "Koble til med Bluesky",
-      "what_is_atmosphere": "Hva er en Atmosphere-konto?",
-      "atmosphere_explanation": "{npmx} bruker {atproto} for å drive mange av sine sosiale funksjoner, slik at brukere kan eie sine egne data og bruke én konto for alle kompatible applikasjoner. Når du oppretter en konto, kan du bruke andre apper som {bluesky} og {tangled} med samme konto.",
-      "default_input_error": "Vennligst skriv inn et gyldig brukernavn, DID eller en full PDS-URL"
+      "disconnect": "Koble fra",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Koblet til som {'@'}{handle}",
+        "connect_prompt": "Koble til med din Atmosphere-konto",
+        "handle_label": "Brukernavn (handle)",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Opprett en ny konto",
+        "connect_bluesky": "Koble til med Bluesky",
+        "what_is_atmosphere": "Hva er en Atmosphere-konto?",
+        "explanation": "{npmx} bruker {atproto} for å drive mange av sine sosiale funksjoner, slik at brukere kan eie sine egne data og bruke én konto for alle kompatible applikasjoner. Når du oppretter en konto, kan du bruke andre apper som {bluesky} og {tangled} med samme konto.",
+        "default_input_error": "Vennligst skriv inn et gyldig brukernavn, DID eller en full PDS-URL"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Koblet til som {username}"
+      }
     }
   },
   "header": {

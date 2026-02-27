@@ -898,18 +898,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Verbunden als {'@'}{handle}",
-      "disconnect": "Trennen",
-      "connect_prompt": "Verbinde dich mit deinem Atmosphere-Konto",
-      "handle_label": "Handle",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Verbinden",
-      "create_account": "Neues Konto erstellen",
-      "connect_bluesky": "Mit Bluesky verbinden",
-      "what_is_atmosphere": "Was ist ein Atmosphere-Konto?",
-      "atmosphere_explanation": "{npmx} nutzt das {atproto}, um viele seiner sozialen Funktionen zu betreiben. So können Nutzer ihre Daten selbst verwalten und ein einziges Konto für alle kompatiblen Anwendungen nutzen. Sobald du ein Konto erstellt hast, kannst du andere Apps wie {bluesky} und {tangled} mit demselben Konto nutzen.",
-      "default_input_error": "Bitte geben Sie einen gültigen Handle, eine DID oder eine vollständige PDS-URL ein"
+      "disconnect": "Trennen",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Verbunden als {'@'}{handle}",
+        "connect_prompt": "Verbinde dich mit deinem Atmosphere-Konto",
+        "handle_label": "Handle",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Neues Konto erstellen",
+        "connect_bluesky": "Mit Bluesky verbinden",
+        "what_is_atmosphere": "Was ist ein Atmosphere-Konto?",
+        "explanation": "{npmx} nutzt das {atproto}, um viele seiner sozialen Funktionen zu betreiben. So können Nutzer ihre Daten selbst verwalten und ein einziges Konto für alle kompatiblen Anwendungen nutzen. Sobald du ein Konto erstellt hast, kannst du andere Apps wie {bluesky} und {tangled} mit demselben Konto nutzen.",
+        "default_input_error": "Bitte geben Sie einen gültigen Handle, eine DID oder eine vollständige PDS-URL ein"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Verbunden als {username}"
+      }
     }
   },
   "header": {

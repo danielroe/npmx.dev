@@ -844,18 +844,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Свързан като {'@'}{handle}",
-      "disconnect": "Прекратяване на връзката",
-      "connect_prompt": "Свържете се с вашия Atmosphere акаунт",
-      "handle_label": "Handle",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Свързване",
-      "create_account": "Създаване на нов акаунт",
-      "connect_bluesky": "Свързване с Bluesky",
-      "what_is_atmosphere": "Какво е Atmosphere акаунт?",
-      "atmosphere_explanation": "{npmx} използва {atproto} за захранване на много от своите социални функции, позволявайки на потребителите да притежават данните си и да използват един акаунт за всички съвместими приложения. След като създадете акаунт, можете да използвате други приложения като {bluesky} и {tangled} със същия акаунт.",
-      "default_input_error": "Моля, въведете валиден handle, DID или пълен PDS URL"
+      "disconnect": "Прекратяване на връзката",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Свързан като {'@'}{handle}",
+        "connect_prompt": "Свържете се с вашия Atmosphere акаунт",
+        "handle_label": "Handle",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Създаване на нов акаунт",
+        "connect_bluesky": "Свързване с Bluesky",
+        "what_is_atmosphere": "Какво е Atmosphere акаунт?",
+        "explanation": "{npmx} използва {atproto} за захранване на много от своите социални функции, позволявайки на потребителите да притежават данните си и да използват един акаунт за всички съвместими приложения. След като създадете акаунт, можете да използвате други приложения като {bluesky} и {tangled} със същия акаунт.",
+        "default_input_error": "Моля, въведете валиден handle, DID или пълен PDS URL"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Свързан като {username}"
+      }
     }
   },
   "header": {

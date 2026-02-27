@@ -743,17 +743,23 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "{'@'}{handle} के रूप में कनेक्ट किया गया",
-      "disconnect": "डिस्कनेक्ट करें",
-      "connect_prompt": "अपने Atmosphere खाते से कनेक्ट करें",
-      "handle_label": "हैंडल",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "कनेक्ट करें",
-      "create_account": "नया खाता बनाएं",
-      "connect_bluesky": "Bluesky से कनेक्ट करें",
-      "what_is_atmosphere": "Atmosphere खाता क्या है?",
-      "atmosphere_explanation": "{npmx} अपनी कई सोशल सुविधाओं को संचालित करने के लिए {atproto} का उपयोग करता है, जिससे उपभोक्ता अपने डेटा के स्वामी बन सकते हैं और सभी संगत एप्लिकेशन के लिए एक खाते का उपयोग कर सकते हैं। एक बार जब आप खाता बना लेते हैं, तो आप {bluesky} और {tangled} जैसे अन्य ऐप्स को उसी खाते से उपयोग कर सकते हैं।"
+      "disconnect": "डिस्कनेक्ट करें",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "{'@'}{handle} के रूप में कनेक्ट किया गया",
+        "connect_prompt": "अपने Atmosphere खाते से कनेक्ट करें",
+        "handle_label": "हैंडल",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "नया खाता बनाएं",
+        "connect_bluesky": "Bluesky से कनेक्ट करें",
+        "what_is_atmosphere": "Atmosphere खाता क्या है?",
+        "explanation": "{npmx} अपनी कई सोशल सुविधाओं को संचालित करने के लिए {atproto} का उपयोग करता है, जिससे उपभोक्ता अपने डेटा के स्वामी बन सकते हैं और सभी संगत एप्लिकेशन के लिए एक खाते का उपयोग कर सकते हैं। एक बार जब आप खाता बना लेते हैं, तो आप {bluesky} और {tangled} जैसे अन्य ऐप्स को उसी खाते से उपयोग कर सकते हैं।"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "के रूप में कनेक्ट किया गया {username}"
+      }
     }
   },
   "header": {

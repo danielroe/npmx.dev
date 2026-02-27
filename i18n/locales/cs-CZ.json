@@ -863,18 +863,24 @@
   },
   "auth": {
     "modal": {
-      "title": "Atmosphere",
-      "connected_as": "Připojen jako {'@'}{handle}",
-      "disconnect": "Odpojit",
-      "connect_prompt": "Připojit se svým účtem Atmosphere",
-      "handle_label": "Uživatelské jméno",
-      "handle_placeholder": "alice.npmx.social",
       "connect": "Připojit",
-      "create_account": "Vytvořit nový účet",
-      "connect_bluesky": "Připojit k Bluesky",
-      "what_is_atmosphere": "Co je účet Atmosphere?",
-      "atmosphere_explanation": "{npmx} používá {atproto} k pohánění mnoha svých sociálních funkcí, což uživatelům umožňuje vlastnit svá data a používat jeden účet pro všechny kompatibilní aplikace. Jakmile si vytvoříte účet, můžete používat i jiné aplikace jako {bluesky} a {tangled} se stejným účtem.",
-      "default_input_error": "Zadejte platný handle, DID nebo úplnou URL PDS"
+      "disconnect": "Odpojit",
+      "atmosphere": {
+        "title": "Atmosphere",
+        "connected_as": "Připojen jako {'@'}{handle}",
+        "connect_prompt": "Připojit se svým účtem Atmosphere",
+        "handle_label": "Uživatelské jméno",
+        "handle_placeholder": "alice.npmx.social",
+        "create_account": "Vytvořit nový účet",
+        "connect_bluesky": "Připojit k Bluesky",
+        "what_is_atmosphere": "Co je účet Atmosphere?",
+        "explanation": "{npmx} používá {atproto} k pohánění mnoha svých sociálních funkcí, což uživatelům umožňuje vlastnit svá data a používat jeden účet pro všechny kompatibilní aplikace. Jakmile si vytvoříte účet, můžete používat i jiné aplikace jako {bluesky} a {tangled} se stejným účtem.",
+        "default_input_error": "Zadejte platný handle, DID nebo úplnou URL PDS"
+      },
+      "github": {
+        "title": "GitHub",
+        "connected_as": "Připojen jako {username}"
+      }
     }
   },
   "header": {
