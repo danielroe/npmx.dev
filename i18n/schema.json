@@ -468,6 +468,12 @@
         },
         "seo_description": {
           "type": "string"
+        },
+        "not_found": {
+          "type": "string"
+        },
+        "not_found_message": {
+          "type": "string"
         }
       },
       "additionalProperties": false

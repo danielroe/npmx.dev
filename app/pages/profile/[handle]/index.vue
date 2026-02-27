@@ -4,10 +4,26 @@ import { updateProfile as updateProfileUtil } from '~/utils/atproto/profile'
 const route = useRoute('profile-handle')
 const handle = computed(() => route.params.handle)
 
-const { data: profile } = useFetch<NPMXProfile>(() => `/api/social/profile/${handle.value}`, {
+const {
+  data: profile,
+  status: profileStatus,
+  error: profileError,
+} = await useFetch<NPMXProfile>(() => `/api/social/profile/${handle.value}`, {
   default: () => ({ displayName: handle.value, description: '', website: '' }),
-  server: false,
 })
+
+if (
+  profileStatus.value === 'error' &&
+  profileError.value?.statusCode &&
+  profileError.value.statusCode >= 400 &&
+  profileError.value.statusCode < 500
+) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: $t('profile.not_found'),
+    message: $t('profile.not_found_message', { handle: handle.value }),
+  })
+}
 
 const { user } = useAtproto()
 const isEditing = ref(false)

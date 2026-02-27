@@ -153,7 +153,9 @@
     "website_placeholder": "https://example.com",
     "likes": "Likes",
     "seo_title": "{handle} - npmx",
-    "seo_description": "npmx profile by {handle}"
+    "seo_description": "npmx profile by {handle}",
+    "not_found": "Profile Not Found",
+    "not_found_message": "The profile for {handle} could not be found."
   },
   "package": {
     "not_found": "Package Not Found",
