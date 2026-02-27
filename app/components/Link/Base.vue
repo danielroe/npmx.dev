@@ -1,42 +1,46 @@
 <script setup lang="ts">
 import type { NuxtLinkProps } from '#app'
+import type { IconClass } from '~/types'
 
 const props = withDefaults(
-  defineProps<
-    {
-      /** Disabled links will be displayed as plain text */
-      disabled?: boolean
-      /**
-       * `type` should never be used, because this will always be a link.
-       * */
-      type?: never
-      variant?: 'button-primary' | 'button-secondary' | 'link'
-      size?: 'small' | 'medium'
-      block?: boolean
+  defineProps<{
+    /** Disabled links will be displayed as plain text */
+    disabled?: boolean
+    /**
+     * `type` should never be used, because this will always be a link.
+     * */
+    type?: never
+    variant?: 'button-primary' | 'button-secondary' | 'link'
+    size?: 'small' | 'medium'
+    block?: boolean
 
-      ariaKeyshortcuts?: string
+    ariaKeyshortcuts?: string
 
-      /**
-       * Don't use this directly. This will automatically be set to `_blank` for external links passed via `to`.
-       */
-      target?: never
+    /**
+     * Don't use this directly. This will automatically be set to `_blank` for external links passed via `to`.
+     */
+    target?: never
 
-      /**
-       * Don't use this directly. This will automatically be set for external links passed via `to`.
-       */
-      rel?: never
+    /**
+     * Don't use this directly. This will automatically be set for external links passed via `to`.
+     */
+    rel?: never
 
-      classicon?: string
+    classicon?: IconClass
 
-      to?: NuxtLinkProps['to']
+    to?: NuxtLinkProps['to']
 
-      /** always use `to` instead of `href` */
-      href?: never
+    /** always use `to` instead of `href` */
+    href?: never
 
-      /** should only be used for links where the context makes it very clear they are clickable. Don't just use this, because you don't like underlines. */
-      noUnderline?: boolean
-    } & NuxtLinkProps
-  >(),
+    /** should only be used for links where the context makes it very clear they are clickable. Don't just use this, because you don't like underlines. */
+    noUnderline?: boolean
+
+    /**
+     * @deprecated @todo remove this property and add separate clean component without this logic
+     */
+    noNewTabIcon?: boolean
+  }>(),
   { variant: 'link', size: 'medium' },
 )
 
@@ -57,6 +61,7 @@ const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
 const slots = useSlots()
 const iconOnly = computed(() => !!props.classicon && !slots.default)
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 </script>
 
 <template>
@@ -107,14 +112,14 @@ const iconOnly = computed(() => !!props.classicon && !slots.default)
         variant === 'button-primary',
     }"
     :to="to"
-    :aria-keyshortcuts="ariaKeyshortcuts"
+    :aria-keyshortcuts="keyboardShortcutsEnabled ? ariaKeyshortcuts : undefined"
     :target="isLinkExternal ? '_blank' : undefined"
   >
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
     <!-- automatically show icon indicating external link -->
     <span
-      v-if="isLinkExternal && !classicon"
+      v-if="isLinkExternal && !classicon && !noNewTabIcon"
       class="i-lucide:external-link rtl-flip size-[1em] opacity-50"
       aria-hidden="true"
     />
@@ -124,7 +129,8 @@ const iconOnly = computed(() => !!props.classicon && !slots.default)
       aria-hidden="true"
     />
     <kbd
-      v-if="ariaKeyshortcuts"
+      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      data-kbd-hint
       class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >

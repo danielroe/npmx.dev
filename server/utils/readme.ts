@@ -3,8 +3,11 @@ import sanitizeHtml from 'sanitize-html'
 import { hasProtocol } from 'ufo'
 import type { ReadmeResponse, TocItem } from '#shared/types/readme'
 import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
-import { highlightCodeSync } from './shiki'
+import { decodeHtmlEntities, stripHtmlTags } from '#shared/utils/html'
 import { convertToEmoji } from '#shared/utils/emoji'
+import { toProxiedImageUrl } from '#server/utils/image-proxy'
+
+import { highlightCodeSync } from './shiki'
 
 /**
  * Playground provider configuration
@@ -13,7 +16,7 @@ interface PlaygroundProvider {
   id: string // Provider identifier
   name: string
   domains: string[] // Associated domains
-  path?: string
+  paths?: string[]
   icon?: string // Provider icon name
 }
 
@@ -79,8 +82,27 @@ const PLAYGROUND_PROVIDERS: PlaygroundProvider[] = [
     id: 'typescript-playground',
     name: 'TypeScript Playground',
     domains: ['typescriptlang.org'],
-    path: '/play',
+    paths: ['/play'],
     icon: 'typescript',
+  },
+  {
+    id: 'solid-playground',
+    name: 'Solid Playground',
+    domains: ['playground.solidjs.com'],
+    icon: 'solid',
+  },
+  {
+    id: 'svelte-playground',
+    name: 'Svelte Playground',
+    domains: ['svelte.dev'],
+    paths: ['/repl', '/playground'],
+    icon: 'svelte',
+  },
+  {
+    id: 'tailwind-playground',
+    name: 'Tailwind Play',
+    domains: ['play.tailwindcss.com'],
+    icon: 'tailwindcss',
   },
 ]
 
@@ -96,7 +118,7 @@ function matchPlaygroundProvider(url: string): PlaygroundProvider | null {
       for (const domain of provider.domains) {
         if (
           (hostname === domain || hostname.endsWith(`.${domain}`)) &&
-          (!provider.path || parsed.pathname.startsWith(provider.path))
+          (!provider.paths || provider.paths.some(path => parsed.pathname.startsWith(path)))
         ) {
           return provider
         }
@@ -172,9 +194,6 @@ const ALLOWED_ATTR: Record<string, string[]> = {
   'p': ['align'],
 }
 
-// GitHub-style callout types
-// Format: > [!NOTE], > [!TIP], > [!IMPORTANT], > [!WARNING], > [!CAUTION]
-
 /**
  * Generate a GitHub-style slug from heading text.
  * - Convert to lowercase
@@ -184,8 +203,7 @@ const ALLOWED_ATTR: Record<string, string[]> = {
  * - Collapse multiple hyphens
  */
 function slugify(text: string): string {
-  return text
-    .replace(/<[^>]*>/g, '') // Strip HTML tags
+  return stripHtmlTags(text)
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-') // Spaces to hyphens
@@ -206,8 +224,10 @@ const reservedPathsNpmJs = [
   'policies',
 ]
 
+const npmJsHosts = new Set(['www.npmjs.com', 'npmjs.com', 'www.npmjs.org', 'npmjs.org'])
+
 const isNpmJsUrlThatCanBeRedirected = (url: URL) => {
-  if (url.host !== 'www.npmjs.com' && url.host !== 'npmjs.com') {
+  if (!npmJsHosts.has(url.host)) {
     return false
   }
 
@@ -300,12 +320,23 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
 // Convert blob/src URLs to raw URLs for images across all providers
 // e.g. https://github.com/nuxt/nuxt/blob/main/.github/assets/banner.svg
 //   → https://github.com/nuxt/nuxt/raw/main/.github/assets/banner.svg
+//
+// External images are proxied through /api/registry/image-proxy to prevent
+// third-party servers from collecting visitor IP addresses and User-Agent data.
+// Proxy URLs are HMAC-signed to prevent open proxy abuse.
+// See: https://github.com/npmx-dev/npmx.dev/issues/1138
 function resolveImageUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
-  const resolved = resolveUrl(url, packageName, repoInfo)
-  if (repoInfo?.provider) {
-    return convertBlobOrFileToRawUrl(resolved, repoInfo.provider)
+  // Skip already-proxied URLs (from a previous resolveImageUrl call in the
+  // marked renderer — sanitizeHtml transformTags may call this again)
+  if (url.startsWith('/api/registry/image-proxy')) {
+    return url
   }
-  return resolved
+  const resolved = resolveUrl(url, packageName, repoInfo)
+  const rawUrl = repoInfo?.provider
+    ? convertBlobOrFileToRawUrl(resolved, repoInfo.provider)
+    : resolved
+  const { imageProxySecret } = useRuntimeConfig()
+  return toProxiedImageUrl(rawUrl, imageProxySecret)
 }
 
 // Helper to prefix id attributes with 'user-content-'
@@ -371,8 +402,8 @@ export async function renderReadmeHtml(
     // (e.g., #install, #dependencies, #versions are used by the package page)
     const id = `user-content-${uniqueSlug}`
 
-    // Collect TOC item with plain text (HTML stripped)
-    const plainText = text.replace(/<[^>]*>/g, '').trim()
+    // Collect TOC item with plain text (HTML stripped, entities decoded)
+    const plainText = decodeHtmlEntities(stripHtmlTags(text).trim())
     if (plainText) {
       toc.push({ text: plainText, id, depth })
     }
@@ -402,11 +433,11 @@ ${html}
     return `<img src="${resolvedHref}"${altAttr}${titleAttr}>`
   }
 
-  // // Resolve link URLs, add security attributes, and collect playground links
+  // Resolve link URLs, add security attributes, and collect playground links
   renderer.link = function ({ href, title, tokens }: Tokens.Link) {
     const text = this.parser.parseInline(tokens)
     const titleAttr = title ? ` title="${title}"` : ''
-    let plainText = text.replace(/<[^>]*>/g, '').trim()
+    let plainText = stripHtmlTags(text).trim()
 
     // If plain text is empty, check if we have an image with alt text
     if (!plainText && tokens.length === 1 && tokens[0]?.type === 'image') {
@@ -511,7 +542,7 @@ ${html}
              * provide the text of the element. This will automatically be removed, because there
              * is an allow list for link attributes.
              * */
-            label: attribs['data-title-intermediate'] || provider.name,
+            label: decodeHtmlEntities(attribs['data-title-intermediate'] || provider.name),
           })
         }
 

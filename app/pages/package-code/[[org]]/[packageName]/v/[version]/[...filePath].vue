@@ -13,6 +13,7 @@ definePageMeta({
     '/package/code/:packageName/v/:version/:filePath(.*)?',
     // '/code/@:org?/:packageName/v/:version/:filePath(.*)?',
   ],
+  scrollMargin: 160,
 })
 
 const route = useRoute('code')
@@ -248,6 +249,14 @@ function copyPermalinkUrl() {
   copyPermalink(url.toString())
 }
 
+// Scroll to top of file content
+const contentContainer = useTemplateRef('contentContainer')
+function scrollToTop() {
+  if (contentContainer.value) {
+    contentContainer.value.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+}
+
 // Canonical URL for this code page
 const canonicalUrl = computed(() => `https://npmx.dev${getCodeUrl(route.params)}`)
 
@@ -409,6 +418,7 @@ defineOgImageComponent('Default', {
       <!-- File content / Directory listing - sticky with internal scroll on desktop -->
       <div
         class="flex-1 min-w-0 overflow-x-hidden sticky top-28 self-start h-[calc(100vh-7rem)] overflow-y-auto"
+        ref="contentContainer"
       >
         <!-- File viewer -->
         <template v-if="isViewingFile && fileContent">
@@ -448,6 +458,14 @@ defineOgImageComponent('Default', {
               </div>
             </div>
             <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors items-center inline-flex gap-1"
+                @click="scrollToTop"
+              >
+                <span class="i-lucide:arrow-up w-3 h-3" />
+                {{ $t('code.scroll_to_top') }}
+              </button>
               <button
                 v-if="selectedLines"
                 type="button"

@@ -105,7 +105,11 @@ function handleKeydown(e: KeyboardEvent) {
     case 'ArrowDown':
       e.preventDefault()
       if (count === 0) return
-      highlightedIndex.value = Math.min(highlightedIndex.value + 1, count - 1)
+      if (highlightedIndex.value < count - 1) {
+        highlightedIndex.value++
+      } else {
+        highlightedIndex.value = 0
+      }
       break
 
     case 'ArrowUp':
@@ -113,6 +117,8 @@ function handleKeydown(e: KeyboardEvent) {
       if (count === 0) return
       if (highlightedIndex.value > 0) {
         highlightedIndex.value--
+      } else {
+        highlightedIndex.value = count - 1
       }
       break
 
@@ -177,18 +183,12 @@ watch(highlightedIndex, index => {
   }
 })
 
-const { start, stop } = useTimeoutFn(() => {
+const containerRef = useTemplateRef('containerRef')
+
+onClickOutside(containerRef, () => {
   isInputFocused.value = false
-}, 200)
-
-function handleBlur() {
-  start()
-}
-
-function handleFocus() {
-  stop()
-  isInputFocused.value = true
-}
+  highlightedIndex.value = -1
+})
 </script>
 
 <template>
@@ -220,7 +220,7 @@ function handleFocus() {
     </div>
 
     <!-- Add package input -->
-    <div v-if="packages.length < maxPackages" class="relative">
+    <div v-if="packages.length < maxPackages" ref="containerRef" class="relative">
       <div class="relative group flex items-center">
         <label for="package-search" class="sr-only">
           {{ $t('compare.selector.search_label') }}
@@ -243,8 +243,8 @@ function handleFocus() {
           size="medium"
           class="w-full min-w-25 ps-7"
           aria-autocomplete="list"
-          @focus="handleFocus"
-          @blur="handleBlur"
+          ref="inputRef"
+          @focus="isInputFocused = true"
           @keydown="handleKeydown"
         />
       </div>
@@ -301,7 +301,7 @@ function handleFocus() {
               v-if="result.description"
               class="text-xs text-fg-muted truncate mt-0.5 w-full block"
             >
-              {{ result.description }}
+              {{ stripHtmlTags(decodeHtmlEntities(result.description)) }}
             </span>
           </ButtonBase>
         </div>

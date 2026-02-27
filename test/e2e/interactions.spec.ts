@@ -223,19 +223,52 @@ test.describe('Keyboard Shortcuts', () => {
     await page.keyboard.press('ControlOrMeta+Shift+,')
     await expect(page).toHaveURL(/\/settings/)
   })
+})
 
-  test('"," does not navigate when search input is focused', async ({ page, goto }) => {
+test.describe('Keyboard Shortcuts disabled', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('npmx-settings', JSON.stringify({ keyboardShortcuts: false }))
+    })
+  })
+
+  test('"," (header) does not navigate to /settings when shortcuts are disabled', async ({
+    page,
+    goto,
+  }) => {
     await goto('/compare', { waitUntil: 'hydration' })
-
-    const searchInput = page.locator('#header-search')
-    await searchInput.focus()
-    await expect(searchInput).toBeFocused()
 
     await page.keyboard.press(',')
 
-    // Should still be on compare, not navigated to settings
     await expect(page).toHaveURL(/\/compare/)
-    // The ',' should have been typed into the input
-    await expect(searchInput).toHaveValue(',')
+  })
+
+  test('"/" (global) does not focus search input when shortcuts are disabled', async ({
+    page,
+    goto,
+  }) => {
+    await goto('/search?q=vue', { waitUntil: 'hydration' })
+
+    await expect(page.locator('text=/found \\d+|showing \\d+/i').first()).toBeVisible({
+      timeout: 15000,
+    })
+
+    // Focus a non-input element so "/" would normally steal focus to search
+    await page.locator('[data-result-index="0"]').first().focus()
+
+    await page.keyboard.press('/')
+
+    await expect(page.locator('input[type="search"]')).not.toBeFocused()
+  })
+
+  test('"d" (package) does not navigate to docs when shortcuts are disabled', async ({
+    page,
+    goto,
+  }) => {
+    await goto('/package/vue', { waitUntil: 'hydration' })
+
+    await page.keyboard.press('d')
+
+    await expect(page).toHaveURL(/\/package\/vue$/)
   })
 })

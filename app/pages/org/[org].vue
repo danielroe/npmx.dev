@@ -10,7 +10,7 @@ definePageMeta({
 const route = useRoute('org')
 const router = useRouter()
 
-const orgName = computed(() => route.params.org)
+const orgName = computed(() => route.params.org.toLowerCase())
 
 const { isConnected } = useConnector()
 
@@ -57,9 +57,6 @@ const {
   setSort,
 } = useStructuredFilters({
   packages,
-  initialFilters: {
-    ...parseSearchOperators(normalizeSearchParam(route.query.q)),
-  },
   initialSort: (normalizeSearchParam(route.query.sort) as SortOption) ?? 'updated-desc',
 })
 

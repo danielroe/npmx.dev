@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import type { IconClass } from '~/types'
+
 const props = withDefaults(
   defineProps<{
     disabled?: boolean
+    /** @default "button" */
     type?: 'button' | 'submit'
+    /** @default "secondary" */
     variant?: 'primary' | 'secondary'
+    /** @default "medium" */
     size?: 'small' | 'medium'
+    /** Keyboard shortcut hint */
     ariaKeyshortcuts?: string
+    /** Forces the button to occupy the entire width of its container. */
     block?: boolean
 
-    classicon?: string
+    classicon?: IconClass
   }>(),
   {
     type: 'button',
@@ -22,6 +29,8 @@ const slots = defineSlots<{
   default?: () => unknown;
 }>()
 const iconOnly = computed(() => !!props.classicon && !slots.default)
+
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 
 defineExpose({
   focus: () => el.value?.focus(),
@@ -59,12 +68,13 @@ defineExpose({
        */
       disabled ? true : undefined
     "
-    :aria-keyshortcuts="ariaKeyshortcuts"
+    :aria-keyshortcuts="keyboardShortcutsEnabled ? ariaKeyshortcuts : undefined"
   >
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
     <kbd
-      v-if="ariaKeyshortcuts"
+      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      data-kbd-hint
       class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >

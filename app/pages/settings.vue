@@ -5,10 +5,12 @@ const { settings } = useSettings()
 const { locale, locales, setLocale: setNuxti18nLocale } = useI18n()
 const colorMode = useColorMode()
 const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 
 // Escape to go back (but not when focused on form elements or modal is open)
 onKeyStroke(
   e =>
+    keyboardShortcutsEnabled.value &&
     isKeyWithoutModifiers(e, 'Escape') &&
     !isEditableElement(e.target) &&
     !document.documentElement.matches('html:has(:modal)'),
@@ -205,6 +207,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
           </div>
         </section>
 
+        <!-- LANGUAGE Section -->
         <section>
           <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
             {{ $t('settings.sections.language') }}
@@ -258,6 +261,20 @@ const setLocale: typeof setNuxti18nLocale = locale => {
                 {{ $t('settings.help_translate') }}
               </a>
             </template>
+          </div>
+        </section>
+
+        <!-- KEYBOARD SHORTCUTS Section -->
+        <section>
+          <h2 class="text-xs text-fg-muted uppercase tracking-wider mb-4">
+            {{ $t('settings.sections.keyboard_shortcuts') }}
+          </h2>
+          <div class="bg-bg-subtle border border-border rounded-lg p-4 sm:p-6">
+            <SettingsToggle
+              :label="$t('settings.keyboard_shortcuts_enabled')"
+              :description="$t('settings.keyboard_shortcuts_enabled_description')"
+              v-model="settings.keyboardShortcuts"
+            />
           </div>
         </section>
       </div>

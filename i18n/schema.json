@@ -105,6 +105,9 @@
         },
         "open_docs": {
           "type": "string"
+        },
+        "disable_shortcuts": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -258,6 +261,9 @@
             },
             "language": {
               "type": "string"
+            },
+            "keyboard_shortcuts": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -329,6 +335,12 @@
           "type": "string"
         },
         "background_themes": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled_description": {
           "type": "string"
         }
       },
@@ -470,6 +482,27 @@
               "type": "string"
             },
             "no_reason": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "size_increase": {
+          "type": "object",
+          "properties": {
+            "title_size": {
+              "type": "string"
+            },
+            "title_deps": {
+              "type": "string"
+            },
+            "title_both": {
+              "type": "string"
+            },
+            "size": {
+              "type": "string"
+            },
+            "deps": {
               "type": "string"
             }
           },
@@ -886,25 +919,40 @@
             "distribution_modal_title": {
               "type": "string"
             },
+            "distribution_range_date_same_year": {
+              "type": "string"
+            },
+            "distribution_range_date_multiple_years": {
+              "type": "string"
+            },
             "grouping_major": {
               "type": "string"
             },
             "grouping_minor": {
               "type": "string"
             },
-            "recent_versions_only": {
+            "grouping_versions_title": {
+              "type": "string"
+            },
+            "grouping_versions_all": {
+              "type": "string"
+            },
+            "grouping_versions_only_recent": {
+              "type": "string"
+            },
+            "grouping_usage_title": {
+              "type": "string"
+            },
+            "grouping_usage_all": {
+              "type": "string"
+            },
+            "grouping_usage_low": {
               "type": "string"
             },
             "recent_versions_only_tooltip": {
               "type": "string"
             },
-            "show_low_usage": {
-              "type": "string"
-            },
             "show_low_usage_tooltip": {
-              "type": "string"
-            },
-            "date_range_tooltip": {
               "type": "string"
             },
             "y_axis_label": {
@@ -927,6 +975,18 @@
             },
             "no_matches": {
               "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "per_version_analysis": {
+                  "type": "string"
+                },
+                "general_description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
@@ -1075,6 +1135,9 @@
             "toggle_annotator": {
               "type": "string"
             },
+            "toggle_stack_mode": {
+              "type": "string"
+            },
             "legend_estimation": {
               "type": "string"
             },
@@ -1103,6 +1166,87 @@
                   "type": "string"
                 },
                 "contributors": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "play_animation": {
+              "type": "string"
+            },
+            "pause_animation": {
+              "type": "string"
+            },
+            "data_correction": {
+              "type": "string"
+            },
+            "average_window": {
+              "type": "string"
+            },
+            "smoothing": {
+              "type": "string"
+            },
+            "known_anomalies": {
+              "type": "string"
+            },
+            "known_anomalies_description": {
+              "type": "string"
+            },
+            "known_anomalies_ranges": {
+              "type": "string"
+            },
+            "known_anomalies_range": {
+              "type": "string"
+            },
+            "known_anomalies_range_named": {
+              "type": "string"
+            },
+            "known_anomalies_none": {
+              "type": "string"
+            },
+            "known_anomalies_contribute": {
+              "type": "string"
+            },
+            "apply_correction": {
+              "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "trend_none": {
+                  "type": "string"
+                },
+                "trend_strong": {
+                  "type": "string"
+                },
+                "trend_weak": {
+                  "type": "string"
+                },
+                "trend_undefined": {
+                  "type": "string"
+                },
+                "button_label": {
+                  "type": "string"
+                },
+                "watermark": {
+                  "type": "string"
+                },
+                "analysis": {
+                  "type": "string"
+                },
+                "estimation": {
+                  "type": "string"
+                },
+                "estimations": {
+                  "type": "string"
+                },
+                "compare": {
+                  "type": "string"
+                },
+                "single_package": {
+                  "type": "string"
+                },
+                "general_description": {
                   "type": "string"
                 }
               },
@@ -1876,6 +2020,9 @@
             "taken": {
               "type": "string"
             },
+            "missing_permission": {
+              "type": "string"
+            },
             "similar_warning": {
               "type": "string"
             },
@@ -2003,6 +2150,9 @@
           "additionalProperties": false
         },
         "file_path": {
+          "type": "string"
+        },
+        "scroll_to_top": {
           "type": "string"
         }
       },
@@ -2458,6 +2608,24 @@
           },
           "additionalProperties": false
         },
+        "sponsors": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "oss_partners": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
         "team": {
           "type": "object",
           "properties": {
@@ -2732,6 +2900,9 @@
               "type": "string"
             },
             "section_comparison": {
+              "type": "string"
+            },
+            "copy_as_markdown": {
               "type": "string"
             },
             "loading": {
@@ -3057,6 +3228,96 @@
             }
           },
           "additionalProperties": false
+        },
+        "file_changes": {
+          "type": "string"
+        },
+        "files_count": {
+          "type": "string"
+        },
+        "lines_hidden": {
+          "type": "string"
+        },
+        "compare_versions": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "deps_count": {
+          "type": "string"
+        },
+        "dependencies": {
+          "type": "string"
+        },
+        "dev_dependencies": {
+          "type": "string"
+        },
+        "peer_dependencies": {
+          "type": "string"
+        },
+        "optional_dependencies": {
+          "type": "string"
+        },
+        "no_dependency_changes": {
+          "type": "string"
+        },
+        "file_filter_option": {
+          "type": "object",
+          "properties": {
+            "all": {
+              "type": "string"
+            },
+            "added": {
+              "type": "string"
+            },
+            "removed": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "search_files_placeholder": {
+          "type": "string"
+        },
+        "no_files_all": {
+          "type": "string"
+        },
+        "no_files_search": {
+          "type": "string"
+        },
+        "no_files_filtered": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "added": {
+              "type": "string"
+            },
+            "removed": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "files_button": {
+          "type": "string"
+        },
+        "select_file_prompt": {
+          "type": "string"
+        },
+        "close_files_panel": {
+          "type": "string"
+        },
+        "filter_files_label": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -3458,9 +3719,6 @@
               "type": "string"
             },
             "social_link": {
-              "type": "string"
-            },
-            "add_to_calendar": {
               "type": "string"
             }
           },

@@ -33,7 +33,8 @@
     "navigate_results": "Navigate results",
     "go_to_result": "Go to result",
     "open_code_view": "Open code view",
-    "open_docs": "Open docs"
+    "open_docs": "Open docs",
+    "disable_shortcuts": "You can disable keyboard shortcuts in {settings}."
   },
   "search": {
     "label": "Search npm packages",
@@ -84,7 +85,8 @@
       "appearance": "Appearance",
       "display": "Display",
       "search": "Data source",
-      "language": "Language"
+      "language": "Language",
+      "keyboard_shortcuts": "Keyboard shortcuts"
     },
     "data_source": {
       "label": "Data source",
@@ -108,7 +110,9 @@
     "accent_colors": "Accent colors",
     "clear_accent": "Clear accent color",
     "translation_progress": "Translation progress",
-    "background_themes": "Background shade"
+    "background_themes": "Background shade",
+    "keyboard_shortcuts_enabled": "Enable keyboard shortcuts",
+    "keyboard_shortcuts_enabled_description": "Keyboard shortcuts can be disabled if they conflict with other browser or system shortcuts"
   },
   "i18n": {
     "missing_keys": "{count} missing translation | {count} missing translations",
@@ -156,6 +160,13 @@
       "package": "This package has been deprecated.",
       "version": "This version has been deprecated.",
       "no_reason": "No reason provided"
+    },
+    "size_increase": {
+      "title_size": "Significant size increase since v{version}",
+      "title_deps": "Significant dependency count increase since v{version}",
+      "title_both": "Significant size and dependency increase since v{version}",
+      "size": "Install size increased by {percent} ({size} larger)",
+      "deps": "{count} more dependencies"
     },
     "replacement": {
       "title": "You might not need this dependency.",
@@ -294,20 +305,29 @@
       "view_all": "View {count} version | View all {count} versions",
       "distribution_title": "Semver Group",
       "distribution_modal_title": "Versions",
+      "distribution_range_date_same_year": "from {from} to {to}, {endYear}",
+      "distribution_range_date_multiple_years": "from {from}, {startYear} to {to}, {endYear}",
       "grouping_major": "Major",
       "grouping_minor": "Minor",
-      "recent_versions_only": "Recent versions only",
+      "grouping_versions_title": "Versions",
+      "grouping_versions_all": "All",
+      "grouping_versions_only_recent": "Only recent",
+      "grouping_usage_title": "Usage",
+      "grouping_usage_all": "All",
+      "grouping_usage_low": "Low",
       "recent_versions_only_tooltip": "Show only versions published within the last year.",
-      "show_low_usage": "Show low usage versions",
       "show_low_usage_tooltip": "Include version groups with less than 1% of total downloads.",
-      "date_range_tooltip": "Last week of version distributions only",
       "y_axis_label": "Downloads",
       "filter_placeholder": "Filter by semver (e.g. ^3.0.0)",
       "filter_invalid": "Invalid semver range",
       "filter_help": "Semver range filter help",
       "filter_tooltip": "Filter versions using a {link}. For example, ^3.0.0 shows all 3.x versions.",
       "filter_tooltip_link": "semver range",
-      "no_matches": "No versions match this range"
+      "no_matches": "No versions match this range",
+      "copy_alt": {
+        "per_version_analysis": "{version} version was downloaded {downloads} times",
+        "general_description": "Bar chart showing per-version downloads for {versions_count} {semver_grouping_mode} versions of the {package_name} package, {date_range_label} from the {first_version} version to the {last_version} version. The most downloaded version is {max_downloaded_version} with {max_version_downloads} downloads. {per_version_analysis}. {watermark}."
+      }
     },
     "dependencies": {
       "title": "Dependency ({count}) | Dependencies ({count})",
@@ -357,6 +377,7 @@
       "date_range_multiline": "{start}\nto {end}",
       "download_file": "Download {fileType}",
       "toggle_annotator": "Toggle annotator",
+      "toggle_stack_mode": "Toggle stack mode",
       "legend_estimation": "Estimation",
       "no_data": "No data available",
       "y_axis_label": "{granularity} {facet}",
@@ -367,6 +388,33 @@
         "downloads": "Downloads",
         "likes": "Likes",
         "contributors": "Contributors"
+      },
+      "play_animation": "Play animation",
+      "pause_animation": "Pause animation",
+      "data_correction": "Data correction",
+      "average_window": "Average window",
+      "smoothing": "Smoothing",
+      "known_anomalies": "Known anomalies",
+      "known_anomalies_description": "Interpolates over known download spikes caused by bots or CI issues.",
+      "known_anomalies_ranges": "Anomaly ranges",
+      "known_anomalies_range": "From {start} to {end}",
+      "known_anomalies_range_named": "{packageName}: from {start} to {end}",
+      "known_anomalies_none": "No known anomalies for this package. | No known anomalies for these packages.",
+      "known_anomalies_contribute": "Contribute anomaly data",
+      "apply_correction": "Apply correction",
+      "copy_alt": {
+        "trend_none": "mostly flat",
+        "trend_strong": "strong",
+        "trend_weak": "weak",
+        "trend_undefined": "undefined (insufficient data)",
+        "button_label": "Copy alt text",
+        "watermark": "At the bottom, a watermark reads \"./npmx a fast, modern browser for the npm registry\"",
+        "analysis": "{package_name} starts at {start_value} and ends at {end_value}, showing a {trend} trend with a slope of {downloads_slope} downloads per time interval",
+        "estimation": "The final value is an estimate based on partial data for the current period.",
+        "estimations": "The final values are estimates based on partial data for the current period.",
+        "compare": "Package download comparison line chart for: {packages}.",
+        "single_package": "Downloads line chart for the {package} package.",
+        "general_description": "The Y axis represents the number of downloads. The X axis represents the date range, from {start_date} to {end_date}, with a {granularity} time period.{estimation_notice} {packages_analysis}. {watermark}."
       }
     },
     "downloads": {
@@ -624,6 +672,7 @@
       "invalid_name": "Invalid package name:",
       "available": "This name is available!",
       "taken": "This name is already taken.",
+      "missing_permission": "You do not have permission to add a package to scope {'@'}{scope}.",
       "similar_warning": "Similar packages exist - npm may reject this name:",
       "related": "Related packages:",
       "scope_warning_title": "Consider using a scoped package instead",
@@ -666,7 +715,8 @@
       "preview": "preview",
       "code": "code"
     },
-    "file_path": "File path"
+    "file_path": "File path",
+    "scroll_to_top": "Scroll to top"
   },
   "badges": {
     "provenance": {
@@ -818,6 +868,12 @@
         "managers": "package managers"
       }
     },
+    "sponsors": {
+      "title": "Sponsors"
+    },
+    "oss_partners": {
+      "title": "OSS Partners"
+    },
     "team": {
       "title": "Team",
       "governance": "Governance",
@@ -910,6 +966,7 @@
       "section_packages": "Packages",
       "section_facets": "Facets",
       "section_comparison": "Comparison",
+      "copy_as_markdown": "Copy table",
       "loading": "Loading package data...",
       "error": "Failed to load package data. Please try again.",
       "empty_title": "Select packages to compare",
@@ -1017,7 +1074,37 @@
       "trends": {
         "title": "Compare Trends"
       }
-    }
+    },
+    "file_changes": "File Changes",
+    "files_count": "{count} files",
+    "lines_hidden": "{count} lines hidden",
+    "compare_versions": "diff",
+    "summary": "Summary",
+    "deps_count": "{count} deps",
+    "dependencies": "Dependencies",
+    "dev_dependencies": "Dev Dependencies",
+    "peer_dependencies": "Peer Dependencies",
+    "optional_dependencies": "Optional Dependencies",
+    "no_dependency_changes": "No dependency changes",
+    "file_filter_option": {
+      "all": "All ({count})",
+      "added": "Added ({count})",
+      "removed": "Removed ({count})",
+      "modified": "Modified ({count})"
+    },
+    "search_files_placeholder": "Search files...",
+    "no_files_all": "No files",
+    "no_files_search": "No files matching \"{query}\"",
+    "no_files_filtered": "No {filter} files",
+    "filter": {
+      "added": "added",
+      "removed": "removed",
+      "modified": "modified"
+    },
+    "files_button": "Files",
+    "select_file_prompt": "Select a file from the sidebar to view its diff",
+    "close_files_panel": "Close files panel",
+    "filter_files_label": "Filter files by change type"
   },
   "privacy_policy": {
     "title": "privacy policy",
@@ -1131,28 +1218,27 @@
   },
   "vacations": {
     "title": "on vacation",
-    "meta_description": "The npmx team is recharging. Discord reopens in a week.",
+    "meta_description": "The npmx team was recharging. Discord reopened after a week.",
     "heading": "recharging",
-    "subtitle": "we've been building npmx at a pace that has cost {some} of us sleep. we don't want that to be the norm! so we are taking a week off. together.",
+    "subtitle": "we were building npmx at a pace that was costing {some} of us sleep. we didn't want that to be the norm! so we took a week off. together.",
     "illustration_alt": "a single row of cosy icons",
     "poke_log": "Poke the campfire",
     "what": {
-      "title": "what's happening",
-      "p1": "discord is closed {dates}.",
+      "title": "what happened",
+      "p1": "discord was closed {dates}.",
       "dates": "February 14 – 21",
-      "p2": "all invite links are gone and channels are locked – except {garden}, which stays open for folks who want to keep hanging out.",
+      "p2": "all invite links were gone and channels were locked – except {garden}, which stayed open for folks who wanted to keep hanging out.",
       "garden": "#garden"
     },
     "meantime": {
       "title": "in the meantime",
-      "p1": "{site} and {repo} stay open – dig in, file issues, open PRs. we'll get to everything when we're back. just don't expect a fast review. we'll be somewhere near a cosy fireplace.",
+      "p1": "{site} and {repo} stayed open – people still dug in, filed some issues, opened a few PRs, but mainly everyone spent time somewhere near a cosy fireplace.",
       "repo_link": "the repo"
     },
     "return": {
-      "title": "see you soon",
-      "p1": "we'll come back recharged and ready for the final push to March 3rd. {social} for updates.",
-      "social_link": "follow us on Bluesky",
-      "add_to_calendar": "remind me when Discord reopens"
+      "title": "we came back!",
+      "p1": "we came back recharged and ready for the final push to March 3rd. {social} for updates.",
+      "social_link": "follow us on Bluesky"
     },
     "stats": {
       "contributors": "Contributors",

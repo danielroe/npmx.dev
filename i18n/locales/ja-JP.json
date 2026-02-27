@@ -151,10 +151,18 @@
     "view_permalink": "このバージョンのパーマリンクを表示",
     "navigation": "パッケージナビゲーション",
     "copy_name": "パッケージ名をコピー",
+    "copy_version": "パッケージのバージョンをコピー",
     "deprecation": {
       "package": "このパッケージは非推奨になりました。",
       "version": "このバージョンは非推奨になりました。",
       "no_reason": "理由は提供されていません"
+    },
+    "size_increase": {
+      "title_size": "v{version} 以降、大幅なサイズ増加",
+      "title_deps": "v{version} 以降、大幅な依存関係数の増加",
+      "title_both": "v{version} 以降、大幅なサイズおよび依存関係の増加",
+      "size": "インストールサイズが {percent} 増加（{size} 増）",
+      "deps": "依存関係が {count} 件増加"
     },
     "replacement": {
       "title": "この依存関係は不要な可能性があります。",
@@ -202,7 +210,7 @@
     "links": {
       "repo": "リポジトリ",
       "homepage": "ホームページ",
-      "issues": "Issues",
+      "issues": "issues",
       "jsr": "jsr",
       "code": "コード",
       "docs": "ドキュメント",
@@ -222,7 +230,7 @@
       "pm_label": "パッケージマネージャー",
       "copy_command": "インストールコマンドをコピー",
       "copy_dev_command": "devインストールコマンドをコピー",
-      "dev_dependency_hint": "通常はdev dependencyとしてインストールされます",
+      "dev_dependency_hint": "通常はdev依存関係としてインストールされます",
       "view_types": "{package} を表示"
     },
     "create": {
@@ -293,14 +301,29 @@
       "view_all": "{count} 個のバージョンを表示|{count} 個のすべてのバージョンを表示",
       "distribution_title": "Semverグループ",
       "distribution_modal_title": "バージョン",
+      "distribution_range_date_same_year": "{endYear} 年 {from} から {to}",
+      "distribution_range_date_multiple_years": "{startYear} 年 {from} から {endYear} 年 {to}",
       "grouping_major": "メジャー",
       "grouping_minor": "マイナー",
-      "recent_versions_only": "最近のバージョンのみ",
+      "grouping_versions_title": "バージョン",
+      "grouping_versions_all": "すべて",
+      "grouping_versions_only_recent": "直近のみ",
+      "grouping_usage_title": "使用状況",
+      "grouping_usage_all": "すべて",
+      "grouping_usage_low": "低",
       "recent_versions_only_tooltip": "過去1年以内に公開されたバージョンのみ表示します。",
-      "show_low_usage": "利用率の低いバージョンを表示",
       "show_low_usage_tooltip": "総ダウンロード数の1%未満のバージョングループも含めます。",
-      "date_range_tooltip": "直近1週間のバージョン分布のみ",
-      "y_axis_label": "ダウンロード"
+      "y_axis_label": "ダウンロード",
+      "filter_placeholder": "semverで絞り込み (例: ^3.0.0)",
+      "filter_invalid": "無効なsemver範囲です",
+      "filter_help": "semver範囲フィルタのヘルプ",
+      "filter_tooltip": "{link} を使ってバージョンを絞り込みます。例えば、^3.0.0は3.xのすべてのバージョンを表示します。",
+      "filter_tooltip_link": "semver範囲",
+      "no_matches": "この範囲に一致するバージョンはありません",
+      "copy_alt": {
+        "per_version_analysis": "バージョン {version} は {downloads} 回ダウンロードされました",
+        "general_description": "{package_name} パッケージの {versions_count} 個の {semver_grouping_mode} バージョンにおけるバージョン別ダウンロード数を示す棒グラフ。期間は {date_range_label}（{first_version} から {last_version} まで）。最多ダウンロードはバージョン {max_downloaded_version} で {max_version_downloads} 回。{per_version_analysis}。{watermark}。"
+      }
     },
     "dependencies": {
       "title": "依存関係（{count}）",
@@ -310,7 +333,8 @@
       "view_vulnerabilities": "脆弱性情報を表示",
       "outdated_major": "最新から {count} 個のメジャーバージョン遅れています (最新: {latest})",
       "outdated_minor": "最新から {count} 個のマイナーバージョン遅れています (最新: {latest})",
-      "outdated_patch": "パッチアップデートがあります (最新: {latest})"
+      "outdated_patch": "パッチアップデートがあります (最新: {latest})",
+      "has_replacement": "この依存関係には代替の候補があります"
     },
     "peer_dependencies": {
       "title": "ピア依存関係（{count}）",
@@ -349,14 +373,44 @@
       "date_range_multiline": "{start}\nから {end}",
       "download_file": "{fileType} をダウンロード",
       "toggle_annotator": "アノテーターを切り替え",
+      "toggle_stack_mode": "スタックモードを切り替え",
       "legend_estimation": "推定値",
       "no_data": "データがありません",
       "y_axis_label": "{granularity} {facet}",
       "facet": "指標",
       "title": "トレンド",
+      "contributors_skip": "コントリビューターには表示されません (GitHubリポジトリなし):",
       "items": {
         "downloads": "ダウンロード数",
-        "likes": "いいね数"
+        "likes": "いいね数",
+        "contributors": "コントリビューター"
+      },
+      "play_animation": "アニメーション再生",
+      "pause_animation": "アニメーション停止",
+      "data_correction": "データ補正",
+      "average_window": "平均ウィンドウ",
+      "smoothing": "スムージング",
+      "known_anomalies": "既知のアノマリー",
+      "known_anomalies_description": "ボットやCIの問題による既知のダウンロードスパイクを補完します。",
+      "known_anomalies_ranges": "アノマリー範囲",
+      "known_anomalies_range": "{start} から {end}",
+      "known_anomalies_range_named": "{packageName}: {start} から {end}",
+      "known_anomalies_none": "このパッケージに既知のアノマリーはありません。|これらのパッケージに既知のアノマリーはありません。",
+      "known_anomalies_contribute": "アノマリーデータの提供",
+      "apply_correction": "補正を適用",
+      "copy_alt": {
+        "trend_none": "ほぼ横ばい",
+        "trend_strong": "強い",
+        "trend_weak": "弱い",
+        "trend_undefined": "未定義（データ不足）",
+        "button_label": "altテキストをコピー",
+        "watermark": "下部に「./npmx a fast, modern browser for the npm registry」のウォーターマークあり",
+        "analysis": "{package_name} は {start_value} で始まり {end_value} で終了。{trend} 傾向を示し、時間間隔あたりのダウンロード傾斜は {downloads_slope} です。",
+        "estimation": "最終値は、現在の期間の部分的データに基づく推定値です。",
+        "estimations": "最終値は、現在の期間の部分的データに基づく推定値です。",
+        "compare": "パッケージダウンロード比較折れ線グラフ: {packages}",
+        "single_package": "{package} パッケージのダウンロード折れ線グラフ",
+        "general_description": "Y軸はダウンロード数、X軸は {start_date} から {end_date} までの期間（単位：{granularity}）を示します。{estimation_notice} {packages_analysis}。{watermark}。"
       }
     },
     "downloads": {
@@ -614,6 +668,7 @@
       "invalid_name": "無効なパッケージ名:",
       "available": "この名前は使用可能です！",
       "taken": "この名前はすでに使用されています。",
+      "missing_permission": "スコープ {'@'}{scope} にパッケージを追加する権限がありません。",
       "similar_warning": "似た名前のパッケージが存在します。npmによって拒否される可能性があります:",
       "related": "関連パッケージ:",
       "scope_warning_title": "スコープ付きパッケージの使用を検討してください",
@@ -808,6 +863,12 @@
         "managers": "存在します"
       }
     },
+    "sponsors": {
+      "title": "スポンサー"
+    },
+    "oss_partners": {
+      "title": "OSSパートナー"
+    },
     "team": {
       "title": "チーム",
       "governance": "ガバナンス",
@@ -900,6 +961,7 @@
       "section_packages": "パッケージ",
       "section_facets": "比較項目",
       "section_comparison": "比較",
+      "copy_as_markdown": "テーブルをコピー",
       "loading": "パッケージデータを読み込み中...",
       "error": "パッケージデータの読み込みに失敗しました。もう一度お試しください。",
       "empty_title": "比較するパッケージを選択",
@@ -1007,7 +1069,37 @@
       "trends": {
         "title": "トレンド比較"
       }
-    }
+    },
+    "file_changes": "ファイル変更",
+    "files_count": "{count} ファイル",
+    "lines_hidden": "{count} 行を非表示",
+    "compare_versions": "diff",
+    "summary": "要約",
+    "deps_count": "依存関係 {count} 件",
+    "dependencies": "依存関係",
+    "dev_dependencies": "dev依存関係",
+    "peer_dependencies": "ピア依存関係",
+    "optional_dependencies": "オプション依存関係",
+    "no_dependency_changes": "依存関係の変更なし",
+    "file_filter_option": {
+      "all": "すべて ({count})",
+      "added": "追加 ({count})",
+      "removed": "削除 ({count})",
+      "modified": "変更 ({count})"
+    },
+    "search_files_placeholder": "ファイルを検索...",
+    "no_files_all": "ファイルなし",
+    "no_files_search": "\"{query}\" に一致するファイルなし",
+    "no_files_filtered": "{filter} ファイルなし",
+    "filter": {
+      "added": "追加済み",
+      "removed": "削除済み",
+      "modified": "変更済み"
+    },
+    "files_button": "ファイル",
+    "select_file_prompt": "サイドバーからファイルを選択してdiffを表示",
+    "close_files_panel": "ファイルパネルを閉じる",
+    "filter_files_label": "変更タイプでファイルをフィルタリング"
   },
   "privacy_policy": {
     "title": "プライバシーポリシー",
@@ -1081,7 +1173,7 @@
     },
     "contact": {
       "title": "問い合わせ",
-      "p1": "本プライバシーポリシーに関する質問や懸念がある場合は、{link}でIssueを作成して連絡してください。",
+      "p1": "本プライバシーポリシーに関する質問や懸念がある場合は、{link}でissueを作成して連絡してください。",
       "link": "GitHubリポジトリ"
     },
     "changes": {

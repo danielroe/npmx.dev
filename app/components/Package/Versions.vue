@@ -22,6 +22,7 @@ const props = defineProps<{
   selectedVersion?: string
 }>()
 
+const QUERY_MODAL_VALUE = 'versions'
 const chartModal = useModal('chart-modal')
 const hasDistributionModalTransitioned = shallowRef(false)
 const isDistributionModalOpen = shallowRef(false)
@@ -34,12 +35,22 @@ function clearDistributionModalFallbackTimer() {
   }
 }
 
+const router = useRouter()
+const route = useRoute()
+
 async function openDistributionModal() {
   isDistributionModalOpen.value = true
   hasDistributionModalTransitioned.value = false
   // ensure the component renders before opening the dialog
   await nextTick()
   chartModal.open()
+
+  await router.replace({
+    query: {
+      ...route.query,
+      modal: QUERY_MODAL_VALUE,
+    },
+  })
 
   // Fallback: Force mount if transition event doesn't fire
   clearDistributionModalFallbackTimer()
@@ -52,9 +63,23 @@ async function openDistributionModal() {
 
 function closeDistributionModal() {
   isDistributionModalOpen.value = false
+
+  router.replace({
+    query: {
+      ...route.query,
+      modal: undefined,
+    },
+  })
+
   hasDistributionModalTransitioned.value = false
   clearDistributionModalFallbackTimer()
 }
+
+onMounted(() => {
+  if (route.query.modal === QUERY_MODAL_VALUE) {
+    openDistributionModal()
+  }
+})
 
 function handleDistributionModalTransitioned() {
   hasDistributionModalTransitioned.value = true
@@ -484,8 +509,8 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
     </template>
     <div class="space-y-0.5 min-w-0">
       <!-- Semver range filter -->
-      <div class="px-1 pb-1">
-        <div class="flex items-center gap-1.5">
+      <div>
+        <div class="flex items-center gap-2 p-1">
           <InputBase
             v-model="semverFilter"
             type="text"
@@ -501,10 +526,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <TooltipApp interactive position="top">
             <span
               tabindex="0"
-              class="i-lucide:info w-3.5 h-3.5 text-fg-subtle cursor-help shrink-0 rounded-sm"
-              role="img"
-              :aria-label="$t('package.versions.filter_help')"
-            />
+              class="block cursor-help shrink-0 -m-2 p-2 -me-1 focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
+            >
+              <span
+                class="block i-lucide:info w-3.5 h-3.5 text-fg-subtle"
+                role="img"
+                :aria-label="$t('package.versions.filter_help')"
+              />
+            </span>
             <template #content>
               <p class="text-xs text-fg-muted">
                 <i18n-t keypath="package.versions.filter_tooltip" tag="span">
@@ -541,14 +570,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
       <!-- Dist-tag rows (limited to MAX_VISIBLE_TAGS) -->
       <div v-for="row in visibleTagRows" :key="row.id">
         <div
-          class="flex items-center gap-2 pe-2 px-1"
-          :class="rowContainsCurrentVersion(row) ? 'bg-bg-subtle rounded-lg' : ''"
+          class="flex items-center gap-2 pe-2 px-1 relative group/version-row hover:bg-bg-subtle focus-within:bg-bg-subtle transition-colors duration-200 rounded-lg"
+          :class="rowContainsCurrentVersion(row) ? 'bg-bg-subtle' : ''"
         >
           <!-- Expand button (only if there are more versions to show) -->
           <button
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm"
+            class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm relative z-10"
             :aria-expanded="expandedTags.has(row.tag)"
             :aria-label="
               expandedTags.has(row.tag)
@@ -566,14 +595,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
             />
             <span
               v-else
-              class="w-3 h-3 transition-transform duration-200 rtl-flip"
+              class="size-3 transition-transform duration-200 rtl-flip"
               :class="
                 expandedTags.has(row.tag) ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'
               "
               aria-hidden="true"
             />
           </button>
-          <span v-else class="w-4" />
+          <span v-else class="w-5" />
 
           <!-- Version info -->
           <div class="flex-1 py-1.5 min-w-0 flex gap-2 justify-between items-center">
@@ -581,10 +610,10 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
               <LinkBase
                 :to="versionRoute(row.primaryVersion.version)"
                 block
-                class="text-sm"
+                class="text-sm after:absolute after:inset-0 after:content-['']"
                 :class="
                   row.primaryVersion.deprecated
-                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                    ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                     : undefined
                 "
                 :title="
@@ -600,18 +629,22 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                   {{ row.primaryVersion.version }}
                 </span>
               </LinkBase>
-              <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5 flex-wrap">
+              <div
+                v-if="row.tags.length"
+                class="flex items-center gap-1 mt-0.5 flex-wrap relative z-10"
+              >
                 <span
                   v-for="tag in row.tags"
                   :key="tag"
-                  class="text-4xs font-semibold text-fg-subtle uppercase tracking-wide truncate"
+                  class="text-4xs font-semibold uppercase tracking-wide truncate"
+                  :class="tag === 'latest' ? 'text-accent' : 'text-fg-subtle'"
                   :title="tag"
                 >
                   {{ tag }}
                 </span>
               </div>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-2 shrink-0 relative z-10">
               <DateTime
                 v-if="row.primaryVersion.time"
                 :datetime="row.primaryVersion.time"
@@ -625,6 +658,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                 :package-name="packageName"
                 :version="row.primaryVersion.version"
                 compact
+                :linked="false"
               />
             </div>
           </div>
@@ -638,17 +672,17 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <div
             v-for="v in getFilteredTagVersions(row.tag).slice(1)"
             :key="v.version"
-            class="py-1"
-            :class="v.version === effectiveCurrentVersion ? 'rounded bg-bg-subtle px-2 -mx-2' : ''"
+            class="py-1 relative group/version-row hover:bg-bg-elevated/20 focus-within:bg-bg-elevated/20 transition-colors duration-200"
+            :class="v.version === effectiveCurrentVersion ? 'bg-bg-elevated/20 rounded' : ''"
           >
             <div class="flex items-center justify-between gap-2">
               <LinkBase
                 :to="versionRoute(v.version)"
                 block
-                class="text-xs"
+                class="text-xs after:absolute after:inset-0 after:content-['']"
                 :class="
                   v.deprecated
-                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                    ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                     : undefined
                 "
                 :title="
@@ -664,7 +698,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                   {{ v.version }}
                 </span>
               </LinkBase>
-              <div class="flex items-center gap-2 shrink-0">
+              <div class="flex items-center gap-2 shrink-0 relative z-10">
                 <DateTime
                   v-if="v.time"
                   :datetime="v.time"
@@ -678,17 +712,19 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                   :package-name="packageName"
                   :version="v.version"
                   compact
+                  :linked="false"
                 />
               </div>
             </div>
             <div
               v-if="v.tags?.length && filterExcludedTags(v.tags, row.tags).length"
-              class="flex items-center gap-1 mt-0.5"
+              class="flex items-center gap-1 mt-0.5 relative z-10"
             >
               <span
                 v-for="tag in filterExcludedTags(v.tags, row.tags)"
                 :key="tag"
-                class="text-5xs font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[120px]"
+                class="text-5xs font-semibold uppercase tracking-wide truncate max-w-[120px]"
+                :class="tag === 'latest' ? 'text-accent' : 'text-fg-subtle'"
                 :title="tag"
               >
                 {{ tag }}
@@ -713,7 +749,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           @click="expandOtherVersions"
         >
           <span
-            class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
+            class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors"
           >
             <span
               v-if="otherVersionsLoading"
@@ -748,17 +784,17 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
           <div
             v-for="row in hiddenTagRows"
             :key="row.id"
-            class="py-1"
-            :class="hiddenRowContainsCurrent(row) ? 'rounded bg-bg-subtle px-2 -mx-2' : ''"
+            class="py-1 relative group/version-row hover:bg-bg-subtle focus-within:bg-bg-subtle transition-colors duration-200 rounded-lg"
+            :class="hiddenRowContainsCurrent(row) ? 'bg-bg-subtle' : ''"
           >
             <div class="flex items-center justify-between gap-2">
               <LinkBase
                 :to="versionRoute(row.primaryVersion.version)"
                 block
-                class="text-xs"
+                class="text-xs after:absolute after:inset-0 after:content-['']"
                 :class="
                   row.primaryVersion.deprecated
-                    ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                    ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                     : undefined
                 "
                 :title="
@@ -774,7 +810,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                   {{ row.primaryVersion.version }}
                 </span>
               </LinkBase>
-              <div class="flex items-center gap-2 shrink-0 pe-2">
+              <div class="flex items-center gap-2 shrink-0 pe-2 relative z-10">
                 <DateTime
                   v-if="row.primaryVersion.time"
                   :datetime="row.primaryVersion.time"
@@ -785,11 +821,15 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                 />
               </div>
             </div>
-            <div v-if="row.tags.length" class="flex items-center gap-1 mt-0.5 flex-wrap">
+            <div
+              v-if="row.tags.length"
+              class="flex items-center gap-1 mt-0.5 flex-wrap relative z-10"
+            >
               <span
                 v-for="tag in row.tags"
                 :key="tag"
-                class="text-5xs font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[120px]"
+                class="text-5xs font-semibold uppercase tracking-wide truncate max-w-[120px]"
+                :class="tag === 'latest' ? 'text-accent' : 'text-fg-subtle'"
                 :title="tag"
               >
                 {{ tag }}
@@ -803,14 +843,14 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
               <!-- Version group header -->
               <div
                 v-if="group.versions.length > 1"
-                class="py-1"
-                :class="majorGroupContainsCurrent(group) ? 'rounded bg-bg-subtle px-2 -mx-2' : ''"
+                class="py-1 relative group/version-row hover:bg-bg-subtle focus-within:bg-bg-subtle transition-colors duration-200 rounded-lg"
+                :class="majorGroupContainsCurrent(group) ? 'bg-bg-subtle' : ''"
               >
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2 min-w-0">
                     <button
                       type="button"
-                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 rounded-sm"
+                      class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors shrink-0 rounded-sm relative z-10"
                       :aria-expanded="expandedMajorGroups.has(group.groupKey)"
                       :aria-label="
                         expandedMajorGroups.has(group.groupKey)
@@ -838,10 +878,10 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       v-if="group.versions[0]?.version"
                       :to="versionRoute(group.versions[0]?.version)"
                       block
-                      class="text-xs"
+                      class="text-xs after:absolute after:inset-0 after:content-['']"
                       :class="
                         group.versions[0]?.deprecated
-                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                          ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                           : undefined
                       "
                       :title="
@@ -860,7 +900,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       </span>
                     </LinkBase>
                   </div>
-                  <div class="flex items-center gap-2 shrink-0 pe-2">
+                  <div class="flex items-center gap-2 shrink-0 pe-2 relative z-10">
                     <DateTime
                       v-if="group.versions[0]?.time"
                       :datetime="group.versions[0]?.time"
@@ -874,17 +914,19 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       :package-name="packageName"
                       :version="group.versions[0]?.version"
                       compact
+                      :linked="false"
                     />
                   </div>
                 </div>
                 <div
                   v-if="group.versions[0]?.tags?.length"
-                  class="flex items-center gap-1 ms-5 flex-wrap"
+                  class="flex items-center gap-1 ms-5 flex-wrap relative z-10"
                 >
                   <span
                     v-for="tag in group.versions[0].tags"
                     :key="tag"
-                    class="text-5xs font-semibold text-fg-subtle uppercase tracking-wide truncate max-w-[120px]"
+                    class="text-5xs font-semibold uppercase tracking-wide truncate max-w-[120px]"
+                    :class="tag === 'latest' ? 'text-accent' : 'text-fg-subtle'"
                     :title="tag"
                   >
                     {{ tag }}
@@ -894,8 +936,8 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
               <!-- Single version (no expand needed) -->
               <div
                 v-else
-                class="py-1"
-                :class="majorGroupContainsCurrent(group) ? 'rounded bg-bg-subtle px-2 -mx-2' : ''"
+                class="py-1 relative group/version-row hover:bg-bg-subtle focus-within:bg-bg-subtle transition-colors duration-200 rounded-lg"
+                :class="majorGroupContainsCurrent(group) ? 'bg-bg-subtle' : ''"
               >
                 <div class="flex items-center justify-between gap-2">
                   <div class="flex items-center gap-2 min-w-0">
@@ -903,10 +945,10 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       v-if="group.versions[0]?.version"
                       :to="versionRoute(group.versions[0]?.version)"
                       block
-                      class="text-xs ms-6"
+                      class="text-xs ms-6 after:absolute after:inset-0 after:content-['']"
                       :class="
                         group.versions[0]?.deprecated
-                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                          ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                           : undefined
                       "
                       :title="
@@ -925,7 +967,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       </span>
                     </LinkBase>
                   </div>
-                  <div class="flex items-center gap-2 shrink-0 pe-2">
+                  <div class="flex items-center gap-2 shrink-0 pe-2 relative z-10">
                     <DateTime
                       v-if="group.versions[0]?.time"
                       :datetime="group.versions[0]?.time"
@@ -939,14 +981,19 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                       :package-name="packageName"
                       :version="group.versions[0]?.version"
                       compact
+                      :linked="false"
                     />
                   </div>
                 </div>
-                <div v-if="group.versions[0]?.tags?.length" class="flex items-center gap-1 ms-5">
+                <div
+                  v-if="group.versions[0]?.tags?.length"
+                  class="flex items-center gap-1 ms-5 relative z-10"
+                >
                   <span
                     v-for="tag in group.versions[0].tags"
                     :key="tag"
-                    class="text-5xs font-semibold text-fg-subtle uppercase tracking-wide"
+                    class="text-5xs font-semibold uppercase tracking-wide"
+                    :class="tag === 'latest' ? 'text-accent' : 'text-fg-subtle'"
                   >
                     {{ tag }}
                   </span>
@@ -961,19 +1008,17 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                 <div
                   v-for="v in group.versions.slice(1)"
                   :key="v.version"
-                  class="py-1"
-                  :class="
-                    v.version === effectiveCurrentVersion ? 'rounded bg-bg-subtle px-2 -mx-2' : ''
-                  "
+                  class="py-1 relative group/version-row hover:bg-bg-elevated/20 focus-within:bg-bg-elevated/20 transition-colors duration-200"
+                  :class="v.version === effectiveCurrentVersion ? 'bg-bg-elevated/20 rounded' : ''"
                 >
                   <div class="flex items-center justify-between gap-2">
                     <LinkBase
                       :to="versionRoute(v.version)"
                       block
-                      class="text-xs"
+                      class="text-xs after:absolute after:inset-0 after:content-['']"
                       :class="
                         v.deprecated
-                          ? 'text-red-800 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300'
+                          ? 'text-red-800 group-hover/version-row:text-red-700 dark:text-red-400 dark:group-hover/version-row:text-red-300'
                           : undefined
                       "
                       :title="
@@ -989,7 +1034,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                         {{ v.version }}
                       </span>
                     </LinkBase>
-                    <div class="flex items-center gap-2 shrink-0 pe-2">
+                    <div class="flex items-center gap-2 shrink-0 pe-2 relative z-10">
                       <DateTime
                         v-if="v.time"
                         :datetime="v.time"
@@ -1003,14 +1048,16 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
                         :package-name="packageName"
                         :version="v.version"
                         compact
+                        :linked="false"
                       />
                     </div>
                   </div>
-                  <div v-if="v.tags?.length" class="flex items-center gap-1 mt-0.5">
+                  <div v-if="v.tags?.length" class="flex items-center gap-1 mt-0.5 relative z-10">
                     <span
                       v-for="tag in v.tags"
                       :key="tag"
-                      class="text-5xs font-semibold text-fg-subtle uppercase tracking-wide"
+                      class="text-5xs font-semibold uppercase tracking-wide"
+                      :class="tag === 'latest' ? 'text-accent' : 'text-fg-subtle'"
                     >
                       {{ tag }}
                     </span>
@@ -1051,7 +1098,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
     <!-- Avoids CLS when the dialog has transitioned -->
     <div
       v-if="!hasDistributionModalTransitioned"
-      class="w-full aspect-[272/609] sm:aspect-[718/571]"
+      class="w-full aspect-[272/609] sm:aspect-[718/592.67]"
     />
   </PackageChartModal>
 </template>
