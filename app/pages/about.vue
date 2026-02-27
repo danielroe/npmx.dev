@@ -145,8 +145,40 @@ function onDocumentPointerDown(e: PointerEvent) {
   }
 }
 
-onMounted(() => document.addEventListener('pointerdown', onDocumentPointerDown))
-onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerDown))
+function onDocumentKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && activeContributor.value) {
+    activeContributor.value = null
+  }
+}
+
+function addListeners() {
+  document.addEventListener('pointerdown', onDocumentPointerDown)
+  document.addEventListener('keydown', onDocumentKeydown)
+}
+
+function removeListeners() {
+  document.removeEventListener('pointerdown', onDocumentPointerDown)
+  document.removeEventListener('keydown', onDocumentKeydown)
+}
+
+onMounted(() => {
+  addListeners()
+})
+
+onBeforeUnmount(() => {
+  cancelClose()
+  removeListeners()
+})
+
+onActivated(() => {
+  addListeners()
+})
+
+onDeactivated(() => {
+  cancelClose()
+  activeContributor.value = null
+  removeListeners()
+})
 </script>
 
 <template>
@@ -306,7 +338,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerD
                   :to="contributor.html_url"
                   no-underline
                   no-external-icon
-                  :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
+                  :aria-label="getAriaLabel(contributor)"
                   class="group relative block h-12 w-12 rounded-lg transition-all outline-none p-0 bg-transparent"
                 >
                   <img
@@ -322,8 +354,10 @@ onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerD
                   v-else
                   type="button"
                   :data-cid="contributor.id"
-                  :aria-expanded="activeContributor?.id === contributor.id ? 'true' : undefined"
-                  :aria-haspopup="isExpandable(contributor) ? 'true' : undefined"
+                  :aria-expanded="
+                    isMounted && activeContributor?.id === contributor.id ? 'true' : undefined
+                  "
+                  :aria-haspopup="isMounted && isExpandable(contributor) ? 'true' : undefined"
                   :aria-label="
                     isExpandable(contributor)
                       ? getAriaLabel(contributor)
@@ -338,7 +372,6 @@ onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerD
                   @mouseenter="open(contributor, $event.currentTarget as HTMLElement)"
                   @mouseleave="scheduleClose(contributor)"
                   @click="toggle(contributor, $event.currentTarget as HTMLElement)"
-                  @keydown.escape="activeContributor = null"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
@@ -391,7 +424,7 @@ onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerD
                           class="flex items-center gap-1 font-sans text-2xs text-fg-muted text-start min-w-0"
                         >
                           <div
-                            class="i-lucide:building-2 size-3 shrink-0 mt-0.5 text-accent/80"
+                            class="i-lucide:building-2 size-3 shrink-0 text-accent/80"
                             aria-hidden="true"
                           />
                           <div
