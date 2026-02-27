@@ -845,7 +845,7 @@
       },
       "github": {
         "title": "GitHub",
-        "connected_as": "ஆக இணைக்கப்பட்டது {username}"
+        "connected_as": "{username} ஆக இணைக்கப்பட்டது"
       }
     }
   },
