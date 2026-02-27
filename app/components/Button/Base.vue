@@ -27,6 +27,7 @@ const props = withDefaults(
 const el = useTemplateRef('el')
 
 const keyboardShortcutsEnabled = useKeyboardShortcuts()
+const showKbdHint = computed(() => keyboardShortcutsEnabled.value && !!props.ariaKeyshortcuts)
 
 defineExpose({
   focus: () => el.value?.focus(),
@@ -63,7 +64,8 @@ defineExpose({
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
     <slot />
     <kbd
-      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      v-if="showKbdHint"
+      data-kbd-hint
       class="ms-2 inline-flex items-center justify-center w-4 h-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >

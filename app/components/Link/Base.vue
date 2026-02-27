@@ -60,6 +60,7 @@ const isButton = computed(() => !isLink.value)
 const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
 const keyboardShortcutsEnabled = useKeyboardShortcuts()
+const showKbdHint = computed(() => keyboardShortcutsEnabled.value && !!props.ariaKeyshortcuts)
 </script>
 
 <template>
@@ -115,7 +116,8 @@ const keyboardShortcutsEnabled = useKeyboardShortcuts()
       aria-hidden="true"
     />
     <kbd
-      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      v-if="showKbdHint"
+      data-kbd-hint
       class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >
