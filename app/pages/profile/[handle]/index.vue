@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { updateProfile as updateProfileUtil } from '~/utils/atproto/profile'
 
-const route = useRoute('/profile/[handle]')
+const route = useRoute('profile-handle')
 const handle = computed(() => route.params.handle)
 
-const { data: profile }: { data?: NPMXProfile } = useFetch(
-  () => `/api/social/profile/${handle.value}`,
-  {
-    default: () => ({ profile: { displayName: handle.value } }),
-    server: false,
-  },
-)
+const { data: profile } = useFetch<NPMXProfile>(() => `/api/social/profile/${handle.value}`, {
+  default: () => ({ displayName: handle.value, description: '', website: '' }),
+  server: false,
+})
 
 const { user } = useAtproto()
 const isEditing = ref(false)
@@ -30,7 +27,7 @@ watchEffect(() => {
 })
 
 async function updateProfile() {
-  if (!user.value.handle || !displayNameInput.value) {
+  if (!user.value?.handle || !displayNameInput.value) {
     return
   }
 
