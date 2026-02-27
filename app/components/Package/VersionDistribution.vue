@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
-import {
-  type VueUiXyDatasetItem,
-  type VueUiXyDatasetBarItem,
-  type VueUiXyDatapointItem,
-  type MinimalCustomFormatParams,
-} from 'vue-data-ui'
+import { type VueUiXyDatasetItem, type VueUiXyConfig } from 'vue-data-ui'
 import { useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
 import { OKLCH_NEUTRAL_FALLBACK, transparentizeOklch, lightenHex } from '~/utils/colors'
@@ -14,10 +9,7 @@ import {
   drawNpmxLogoAndTaglineWatermark,
 } from '~/composables/useChartWatermark'
 import TooltipApp from '~/components/Tooltip/App.vue'
-
-type TooltipParams = MinimalCustomFormatParams<VueUiXyDatapointItem[]> & {
-  bars: VueUiXyDatasetBarItem[]
-}
+import { copyAltTextForVersionsBarChart } from '~/utils/charts'
 
 const props = defineProps<{
   packageName: string
@@ -25,6 +17,8 @@ const props = defineProps<{
 }>()
 
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { copy, copied } = useClipboard()
+
 const colorMode = useColorMode()
 const resolvedMode = shallowRef<'light' | 'dark'>('light')
 const rootEl = shallowRef<HTMLElement | null>(null)
@@ -176,7 +170,7 @@ const hasMinimap = computed<boolean>(() => {
   return series.length > 6
 })
 
-const chartConfig = computed(() => {
+const chartConfig = computed<VueUiXyConfig>(() => {
   return {
     theme: isDarkMode.value ? 'dark' : '',
     chart: {
@@ -199,20 +193,23 @@ const chartConfig = computed(() => {
           fullscreen: false,
           table: false,
           tooltip: false,
-          altCopy: false, // TODO: set to true to enable the alt copy feature
+          altCopy: true,
         },
         buttonTitles: {
           csv: $t('package.trends.download_file', { fileType: 'CSV' }),
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
-          altCopy: undefined, // TODO: set to proper translation key
+          altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
         },
         callbacks: {
-          img: ({ imageUri }: { imageUri: string }) => {
+          img: args => {
+            const imageUri = args?.imageUri
+            if (!imageUri) return
             loadFile(imageUri, buildExportFilename('png'))
           },
-          csv: (csvStr: string) => {
+          csv: csvStr => {
+            if (!csvStr) return
             const PLACEHOLDER_CHAR = '\0'
             const multilineDateTemplate = $t('package.trends.date_range_multiline', {
               start: PLACEHOLDER_CHAR,
@@ -229,15 +226,26 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }: { blob: Blob }) => {
+          svg: args => {
+            const blob = args?.blob
+            if (!blob) return
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
           },
-          // altCopy: ({ dataset: dst, config: cfg }: { dataset: Array<VueUiXyDatasetItem>; config: VueUiXyConfig}) => {
-          //   // TODO: implement a reusable copy-alt-text-to-clipboard feature based on the dataset & configuration
-          //   console.log({ dst, cfg})
-          // }
+          altCopy: ({ dataset: dst, config: cfg }) =>
+            copyAltTextForVersionsBarChart({
+              dataset: dst,
+              config: {
+                ...cfg,
+                datapointLabels: xAxisLabels.value,
+                dateRangeLabel: dateRangeLabel.value,
+                semverGroupingMode: groupingMode.value,
+                copy,
+                $t,
+                numberFormatter: compactNumberFormatter.value.format,
+              },
+            }),
         },
       },
       grid: {
@@ -277,8 +285,7 @@ const chartConfig = computed(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: (params: TooltipParams) => {
-          const { datapoint, absoluteIndex, bars } = params
+        customFormat: ({ datapoint, absoluteIndex, bars }) => {
           if (!datapoint || pending.value) return ''
 
           // Use absoluteIndex to get the correct version from chartDataset
@@ -328,9 +335,6 @@ const chartConfig = computed(() => {
           strokeDasharray: 3,
         },
       },
-    },
-    table: {
-      show: false,
     },
   }
 })
@@ -447,7 +451,7 @@ const chartConfig = computed(() => {
       role="region"
       aria-labelledby="version-distribution-title"
       class="relative"
-      :class="isMobile ? 'min-h-[260px]' : 'min-h-[400px]'"
+      :class="isMobile ? 'min-h-[260px]' : 'min-h-[520px]'"
     >
       <!-- Chart content -->
       <ClientOnly v-if="xyDataset.length > 0 && !error">
@@ -462,6 +466,16 @@ const chartConfig = computed(() => {
               <g
                 v-if="svg.isPrintingSvg || svg.isPrintingImg"
                 v-html="drawNpmxLogoAndTaglineWatermark(svg, watermarkColors, $t, 'bottom')"
+              />
+
+              <!-- Overlay covering the chart area to hide line resizing when switching granularities recalculates VueUiXy scaleMax when estimation lines are necessary -->
+              <rect
+                v-if="pending"
+                :x="svg.drawingArea.left"
+                :y="svg.drawingArea.top - 12"
+                :width="svg.drawingArea.width + 12"
+                :height="svg.drawingArea.height + 48"
+                :fill="colors.bg"
               />
             </template>
 
@@ -573,6 +587,16 @@ const chartConfig = computed(() => {
                 aria-hidden="true"
               />
             </template>
+            <template #optionAltCopy>
+              <span
+                class="w-6 h-6"
+                :class="
+                  copied ? 'i-lucide:check text-accent' : 'i-lucide:person-standing text-fg-subtle'
+                "
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
           </VueUiXy>
         </div>
 
@@ -619,21 +643,6 @@ const chartConfig = computed(() => {
 /* Disable all transitions on SVG elements to prevent repositioning animation */
 :deep(.vue-ui-xy) svg rect {
   transition: none !important;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.chart-container {
-  animation: fadeInUp 350ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
 

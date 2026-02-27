@@ -2,19 +2,20 @@ import process from 'node:process'
 import { currentLocales } from './config/i18n'
 import { isCI, isTest, provider } from 'std-env'
 
+const isStorybook = process.env.STORYBOOK === 'true' || process.env.VITEST_STORYBOOK === 'true'
+
 export default defineNuxtConfig({
   modules: [
     '@unocss/nuxt',
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
     '@nuxt/a11y',
-    '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    '@nuxtjs/color-mode',
+    ...(isStorybook ? [] : ['@nuxt/fonts', '@nuxtjs/color-mode']),
   ],
 
   $test: {
@@ -34,6 +35,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     sessionPassword: '',
+    imageProxySecret: '',
     github: {
       orgToken: '',
     },
@@ -135,13 +137,10 @@ export default defineNuxtConfig({
       },
     },
     // pages
-    '/package/:name': getISRConfig(60, { fallback: 'html' }),
+    '/package/**': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name': getISRConfig(60, { fallback: 'html' }),
     '/package/:org/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
     '/package/:org/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -171,7 +170,7 @@ export default defineNuxtConfig({
   experimental: {
     entryImportMap: false,
     typescriptPlugin: true,
-    viteEnvironmentApi: true,
+    viteEnvironmentApi: !isStorybook,
     typedPages: true,
   },
 
@@ -207,6 +206,10 @@ export default defineNuxtConfig({
       'fetch-cache': {
         driver: 'fsLite',
         base: './.cache/fetch',
+      },
+      'payload-cache': {
+        driver: 'fsLite',
+        base: './.cache/payload',
       },
       'atproto': {
         driver: 'fsLite',
@@ -252,6 +255,7 @@ export default defineNuxtConfig({
   },
 
   ogImage: {
+    enabled: !isStorybook,
     defaults: {
       component: 'Default',
     },
@@ -270,6 +274,7 @@ export default defineNuxtConfig({
     // Disable service worker
     disable: true,
     pwaAssets: {
+      disabled: isStorybook,
       config: false,
     },
     manifest: {

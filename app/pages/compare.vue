@@ -6,8 +6,10 @@ definePageMeta({
   name: 'compare',
 })
 
+const { locale } = useI18n()
 const router = useRouter()
 const canGoBack = useCanGoBack()
+const { copied, copy } = useClipboard({ copiedDuring: 2000 })
 
 // Sync packages with URL query param (stable ref - doesn't change on other query changes)
 const packagesParam = useRouteQuery<string>('packages', '', { mode: 'replace' })
@@ -78,6 +80,57 @@ const canCompare = computed(() => packages.value.length >= 2)
 const gridHeaders = computed(() =>
   gridColumns.value.map(col => (col.version ? `${col.name}@${col.version}` : col.name)),
 )
+
+/*
+ * Convert the comparison grid data to a Markdown table.
+ */
+function exportComparisonDataAsMarkdown() {
+  const mdData: Array<Array<string>> = []
+  const headers = [
+    '',
+    ...gridHeaders.value,
+    ...(showNoDependency.value ? [$t('compare.no_dependency.label')] : []),
+  ]
+  mdData.push(headers)
+  const maxLengths = headers.map(item => item.length)
+
+  selectedFacets.value.forEach((facet, index) => {
+    const label = facet.label
+    const data = getFacetValues(facet.id)
+    mdData.push([
+      label,
+      ...data.map(item =>
+        item?.type === 'date'
+          ? new Date(item.display).toLocaleDateString(locale.value, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            })
+          : item?.display || '',
+      ),
+    ])
+    mdData?.[index + 1]?.forEach((item, itemIndex) => {
+      if (item.length > (maxLengths?.[itemIndex] || 0)) {
+        maxLengths[itemIndex] = item.length
+      }
+    })
+  })
+
+  const markdown = mdData.reduce((result, row, index) => {
+    // replacing pipe `|` with `ǀ` (U+01C0 Latin Letter Dental Click) to avoid breaking tables
+    result += `| ${row
+      .map((el, ind) => el.padEnd(maxLengths[ind] || 0, ' ').replace(/\|/g, 'ǀ'))
+      .join(' | ')} |`
+    if (index === 0) {
+      result += `\n|`
+      maxLengths.forEach(len => (result += ` ${'-'.padEnd(len, '-')} |`))
+    }
+    result += `\n`
+    return result
+  }, '')
+
+  copy(markdown)
+}
 
 useSeoMeta({
   title: () =>
@@ -193,7 +246,24 @@ useSeoMeta({
 
       <!-- Comparison grid -->
       <section v-if="canCompare" class="mt-10" aria-labelledby="comparison-heading">
-        <h2 id="comparison-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
+        <CopyToClipboardButton
+          v-if="packagesData && packagesData.some(p => p !== null)"
+          :copied="copied"
+          :copy-text="$t('compare.packages.copy_as_markdown')"
+          class="mb-4"
+          :button-attrs="{ class: 'hidden md:inline-flex' }"
+          @click="exportComparisonDataAsMarkdown"
+        >
+          <h2 id="comparison-heading" class="text-xs text-fg-subtle uppercase tracking-wider">
+            {{ $t('compare.packages.section_comparison') }}
+          </h2>
+        </CopyToClipboardButton>
+
+        <h2
+          v-else
+          id="comparison-heading"
+          class="text-xs text-fg-subtle uppercase tracking-wider mb-4"
+        >
           {{ $t('compare.packages.section_comparison') }}
         </h2>
 
@@ -241,7 +311,7 @@ useSeoMeta({
           </div>
 
           <h2
-            id="comparison-heading"
+            id="trends-comparison-heading"
             class="text-xs text-fg-subtle uppercase tracking-wider mb-4 mt-10"
           >
             {{ $t('compare.facets.trends.title') }}

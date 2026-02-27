@@ -83,6 +83,7 @@ export interface SlimPackument {
   'keywords'?: string[]
   'repository'?: { type?: string; url?: string; directory?: string }
   'bugs'?: { url?: string; email?: string }
+  'storybook'?: { url: string }
   /** current version */
   'requestedVersion': SlimPackumentVersion | null
   /** Only includes dist-tag versions (with installScripts info added per version) */
@@ -354,6 +355,8 @@ export interface PackageFileTree {
   path: string
   /** Node type */
   type: 'file' | 'directory'
+  /** File hash (only for files) */
+  hash?: string
   /** Node size in bytes (file size or recursive directory total) */
   size?: number
   /** Child nodes (only for directories) */

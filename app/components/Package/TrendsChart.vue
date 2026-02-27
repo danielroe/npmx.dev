@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { VueUiXyDatasetItem } from 'vue-data-ui'
+import type { Theme as VueDataUiTheme, VueUiXyConfig, VueUiXyDatasetItem } from 'vue-data-ui'
 import { VueUiXy } from 'vue-data-ui/vue-ui-xy'
 import { useDebounceFn, useElementSize } from '@vueuse/core'
 import { useCssVariables } from '~/composables/useColors'
@@ -18,6 +18,7 @@ import type {
   YearlyDataPoint,
 } from '~/types/chart'
 import { DATE_INPUT_MAX } from '~/utils/input'
+import { copyAltTextForTrendLineChart } from '~/utils/charts'
 
 const props = withDefaults(
   defineProps<{
@@ -50,6 +51,8 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { copy, copied } = useClipboard()
+
 const colorMode = useColorMode()
 const resolvedMode = shallowRef<'light' | 'dark'>('light')
 const rootEl = shallowRef<HTMLElement | null>(null)
@@ -1404,13 +1407,13 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
 }
 
 // VueUiXy chart component configuration
-const chartConfig = computed(() => {
+const chartConfig = computed<VueUiXyConfig>(() => {
   return {
-    theme: isDarkMode.value ? 'dark' : 'default',
+    theme: isDarkMode.value ? 'dark' : ('' as VueDataUiTheme),
     chart: {
       height: isMobile.value ? 950 : 600,
       backgroundColor: colors.value.bg,
-      padding: { bottom: displayedGranularity.value === 'yearly' ? 84 : 64, right: 100 }, // padding right is set to leave space of last datapoint label(s)
+      padding: { bottom: displayedGranularity.value === 'yearly' ? 84 : 64, right: 128 }, // padding right is set to leave space of last datapoint label(s)
       userOptions: {
         buttons: {
           pdf: false,
@@ -1418,20 +1421,23 @@ const chartConfig = computed(() => {
           fullscreen: false,
           table: false,
           tooltip: false,
-          altCopy: false, // TODO: set to true to enable the alt copy feature
+          altCopy: true,
         },
         buttonTitles: {
           csv: $t('package.trends.download_file', { fileType: 'CSV' }),
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
-          altCopy: undefined, // TODO: set to proper translation key
+          altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
         },
         callbacks: {
-          img: ({ imageUri }: { imageUri: string }) => {
+          img: args => {
+            const imageUri = args?.imageUri
+            if (!imageUri) return
             loadFile(imageUri, buildExportFilename('png'))
           },
-          csv: (csvStr: string) => {
+          csv: csvStr => {
+            if (!csvStr) return
             const PLACEHOLDER_CHAR = '\0'
             const multilineDateTemplate = $t('package.trends.date_range_multiline', {
               start: PLACEHOLDER_CHAR,
@@ -1448,15 +1454,29 @@ const chartConfig = computed(() => {
             loadFile(url, buildExportFilename('csv'))
             URL.revokeObjectURL(url)
           },
-          svg: ({ blob }: { blob: Blob }) => {
+          svg: args => {
+            const blob = args?.blob
+            if (!blob) return
             const url = URL.createObjectURL(blob)
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
           },
-          // altCopy: ({ dataset: dst, config: cfg }: { dataset: Array<VueUiXyDatasetItem>; config: VueUiXyConfig}) => {
-          //   // TODO: implement a reusable copy-alt-text-to-clipboard feature based on the dataset & configuration
-          //   console.log({ dst, cfg})
-          // }
+          altCopy: ({ dataset: dst, config: cfg }) =>
+            copyAltTextForTrendLineChart({
+              dataset: dst,
+              config: {
+                ...cfg,
+                formattedDatasetValues: (dst?.lines || []).map(d =>
+                  d.series.map(n => compactNumberFormatter.value.format(n ?? 0)),
+                ),
+                hasEstimation:
+                  supportsEstimation.value && !isEndDateOnPeriodEnd.value && !isZoomed.value,
+                granularity: displayedGranularity.value,
+                copy,
+                $t,
+                numberFormatter: compactNumberFormatter.value.format,
+              },
+            }),
         },
       },
       grid: {
@@ -1510,10 +1530,9 @@ const chartConfig = computed(() => {
         borderColor: 'transparent',
         backdropFilter: false,
         backgroundColor: 'transparent',
-        customFormat: ({ datapoint }: { datapoint: Record<string, any> | any[] }) => {
-          if (!datapoint || pending.value) return ''
+        customFormat: ({ datapoint: items }) => {
+          if (!items || pending.value) return ''
 
-          const items = Array.isArray(datapoint) ? datapoint : [datapoint[0]]
           const hasMultipleItems = items.length > 1
 
           const rows = items
@@ -1678,7 +1697,11 @@ watch(selectedMetric, value => {
     </h2>
 
     <!-- Chart panel (active metric) -->
-    <div role="region" aria-labelledby="trends-chart-title" class="min-h-[260px]">
+    <div
+      role="region"
+      aria-labelledby="trends-chart-title"
+      :class="isMobile === false && width > 0 ? 'min-h-[567px]' : 'min-h-[260px]'"
+    >
       <ClientOnly v-if="chartData.dataset">
         <div :data-pending="pending" :data-minimap-visible="maxDatapoints > 6">
           <VueUiXy
@@ -1862,7 +1885,10 @@ watch(selectedMetric, value => {
             </template>
             <template #optionAltCopy>
               <span
-                class="i-lucide:person-standing w-6 h-6 text-fg-subtle"
+                class="w-6 h-6"
+                :class="
+                  copied ? 'i-lucide:check text-accent' : 'i-lucide:person-standing text-fg-subtle'
+                "
                 style="pointer-events: none"
                 aria-hidden="true"
               />
