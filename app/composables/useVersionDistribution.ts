@@ -21,9 +21,9 @@ interface ChartDataItem {
  * @returns Reactive state and computed chart data
  */
 export function useVersionDistribution(packageName: MaybeRefOrGetter<string>) {
-  const groupingMode = ref<VersionGroupingMode>('major')
-  const showRecentOnly = ref(false)
-  const showLowUsageVersions = ref(false)
+  const groupingMode = useRouteQuery<VersionGroupingMode>('grouping', 'major', { mode: 'replace' })
+  const showRecentOnly = useBooleanRouteQuery('recent', false)
+  const showLowUsageVersions = useBooleanRouteQuery('lowUsage', false)
   const pending = ref(false)
   const error = ref<Error | null>(null)
   const data = ref<VersionDistributionResponse | null>(null)
@@ -172,4 +172,14 @@ export function useVersionDistribution(packageName: MaybeRefOrGetter<string>) {
     // Methods
     fetchDistribution,
   }
+}
+
+function useBooleanRouteQuery(key: string, defaultValue = false) {
+  return useRouteQuery(key, defaultValue ? 'true' : 'false', {
+    transform: {
+      get: (v: string) => v === 'true',
+      set: (v: boolean) => (v ? 'true' : 'false'),
+    },
+    mode: 'replace',
+  })
 }
