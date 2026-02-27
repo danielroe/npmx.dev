@@ -1,7 +1,7 @@
 import { flatten, safeParse } from 'valibot'
 import { BlogMetaRequestSchema } from '#shared/schemas/atproto'
 import { handleApiError } from '#server/utils/error-handler'
-import { BLOG_META_TAG_REGEX } from '#shared/utils/constants'
+import { BLOG_META_TAG_REGEX, META_TAG_TITLE_REGEX } from '#shared/utils/constants'
 
 export default defineEventHandler(async event => {
   const query = getQuery(event)
@@ -32,14 +32,19 @@ export default defineEventHandler(async event => {
       }
     }
 
+    // Capture the raw meta values
+    const rawTitle = getMeta(html, metaTags, ['og:title', 'twitter:title', 'title'])
+    const rawAuthor = getMeta(html, metaTags, ['author', 'og:site_name', 'twitter:site'])
+    const rawDesc = getMeta(html, metaTags, [
+      'og:description',
+      'twitter:description',
+      'description',
+    ])
+
     return {
-      title: getMeta(html, metaTags, ['og:title', 'twitter:title', 'title']),
-      author: getMeta(html, metaTags, ['author', 'og:site_name', 'twitter:site']),
-      description: getMeta(html, metaTags, [
-        'og:description',
-        'twitter:description',
-        'description',
-      ]),
+      title: decodeHtmlEntities(rawTitle),
+      author: decodeHtmlEntities(rawAuthor),
+      description: decodeHtmlEntities(rawDesc),
       image: getMeta(html, metaTags, ['og:image', 'twitter:image', 'og:image:secure_url']),
       // INFO: Extract all meta tags for debugging
       _meta: metaTags,
@@ -53,7 +58,7 @@ export default defineEventHandler(async event => {
   }
 })
 
-// INFO: Helper to get specific meta Simple regex extraction
+// INFO: Extracts the specific meta tags via a simple regex
 const getMeta = (html: string, metaTags: Record<string, string>, keys: string[]) => {
   for (const key of keys) {
     if (metaTags[key]) return metaTags[key]
@@ -63,7 +68,20 @@ const getMeta = (html: string, metaTags: Record<string, string>, keys: string[])
   }
   // Fallback to title tag
   if (keys.includes('title')) {
-    return html.match(/<title>([^<]*)<\/title>/i)?.[1] || null
+    return html.match(META_TAG_TITLE_REGEX)?.[1] || null
   }
   return null
+}
+
+// INFO: Prettifies the HTML entities via a simple decoder
+function decodeHtmlEntities(str: string | null | undefined): string | null {
+  if (!str) return null
+  return str
+    .replace(/&#x27;/g, "'")
+    .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+  // Add more if needed, but these cover 99% of OG tag issues
 }

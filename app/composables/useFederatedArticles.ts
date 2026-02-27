@@ -1,18 +1,7 @@
 import type { BlogMetaResponse } from '#shared/schemas/atproto'
 import type { ResolvedAuthor } from '#shared/schemas/blog'
+import type { FederatedArticleInput, ResolvedFederatedArticle } from '#shared/types/blog-post'
 import { type AtIdentifierString } from '@atproto/lex'
-
-// Input Interface
-export interface FederatedArticleInput {
-  url: string
-  authorHandle: string
-}
-
-// Output Interface
-export type ResolvedFederatedArticle = Omit<BlogMetaResponse, 'author' | '_meta'> & {
-  url: string
-  author: ResolvedAuthor
-}
 
 export async function useFederatedArticles(
   federatedArticles: FederatedArticleInput[],
@@ -69,7 +58,8 @@ export async function useFederatedArticles(
     return {
       url: article.url,
       title: meta?.title || 'Untitled',
-      description: meta?.description,
+      // INFO: Prefer input description, otherwise fallback to fetched meta
+      description: article.description || meta?.description,
       image: meta?.image,
       author: resolvedAuthor,
     }
