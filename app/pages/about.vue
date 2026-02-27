@@ -335,15 +335,9 @@ onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerD
                       ? 'hover:scale-125 focus-visible:scale-125'
                       : 'hover:scale-110 focus-visible:scale-110',
                   ]"
-                  @mouseenter="
-                    isExpandable(contributor) &&
-                    open(contributor, $event.currentTarget as HTMLElement)
-                  "
-                  @mouseleave="isExpandable(contributor) && scheduleClose(contributor)"
-                  @click="
-                    isExpandable(contributor) &&
-                    toggle(contributor, $event.currentTarget as HTMLElement)
-                  "
+                  @mouseenter="open(contributor, $event.currentTarget as HTMLElement)"
+                  @mouseleave="scheduleClose(contributor)"
+                  @click="toggle(contributor, $event.currentTarget as HTMLElement)"
                   @keydown.escape="activeContributor = null"
                 >
                   <img
