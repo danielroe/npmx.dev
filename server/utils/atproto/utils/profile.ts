@@ -30,6 +30,12 @@ export class ProfileUtils {
       const response = await fetch(resolveUrl, {
         headers: { 'User-Agent': 'npmx' },
       })
+      if (!response.ok) {
+        throw createError({
+          status: response.status,
+          message: `Failed to resolve MiniDoc for ${handle}`,
+        })
+      }
       const value = (await response.json()) as MiniDoc
 
       miniDoc = value
