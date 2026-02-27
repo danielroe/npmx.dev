@@ -1,6 +1,8 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import { isCI, provider } from 'std-env'
+import { isCI, isTest, provider } from 'std-env'
+
+const isStorybook = process.env.STORYBOOK === 'true' || process.env.VITEST_STORYBOOK === 'true'
 
 export default defineNuxtConfig({
   modules: [
@@ -8,13 +10,12 @@ export default defineNuxtConfig({
     '@nuxtjs/html-validator',
     '@nuxt/scripts',
     '@nuxt/a11y',
-    '@nuxt/fonts',
     'nuxt-og-image',
     '@nuxt/test-utils',
     '@vite-pwa/nuxt',
     '@vueuse/nuxt',
     '@nuxtjs/i18n',
-    '@nuxtjs/color-mode',
+    ...(isStorybook ? [] : ['@nuxt/fonts', '@nuxtjs/color-mode']),
   ],
 
   $test: {
@@ -34,9 +35,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     sessionPassword: '',
+    imageProxySecret: '',
     github: {
       orgToken: '',
     },
+    oauthJwkOne: process.env.OAUTH_JWK_ONE || undefined,
     // Upstash Redis for distributed OAuth token refresh locking in production
     upstash: {
       redisRestUrl: process.env.UPSTASH_KV_REST_API_URL || process.env.KV_REST_API_URL || '',
@@ -101,7 +104,7 @@ export default defineNuxtConfig({
       isr: {
         expiration: 60 * 60 /* one hour */,
         passQuery: true,
-        allowQuery: ['color', 'labelColor', 'label', 'name'],
+        allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
       },
     },
     '/api/registry/downloads/**': {
@@ -122,6 +125,7 @@ export default defineNuxtConfig({
     '/_avatar/**': { isr: 3600, proxy: 'https://www.gravatar.com/avatar/**' },
     '/opensearch.xml': { isr: true },
     '/oauth-client-metadata.json': { prerender: true },
+    '/.well-known/jwks.json': { prerender: true },
     // never cache
     '/api/auth/**': { isr: false, cache: false },
     '/api/social/**': { isr: false, cache: false },
@@ -133,13 +137,10 @@ export default defineNuxtConfig({
       },
     },
     // pages
-    '/package/:name': getISRConfig(60, { fallback: 'html' }),
+    '/package/**': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
     '/package/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name': getISRConfig(60, { fallback: 'html' }),
     '/package/:org/:name/_payload.json': getISRConfig(60, { fallback: 'json' }),
-    '/package/:org/:name/v/:version': getISRConfig(60, { fallback: 'html' }),
     '/package/:org/:name/v/:version/_payload.json': getISRConfig(60, { fallback: 'json' }),
     // infinite cache (versioned - doesn't change)
     '/package-code/**': { isr: true, cache: { maxAge: 365 * 24 * 60 * 60 } },
@@ -169,7 +170,7 @@ export default defineNuxtConfig({
   experimental: {
     entryImportMap: false,
     typescriptPlugin: true,
-    viteEnvironmentApi: true,
+    viteEnvironmentApi: !isStorybook,
     typedPages: true,
   },
 
@@ -206,6 +207,10 @@ export default defineNuxtConfig({
         driver: 'fsLite',
         base: './.cache/fetch',
       },
+      'payload-cache': {
+        driver: 'fsLite',
+        base: './.cache/payload',
+      },
       'atproto': {
         driver: 'fsLite',
         base: './.cache/atproto',
@@ -216,9 +221,15 @@ export default defineNuxtConfig({
         include: ['../test/unit/server/**/*.ts'],
       },
     },
+    replace: {
+      'import.meta.test': isTest,
+    },
   },
 
   fonts: {
+    providers: {
+      fontshare: false,
+    },
     families: [
       {
         name: 'Geist',
@@ -244,6 +255,7 @@ export default defineNuxtConfig({
   },
 
   ogImage: {
+    enabled: !isStorybook,
     defaults: {
       component: 'Default',
     },
@@ -262,6 +274,7 @@ export default defineNuxtConfig({
     // Disable service worker
     disable: true,
     pwaAssets: {
+      disabled: isStorybook,
       config: false,
     },
     manifest: {

@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import type { IconClass } from '~/types'
+
 const props = withDefaults(
   defineProps<{
     disabled?: boolean
+    /** @default "button" */
     type?: 'button' | 'submit'
+    /** @default "secondary" */
     variant?: 'primary' | 'secondary'
+    /** @default "medium" */
     size?: 'small' | 'medium'
+    /** Keyboard shortcut hint */
     ariaKeyshortcuts?: string
+    /** Forces the button to occupy the entire width of its container. */
     block?: boolean
 
-    classicon?: string
+    classicon?: IconClass
   }>(),
   {
     type: 'button',
