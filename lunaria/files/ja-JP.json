@@ -229,7 +229,7 @@
       "pm_label": "パッケージマネージャー",
       "copy_command": "インストールコマンドをコピー",
       "copy_dev_command": "devインストールコマンドをコピー",
-      "dev_dependency_hint": "通常はdev dependencyとしてインストールされます",
+      "dev_dependency_hint": "通常はdev依存関係としてインストールされます",
       "view_types": "{package} を表示"
     },
     "create": {
@@ -1076,9 +1076,9 @@
     "summary": "要約",
     "deps_count": "依存関係 {count} 件",
     "dependencies": "依存関係",
-    "dev_dependencies": "Dev Dependencies",
+    "dev_dependencies": "dev依存関係",
     "peer_dependencies": "ピア依存関係",
-    "optional_dependencies": "Optional Dependencies",
+    "optional_dependencies": "オプション依存関係",
     "no_dependency_changes": "依存関係の変更なし",
     "file_filter_option": {
       "all": "すべて ({count})",
@@ -1095,7 +1095,7 @@
       "removed": "削除済み",
       "modified": "変更済み"
     },
-    "files_button": "Files",
+    "files_button": "ファイル",
     "select_file_prompt": "サイドバーからファイルを選択してdiffを表示",
     "close_files_panel": "ファイルパネルを閉じる",
     "filter_files_label": "変更タイプでファイルをフィルタリング"
