@@ -26,7 +26,7 @@ const props = withDefaults(
 
 const el = useTemplateRef('el')
 const slots = defineSlots<{
-  default?: () => unknown;
+  default?: () => unknown
 }>()
 const iconOnly = computed(() => !!props.classicon && !slots.default)
 
