@@ -11,3 +11,7 @@ const htmlEntities: Record<string, string> = {
 export function decodeHtmlEntities(text: string): string {
   return text.replace(/&(?:amp|lt|gt|quot|apos|nbsp|#39);/g, match => htmlEntities[match] || match)
 }
+
+export function stripHtmlTags(text: string): string {
+  return text.replace(/<[^>]*>/g, '')
+}
