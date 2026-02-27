@@ -162,7 +162,7 @@ export function smoothPath(pts: { x: number; y: number }[]): string {
   for (let i = 0; i < n; i++) {
     dx[i] = pts[i + 1]!.x - pts[i]!.x
     dy[i] = pts[i + 1]!.y - pts[i]!.y
-    m[i] = dy[i]! / dx[i]!
+    m[i] = dx[i] === 0 ? 0 : dy[i]! / dx[i]!
   }
 
   t[0] = m[0]!

@@ -263,13 +263,13 @@ function getMockForUrl(url: string): MockResult | null {
       const downloads: { day: string; downloads: number }[] = []
       const start = new Date(startDate!)
       const end = new Date(endDate!)
-      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
         const day = d.toISOString().slice(0, 10)
         const i = downloads.length
         const trend = 1 + trendSlope * i
         const wave = Math.sin((i * 2 * Math.PI) / wavePeriod) * waveAmp
         const noise = Math.sin(i * 7 + s) * 0.05
-        const dow = d.getDay()
+        const dow = d.getUTCDay()
         const weekend = dow === 0 || dow === 6 ? 1 - weekendDip : 1
         downloads.push({
           day,

@@ -193,7 +193,7 @@ function matchNpmApi(urlString) {
     const downloads = []
     const startDate = new Date(start)
     const endDate = new Date(end)
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    for (let d = new Date(startDate); d <= endDate; d.setUTCDate(d.getUTCDate() + 1)) {
       const day = d.toISOString().slice(0, 10)
       // Sine wave + noise for a realistic-looking sparkline
       const dayIndex = downloads.length
