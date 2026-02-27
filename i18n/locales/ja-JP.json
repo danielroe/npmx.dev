@@ -933,7 +933,7 @@
       },
       "github": {
         "title": "GitHub",
-        "connected_as": "として接続済み {username}"
+        "connected_as": "{username} として接続済み"
       }
     }
   },
