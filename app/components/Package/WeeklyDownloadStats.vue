@@ -280,7 +280,7 @@ const config = computed<VueUiSparklineConfig>(() => {
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
 
-      <div class="w-full overflow-hidden h-[110px] motion-safe:h-[140px]">
+      <div class="w-full overflow-hidden">
         <template v-if="isLoadingWeeklyDownloads || hasWeeklyDownloads">
           <div class="relative">
             <ClientOnly>
@@ -316,26 +316,30 @@ const config = computed<VueUiSparklineConfig>(() => {
               </template>
             </ClientOnly>
 
-            <TooltipApp
+            <div
               v-if="hasWeeklyDownloads"
-              :text="
-                hasSparklineAnimation
-                  ? $t('package.trends.pause_animation')
-                  : $t('package.trends.play_animation')
-              "
+              class="hidden motion-safe:block absolute top-0 inset-ie-0"
             >
-              <ButtonBase
-                size="small"
-                class="hidden motion-safe:inline-flex absolute top-0 inset-ie-0 !p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
-                :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
-                :aria-label="
+              <TooltipApp
+                :text="
                   hasSparklineAnimation
                     ? $t('package.trends.pause_animation')
                     : $t('package.trends.play_animation')
                 "
-                @click="toggleSparklineAnimation"
-              />
-            </TooltipApp>
+              >
+                <ButtonBase
+                  size="small"
+                  class="!p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
+                  :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
+                  :aria-label="
+                    hasSparklineAnimation
+                      ? $t('package.trends.pause_animation')
+                      : $t('package.trends.play_animation')
+                  "
+                  @click="toggleSparklineAnimation"
+                />
+              </TooltipApp>
+            </div>
           </div>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
