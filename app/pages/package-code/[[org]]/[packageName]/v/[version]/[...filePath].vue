@@ -459,6 +459,7 @@ defineOgImageComponent('Default', {
             </div>
             <div class="flex items-center gap-2">
               <button
+                v-if="isTouchDevice()"
                 type="button"
                 class="px-2 py-1 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded hover:text-fg hover:border-border-hover transition-colors items-center inline-flex gap-1"
                 @click="scrollToTop"
