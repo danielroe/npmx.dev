@@ -121,7 +121,7 @@ defineOgImageComponent('Default', {
             <LinkBase :to="packageRoute(pick.name)" class="text-sm">
               <span
                 >{{ pick.name.slice(0, pick.letterIndex)
-                }}<span class="font-bold" :class="{ 'text-accent': selectedAccentColor }">{{
+                }}<span class="font-semibold" :class="{ 'text-accent': selectedAccentColor }">{{
                   pick.name[pick.letterIndex]
                 }}</span
                 >{{ pick.name.slice(pick.letterIndex + 1) }}</span
