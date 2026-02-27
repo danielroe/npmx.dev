@@ -31,7 +31,7 @@ const websiteInput = ref()
 const isUpdateProfileActionPending = ref(false)
 
 watchEffect(() => {
-  if (isEditing) {
+  if (isEditing.value) {
     if (profile) {
       displayNameInput.value = profile.value.displayName
       descriptionInput.value = profile.value.description
