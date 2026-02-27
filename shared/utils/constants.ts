@@ -84,3 +84,5 @@ export const BLUESKY_URL_REGEX = /^https:\/\/bsky\.app\/profile\/[^/]+\/post\/[^
 export const BLUESKY_URL_EXTRACT_REGEX = /profile\/([^/]+)\/post\/([^/]+)/
 export const BSKY_POST_AT_URI_REGEX =
   /^at:\/\/(did:plc:[a-z0-9]+)\/app\.bsky\.feed\.post\/([a-z0-9]+)$/
+export const BLOG_META_TAG_REGEX =
+  /<meta[^>]*(?:property|name)=["']([^"']+)["'][^>]*content=["']([^"']+)["'][^>]*>/gi

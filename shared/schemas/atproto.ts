@@ -9,6 +9,7 @@ import {
   regex,
   startsWith,
   string,
+  url,
 } from 'valibot'
 import type { InferOutput } from 'valibot'
 import { AT_URI_REGEX, BLUESKY_URL_REGEX, ERROR_BLUESKY_URL_FAILED } from '#shared/utils/constants'
@@ -66,3 +67,19 @@ export const BlueskyOEmbedResponseSchema = object({
 })
 
 export type BlueskyOEmbedResponse = InferOutput<typeof BlueskyOEmbedResponseSchema>
+
+export const BlogMetaRequestSchema = object({
+  url: pipe(string(), url()),
+})
+
+export type BlogMetaRequest = InferOutput<typeof BlogMetaRequestSchema>
+
+export const BlogMetaResponseSchema = object({
+  title: string(),
+  author: optional(string()),
+  description: optional(string()),
+  image: optional(string()),
+  _meta: optional(object({})),
+})
+
+export type BlogMetaResponse = InferOutput<typeof BlogMetaResponseSchema>

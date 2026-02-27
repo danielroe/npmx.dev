@@ -112,3 +112,43 @@ project from a wide variety of perspectives and experiences.
 The alpha release of npmx is intentionally early. We want real-world feedback from _you_ to guide our roadmap and priorities. Try [npmx](https://npmx.dev) today, let us know what you think and share your use-cases and missing features at [chat.npmx.dev](https://chat.npmx.dev). [Open an issue on GitHub](https://github.com/npmx-dev/npmx.dev/issues) or submit a pull request, and [follow npmx.dev on Bluesky](https://bsky.app/profile/npmx.dex) to keep up to date with what we're working on.
 
 And thank you: thank you to every single human who has contributed to npmx so far, whether that's in the form of code, documentation, testing, community activities, and more. You are the people building npmx; you are the people building the future we want.
+
+---
+
+<BlogPostFederatedArticles 
+  headline="Elsewhere..."
+  :articles="[
+        { 
+          url: 'https://dholms.leaflet.pub/3meluqcwky22a', 
+          authorHandle: 'dholms.dev' 
+        },
+        { 
+          url: 'https://whitep4nth3r.com/blog/website-redesign-2026/', 
+          authorHandle: 'whitep4nth3r.com' 
+        },
+        { 
+          url: 'https://roe.dev/blog/the-golden-thread', 
+          authorHandle: 'danielroe.dev'
+        },
+        { 
+          url: 'https://blog.muni.town/village-scale-resilience/', 
+          authorHandle: 'erlend.sh'
+        },
+        { 
+          url: 'https://www.pfrazee.com/blog/atmospheric-computing', 
+          authorHandle: 'pfrazee.com'
+        },
+        { 
+          url: 'https://marvins-guide.leaflet.pub/3mckm76mfws2h', 
+          authorHandle: 'baileytownsend.dev'
+        },
+        { 
+          url: 'https://patak.cat/blog/update.html', 
+          authorHandle: 'patak.cat'
+        },
+        { 
+          url: 'https://zeu.dev/blog/rnlive-partykit/', 
+          authorHandle: 'zeu.dev'
+        }
+      ]"
+/>

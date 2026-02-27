@@ -1,4 +1,4 @@
-import EmbeddableBlueskyPost from '~/components/EmbeddableBlueskyPost.client.vue'
+import BlogPostFederatedArticles from '~/components/BlogPostFederatedArticles.vue'
 
 /**
  * INFO: .md files are transformed into Vue SFCs by unplugin-vue-markdown during the Vite transform pipeline
@@ -6,5 +6,5 @@ import EmbeddableBlueskyPost from '~/components/EmbeddableBlueskyPost.client.vue
  * Global registration ensures the component is available in the Vue runtime regardless of how the SFC was generated
  */
 export default defineNuxtPlugin(nuxtApp => {
-  nuxtApp.vueApp.component('EmbeddableBlueskyPost', EmbeddableBlueskyPost)
+  nuxtApp.vueApp.component('BlogPostFederatedArticles', BlogPostFederatedArticles)
 })

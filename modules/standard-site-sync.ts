@@ -13,6 +13,7 @@ import { $fetch } from 'ofetch'
 const syncedDocuments = new Map<string, string>()
 const CLOCK_ID_THREE = 3
 const MS_TO_MICROSECONDS = 1000
+const ONE_DAY_MILLISECONDS = 86400000
 
 type PDSSession = Pick<PDSSessionResponse, 'did' | 'handle'> & {
   accessToken: string
@@ -149,7 +150,7 @@ function generateTID(dateString: string, filePath: string): string {
 
   // If date has no time component (exact midnight), add file-based entropy
   // This ensures unique TIDs when multiple posts share the same date
-  if (timestamp % 86400000 === 0) {
+  if (timestamp % ONE_DAY_MILLISECONDS === 0) {
     // Hash the file path to generate deterministic microseconds offset
     const pathHash = createHash('md5').update(filePath).digest('hex')
     const offset = parseInt(pathHash.slice(0, 8), 16) % 1000000 // 0-999999 microseconds
