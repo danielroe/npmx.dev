@@ -163,7 +163,7 @@ const roleLabels = computed(
           </h2>
           <AboutLogoList
             :list="SPONSORS"
-            class="flex-col gap-8 items-start md:flex-row md:items-center md:gap-4"
+            class="flex-col gap-6 items-start md:flex-row md:items-center md:gap-4"
           />
         </div>
 
@@ -306,17 +306,3 @@ const roleLabels = computed(
     </article>
   </main>
 </template>
-
-<style scoped>
-.sponsors-logos :deep(a) {
-  width: 8rem;
-  height: 2.5rem;
-}
-
-.sponsors-logos :deep(img) {
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-}
-</style>
