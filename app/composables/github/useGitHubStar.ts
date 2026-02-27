@@ -38,6 +38,7 @@ export function useGitHubStar(repoRef: Ref<RepoRef | null>) {
 
   const isStarred = computed(() => starStatus.value?.starred ?? false)
   const isStarActionPending = shallowRef(false)
+  const starChange = shallowRef(0)
 
   async function toggleStar() {
     if (!shouldFetch.value || isStarActionPending.value) return
@@ -50,6 +51,7 @@ export function useGitHubStar(repoRef: Ref<RepoRef | null>) {
       connected: true,
     }
 
+    starChange.value = currentlyStarred ? 0 : 1
     isStarActionPending.value = true
 
     try {
@@ -65,6 +67,8 @@ export function useGitHubStar(repoRef: Ref<RepoRef | null>) {
         starred: currentlyStarred,
         connected: true,
       }
+
+      starChange.value = 0
     } finally {
       isStarActionPending.value = false
     }
@@ -74,6 +78,7 @@ export function useGitHubStar(repoRef: Ref<RepoRef | null>) {
     isStarred,
     isStarActionPending,
     isGitHubRepo,
+    starChange,
     toggleStar,
   }
 }

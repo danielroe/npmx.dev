@@ -485,7 +485,10 @@ const repositoryUrl = computed(() => {
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 
 const { isConnected: isGitHubConnected } = useGitHub()
-const { isStarred, isStarActionPending, isGitHubRepo, toggleStar } = useGitHubStar(repoRef)
+const { isStarred, isStarActionPending, isGitHubRepo, starChange, toggleStar } =
+  useGitHubStar(repoRef)
+
+const displayStars = computed(() => Math.max(0, stars.value + starChange.value))
 
 const PROVIDER_ICONS: Record<string, IconClass> = {
   github: 'i-simple-icons:github',
@@ -1008,7 +1011,7 @@ const showSkeleton = shallowRef(false)
             </li>
             <li v-if="repositoryUrl && repoMeta && starsLink">
               <LinkBase :to="starsLink" classicon="i-lucide:star">
-                {{ compactNumberFormatter.format(stars) }}
+                {{ compactNumberFormatter.format(displayStars) }}
               </LinkBase>
             </li>
             <li v-if="forks && forksLink">
