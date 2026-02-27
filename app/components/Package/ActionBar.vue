@@ -1,8 +1,4 @@
 <script setup lang="ts">
-defineProps<{
-  hide?: boolean
-}>()
-
 const { selectedPackages, selectedPackagesParam, clearSelectedPackages } = usePackageSelection()
 
 const shortcutKey = 'b'
@@ -23,7 +19,7 @@ onKeyStroke(
 <template>
   <Transition name="action-bar-slide" appear>
     <div
-      v-if="selectedPackages.length && !hide"
+      v-if="selectedPackages.length"
       class="fixed bottom-12 inset-is-0 w-full flex items-center justify-center z-36 pointer-events-none"
     >
       <div
@@ -53,7 +49,6 @@ onKeyStroke(
             :to="{ name: 'compare', query: { packages: selectedPackagesParam } }"
             variant="button-secondary"
             classicon="i-lucide:git-compare"
-            :disabled="selectedPackages.length > 4"
           >
             Compare
           </LinkBase>

@@ -542,7 +542,7 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <PackageActionBar :hide="isSelectioView" />
+  <PackageActionBar />
 
   <main class="flex-1 py-8" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
     <div class="container-sm">

@@ -9,26 +9,24 @@ export function usePackageSelection() {
         return []
       }
 
-      return selectedPackagesParam.value.split(',').map(p => p.trim())
+      return selectedPackagesParam.value
+        .split(',')
+        .map(p => p.trim())
+        .filter(p => p.length > 0)
+        .slice(0, 4)
     },
     set(value) {
       selectedPackagesParam.value = value.length > 0 ? value.join(',') : ''
     },
   })
 
-  function findPackageIndex(name: string): number {
-    return selectedPackages.value.findIndex(selectedPackage => selectedPackage === name)
-  }
-
   function isPackageSelected(name: string): boolean {
-    return findPackageIndex(name) !== -1
+    return selectedPackages.value.includes(name)
   }
 
   function togglePackageSelection(name: string) {
-    const itemIndex = findPackageIndex(name)
-
-    if (itemIndex !== -1) {
-      selectedPackages.value = selectedPackages.value.filter((_, i) => i !== itemIndex)
+    if (isPackageSelected(name)) {
+      selectedPackages.value = selectedPackages.value.filter(selected => selected !== name)
     } else {
       selectedPackages.value = [...selectedPackages.value, name]
     }
