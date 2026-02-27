@@ -183,7 +183,11 @@ const correctedDownloads = computed<WeeklyDataPoint[]>(() => {
   let data = weeklyDownloads.value as WeeklyDataPoint[]
   if (!data.length) return data
   if (settings.value.chartFilter.anomaliesFixed) {
-    data = applyBlocklistCorrection(data, props.packageName, 'weekly') as WeeklyDataPoint[]
+    data = applyBlocklistCorrection({
+      data,
+      packageName: props.packageName,
+      granularity: 'weekly',
+    }) as WeeklyDataPoint[]
   }
   data = applyDataCorrection(data, settings.value.chartFilter) as WeeklyDataPoint[]
   return data

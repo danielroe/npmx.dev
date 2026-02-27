@@ -946,7 +946,11 @@ const effectiveDataSingle = computed<EvolutionData>(() => {
   if (isDownloadsMetric.value && data.length) {
     const pkg = effectivePackageNames.value[0] ?? props.packageName ?? ''
     if (settings.value.chartFilter.anomaliesFixed) {
-      data = applyBlocklistCorrection(data, pkg, displayedGranularity.value)
+      data = applyBlocklistCorrection({
+        data,
+        packageName: pkg,
+        granularity: displayedGranularity.value,
+      })
     }
     return applyDataCorrection(
       data as Array<{ value: number }>,
@@ -990,7 +994,7 @@ const chartData = computed<{
     let data = state.evolutionsByPackage[pkg] ?? []
     if (isDownloadsMetric.value && data.length) {
       if (settings.value.chartFilter.anomaliesFixed) {
-        data = applyBlocklistCorrection(data, pkg, granularity)
+        data = applyBlocklistCorrection({ data, packageName: pkg, granularity })
       }
       data = applyDataCorrection(
         data as Array<{ value: number }>,

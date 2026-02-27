@@ -65,11 +65,12 @@ function scaleWeeklyValue(weeklyValue: number, granularity: ChartTimeGranularity
   }
 }
 
-export function applyBlocklistCorrection(
-  data: EvolutionData,
-  packageName: string,
-  granularity: ChartTimeGranularity,
-): EvolutionData {
+export function applyBlocklistCorrection(opts: {
+  data: EvolutionData
+  packageName: string
+  granularity: ChartTimeGranularity
+}): EvolutionData {
+  const { data, packageName, granularity } = opts
   const anomalies = DOWNLOAD_ANOMALIES.filter(a => a.packageName === packageName)
   if (!anomalies.length) return data
 
