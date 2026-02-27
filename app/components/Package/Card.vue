@@ -66,13 +66,18 @@ const numberFormatter = useNumberFormatter()
       </component>
 
       <div class="relative z-1">
-        <input
-          data-package-card-checkbox
-          class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
-          type="checkbox"
-          :checked="isSelected"
-          @change="togglePackageSelection(result)"
-        />
+        <label>
+          <span class="sr-only">
+            {{ $t('package.card.select') }}
+          </span>
+          <input
+            data-package-card-checkbox
+            class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
+            type="checkbox"
+            :checked="isSelected"
+            @change="togglePackageSelection(result)"
+          />
+        </label>
       </div>
     </header>
 

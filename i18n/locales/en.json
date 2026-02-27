@@ -284,7 +284,8 @@
       "published": "Published",
       "weekly_downloads": "Weekly downloads",
       "keywords": "Keywords",
-      "license": "License"
+      "license": "License",
+      "select": "Select package"
     },
     "versions": {
       "title": "Versions",

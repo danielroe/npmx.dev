@@ -858,6 +858,9 @@
             },
             "license": {
               "type": "string"
+            },
+            "select": {
+              "type": "string"
             }
           },
           "additionalProperties": false

@@ -203,13 +203,18 @@ const allMaintainersText = computed(() => {
 
     <td class="pe-2 relative z-1">
       <div class="flex items-center justify-center h-full">
-        <input
-          data-package-card-checkbox
-          class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
-          type="checkbox"
-          :checked="isSelected"
-          @change="togglePackageSelection(result)"
-        />
+        <label>
+          <span class="sr-only">
+            {{ $t('package.card.select') }}
+          </span>
+          <input
+            data-package-card-checkbox
+            class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors"
+            type="checkbox"
+            :checked="isSelected"
+            @change="togglePackageSelection(result)"
+          />
+        </label>
       </div>
     </td>
   </tr>
