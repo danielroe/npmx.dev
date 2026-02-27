@@ -10,7 +10,6 @@ export const CACHE_MAX_AGE_ONE_YEAR = 60 * 60 * 24 * 365
 // API Strings
 export const NPMX_SITE = 'https://npmx.dev'
 export const NPMX_DOCS_SITE = 'https://docs.npmx.dev'
-export const BLUESKY_EMBED_BASE_ROUTE = 'https://embed.bsky.app'
 export const BLUESKY_API = 'https://public.api.bsky.app'
 export const BLUESKY_COMMENTS_REQUEST = '/api/atproto/bluesky-comments'
 export const NPM_REGISTRY = 'https://registry.npmjs.org'
@@ -21,7 +20,6 @@ export const ERROR_PACKAGE_REQUIREMENTS_FAILED =
   'Package name, version, and file path are required.'
 export const ERROR_BLUESKY_URL_FAILED =
   'Invalid Bluesky URL format. Expected: https://bsky.app/profile/HANDLE/post/POST_ID'
-export const ERROR_BLUESKY_EMBED_FAILED = 'Failed to generate Bluesky embed.'
 export const ERROR_FILE_LIST_FETCH_FAILED = 'Failed to fetch file list.'
 export const ERROR_CALC_INSTALL_SIZE_FAILED = 'Failed to calculate install size.'
 export const NPM_MISSING_README_SENTINEL = 'ERROR: No README data found!'

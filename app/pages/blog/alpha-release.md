@@ -43,7 +43,7 @@ people's frustrations with the npm experience on the web and the CLI. The questi
 as they voiced frustrations with the user experience including code browsing, missing data, trust signals, surfacing
 dependencies, and the friction surrounding the publishing experience.
 
-<EmbeddableBlueskyPost url="https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r" />
+<BlueskyPostEmbed url="https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r" />
 
 It was clear there was a huge opportunity to build a fast, modern browser for the npm registry with an improved
 developer experience, and that there were people willing to work with Daniel to build it.
