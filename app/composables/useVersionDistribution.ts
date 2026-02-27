@@ -21,7 +21,10 @@ interface ChartDataItem {
  * @returns Reactive state and computed chart data
  */
 export function useVersionDistribution(packageName: MaybeRefOrGetter<string>) {
-  const groupingMode = useRouteQuery<VersionGroupingMode>('grouping', 'major', { mode: 'replace' })
+  const groupingMode = useRouteQuery<VersionGroupingMode>('grouping', 'major', {
+    transform: (v: string) => (v === 'minor' ? 'minor' : 'major'),
+    mode: 'replace',
+  })
   const showRecentOnly = useBooleanRouteQuery('recent', false)
   const showLowUsageVersions = useBooleanRouteQuery('lowUsage', false)
   const pending = ref(false)
