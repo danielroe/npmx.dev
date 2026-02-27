@@ -285,7 +285,6 @@ const config = computed<VueUiSparklineConfig>(() => {
       <template #actions>
         <ButtonBase
           v-if="hasWeeklyDownloads"
-          type="button"
           @click="openChartModal"
           class="text-fg-subtle hover:text-fg transition-colors duration-200 inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 focus-visible:outline-accent/70 rounded"
           :title="$t('package.trends.title')"
@@ -296,49 +295,66 @@ const config = computed<VueUiSparklineConfig>(() => {
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
 
-      <div class="w-full overflow-hidden h-[110px] motion-safe:h-[140px]">
+      <div class="w-full overflow-hidden">
         <template v-if="isLoadingWeeklyDownloads || hasWeeklyDownloads">
-          <ClientOnly>
-            <VueUiSparkline class="w-full max-w-xs" :dataset :config>
-              <template #skeleton>
-                <!-- This empty div overrides the default built-in scanning animation on load -->
-                <div />
+          <div class="relative">
+            <ClientOnly>
+              <VueUiSparkline class="w-full max-w-xs" :dataset :config>
+                <template #skeleton>
+                  <!-- This empty div overrides the default built-in scanning animation on load -->
+                  <div />
+                </template>
+              </VueUiSparkline>
+              <template #fallback>
+                <!-- Skeleton matching VueUiSparkline layout (title 24px + SVG aspect 500:80) -->
+                <div class="max-w-xs">
+                  <!-- Title row: fontSize * 2 = 24px -->
+                  <div class="h-6 flex items-center">
+                    <SkeletonInline class="h-3 w-48" />
+                  </div>
+                  <!-- Chart area: matches SVG viewBox 500:80 -->
+                  <div class="aspect-[500/80] flex items-center">
+                    <!-- Data label (covers ~42% width, matching dataLabel.offsetX) -->
+                    <div class="w-[42%] flex items-center ps-0.5">
+                      <SkeletonInline class="h-7 w-24" />
+                    </div>
+                    <!-- Sparkline line placeholder -->
+                    <div class="flex-1 flex items-end pe-3">
+                      <SkeletonInline class="h-px w-full" />
+                    </div>
+                  </div>
+                </div>
+                <!-- Animation toggle button placeholder (matches absolute top-right button) -->
+                <div class="hidden motion-safe:block absolute top-0 inset-ie-0 p-1">
+                  <SkeletonInline class="size-4 rounded" />
+                </div>
               </template>
-            </VueUiSparkline>
-            <template #fallback>
-              <!-- Skeleton matching VueUiSparkline layout (title 24px + SVG aspect 500:80) -->
-              <div class="max-w-xs">
-                <!-- Title row: fontSize * 2 = 24px -->
-                <div class="h-6 flex items-center ps-3">
-                  <SkeletonInline class="h-3 w-36" />
-                </div>
-                <!-- Chart area: matches SVG viewBox 500:80 -->
-                <div class="aspect-[500/80] flex items-center">
-                  <!-- Data label (covers ~42% width, matching dataLabel.offsetX) -->
-                  <div class="w-[42%] flex items-center ps-0.5">
-                    <SkeletonInline class="h-7 w-24" />
-                  </div>
-                  <!-- Sparkline line placeholder -->
-                  <div class="flex-1 flex items-end pe-3">
-                    <SkeletonInline class="h-px w-full" />
-                  </div>
-                </div>
-                <!-- Animation toggle placeholder -->
-                <div class="w-full hidden motion-safe:flex flex-1 items-end justify-end">
-                  <SkeletonInline class="h-[20px] w-30" />
-                </div>
-              </div>
-            </template>
-          </ClientOnly>
+            </ClientOnly>
 
-          <div v-if="hasWeeklyDownloads" class="hidden motion-safe:flex justify-end p-1">
-            <ButtonBase size="small" @click="toggleSparklineAnimation">
-              {{
-                hasSparklineAnimation
-                  ? $t('package.trends.pause_animation')
-                  : $t('package.trends.play_animation')
-              }}
-            </ButtonBase>
+            <div
+              v-if="hasWeeklyDownloads"
+              class="hidden motion-safe:block absolute top-0 inset-ie-0"
+            >
+              <TooltipApp
+                :text="
+                  hasSparklineAnimation
+                    ? $t('package.trends.pause_animation')
+                    : $t('package.trends.play_animation')
+                "
+              >
+                <ButtonBase
+                  size="medium"
+                  class="!p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
+                  :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
+                  :aria-label="
+                    hasSparklineAnimation
+                      ? $t('package.trends.pause_animation')
+                      : $t('package.trends.play_animation')
+                  "
+                  @click="toggleSparklineAnimation"
+                />
+              </TooltipApp>
+            </div>
           </div>
         </template>
         <p v-else class="py-2 text-sm font-mono text-fg-subtle">
