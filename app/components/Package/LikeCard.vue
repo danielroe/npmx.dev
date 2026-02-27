@@ -99,9 +99,7 @@ const likeAction = async () => {
                 class="w-4 h-4"
                 aria-hidden="true"
               />
-              <span>{{
-                compactNumberFormatter.format(likesData?.totalLikes ?? 0, { decimals: 1 })
-              }}</span>
+              <span>{{ compactNumberFormatter.format(likesData?.totalLikes ?? 0) }}</span>
             </button>
           </TooltipApp>
         </ClientOnly>
