@@ -156,6 +156,13 @@
       "version": "このバージョンは非推奨になりました。",
       "no_reason": "理由は提供されていません"
     },
+    "size_increase": {
+      "title_size": "EN TEXT TO REPLACE: Significant size increase since v{version}",
+      "title_deps": "EN TEXT TO REPLACE: Significant dependency count increase since v{version}",
+      "title_both": "EN TEXT TO REPLACE: Significant size and dependency increase since v{version}",
+      "size": "EN TEXT TO REPLACE: Install size increased by {percent} ({size} larger)",
+      "deps": "EN TEXT TO REPLACE: {count} more dependencies"
+    },
     "replacement": {
       "title": "この依存関係は不要な可能性があります。",
       "native": "これは Node {nodeVersion} 以降で利用可能な {replacement} で置き換え可能です。",
@@ -293,8 +300,16 @@
       "view_all": "{count} 個のバージョンを表示|{count} 個のすべてのバージョンを表示",
       "distribution_title": "Semverグループ",
       "distribution_modal_title": "バージョン",
+      "distribution_range_date_same_year": "EN TEXT TO REPLACE: from {from} to {to}, {endYear}",
+      "distribution_range_date_multiple_years": "EN TEXT TO REPLACE: from {from}, {startYear} to {to}, {endYear}",
       "grouping_major": "メジャー",
       "grouping_minor": "マイナー",
+      "grouping_versions_title": "EN TEXT TO REPLACE: Versions",
+      "grouping_versions_all": "EN TEXT TO REPLACE: All",
+      "grouping_versions_only_recent": "EN TEXT TO REPLACE: Only recent",
+      "grouping_usage_title": "EN TEXT TO REPLACE: Usage",
+      "grouping_usage_all": "EN TEXT TO REPLACE: All",
+      "grouping_usage_low": "EN TEXT TO REPLACE: Low",
       "recent_versions_only_tooltip": "過去1年以内に公開されたバージョンのみ表示します。",
       "show_low_usage_tooltip": "総ダウンロード数の1%未満のバージョングループも含めます。",
       "y_axis_label": "ダウンロード",
@@ -303,7 +318,11 @@
       "filter_help": "semver範囲フィルタのヘルプ",
       "filter_tooltip": "{link} を使ってバージョンを絞り込みます。例えば、^3.0.0は3.xのすべてのバージョンを表示します。",
       "filter_tooltip_link": "semver範囲",
-      "no_matches": "この範囲に一致するバージョンはありません"
+      "no_matches": "この範囲に一致するバージョンはありません",
+      "copy_alt": {
+        "per_version_analysis": "EN TEXT TO REPLACE: {version} version was downloaded {downloads} times",
+        "general_description": "EN TEXT TO REPLACE: Bar chart showing per-version downloads for {versions_count} {semver_grouping_mode} versions of the {package_name} package, {date_range_label} from the {first_version} version to the {last_version} version. The most downloaded version is {max_downloaded_version} with {max_version_downloads} downloads. {per_version_analysis}. {watermark}."
+      }
     },
     "dependencies": {
       "title": "依存関係（{count}）",
@@ -353,6 +372,7 @@
       "date_range_multiline": "{start}\nから {end}",
       "download_file": "{fileType} をダウンロード",
       "toggle_annotator": "アノテーターを切り替え",
+      "toggle_stack_mode": "EN TEXT TO REPLACE: Toggle stack mode",
       "legend_estimation": "推定値",
       "no_data": "データがありません",
       "y_axis_label": "{granularity} {facet}",
@@ -363,6 +383,33 @@
         "downloads": "ダウンロード数",
         "likes": "いいね数",
         "contributors": "コントリビューター"
+      },
+      "play_animation": "EN TEXT TO REPLACE: Play animation",
+      "pause_animation": "EN TEXT TO REPLACE: Pause animation",
+      "data_correction": "EN TEXT TO REPLACE: Data correction",
+      "average_window": "EN TEXT TO REPLACE: Average window",
+      "smoothing": "EN TEXT TO REPLACE: Smoothing",
+      "known_anomalies": "EN TEXT TO REPLACE: Known anomalies",
+      "known_anomalies_description": "EN TEXT TO REPLACE: Interpolates over known download spikes caused by bots or CI issues.",
+      "known_anomalies_ranges": "EN TEXT TO REPLACE: Anomaly ranges",
+      "known_anomalies_range": "EN TEXT TO REPLACE: From {start} to {end}",
+      "known_anomalies_range_named": "EN TEXT TO REPLACE: {packageName}: from {start} to {end}",
+      "known_anomalies_none": "EN TEXT TO REPLACE: No known anomalies for this package. | No known anomalies for these packages.",
+      "known_anomalies_contribute": "EN TEXT TO REPLACE: Contribute anomaly data",
+      "apply_correction": "EN TEXT TO REPLACE: Apply correction",
+      "copy_alt": {
+        "trend_none": "EN TEXT TO REPLACE: mostly flat",
+        "trend_strong": "EN TEXT TO REPLACE: strong",
+        "trend_weak": "EN TEXT TO REPLACE: weak",
+        "trend_undefined": "EN TEXT TO REPLACE: undefined (insufficient data)",
+        "button_label": "EN TEXT TO REPLACE: Copy alt text",
+        "watermark": "EN TEXT TO REPLACE: At the bottom, a watermark reads \"./npmx a fast, modern browser for the npm registry\"",
+        "analysis": "EN TEXT TO REPLACE: {package_name} starts at {start_value} and ends at {end_value}, showing a {trend} trend with a slope of {downloads_slope} downloads per time interval",
+        "estimation": "EN TEXT TO REPLACE: The final value is an estimate based on partial data for the current period.",
+        "estimations": "EN TEXT TO REPLACE: The final values are estimates based on partial data for the current period.",
+        "compare": "EN TEXT TO REPLACE: Package download comparison line chart for: {packages}.",
+        "single_package": "EN TEXT TO REPLACE: Downloads line chart for the {package} package.",
+        "general_description": "EN TEXT TO REPLACE: The Y axis represents the number of downloads. The X axis represents the date range, from {start_date} to {end_date}, with a {granularity} time period.{estimation_notice} {packages_analysis}. {watermark}."
       }
     },
     "downloads": {
@@ -620,6 +667,7 @@
       "invalid_name": "無効なパッケージ名:",
       "available": "この名前は使用可能です！",
       "taken": "この名前はすでに使用されています。",
+      "missing_permission": "EN TEXT TO REPLACE: You do not have permission to add a package to scope {'@'}{scope}.",
       "similar_warning": "似た名前のパッケージが存在します。npmによって拒否される可能性があります:",
       "related": "関連パッケージ:",
       "scope_warning_title": "スコープ付きパッケージの使用を検討してください",
@@ -814,6 +862,12 @@
         "managers": "存在します"
       }
     },
+    "sponsors": {
+      "title": "EN TEXT TO REPLACE: Sponsors"
+    },
+    "oss_partners": {
+      "title": "EN TEXT TO REPLACE: OSS Partners"
+    },
     "team": {
       "title": "チーム",
       "governance": "ガバナンス",
@@ -906,6 +960,7 @@
       "section_packages": "パッケージ",
       "section_facets": "比較項目",
       "section_comparison": "比較",
+      "copy_as_markdown": "EN TEXT TO REPLACE: Copy table",
       "loading": "パッケージデータを読み込み中...",
       "error": "パッケージデータの読み込みに失敗しました。もう一度お試しください。",
       "empty_title": "比較するパッケージを選択",
@@ -1013,7 +1068,37 @@
       "trends": {
         "title": "トレンド比較"
       }
-    }
+    },
+    "file_changes": "EN TEXT TO REPLACE: File Changes",
+    "files_count": "EN TEXT TO REPLACE: {count} files",
+    "lines_hidden": "EN TEXT TO REPLACE: {count} lines hidden",
+    "compare_versions": "EN TEXT TO REPLACE: diff",
+    "summary": "EN TEXT TO REPLACE: Summary",
+    "deps_count": "EN TEXT TO REPLACE: {count} deps",
+    "dependencies": "EN TEXT TO REPLACE: Dependencies",
+    "dev_dependencies": "EN TEXT TO REPLACE: Dev Dependencies",
+    "peer_dependencies": "EN TEXT TO REPLACE: Peer Dependencies",
+    "optional_dependencies": "EN TEXT TO REPLACE: Optional Dependencies",
+    "no_dependency_changes": "EN TEXT TO REPLACE: No dependency changes",
+    "file_filter_option": {
+      "all": "EN TEXT TO REPLACE: All ({count})",
+      "added": "EN TEXT TO REPLACE: Added ({count})",
+      "removed": "EN TEXT TO REPLACE: Removed ({count})",
+      "modified": "EN TEXT TO REPLACE: Modified ({count})"
+    },
+    "search_files_placeholder": "EN TEXT TO REPLACE: Search files...",
+    "no_files_all": "EN TEXT TO REPLACE: No files",
+    "no_files_search": "EN TEXT TO REPLACE: No files matching \"{query}\"",
+    "no_files_filtered": "EN TEXT TO REPLACE: No {filter} files",
+    "filter": {
+      "added": "EN TEXT TO REPLACE: added",
+      "removed": "EN TEXT TO REPLACE: removed",
+      "modified": "EN TEXT TO REPLACE: modified"
+    },
+    "files_button": "EN TEXT TO REPLACE: Files",
+    "select_file_prompt": "EN TEXT TO REPLACE: Select a file from the sidebar to view its diff",
+    "close_files_panel": "EN TEXT TO REPLACE: Close files panel",
+    "filter_files_label": "EN TEXT TO REPLACE: Filter files by change type"
   },
   "privacy_policy": {
     "title": "プライバシーポリシー",
