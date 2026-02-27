@@ -56,7 +56,7 @@ async function updateProfile() {
   }
 
   try {
-    const result = await updateProfileUtil(handle, {
+    const result = await updateProfileUtil(handle.value, {
       displayName: displayNameInput.value,
       description: descriptionInput.value,
       website: websiteInput.value,
