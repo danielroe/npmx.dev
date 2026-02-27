@@ -4,12 +4,6 @@ import type { NpmxPicksResponse } from '#shared/types/picks'
 const { data: picksData } = useFetch<NpmxPicksResponse>('/api/picks')
 const { selectedAccentColor } = useAccentColor()
 
-const PICK_COLORS = ['coral', 'amber', 'emerald', 'sky'] as const
-function pickLetterColor(index: number): string | undefined {
-  if (selectedAccentColor.value) return undefined
-  return `var(--swatch-${PICK_COLORS[index]})`
-}
-
 const { model: searchQuery, flushUpdateUrlQuery } = useGlobalSearch()
 const isSearchFocused = shallowRef(false)
 
@@ -123,14 +117,13 @@ defineOgImageComponent('Default', {
         style="animation-delay: 0.3s"
       >
         <ul class="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 list-none m-0 p-0">
-          <li v-for="(pick, i) in picksData?.picks" :key="pick.letter">
+          <li v-for="pick in picksData?.picks" :key="pick.letter">
             <LinkBase :to="packageRoute(pick.name)" class="text-sm">
               <span
                 >{{ pick.name.slice(0, pick.letterIndex)
-                }}<span
-                  class="font-bold text-accent"
-                  :style="pickLetterColor(i) ? { color: pickLetterColor(i) } : undefined"
-                  >{{ pick.name[pick.letterIndex] }}</span
+                }}<span class="font-bold" :class="{ 'text-accent': selectedAccentColor }">{{
+                  pick.name[pick.letterIndex]
+                }}</span
                 >{{ pick.name.slice(pick.letterIndex + 1) }}</span
               >
             </LinkBase>
