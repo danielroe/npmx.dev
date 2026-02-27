@@ -328,7 +328,7 @@ const config = computed<VueUiSparklineConfig>(() => {
                 "
               >
                 <ButtonBase
-                  size="small"
+                  size="medium"
                   class="!p-1 !border-0 !bg-transparent hover:!bg-transparent text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
                   :classicon="hasSparklineAnimation ? 'i-lucide:pause' : 'i-lucide:play'"
                   :aria-label="
