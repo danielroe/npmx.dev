@@ -78,7 +78,7 @@ watch(user, async newUser => {
       <div class="flex flex-col space-y-4">
         <NuxtLink
           :to="{ name: 'profile-handle', params: { handle: user.handle } }"
-          :prefetch-on="prefetch ? 'visibility' : 'interaction'"
+          prefetch-on="interaction"
         >
           <button
             class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
