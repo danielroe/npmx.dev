@@ -10,8 +10,6 @@ import { NodeOAuthClient, AtprotoDohHandleResolver } from '@atproto/oauth-client
 import { getOAuthLock } from '#server/utils/atproto/lock'
 import { useOAuthStorage } from '#server/utils/atproto/storage'
 import { LIKES_SCOPE, PROFILE_SCOPE } from '#shared/utils/constants'
-import { OAuthMetadataSchema } from '#shared/schemas/oauth'
-import { LIKES_SCOPE } from '#shared/utils/constants'
 import type { UserServerSession } from '#shared/types/userSession'
 // @ts-expect-error virtual file from oauth module
 import { clientUri } from '#oauth/config'
