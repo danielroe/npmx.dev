@@ -4,11 +4,18 @@ import { updateProfile as updateProfileUtil } from '~/utils/atproto/profile'
 const route = useRoute('profile-handle')
 const handle = computed(() => route.params.handle)
 
-const { data: profile } = await useFetch<NPMXProfile>(() => `/api/social/profile/${handle.value}`, {
-  default: () => ({ displayName: handle.value, description: '', website: '' }),
-})
-
-if (!profile.value) {
+const { data: profile, error: profileError } = await useFetch<NPMXProfile>(
+  () => `/api/social/profile/${handle.value}`,
+  {
+    default: () => ({
+      displayName: handle.value,
+      description: '',
+      website: '',
+      recordExists: false,
+    }),
+  },
+)
+if (!profile.value || profileError.value?.statusCode === 404) {
   throw createError({
     statusCode: 404,
     statusMessage: $t('profile.not_found'),

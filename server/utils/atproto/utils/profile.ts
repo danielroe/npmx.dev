@@ -42,8 +42,10 @@ export class ProfileUtils {
         params: { identifier: handle },
       })
       if (!response.success) {
+        // Not always, but usually this will mean the profile cannot be found
+        // and can be assumed most of the time it does not exists
         throw createError({
-          status: 400,
+          status: 404,
           message: `Failed to resolve MiniDoc for ${handle}`,
         })
       }
@@ -81,9 +83,17 @@ export class ProfileUtils {
 
       if (response.success) {
         const validationResult = dev.npmx.actor.profile.$validate(response.body.value)
-        profile = validationResult
+        profile = { recordExists: true, ...validationResult }
         await this.cache.set(profileKey, profile, CACHE_MAX_AGE)
       } else {
+        if (response.error === 'RecordNotFound') {
+          return {
+            recordExists: false,
+            displayName: miniDoc.handle,
+            description: '',
+            website: '',
+          }
+        }
         throw new Error(`Failed to fetch profile: ${response.error}`)
       }
     }
