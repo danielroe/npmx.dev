@@ -2,6 +2,7 @@
 type BaseItem = {
   name: string
   url: string
+  normalisingIndent?: string
   logo:
     | string
     | {
@@ -21,14 +22,15 @@ const props = defineProps<{
 </script>
 
 <template>
-  <ul class="flex items-center flex-wrap gap-4 md:gap-x-6 md:gap-y-4 list-none">
+  <ul class="flex flex-wrap gap-4 md:gap-x-6 md:gap-y-4 list-none">
     <li v-for="item in list" :key="item.name">
       <a
         v-if="'logo' in item"
         :href="item.url"
         target="_blank"
         rel="noopener noreferrer"
-        class="flex items-center justify-center h-full min-w-11 rounded-md hover:bg-fg/10 transition-colors p-1"
+        class="relative flex items-center justify-center h-14 min-w-14 rounded-md hover:bg-fg/10 transition-colors p-1"
+        :style="{ paddingBlock: item.normalisingIndent }"
         :aria-label="item.name"
       >
         <AboutLogoImg :src="item.logo" :alt="item.name" />
@@ -53,7 +55,8 @@ const props = defineProps<{
               :href="groupItem.url"
               target="_blank"
               rel="noopener noreferrer"
-              class="flex items-center justify-center h-full min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
+              class="relative flex items-center justify-center h-10 min-w-10 rounded-md hover:bg-fg/10 transition-colors p-0.5"
+              :style="{ paddingBlock: groupItem.normalisingIndent }"
               :aria-label="groupItem.name"
             >
               <AboutLogoImg :src="groupItem.logo" :alt="groupItem.name" />
