@@ -45,14 +45,14 @@ export class ProfileUtils {
    * @returns
    */
   async getProfile(handle: string): Promise<NPMXProfile | undefined> {
-    const profileKey = CACHE_PROFILE_KEY(handle)
+    const miniDoc = await this.slingshotMiniDoc(handle)
+    const profileKey = CACHE_PROFILE_KEY(miniDoc.did)
     const cachedProfile = await this.cache.get<NPMXProfile>(profileKey)
 
     let profile: NPMXProfile | undefined
     if (cachedProfile) {
       profile = cachedProfile
     } else {
-      const miniDoc = await this.slingshotMiniDoc(handle)
       const profileUri = `at://${miniDoc.did}/dev.npmx.actor.profile/self`
       const response = await fetch(
         `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${profileUri}`,
@@ -72,7 +72,7 @@ export class ProfileUtils {
 
   async updateProfileCache(handle: string, profile: NPMXProfile): Promise<NPMXProfile | undefined> {
     const miniDoc = await this.slingshotMiniDoc(handle)
-    const profileKey = CACHE_PROFILE_KEY(miniDoc.handle)
+    const profileKey = CACHE_PROFILE_KEY(miniDoc.did)
     await this.cache.set(profileKey, profile, CACHE_MAX_AGE)
     return profile
   }
