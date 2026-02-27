@@ -4,20 +4,11 @@ import { updateProfile as updateProfileUtil } from '~/utils/atproto/profile'
 const route = useRoute('profile-handle')
 const handle = computed(() => route.params.handle)
 
-const {
-  data: profile,
-  status: profileStatus,
-  error: profileError,
-} = await useFetch<NPMXProfile>(() => `/api/social/profile/${handle.value}`, {
+const { data: profile } = await useFetch<NPMXProfile>(() => `/api/social/profile/${handle.value}`, {
   default: () => ({ displayName: handle.value, description: '', website: '' }),
 })
 
-if (
-  profileStatus.value === 'error' &&
-  profileError.value?.statusCode &&
-  profileError.value.statusCode >= 400 &&
-  profileError.value.statusCode < 500
-) {
+if (!profile.value) {
   throw createError({
     statusCode: 404,
     statusMessage: $t('profile.not_found'),
@@ -77,7 +68,7 @@ async function updateProfile() {
   }
 }
 
-const { data: likesData, status } = await useProfileLikes(handle)
+const { data: likesData, status } = useProfileLikes(handle)
 
 useSeoMeta({
   title: () => $t('profile.seo_title', { handle: handle.value }),
@@ -178,8 +169,8 @@ defineOgImageComponent('Default', {
         {{ $t('profile.likes') }}
         <span v-if="likesData">({{ likesData.likes?.records?.length ?? 0 }})</span>
       </h2>
-      <div v-if="status === 'pending'">
-        <p>{{ $t('common.loading') }}</p>
+      <div v-if="status === 'pending'" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <SkeletonBlock v-for="i in 4" :key="i" class="h-16 rounded-lg" />
       </div>
       <div v-else-if="status === 'error'">
         <p>{{ $t('common.error') }}</p>
