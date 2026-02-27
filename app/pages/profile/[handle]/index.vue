@@ -119,7 +119,7 @@ defineOgImageComponent('Default', {
         <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
           <div class="link-subtle font-mono text-sm inline-flex items-center gap-1.5">
-            <span class="i-carbon:link w-4 h-4" aria-hidden="true" />
+            <span class="text-white i-carbon:link w-4 h-4" aria-hidden="true" />
             <input
               name="website"
               type="url"
@@ -151,16 +151,9 @@ defineOgImageComponent('Default', {
         <p v-if="profile.description">{{ profile.description }}</p>
         <div class="flex gap-4 items-center font-mono text-sm">
           <h2>@{{ handle }}</h2>
-          <a
-            v-if="profile.website"
-            :href="profile.website"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="link-subtle font-mono text-sm inline-flex items-center gap-1.5"
-          >
-            <span class="i-carbon:link w-4 h-4" aria-hidden="true" />
+          <LinkBase v-if="profile.website" :to="profile.website" classicon="i-lucide:link">
             {{ profile.website }}
-          </a>
+          </LinkBase>
           <button
             v-if="user?.handle === handle"
             @click="isEditing = true"

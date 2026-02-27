@@ -289,6 +289,8 @@ async function getNpmxProfile(handle: string, authSession: OAuthSession) {
 
   // get existing npmx profile OR create a new one
   const profileUri = `at://${client.did}/dev.npmx.actor.profile/self`
+
+  // TODO: update with safe client rpc, see `getMiniProfile` response variable
   const profileResponse = await fetch(
     `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${profileUri}`,
     { headers: { 'User-Agent': 'npmx' } },

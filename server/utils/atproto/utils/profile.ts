@@ -11,21 +11,10 @@ const CACHE_MAX_AGE = CACHE_MAX_AGE_ONE_MINUTE * 5
  * Logic to handle and update profile queries
  */
 export class ProfileUtils {
-  private readonly constellation: Constellation
   private readonly cache: CacheAdapter
+  // TODO: create Slingshot client (like Constellation class)
 
   constructor() {
-    this.constellation = new Constellation(
-      // Passes in a fetch wrapped as cachedfetch since are already doing some heavy caching here
-      async <T = unknown>(
-        url: string,
-        options: Parameters<typeof $fetch>[1] = {},
-        _ttl?: number,
-      ): Promise<CachedFetchResult<T>> => {
-        const data = (await $fetch<T>(url, options)) as T
-        return { data, isStale: false, cachedAt: null }
-      },
-    )
     this.cache = getCacheAdapter('generic')
   }
 
