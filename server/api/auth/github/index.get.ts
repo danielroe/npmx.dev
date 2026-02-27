@@ -30,8 +30,15 @@ export default defineEventHandler(async event => {
 
   const query = getQuery(event)
 
-  if (query.error === 'access_denied') {
-    return sendRedirect(event, '/')
+  if (query.error) {
+    if (query.error === 'access_denied') {
+      return sendRedirect(event, '/')
+    }
+
+    throw createError({
+      statusCode: 400,
+      message: `GitHub authentication failed: ${query.error}.`,
+    })
   }
 
   // If no code, initiate the OAuth flow
@@ -113,11 +120,6 @@ export default defineEventHandler(async event => {
 
     return sendRedirect(event, stateData.redirectPath)
   } catch (error) {
-    // User cancelled
-    if (query.error === 'access_denied') {
-      return sendRedirect(event, '/')
-    }
-
     const message = error instanceof Error ? error.message : 'GitHub authentication failed.'
     return handleApiError(error, {
       statusCode: 401,
