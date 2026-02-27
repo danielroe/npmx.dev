@@ -27,7 +27,9 @@ const SKIPPED_COMPONENTS: Record<string, string> = {
   'OgImage/Package.vue': 'OG Image component - server-rendered image, not interactive UI',
 
   // Client-only components with complex dependencies
-  'Header/AuthModal.client.vue': 'Complex auth modal with navigation - requires full app context',
+  'Header/AtprotoModal.client.vue':
+    'Complex auth modal with navigation - requires full app context',
+  'Header/GitHubModal.client.vue': 'Complex auth modal with navigation - requires full app context',
 
   // Complex components requiring full app context or specific runtime conditions
   'Header/OrgsDropdown.vue': 'Requires connector context and API calls',
