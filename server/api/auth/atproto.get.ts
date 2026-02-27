@@ -292,8 +292,8 @@ async function getNpmxProfile(handle: string, authSession: OAuthSession) {
 
   // TODO: update with safe client rpc, see `getMiniProfile` response variable
   const profileResponse = await fetch(
-    `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${profileUri}`,
-    { headers: { 'User-Agent': 'npmx' } },
+    `https://${SLINGSHOT_HOST}/xrpc/blue.microcosm.repo.getRecordByUri?at_uri=${encodeURIComponent(profileUri)}`,
+    { headers: { 'User-Agent': 'npmx' }, signal: AbortSignal.timeout(5_000) },
   )
 
   if (profileResponse.ok) {
