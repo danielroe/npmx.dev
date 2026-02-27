@@ -453,6 +453,16 @@ watch(displayResults, results => {
   }
 })
 
+/**
+ * Focus the header search input
+ */
+function focusSearchInput() {
+  const searchInput = document.querySelector<HTMLInputElement>(
+    'input[type="search"], input[name="q"]',
+  )
+  searchInput?.focus()
+}
+
 function handleResultsKeydown(e: KeyboardEvent) {
   // If the active element is an input, navigate to exact match or wait for results
   if (e.key === 'Enter' && document.activeElement?.tagName === 'INPUT') {
@@ -489,7 +499,12 @@ function handleResultsKeydown(e: KeyboardEvent) {
 
   if (e.key === 'ArrowUp') {
     e.preventDefault()
-    const nextIndex = currentIndex < 0 ? 0 : Math.max(currentIndex - 1, 0)
+    // At first result or no result focused: return focus to search input
+    if (currentIndex <= 0) {
+      focusSearchInput()
+      return
+    }
+    const nextIndex = currentIndex - 1
     const el = elements[nextIndex]
     if (el) focusElement(el)
     return

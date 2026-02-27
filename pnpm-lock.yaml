@@ -4,6 +4,21 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  storybook:
+    '@storybook-vue/nuxt':
+      specifier: 9.0.1
+      version: 9.0.1
+    '@storybook/addon-a11y':
+      specifier: ^10.2.7
+      version: 10.2.13
+    '@storybook/addon-docs':
+      specifier: ^10.2.7
+      version: 10.2.13
+    '@storybook/addon-themes':
+      specifier: ^10.2.7
+      version: 10.2.13
+
 overrides:
   sharp: 0.34.5
   vite: npm:@voidzero-dev/vite-plus-core@0.0.0-g52709db6.20260226-1136
@@ -224,14 +239,17 @@ importers:
         specifier: 1.58.2
         version: 1.58.2
       '@storybook-vue/nuxt':
-        specifier: 9.0.1
+        specifier: catalog:storybook
         version: 9.0.1(943de74da843ff392a0ce19e8d4f1cd5)
       '@storybook/addon-a11y':
-        specifier: ^10.2.7
+        specifier: catalog:storybook
         version: 10.2.13(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@storybook/addon-docs':
-        specifier: ^10.2.7
+        specifier: catalog:storybook
         version: 10.2.13(@types/react@19.2.14)(esbuild@0.27.3)(rollup@4.56.0)(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@8.0.0-beta.10(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(esbuild@0.27.3))
+      '@storybook/addon-themes':
+        specifier: catalog:storybook
+        version: 10.2.13(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@types/node':
         specifier: 24.10.13
         version: 24.10.13
@@ -4171,6 +4189,11 @@ packages:
 
   '@storybook/addon-docs@10.2.13':
     resolution: {integrity: sha512-puMxpJbt/CuodLIbKDxWrW1ZgADYomfNHWEKp2d2l2eJjp17rADx0h3PABuNbX+YHbJwYcDdqluSnQwMysFEOA==}
+    peerDependencies:
+      storybook: ^10.2.7
+
+  '@storybook/addon-themes@10.2.13':
+    resolution: {integrity: sha512-ueOGGy7ZXgFp+GFo67HfWSCoNIv1+z+nHiSUmkZP/GHZ/1yiD/w8Sv0bEI1HjD/whCdoOzDKNcVXfiJAFdHoGw==}
     peerDependencies:
       storybook: ^10.2.7
 
@@ -14899,6 +14922,11 @@ snapshots:
       - rollup
       - vite
       - webpack
+
+  '@storybook/addon-themes@10.2.13(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))':
+    dependencies:
+      storybook: 10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      ts-dedent: 2.2.0
 
   '@storybook/builder-vite@9.1.2(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@8.0.0-beta.10(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:

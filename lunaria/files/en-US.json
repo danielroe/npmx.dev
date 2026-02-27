@@ -32,7 +32,8 @@
     "navigate_results": "Navigate results",
     "go_to_result": "Go to result",
     "open_code_view": "Open code view",
-    "open_docs": "Open docs"
+    "open_docs": "Open docs",
+    "disable_shortcuts": "You can disable keyboard shortcuts in {settings}."
   },
   "search": {
     "label": "Search npm packages",
@@ -83,7 +84,8 @@
       "appearance": "Appearance",
       "display": "Display",
       "search": "Data source",
-      "language": "Language"
+      "language": "Language",
+      "keyboard_shortcuts": "Keyboard shortcuts"
     },
     "data_source": {
       "label": "Data source",
@@ -107,7 +109,9 @@
     "accent_colors": "Accent colors",
     "clear_accent": "Clear accent color",
     "translation_progress": "Translation progress",
-    "background_themes": "Background shade"
+    "background_themes": "Background shade",
+    "keyboard_shortcuts_enabled": "Enable keyboard shortcuts",
+    "keyboard_shortcuts_enabled_description": "Keyboard shortcuts can be disabled if they conflict with other browser or system shortcuts"
   },
   "i18n": {
     "missing_keys": "{count} missing translation | {count} missing translations",
@@ -372,6 +376,7 @@
       "date_range_multiline": "{start}\nto {end}",
       "download_file": "Download {fileType}",
       "toggle_annotator": "Toggle annotator",
+      "toggle_stack_mode": "Toggle stack mode",
       "legend_estimation": "Estimation",
       "no_data": "No data available",
       "y_axis_label": "{granularity} {facet}",
@@ -385,6 +390,17 @@
       },
       "play_animation": "Play animation",
       "pause_animation": "Pause animation",
+      "data_correction": "Data correction",
+      "average_window": "Average window",
+      "smoothing": "Smoothing",
+      "known_anomalies": "Known anomalies",
+      "known_anomalies_description": "Interpolates over known download spikes caused by bots or CI issues.",
+      "known_anomalies_ranges": "Anomaly ranges",
+      "known_anomalies_range": "From {start} to {end}",
+      "known_anomalies_range_named": "{packageName}: from {start} to {end}",
+      "known_anomalies_none": "No known anomalies for this package. | No known anomalies for these packages.",
+      "known_anomalies_contribute": "Contribute anomaly data",
+      "apply_correction": "Apply correction",
       "copy_alt": {
         "trend_none": "mostly flat",
         "trend_strong": "strong",
@@ -698,7 +714,8 @@
       "preview": "preview",
       "code": "code"
     },
-    "file_path": "File path"
+    "file_path": "File path",
+    "scroll_to_top": "Scroll to top"
   },
   "badges": {
     "provenance": {

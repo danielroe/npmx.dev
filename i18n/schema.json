@@ -105,6 +105,9 @@
         },
         "open_docs": {
           "type": "string"
+        },
+        "disable_shortcuts": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -258,6 +261,9 @@
             },
             "language": {
               "type": "string"
+            },
+            "keyboard_shortcuts": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -329,6 +335,12 @@
           "type": "string"
         },
         "background_themes": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled_description": {
           "type": "string"
         }
       },
@@ -1123,6 +1135,9 @@
             "toggle_annotator": {
               "type": "string"
             },
+            "toggle_stack_mode": {
+              "type": "string"
+            },
             "legend_estimation": {
               "type": "string"
             },
@@ -1160,6 +1175,39 @@
               "type": "string"
             },
             "pause_animation": {
+              "type": "string"
+            },
+            "data_correction": {
+              "type": "string"
+            },
+            "average_window": {
+              "type": "string"
+            },
+            "smoothing": {
+              "type": "string"
+            },
+            "known_anomalies": {
+              "type": "string"
+            },
+            "known_anomalies_description": {
+              "type": "string"
+            },
+            "known_anomalies_ranges": {
+              "type": "string"
+            },
+            "known_anomalies_range": {
+              "type": "string"
+            },
+            "known_anomalies_range_named": {
+              "type": "string"
+            },
+            "known_anomalies_none": {
+              "type": "string"
+            },
+            "known_anomalies_contribute": {
+              "type": "string"
+            },
+            "apply_correction": {
               "type": "string"
             },
             "copy_alt": {
@@ -2102,6 +2150,9 @@
           "additionalProperties": false
         },
         "file_path": {
+          "type": "string"
+        },
+        "scroll_to_top": {
           "type": "string"
         }
       },

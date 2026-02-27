@@ -301,7 +301,7 @@ onClickOutside(containerRef, () => {
               v-if="result.description"
               class="text-xs text-fg-muted truncate mt-0.5 w-full block"
             >
-              {{ decodeHtmlEntities(result.description) }}
+              {{ stripHtmlTags(decodeHtmlEntities(result.description)) }}
             </span>
           </ButtonBase>
         </div>
