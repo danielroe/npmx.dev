@@ -10,6 +10,10 @@ onKeyStroke(
     return isKeyWithoutModifiers(e, shortcutKey) && (!isEditableElement(target) || isCheckbox)
   },
   e => {
+    if (selectedPackages.value.length === 0) {
+      return
+    }
+
     e.preventDefault()
     actionBar.value?.focus()
   },
