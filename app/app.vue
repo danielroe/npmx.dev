@@ -47,10 +47,12 @@ if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
+const keyboardShortcuts = useKeyboardShortcuts()
+
 onKeyDown(
   '/',
   e => {
-    if (isEditableElement(e.target)) return
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) return
     e.preventDefault()
 
     const searchInput = document.querySelector<HTMLInputElement>(
@@ -70,7 +72,7 @@ onKeyDown(
 onKeyDown(
   '?',
   e => {
-    if (isEditableElement(e.target)) return
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) return
     e.preventDefault()
     showKbdHints.value = true
   },
@@ -80,7 +82,7 @@ onKeyDown(
 onKeyUp(
   '?',
   e => {
-    if (isEditableElement(e.target)) return
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) return
     e.preventDefault()
     showKbdHints.value = false
   },

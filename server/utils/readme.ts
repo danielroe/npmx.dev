@@ -3,7 +3,7 @@ import sanitizeHtml from 'sanitize-html'
 import { hasProtocol } from 'ufo'
 import type { ReadmeResponse, TocItem } from '#shared/types/readme'
 import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
-import { decodeHtmlEntities } from '#shared/utils/html'
+import { decodeHtmlEntities, stripHtmlTags } from '#shared/utils/html'
 import { convertToEmoji } from '#shared/utils/emoji'
 import { toProxiedImageUrl } from '#server/utils/image-proxy'
 
@@ -192,22 +192,6 @@ const ALLOWED_ATTR: Record<string, string[]> = {
   'span': ['class', 'style'],
   'div': ['class', 'style', 'align'],
   'p': ['align'],
-}
-
-/**
- * Strip all HTML tags from a string, looping until stable to prevent
- * incomplete sanitization from nested/interleaved tags
- * (e.g. `<scr<script>ipt>` → `<script>` after one pass).
- */
-function stripHtmlTags(text: string): string {
-  const tagPattern = /<[^>]*>/g
-  let result = text
-  let previous: string
-  do {
-    previous = result
-    result = result.replace(tagPattern, '')
-  } while (result !== previous)
-  return result
 }
 
 /**

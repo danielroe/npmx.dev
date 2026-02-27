@@ -3,12 +3,12 @@
   "seo": {
     "home": {
       "title": "npmx - Explorateur de paquets pour le registre npm",
-      "description": "Un meilleur explorateur du registre npm. Recherchez, parcourez et explorez les paquets avec une interface moderne."
+      "description": "Un explorateur rapide et moderne du registre npm. Recherchez, parcourez et explorez les paquets avec une interface moderne."
     }
   },
   "built_at": "compilé {0}",
   "alt_logo": "Logo npmx",
-  "tagline": "un meilleur explorateur du registre npm",
+  "tagline": "un explorateur rapide et moderne du registre npm",
   "non_affiliation_disclaimer": "non affilié à npm, Inc.",
   "trademark_disclaimer": "npm est une marque déposée de npm, Inc. Ce site n'est pas affilié à npm, Inc.",
   "footer": {
@@ -156,6 +156,13 @@
       "package": "Ce paquet a été déprécié.",
       "version": "Cette version a été dépréciée.",
       "no_reason": "Aucune raison fournie"
+    },
+    "size_increase": {
+      "title_size": "Augmentation significative de la taille depuis la v{version}",
+      "title_deps": "Augmentation significative du nombre de dépendances depuis la v{version}",
+      "title_both": "Augmentation significative de la taille et des dépendances depuis la v{version}",
+      "size": "La taille d'installation a augmenté de {percent} ({size} de plus)",
+      "deps": "{count} dépendances supplémentaires"
     },
     "replacement": {
       "title": "Vous n'avez peut-être pas besoin de cette dépendance.",
@@ -366,6 +373,7 @@
       "date_range_multiline": "{start}\nau {end}",
       "download_file": "Télécharger {fileType}",
       "toggle_annotator": "Afficher/Masquer l'annotateur",
+      "toggle_stack_mode": "Basculer le mode empilé",
       "legend_estimation": "Estimation",
       "no_data": "Données non disponibles",
       "y_axis_label": "{facet} {granularity}",
@@ -379,6 +387,17 @@
       },
       "play_animation": "Lancer l'animation",
       "pause_animation": "Mettre l'animation en pause",
+      "data_correction": "Correction des données",
+      "average_window": "Plage de moyenne",
+      "smoothing": "Lissage",
+      "known_anomalies": "Anomalies connues",
+      "known_anomalies_description": "Interpole les pics de téléchargements connus causés par des bots ou des problèmes de CI.",
+      "known_anomalies_ranges": "Plages d'anomalies",
+      "known_anomalies_range": "Du {start} au {end}",
+      "known_anomalies_range_named": "{packageName} : du {start} au {end}",
+      "known_anomalies_none": "Aucune anomalie connue pour ce paquet. | Aucune anomalie connue pour ces paquets.",
+      "known_anomalies_contribute": "Contribuer des données d'anomalie",
+      "apply_correction": "Appliquer la correction",
       "copy_alt": {
         "trend_none": "globalement stable",
         "trend_strong": "forte",
@@ -844,6 +863,12 @@
         "managers": "gestionnaires de paquets"
       }
     },
+    "sponsors": {
+      "title": "Commanditaires"
+    },
+    "oss_partners": {
+      "title": "Partenaires open source"
+    },
     "team": {
       "title": "Équipe",
       "governance": "Gouvernance",
@@ -1044,7 +1069,37 @@
       "trends": {
         "title": "Comparer les tendances"
       }
-    }
+    },
+    "file_changes": "Modifications de fichiers",
+    "files_count": "{count} fichiers",
+    "lines_hidden": "{count} lignes masquées",
+    "compare_versions": "diff",
+    "summary": "Résumé",
+    "deps_count": "{count} dépendances",
+    "dependencies": "Dépendances",
+    "dev_dependencies": "Dépendances de développement",
+    "peer_dependencies": "Dépendances de type peer",
+    "optional_dependencies": "Dépendances optionnelles",
+    "no_dependency_changes": "Aucun changement de dépendance",
+    "file_filter_option": {
+      "all": "Tous ({count})",
+      "added": "Ajoutés ({count})",
+      "removed": "Supprimés ({count})",
+      "modified": "Modifiés ({count})"
+    },
+    "search_files_placeholder": "Rechercher des fichiers...",
+    "no_files_all": "Aucun fichier",
+    "no_files_search": "Aucun fichier correspondant à « {query} »",
+    "no_files_filtered": "Aucun fichier {filter}",
+    "filter": {
+      "added": "ajouté",
+      "removed": "supprimé",
+      "modified": "modifié"
+    },
+    "files_button": "Fichiers",
+    "select_file_prompt": "Sélectionnez un fichier dans la barre latérale pour voir son diff",
+    "close_files_panel": "Fermer le panneau de fichiers",
+    "filter_files_label": "Filtrer les fichiers par type de modification"
   },
   "privacy_policy": {
     "title": "politique de confidentialité",
