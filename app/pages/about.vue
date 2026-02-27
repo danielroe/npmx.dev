@@ -20,18 +20,8 @@ defineOgImageComponent('Default', {
 })
 
 const isMounted = shallowRef(false)
-const activeContributor = shallowRef<GitHubContributor | null>(null)
-const openTimer = shallowRef<ReturnType<typeof setTimeout> | undefined>()
-const closeTimer = shallowRef<ReturnType<typeof setTimeout> | undefined>()
-const isFlipped = shallowRef(false)
-
 onMounted(() => {
   isMounted.value = true
-})
-
-onBeforeUnmount(() => {
-  if (openTimer.value) clearTimeout(openTimer.value)
-  if (closeTimer.value) clearTimeout(closeTimer.value)
 })
 
 const pmLinks = {
@@ -45,9 +35,6 @@ const pmLinks = {
 
 const { data, status: contributorsStatus } = useLazyFetch('/api/contributors')
 
-/**
- * Checks if a contributor should show the expanded card.
- */
 function isExpandable(c: GitHubContributor) {
   const isGovernance = c.role === 'steward' || c.role === 'maintainer'
   return (
@@ -57,7 +44,9 @@ function isExpandable(c: GitHubContributor) {
     !!c.name ||
     !!c.location ||
     !!c.twitterUsername ||
-    !!c.websiteUrl
+    !!c.websiteUrl ||
+    !!c.blueskyHandle ||
+    !!c.mastodonUrl
   )
 }
 
@@ -71,110 +60,6 @@ const roleLabels = computed(
     }) as Partial<Record<Role, string>>,
 )
 
-/**
- * High-performance positioning for Firefox and Chrome (TODO: Safari will require a review :fingers_crossed:).
- * Handles vertical collision for top-row items.
- */
-async function positionPopover(anchorId: string) {
-  const popover = document.getElementById('shared-contributor-popover')
-  const anchor = document.getElementById(anchorId)
-
-  if (!popover || !anchor) return
-
-  // 1. Wait for Vue to update the reactive state
-  await nextTick()
-
-  // 2. Open popover so it enters Top Layer (Firefox dimensions fix)
-  if (!popover.matches(':popover-open')) {
-    try {
-      ;(popover as any).showPopover()
-    } catch (e) {
-      if (import.meta.dev) {
-        // oxlint-disable-next-line no-console
-        console.warn('[positionPopover] showPopover failed:', e)
-      }
-    }
-  }
-
-  // 3. One more tick to ensure the DOM is actually painted with the content
-  // This fixes the "only showing website link" bug in some browsers
-  await nextTick()
-
-  const rect = anchor.getBoundingClientRect()
-  const padding = 16
-  const popoverWidth = popover.offsetWidth || 256
-  const popoverHeight = popover.offsetHeight || 280
-
-  // Check if there is enough space above the avatar (including header margin)
-  // If we are too close to the top (e.g., < 300px), show below
-  const showBelow = rect.top < popoverHeight + 20
-  isFlipped.value = showBelow
-
-  const idealLeft = rect.left + rect.width / 2
-  const minLeft = popoverWidth / 2 + padding
-  const maxLeft = window.innerWidth - popoverWidth / 2 - padding
-  const finalLeft = Math.max(minLeft, Math.min(idealLeft, maxLeft))
-
-  // 4. Position using fixed viewport coordinates
-  const yBase = showBelow ? rect.bottom + 12 : rect.top - 12
-  const yPercent = showBelow ? '0' : '-100%'
-
-  popover.style.transform = `translate3d(${finalLeft}px, ${yBase}px, 0) translate(-50%, ${yPercent})`
-
-  // --- Inside positionPopover function ---
-  const arrow = popover.querySelector('.popover-arrow') as HTMLElement
-  if (arrow) {
-    const delta = idealLeft - finalLeft
-    // We use a CSS variable to pass the value safely to the template
-    arrow.style.setProperty('--arrow-delta', `${delta}px`)
-  }
-}
-
-function onMouseEnter(contributor: GitHubContributor) {
-  if (!isExpandable(contributor)) return
-  cancelClose()
-  clearTimeout(openTimer.value)
-  openTimer.value = undefined
-
-  const trigger = async () => {
-    activeContributor.value = contributor
-    await positionPopover(`anchor-${contributor.id}`)
-  }
-
-  if (activeContributor.value) {
-    void trigger()
-  } else {
-    openTimer.value = setTimeout(trigger, 80)
-  }
-}
-
-function cancelClose() {
-  if (closeTimer.value) {
-    clearTimeout(closeTimer.value)
-    closeTimer.value = undefined
-  }
-}
-
-function onMouseLeave() {
-  clearTimeout(openTimer.value)
-  openTimer.value = undefined
-  closeTimer.value = setTimeout(() => {
-    const popover = document.getElementById('shared-contributor-popover')
-    if (popover && !popover.matches(':hover')) {
-      try {
-        ;(popover as any).hidePopover()
-      } catch (e) {
-        if (import.meta.dev) {
-          // oxlint-disable-next-line no-console
-          console.warn('[onMouseLeave] hidePopover failed:', e)
-        }
-      }
-      activeContributor.value = null
-    }
-  }, 120)
-}
-
-// --- Add this helper function ---
 function getAriaLabel(c: GitHubContributor): string {
   const separator = $t('about.contributors.separator')
   const role = roleLabels.value[c.role]
@@ -193,6 +78,74 @@ function getAriaLabel(c: GitHubContributor): string {
     location,
   })
 }
+
+// --- Popover Logic (Single Instance in DOM via v-if) ---
+const activeContributor = shallowRef<GitHubContributor | null>(null)
+const popoverPos = reactive({ top: 0, left: 0, align: 'center' as 'left' | 'center' | 'right' })
+let closeTimer: ReturnType<typeof setTimeout> | null = null
+
+function cancelClose() {
+  if (closeTimer) {
+    clearTimeout(closeTimer)
+    closeTimer = null
+  }
+}
+
+function computePos(btn: HTMLElement) {
+  const r = btn.getBoundingClientRect()
+  const vw = window.innerWidth
+  const POP_W = 256
+  const GAP = 8
+
+  popoverPos.top = r.bottom + GAP
+  const center = r.left + r.width / 2
+
+  if (center - POP_W / 2 < GAP) {
+    popoverPos.align = 'left'
+    popoverPos.left = r.left
+  } else if (center + POP_W / 2 > vw - GAP) {
+    popoverPos.align = 'right'
+    popoverPos.left = r.right
+  } else {
+    popoverPos.align = 'center'
+    popoverPos.left = center
+  }
+}
+
+function open(c: GitHubContributor, btnEl: HTMLElement) {
+  cancelClose()
+  computePos(btnEl)
+  activeContributor.value = c
+}
+
+function scheduleClose(c: GitHubContributor) {
+  cancelClose()
+  closeTimer = setTimeout(() => {
+    if (activeContributor.value?.id === c.id) activeContributor.value = null
+  }, 150)
+}
+
+function toggle(c: GitHubContributor, btnEl: HTMLElement) {
+  if (activeContributor.value?.id === c.id) {
+    activeContributor.value = null
+  } else {
+    open(c, btnEl)
+  }
+}
+
+function onDocumentPointerDown(e: PointerEvent) {
+  if (!activeContributor.value) return
+  const t = e.target as HTMLElement
+  if (
+    !t.closest('[data-popover-panel]') &&
+    !t.closest(`[data-cid="${activeContributor.value.id}"]`)
+  ) {
+    activeContributor.value = null
+  }
+}
+
+onMounted(() => document.addEventListener('pointerdown', onDocumentPointerDown))
+onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerDown))
 </script>
 
 <template>
@@ -260,36 +213,36 @@ function getAriaLabel(c: GitHubContributor): string {
                   scope="global"
                 >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
-                  <template #people>
-                    <LinkBase :to="pmLinks.npm" class="font-sans">{{
+                  <template #people
+                    ><LinkBase :to="pmLinks.npm" class="font-sans">{{
                       $t('about.what_we_are_not.words.people')
-                    }}</LinkBase>
-                  </template>
-                  <template #building>
-                    <LinkBase :to="pmLinks.pnpm" class="font-sans">{{
+                    }}</LinkBase></template
+                  >
+                  <template #building
+                    ><LinkBase :to="pmLinks.pnpm" class="font-sans">{{
                       $t('about.what_we_are_not.words.building')
-                    }}</LinkBase>
-                  </template>
-                  <template #really>
-                    <LinkBase :to="pmLinks.yarn" class="font-sans">{{
+                    }}</LinkBase></template
+                  >
+                  <template #really
+                    ><LinkBase :to="pmLinks.yarn" class="font-sans">{{
                       $t('about.what_we_are_not.words.really')
-                    }}</LinkBase>
-                  </template>
-                  <template #cool>
-                    <LinkBase :to="pmLinks.bun" class="font-sans">{{
+                    }}</LinkBase></template
+                  >
+                  <template #cool
+                    ><LinkBase :to="pmLinks.bun" class="font-sans">{{
                       $t('about.what_we_are_not.words.cool')
-                    }}</LinkBase>
-                  </template>
-                  <template #package>
-                    <LinkBase :to="pmLinks.deno" class="font-sans">{{
+                    }}</LinkBase></template
+                  >
+                  <template #package
+                    ><LinkBase :to="pmLinks.deno" class="font-sans">{{
                       $t('about.what_we_are_not.words.package')
-                    }}</LinkBase>
-                  </template>
-                  <template #managers>
-                    <LinkBase :to="pmLinks.vlt" class="font-sans">{{
+                    }}</LinkBase></template
+                  >
+                  <template #managers
+                    ><LinkBase :to="pmLinks.vlt" class="font-sans">{{
                       $t('about.what_we_are_not.words.managers')
-                    }}</LinkBase>
-                  </template>
+                    }}</LinkBase></template
+                  >
                 </i18n-t>
               </span>
             </li>
@@ -347,24 +300,32 @@ function getAriaLabel(c: GitHubContributor): string {
                 :key="contributor.id"
                 class="relative h-12 w-12 list-none"
               >
-                <LinkBase
-                  :id="`anchor-${contributor.id}`"
-                  :to="contributor.html_url"
+                <button
+                  type="button"
+                  :data-cid="contributor.id"
+                  :aria-expanded="activeContributor?.id === contributor.id ? 'true' : undefined"
+                  :aria-haspopup="isExpandable(contributor) ? 'true' : undefined"
                   :aria-label="
                     isExpandable(contributor)
                       ? getAriaLabel(contributor)
                       : $t('about.contributors.view_profile', { name: contributor.login })
                   "
-                  no-underline
-                  no-external-icon
-                  class="group relative block h-12 w-12 rounded-lg transition-all outline-none focus-visible:(ring-2 ring-accent z-20)"
+                  class="group relative block h-12 w-12 rounded-lg transition-all outline-none focus-visible:(ring-2 ring-accent z-20) p-0 border-none cursor-pointer bg-transparent"
                   :class="[
                     !isExpandable(contributor)
                       ? 'hover:scale-125 focus-visible:scale-125'
                       : 'hover:scale-110 focus-visible:scale-110',
                   ]"
-                  @mouseenter="onMouseEnter(contributor)"
-                  @mouseleave="onMouseLeave"
+                  @mouseenter="
+                    isExpandable(contributor) &&
+                    open(contributor, $event.currentTarget as HTMLElement)
+                  "
+                  @mouseleave="isExpandable(contributor) && scheduleClose(contributor)"
+                  @click="
+                    isExpandable(contributor) &&
+                    toggle(contributor, $event.currentTarget as HTMLElement)
+                  "
+                  @keydown.escape="activeContributor = null"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
@@ -374,7 +335,154 @@ function getAriaLabel(c: GitHubContributor): string {
                     class="w-12 h-12 rounded-lg ring-2 ring-transparent transition-all duration-200 hover:ring-accent"
                     loading="lazy"
                   />
-                </LinkBase>
+                </button>
+
+                <Transition name="pop">
+                  <div
+                    v-if="isExpandable(contributor) && activeContributor?.id === contributor.id"
+                    data-popover-panel
+                    role="tooltip"
+                    class="contributor-popover"
+                    :style="{
+                      top: `${popoverPos.top}px`,
+                      left: `${popoverPos.left}px`,
+                    }"
+                    :class="`align-${popoverPos.align}`"
+                    @mouseenter="cancelClose()"
+                    @mouseleave="scheduleClose(contributor)"
+                  >
+                    <div
+                      class="flex flex-col gap-y-3 w-64 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-2xl text-start"
+                    >
+                      <div class="flex flex-col gap-2 min-w-0">
+                        <span
+                          class="w-full font-sans font-bold text-fg leading-tight truncate block"
+                        >
+                          {{ contributor.name || contributor.login }}
+                        </span>
+                        <div
+                          v-if="roleLabels[contributor.role]"
+                          class="font-mono text-3xs uppercase tracking-wider text-accent font-bold"
+                        >
+                          {{ roleLabels[contributor.role] }}
+                        </div>
+                        <p
+                          v-if="contributor.bio"
+                          class="font-sans text-xs text-fg-subtle line-clamp-3 leading-relaxed"
+                        >
+                          "{{ contributor.bio }}"
+                        </p>
+
+                        <div
+                          v-if="contributor.companyHTML"
+                          class="flex items-center gap-1 font-sans text-2xs text-fg-muted text-start min-w-0"
+                        >
+                          <div
+                            class="i-lucide:building-2 size-3 shrink-0 mt-0.5 text-accent/80"
+                            aria-hidden="true"
+                          />
+                          <div
+                            class="company-content leading-relaxed break-words min-w-0 [&_a]:(text-accent no-underline hover:underline transition-all)"
+                            v-html="contributor.companyHTML"
+                          />
+                        </div>
+                        <div
+                          v-else-if="contributor.company"
+                          class="flex items-center font-sans text-2xs text-fg-muted text-start min-w-0"
+                        >
+                          <div
+                            class="i-lucide:building-2 size-3 shrink-0 mt-0.5 text-accent/80"
+                            aria-hidden="true"
+                          />
+                          <div class="company-content leading-relaxed break-words min-w-0">
+                            {{ contributor.company }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="flex flex-col gap-2 text-3xs text-fg-subtle font-sans">
+                        <div v-if="contributor.location" class="flex items-center gap-1 min-w-0">
+                          <div class="i-lucide:map-pin size-3 shrink-0" aria-hidden="true" />
+                          <span class="w-full truncate">{{ contributor.location }}</span>
+                        </div>
+                        <a
+                          v-if="contributor.websiteUrl"
+                          :href="contributor.websiteUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="flex items-center gap-1 hover:text-accent transition-colors"
+                        >
+                          <div class="i-lucide:link size-3 shrink-0" aria-hidden="true" />
+                          <span class="truncate">{{
+                            contributor.websiteUrl.replace(/^https?:\/\//, '')
+                          }}</span>
+                        </a>
+                        <a
+                          v-if="contributor.twitterUsername"
+                          :href="`https://x.com/${contributor.twitterUsername}`"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="flex items-center gap-1 hover:text-accent transition-colors"
+                        >
+                          <div class="i-simple-icons:x size-2.5 shrink-0" aria-hidden="true" />
+                          <span>@{{ contributor.twitterUsername }}</span>
+                        </a>
+                        <a
+                          v-if="contributor.blueskyHandle"
+                          :href="`https://bsky.app/profile/${contributor.blueskyHandle}`"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="flex items-center gap-1 hover:text-accent transition-colors"
+                        >
+                          <div
+                            class="i-simple-icons:bluesky size-2.5 shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span>@{{ contributor.blueskyHandle }}</span>
+                        </a>
+                        <a
+                          v-if="contributor.mastodonUrl"
+                          :href="contributor.mastodonUrl"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="flex items-center gap-1 hover:text-accent transition-colors"
+                        >
+                          <div
+                            class="i-simple-icons:mastodon size-2.5 shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span class="truncate">{{
+                            contributor.mastodonUrl.replace(/^https?:\/\//, '').replace(/\/@?/, '@')
+                          }}</span>
+                        </a>
+                      </div>
+
+                      <div
+                        class="flex items-center justify-between border-t border-t-gray-400/65 dark:border-t-gray-300 border-border-subtle pt-3"
+                      >
+                        <a
+                          :href="contributor.html_url"
+                          target="_blank"
+                          class="text-3xs text-fg-subtle font-mono hover:text-accent"
+                          rel="noopener noreferrer"
+                        >
+                          @{{ contributor.login }}
+                        </a>
+                        <a
+                          v-if="contributor.sponsors_url"
+                          :href="contributor.sponsors_url"
+                          :aria-label="$t('about.team.sponsor_aria', { name: contributor.login })"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="flex items-center gap-1 rounded border border-purple-700/30 bg-purple-700/5 text-purple-700 dark:border-purple-300/30 dark:bg-purple-300/5 dark:text-purple-300 px-2 py-0.5 text-4xs font-bold uppercase tracking-wider transition-colors hover:bg-purple-700/15 dark:hover:bg-purple-300/15"
+                        >
+                          <span class="i-lucide:heart size-3" aria-hidden="true" />
+                          <span>{{ $t('about.team.sponsor') }}</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Transition>
               </li>
             </ul>
           </section>
@@ -382,153 +490,46 @@ function getAriaLabel(c: GitHubContributor): string {
         <CallToAction />
       </section>
     </article>
-
-    <ClientOnly>
-      <div
-        id="shared-contributor-popover"
-        popover="manual"
-        class="fixed top-0 force-left-0 m-0 border-none bg-transparent p-0 overflow-visible opacity-0 invisible transition-[opacity,visibility] duration-150 ease-out allow-discrete popover-open:(opacity-100 visible) z-40"
-        @mouseenter="cancelClose"
-        @mouseleave="onMouseLeave"
-      >
-        <div
-          v-if="activeContributor"
-          class="flex flex-col gap-y-3 relative z-10 w-64 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-2xl text-start"
-        >
-          <div class="flex flex-col gap-2 min-w-0">
-            <span class="w-full font-sans font-bold text-fg leading-tight truncate block">
-              {{ activeContributor.name || activeContributor.login }}
-            </span>
-            <div
-              v-if="roleLabels[activeContributor.role]"
-              class="font-mono text-3xs uppercase tracking-wider text-accent font-bold"
-            >
-              {{ roleLabels[activeContributor.role] }}
-            </div>
-            <p
-              v-if="activeContributor.bio"
-              class="font-sans text-xs text-fg-subtle line-clamp-3 leading-relaxed"
-            >
-              "{{ activeContributor.bio }}"
-            </p>
-
-            <div
-              v-if="activeContributor.companyHTML"
-              class="flex items-center gap-1 font-sans text-2xs text-fg-muted text-start min-w-0"
-            >
-              <div
-                class="i-lucide:building-2 size-3 shrink-0 mt-0.5 text-accent/80"
-                aria-hidden="true"
-              />
-              <div
-                class="company-content leading-relaxed break-words min-w-0 [&_a]:(text-accent no-underline hover:underline transition-all)"
-                v-html="activeContributor.companyHTML"
-              />
-            </div>
-
-            <div
-              v-else-if="activeContributor.company"
-              class="flex items-center font-sans text-2xs text-fg-muted text-start min-w-0"
-            >
-              <div
-                class="i-lucide:building-2 size-3 shrink-0 mt-0.5 text-accent/80"
-                aria-hidden="true"
-              />
-              <div
-                class="company-content leading-relaxed break-words min-w-0 [&_a]:(text-accent no-underline hover:underline transition-all)"
-              >
-                {{ activeContributor.company }}
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-2 text-3xs text-fg-subtle font-sans">
-            <div v-if="activeContributor.location" class="flex items-center gap-1 min-w-0">
-              <div class="i-lucide:map-pin size-3 shrink-0" aria-hidden="true" />
-              <span class="w-full truncate">{{ activeContributor.location }}</span>
-            </div>
-
-            <a
-              v-if="activeContributor.websiteUrl"
-              :href="activeContributor.websiteUrl"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-1 hover:text-accent transition-colors"
-            >
-              <div class="i-lucide:link size-3 shrink-0" aria-hidden="true" />
-              <span class="truncate">{{
-                activeContributor.websiteUrl.replace(/^https?:\/\//, '')
-              }}</span>
-            </a>
-            <a
-              v-if="activeContributor.twitterUsername"
-              :href="`https://x.com/${activeContributor.twitterUsername}`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-1 hover:text-accent transition-colors"
-            >
-              <div class="i-simple-icons:x size-2.5 shrink-0" aria-hidden="true" />
-              <span>@{{ activeContributor.twitterUsername }}</span>
-            </a>
-          </div>
-
-          <div
-            class="flex items-center justify-between border-t border-t-gray-400/65 dark:border-t-gray-300 border-border-subtle pt-3"
-          >
-            <a
-              :href="activeContributor.html_url"
-              target="_blank"
-              class="text-3xs text-fg-subtle font-mono hover:text-accent"
-              rel="noopener noreferrer"
-            >
-              @{{ activeContributor.login }}
-            </a>
-            <a
-              v-if="activeContributor.sponsors_url"
-              :href="activeContributor.sponsors_url"
-              :aria-label="$t('about.team.sponsor_aria', { name: activeContributor.login })"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center gap-1 rounded border border-purple-700/30 bg-purple-700/5 text-purple-700 dark:border-purple-300/30 dark:bg-purple-300/5 dark:text-purple-300 px-2 py-0.5 text-4xs font-bold uppercase tracking-wider transition-colors hover:bg-purple-700/15 dark:hover:bg-purple-300/15"
-            >
-              <span class="i-lucide:heart size-3" aria-hidden="true" />
-              <span>{{ $t('about.team.sponsor') }}</span>
-            </a>
-          </div>
-
-          <div
-            aria-hidden="true"
-            class="popover-arrow absolute force-left-1/2 z-0 h-3 w-3 border-border-subtle bg-bg-elevated will-change-transform"
-            :class="
-              isFlipped ? 'top-[-6px] border-te border-is' : 'bottom-[-6px] border-be border-ie'
-            "
-            :style="{ transform: 'translateX(calc(-50% + var(--arrow-delta, 0px))) rotate(45deg)' }"
-          />
-        </div>
-      </div>
-    </ClientOnly>
   </main>
 </template>
 
 <style scoped>
-[popover]:not(:popover-open) {
-  display: none;
+.contributor-popover {
+  position: fixed;
+  z-index: 9999;
+  margin: 0;
+  padding: 0;
+  /* Default: centered on anchor */
+  transform: translateX(-50%);
 }
-[popover] {
-  @apply top-0 force-left-0 force-right-unset;
-  will-change: transform, opacity;
+
+.contributor-popover.align-left {
+  transform: translateX(0);
+}
+.contributor-popover.align-right {
+  transform: translateX(-100%);
+}
+
+.pop-enter-active {
   transition:
-    opacity 0.15s ease-out,
-    visibility 0.15s ease-out;
+    opacity 120ms ease-out,
+    transform 150ms ease-out;
 }
-
-/* Prevent any parent from clipping the arrow or the card shadow */
-#shared-contributor-popover {
-  overflow: visible;
+.pop-leave-active {
+  transition: opacity 80ms ease-in;
 }
-
-/* Arrow will-change to keep animations smooth */
-.popover-arrow {
-  will-change: transform;
+.pop-enter-from {
+  opacity: 0;
+  /* Adjust transform based on alignment logic is tricky in pure CSS transition classes
+     because we are already using transform for alignment.
+     However, since we are using v-if, the element is inserted with the correct class.
+     We can just add a slight Y offset to the existing transform.
+     But since we can't easily compose transforms in CSS classes without knowing the base,
+     we'll stick to opacity fade for simplicity and robustness, or use a wrapper for animation.
+     Let's try a simple opacity fade first to ensure layout stability.
+  */
+}
+.pop-leave-to {
+  opacity: 0;
 }
 </style>
