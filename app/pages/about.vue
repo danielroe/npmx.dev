@@ -153,33 +153,15 @@ function onDocumentKeydown(e: KeyboardEvent) {
   }
 }
 
-function addListeners() {
+onMounted(() => {
   document.addEventListener('pointerdown', onDocumentPointerDown)
   document.addEventListener('keydown', onDocumentKeydown)
-}
-
-function removeListeners() {
-  document.removeEventListener('pointerdown', onDocumentPointerDown)
-  document.removeEventListener('keydown', onDocumentKeydown)
-}
-
-onMounted(() => {
-  addListeners()
 })
 
 onBeforeUnmount(() => {
   cancelClose()
-  removeListeners()
-})
-
-onActivated(() => {
-  addListeners()
-})
-
-onDeactivated(() => {
-  cancelClose()
-  activeContributor.value = null
-  removeListeners()
+  document.removeEventListener('pointerdown', onDocumentPointerDown)
+  document.removeEventListener('keydown', onDocumentKeydown)
 })
 </script>
 
@@ -316,10 +298,7 @@ onDeactivated(() => {
             {{ $t('about.contributors.description') }}
           </p>
           <section aria-labelledby="contributors-heading">
-            <h3
-              id="contributors-heading"
-              class="text-sm text-fg uppercase tracking-wider mb-4"
-            >
+            <h3 id="contributors-heading" class="text-sm text-fg uppercase tracking-wider mb-4">
               {{
                 $t(
                   'about.contributors.title',
@@ -356,7 +335,7 @@ onDeactivated(() => {
                   v-if="!isExpandable(contributor)"
                   :to="contributor.html_url"
                   no-underline
-                  no-external-icon
+                  no-new-tab-icon
                   :aria-label="getAriaLabel(contributor)"
                   class="group relative block h-12 w-12 rounded-lg transition-all outline-none p-0 bg-transparent"
                 >
