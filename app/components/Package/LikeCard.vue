@@ -71,7 +71,7 @@ const likeAction = async () => {
 
 <template>
   <NuxtLink :to="packageRoute(name)">
-    <BaseCard class="group font-mono flex justify-between">
+    <BaseCard class="font-mono flex justify-between">
       {{ name }}
       <div class="flex items-center gap-4 justify-between">
         <ClientOnly>
