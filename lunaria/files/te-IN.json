@@ -757,7 +757,7 @@
       },
       "github": {
         "title": "GitHub",
-        "connected_as": "గా కనెక్ట్ చేయబడింది {username}"
+        "connected_as": "{username} గా కనెక్ట్ చేయబడింది"
       }
     }
   },
