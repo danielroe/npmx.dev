@@ -1162,10 +1162,10 @@
             "pause_animation": {
               "type": "string"
             },
-            "filters": {
+            "data_correction": {
               "type": "string"
             },
-            "average": {
+            "average_window": {
               "type": "string"
             },
             "smoothing": {

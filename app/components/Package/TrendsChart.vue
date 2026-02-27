@@ -1631,7 +1631,7 @@ const chartConfig = computed<VueUiXyConfig>(() => {
 })
 
 const isDownloadsMetric = computed(() => selectedMetric.value === 'downloads')
-const showFilterControls = shallowRef(false)
+const showCorrectionControls = shallowRef(false)
 
 // Trigger data loading when the metric is switched
 watch(selectedMetric, value => {
@@ -1726,19 +1726,19 @@ watch(selectedMetric, value => {
         <button
           type="button"
           class="self-start flex items-center gap-1 text-2xs font-mono text-fg-subtle hover:text-fg transition-colors"
-          @click="showFilterControls = !showFilterControls"
+          @click="showCorrectionControls = !showCorrectionControls"
         >
           <span
             class="w-3.5 h-3.5 transition-transform"
-            :class="showFilterControls ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
+            :class="showCorrectionControls ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'"
             aria-hidden="true"
           />
-          {{ $t('package.trends.filters') }}
+          {{ $t('package.trends.data_correction') }}
         </button>
-        <div v-if="showFilterControls" class="flex items-end gap-3">
+        <div v-if="showCorrectionControls" class="flex items-end gap-3">
           <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
-              {{ $t('package.trends.average') }}
+              {{ $t('package.trends.average_window') }}
               <span class="text-fg-muted">({{ settings.chartFilter.averageWindow }})</span>
             </span>
             <input
