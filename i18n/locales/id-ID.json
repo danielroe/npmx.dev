@@ -42,28 +42,28 @@
     "button": "cari",
     "searching": "Mencari...",
     "found_packages": "Paket tidak ditemukan | Ditemukan 1 paket | Ditemukan {count} paket",
+    "found_packages_sorted": "Tidak ada hasil ditemukan | Menyortir {count} hasil teratas | Menyortir {count} hasil teratas",
     "updating": "(memperbarui...)",
     "no_results": "Tidak ada paket yang ditemukan untuk \"{query}\"",
-    "not_taken": "{name} tersedia",
-    "claim_prompt": "Klaim nama paket ini di npm",
-    "claim_button": "Klaim \"{name}\"",
-    "want_to_claim": "Ingin klaim nama paket ini?",
-    "start_typing": "Mulai mengetik untuk mencari paket",
-    "exact_match": "persis",
-    "suggestion": {
-      "user": "pengguna",
-      "org": "organisasi",
-      "view_user_packages": "Lihat paket oleh pengguna ini",
-      "view_org_packages": "Lihat paket oleh organisasi ini"
-    },
-    "found_packages_sorted": "Tidak ada hasil ditemukan | Menyortir {count} hasil teratas | Menyortir {count} hasil teratas",
     "rate_limited": "Mencapai batas ukuran permintaan npm, coba lagi nanti",
     "title": "pencarian",
     "title_search": "pencarian: {search}",
     "title_packages": "cari paket",
     "meta_description": "Hasil pencarian untuk '{search}'",
     "meta_description_packages": "Cari paket npm",
-    "algolia_disclaimer": "Didukung oleh Algolia"
+    "not_taken": "{name} tersedia",
+    "claim_prompt": "Klaim nama paket ini di npm",
+    "claim_button": "Klaim \"{name}\"",
+    "want_to_claim": "Ingin klaim nama paket ini?",
+    "start_typing": "Mulai mengetik untuk mencari paket",
+    "algolia_disclaimer": "Didukung oleh Algolia",
+    "exact_match": "persis",
+    "suggestion": {
+      "user": "pengguna",
+      "org": "organisasi",
+      "view_user_packages": "Lihat paket oleh pengguna ini",
+      "view_org_packages": "Lihat paket oleh organisasi ini"
+    }
   },
   "nav": {
     "main_navigation": "Utama",
@@ -84,8 +84,8 @@
     "sections": {
       "appearance": "Tampilan",
       "display": "Layar",
-      "language": "Bahasa",
       "search": "Sumber data",
+      "language": "Bahasa",
       "keyboard_shortcuts": "Pintasan papan ketik"
     },
     "data_source": {
@@ -129,6 +129,7 @@
     "end_of_results": "Akhir dari hasil",
     "try_again": "Coba lagi",
     "close": "Tutup",
+    "or": "atau",
     "retry": "Ulangi",
     "copy": "salin",
     "copied": "tersalin!",
@@ -143,8 +144,7 @@
       "role": "peran",
       "members": "anggota"
     },
-    "scroll_to_top": "Kembali ke atas",
-    "or": "atau"
+    "scroll_to_top": "Kembali ke atas"
   },
   "package": {
     "not_found": "Paket Tidak Ditemukan",
@@ -155,10 +155,18 @@
     "view_permalink": "Lihat permalink untuk versi ini",
     "navigation": "Paket",
     "copy_name": "Salin nama paket",
+    "copy_version": "Salin versi paket",
     "deprecation": {
       "package": "Paket ini telah usang (deprecated).",
       "version": "Versi ini telah usang (deprecated).",
       "no_reason": "Alasan tidak diberikan"
+    },
+    "size_increase": {
+      "title_size": "Peningkatan ukuran yang signifikan sejak v{version}",
+      "title_deps": "Peningkatan jumlah dependensi yang signifikan sejak v{version}",
+      "title_both": "Peningkatan ukuran dan ketergantungan yang signifikan sejak v{version}",
+      "size": "Ukuran instalasi meningkat sebesar {percent} ({size} lebih besar)",
+      "deps": "{count} lebih banyak dependensi"
     },
     "replacement": {
       "title": "Mungkin Anda tidak butuh dependensi ini.",
@@ -167,9 +175,9 @@
       "documented": "{community} menganggap paket ini memiliki alternatif yang lebih berperforma.",
       "none": "Paket ini ditandai sudah tidak diperlukan, fungsinya kemungkinan sudah tersedia secara bawaan (native).",
       "learn_more": "Pelajari lebih lanjut",
+      "learn_more_above": "Pelajari selengkapnya di atas.",
       "mdn": "MDN",
       "community": "komunitas",
-      "learn_more_above": "Pelajari selengkapnya di atas.",
       "consider_no_dep": "+ Pertimbangkan tanpa dependensi?"
     },
     "stats": {
@@ -177,21 +185,16 @@
       "deps": "Dep",
       "install_size": "Ukuran Instal",
       "vulns": "Kerentanan",
+      "published": "Diterbitkan",
+      "published_tooltip": "Tanggal {package}{'@'}{version} diterbitkan",
       "view_dependency_graph": "Lihat grafik dependensi",
       "inspect_dependency_tree": "Periksa pohon dependensi",
       "size_tooltip": {
         "unpacked": "{size} ukuran tidak terkompresi (paket ini)",
         "total": "{size} total ukuran tidak terkompresi (termasuk semua {count} dependensi untuk linux-x64)"
-      },
-      "published": "Diterbitkan",
-      "published_tooltip": "Tanggal {package}{'@'}{version} diterbitkan"
+      }
     },
     "skills": {
-      "file_counts": {
-        "scripts": "{count} skrip | {count} skrip",
-        "refs": "{count} ref | {count} ref",
-        "assets": "{count} aset | {count} aset"
-      },
       "title": "Keahlian Agen",
       "skills_available": "{count} keahlian tersedia | {count} keahlian tersedia",
       "compatible_with": "Kompatibel dengan {tool}",
@@ -201,6 +204,11 @@
       "available_skills": "Keahlian Tersedia",
       "click_to_expand": "Klik untuk memperluas",
       "no_description": "Tidak ada deskripsi",
+      "file_counts": {
+        "scripts": "{count} skrip | {count} skrip",
+        "refs": "{count} ref | {count} ref",
+        "assets": "{count} aset | {count} aset"
+      },
       "view_source": "Lihat sumber"
     },
     "links": {
@@ -225,9 +233,9 @@
       "title": "Memulai",
       "pm_label": "Manajer paket",
       "copy_command": "Salin perintah instal",
-      "view_types": "Lihat {package}",
       "copy_dev_command": "Salin perintah instal dev",
-      "dev_dependency_hint": "Biasanya diinstal sebagai dev dependency"
+      "dev_dependency_hint": "Biasanya diinstal sebagai dev dependency",
+      "view_types": "Lihat {package}"
     },
     "create": {
       "title": "Buat proyek baru",
@@ -242,6 +250,7 @@
       "title": "Readme",
       "no_readme": "README tidak tersedia.",
       "view_on_github": "Lihat di GitHub",
+      "toc_title": "Garis Besar",
       "callout": {
         "note": "Catatan",
         "tip": "Tip",
@@ -249,7 +258,6 @@
         "warning": "Peringatan",
         "caution": "Perhatian"
       },
-      "toc_title": "Garis Besar",
       "copy_as_markdown": "Salin README sebagai Markdown"
     },
     "provenance_section": {
@@ -277,10 +285,10 @@
     "compatibility": "Kompatibilitas",
     "card": {
       "publisher": "Penerbit",
+      "published": "Diterbitkan",
       "weekly_downloads": "Unduhan mingguan",
       "keywords": "Kata kunci",
-      "license": "Lisensi",
-      "published": "Diterbitkan"
+      "license": "Lisensi"
     },
     "versions": {
       "title": "Versi",
@@ -369,11 +377,6 @@
       "date_range_multiline": "{start}\nsampai {end}",
       "download_file": "Unduh {fileType}",
       "toggle_annotator": "Ganti anotator",
-      "items": {
-        "downloads": "Unduhan",
-        "likes": "Suka",
-        "contributors": "Kontributor"
-      },
       "toggle_stack_mode": "Beralih mode tumpukan",
       "legend_estimation": "Estimasi",
       "no_data": "Tidak ada data tersedia",
@@ -381,6 +384,11 @@
       "facet": "Aspek",
       "title": "Tren",
       "contributors_skip": "Tidak ditampilkan dalam Kontributor (tidak ada repositori GitHub):",
+      "items": {
+        "downloads": "Unduhan",
+        "likes": "Suka",
+        "contributors": "Kontributor"
+      },
       "play_animation": "Putar animasi",
       "pause_animation": "Jeda animasi",
       "data_correction": "Koreksi data",
@@ -492,22 +500,14 @@
     },
     "sort": {
       "downloads": "Paling banyak diunduh",
+      "published": "Baru-baru ini diterbitkan",
       "name_asc": "Nama (A-Z)",
-      "name_desc": "Nama (Z-A)",
-      "published": "Baru-baru ini diterbitkan"
+      "name_desc": "Nama (Z-A)"
     },
     "size": {
       "b": "{size} B",
       "kb": "{size} kB",
       "mb": "{size} MB"
-    },
-    "copy_version": "Salin versi paket",
-    "size_increase": {
-      "title_size": "Peningkatan ukuran yang signifikan sejak v{version}",
-      "title_deps": "Peningkatan jumlah dependensi yang signifikan sejak v{version}",
-      "title_both": "Peningkatan ukuran dan ketergantungan yang signifikan sejak v{version}",
-      "size": "Ukuran instalasi meningkat sebesar {percent} ({size} lebih besar)",
-      "deps": "{count} lebih banyak dependensi"
     }
   },
   "connector": {
@@ -548,7 +548,9 @@
       "otp_placeholder": "Masukkan kode OTP...",
       "otp_label": "Kata sandi sekali-pakai",
       "retry_otp": "Ulangi dengan OTP",
+      "retry_web_auth": "Coba ulangi dengan autentikasi peramban",
       "retrying": "Mengulangi...",
+      "open_web_auth": "Buka tautan autentikasi peramban",
       "approve_operation": "Setujui operasi",
       "remove_operation": "Hapus operasi",
       "approve_all": "Setujui Semua",
@@ -556,9 +558,7 @@
       "executing": "Mengeksekusi...",
       "log": "Log",
       "log_label": "Log operasi selesai",
-      "remove_from_log": "Hapus dari log",
-      "retry_web_auth": "Coba ulangi dengan autentikasi peramban",
-      "open_web_auth": "Buka tautan autentikasi peramban"
+      "remove_from_log": "Hapus dari log"
     }
   },
   "org": {
@@ -672,6 +672,7 @@
       "invalid_name": "Nama paket tidak valid:",
       "available": "Nama ini tersedia!",
       "taken": "Nama ini sudah digunakan.",
+      "missing_permission": "Anda tidak memiliki wewenang untuk menambahkan paket ke cakupan {'@'}{scope}.",
       "similar_warning": "Paket serupa ditemukan - npm mungkin menolak nama ini:",
       "related": "Paket terkait:",
       "scope_warning_title": "Pertimbangkan untuk menggunakan paket scoped",
@@ -684,8 +685,7 @@
       "publishing": "Menerbitkan...",
       "checking": "Memeriksa ketersediaan...",
       "failed_to_check": "Gagal memeriksa ketersediaan nama",
-      "failed_to_claim": "Gagal mengklaim paket",
-      "missing_permission": "Anda tidak memiliki wewenang untuk menambahkan paket ke cakupan {'@'}{scope}."
+      "failed_to_claim": "Gagal mengklaim paket"
     }
   },
   "code": {
@@ -788,12 +788,12 @@
       "downloads_day": "Unduhan/hari",
       "downloads_month": "Unduhan/bulan",
       "downloads_year": "Unduhan/tahun",
+      "published": "Paling Akhir Diterbitkan",
       "name": "Nama",
       "quality": "Kualitas",
       "popularity": "Popularitas",
       "maintenance": "Pemeliharaan",
-      "score": "Skor",
-      "published": "Paling Akhir Diterbitkan"
+      "score": "Skor"
     },
     "columns": {
       "title": "Kolom",
@@ -804,14 +804,14 @@
       "version": "Versi",
       "description": "Deskripsi",
       "downloads": "Unduhan/minggu",
+      "published": "Paling Akhir Diterbitkan",
       "maintainers": "Pemelihara",
       "keywords": "Kata kunci",
       "quality_score": "Skor kualitas",
       "popularity_score": "Skor popularitas",
       "maintenance_score": "Skor pemeliharaan",
       "combined_score": "Skor gabungan",
-      "security": "Keamanan",
-      "published": "Paling Akhir Diterbitkan"
+      "security": "Keamanan"
     },
     "view_mode": {
       "label": "Mode tampilan",
@@ -868,6 +868,12 @@
         "managers": "yang keren"
       }
     },
+    "sponsors": {
+      "title": "Sponsor"
+    },
+    "oss_partners": {
+      "title": "Mitra OSS"
+    },
     "team": {
       "title": "Tim",
       "governance": "Tata Kelola",
@@ -900,12 +906,6 @@
         "description": "Temukan kabar terbaru tentang npmx.",
         "cta": "Ikuti di Bluesky"
       }
-    },
-    "sponsors": {
-      "title": "Sponsor"
-    },
-    "oss_partners": {
-      "title": "Mitra OSS"
     }
   },
   "account_menu": {
@@ -966,11 +966,11 @@
       "section_packages": "Paket",
       "section_facets": "Aspek",
       "section_comparison": "Perbandingan",
+      "copy_as_markdown": "Salin tabel",
       "loading": "Memuat data paket...",
       "error": "Gagal memuat data paket. Silakan coba lagi.",
       "empty_title": "Pilih paket untuk dibandingkan",
-      "empty_description": "Cari dan tambahkan setidaknya 2 paket di atas untuk melihat perbandingan metrik mereka secara berdampingan.",
-      "copy_as_markdown": "Salin tabel"
+      "empty_description": "Cari dan tambahkan setidaknya 2 paket di atas untuk melihat perbandingan metrik mereka secara berdampingan."
     },
     "selector": {
       "search_label": "Cari paket",
@@ -999,6 +999,7 @@
       "deselect_all": "Batalkan semua aspek",
       "select_category": "Pilih semua aspek {category}",
       "deselect_category": "Batalkan semua aspek {category}",
+      "binary_only_tooltip": "Paket ini hanya mengekspos berkas biner dan bukan eksport",
       "categories": {
         "performance": "Performa",
         "health": "Kesehatan",
@@ -1072,8 +1073,7 @@
       },
       "trends": {
         "title": "Bandingkan Tren"
-      },
-      "binary_only_tooltip": "Paket ini hanya mengekspos berkas biner dan bukan eksport"
+      }
     },
     "file_changes": "Perubahan Berkas",
     "files_count": "{count} berkas",
@@ -1107,6 +1107,9 @@
     "filter_files_label": "Filter berkas menurut jenis tindakan"
   },
   "privacy_policy": {
+    "title": "kebijakan privasi",
+    "last_updated": "Terakhir diperbarui: {date}",
+    "welcome": "Selamat datang di {app}. Kami berkomitmen untuk melindungi privasi Anda. Kebijakan ini menjelaskan bagaimana data kami dikumpulkan, bagaimana kami menggunakannya, dan hak-hak Anda atas privasi Anda.",
     "cookies": {
       "what_are": {
         "title": "Apa itu cookie?",
@@ -1181,12 +1184,12 @@
     "changes": {
       "title": "Perkembangan halaman privasi regulasi publik",
       "p1": "Setiap masa, laman dari undang privasi perlindungan kami terkini bisa selalu dimutakhirkan kepada pembaharuan penjaminan mutu privasi web portal. Jangan lupakan pembaruan ini demi keamanan lebih dalam interaksi aplikasi perangkat piranti Anda."
-    },
-    "title": "kebijakan privasi",
-    "last_updated": "Terakhir diperbarui: {date}",
-    "welcome": "Selamat datang di {app}. Kami berkomitmen untuk melindungi privasi Anda. Kebijakan ini menjelaskan bagaimana data kami dikumpulkan, bagaimana kami menggunakannya, dan hak-hak Anda atas privasi Anda."
+    }
   },
   "a11y": {
+    "title": "aksesibilitas",
+    "footer_title": "a11y",
+    "welcome": "Kami membuat aplikasi web base {app} untuk dikembangkan secara masal buat banyak kelompok antarpelajar digital dan praktis program.",
     "approach": {
       "title": "Penerapan Konsep Layanan Kami",
       "p1": "Kami secara utuh menetapkan acuan ke-web WCAG sebagai arahan pengolestasian pembuatan sarana penjangkau web situs. Namun bukan patokan dasar, perbaharuan ini tetap merangkum layanan masal terbuka yang dikombinasikan demi proses progres pelayaran internet berkapabilitas maksimal.",
@@ -1211,43 +1214,6 @@
       "title": "Timbal Balik Peringatan Laporan Fitur Interaktif Kami.",
       "p1": "Seandainya Anda dihadapkan akan berbagai celah ketiadaan alat pendukung disabilitas / pembatasan pandang yang cukup dalam platform {app}, kemukakan permasalahan sistem di isu {link} pengembang repositori publik ini. Permasalahan yang terdata diproses atas perhatian penuh dengan tingkat penyelesaian progres deduktif mutakhir bagi kami seluruh rekan kolaborasi di depan panggung layanan.",
       "link": "Repositori Pengembangan Isu Github"
-    },
-    "title": "aksesibilitas",
-    "footer_title": "a11y",
-    "welcome": "Kami membuat aplikasi web base {app} untuk dikembangkan secara masal buat banyak kelompok antarpelajar digital dan praktis program."
-  },
-  "vacations": {
-    "title": "liburan",
-    "meta_description": "Tim npmx sedang beristirahat. Discord aktif setelah satu minggu berlalu",
-    "heading": "isi energi",
-    "subtitle": "waktu proses npmx mengorbankan sebagian lelah para pengerja, hal ini bukan sesuatu berkelanjutan atas komitmen progres web app npmx, dengan demikian saatnya seimbangkan hidup secara rehat sesaat. di sisi itu semua.",
-    "illustration_alt": "semua alat kedinginan merapatkan ruang",
-    "poke_log": "Singgung unggun kayu hangat",
-    "what": {
-      "title": "apa yang sedang jadi sorotan penundaan log operasional:",
-      "p1": "Ruang obrolan discord belum dipublikasi {dates}.",
-      "dates": "Perayaan Februari ke 14 atau penundaan minggu depan s/d 21.",
-      "p2": "ruang tertutup buat kanal terpadu dari pengundangan interaksi kecuali {garden} dan sesi ruang publik berbaur dari perbincangan sosiolog individu.",
-      "garden": "#garden"
-    },
-    "meantime": {
-      "title": "sementara waktu ini",
-      "p1": "{site} maupun di server internal {repo} akan berjalan konsisten demi antusias yang ada di kalangan masyarakat pembaharu warta pengembangan mutakhir. Namun keaktifan log di tempat kami bersinggahan dengan hangat di sekitar tumpukan abu",
-      "repo_link": "Repositori repo master di log master kami"
-    },
-    "return": {
-      "title": "kembalinya sesi berbaur kami di log server!!",
-      "p1": "Penyelesaian dan pengarahan waktu komitmen sampai pertanggal penyelesaian target Maret kami di pertanggal maret-3 nya secara pasti. Kunjungi juga pengumuman situs sosial web log pemberitahuan update sosial media kita di sana melalui situs {social}.",
-      "social_link": "Bluesky jejaring kanal warta"
-    },
-    "stats": {
-      "contributors": "Pengaruh/Kontributor",
-      "commits": "Target Komit",
-      "pr": "Permintaan Eksekusi Web/PR",
-      "subtitle": {
-        "some": "di antara kelompok yang ada",
-        "all": "semua kalangan"
-      }
     }
   }
 }
