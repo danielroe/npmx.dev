@@ -300,7 +300,25 @@ onUnmounted(() => document.removeEventListener('pointerdown', onDocumentPointerD
                 :key="contributor.id"
                 class="relative h-12 w-12 list-none"
               >
+                <LinkBase
+                  v-if="!isExpandable(contributor)"
+                  :to="contributor.html_url"
+                  no-underline
+                  no-external-icon
+                  :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
+                  class="group relative block h-12 w-12 rounded-lg transition-all outline-none p-0 bg-transparent"
+                >
+                  <img
+                    :src="`${contributor.avatar_url}&s=64`"
+                    :alt="$t('about.contributors.avatar', { name: contributor.login })"
+                    width="64"
+                    height="64"
+                    class="w-12 h-12 rounded-lg ring-2 ring-transparent transition-all duration-200 hover:ring-accent"
+                    loading="lazy"
+                  />
+                </LinkBase>
                 <button
+                  v-else
                   type="button"
                   :data-cid="contributor.id"
                   :aria-expanded="activeContributor?.id === contributor.id ? 'true' : undefined"
