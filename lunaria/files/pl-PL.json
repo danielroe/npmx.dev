@@ -1101,7 +1101,7 @@
       "modified": "zmienionych"
     },
     "files_button": "Pliki",
-    "select_file_prompt": "Wybierz plik z panelu obok aby zobaczyć zmiany",
+    "select_file_prompt": "Wybierz plik z panelu obok, aby zobaczyć zmiany",
     "close_files_panel": "Zamknij panel plików",
     "filter_files_label": "Filtruj pliki według rodzaju zmian"
   },
