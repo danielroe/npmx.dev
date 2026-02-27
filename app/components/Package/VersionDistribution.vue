@@ -9,6 +9,7 @@ import {
   drawNpmxLogoAndTaglineWatermark,
 } from '~/composables/useChartWatermark'
 import TooltipApp from '~/components/Tooltip/App.vue'
+import { copyAltTextForVersionsBarChart } from '~/utils/charts'
 
 const props = defineProps<{
   packageName: string
@@ -16,6 +17,8 @@ const props = defineProps<{
 }>()
 
 const { accentColors, selectedAccentColor } = useAccentColor()
+const { copy, copied } = useClipboard()
+
 const colorMode = useColorMode()
 const resolvedMode = shallowRef<'light' | 'dark'>('light')
 const rootEl = shallowRef<HTMLElement | null>(null)
@@ -190,14 +193,14 @@ const chartConfig = computed<VueUiXyConfig>(() => {
           fullscreen: false,
           table: false,
           tooltip: false,
-          altCopy: false, // TODO: set to true to enable the alt copy feature
+          altCopy: true,
         },
         buttonTitles: {
           csv: $t('package.trends.download_file', { fileType: 'CSV' }),
           img: $t('package.trends.download_file', { fileType: 'PNG' }),
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
-          altCopy: undefined, // TODO: set to proper translation key
+          altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
         },
         callbacks: {
           img: args => {
@@ -230,10 +233,19 @@ const chartConfig = computed<VueUiXyConfig>(() => {
             loadFile(url, buildExportFilename('svg'))
             URL.revokeObjectURL(url)
           },
-          // altCopy: ({ dataset: dst, config: cfg }: { dataset: Array<VueUiXyDatasetItem>; config: VueUiXyConfig}) => {
-          //   // TODO: implement a reusable copy-alt-text-to-clipboard feature based on the dataset & configuration
-          //   console.log({ dst, cfg})
-          // }
+          altCopy: ({ dataset: dst, config: cfg }) =>
+            copyAltTextForVersionsBarChart({
+              dataset: dst,
+              config: {
+                ...cfg,
+                datapointLabels: xAxisLabels.value,
+                dateRangeLabel: dateRangeLabel.value,
+                semverGroupingMode: groupingMode.value,
+                copy,
+                $t,
+                numberFormatter: compactNumberFormatter.value.format,
+              },
+            }),
         },
       },
       grid: {
@@ -571,6 +583,16 @@ const chartConfig = computed<VueUiXyConfig>(() => {
               <span
                 v-else
                 class="i-lucide:pen w-6 h-6 text-fg-subtle"
+                style="pointer-events: none"
+                aria-hidden="true"
+              />
+            </template>
+            <template #optionAltCopy>
+              <span
+                class="w-6 h-6"
+                :class="
+                  copied ? 'i-lucide:check text-accent' : 'i-lucide:person-standing text-fg-subtle'
+                "
                 style="pointer-events: none"
                 aria-hidden="true"
               />

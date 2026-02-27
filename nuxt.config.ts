@@ -205,6 +205,10 @@ export default defineNuxtConfig({
         driver: 'fsLite',
         base: './.cache/fetch',
       },
+      'payload-cache': {
+        driver: 'fsLite',
+        base: './.cache/payload',
+      },
       'atproto': {
         driver: 'fsLite',
         base: './.cache/atproto',
