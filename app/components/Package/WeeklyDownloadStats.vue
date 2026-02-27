@@ -198,8 +198,8 @@ const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
   correctedDownloads.value.map(d => ({
     value: d?.value ?? 0,
     period: $t('package.trends.date_range', {
-      start: d.weekStart ?? '-',
-      end: d.weekEnd ?? '-',
+      start: d.weekStart ? $d(d.weekStart, 'shortDate') : '-',
+      end: d.weekEnd ? $d(d.weekEnd, 'shortDate') : '-',
     }),
   })),
 )
@@ -398,6 +398,10 @@ const config = computed<VueUiSparklineConfig>(() => {
 
 <style>
 /** Overrides */
+/* TODO: remove this style once we have rtl support */
+.vue-ui-sparkline svg {
+  direction: ltr;
+}
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
