@@ -330,8 +330,8 @@
       "show_all": "показать все ({count})",
       "optional": "опционально",
       "view_vulnerabilities": "Посмотреть уязвимости",
-      "outdated_major": "{count} мажорная версия позади (последняя: {latest}) | {count} мажорных версий позади (последняя: {latest})",
-      "outdated_minor": "{count} минорная версия позади (последняя: {latest}) | {count} минорных версий позади (последняя: {latest})",
+      "outdated_major": "{count} мажорная версия позади (последняя: {latest}) | {count} мажорные версии позади (последняя: {latest}) | {count} мажорных версий позади (последняя: {latest})",
+      "outdated_minor": "{count} минорная версия позади (последняя: {latest}) | {count} минорные версии позади (последняя: {latest}) | {count} минорных версий позади (последняя: {latest})",
       "outdated_patch": "Доступно патч-обновление (последняя: {latest})",
       "has_replacement": "Для этой зависимости есть рекомендуемые замены"
     },
@@ -394,7 +394,7 @@
       "known_anomalies_ranges": "Диапазоны аномалий",
       "known_anomalies_range": "С {start} по {end}",
       "known_anomalies_range_named": "{packageName}: с {start} по {end}",
-      "known_anomalies_none": "Нет известных аномалий для этого пакета. | Нет известных аномалий для этих пакетов.",
+      "known_anomalies_none": "Нет известных аномалий для этого пакета. | Нет известных аномалий для этих пакетов. | Нет известных аномалий для этих пакетов.",
       "known_anomalies_contribute": "Предложить данные об аномалиях",
       "apply_correction": "Применить корректировку",
       "copy_alt": {
@@ -838,7 +838,7 @@
   "about": {
     "title": "О проекте",
     "heading": "о проекте",
-    "meta_description": "npmx — это быстрый и современный браузер для реестра npm. Улучшенный UX/DX для исследования npm-пакетов.",
+    "meta_description": "npm.npmx — это быстрый и современный браузер для реестра npm. Улучшенный UX/DX для исследования npm-пакетов.",
     "what_we_are": {
       "title": "Кто мы",
       "better_ux_dx": "лучший UX/DX",
