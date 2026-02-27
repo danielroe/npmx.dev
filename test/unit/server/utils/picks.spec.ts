@@ -29,10 +29,11 @@ describe('selectPicks', () => {
     }
     const picks = selectPicks(candidates)
 
-    expect(picks[0]!.letterIndex).toBe('next'.indexOf('n'))
-    expect(picks[1]!.letterIndex).toBe('webpack'.indexOf('p'))
-    expect(picks[2]!.letterIndex).toBe('commander'.indexOf('m'))
-    expect(picks[3]!.letterIndex).toBe('luxon'.indexOf('x'))
+    expect(picks).toHaveLength(4)
+    expect(picks[0]?.letterIndex).toBe('next'.indexOf('n'))
+    expect(picks[1]?.letterIndex).toBe('webpack'.indexOf('p'))
+    expect(picks[2]?.letterIndex).toBe('commander'.indexOf('m'))
+    expect(picks[3]?.letterIndex).toBe('luxon'.indexOf('x'))
   })
 
   it('prefers liked candidates over non-liked', () => {
@@ -61,13 +62,14 @@ describe('selectPicks', () => {
       x: [{ name: 'luxon', totalLikes: 0 }],
     }
     const picks = selectPicks(candidates)
-    expect(picks[0]!.name).toBe('nodemon')
-    expect(picks[1]!.name).toBe('prettier')
-    expect(picks[2]!.name).toBe('mocha')
-    expect(picks[3]!.name).toBe('luxon')
+    expect(picks).toHaveLength(4)
+    expect(picks[0]?.name).toBe('nodemon')
+    expect(picks[1]?.name).toBe('prettier')
+    expect(picks[2]?.name).toBe('mocha')
+    expect(picks[3]?.name).toBe('luxon')
   })
 
-  it('falls back to hardcoded when no candidates at all', () => {
+  it('falls back to hardcoded fallbacks when no candidates at all', () => {
     const candidates: Record<NpmxLetter, PickCandidate[]> = {
       n: [],
       p: [],
@@ -75,10 +77,26 @@ describe('selectPicks', () => {
       x: [],
     }
     const picks = selectPicks(candidates)
-    expect(picks[0]!.name).toBe(FALLBACKS.n)
-    expect(picks[1]!.name).toBe(FALLBACKS.p)
-    expect(picks[2]!.name).toBe(FALLBACKS.m)
-    expect(picks[3]!.name).toBe(FALLBACKS.x)
+    expect(picks).toHaveLength(4)
+    expect(picks[0]?.name).toBe(FALLBACKS.n)
+    expect(picks[1]?.name).toBe(FALLBACKS.p)
+    expect(picks[2]?.name).toBe(FALLBACKS.m)
+    expect(picks[3]?.name).toBe(FALLBACKS.x)
+  })
+
+  it('falls back to hardcoded fallbacks when the request to Algolia fails', () => {
+    const candidates: Record<NpmxLetter, PickCandidate[]> = {
+      n: [],
+      p: [],
+      m: [],
+      x: [],
+    }
+    const picks = selectPicks(candidates)
+    expect(picks).toHaveLength(4)
+    expect(picks[0]?.name).toBe(FALLBACKS.n)
+    expect(picks[1]?.name).toBe(FALLBACKS.p)
+    expect(picks[2]?.name).toBe(FALLBACKS.m)
+    expect(picks[3]?.name).toBe(FALLBACKS.x)
   })
 
   it('does not duplicate packages across picks', () => {

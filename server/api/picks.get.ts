@@ -38,26 +38,32 @@ export default defineCachedEventHandler(
     const { appId, apiKey, indexName } = useRuntimeConfig().public.algolia
 
     // 1. Fetch popular packages from Algolia
-    const algoliaResponse = await $fetch<AlgoliaResponse>(
-      `https://${appId}-dsn.algolia.net/1/indexes/${indexName}/query`,
-      {
-        method: 'POST',
-        headers: {
-          'X-Algolia-Application-Id': appId,
-          'X-Algolia-API-Key': apiKey,
+    let algoliaHits: AlgoliaHit[] = []
+    try {
+      const algoliaResponse = await $fetch<AlgoliaResponse>(
+        `https://${appId}-dsn.algolia.net/1/indexes/${indexName}/query`,
+        {
+          method: 'POST',
+          headers: {
+            'X-Algolia-Application-Id': appId,
+            'X-Algolia-API-Key': apiKey,
+          },
+          body: {
+            query: '',
+            hitsPerPage: ALGOLIA_POOL_SIZE,
+            attributesToRetrieve: ['name', 'downloadsLast30Days', 'isDeprecated'],
+            attributesToHighlight: [],
+          },
         },
-        body: {
-          query: '',
-          hitsPerPage: ALGOLIA_POOL_SIZE,
-          attributesToRetrieve: ['name', 'downloadsLast30Days', 'modified', 'isDeprecated'],
-          attributesToHighlight: [],
-        },
-      },
-    )
+      )
+      algoliaHits = algoliaResponse.hits ?? []
+    } catch (error) {
+      console.warn('[picks] Algolia fetch failed, falling back to empty pool', error)
+      algoliaHits = []
+    }
 
     // 2. Post-filter pool
-    const now = Date.now()
-    const pool = algoliaResponse.hits.filter(hit => {
+    const pool = algoliaHits.filter(hit => {
       if (hit.isDeprecated) return false
       if (hit.downloadsLast30Days < MIN_DOWNLOADS_LAST_30_DAYS) return false
       return true
