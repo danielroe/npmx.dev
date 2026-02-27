@@ -97,7 +97,7 @@ const closeModal = () => modalRef.value?.close?.()
               </li>
             </ul>
             <p class="text-fg-muted leading-relaxed">
-              <i18n-t keypath="shortcuts.disable" tag="span" scope="global">
+              <i18n-t keypath="shortcuts.disable_shortcuts" tag="span" scope="global">
                 <template #settings>
                   <NuxtLink
                     :to="{ name: 'settings' }"

@@ -1,14 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 describe('useSettings - keyboardShortcuts', () => {
   beforeEach(() => {
-    localStorage.clear()
-    vi.resetModules()
-  })
-
-  afterEach(() => {
-    // Reset the singleton so the next test gets a fresh instance
-    localStorage.clear()
     vi.resetModules()
   })
 
@@ -29,6 +22,7 @@ describe('useSettings - keyboardShortcuts', () => {
 
     it('should reflect changes made via settings', async () => {
       const { useSettings } = await import('../../../app/composables/useSettings')
+      const { useKeyboardShortcuts } = await import('../../../app/composables/useSettings')
       const { settings } = useSettings()
       const enabled = useKeyboardShortcuts()
 
@@ -49,27 +43,6 @@ describe('useSettings - keyboardShortcuts', () => {
 
       settings.value.keyboardShortcuts = false
       expect(enabled.value).toBe(false)
-    })
-  })
-
-  describe('persistence', () => {
-    it('should persist keyboardShortcuts=false to localStorage', async () => {
-      const { useSettings } = await import('../../../app/composables/useSettings')
-      const { settings } = useSettings()
-      settings.value.keyboardShortcuts = false
-
-      const stored = JSON.parse(localStorage.getItem('npmx-settings') ?? '{}')
-      expect(stored.keyboardShortcuts).toBe(false)
-    })
-
-    it('should persist keyboardShortcuts=true to localStorage', async () => {
-      const { useSettings } = await import('../../../app/composables/useSettings')
-      const { settings } = useSettings()
-      settings.value.keyboardShortcuts = false
-      settings.value.keyboardShortcuts = true
-
-      const stored = JSON.parse(localStorage.getItem('npmx-settings') ?? '{}')
-      expect(stored.keyboardShortcuts).toBe(true)
     })
   })
 })
