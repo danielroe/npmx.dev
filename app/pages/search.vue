@@ -5,6 +5,7 @@ import { onKeyDown } from '@vueuse/core'
 import { debounce } from 'perfect-debounce'
 import { isValidNewPackageName } from '~/utils/package-name'
 import { isPlatformSpecificPackage } from '~/utils/platform-packages'
+import { parsePackageSpecifier } from '#shared/utils/parse-package-param'
 import { normalizeSearchParam } from '#shared/utils/url'
 
 const route = useRoute()
@@ -422,16 +423,6 @@ function focusElement(el: HTMLElement) {
   el.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
 }
 
-// Parse "pkg@version" from search input (e.g. "esbuild@0.25.12", "@angular/core@^18")
-function parsePackageAtVersion(input: string): { name: string; version?: string } {
-  const atIndex = input.startsWith('@') ? input.indexOf('@', 1) : input.indexOf('@')
-  if (atIndex > 0) {
-    const version = input.slice(atIndex + 1)
-    if (version) return { name: input.slice(0, atIndex), version }
-  }
-  return { name: input }
-}
-
 // Navigate to package page
 async function navigateToPackage(packageName: string) {
   await navigateTo(packageRoute(packageName))
@@ -471,7 +462,7 @@ function handleResultsKeydown(e: KeyboardEvent) {
     if (!inputValue) return
 
     // Handle "pkg@version" format (e.g. "esbuild@0.25.12", "@angular/core@^18")
-    const { name, version } = parsePackageAtVersion(inputValue)
+    const { name, version } = parsePackageSpecifier(inputValue)
     if (version) {
       return navigateTo(packageRoute(name, version))
     }
