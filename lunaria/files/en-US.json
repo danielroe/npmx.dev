@@ -772,6 +772,7 @@
       "secure": "Without warnings",
       "insecure": "With warnings"
     },
+    "view_selected": "View selected",
     "sort": {
       "label": "Sort packages",
       "toggle_direction": "Toggle sort direction",

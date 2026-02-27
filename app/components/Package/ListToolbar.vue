@@ -224,7 +224,7 @@ const { selectedPackages, clearSelectedPackages } = usePackageSelection()
             @click="emit('toggleSelection')"
             classicon="i-lucide:package-check"
           >
-            View selected ({{ selectedPackages.length }})
+            {{ t('filters.view_selected') }} ({{ selectedPackages.length }})
           </ButtonBase>
           <button @click="clearSelectedPackages" class="flex items-center ms-2">
             <span class="i-lucide:x text-sm" aria-label="Close action bar" />

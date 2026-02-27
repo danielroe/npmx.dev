@@ -23,7 +23,6 @@ const pages = [
   '/package',
   '/package-code',
   '/package-docs',
-  '/package-selection',
   '/privacy',
   '/search',
   '/settings',

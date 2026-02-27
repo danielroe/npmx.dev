@@ -2323,6 +2323,9 @@
           },
           "additionalProperties": false
         },
+        "view_selected": {
+          "type": "string"
+        },
         "sort": {
           "type": "object",
           "properties": {

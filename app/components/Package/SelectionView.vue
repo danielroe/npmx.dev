@@ -10,15 +10,15 @@ const { selectedPackages, clearSelectedPackages, selectedPackagesParam } = usePa
   <section>
     <header class="mb-6 flex items-center justify-end">
       <div class="flex items-center gap-2">
-        <ButtonBase variant="secondary" @click="clearSelectedPackages" classicon="i-lucide:x"
-          >Clear all</ButtonBase
-        >
+        <ButtonBase variant="secondary" @click="clearSelectedPackages" classicon="i-lucide:x">
+          {{ $t('filters.clear_all') }}
+        </ButtonBase>
         <LinkBase
           :to="{ name: 'compare', query: { packages: selectedPackagesParam } }"
           variant="button-primary"
           classicon="i-lucide:git-compare"
         >
-          Compare
+          {{ $t('package.links.compare') }}
         </LinkBase>
       </div>
     </header>
