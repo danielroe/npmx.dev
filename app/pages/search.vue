@@ -464,13 +464,6 @@ function focusSearchInput() {
 }
 
 function handleResultsKeydown(e: KeyboardEvent) {
-  // Escape returns focus to the search input from anywhere on the page
-  if (e.key === 'Escape') {
-    e.preventDefault()
-    focusSearchInput()
-    return
-  }
-
   // If the active element is an input, navigate to exact match or wait for results
   if (e.key === 'Enter' && document.activeElement?.tagName === 'INPUT') {
     // Get value directly from input (not from route query, which may be debounced)
@@ -530,7 +523,7 @@ function handleResultsKeydown(e: KeyboardEvent) {
   }
 }
 
-onKeyDown(['ArrowDown', 'ArrowUp', 'Enter', 'Escape'], handleResultsKeydown)
+onKeyDown(['ArrowDown', 'ArrowUp', 'Enter'], handleResultsKeydown)
 
 useSeoMeta({
   title: () =>

@@ -116,23 +116,6 @@ test.describe('Search Pages', () => {
     await expect(page.locator('input[type="search"]')).toBeFocused()
   })
 
-  test('/search?q=vue → Escape returns focus to search input', async ({ page, goto }) => {
-    await goto('/search?q=vue', { waitUntil: 'hydration' })
-
-    await expect(page.locator('text=/found \\d+|showing \\d+/i').first()).toBeVisible({
-      timeout: 15000,
-    })
-
-    // Navigate into results
-    await page.keyboard.press('ArrowDown')
-    await page.keyboard.press('ArrowDown')
-    await expect(page.locator('[data-result-index="1"]').first()).toBeFocused()
-
-    // Escape returns to the search input
-    await page.keyboard.press('Escape')
-    await expect(page.locator('input[type="search"]')).toBeFocused()
-  })
-
   test('/search?q=vue → "/" focuses the search input from results', async ({ page, goto }) => {
     await goto('/search?q=vue', { waitUntil: 'hydration' })
 
