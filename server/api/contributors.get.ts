@@ -199,7 +199,7 @@ async function fetchGitHubUserData(
                 blueskyHandle = match[1] as string
               }
             } else if (account.provider === 'MASTODON') {
-              mastodonUrl = account.url
+              mastodonUrl = cleanString(account.url, true)
             }
           }
         }
