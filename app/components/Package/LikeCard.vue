@@ -71,9 +71,9 @@ const likeAction = async () => {
 
 <template>
   <NuxtLink :to="packageRoute(name)">
-    <BaseCard class="font-mono flex justify-between">
-      {{ name }}
-      <div class="flex items-center gap-4 justify-between">
+    <BaseCard class="font-mono flex justify-between min-w-0">
+      <span class="truncate min-w-0" :title="name">{{ name }}</span>
+      <div class="flex items-center gap-4 justify-between shrink-0">
         <ClientOnly>
           <TooltipApp
             :text="likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')"

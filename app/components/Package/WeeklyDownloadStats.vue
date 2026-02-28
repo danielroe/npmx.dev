@@ -29,6 +29,12 @@ const modalTitle = computed(() => {
   return $t('package.trends.items.downloads')
 })
 
+const modalSubtitle = computed(() => {
+  const facet = route.query.facet as string | undefined
+  if (facet === 'likes' || facet === 'contributors') return undefined
+  return $t('package.downloads.subtitle')
+})
+
 const isChartModalOpen = shallowRef<boolean>(false)
 
 function handleModalClose() {
@@ -285,7 +291,11 @@ const config = computed<VueUiSparklineConfig>(() => {
 
 <template>
   <div class="space-y-8">
-    <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
+    <CollapsibleSection
+      id="downloads"
+      :title="$t('package.downloads.title')"
+      :subtitle="$t('package.downloads.subtitle')"
+    >
       <template #actions>
         <ButtonBase
           v-if="hasWeeklyDownloads"
@@ -355,6 +365,7 @@ const config = computed<VueUiSparklineConfig>(() => {
   <PackageChartModal
     v-if="isChartModalOpen && hasWeeklyDownloads"
     :modal-title="modalTitle"
+    :modal-subtitle="modalSubtitle"
     @close="handleModalClose"
     @transitioned="handleModalTransitioned"
   >

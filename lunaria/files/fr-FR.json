@@ -414,7 +414,8 @@
     },
     "downloads": {
       "title": "Téléchargements hebdo.",
-      "community_distribution": "Voir la distribution des versions téléchargées par la communauté"
+      "community_distribution": "Voir la distribution des versions téléchargées par la communauté",
+      "subtitle": "Toutes versions confondues"
     },
     "install_scripts": {
       "title": "Scripts d'installation",

@@ -1332,6 +1332,9 @@
             },
             "community_distribution": {
               "type": "string"
+            },
+            "subtitle": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -3308,6 +3311,12 @@
           "type": "string"
         },
         "lines_hidden": {
+          "type": "string"
+        },
+        "file_too_large": {
+          "type": "string"
+        },
+        "file_size_warning": {
           "type": "string"
         },
         "compare_versions": {
