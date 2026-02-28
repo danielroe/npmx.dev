@@ -112,11 +112,6 @@ export const BaseStyles = html`
     }
 
     main {
-      margin-inline: auto;
-      padding-inline: 1rem;
-    }
-
-    .limit-to-viewport {
       max-width: 60ch;
       margin-inline: auto;
     }
@@ -186,7 +181,6 @@ export const BaseStyles = html`
     }
 
     .status-by-file {
-      width: 100%;
       border-collapse: collapse;
       border: 1px solid var(--ln-color-table-border);
       font-size: 0.8125rem;
