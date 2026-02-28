@@ -352,6 +352,8 @@ export default defineNuxtConfig({
         'fast-npm-meta',
         '@floating-ui/vue',
         'algoliasearch/lite',
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
       ],
     },
   },
