@@ -42,7 +42,7 @@ export default defineEventHandler(async event => {
   const sig = (Array.isArray(query.sig) ? query.sig[0] : query.sig) as string | undefined
 
   if (!url) {
-    return {url: url || "none", origURl: query.url, query}
+    return {eventPath: event.path, eventParams: event.context.params, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
   }
 
   if (!sig) {
