@@ -10,7 +10,7 @@ const { selectedPackages, clearSelectedPackages, selectedPackagesParam } = usePa
   <section>
     <header class="mb-6 flex items-center justify-end">
       <div class="flex items-center gap-2">
-        <ButtonBase variant="secondary" @click="clearSelectedPackages" classicon="i-lucide:x">
+        <ButtonBase variant="secondary" @click="clearSelectedPackages">
           {{ $t('filters.clear_all') }}
         </ButtonBase>
         <LinkBase
