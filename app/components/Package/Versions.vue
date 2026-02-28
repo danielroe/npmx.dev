@@ -68,6 +68,9 @@ function closeDistributionModal() {
     query: {
       ...route.query,
       modal: undefined,
+      grouping: undefined,
+      recent: undefined,
+      lowUsage: undefined,
     },
   })
 
