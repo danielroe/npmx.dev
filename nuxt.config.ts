@@ -107,6 +107,13 @@ export default defineNuxtConfig({
         allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
       },
     },
+    '/api/registry/image-proxy/**': {
+      isr: {
+        expiration: 60 * 60 /* one hour */,
+        passQuery: true,
+        allowQuery: ['url', 'sig'],
+      },
+    },
     '/api/registry/downloads/**': {
       isr: {
         expiration: 60 * 60 /* one hour */,
