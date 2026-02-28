@@ -228,11 +228,12 @@ onKeyStroke(
             {{ env === 'release' ? 'alpha' : env }}
           </span>
         </NuxtLink>
-        <NuxtLink v-if="prId" :to="`https://github.com/npmx-dev/npmx.dev/pull/${prId}`">
-          <span
-            aria-hidden="true"
-            class="text-xs px-1.5 py-0.5 rounded badge-green font-sans font-medium ms-2"
-          >
+        <NuxtLink
+          v-if="prId"
+          :to="`https://github.com/npmx-dev/npmx.dev/pull/${prId}`"
+          :aria-label="`Open GitHub pull request ${prId}`"
+        >
+          <span class="text-xs px-1.5 py-0.5 rounded badge-green font-sans font-medium ms-2">
             PR #{{ prId }}
           </span>
         </NuxtLink>
