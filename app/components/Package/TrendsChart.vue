@@ -1035,18 +1035,23 @@ const chartData = computed<{
 
   const dataset: VueUiXyDatasetItem[] = names.map(pkg => {
     const points = pointsByPackage.get(pkg) ?? []
-    const map = new Map<number, number>()
-    for (const p of points) map.set(p.timestamp, p.value)
+    const valueByTimestamp = new Map<number, number>()
+    const anomalyTimestamps = new Set<number>()
+    for (const p of points) {
+      valueByTimestamp.set(p.timestamp, p.value)
+      if (p.hasAnomaly) anomalyTimestamps.add(p.timestamp)
+    }
 
-    const series = dates.map(t => map.get(t) ?? 0)
+    const series = dates.map(t => valueByTimestamp.get(t) ?? 0)
+    const dashIndices = dates
+      .map((t, index) => (anomalyTimestamps.has(t) ? index : -1))
+      .filter(index => index !== -1)
 
     const item: VueUiXyDatasetItem = {
       name: pkg,
       type: 'line',
       series,
-      dashIndices: points
-        .map((item, index) => (item.hasAnomaly ? index : -1))
-        .filter(index => index !== -1),
+      dashIndices,
     } as VueUiXyDatasetItem
 
     if (isListedFramework(pkg)) {
