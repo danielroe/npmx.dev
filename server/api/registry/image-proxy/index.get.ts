@@ -42,13 +42,13 @@ export default defineEventHandler(async event => {
   const sig = (Array.isArray(query.sig) ? query.sig[0] : query.sig) as string | undefined
 
   if (!url) {
-    return url
+    return {url: url || "none", origURl: query.url, query}
   }
 
   if (!sig) {
-    return { sig }
+    return { sig: sig || "none", origSig: query.sig, query}
   }
-  return {"ok": true, url, sig};
+  return {"ok": true, url, sig, origSig: query.sig, query};
 
   // Verify HMAC signature to ensure this URL was generated server-side
   // const { imageProxySecret } = useRuntimeConfig()
