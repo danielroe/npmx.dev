@@ -143,87 +143,93 @@ async function fetchGitHubUserData(
 ): Promise<Set<string>> {
   if (logins.length === 0) return new Set()
 
-  // Build aliased GraphQL query: user0: user(login: "x") { hasSponsorsListing login }
-  const fragments = logins.map(
-    (login, i) =>
-      `user${i}: user(login: "${login}") { hasSponsorsListing login name bio company companyHTML location websiteUrl twitterUsername socialAccounts(first: 10) { nodes { provider url } } }`,
-  )
-  const query = `{ ${fragments.join('\n')} }`
+  const sponsorable = new Set<string>()
+  const chunkSize = 100
 
-  try {
-    const response = await fetch('https://api.github.com/graphql', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'npmx',
-      },
-      body: JSON.stringify({ query }),
-    })
+  for (let i = 0; i < logins.length; i += chunkSize) {
+    const chunk = logins.slice(i, i + chunkSize)
 
-    if (!response.ok) {
-      console.warn(`Failed to fetch sponsors info: ${response.status}`)
-      return new Set()
-    }
+    // Build aliased GraphQL query: user0: user(login: "x") { hasSponsorsListing login }
+    const fragments = chunk.map(
+      (login, idx) =>
+        `user${idx}: user(login: "${login}") { hasSponsorsListing login name bio company companyHTML location websiteUrl twitterUsername socialAccounts(first: 10) { nodes { provider url } } }`,
+    )
+    const query = `{ ${fragments.join('\n')} }`
 
-    const json = (await response.json()) as {
-      data?: Record<
-        string,
-        | (GitHubUserData & {
-            login: string
-            hasSponsorsListing: boolean
-            socialAccounts: { nodes: { provider: string; url: string }[] }
-          })
-        | null
-      >
-    }
+    try {
+      const response = await fetch('https://api.github.com/graphql', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+          'User-Agent': 'npmx',
+        },
+        body: JSON.stringify({ query }),
+      })
 
-    const sponsorable = new Set<string>()
-    if (json.data) {
-      for (const user of Object.values(json.data)) {
-        if (!user) continue
-        if (user.hasSponsorsListing) {
-          sponsorable.add(user.login)
-        }
+      if (!response.ok) {
+        console.warn(`Failed to fetch sponsors info (chunk ${i}): ${response.status}`)
+        continue
+      }
 
-        // Extract Bluesky and Mastodon from socialAccounts
-        let blueskyHandle: string | null = null
-        let mastodonUrl: string | null = null
+      const json = (await response.json()) as {
+        data?: Record<
+          string,
+          | (GitHubUserData & {
+              login: string
+              hasSponsorsListing: boolean
+              socialAccounts: { nodes: { provider: string; url: string }[] }
+            })
+          | null
+        >
+      }
 
-        if (user.socialAccounts?.nodes) {
-          for (const account of user.socialAccounts.nodes) {
-            if (account.url.includes('bsky.app')) {
-              // Extract handle from URL: https://bsky.app/profile/handle.bsky.social
-              const match = account.url.match(/bsky\.app\/profile\/([^/?]+)/)
-              if (match) {
-                blueskyHandle = match[1] as string
+      if (json.data) {
+        for (const user of Object.values(json.data)) {
+          if (!user) continue
+          if (user.hasSponsorsListing) {
+            sponsorable.add(user.login)
+          }
+
+          // Extract Bluesky and Mastodon from socialAccounts
+          let blueskyHandle: string | null = null
+          let mastodonUrl: string | null = null
+
+          if (user.socialAccounts?.nodes) {
+            for (const account of user.socialAccounts.nodes) {
+              if (account.url.includes('bsky.app')) {
+                // Extract handle from URL: https://bsky.app/profile/handle.bsky.social
+                const match = account.url.match(/bsky\.app\/profile\/([^/?]+)/)
+                if (match) {
+                  blueskyHandle = match[1] as string
+                }
+              } else if (account.provider === 'MASTODON') {
+                mastodonUrl = cleanString(account.url, true)
               }
-            } else if (account.provider === 'MASTODON') {
-              mastodonUrl = cleanString(account.url, true)
             }
           }
-        }
 
-        // --- SERVER-SIDE SANITIZATION AND BATCHING ---
-        usersData.set(user.login, {
-          name: cleanString(user.name),
-          bio: cleanString(user.bio),
-          company: cleanString(user.company),
-          // Rich HTML sanitization for company mentions/orgs
-          companyHTML: sanitizeGitHubHTML(user.companyHTML),
-          location: cleanString(user.location),
-          websiteUrl: cleanString(user.websiteUrl, true),
-          twitterUsername: cleanString(user.twitterUsername),
-          blueskyHandle,
-          mastodonUrl,
-        })
+          // --- SERVER-SIDE SANITIZATION AND BATCHING ---
+          usersData.set(user.login, {
+            name: cleanString(user.name),
+            bio: cleanString(user.bio),
+            company: cleanString(user.company),
+            // Rich HTML sanitization for company mentions/orgs
+            companyHTML: sanitizeGitHubHTML(user.companyHTML),
+            location: cleanString(user.location),
+            websiteUrl: cleanString(user.websiteUrl, true),
+            twitterUsername: cleanString(user.twitterUsername),
+            blueskyHandle,
+            mastodonUrl,
+          })
+        }
       }
+    } catch (error) {
+      console.warn(`Failed to fetch sponsors info (chunk ${i}):`, error)
     }
-    return sponsorable
-  } catch (error) {
-    console.warn('Failed to fetch sponsors info:', error)
-    return new Set()
   }
+
+  return sponsorable
 }
 
 function getRoleInfo(login: string, teams: TeamMembers): { role: Role; order: number } {
