@@ -176,7 +176,7 @@ export const BaseStyles = html`
     }
 
     .status-by-file-wrapper {
-      overflow-x: scroll;
+      overflow-x: auto;
       margin-bottom: 1rem;
       border: 1px solid var(--ln-color-table-border);
       border-radius: 0.375rem;
