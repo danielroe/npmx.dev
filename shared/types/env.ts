@@ -8,5 +8,5 @@ export interface BuildInfo {
   branch: string
   env: EnvType
   privacyPolicyDate: string
-  prNumber: string | number | null
+  prNumber: string | null
 }
