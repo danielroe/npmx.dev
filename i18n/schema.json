@@ -2725,9 +2725,6 @@
             "error": {
               "type": "string"
             },
-            "view_profile": {
-              "type": "string"
-            },
             "avatar": {
               "type": "string"
             },
