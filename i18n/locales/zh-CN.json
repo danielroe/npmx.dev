@@ -146,6 +146,9 @@
     },
     "scroll_to_top": "回到顶部"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "未找到包",
     "not_found_message": "找不到此包。",
@@ -885,8 +888,7 @@
       "title": "{count} 位贡献者",
       "description": "npmx 是完全开源的，由令人惊叹的社区贡献者们共同构建。",
       "loading": "正在加载贡献者…",
-      "error": "无法加载贡献者",
-      "view_profile": "查看 {name} 的 GitHub 个人资料"
+      "error": "无法加载贡献者"
     },
     "get_involved": {
       "title": "加入我们",

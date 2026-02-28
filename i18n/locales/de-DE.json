@@ -142,6 +142,9 @@
     },
     "scroll_to_top": "Nach oben scrollen"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "Paket nicht gefunden",
     "not_found_message": "Das Paket konnte nicht gefunden werden.",
@@ -157,6 +160,7 @@
       "version": "Diese Version ist veraltet.",
       "no_reason": "Kein Grund angegeben"
     },
+    "size_increase": {},
     "replacement": {
       "title": "Du brauchst diese Abhängigkeit vielleicht nicht.",
       "native": "Dies kann durch {replacement} ersetzt werden, verfügbar seit Node {nodeVersion}.",
@@ -861,8 +865,7 @@
       "title": "... und {count} weiterer Mitwirkender | ... und {count} weitere Mitwirkende",
       "description": "npmx ist komplett Open Source und wird von einer großartigen Community von Mitwirkenden entwickelt. Mach mit und lass uns gemeinsam das npm-Browsing-Erlebnis gestalten, das wir uns schon immer gewünscht haben.",
       "loading": "Mitwirkende werden geladen...",
-      "error": "Mitwirkende konnten nicht geladen werden",
-      "view_profile": "GitHub-Profil von {name} anzeigen"
+      "error": "Mitwirkende konnten nicht geladen werden"
     },
     "get_involved": {
       "title": "Mitmachen",
@@ -1049,7 +1052,9 @@
       "trends": {
         "title": "Trends vergleichen"
       }
-    }
+    },
+    "file_filter_option": {},
+    "filter": {}
   },
   "privacy_policy": {
     "title": "Datenschutzerklärung",

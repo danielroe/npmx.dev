@@ -141,6 +141,9 @@
     },
     "scroll_to_top": "Retour en haut"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "Paquet introuvable",
     "not_found_message": "Le paquet n'a pas pu être trouvé.",
@@ -879,8 +882,7 @@
       "title": "Contributeurs",
       "description": "npmx est entièrement open source, construit par une incroyable communauté de contributeurs. Rejoignez-nous et construisons l'expérience de navigation pour npm dont nous avons toujours rêvés, ensemble.",
       "loading": "Chargement des contributeurs...",
-      "error": "Échec du chargement des contributeurs",
-      "view_profile": "Voir le profil GitHub de {name}"
+      "error": "Échec du chargement des contributeurs"
     },
     "get_involved": {
       "title": "Participer",
