@@ -52,7 +52,6 @@ export default defineNuxtConfig({
         apiKey: 'f54e21fa3a2a0160595bb058179bfb1e',
         indexName: 'npm-search',
       },
-      pullRequestID: process.env.VERCEL_GIT_PULL_REQUEST_ID || undefined,
     },
   },
 
