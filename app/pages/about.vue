@@ -81,12 +81,13 @@ function getAriaLabel(c: GitHubContributor): string {
   })
 }
 
-// --- Popover Logic (Global Single Instance with Event Delegation + Direct DOM Manipulation) ---
+// --- Popover Logic (Global Single Instance with Event Delegation) ---
+// We use a single global popover instance for performance (especially in Firefox with many items).
+// Event delegation on the list handles interactions, avoiding listeners on every item.
 const activeContributor = shallowRef<GitHubContributor>()
 const popoverPos = reactive({ top: 0, left: 0, align: 'center' as 'left' | 'center' | 'right' })
-const panelRef = ref<HTMLElement>()
+const panelRef = useTemplateRef<HTMLElement>('panelRef')
 const activeBtnEl = shallowRef<HTMLElement>()
-let activeBtnDom: HTMLElement | null = null // Direct DOM reference for performance
 let closeTimer: ReturnType<typeof setTimeout> | undefined
 let lastOpenTime = 0
 
@@ -102,8 +103,10 @@ function computePos(btn: HTMLElement) {
   const vw = window.innerWidth
   const POP_W = 256
   const GAP = 8
+
   popoverPos.top = r.bottom + GAP
   const center = r.left + r.width / 2
+
   if (center - POP_W / 2 < GAP) {
     popoverPos.align = 'left'
     popoverPos.left = r.left
@@ -116,6 +119,7 @@ function computePos(btn: HTMLElement) {
   }
 }
 
+// DON'T MOVE aria-expanded to the template, Firefox performance issues
 function setActiveBtnExpanded(btn: HTMLElement | null, value: boolean) {
   if (activeBtnDom && activeBtnDom !== btn) {
     activeBtnDom.removeAttribute('aria-expanded')
@@ -166,7 +170,7 @@ function onListMouseEnter(e: MouseEvent) {
 }
 
 function onListMouseLeave(e: MouseEvent) {
-  // Solo cerrar si salimos del <ul> completamente
+  // only close if we exist >ul>
   const related = e.relatedTarget as Element | null
   if (related?.closest('[data-popover-panel]')) return
   if (!related?.closest('button[data-cid]')) scheduleCloseActive()
@@ -187,13 +191,13 @@ function onListClick(e: MouseEvent) {
   }
 }
 
-// ── Panel mouse events ───────────────────────────────────────────────────────
+// Panel mouse events
 function onPanelMouseLeave(e: MouseEvent) {
   const related = e.relatedTarget as Element | null
   if (!related?.closest('button[data-cid]')) scheduleCloseActive()
 }
 
-// ── Tab management dentro del panel (foco manual) ───────────────────────────
+// Tab management inside the panel (manual focus)
 function onPanelKeydown(e: KeyboardEvent) {
   if (e.key !== 'Tab' || !panelRef.value) return
   const focusables = [...panelRef.value.querySelectorAll<HTMLElement>('a[href]')]
@@ -234,7 +238,7 @@ function onPanelKeydown(e: KeyboardEvent) {
   }
 }
 
-// ── Document listeners ───────────────────────────────────────────────────────
+// Document listeners
 function onDocumentPointerDown(e: PointerEvent) {
   if (!activeContributor.value) return
   const t = e.target as Element
@@ -251,6 +255,8 @@ function onDocumentKeydown(e: KeyboardEvent) {
     activeBtnEl.value?.focus()
   }
 }
+
+let activeBtnDom: HTMLElement | null = null
 
 onMounted(() => {
   document.addEventListener('pointerdown', onDocumentPointerDown)
@@ -422,7 +428,6 @@ onBeforeUnmount(() => {
             </div>
             <ul
               v-else-if="contributors.length"
-              ref="listRef"
               class="flex flex-wrap justify-center gap-2 list-none p-0 overflow-visible"
               @mouseover="onListMouseEnter"
               @mouseout="onListMouseLeave"
@@ -615,6 +620,10 @@ onBeforeUnmount(() => {
 
 [data-cid][aria-expanded='true'] img {
   @apply ring-2 ring-accent;
+  transform: scale(1.1);
+  --un-ring-opacity: 1;
+  --un-ring-color: color-mix(in srgb, var(--accent) var(--un-ring-opacity), transparent);
+  box-shadow: 0 0 0 2px var(--un-ring-color);
 }
 
 @media (hover: hover) {
@@ -627,6 +636,8 @@ onBeforeUnmount(() => {
   }
 }
 
+/* Capture tap/click (focus without keyboard navigation => for chrome tap) */
+[data-cid]:focus:not(:focus-visible) img,
 [data-cid]:focus-visible img {
   transform: scale(1.1);
   --un-ring-opacity: 1;
@@ -637,6 +648,11 @@ onBeforeUnmount(() => {
 [data-cid]:focus-visible {
   outline: none;
   z-index: 20;
+}
+
+/* FF popup outline */
+.contributor-popover:focus {
+  outline: none;
 }
 
 .contributor-popover {
