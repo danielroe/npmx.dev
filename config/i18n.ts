@@ -259,7 +259,7 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     file: 'cs-CZ.json',
     name: 'Čeština',
     pluralRule: createPluralRule('cs-CZ', { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }),
-  } /*
+  }, /*
     {
       code: 'pl-PL',
       file: 'pl-PL.json',
