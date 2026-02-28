@@ -1240,40 +1240,5 @@
       "p1": "Erişilebilirlik sorunları için:",
       "link": "GitHub'da issue açın"
     }
-  },
-  "vacations": {
-    "title": "Tatil Modu",
-    "meta_description": "npmx ekibi tatilde - topluluğa teşekkürler",
-    "heading": "Tatildeyiz!",
-    "subtitle": "Ama topluluk harika işler yapıyor",
-    "illustration_alt": "Tatil illüstrasyonu",
-    "poke_log": "Poke günlüğü",
-    "what": {
-      "title": "Ne oluyor?",
-      "p1": "npmx ekibi kısa bir tatilde.",
-      "dates": "Tarihler: {start} - {end}",
-      "p2": "Bu süre zarfında topluluk harika işler yapıyor.",
-      "garden": "Bahçe"
-    },
-    "meantime": {
-      "title": "Bu arada",
-      "p1": "Katkıda bulunmak isterseniz:",
-      "repo_link": "GitHub reposuna göz atın"
-    },
-    "return": {
-      "title": "Dönüş",
-      "p1": "Yakında döneceğiz! Güncellemeler için:",
-      "social_link": "Bizi takip edin"
-    },
-    "stats": {
-      "contributors": "Katkıda bulunanlar",
-      "commits": "Commit'ler",
-      "pr": "Pull request'ler",
-      "subtitle": {
-        "some": "Bazı istatistikler",
-        "all": "Tüm istatistikler"
-      }
-    }
   }
 }
-
