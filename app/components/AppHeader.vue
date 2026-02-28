@@ -128,6 +128,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
 const showFullSearch = shallowRef(false)
 const showMobileMenu = shallowRef(false)
 const { env } = useAppConfig().buildInfo
+const prId = env === 'preview' ? useRuntimeConfig().public.pullRequestID : 123
 
 // On mobile, clicking logo+search button expands search
 const route = useRoute()
@@ -225,6 +226,14 @@ onKeyStroke(
             class="scale-35 transform-origin-br font-mono tracking-wide text-accent absolute bottom-0.5 -inset-ie-1"
           >
             {{ env === 'release' ? 'alpha' : env }}
+          </span>
+        </NuxtLink>
+        <NuxtLink v-if="prId" :to="`https://github.com/npmx-dev/npmx.dev/pull/${prId}`">
+          <span
+            aria-hidden="true"
+            class="text-xs px-1.5 py-0.5 rounded badge-green font-sans font-medium ms-2"
+          >
+            PR #{{ prId }}
           </span>
         </NuxtLink>
       </div>
