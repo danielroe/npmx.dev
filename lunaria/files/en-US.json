@@ -143,7 +143,28 @@
       "role": "role",
       "members": "members"
     },
-    "scroll_to_top": "Scroll to top"
+    "scroll_to_top": "Scroll to top",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "error": "Error"
+  },
+  "profile": {
+    "display_name": "Display Name",
+    "description": "Description",
+    "no_description": "No description",
+    "website": "Website",
+    "website_placeholder": "https://example.com",
+    "likes": "Likes",
+    "seo_title": "{handle} - npmx",
+    "seo_description": "npmx profile by {handle}",
+    "not_found": "Profile Not Found",
+    "not_found_message": "The profile for {handle} could not be found.",
+    "invite": {
+      "message": "It doesn't look like they're using npmx yet. Want to tell them about it?",
+      "share_button": "Share on Bluesky",
+      "compose_text": "Hey {'@'}{handle}! Have you checked out npmx.dev yet? It's a browser for the npm registry that's fast, modern, and open-source.\nhttps://npmx.dev"
+    }
   },
   "package": {
     "not_found": "Package Not Found",
@@ -937,7 +958,8 @@
       "connect_bluesky": "Connect with Bluesky",
       "what_is_atmosphere": "What is an Atmosphere account?",
       "atmosphere_explanation": "{npmx} uses the {atproto} to power many of its social features, allowing users to own their data and use one account for all compatible applications. Once you create an account, you can use other apps like {bluesky} and {tangled} with the same account.",
-      "default_input_error": "Please enter a valid handle, DID, or a full PDS URL"
+      "default_input_error": "Please enter a valid handle, DID, or a full PDS URL",
+      "profile": "Profile"
     }
   },
   "header": {

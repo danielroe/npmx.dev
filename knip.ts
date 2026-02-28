@@ -33,6 +33,7 @@ const config: KnipConfig = {
         '!test/test-utils/**',
         '!test/e2e/helpers/**',
         '!cli/src/**',
+        '!lexicons/**',
       ],
       ignoreDependencies: [
         '@iconify-json/*',
