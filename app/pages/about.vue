@@ -334,9 +334,9 @@ onBeforeUnmount(() => {
                 <LinkBase
                   v-if="!isExpandable(contributor)"
                   :to="contributor.html_url"
+                  :aria-label="getAriaLabel(contributor)"
                   no-underline
                   no-new-tab-icon
-                  :aria-label="getAriaLabel(contributor)"
                   class="group relative block h-12 w-12 rounded-lg transition-all outline-none p-0 bg-transparent"
                 >
                   <img
