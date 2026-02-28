@@ -107,7 +107,7 @@ useHead({
           <LinkBase :to="`#${id}`">
             {{ title }}
           </LinkBase>
-          <span v-if="subtitle" class="block text-2xs normal-case tracking-normal opacity-70">{{
+          <span v-if="subtitle" class="block text-2xs normal-case tracking-normal">{{
             subtitle
           }}</span>
         </span>
