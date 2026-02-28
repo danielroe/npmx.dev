@@ -355,7 +355,6 @@ onBeforeUnmount(() => {
                   :aria-expanded="
                     isMounted && activeContributor?.id === contributor.id ? 'true' : undefined
                   "
-                  :aria-haspopup="isMounted && isExpandable(contributor) ? 'true' : undefined"
                   :aria-label="
                     isExpandable(contributor)
                       ? getAriaLabel(contributor)
@@ -382,10 +381,9 @@ onBeforeUnmount(() => {
                 </button>
 
                 <Transition name="pop">
-                  <div
+                  <article
                     v-if="isExpandable(contributor) && activeContributor?.id === contributor.id"
                     data-popover-panel
-                    role="tooltip"
                     class="contributor-popover"
                     :style="{
                       top: `${popoverPos.top}px`,
@@ -399,11 +397,11 @@ onBeforeUnmount(() => {
                       class="flex flex-col gap-y-3 w-64 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-2xl text-start"
                     >
                       <div class="flex flex-col gap-2 min-w-0">
-                        <span
+                        <hgroup
                           class="w-full font-sans font-bold text-fg leading-tight truncate block"
                         >
-                          {{ contributor.name || contributor.login }}
-                        </span>
+                          <h3>{{ contributor.name || contributor.login }}</h3>
+                        </hgroup>
                         <div
                           v-if="roleLabels[contributor.role]"
                           class="font-mono text-3xs uppercase tracking-wider text-accent font-bold"
@@ -525,7 +523,7 @@ onBeforeUnmount(() => {
                         </a>
                       </div>
                     </div>
-                  </div>
+                  </article>
                 </Transition>
               </li>
             </ul>
