@@ -1,4 +1,4 @@
-interface UserLocalSettings {
+export interface UserLocalSettings {
   sidebar: {
     collapsed: string[]
     animateSparkline: boolean

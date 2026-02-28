@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import type { UserPreferences } from '#shared/schemas/userPreferences'
+
 const { accentColors, selectedAccentColor, setAccentColor } = useAccentColor()
 
 onPrehydrate(el => {
-  const preferences = JSON.parse(localStorage.getItem('npmx-user-preferences') || '{}')
+  let preferences: UserPreferences = {}
   const defaultId = 'sky'
+  try {
+    preferences = JSON.parse(localStorage.getItem('npmx-user-preferences') || '{}')
+  } catch {}
   const id = preferences.accentColorId
   if (id) {
     const input = el.querySelector<HTMLInputElement>(`input[value="${id}"]`)

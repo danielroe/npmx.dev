@@ -1,3 +1,6 @@
+import type { UserPreferences } from '#shared/schemas/userPreferences'
+import type { UserLocalSettings } from '~/composables/useUserLocalSettings'
+
 /**
  * Initialize user preferences before hydration to prevent flash/layout shift.
  * This sets CSS custom properties and data attributes that CSS can use
@@ -24,7 +27,10 @@ export function initPreferencesOnPrehydrate() {
     const validPMs = new Set(['npm', 'pnpm', 'yarn', 'bun', 'deno', 'vlt'])
 
     // Read user preferences from localStorage
-    const preferences = JSON.parse(localStorage.getItem('npmx-user-preferences') || '{}')
+    let preferences: UserPreferences = {}
+    try {
+      preferences = JSON.parse(localStorage.getItem('npmx-user-preferences') || '{}')
+    } catch {}
 
     const accentColorId = preferences.accentColorId
     if (accentColorId && accentColorIds.has(accentColorId)) {
@@ -58,8 +64,10 @@ export function initPreferencesOnPrehydrate() {
     // Set data attribute for CSS-based visibility
     document.documentElement.dataset.pm = pm
 
-    // Read sidebar preferences from separate localStorage key
-    const sidebar = JSON.parse(localStorage.getItem('npmx-sidebar-preferences') || '{}')
-    document.documentElement.dataset.collapsed = sidebar.collapsed?.join(' ') ?? ''
+    let localSettings: Partial<UserLocalSettings> = {}
+    try {
+      localSettings = JSON.parse(localStorage.getItem('npmx-settings') || '{}')
+    } catch {}
+    document.documentElement.dataset.collapsed = localSettings.sidebar?.collapsed?.join(' ') ?? ''
   })
 }
