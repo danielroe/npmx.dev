@@ -176,13 +176,15 @@ export const BaseStyles = html`
     }
 
     .status-by-file-wrapper {
-      overflow-x: auto;
+      overflow-x: scroll;
       margin-bottom: 1rem;
+      border: 1px solid var(--ln-color-table-border);
+      border-radius: 0.375rem;
+      scrollbar-color: var(--ln-color-gray-6) var(--ln-color-gray-2);
     }
 
     .status-by-file {
       border-collapse: collapse;
-      border: 1px solid var(--ln-color-table-border);
       font-size: 0.8125rem;
     }
 
