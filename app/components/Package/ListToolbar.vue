@@ -226,8 +226,12 @@ const { selectedPackages, clearSelectedPackages } = usePackageSelection()
           >
             {{ t('filters.view_selected') }} ({{ selectedPackages.length }})
           </ButtonBase>
-          <button @click="clearSelectedPackages" class="flex items-center ms-2">
-            <span class="i-lucide:x text-sm" aria-label="Close action bar" />
+          <button
+            @click="clearSelectedPackages"
+            aria-label="Close action bar"
+            class="flex items-center ms-2"
+          >
+            <span class="i-lucide:x text-sm" />
           </button>
         </div>
       </div>
