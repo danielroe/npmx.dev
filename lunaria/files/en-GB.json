@@ -440,7 +440,8 @@
     },
     "downloads": {
       "title": "Weekly Downloads",
-      "community_distribution": "View community adoption distribution"
+      "community_distribution": "View community adoption distribution",
+      "subtitle": "Across all versions"
     },
     "install_scripts": {
       "title": "Install Scripts",
@@ -1102,6 +1103,8 @@
     "file_changes": "File Changes",
     "files_count": "{count} files",
     "lines_hidden": "{count} lines hidden",
+    "file_too_large": "File too large to compare",
+    "file_size_warning": "{size} exceeds the 250KB limit for comparison",
     "compare_versions": "diff",
     "summary": "Summary",
     "deps_count": "{count} deps",
