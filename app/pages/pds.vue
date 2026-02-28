@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { AtprotoProfile } from '#server/api/atproto/users.get.ts'
+import type { AtprotoProfile } from '#server/api/atproto/pds-users.get.ts'
 
 const router = useRouter()
 const canGoBack = useCanGoBack()
