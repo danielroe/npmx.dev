@@ -398,10 +398,6 @@ const config = computed<VueUiSparklineConfig>(() => {
 
 <style>
 /** Overrides */
-/* TODO: remove this style once we have rtl support */
-.vue-ui-sparkline svg {
-  direction: ltr;
-}
 .vue-ui-sparkline-title span {
   padding: 0 !important;
   letter-spacing: 0.04rem;
