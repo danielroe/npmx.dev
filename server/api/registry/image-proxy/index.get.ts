@@ -58,7 +58,14 @@ export default defineEventHandler(async event => {
   // Verify HMAC signature to ensure this URL was generated server-side
   const { imageProxySecret } = useRuntimeConfig()
   if (!imageProxySecret || !verifyImageUrl(url, sig, imageProxySecret)) {
-    return {place: 'sig', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl, imageProxySecret}
+    return {
+      place: 'sig',
+      url,
+      sig,
+      reqUrl: event.node.req.url,
+      reqOrigUrl: event.node.req.originalUrl,
+      imageProxySecret,
+    }
     // throw createError({
     //   statusCode: 403,
     //   message: 'Invalid signature.',
@@ -67,7 +74,13 @@ export default defineEventHandler(async event => {
 
   // Validate URL syntactically
   if (!isAllowedImageUrl(url)) {
-    return {place: 'isAllowedImageUrl', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+    return {
+      place: 'isAllowedImageUrl',
+      url,
+      sig,
+      reqUrl: event.node.req.url,
+      reqOrigUrl: event.node.req.originalUrl,
+    }
     // throw createError({
     //   statusCode: 400,
     //   message: 'Invalid or disallowed image URL.',
@@ -77,7 +90,13 @@ export default defineEventHandler(async event => {
   // Resolve hostname via DNS and validate the resolved IP is not private.
   // This prevents DNS rebinding attacks where a hostname resolves to a private IP.
   if (!(await resolveAndValidateHost(url))) {
-    return {place: 'resolveAndValidateHost', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+    return {
+      place: 'resolveAndValidateHost',
+      url,
+      sig,
+      reqUrl: event.node.req.url,
+      reqOrigUrl: event.node.req.originalUrl,
+    }
     // throw createError({
     //   statusCode: 400,
     //   message: 'Invalid or disallowed image URL.',
@@ -115,7 +134,13 @@ export default defineEventHandler(async event => {
 
       // Validate the redirect target before following it
       if (!isAllowedImageUrl(redirectUrl)) {
-        return {place: 'isAllowedImageUrl 2', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+        return {
+          place: 'isAllowedImageUrl 2',
+          url,
+          sig,
+          reqUrl: event.node.req.url,
+          reqOrigUrl: event.node.req.originalUrl,
+        }
         // throw createError({
         //   statusCode: 400,
         //   message: 'Redirect to disallowed URL.',
@@ -123,7 +148,13 @@ export default defineEventHandler(async event => {
       }
 
       if (!(await resolveAndValidateHost(redirectUrl))) {
-        return {place: 'resolveAndValidateHost 2', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+        return {
+          place: 'resolveAndValidateHost 2',
+          url,
+          sig,
+          reqUrl: event.node.req.url,
+          reqOrigUrl: event.node.req.originalUrl,
+        }
         // throw createError({
         //   statusCode: 400,
         //   message: 'Redirect to disallowed URL.',
@@ -136,7 +167,13 @@ export default defineEventHandler(async event => {
     }
 
     if (!response) {
-      return {place: 'response', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+      return {
+        place: 'response',
+        url,
+        sig,
+        reqUrl: event.node.req.url,
+        reqOrigUrl: event.node.req.originalUrl,
+      }
       // throw createError({
       //   statusCode: 502,
       //   message: 'Failed to fetch image.',
@@ -146,19 +183,31 @@ export default defineEventHandler(async event => {
     // Check if we exhausted the redirect limit
     if (REDIRECT_STATUSES.has(response.status)) {
       await response.body?.cancel()
-      return {place: 'response 2', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+      return {
+        place: 'response 2',
+        url,
+        sig,
+        reqUrl: event.node.req.url,
+        reqOrigUrl: event.node.req.originalUrl,
+      }
       // throw createError({
       //   statusCode: 502,
-        // message: 'Too many redirects.',
+      // message: 'Too many redirects.',
       // })
     }
 
     if (!response.ok) {
       await response.body?.cancel()
-      return {place: 'response 3', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+      return {
+        place: 'response 3',
+        url,
+        sig,
+        reqUrl: event.node.req.url,
+        reqOrigUrl: event.node.req.originalUrl,
+      }
       // throw createError({
       //   statusCode: response.status === 404 ? 404 : 502,
-        // message: `Failed to fetch image: ${response.status}`,
+      // message: `Failed to fetch image: ${response.status}`,
       // })
     }
 
@@ -167,10 +216,16 @@ export default defineEventHandler(async event => {
     // Allow raster/vector image content types (we don't inject external content into DOM, so SVG is allowed too)
     if (!contentType.startsWith('image/')) {
       await response.body?.cancel()
-      return {place: 'contentType', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl}
+      return {
+        place: 'contentType',
+        url,
+        sig,
+        reqUrl: event.node.req.url,
+        reqOrigUrl: event.node.req.originalUrl,
+      }
       // throw createError({
       //   statusCode: 400,
-        // message: 'URL does not point to an allowed image type.',
+      // message: 'URL does not point to an allowed image type.',
       // })
     }
 
@@ -233,11 +288,25 @@ export default defineEventHandler(async event => {
   } catch (error: unknown) {
     // Re-throw H3 errors
     if (error && typeof error === 'object' && 'statusCode' in error) {
-      return {place: 'error', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl, error}
+      return {
+        place: 'error',
+        url,
+        sig,
+        reqUrl: event.node.req.url,
+        reqOrigUrl: event.node.req.originalUrl,
+        error,
+      }
       // throw error
     }
 
-    return {place: 'error 2', url, sig, reqUrl: event.node.req.url, reqOrigUrl: event.node.req.originalUrl, error}
+    return {
+      place: 'error 2',
+      url,
+      sig,
+      reqUrl: event.node.req.url,
+      reqOrigUrl: event.node.req.originalUrl,
+      error,
+    }
     // throw createError({
     //   statusCode: 502,
     //   message: 'Failed to proxy image.',
