@@ -103,14 +103,14 @@ useHead({
           />
         </button>
 
-        <div>
+        <span>
           <LinkBase :to="`#${id}`">
             {{ title }}
           </LinkBase>
           <span v-if="subtitle" class="block text-2xs normal-case tracking-normal opacity-70">{{
             subtitle
           }}</span>
-        </div>
+        </span>
       </component>
 
       <!-- Actions slot for buttons or other elements -->

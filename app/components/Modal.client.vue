@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   modalTitle: string
+  modalSubtitle?: string
 }>()
 
 const dialogRef = useTemplateRef('dialogRef')
@@ -50,9 +51,12 @@ defineExpose({
     >
       <!-- Modal top header section -->
       <div class="flex items-center justify-between mb-6">
-        <h2 :id="modalTitleId" class="font-mono text-lg font-medium">
-          {{ modalTitle }}
-        </h2>
+        <div>
+          <h2 :id="modalTitleId" class="font-mono text-lg font-medium">
+            {{ modalTitle }}
+          </h2>
+          <p v-if="modalSubtitle" class="text-xs text-fg-subtle">{{ modalSubtitle }}</p>
+        </div>
         <ButtonBase
           type="button"
           :aria-label="$t('common.close')"
