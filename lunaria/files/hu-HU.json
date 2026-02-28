@@ -100,6 +100,9 @@
     },
     "scroll_to_top": "Vissza a tetejére"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "Csomag Nem Található",
     "not_found_message": "A keresett csomag nem található.",
@@ -113,6 +116,7 @@
       "version": "Ez a verzió elavult (deprecated).",
       "no_reason": "Nincs indoklás megadva"
     },
+    "size_increase": {},
     "replacement": {
       "title": "Lehet, hogy nincs szükséged erre a függőségre.",
       "native": "Ez helyettesíthető a következővel: {replacement}, amely elérhető a Node {nodeVersion} verzió óta.",
@@ -192,7 +196,8 @@
       "other_versions": "Egyéb verziók",
       "more_tagged": "{count} további címkézett",
       "all_covered": "Minden verziót lefednek a fenti címkék",
-      "deprecated_title": "{version} (elavult)"
+      "deprecated_title": "{version} (elavult)",
+      "copy_alt": {}
     },
     "dependencies": {
       "title": "Függőségek ({count})",
@@ -237,7 +242,8 @@
       "date_range": "{start} - {end}",
       "download_file": "{fileType} letöltése",
       "toggle_annotator": "Magyarázó kapcsolása",
-      "items": {}
+      "items": {},
+      "copy_alt": {}
     },
     "downloads": {
       "title": "Heti letöltések"
@@ -663,13 +669,14 @@
         "managers": "kezelőket"
       }
     },
+    "sponsors": {},
+    "oss_partners": {},
     "team": {},
     "contributors": {
       "title": "Közreműködők",
       "description": "Az npmx teljes mértékben nyílt forráskódú. Egy csodálatos közösség építi. Csatlakozz hozzánk, és építsük fel együtt azt az npm böngészési élményt, amire mindig is vágytunk.",
       "loading": "Közreműködők betöltése...",
-      "error": "Nem sikerült betölteni a közreműködőket",
-      "view_profile": "{name} GitHub profiljának megtekintése"
+      "error": "Nem sikerült betölteni a közreműködőket"
     },
     "get_involved": {
       "title": "Vegyél részt",
@@ -736,7 +743,9 @@
       },
       "values": {},
       "trends": {}
-    }
+    },
+    "file_filter_option": {},
+    "filter": {}
   },
   "privacy_policy": {
     "cookies": {
