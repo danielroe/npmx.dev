@@ -3304,6 +3304,12 @@
         "lines_hidden": {
           "type": "string"
         },
+        "file_too_large": {
+          "type": "string"
+        },
+        "file_size_warning": {
+          "type": "string"
+        },
         "compare_versions": {
           "type": "string"
         },

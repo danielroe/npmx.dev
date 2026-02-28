@@ -1100,6 +1100,8 @@
     "file_changes": "File Changes",
     "files_count": "{count} files",
     "lines_hidden": "{count} lines hidden",
+    "file_too_large": "File too large to compare",
+    "file_size_warning": "{size} exceeds the 250KB limit for comparison",
     "compare_versions": "diff",
     "summary": "Summary",
     "deps_count": "{count} deps",

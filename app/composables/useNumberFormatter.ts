@@ -16,8 +16,8 @@ export const useBytesFormatter = () => {
   const decimalNumberFormatter = useNumberFormatter({
     maximumFractionDigits: 1,
   })
-  const KB = 1000
-  const MB = 1000 * 1000
+  const KB = 1024
+  const MB = 1024 * 1024
 
   return {
     format: (bytes: number) => {
