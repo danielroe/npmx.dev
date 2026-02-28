@@ -48,17 +48,18 @@ export default defineEventHandler(async event => {
   if (!sig) {
     return { sig }
   }
+  return {"ok": true, url, sig};
 
   // Verify HMAC signature to ensure this URL was generated server-side
-  const { imageProxySecret } = useRuntimeConfig()
-  if (!imageProxySecret || !verifyImageUrl(url, sig, imageProxySecret)) {
-    // throw createError({
-    //   statusCode: 403,
-    //   message: 'Invalid signature.',
-    // })
-    return {url, sig, imageProxySecret}
-  }
-  return {"ok": true};
+  // const { imageProxySecret } = useRuntimeConfig()
+  // if (!imageProxySecret || !verifyImageUrl(url, sig, imageProxySecret)) {
+  //   // throw createError({
+  //   //   statusCode: 403,
+  //   //   message: 'Invalid signature.',
+  //   // })
+  //   return {url, sig, imageProxySecret}
+  // }
+  // return {"ok": true};
 
   // // Validate URL syntactically
   // if (!isAllowedImageUrl(url)) {
