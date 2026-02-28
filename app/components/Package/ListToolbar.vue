@@ -216,7 +216,7 @@ const { selectedPackages, clearSelectedPackages } = usePackageSelection()
         </div>
 
         <div
-          class="flex items-center order-3 border-is border-fg-subtle/20 ps-3"
+          class="flex items-center order-3 sm:border-is sm:border-fg-subtle/20 sm:ps-3"
           v-if="selectedPackages.length"
         >
           <ButtonBase
