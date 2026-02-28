@@ -4,19 +4,12 @@ const { info, requestedDate } = defineProps<{
   requestedDate?: string
 }>()
 
-const { data: releases, pending } = useFetch<ReleaseData[]>(
+const { data: releases } = useFetch<ReleaseData[]>(
   () => `/api/changelog/releases/${info.provider}/${info.repo}`,
 )
 
 const route = useRoute()
 const router = useRouter()
-
-// if (import.meta.client) {
-
-//   watchEffect(() => {
-
-//   })
-// }
 
 watch(
   [() => route.hash, () => requestedDate, releases],
