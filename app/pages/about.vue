@@ -446,7 +446,7 @@ onBeforeUnmount(() => {
                   no-underline
                   no-new-tab-icon
                   :aria-label="getAriaLabel(contributor)"
-                  class="group relative block h-12 w-12 rounded-lg transition-transform duration-200 outline-none p-0 bg-transparent"
+                  class="group relative block h-12 w-12 rounded-lg transition-transform outline-none p-0 bg-transparent"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
