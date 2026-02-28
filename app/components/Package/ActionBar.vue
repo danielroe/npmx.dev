@@ -41,8 +41,12 @@ onKeyStroke(
           <span class="text-fg text-sm">
             {{ $t('action_bar.selection', selectedPackages.length) }}
           </span>
-          <button @click="clearSelectedPackages" class="flex items-center ms-2 hover:text-fg-muted">
-            <span class="i-lucide:x text-xs relative top-px" aria-label="Close action bar" />
+          <button
+            @click="clearSelectedPackages"
+            class="flex items-center ms-2 hover:text-fg-muted"
+            aria-label="Close action bar"
+          >
+            <span class="i-lucide:x text-xs relative top-px" aria-hidden="true" />
           </button>
         </div>
 
@@ -51,7 +55,7 @@ onKeyStroke(
           variant="button-secondary"
           classicon="i-lucide:git-compare"
         >
-          Compare
+          {{ $t('package.links.compare') }}
         </LinkBase>
       </div>
     </div>
