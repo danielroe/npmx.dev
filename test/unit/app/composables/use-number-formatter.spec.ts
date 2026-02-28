@@ -30,17 +30,17 @@ describe('useBytesFormatter', () => {
     expect(format(999)).toBe('999 B')
   })
 
-  it('formats kB values using decimal base (1024)', () => {
+  it('formats kB values using decimal base (1000)', () => {
     const { format } = useBytesFormatter()
 
-    expect(format(1024)).toBe('1 kB')
-    expect(format(8704)).toBe('8.5 kB')
+    expect(format(1000)).toBe('1 kB')
+    expect(format(8414)).toBe('8.4 kB')
   })
 
-  it('formats MB values using decimal base (1024 * 1024)', () => {
+  it('formats MB values using decimal base (1000 * 1000)', () => {
     const { format } = useBytesFormatter()
 
-    expect(format(1_048_576)).toBe('1 MB')
-    expect(format(1_572_864)).toBe('1.5 MB')
+    expect(format(1_000_000)).toBe('1 MB')
+    expect(format(1_500_000)).toBe('1.5 MB')
   })
 })
