@@ -23,7 +23,7 @@ export default defineNuxtModule({
         branch: 'xxx',
         time: time.getTime(),
         privacyPolicyDate: time.toISOString(),
-        prNumber: undefined,
+        prNumber: null,
       } satisfies BuildInfo
     } else {
       const [{ env: useEnv, commit, shortCommit, branch, prNumber }, privacyPolicyDate] =

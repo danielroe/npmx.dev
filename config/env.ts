@@ -25,7 +25,7 @@ export const isPR = process.env.PULL_REQUEST === 'true' || !!process.env.VERCEL_
  *
  * Pull request number (if in a PR environment)
  */
-export const prNumber = process.env.REVIEW_ID || process.env.VERCEL_GIT_PULL_REQUEST_ID
+export const prNumber = process.env.REVIEW_ID || process.env.VERCEL_GIT_PULL_REQUEST_ID || null
 
 /**
  * Environment variable `BRANCH` provided by Netlify.
