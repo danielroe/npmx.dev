@@ -438,6 +438,69 @@
         },
         "scroll_to_top": {
           "type": "string"
+        },
+        "cancel": {
+          "type": "string"
+        },
+        "save": {
+          "type": "string"
+        },
+        "edit": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "display_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "no_description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "website_placeholder": {
+          "type": "string"
+        },
+        "likes": {
+          "type": "string"
+        },
+        "seo_title": {
+          "type": "string"
+        },
+        "seo_description": {
+          "type": "string"
+        },
+        "not_found": {
+          "type": "string"
+        },
+        "not_found_message": {
+          "type": "string"
+        },
+        "invite": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "share_button": {
+              "type": "string"
+            },
+            "compose_text": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -2813,6 +2876,9 @@
               "type": "string"
             },
             "default_input_error": {
+              "type": "string"
+            },
+            "profile": {
               "type": "string"
             }
           },
