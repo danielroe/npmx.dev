@@ -281,7 +281,11 @@ const config = computed<VueUiSparklineConfig>(() => {
 
 <template>
   <div class="space-y-8">
-    <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
+    <CollapsibleSection
+      id="downloads"
+      :title="$t('package.downloads.title')"
+      :subtitle="$t('package.downloads.subtitle')"
+    >
       <template #actions>
         <ButtonBase
           v-if="hasWeeklyDownloads"
