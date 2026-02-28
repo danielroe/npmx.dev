@@ -3,7 +3,7 @@ import validateNpmPackageName from 'validate-npm-package-name'
 
 // Validation pattern for npm usernames/org names
 // These follow similar rules: lowercase alphanumeric with hyphens, can't start/end with hyphen
-const NPM_USERNAME_RE = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i
+const NPM_USERNAME_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i
 
 // ============================================================================
 // Base Schemas
@@ -25,6 +25,7 @@ export const PackageNameSchema = v.pipe(
 /**
  * Validates an npm package name for new packages only
  * Stricter than PackageNameSchema - rejects legacy formats (uppercase, etc.)
+ * @internal
  */
 export const NewPackageNameSchema = v.pipe(
   v.string(),
@@ -76,6 +77,7 @@ export const ScopeTeamSchema = v.pipe(
 
 /**
  * Validates org roles
+ * @internal
  */
 export const OrgRoleSchema = v.picklist(
   ['developer', 'admin', 'owner'],
@@ -84,6 +86,7 @@ export const OrgRoleSchema = v.picklist(
 
 /**
  * Validates access permissions
+ * @internal
  */
 export const PermissionSchema = v.picklist(
   ['read-only', 'read-write'],
@@ -110,6 +113,7 @@ export const OperationTypeSchema = v.picklist([
 
 /**
  * Validates OTP (6-digit code)
+ * @internal
  */
 export const OtpSchema = v.optional(
   v.pipe(v.string(), v.regex(/^\d{6}$/, 'OTP must be a 6-digit code')),
@@ -117,6 +121,7 @@ export const OtpSchema = v.optional(
 
 /**
  * Validates a hex token (like session tokens and operation IDs)
+ * @internal
  */
 export const HexTokenSchema = v.pipe(
   v.string(),
@@ -126,6 +131,7 @@ export const HexTokenSchema = v.pipe(
 
 /**
  * Validates operation ID (16-char hex)
+ * @internal
  */
 export const OperationIdSchema = v.pipe(
   v.string(),
@@ -145,10 +151,15 @@ export const ConnectBodySchema = v.object({
 })
 
 /**
- * Schema for /execute request body
+ * Schema for /execute request body.
+ * - `otp`: optional 6-digit OTP code for 2FA
+ * - `interactive`: when true, commands run via a real PTY (node-pty) instead of execFile, so npm's OTP handler can activate.
+ * - `openUrls`: when true (default), npm opens auth URLs in the user's browser automatically. When false, URLs are suppressed on the connector side and only returned in the response / exposed in /state
  */
 export const ExecuteBodySchema = v.object({
   otp: OtpSchema,
+  interactive: v.optional(v.boolean()),
+  openUrls: v.optional(v.boolean()),
 })
 
 /**
@@ -176,6 +187,7 @@ export const BatchOperationsBodySchema = v.array(CreateOperationBodySchema)
 // Type-specific Operation Params Schemas
 // ============================================================================
 
+/** @internal */
 export const OrgAddUserParamsSchema = v.object({
   org: OrgNameSchema,
   user: UsernameSchema,
@@ -205,6 +217,7 @@ const TeamRemoveUserParamsSchema = v.object({
   user: UsernameSchema,
 })
 
+/** @internal */
 export const AccessGrantParamsSchema = v.object({
   permission: PermissionSchema,
   scopeTeam: ScopeTeamSchema,
@@ -226,6 +239,7 @@ const OwnerRemoveParamsSchema = v.object({
   pkg: PackageNameSchema,
 })
 
+/** @internal */
 export const PackageInitParamsSchema = v.object({
   name: NewPackageNameSchema,
   author: v.optional(UsernameSchema),

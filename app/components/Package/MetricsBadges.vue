@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { NuxtLink } from '#components'
+import { LinkBase, TagStatic } from '#components'
 
 const props = defineProps<{
   packageName: string
@@ -7,10 +7,12 @@ const props = defineProps<{
   version?: string
 }>()
 
-const { data: analysis } = usePackageAnalysis(
+const { data: analysis, status } = usePackageAnalysis(
   () => props.packageName,
   () => props.version,
 )
+
+const isLoading = computed(() => status.value !== 'error' && !analysis.value)
 
 // ESM support
 const hasEsm = computed(() => {
@@ -52,63 +54,60 @@ const typesHref = computed(() => {
 </script>
 
 <template>
-  <ul v-if="analysis" class="flex items-center gap-1.5 list-none m-0 p-0">
+  <ul class="flex items-center gap-1.5 list-none m-0 p-0">
     <!-- TypeScript types badge -->
-    <li v-if="!props.isBinary">
-      <TooltipApp :text="typesTooltip">
-        <component
-          :is="typesHref ? NuxtLink : 'span'"
+    <li v-if="!props.isBinary" class="contents">
+      <TooltipApp :text="typesTooltip" strategy="fixed">
+        <LinkBase
+          v-if="typesHref"
+          variant="button-secondary"
+          size="small"
           :to="typesHref"
-          class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded transition-colors duration-200"
-          :class="[
-            hasTypes
-              ? 'text-fg-muted bg-bg-muted border border-border'
-              : 'text-fg-subtle bg-bg-subtle border border-border-subtle',
-            typesHref
-              ? 'hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50'
-              : '',
-          ]"
+          classicon="i-lucide:check"
         >
-          <span
-            class="w-3 h-3"
-            :class="hasTypes ? 'i-carbon-checkmark' : 'i-carbon-close'"
-            aria-hidden="true"
-          />
           {{ $t('package.metrics.types_label') }}
-        </component>
+        </LinkBase>
+        <TagStatic
+          v-else
+          :variant="hasTypes && !isLoading ? 'default' : 'ghost'"
+          :tabindex="0"
+          :classicon="
+            isLoading ? 'i-svg-spinners:ring-resize ' : hasTypes ? 'i-lucide:check' : 'i-lucide:x'
+          "
+        >
+          {{ $t('package.metrics.types_label') }}
+        </TagStatic>
       </TooltipApp>
     </li>
 
     <!-- ESM badge (show with X if missing) -->
-    <li>
-      <TooltipApp :text="hasEsm ? $t('package.metrics.esm') : $t('package.metrics.no_esm')">
-        <span
-          class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs rounded transition-colors duration-200"
-          :class="
-            hasEsm
-              ? 'text-fg-muted bg-bg-muted border border-border'
-              : 'text-fg-subtle bg-bg-subtle border border-border-subtle'
+    <li class="contents">
+      <TooltipApp
+        :text="isLoading ? '' : hasEsm ? $t('package.metrics.esm') : $t('package.metrics.no_esm')"
+        strategy="fixed"
+      >
+        <TagStatic
+          tabindex="0"
+          :variant="hasEsm && !isLoading ? 'default' : 'ghost'"
+          :classicon="
+            isLoading ? 'i-svg-spinners:ring-resize ' : hasEsm ? 'i-lucide:check' : 'i-lucide:x'
           "
         >
-          <span
-            class="w-3 h-3"
-            :class="hasEsm ? 'i-carbon-checkmark' : 'i-carbon-close'"
-            aria-hidden="true"
-          />
           ESM
-        </span>
+        </TagStatic>
       </TooltipApp>
     </li>
 
-    <!-- CJS badge (only show if present) -->
-    <li v-if="hasCjs">
-      <TooltipApp :text="$t('package.metrics.cjs')">
-        <span
-          class="inline-flex items-center gap-1 px-1.5 py-0.5 font-mono text-xs text-fg-muted bg-bg-muted border border-border rounded transition-colors duration-200"
+    <!-- CJS badge -->
+    <li v-if="isLoading || hasCjs" class="contents">
+      <TooltipApp :text="isLoading ? '' : $t('package.metrics.cjs')" strategy="fixed">
+        <TagStatic
+          tabindex="0"
+          :variant="isLoading ? 'ghost' : 'default'"
+          :classicon="isLoading ? 'i-svg-spinners:ring-resize ' : 'i-lucide:check'"
         >
-          <span class="i-carbon-checkmark w-3 h-3" aria-hidden="true" />
           CJS
-        </span>
+        </TagStatic>
       </TooltipApp>
     </li>
   </ul>

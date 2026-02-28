@@ -1,21 +1,24 @@
 <script setup lang="ts">
-interface GitHubContributor {
-  login: string
-  id: number
-  avatar_url: string
-  html_url: string
-  contributions: number
-}
+import type { Role } from '#server/api/contributors.get'
+import { SPONSORS } from '~/assets/logos/sponsors'
+import { OSS_PARTNERS } from '~/assets/logos/oss-partners'
+
+const router = useRouter()
+const canGoBack = useCanGoBack()
 
 useSeoMeta({
   title: () => `${$t('about.title')} - npmx`,
+  ogTitle: () => `${$t('about.title')} - npmx`,
+  twitterTitle: () => `${$t('about.title')} - npmx`,
   description: () => $t('about.meta_description'),
+  ogDescription: () => $t('about.meta_description'),
+  twitterDescription: () => $t('about.meta_description'),
 })
 
 defineOgImageComponent('Default', {
   primaryColor: '#60a5fa',
-  title: 'About npmx',
-  description: 'A better browser for the **npm registry**',
+  title: 'about npmx',
+  description: 'a fast, modern browser for the **npm registry**',
 })
 
 const pmLinks = {
@@ -27,27 +30,51 @@ const pmLinks = {
   vlt: 'https://www.vlt.sh/',
 }
 
-const { data: contributors, status: contributorsStatus } = useFetch<GitHubContributor[]>(
-  '/api/contributors',
-  {
-    lazy: true,
-  },
+const { data: contributors, status: contributorsStatus } = useLazyFetch('/api/contributors')
+
+const governanceMembers = computed(
+  () => contributors.value?.filter(c => c.role !== 'contributor') ?? [],
+)
+
+const communityContributors = computed(
+  () => contributors.value?.filter(c => c.role === 'contributor') ?? [],
+)
+
+const roleLabels = computed(
+  () =>
+    ({
+      steward: $t('about.team.role_steward'),
+      maintainer: $t('about.team.role_maintainer'),
+    }) as Partial<Record<Role, string>>,
 )
 </script>
 
 <template>
-  <main class="container flex-1 py-12 sm:py-16">
+  <main class="container flex-1 py-12 sm:py-16 overflow-x-hidden">
     <article class="max-w-2xl mx-auto">
       <header class="mb-12">
-        <h1 class="font-mono text-3xl sm:text-4xl font-medium mb-4">{{ $t('about.heading') }}</h1>
+        <div class="flex items-baseline justify-between gap-4 mb-4">
+          <h1 class="font-mono text-3xl sm:text-4xl font-medium">
+            {{ $t('about.heading') }}
+          </h1>
+          <button
+            type="button"
+            class="cursor-pointer inline-flex items-center gap-2 p-1.5 -mx-1.5 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
+            @click="router.back()"
+            v-if="canGoBack"
+          >
+            <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
+            <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+          </button>
+        </div>
         <p class="text-fg-muted text-lg">
           {{ $t('tagline') }}
         </p>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-8">
+      <section class="prose prose-invert max-w-none space-y-12">
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
@@ -56,13 +83,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                 <strong class="text-fg">{{ $t('about.what_we_are.better_ux_dx') }}</strong>
               </template>
               <template #jsr>
-                <a
-                  href="https://jsr.io/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="link text-fg"
-                  >JSR</a
-                >
+                <LinkBase to="https://jsr.io/" no-new-tab-icon>JSR</LinkBase>
               </template>
             </i18n-t>
           </p>
@@ -76,7 +97,7 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
         </div>
 
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are_not.title') }}
           </h2>
           <ul class="space-y-3 text-fg-muted list-none p-0">
@@ -94,58 +115,34 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
                 >
                   <template #already>{{ $t('about.what_we_are_not.words.already') }}</template>
                   <template #people>
-                    <a
-                      :href="pmLinks.npm"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
-                      >{{ $t('about.what_we_are_not.words.people') }}</a
-                    >
+                    <LinkBase :to="pmLinks.npm" class="font-sans" no-new-tab-icon>{{
+                      $t('about.what_we_are_not.words.people')
+                    }}</LinkBase>
                   </template>
                   <template #building>
-                    <a
-                      :href="pmLinks.pnpm"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
-                      >{{ $t('about.what_we_are_not.words.building') }}</a
-                    >
+                    <LinkBase :to="pmLinks.pnpm" class="font-sans" no-new-tab-icon>{{
+                      $t('about.what_we_are_not.words.building')
+                    }}</LinkBase>
                   </template>
                   <template #really>
-                    <a
-                      :href="pmLinks.yarn"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
-                      >{{ $t('about.what_we_are_not.words.really') }}</a
-                    >
+                    <LinkBase :to="pmLinks.yarn" class="font-sans" no-new-tab-icon>{{
+                      $t('about.what_we_are_not.words.really')
+                    }}</LinkBase>
                   </template>
                   <template #cool>
-                    <a
-                      :href="pmLinks.bun"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
-                      >{{ $t('about.what_we_are_not.words.cool') }}</a
-                    >
+                    <LinkBase :to="pmLinks.bun" class="font-sans" no-new-tab-icon>{{
+                      $t('about.what_we_are_not.words.cool')
+                    }}</LinkBase>
                   </template>
                   <template #package>
-                    <a
-                      :href="pmLinks.deno"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
-                      >{{ $t('about.what_we_are_not.words.package') }}</a
-                    >
+                    <LinkBase :to="pmLinks.deno" class="font-sans" no-new-tab-icon>{{
+                      $t('about.what_we_are_not.words.package')
+                    }}</LinkBase>
                   </template>
                   <template #managers>
-                    <a
-                      :href="pmLinks.vlt"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      class="text-fg-muted hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
-                      >{{ $t('about.what_we_are_not.words.managers') }}</a
-                    >
+                    <LinkBase :to="pmLinks.vlt" class="font-sans" no-new-tab-icon>{{
+                      $t('about.what_we_are_not.words.managers')
+                    }}</LinkBase>
                   </template>
                 </i18n-t>
               </span>
@@ -160,62 +157,152 @@ const { data: contributors, status: contributorsStatus } = useFetch<GitHubContri
           </ul>
         </div>
 
+        <div class="sponsors-logos">
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.sponsors.title') }}
+          </h2>
+          <AboutLogoList
+            :list="SPONSORS"
+            class="flex-col gap-6 items-start md:flex-row md:items-center md:gap-4"
+          />
+        </div>
+
         <div>
-          <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">
-            {{ contributors?.length ?? 0 }} {{ $t('about.contributors.title') }}
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('about.oss_partners.title') }}
+          </h2>
+          <AboutLogoList :list="OSS_PARTNERS" class="items-center" />
+        </div>
+
+        <div>
+          <h2 class="text-lg uppercase tracking-wider mb-4">
+            {{ $t('about.team.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-6">
             {{ $t('about.contributors.description') }}
           </p>
 
-          <!-- Contributors cloud -->
-          <div v-if="contributorsStatus === 'pending'" class="text-fg-subtle text-sm">
-            {{ $t('about.contributors.loading') }}
-          </div>
-          <div v-else-if="contributorsStatus === 'error'" class="text-fg-subtle text-sm">
-            {{ $t('about.contributors.error') }}
-          </div>
-          <div v-else-if="contributors?.length" class="flex flex-wrap gap-2">
-            <a
-              v-for="contributor in contributors"
-              :key="contributor.id"
-              :href="contributor.html_url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group relative"
-              :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
-            >
-              <div class="relative flex items-center">
+          <!-- Governance: stewards + maintainers -->
+          <section
+            v-if="governanceMembers.length"
+            class="mb-12"
+            aria-labelledby="governance-heading"
+          >
+            <h3 id="governance-heading" class="text-sm text-fg uppercase tracking-wider mb-4">
+              {{ $t('about.team.governance') }}
+            </h3>
+
+            <ul class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 list-none p-0">
+              <li
+                v-for="person in governanceMembers"
+                :key="person.id"
+                class="relative flex items-center gap-3 p-3 border border-border rounded-lg hover:border-border-hover hover:bg-bg-muted transition-[border-color,background-color] duration-200 cursor-pointer focus-within:ring-2 focus-within:ring-offset-bg focus-within:ring-offset-2 focus-within:ring-fg/50"
+              >
                 <img
-                  :src="`${contributor.avatar_url}&s=64`"
-                  :alt="contributor.login"
-                  width="32"
-                  height="32"
-                  class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out hover:scale-125 will-change-transform"
+                  :src="`${person.avatar_url}&s=80`"
+                  :alt="`${person.login}'s avatar`"
+                  class="w-12 h-12 rounded-md ring-1 ring-border shrink-0"
                   loading="lazy"
                 />
+                <div class="min-w-0 flex-1">
+                  <div class="font-mono text-sm text-fg truncate">
+                    <NuxtLink
+                      :to="person.html_url"
+                      target="_blank"
+                      class="decoration-none after:content-[''] after:absolute after:inset-0"
+                      :aria-label="$t('about.contributors.view_profile', { name: person.login })"
+                    >
+                      @{{ person.login }}
+                    </NuxtLink>
+                  </div>
+                  <div class="text-xs text-fg-muted tracking-tight">
+                    {{ roleLabels[person.role] ?? person.role }}
+                  </div>
+                  <LinkBase
+                    v-if="person.sponsors_url"
+                    :to="person.sponsors_url"
+                    no-underline
+                    no-external-icon
+                    classicon="i-lucide:heart"
+                    class="relative z-10 text-xs text-fg-muted hover:text-pink-400 mt-0.5"
+                    :aria-label="$t('about.team.sponsor_aria', { name: person.login })"
+                  >
+                    {{ $t('about.team.sponsor') }}
+                  </LinkBase>
+                </div>
                 <span
-                  class="pointer-events-none absolute -top-9 inset-is-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs px-2 py-1 shadow-lg opacity-0 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100"
+                  class="i-lucide:external-link rtl-flip w-3.5 h-3.5 text-fg-muted opacity-50 shrink-0 self-start mt-0.5 pointer-events-none"
+                  aria-hidden="true"
+                />
+              </li>
+            </ul>
+          </section>
+
+          <!-- Contributors cloud -->
+          <section aria-labelledby="contributors-heading">
+            <h3 id="contributors-heading" class="text-sm uppercase tracking-wider mb-4">
+              {{
+                $t(
+                  'about.contributors.title',
+                  { count: $n(communityContributors.length) },
+                  communityContributors.length,
+                )
+              }}
+            </h3>
+
+            <div
+              v-if="contributorsStatus === 'pending'"
+              class="text-fg-subtle text-sm"
+              role="status"
+            >
+              {{ $t('about.contributors.loading') }}
+            </div>
+            <div
+              v-else-if="contributorsStatus === 'error'"
+              class="text-fg-subtle text-sm"
+              role="alert"
+            >
+              {{ $t('about.contributors.error') }}
+            </div>
+            <ul
+              v-else-if="communityContributors.length"
+              class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0"
+            >
+              <li
+                v-for="contributor in communityContributors"
+                :key="contributor.id"
+                class="block group relative"
+              >
+                <a
+                  :href="contributor.html_url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="$t('about.contributors.view_profile', { name: contributor.login })"
+                  class="block rounded-lg"
                 >
-                  @{{ contributor.login }}
-                </span>
-              </div>
-            </a>
-          </div>
+                  <img
+                    :src="`${contributor.avatar_url}&s=64`"
+                    :alt="`${contributor.login}'s avatar`"
+                    width="48"
+                    height="48"
+                    class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out group-hover:scale-125 will-change-transform"
+                    loading="lazy"
+                  />
+                  <span
+                    class="pointer-events-none absolute -top-9 inset-is-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs px-2 py-1 shadow-lg opacity-0 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100"
+                    dir="ltr"
+                    role="tooltip"
+                  >
+                    @{{ contributor.login }}
+                  </span>
+                </a>
+              </li>
+            </ul>
+          </section>
         </div>
 
         <CallToAction />
       </section>
-
-      <footer class="mt-16 pt-8 border-t border-border">
-        <NuxtLink
-          to="/"
-          class="inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-[color] duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-        >
-          <span class="i-carbon:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
-          {{ $t('about.back_home') }}
-        </NuxtLink>
-      </footer>
     </article>
   </main>
 </template>

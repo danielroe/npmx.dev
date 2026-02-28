@@ -32,17 +32,20 @@ const SKIPPED_COMPONENTS: Record<string, string> = {
   // Complex components requiring full app context or specific runtime conditions
   'Header/OrgsDropdown.vue': 'Requires connector context and API calls',
   'Header/PackagesDropdown.vue': 'Requires connector context and API calls',
-  'Header/MobileMenu.vue': 'Requires Teleport and full navigation context',
+  'Header/MobileMenu.client.vue': 'Requires Teleport and full navigation context',
   'Modal.client.vue':
     'Base modal component - tested via specific modals like ChartModal, ConnectorModal',
   'Package/SkillsModal.vue': 'Complex modal with tabs - requires modal context and state',
-  'ScrollToTop.vue': 'Requires scroll position and CSS scroll-state queries',
+  'ScrollToTop.client.vue': 'Requires scroll position and CSS scroll-state queries',
   'Settings/TranslationHelper.vue': 'i18n helper component - requires specific locale status data',
   'Package/WeeklyDownloadStats.vue':
     'Uses vue-data-ui VueUiSparkline - has DOM measurement issues in test environment',
+  'Package/VersionDistribution.vue':
+    'Uses vue-data-ui VueUiXy - has DOM measurement issues in test environment',
   'UserCombobox.vue': 'Unused component - intended for future admin features',
   'SkeletonBlock.vue': 'Already covered indirectly via other component tests',
   'SkeletonInline.vue': 'Already covered indirectly via other component tests',
+  'Button/Group.vue': "Wrapper component, tests wouldn't make much sense here",
 }
 
 /**

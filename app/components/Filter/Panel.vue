@@ -8,8 +8,8 @@ import type {
 } from '#shared/types/preferences'
 import {
   DOWNLOAD_RANGES,
-  SEARCH_SCOPE_OPTIONS,
-  SECURITY_FILTER_OPTIONS,
+  SEARCH_SCOPE_VALUES,
+  SECURITY_FILTER_VALUES,
   UPDATED_WITHIN_OPTIONS,
 } from '#shared/types/preferences'
 
@@ -27,8 +27,15 @@ const emit = defineEmits<{
   'toggleKeyword': [keyword: string]
 }>()
 
+const { t } = useI18n()
+
 const isExpanded = shallowRef(false)
 const showAllKeywords = shallowRef(false)
+
+const filterText = computed({
+  get: () => props.filters.text,
+  set: value => emit('update:text', value),
+})
 
 const displayedKeywords = computed(() => {
   const keywords = props.availableKeywords ?? []
@@ -55,67 +62,77 @@ const hasMoreKeywords = computed(() => {
 })
 
 // i18n mappings for filter options
-const scopeLabelKeys = {
-  name: 'filters.scope_name',
-  description: 'filters.scope_description',
-  keywords: 'filters.scope_keywords',
-  all: 'filters.scope_all',
-} as const
+const scopeLabelKeys = computed(
+  () =>
+    ({
+      name: t('filters.scope_name'),
+      description: t('filters.scope_description'),
+      keywords: t('filters.scope_keywords'),
+      all: t('filters.scope_all'),
+    }) as const,
+)
 
-const scopeDescriptionKeys = {
-  name: 'filters.scope_name_description',
-  description: 'filters.scope_description_description',
-  keywords: 'filters.scope_keywords_description',
-  all: 'filters.scope_all_description',
-} as const
+const scopeDescriptionKeys = computed(
+  () =>
+    ({
+      name: t('filters.scope_name_description'),
+      description: t('filters.scope_description_description'),
+      keywords: t('filters.scope_keywords_description'),
+      all: t('filters.scope_all_description'),
+    }) as const,
+)
 
-const downloadRangeLabelKeys = {
-  'any': 'filters.download_range.any',
-  'lt100': 'filters.download_range.lt100',
-  '100-1k': 'filters.download_range.100_1k',
-  '1k-10k': 'filters.download_range.1k_10k',
-  '10k-100k': 'filters.download_range.10k_100k',
-  'gt100k': 'filters.download_range.gt100k',
-} as const
+const downloadRangeLabelKeys = computed(
+  () =>
+    ({
+      'any': t('filters.download_range.any'),
+      'lt100': t('filters.download_range.lt100'),
+      '100-1k': t('filters.download_range.100_1k'),
+      '1k-10k': t('filters.download_range.1k_10k'),
+      '10k-100k': t('filters.download_range.10k_100k'),
+      'gt100k': t('filters.download_range.gt100k'),
+    }) as const,
+)
 
-const updatedWithinLabelKeys = {
-  any: 'filters.updated.any',
-  week: 'filters.updated.week',
-  month: 'filters.updated.month',
-  quarter: 'filters.updated.quarter',
-  year: 'filters.updated.year',
-} as const
+const updatedWithinLabelKeys = computed(
+  () =>
+    ({
+      any: t('filters.updated.any'),
+      week: t('filters.updated.week'),
+      month: t('filters.updated.month'),
+      quarter: t('filters.updated.quarter'),
+      year: t('filters.updated.year'),
+    }) as const,
+)
 
-const securityLabelKeys = {
-  all: 'filters.security_options.all',
-  secure: 'filters.security_options.secure',
-  warnings: 'filters.security_options.insecure',
-} as const
+const securityLabelKeys = computed(
+  () =>
+    ({
+      all: t('filters.security_options.all'),
+      secure: t('filters.security_options.secure'),
+      warnings: t('filters.security_options.insecure'),
+    }) as const,
+)
 
 // Type-safe accessor functions
 function getScopeLabelKey(value: SearchScope): string {
-  return scopeLabelKeys[value]
+  return scopeLabelKeys.value[value]
 }
 
 function getScopeDescriptionKey(value: SearchScope): string {
-  return scopeDescriptionKeys[value]
+  return scopeDescriptionKeys.value[value]
 }
 
 function getDownloadRangeLabelKey(value: DownloadRange): string {
-  return downloadRangeLabelKeys[value]
+  return downloadRangeLabelKeys.value[value]
 }
 
 function getUpdatedWithinLabelKey(value: UpdatedWithin): string {
-  return updatedWithinLabelKeys[value]
+  return updatedWithinLabelKeys.value[value]
 }
 
 function getSecurityLabelKey(value: SecurityFilter): string {
-  return securityLabelKeys[value]
-}
-
-function handleTextInput(event: Event) {
-  const target = event.target as HTMLInputElement
-  emit('update:text', target.value)
+  return securityLabelKeys.value[value]
 }
 
 // Compact summary of active filters for collapsed header using operator syntax
@@ -176,14 +193,14 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
       @click="isExpanded = !isExpanded"
     >
       <span class="flex items-center gap-2 text-sm font-mono text-fg shrink-0">
-        <span class="i-carbon-filter w-4 h-4" aria-hidden="true" />
+        <span class="i-lucide:funnel w-4 h-4" aria-hidden="true" />
         {{ $t('filters.title') }}
       </span>
       <span v-if="!isExpanded && hasActiveFilters" class="text-xs font-mono text-fg-muted truncate">
         {{ filterSummary }}
       </span>
       <span
-        class="i-carbon-chevron-down w-4 h-4 text-fg-subtle transition-transform duration-200 shrink-0 ms-auto"
+        class="i-lucide:chevron-down w-4 h-4 text-fg-subtle transition-transform duration-200 shrink-0 ms-auto"
         :class="{ 'rotate-180': isExpanded }"
         aria-hidden="true"
       />
@@ -200,36 +217,37 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             </label>
             <!-- Search scope toggle -->
             <div
-              class="inline-flex rounded-md border border-border p-0.5 bg-bg"
+              class="inline-flex rounded-md border border-border p-0.5 bg-bg-muted"
               role="group"
               :aria-label="$t('filters.search_scope')"
             >
               <button
-                v-for="option in SEARCH_SCOPE_OPTIONS"
-                :key="option.value"
+                v-for="scope in SEARCH_SCOPE_VALUES"
+                :key="scope"
                 type="button"
-                class="px-2 py-0.5 text-xs font-mono rounded-sm transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
+                class="px-2 py-0.5 text-xs font-mono rounded-sm border transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
                 :class="
-                  filters.searchScope === option.value
-                    ? 'bg-bg-muted text-fg'
-                    : 'text-fg-muted hover:text-fg'
+                  filters.searchScope === scope
+                    ? 'bg-bg-subtle text-fg border-fg-subtle'
+                    : 'text-fg-muted hover:text-fg border-transparent'
                 "
-                :aria-pressed="filters.searchScope === option.value"
-                :title="$t(getScopeDescriptionKey(option.value))"
-                @click="emit('update:searchScope', option.value)"
+                :aria-pressed="filters.searchScope === scope"
+                :title="getScopeDescriptionKey(scope)"
+                @click="emit('update:searchScope', scope)"
               >
-                {{ $t(getScopeLabelKey(option.value)) }}
+                {{ getScopeLabelKey(scope) }}
               </button>
             </div>
           </div>
-          <input
+          <InputBase
             id="filter-search"
             type="text"
-            :value="filters.text"
+            v-model="filterText"
             :placeholder="searchPlaceholder"
             autocomplete="off"
-            class="w-full bg-bg-subtle border border-border rounded-md px-4 py-3 font-mono text-sm text-fg placeholder:text-fg-subtle transition-all duration-200 focus:(border-fg/40 outline-none ring-1 ring-fg/10)"
-            @input="handleTextInput"
+            class="w-full min-w-25"
+            size="medium"
+            no-correct
           />
         </div>
 
@@ -243,22 +261,16 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             role="radiogroup"
             :aria-label="$t('filters.weekly_downloads')"
           >
-            <button
+            <TagRadioButton
               v-for="range in DOWNLOAD_RANGES"
               :key="range.value"
-              type="button"
-              role="radio"
-              :aria-checked="filters.downloadRange === range.value"
-              class="tag transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-              :class="
-                filters.downloadRange === range.value
-                  ? 'bg-fg text-bg border-fg hover:text-bg/50'
-                  : ''
-              "
-              @click="emit('update:downloadRange', range.value)"
+              :model-value="filters.downloadRange"
+              :value="range.value"
+              @update:modelValue="emit('update:downloadRange', $event as DownloadRange)"
+              name="range"
             >
-              {{ $t(getDownloadRangeLabelKey(range.value)) }}
-            </button>
+              {{ getDownloadRangeLabelKey(range.value) }}
+            </TagRadioButton>
           </div>
         </fieldset>
 
@@ -272,22 +284,16 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             role="radiogroup"
             :aria-label="$t('filters.updated_within')"
           >
-            <button
+            <TagRadioButton
               v-for="option in UPDATED_WITHIN_OPTIONS"
               :key="option.value"
-              type="button"
-              role="radio"
-              :aria-checked="filters.updatedWithin === option.value"
-              class="tag transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-              :class="
-                filters.updatedWithin === option.value
-                  ? 'bg-fg text-bg border-fg hover:text-bg/70'
-                  : ''
-              "
-              @click="emit('update:updatedWithin', option.value)"
+              :model-value="filters.updatedWithin"
+              :value="option.value"
+              name="updatedWithin"
+              @update:modelValue="emit('update:updatedWithin', $event as UpdatedWithin)"
             >
-              {{ $t(getUpdatedWithinLabelKey(option.value)) }}
-            </button>
+              {{ getUpdatedWithinLabelKey(option.value) }}
+            </TagRadioButton>
           </div>
         </fieldset>
 
@@ -300,20 +306,16 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             </span>
           </legend>
           <div class="flex flex-wrap gap-2" role="radiogroup" :aria-label="$t('filters.security')">
-            <button
-              v-for="option in SECURITY_FILTER_OPTIONS"
-              :key="option.value"
-              type="button"
-              role="radio"
+            <TagRadioButton
+              v-for="security in SECURITY_FILTER_VALUES"
+              :key="security"
               disabled
-              :aria-checked="filters.security === option.value"
-              class="tag transition-colors duration-200 opacity-50 cursor-not-allowed focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-              :class="
-                filters.security === option.value ? 'bg-fg text-bg border-fg hover:text-bg/70' : ''
-              "
+              :model-value="filters.security"
+              :value="security"
+              name="security"
             >
-              {{ $t(getSecurityLabelKey(option.value)) }}
-            </button>
+              {{ getSecurityLabelKey(security) }}
+            </TagRadioButton>
           </div>
         </fieldset>
 
@@ -323,19 +325,15 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             {{ $t('filters.keywords') }}
           </legend>
           <div class="flex flex-wrap gap-1.5" role="group" :aria-label="$t('filters.keywords')">
-            <button
+            <ButtonBase
               v-for="keyword in displayedKeywords"
               :key="keyword"
-              type="button"
+              size="small"
               :aria-pressed="filters.keywords.includes(keyword)"
-              class="tag text-xs transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-offset-1"
-              :class="
-                filters.keywords.includes(keyword) ? 'bg-fg text-bg border-fg hover:text-bg/70' : ''
-              "
               @click="emit('toggleKeyword', keyword)"
             >
               {{ keyword }}
-            </button>
+            </ButtonBase>
             <button
               v-if="hasMoreKeywords"
               type="button"

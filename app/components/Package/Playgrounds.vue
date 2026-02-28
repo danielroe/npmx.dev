@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { PlaygroundLink } from '#shared/types'
-import { decodeHtmlEntities } from '~/utils/formatters'
 
 const props = defineProps<{
   links: PlaygroundLink[]
@@ -16,7 +15,12 @@ const providerIcons: Record<string, string> = {
   'vue-playground': 'i-simple-icons:vuedotjs',
   'nuxt-new': 'i-simple-icons:nuxtdotjs',
   'vite-new': 'i-simple-icons:vite',
-  'jsfiddle': 'i-carbon:code',
+  'jsfiddle': 'i-lucide:code',
+  'typescript-playground': 'i-simple-icons:typescript',
+  'solid-playground': 'i-simple-icons:solid',
+  'svelte-playground': 'i-simple-icons:svelte',
+  'tailwind-playground': 'i-simple-icons:tailwindcss',
+  'storybook': 'i-simple-icons:storybook',
 }
 
 // Map provider id to color class
@@ -30,10 +34,15 @@ const providerColors: Record<string, string> = {
   'nuxt-new': 'text-provider-nuxt',
   'vite-new': 'text-provider-vite',
   'jsfiddle': 'text-provider-jsfiddle',
+  'typescript-playground': 'text-provider-typescript',
+  'solid-playground': 'text-provider-solid',
+  'svelte-playground': 'text-provider-svelte',
+  'tailwind-playground': 'text-provider-tailwind',
+  'storybook': 'text-provider-storybook',
 }
 
 function getIcon(provider: string): string {
-  return providerIcons[provider] || 'i-carbon:play'
+  return providerIcons[provider] || 'i-lucide:play'
 }
 
 function getColor(provider: string): string {
@@ -109,8 +118,8 @@ function focusMenuItem(index: number) {
 </script>
 
 <template>
-  <section v-if="links.length > 0">
-    <h2 id="playgrounds-heading" class="text-xs text-fg-subtle uppercase tracking-wider mb-3">
+  <section v-if="links.length > 0" class="px-1">
+    <h2 id="playgrounds-heading" class="text-xs font-mono text-fg uppercase tracking-wider mb-3">
       {{ $t('package.playgrounds.title') }}
     </h2>
 
@@ -121,13 +130,13 @@ function focusMenuItem(index: number) {
           :href="firstLink.url"
           target="_blank"
           rel="noopener noreferrer"
-          class="w-full flex items-center gap-2 px-3 py-2 text-sm font-mono bg-bg-muted border border-border rounded-md hover:border-border-hover hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-hover transition-colors duration-200"
+          class="w-full flex items-center gap-2 px-3 py-2 text-sm font-mono bg-bg-muted border border-border rounded-md hover:border-border-hover hover:bg-bg-elevated focus-visible:outline-accent/70 transition-colors duration-200"
         >
           <span
             :class="[getIcon(firstLink.provider), getColor(firstLink.provider), 'w-4 h-4 shrink-0']"
             aria-hidden="true"
           />
-          <span class="truncate text-fg-muted">{{ decodeHtmlEntities(firstLink.label) }}</span>
+          <span class="truncate text-fg-muted">{{ firstLink.label }}</span>
         </a>
       </TooltipApp>
 
@@ -137,18 +146,18 @@ function focusMenuItem(index: number) {
         type="button"
         aria-haspopup="true"
         :aria-expanded="isOpen"
-        class="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm font-mono bg-bg-muted border border-border rounded-md hover:border-border-hover hover:bg-bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-border-hover transition-colors duration-200"
+        class="w-full flex items-center justify-between gap-2 px-3 py-2 text-sm font-mono bg-bg-muted border border-border rounded-md hover:border-border-hover hover:bg-bg-elevated focus-visible:outline-accent/70 transition-colors duration-200"
         @click="isOpen = !isOpen"
         @keydown="handleKeydown"
       >
         <span class="flex items-center gap-2">
-          <span class="i-carbon:play w-4 h-4 shrink-0 text-fg-muted" aria-hidden="true" />
+          <span class="i-lucide:play w-4 h-4 shrink-0 text-fg-muted" aria-hidden="true" />
           <span class="text-fg-muted"
             >{{ $t('package.playgrounds.choose') }} ({{ links.length }})</span
           >
         </span>
         <span
-          class="i-carbon:chevron-down w-3 h-3 text-fg-subtle transition-transform duration-200 motion-reduce:transition-none"
+          class="i-lucide:chevron-down w-3 h-3 text-fg-subtle transition-transform duration-200 motion-reduce:transition-none"
           :class="{ 'rotate-180': isOpen }"
           aria-hidden="true"
         />
@@ -176,14 +185,14 @@ function focusMenuItem(index: number) {
               target="_blank"
               rel="noopener noreferrer"
               role="menuitem"
-              class="flex items-center gap-2 px-3 py-2 text-sm font-mono text-fg-muted hover:text-fg hover:bg-bg-muted focus-visible:outline-none focus-visible:text-fg focus-visible:bg-bg-muted transition-colors duration-150"
+              class="flex items-center gap-2 px-3 py-2 text-sm font-mono text-fg-muted hover:text-fg hover:bg-bg-muted focus-visible:outline-accent/70 focus-visible:text-fg focus-visible:bg-bg-muted transition-colors duration-150"
               @click="closeDropdown"
             >
               <span
                 :class="[getIcon(link.provider), getColor(link.provider), 'w-4 h-4 shrink-0']"
                 aria-hidden="true"
               />
-              <span class="truncate">{{ decodeHtmlEntities(link.label) }}</span>
+              <span class="truncate">{{ link.label }}</span>
             </a>
           </TooltipApp>
         </div>

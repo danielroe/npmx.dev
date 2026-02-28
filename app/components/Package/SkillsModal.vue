@@ -62,7 +62,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
           :aria-selected="selectedMethod === 'skills-npm'"
           :tabindex="selectedMethod === 'skills-npm' ? 0 : -1"
           type="button"
-          class="px-2 py-1 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="px-2 py-1 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-accent/70"
           :class="
             selectedMethod === 'skills-npm'
               ? 'bg-bg border-border shadow-sm text-fg'
@@ -77,7 +77,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
           :aria-selected="selectedMethod === 'skills-cli'"
           :tabindex="selectedMethod === 'skills-cli' ? 0 : -1"
           type="button"
-          class="px-2 py-1 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="px-2 py-1 font-mono text-xs rounded transition-colors duration-150 border border-solid focus-visible:outline-accent/70"
           :class="
             selectedMethod === 'skills-cli'
               ? 'bg-bg border-border shadow-sm text-fg'
@@ -110,7 +110,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
         class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors shrink-0"
       >
         {{ $t('package.skills.learn_more') }}
-        <span class="i-carbon:arrow-right w-3 h-3" />
+        <span class="i-lucide:arrow-right w-3 h-3" />
       </a>
     </div>
 
@@ -133,7 +133,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
           </code>
           <button
             type="button"
-            class="absolute top-0 inset-ie-0 px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/cmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="absolute top-0 inset-ie-0 px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border rounded transition-colors duration-200 opacity-0 group-hover/cmd:opacity-100 hover:(text-fg border-border-hover) active:scale-95 focus-visible:opacity-100 focus-visible:outline-accent/70"
             :aria-label="$t('package.get_started.copy_command')"
             @click.stop="copyCommand"
           >
@@ -154,21 +154,26 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
       <li v-for="skill in skills" :key="skill.dirName">
         <button
           type="button"
-          class="w-full flex items-center gap-2 py-1.5 text-start rounded transition-colors hover:bg-bg-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="w-full flex items-center gap-2 py-1.5 text-start rounded transition-colors hover:bg-bg-subtle focus-visible:outline-accent/70"
           :aria-expanded="expandedSkills.has(skill.dirName)"
           @click="toggleSkill(skill.dirName)"
         >
           <span
-            class="i-carbon:chevron-right w-3 h-3 text-fg-subtle shrink-0 transition-transform duration-200"
+            class="i-lucide:chevron-right w-3 h-3 text-fg-subtle shrink-0 transition-transform duration-200"
             :class="{ 'rotate-90': expandedSkills.has(skill.dirName) }"
             aria-hidden="true"
           />
           <span class="font-mono text-sm text-fg-muted">{{ skill.name }}</span>
-          <span
+          <TooltipApp
             v-if="skill.warnings?.length"
-            class="i-carbon:warning w-3.5 h-3.5 text-amber-500 shrink-0"
-            :title="getWarningTooltip(skill)"
-          />
+            class="shrink-0 p-2 -m-2"
+            aria-hidden="true"
+            :text="getWarningTooltip(skill)"
+            to="#skills-modal"
+            defer
+          >
+            <span class="i-lucide:circle-alert w-3.5 h-3.5 text-amber-500" />
+          </TooltipApp>
         </button>
 
         <!-- Expandable details -->
@@ -189,7 +194,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
               <!-- File counts & warnings -->
               <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
                 <span v-if="skill.fileCounts?.scripts" class="text-fg-subtle">
-                  <span class="i-carbon:script size-3 align-[-2px] me-0.5" />{{
+                  <span class="i-lucide:file-code size-3 align-[-2px] me-0.5" />{{
                     $t(
                       'package.skills.file_counts.scripts',
                       { count: skill.fileCounts.scripts },
@@ -198,7 +203,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
                   }}
                 </span>
                 <span v-if="skill.fileCounts?.references" class="text-fg-subtle">
-                  <span class="i-carbon:document size-3 align-[-2px] me-0.5" />{{
+                  <span class="i-lucide:file-text size-3 align-[-2px] me-0.5" />{{
                     $t(
                       'package.skills.file_counts.refs',
                       { count: skill.fileCounts.references },
@@ -207,7 +212,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
                   }}
                 </span>
                 <span v-if="skill.fileCounts?.assets" class="text-fg-subtle">
-                  <span class="i-carbon:image size-3 align-[-2px] me-0.5" />{{
+                  <span class="i-lucide:image size-3 align-[-2px] me-0.5" />{{
                     $t(
                       'package.skills.file_counts.assets',
                       { count: skill.fileCounts.assets },
@@ -217,7 +222,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
                 </span>
                 <template v-for="warning in skill.warnings" :key="warning.message">
                   <span class="text-amber-500">
-                    <span class="i-carbon:warning size-3 align-[-2px] me-0.5" />{{
+                    <span class="i-lucide:circle-alert size-3 align-[-2px] me-0.5" />{{
                       warning.message
                     }}
                   </span>
@@ -230,7 +235,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
                 class="inline-flex items-center gap-1 text-xs text-fg-subtle hover:text-fg transition-colors"
                 @click.stop
               >
-                <span class="i-carbon:code size-3" />{{ $t('package.skills.view_source') }}
+                <span class="i-lucide:code size-3" />{{ $t('package.skills.view_source') }}
               </NuxtLink>
             </div>
           </div>

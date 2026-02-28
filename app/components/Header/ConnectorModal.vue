@@ -2,6 +2,8 @@
 const { isConnected, isConnecting, npmUser, error, hasOperations, connect, disconnect } =
   useConnector()
 
+const { settings } = useSettings()
+
 const tokenInput = shallowRef('')
 const portInput = shallowRef('31415')
 const { copied, copy } = useClipboard({ copiedDuring: 2000 })
@@ -61,6 +63,16 @@ function handleDisconnect() {
         </div>
       </div>
 
+      <!-- Connector preferences -->
+      <div class="flex flex-col gap-2">
+        <SettingsToggle
+          :label="$t('connector.modal.auto_open_url')"
+          v-model="settings.connector.autoOpenURL"
+        />
+      </div>
+
+      <div class="border-t border-border my-3" />
+
       <!-- Operations Queue -->
       <OrgOperationsQueue />
 
@@ -68,36 +80,27 @@ function handleDisconnect() {
         {{ $t('connector.modal.connected_hint') }}
       </div>
 
-      <button
-        type="button"
-        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-        @click="handleDisconnect"
-      >
+      <ButtonBase type="button" class="w-full" @click="handleDisconnect">
         {{ $t('connector.modal.disconnect') }}
-      </button>
+      </ButtonBase>
     </div>
 
     <!-- Disconnected state -->
     <form v-else class="space-y-4" @submit.prevent="handleConnect">
       <!-- Contributor-only notice -->
       <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-        <div class="space-y-2">
-          <span
-            class="inline-block px-2 py-0.5 text-xs font-bold uppercase tracking-wider bg-amber-500/20 text-amber-400 rounded"
-          >
+        <div>
+          <span class="inline-block text-xs font-bold uppercase tracking-wider text-fg rounded">
             {{ $t('connector.modal.contributor_badge') }}
           </span>
           <p class="text-sm text-fg-muted">
             <i18n-t keypath="connector.modal.contributor_notice" scope="global">
               <template #link>
-                <a
-                  href="https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md#local-connector-cli"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-amber-400 hover:underline"
+                <LinkBase
+                  to="https://github.com/npmx-dev/npmx.dev/blob/main/CONTRIBUTING.md#local-connector-cli"
                 >
                   {{ $t('connector.modal.contributor_link') }}
-                </a>
+                </LinkBase>
               </template>
             </i18n-t>
           </p>
@@ -110,18 +113,16 @@ function handleDisconnect() {
 
       <div
         class="flex items-center p-3 bg-bg-muted border border-border rounded-lg font-mono text-sm"
+        dir="ltr"
       >
         <span class="text-fg-subtle">$</span>
         <span class="text-fg-subtle ms-2">pnpm npmx-connector</span>
-        <button
-          type="button"
+        <ButtonBase
           :aria-label="copied ? $t('connector.modal.copied') : $t('connector.modal.copy_command')"
-          class="ms-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
           @click="copy('pnpm npmx-connector')"
-        >
-          <span v-if="!copied" class="i-carbon:copy w-5 h-5" aria-hidden="true" />
-          <span v-else class="i-carbon:checkmark w-5 h-5 text-green-500" aria-hidden="true" />
-        </button>
+          class="ms-auto"
+          :classicon="copied ? 'i-lucide:check text-green-500' : 'i-lucide:copy'"
+        />
       </div>
 
       <!-- TODO: Uncomment when npmx-connector is published to npm
@@ -138,13 +139,13 @@ function handleDisconnect() {
                           :aria-label="
                             copied ? $t('connector.modal.copied') : $t('connector.modal.copy_command')
                           "
-                          class="ms-auto text-fg-subtle hover:text-fg transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+                          class="ms-auto text-fg-subtle p-1.5 -m-1.5 hover:text-fg transition-colors duration-200 focus-visible:outline-accent/70 rounded"
                           @click="copyCommand"
                         >
-                          <span v-if="!copied" class="i-carbon:copy w-5 h-5" aria-hidden="true" />
+                          <span v-if="!copied" class="i-lucide:copy block w-5 h-5" aria-hidden="true" />
                           <span
                             v-else
-                            class="i-carbon:checkmark w-5 h-5 text-green-500"
+                            class="i-lucide:check block w-5 h-5 text-green-500"
                             aria-hidden="true"
                           />
                         </button>
@@ -162,21 +163,20 @@ function handleDisconnect() {
           >
             {{ $t('connector.modal.token_label') }}
           </label>
-          <input
+          <InputBase
             id="connector-token"
             v-model="tokenInput"
             type="password"
             name="connector-token"
             :placeholder="$t('connector.modal.token_placeholder')"
-            v-bind="noCorrect"
-            class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg placeholder:text-fg-subtle transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+            no-correct
+            class="w-full"
+            size="medium"
           />
         </div>
 
         <details class="text-sm">
-          <summary
-            class="text-fg-subtle cursor-pointer hover:text-fg-muted transition-colors duration-200"
-          >
+          <summary class="text-fg-subtle hover:text-fg-muted transition-colors duration-200">
             {{ $t('connector.modal.advanced') }}
           </summary>
           <div class="mt-3">
@@ -186,15 +186,24 @@ function handleDisconnect() {
             >
               {{ $t('connector.modal.port_label') }}
             </label>
-            <input
+            <InputBase
               id="connector-port"
               v-model="portInput"
               type="text"
               name="connector-port"
               inputmode="numeric"
               autocomplete="off"
-              class="w-full px-3 py-2 font-mono text-sm bg-bg-subtle border border-border rounded-md text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+              class="w-full"
+              size="medium"
             />
+
+            <div class="border-t border-border my-3" />
+            <div class="flex flex-col gap-2">
+              <SettingsToggle
+                :label="$t('connector.modal.auto_open_url')"
+                v-model="settings.connector.autoOpenURL"
+              />
+            </div>
           </div>
         </details>
       </div>
@@ -213,21 +222,22 @@ function handleDisconnect() {
         role="alert"
         class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md"
       >
-        <p class="font-mono text-sm text-fg font-bold">
+        <p class="inline-block text-xs font-bold uppercase tracking-wider text-fg rounded">
           {{ $t('connector.modal.warning') }}
         </p>
-        <p class="text-sm text-fg-muted">
+        <p class="text-sm text-fg-muted mt-1">
           {{ $t('connector.modal.warning_text') }}
         </p>
       </div>
 
-      <button
+      <ButtonBase
         type="submit"
+        variant="primary"
         :disabled="!tokenInput.trim() || isConnecting"
-        class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+        class="w-full"
       >
         {{ isConnecting ? $t('connector.modal.connecting') : $t('connector.modal.connect') }}
-      </button>
+      </ButtonBase>
     </form>
   </Modal>
 </template>

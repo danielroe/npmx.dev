@@ -15,7 +15,6 @@ import {
   DEFAULT_FILTERS,
   DOWNLOAD_RANGES,
   parseSortOption,
-  SECURITY_FILTER_OPTIONS,
   UPDATED_WITHIN_OPTIONS,
 } from '#shared/types/preferences'
 
@@ -43,7 +42,7 @@ export function parseSearchOperators(input: string): ParsedSearchOperators {
 
   // Regex to match operators: name:value, desc:value, description:value, kw:value, keyword:value
   // Value continues until whitespace or next operator
-  const operatorRegex = /\b(name|desc|description|kw|keyword):([^\s]+)/gi
+  const operatorRegex = /\b(name|desc|description|kw|keyword):(\S+)/gi
 
   let remaining = input
   let match
@@ -76,6 +75,17 @@ export function parseSearchOperators(input: string): ParsedSearchOperators {
     result.text = cleanedText
   }
 
+  // Deduplicate keywords (case-insensitive)
+  if (result.keywords) {
+    const seen = new Set<string>()
+    result.keywords = result.keywords.filter(kw => {
+      const lower = kw.toLowerCase()
+      if (seen.has(lower)) return false
+      seen.add(lower)
+      return true
+    })
+  }
+
   return result
 }
 
@@ -86,8 +96,37 @@ export function hasSearchOperators(parsed: ParsedSearchOperators): boolean {
   return !!(parsed.name?.length || parsed.description?.length || parsed.keywords?.length)
 }
 
+/**
+ * Remove a keyword from a search query string.
+ * Handles kw:xxx and keyword:xxx formats, including comma-separated values.
+ */
+export function removeKeywordFromQuery(query: string, keyword: string): string {
+  const operatorRegex = /\b((?:kw|keyword):)(\S+)/gi
+  const lowerKeyword = keyword.toLowerCase()
+
+  let result = query.replace(operatorRegex, (match, prefix: string, value: string) => {
+    const values = value.split(',').filter(Boolean)
+    const filtered = values.filter(v => v.toLowerCase() !== lowerKeyword)
+
+    if (filtered.length === 0) {
+      // All values removed — drop the entire operator
+      return ''
+    }
+    if (filtered.length === values.length) {
+      // Nothing was removed — keep original
+      return match
+    }
+    return `${prefix}${filtered.join(',')}`
+  })
+
+  // Clean up double spaces and trim
+  result = result.replace(/\s+/g, ' ').trim()
+  return result
+}
+
 interface UseStructuredFiltersOptions {
   packages: Ref<NpmSearchResult[]>
+  searchQueryModel?: Ref<string>
   initialFilters?: Partial<StructuredFilters>
   initialSort?: SortOption
 }
@@ -113,13 +152,42 @@ function matchesSecurity(pkg: NpmSearchResult, security: SecurityFilter): boolea
  *
  */
 export function useStructuredFilters(options: UseStructuredFiltersOptions) {
-  const { packages, initialFilters, initialSort } = options
+  const route = useRoute()
+  const router = useRouter()
+  const { packages, initialFilters, initialSort, searchQueryModel } = options
+  const { t } = useI18n()
 
-  // Filter state
+  const searchQuery = shallowRef(normalizeSearchParam(route.query.q))
+
+  // Filter state - must be declared before the watcher that uses it
   const filters = ref<StructuredFilters>({
     ...DEFAULT_FILTERS,
     ...initialFilters,
   })
+
+  // Watch route query changes and sync filter state
+  watch(
+    () => route.query.q,
+    urlQuery => {
+      const value = normalizeSearchParam(urlQuery)
+      if (searchQuery.value !== value) {
+        searchQuery.value = value
+      }
+
+      // Sync filters with URL
+      // When URL changes (e.g. from search input or navigation),
+      // we need to update our local filter state to match
+      const parsed = parseSearchOperators(value)
+
+      filters.value.text = parsed.text ?? ''
+      // Deduplicate keywords (in case of both kw: and keyword: for same value)
+      filters.value.keywords = parsed.keywords ?? []
+
+      // Note: We intentionally don't reset other filters (security, downloadRange, etc.)
+      // as those are not typically driven by the search query string structure
+    },
+    { immediate: true },
+  )
 
   // Sort state
   const sortOption = shallowRef<SortOption>(initialSort ?? 'updated-desc')
@@ -292,6 +360,30 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
     return [...filteredPackages.value].sort((a, b) => comparePackages(a, b, sortOption.value))
   })
 
+  // i18n key mappings for filter chip values
+  const downloadRangeLabels = computed<Record<DownloadRange, string>>(() => ({
+    'any': t('filters.download_range.any'),
+    'lt100': t('filters.download_range.lt100'),
+    '100-1k': t('filters.download_range.100_1k'),
+    '1k-10k': t('filters.download_range.1k_10k'),
+    '10k-100k': t('filters.download_range.10k_100k'),
+    'gt100k': t('filters.download_range.gt100k'),
+  }))
+
+  const securityLabels = computed<Record<SecurityFilter, string>>(() => ({
+    all: t('filters.security_options.all'),
+    secure: t('filters.security_options.secure'),
+    warnings: t('filters.security_options.insecure'),
+  }))
+
+  const updatedWithinLabels = computed<Record<UpdatedWithin, string>>(() => ({
+    any: t('filters.updated.any'),
+    week: t('filters.updated.week'),
+    month: t('filters.updated.month'),
+    quarter: t('filters.updated.quarter'),
+    year: t('filters.updated.year'),
+  }))
+
   // Active filter chips for display
   const activeFilters = computed<FilterChip[]>(() => {
     const chips: FilterChip[] = []
@@ -300,18 +392,17 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
       chips.push({
         id: 'text',
         type: 'text',
-        label: 'Search',
+        label: t('filters.chips.search'),
         value: filters.value.text,
       })
     }
 
     if (filters.value.downloadRange !== 'any') {
-      const config = DOWNLOAD_RANGES.find(r => r.value === filters.value.downloadRange)
       chips.push({
         id: 'downloadRange',
         type: 'downloadRange',
-        label: 'Downloads',
-        value: config?.label ?? filters.value.downloadRange,
+        label: t('filters.chips.downloads'),
+        value: downloadRangeLabels.value[filters.value.downloadRange],
       })
     }
 
@@ -319,28 +410,26 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
       chips.push({
         id: `keyword-${keyword}`,
         type: 'keywords',
-        label: 'Keyword',
+        label: t('filters.chips.keyword'),
         value: keyword,
       })
     }
 
     if (filters.value.security !== 'all') {
-      const config = SECURITY_FILTER_OPTIONS.find(o => o.value === filters.value.security)
       chips.push({
         id: 'security',
         type: 'security',
-        label: 'Security',
-        value: config?.label ?? filters.value.security,
+        label: t('filters.chips.security'),
+        value: securityLabels.value[filters.value.security],
       })
     }
 
     if (filters.value.updatedWithin !== 'any') {
-      const config = UPDATED_WITHIN_OPTIONS.find(o => o.value === filters.value.updatedWithin)
       chips.push({
         id: 'updatedWithin',
         type: 'updatedWithin',
-        label: 'Updated',
-        value: config?.label ?? filters.value.updatedWithin,
+        label: t('filters.chips.updated'),
+        value: updatedWithinLabels.value[filters.value.updatedWithin],
       })
     }
 
@@ -364,17 +453,35 @@ export function useStructuredFilters(options: UseStructuredFiltersOptions) {
   }
 
   function addKeyword(keyword: string) {
-    if (!filters.value.keywords.includes(keyword)) {
+    const lowerKeyword = keyword.toLowerCase()
+    const alreadyExists = filters.value.keywords.some(k => k.toLowerCase() === lowerKeyword)
+    if (!alreadyExists) {
       filters.value.keywords = [...filters.value.keywords, keyword]
+      const newQ = searchQuery.value
+        ? `${searchQuery.value.trim()} keyword:${keyword}`
+        : `keyword:${keyword}`
+      router.replace({ query: { ...route.query, q: newQ } })
+
+      if (searchQueryModel) searchQueryModel.value = newQ
     }
   }
 
   function removeKeyword(keyword: string) {
-    filters.value.keywords = filters.value.keywords.filter(k => k !== keyword)
+    const lowerKeyword = keyword.toLowerCase()
+    filters.value.keywords = filters.value.keywords.filter(k => k.toLowerCase() !== lowerKeyword)
+
+    // Remove the keyword from the search query string.
+    // Handles both kw:xxx and keyword:xxx formats, including comma-separated values.
+    const newQ = removeKeywordFromQuery(searchQuery.value, keyword)
+
+    router.replace({ query: { ...route.query, q: newQ || undefined } })
+    if (searchQueryModel) searchQueryModel.value = newQ
   }
 
   function toggleKeyword(keyword: string) {
-    if (filters.value.keywords.includes(keyword)) {
+    const lowerKeyword = keyword.toLowerCase()
+    const exists = filters.value.keywords.some(k => k.toLowerCase() === lowerKeyword)
+    if (exists) {
       removeKeyword(keyword)
     } else {
       addKeyword(keyword)

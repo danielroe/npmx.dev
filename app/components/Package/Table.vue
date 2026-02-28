@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import type { NpmSearchResult } from '#shared/types/npm-registry'
-import type { ColumnConfig, ColumnId, SortKey, SortOption } from '#shared/types/preferences'
+import type {
+  ColumnConfig,
+  ColumnId,
+  SortKey,
+  SortOption,
+  StructuredFilters,
+} from '#shared/types/preferences'
 import { buildSortOption, parseSortOption, toggleDirection } from '#shared/types/preferences'
 
 const props = defineProps<{
   results: NpmSearchResult[]
   columns: ColumnConfig[]
+  filters?: StructuredFilters
   isLoading?: boolean
 }>()
+
+const { t } = useI18n()
 
 const sortOption = defineModel<SortOption>('sortOption')
 
@@ -80,23 +89,23 @@ function toggleSort(id: string) {
 }
 
 // Map column IDs to i18n keys
-const columnLabelKeys: Record<ColumnId, string> = {
-  name: 'filters.columns.name',
-  version: 'filters.columns.version',
-  description: 'filters.columns.description',
-  downloads: 'filters.columns.downloads',
-  updated: 'filters.columns.published',
-  maintainers: 'filters.columns.maintainers',
-  keywords: 'filters.columns.keywords',
-  qualityScore: 'filters.columns.quality_score',
-  popularityScore: 'filters.columns.popularity_score',
-  maintenanceScore: 'filters.columns.maintenance_score',
-  combinedScore: 'filters.columns.combined_score',
-  security: 'filters.columns.security',
-}
+const columnLabels = computed(() => ({
+  name: t('filters.columns.name'),
+  version: t('filters.columns.version'),
+  description: t('filters.columns.description'),
+  downloads: t('filters.columns.downloads'),
+  updated: t('filters.columns.published'),
+  maintainers: t('filters.columns.maintainers'),
+  keywords: t('filters.columns.keywords'),
+  qualityScore: t('filters.columns.quality_score'),
+  popularityScore: t('filters.columns.popularity_score'),
+  maintenanceScore: t('filters.columns.maintenance_score'),
+  combinedScore: t('filters.columns.combined_score'),
+  security: t('filters.columns.security'),
+}))
 
-function getColumnLabelKey(id: ColumnId): string {
-  return columnLabelKeys[id]
+function getColumnLabel(id: ColumnId): string {
+  return columnLabels.value[id]
 }
 </script>
 
@@ -108,9 +117,9 @@ function getColumnLabelKey(id: ColumnId): string {
           <!-- Name (always visible) -->
           <th
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
-              'cursor-pointer hover:text-fg transition-colors duration-200': isSortable('name'),
+              'hover:text-fg transition-colors duration-200': isSortable('name'),
             }"
             :aria-sort="
               isColumnSorted('name')
@@ -126,15 +135,19 @@ function getColumnLabelKey(id: ColumnId): string {
             @keydown.space.prevent="toggleSort('name')"
           >
             <span class="inline-flex items-center gap-1">
-              {{ $t(getColumnLabelKey('name')) }}
+              {{ getColumnLabel('name') }}
               <template v-if="isSortable('name')">
                 <span
                   v-if="isColumnSorted('name')"
-                  class="i-carbon-caret-down w-3 h-3"
+                  class="i-lucide:chevron-down w-3 h-3"
                   :class="getSortDirection('name') === 'asc' ? 'rotate-180' : ''"
                   aria-hidden="true"
                 />
-                <span v-else class="i-carbon-caret-sort w-3 h-3 opacity-30" aria-hidden="true" />
+                <span
+                  v-else
+                  class="i-lucide:chevrons-up-down w-3 h-3 opacity-30"
+                  aria-hidden="true"
+                />
               </template>
             </span>
           </th>
@@ -142,26 +155,25 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('version')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none"
           >
-            {{ $t(getColumnLabelKey('version')) }}
+            {{ getColumnLabel('version') }}
           </th>
 
           <th
             v-if="isColumnVisible('description')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none"
           >
-            {{ $t(getColumnLabelKey('description')) }}
+            {{ getColumnLabel('description') }}
           </th>
 
           <th
             v-if="isColumnVisible('downloads')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
-              'cursor-pointer hover:text-fg transition-colors duration-200':
-                isSortable('downloads'),
+              'hover:text-fg transition-colors duration-200': isSortable('downloads'),
             }"
             :aria-sort="
               isColumnSorted('downloads')
@@ -177,15 +189,19 @@ function getColumnLabelKey(id: ColumnId): string {
             @keydown.space.prevent="toggleSort('downloads')"
           >
             <span class="inline-flex items-center gap-1 justify-end">
-              {{ $t(getColumnLabelKey('downloads')) }}
+              {{ getColumnLabel('downloads') }}
               <template v-if="isSortable('downloads')">
                 <span
                   v-if="isColumnSorted('downloads')"
-                  class="i-carbon-caret-down w-3 h-3"
+                  class="i-lucide:chevron-down w-3 h-3"
                   :class="getSortDirection('downloads') === 'asc' ? 'rotate-180' : ''"
                   aria-hidden="true"
                 />
-                <span v-else class="i-carbon-caret-sort w-3 h-3 opacity-30" aria-hidden="true" />
+                <span
+                  v-else
+                  class="i-lucide:chevrons-up-down w-3 h-3 opacity-30"
+                  aria-hidden="true"
+                />
               </template>
             </span>
           </th>
@@ -193,9 +209,9 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('updated')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none"
             :class="{
-              'cursor-pointer hover:text-fg transition-colors duration-200': isSortable('updated'),
+              'hover:text-fg transition-colors duration-200': isSortable('updated'),
             }"
             :aria-sort="
               isColumnSorted('updated')
@@ -211,15 +227,19 @@ function getColumnLabelKey(id: ColumnId): string {
             @keydown.space.prevent="toggleSort('updated')"
           >
             <span class="inline-flex items-center gap-1">
-              {{ $t(getColumnLabelKey('updated')) }}
+              {{ getColumnLabel('updated') }}
               <template v-if="isSortable('updated')">
                 <span
                   v-if="isColumnSorted('updated')"
-                  class="i-carbon-caret-down w-3 h-3"
+                  class="i-lucide:chevron-down w-3 h-3"
                   :class="getSortDirection('updated') === 'asc' ? 'rotate-180' : ''"
                   aria-hidden="true"
                 />
-                <span v-else class="i-carbon-caret-sort w-3 h-3 opacity-30" aria-hidden="true" />
+                <span
+                  v-else
+                  class="i-lucide:chevrons-up-down w-3 h-3 opacity-30"
+                  aria-hidden="true"
+                />
               </template>
             </span>
           </th>
@@ -227,57 +247,57 @@ function getColumnLabelKey(id: ColumnId): string {
           <th
             v-if="isColumnVisible('maintainers')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('maintainers')) }}
+            {{ getColumnLabel('maintainers') }}
           </th>
 
           <th
             v-if="isColumnVisible('keywords')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('keywords')) }}
+            {{ getColumnLabel('keywords') }}
           </th>
 
           <th
             v-if="isColumnVisible('qualityScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('qualityScore')) }}
+            {{ getColumnLabel('qualityScore') }}
           </th>
 
           <th
             v-if="isColumnVisible('popularityScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('popularityScore')) }}
+            {{ getColumnLabel('popularityScore') }}
           </th>
 
           <th
             v-if="isColumnVisible('maintenanceScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('maintenanceScore')) }}
+            {{ getColumnLabel('maintenanceScore') }}
           </th>
 
           <th
             v-if="isColumnVisible('combinedScore')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider text-end"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('combinedScore')) }}
+            {{ getColumnLabel('combinedScore') }}
           </th>
 
           <th
             v-if="isColumnVisible('security')"
             scope="col"
-            class="py-3 px-3 text-xs font-mono font-medium text-fg-muted uppercase tracking-wider"
+            class="py-3 px-3 text-xs text-start text-fg-muted font-mono font-medium uppercase tracking-wider whitespace-nowrap select-none text-end"
           >
-            {{ $t(getColumnLabelKey('security')) }}
+            {{ getColumnLabel('security') }}
           </th>
         </tr>
       </thead>
@@ -294,17 +314,17 @@ function getColumnLabelKey(id: ColumnId): string {
             <td v-if="isColumnVisible('description')" class="py-3 px-3">
               <div class="h-4 w-48 bg-bg-muted rounded animate-pulse" />
             </td>
-            <td v-if="isColumnVisible('downloads')" class="py-3 px-3 text-end">
+            <td v-if="isColumnVisible('downloads')" class="py-3 px-3">
               <div class="h-4 w-16 bg-bg-muted rounded animate-pulse ms-auto" />
             </td>
             <td v-if="isColumnVisible('updated')" class="py-3 px-3">
-              <div class="h-4 w-20 bg-bg-muted rounded animate-pulse" />
+              <div class="h-4 w-20 bg-bg-muted rounded animate-pulse ms-auto" />
             </td>
             <td v-if="isColumnVisible('maintainers')" class="py-3 px-3">
-              <div class="h-4 w-24 bg-bg-muted rounded animate-pulse" />
+              <div class="h-4 w-24 bg-bg-muted rounded animate-pulse ms-auto" />
             </td>
             <td v-if="isColumnVisible('keywords')" class="py-3 px-3">
-              <div class="h-4 w-32 bg-bg-muted rounded animate-pulse" />
+              <div class="h-4 w-32 bg-bg-muted rounded animate-pulse ms-auto" />
             </td>
           </tr>
         </template>
@@ -317,6 +337,7 @@ function getColumnLabelKey(id: ColumnId): string {
             :result="result"
             :columns="columns"
             :index="index"
+            :filters="filters"
             @click-keyword="emit('clickKeyword', $event)"
           />
         </template>

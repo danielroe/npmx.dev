@@ -6,7 +6,10 @@ import { BACKGROUND_THEMES } from '#shared/utils/constants'
 
 type BackgroundThemeId = keyof typeof BACKGROUND_THEMES
 
-type AccentColorId = keyof typeof ACCENT_COLORS
+type AccentColorId = keyof typeof ACCENT_COLORS.light
+
+/** Available search providers */
+export type SearchProvider = 'npm' | 'algolia'
 
 /**
  * Application settings stored in localStorage
@@ -24,8 +27,23 @@ export interface AppSettings {
   hidePlatformPackages: boolean
   /** User-selected locale */
   selectedLocale: LocaleObject['code'] | null
+  /** Search provider for package search */
+  searchProvider: SearchProvider
+  /** Enable/disable keyboard shortcuts */
+  keyboardShortcuts: boolean
+  /** Connector preferences */
+  connector: {
+    /** Automatically open the web auth page in the browser */
+    autoOpenURL: boolean
+  }
   sidebar: {
     collapsed: string[]
+    animateSparkline: boolean
+  }
+  chartFilter: {
+    averageWindow: number
+    smoothingTau: number
+    anomaliesFixed: boolean
   }
 }
 
@@ -36,8 +54,19 @@ const DEFAULT_SETTINGS: AppSettings = {
   hidePlatformPackages: true,
   selectedLocale: null,
   preferredBackgroundTheme: null,
+  searchProvider: import.meta.test ? 'npm' : 'algolia',
+  keyboardShortcuts: true,
+  connector: {
+    autoOpenURL: false,
+  },
   sidebar: {
     collapsed: [],
+    animateSparkline: true,
+  },
+  chartFilter: {
+    averageWindow: 0,
+    smoothingTau: 1,
+    anomaliesFixed: true,
   },
 }
 
@@ -72,21 +101,51 @@ export function useRelativeDates() {
 }
 
 /**
+ * Composable for accessing just the keyboard shortcuts setting.
+ * Useful for components that only need to read this specific setting.
+ */
+export const useKeyboardShortcuts = createSharedComposable(function useKeyboardShortcuts() {
+  const { settings } = useSettings()
+  const enabled = computed(() => settings.value.keyboardShortcuts)
+
+  if (import.meta.client) {
+    watch(
+      enabled,
+      value => {
+        if (value) {
+          delete document.documentElement.dataset.kbdShortcuts
+        } else {
+          document.documentElement.dataset.kbdShortcuts = 'false'
+        }
+      },
+      { immediate: true },
+    )
+  }
+
+  return enabled
+})
+
+/**
  * Composable for managing accent color.
  */
 export function useAccentColor() {
   const { settings } = useSettings()
+  const colorMode = useColorMode()
 
-  const accentColors = Object.entries(ACCENT_COLORS).map(([id, value]) => ({
-    id: id as AccentColorId,
-    name: id,
-    value,
-  }))
+  const accentColors = computed(() => {
+    const isDark = colorMode.value === 'dark'
+    const colors = isDark ? ACCENT_COLORS.dark : ACCENT_COLORS.light
+
+    return Object.entries(colors).map(([id, value]) => ({
+      id: id as AccentColorId,
+      name: id,
+      value,
+    }))
+  })
 
   function setAccentColor(id: AccentColorId | null) {
-    const color = id ? ACCENT_COLORS[id] : null
-    if (color) {
-      document.documentElement.style.setProperty('--accent-color', color)
+    if (id) {
+      document.documentElement.style.setProperty('--accent-color', `var(--swatch-${id})`)
     } else {
       document.documentElement.style.removeProperty('--accent-color')
     }
@@ -97,6 +156,32 @@ export function useAccentColor() {
     accentColors,
     selectedAccentColor: computed(() => settings.value.accentColorId),
     setAccentColor,
+  }
+}
+
+/**
+ * Composable for managing the search provider setting.
+ */
+export function useSearchProvider() {
+  const { settings } = useSettings()
+
+  const searchProvider = computed({
+    get: () => settings.value.searchProvider,
+    set: (value: SearchProvider) => {
+      settings.value.searchProvider = value
+    },
+  })
+
+  const isAlgolia = computed(() => searchProvider.value === 'algolia')
+
+  function toggle() {
+    searchProvider.value = searchProvider.value === 'npm' ? 'algolia' : 'npm'
+  }
+
+  return {
+    searchProvider,
+    isAlgolia,
+    toggle,
   }
 }
 

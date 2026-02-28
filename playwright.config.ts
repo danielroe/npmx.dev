@@ -16,8 +16,12 @@ export default defineConfig<ConfigOptions>({
     command: 'pnpm start:playwright:webserver',
     url: baseURL,
     reuseExistingServer: false,
-    timeout: 120_000,
+    timeout: 60_000,
   },
+  // Start/stop mock connector server before/after all tests (teardown via returned closure)
+  globalSetup: fileURLToPath(new URL('./test/e2e/global-setup.ts', import.meta.url)),
+  // We currently only test on one browser on one platform
+  snapshotPathTemplate: '{snapshotDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   use: {
     baseURL,
     trace: 'on-first-retry',
@@ -28,7 +32,7 @@ export default defineConfig<ConfigOptions>({
   },
   projects: [
     {
-      name: 'chromium',
+      name: 'chromium-headless-shell',
       use: { ...devices['Desktop Chrome'] },
     },
   ],

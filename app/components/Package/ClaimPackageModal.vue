@@ -3,6 +3,8 @@ import { checkPackageName } from '~/utils/package-name'
 
 const props = defineProps<{
   packageName: string
+  packageScope?: string | null
+  canPublishToScope: boolean
 }>()
 
 const {
@@ -36,12 +38,12 @@ const isChecking = computed(() => {
 })
 
 const mergedError = computed(() => {
-  return (
-    publishError.value ??
-    (checkError.value instanceof Error
-      ? checkError.value.message
-      : $t('claim.modal.failed_to_check'))
-  )
+  return checkResult.value !== null
+    ? null
+    : (publishError.value ??
+        (checkError.value instanceof Error
+          ? checkError.value.message
+          : $t('claim.modal.failed_to_check')))
 })
 
 const connectorModal = useModal('connector-modal')
@@ -96,7 +98,7 @@ async function handleClaim() {
   }
 }
 
-const dialogRef = ref<HTMLDialogElement>()
+const dialogRef = useTemplateRef('dialogRef')
 
 function open() {
   // Reset state and check availability each time modal is opened
@@ -158,7 +160,7 @@ const previewPackageJson = computed(() => {
       <div
         class="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
       >
-        <span class="i-carbon-checkmark-filled text-green-500 w-6 h-6" aria-hidden="true" />
+        <span class="i-lucide:check text-green-500 w-6 h-6" aria-hidden="true" />
         <div>
           <p class="font-mono text-sm text-fg">{{ $t('claim.modal.success') }}</p>
           <p class="text-xs text-fg-muted">
@@ -173,15 +175,15 @@ const previewPackageJson = computed(() => {
 
       <div class="flex gap-3">
         <NuxtLink
-          :to="`/package/${packageName}`"
-          class="flex-1 px-4 py-2 font-mono text-sm text-center text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          :to="packageRoute(packageName)"
+          class="flex-1 px-4 py-2 font-mono text-sm text-center text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-accent/70"
           @click="close"
         >
           {{ $t('claim.modal.view_package') }}
         </NuxtLink>
         <button
           type="button"
-          class="flex-1 px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="flex-1 px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
           @click="close"
         >
           {{ $t('common.close') }}
@@ -221,12 +223,22 @@ const previewPackageJson = computed(() => {
       </div>
 
       <!-- Availability status -->
-      <div v-if="checkResult.valid">
+      <template v-if="checkResult.valid">
         <div
-          v-if="checkResult.available"
+          v-if="isConnected && !canPublishToScope"
+          class="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
+        >
+          <span class="i-lucide:x text-red-500 w-5 h-5" aria-hidden="true" />
+          <p class="font-mono text-sm text-fg">
+            {{ $t('claim.modal.missing_permission', { scope: packageScope }) }}
+          </p>
+        </div>
+
+        <div
+          v-else-if="checkResult.available"
           class="flex items-center gap-3 p-4 bg-green-500/10 border border-green-500/20 rounded-lg"
         >
-          <span class="i-carbon-checkmark-filled text-green-500 w-5 h-5" aria-hidden="true" />
+          <span class="i-lucide:check text-green-500 w-5 h-5" aria-hidden="true" />
           <p class="font-mono text-sm text-fg">{{ $t('claim.modal.available') }}</p>
         </div>
 
@@ -234,13 +246,13 @@ const previewPackageJson = computed(() => {
           v-else
           class="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/20 rounded-lg"
         >
-          <span class="i-carbon-close-filled text-red-500 w-5 h-5" aria-hidden="true" />
+          <span class="i-lucide:x text-red-500 w-5 h-5" aria-hidden="true" />
           <p class="font-mono text-sm text-fg">{{ $t('claim.modal.taken') }}</p>
         </div>
-      </div>
+      </template>
 
       <!-- Similar packages warning -->
-      <div v-if="checkResult.similarPackages?.length && checkResult.available">
+      <template v-if="checkResult.similarPackages?.length && checkResult.available">
         <div
           :class="
             hasDangerousSimilarPackages
@@ -266,19 +278,19 @@ const previewPackageJson = computed(() => {
             >
               <span
                 v-if="pkg.similarity === 'exact-match'"
-                class="i-carbon-warning-filled text-red-500 w-4 h-4 mt-0.5 shrink-0"
+                class="i-lucide:circle-alert text-red-500 w-4 h-4 mt-0.5 shrink-0"
                 aria-hidden="true"
               />
               <span
                 v-else-if="pkg.similarity === 'very-similar'"
-                class="i-carbon-warning text-yellow-500 w-4 h-4 mt-0.5 shrink-0"
+                class="i-lucide:circle-alert text-yellow-500 w-4 h-4 mt-0.5 shrink-0"
                 aria-hidden="true"
               />
               <span v-else class="w-4 h-4 shrink-0" />
               <div class="min-w-0">
                 <NuxtLink
-                  :to="`/package/${pkg.name}`"
-                  class="font-mono text-sm text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50 rounded"
+                  :to="packageRoute(pkg.name)"
+                  class="font-mono text-sm text-fg hover:underline focus-visible:outline-accent/70 rounded"
                   target="_blank"
                 >
                   {{ pkg.name }}
@@ -290,7 +302,7 @@ const previewPackageJson = computed(() => {
             </li>
           </ul>
         </div>
-      </div>
+      </template>
 
       <!-- Error message -->
       <div
@@ -328,7 +340,7 @@ const previewPackageJson = computed(() => {
           </div>
           <button
             type="button"
-            class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 focus-visible:outline-accent/70"
             @click="connectorModal.open"
           >
             {{ $t('claim.modal.connect_button') }}
@@ -336,7 +348,7 @@ const previewPackageJson = computed(() => {
         </div>
 
         <!-- Claim button -->
-        <div v-else class="space-y-3">
+        <div v-else-if="isConnected && canPublishToScope" class="space-y-3">
           <p class="text-sm text-fg-muted">
             {{ $t('claim.modal.publish_hint') }}
           </p>
@@ -344,7 +356,7 @@ const previewPackageJson = computed(() => {
           <!-- Expandable package.json preview -->
           <details class="border border-border rounded-md overflow-hidden">
             <summary
-              class="px-3 py-2 text-sm text-fg-muted bg-bg-subtle cursor-pointer hover:text-fg transition-colors select-none"
+              class="px-3 py-2 text-sm text-fg-muted bg-bg-subtle hover:text-fg transition-colors select-none"
             >
               {{ $t('claim.modal.preview_json') }}
             </summary>
@@ -356,7 +368,7 @@ const previewPackageJson = computed(() => {
           <button
             type="button"
             :disabled="isPublishing"
-            class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="w-full px-4 py-2 font-mono text-sm text-bg bg-fg rounded-md transition-colors duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
             @click="handleClaim"
           >
             {{ isPublishing ? $t('claim.modal.publishing') : $t('claim.modal.claim_button') }}
@@ -368,7 +380,7 @@ const previewPackageJson = computed(() => {
       <button
         v-if="!checkResult.available || !checkResult.valid"
         type="button"
-        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
         @click="close"
       >
         {{ $t('common.close') }}
@@ -385,7 +397,7 @@ const previewPackageJson = computed(() => {
       </div>
       <button
         type="button"
-        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="w-full px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
         @click="() => checkAvailability()"
       >
         {{ $t('common.retry') }}

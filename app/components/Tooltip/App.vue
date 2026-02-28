@@ -1,21 +1,50 @@
 <script setup lang="ts">
 const props = defineProps<{
-  /** Tooltip text */
-  text: string
+  /** Tooltip text (optional when using content slot) */
+  text?: string
   /** Position: 'top' | 'bottom' | 'left' | 'right' */
   position?: 'top' | 'bottom' | 'left' | 'right'
+  /** Enable interactive tooltip (pointer events + hide delay for clickable content) */
+  interactive?: boolean
+  /** Teleport target for the tooltip content (defaults to 'body') */
+  to?: string | HTMLElement
+  /** Whether to defer teleport rendering until after the component is mounted */
+  defer?: boolean
+  /** Offset distance in pixels (default: 4) */
+  offset?: number
 }>()
 
 const isVisible = shallowRef(false)
 const tooltipId = useId()
+const hideTimeout = shallowRef<ReturnType<typeof setTimeout> | null>(null)
 
 function show() {
+  if (hideTimeout.value) {
+    clearTimeout(hideTimeout.value)
+    hideTimeout.value = null
+  }
   isVisible.value = true
 }
 
 function hide() {
-  isVisible.value = false
+  if (props.interactive) {
+    // Delay hide so cursor can travel from trigger to tooltip
+    hideTimeout.value = setTimeout(() => {
+      isVisible.value = false
+    }, 150)
+  } else {
+    isVisible.value = false
+  }
 }
+
+const tooltipAttrs = computed(() => {
+  const attrs: Record<string, unknown> = { role: 'tooltip', id: tooltipId }
+  if (props.interactive) {
+    attrs.onMouseenter = show
+    attrs.onMouseleave = hide
+  }
+  return attrs
+})
 </script>
 
 <template>
@@ -23,12 +52,20 @@ function hide() {
     :text
     :isVisible
     :position
-    :tooltip-attr="{ role: 'tooltip', id: tooltipId }"
+    :interactive
+    :to
+    :defer
+    :offset
+    :tooltip-attr="tooltipAttrs"
     @mouseenter="show"
     @mouseleave="hide"
     @focusin="show"
     @focusout="hide"
     :aria-describedby="isVisible ? tooltipId : undefined"
-    ><slot
-  /></TooltipBase>
+  >
+    <slot />
+    <template v-if="$slots.content" #content>
+      <slot name="content" />
+    </template>
+  </TooltipBase>
 </template>

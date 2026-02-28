@@ -1,39 +1,30 @@
 import type { NodeSavedState, NodeSavedStateStore } from '@atproto/oauth-client-node'
-import type { H3Event } from 'h3'
+import { OAUTH_CACHE_STORAGE_BASE } from './storage'
 
-/**
- * Storage key prefix for oauth state storage.
- */
-export const OAUTH_STATE_CACHE_STORAGE_BASE = 'oauth-atproto-state'
+// It is recommended that oauth state is only saved for 30 minutes
+const STATE_EXPIRATION = CACHE_MAX_AGE_ONE_MINUTE * 30
 
 export class OAuthStateStore implements NodeSavedStateStore {
-  private readonly cookieKey = 'oauth:atproto:state'
-  private readonly storage = useStorage(OAUTH_STATE_CACHE_STORAGE_BASE)
+  private readonly cache: CacheAdapter
 
-  constructor(private event: H3Event) {}
+  constructor() {
+    this.cache = getCacheAdapter(OAUTH_CACHE_STORAGE_BASE)
+  }
 
-  async get(): Promise<NodeSavedState | undefined> {
-    const stateKey = getCookie(this.event, this.cookieKey)
-    if (!stateKey) return
-    const result = await this.storage.getItem<NodeSavedState>(stateKey)
-    if (!result) return
-    return result
+  private createStorageKey(key: string) {
+    return `state:${key}`
+  }
+
+  async get(key: string): Promise<NodeSavedState | undefined> {
+    const state = await this.cache.get<NodeSavedState>(this.createStorageKey(key))
+    return state ?? undefined
   }
 
   async set(key: string, val: NodeSavedState) {
-    setCookie(this.event, this.cookieKey, key, {
-      httpOnly: true,
-      secure: !import.meta.dev,
-      sameSite: 'lax',
-    })
-    await this.storage.setItem<NodeSavedState>(key, val)
+    await this.cache.set<NodeSavedState>(this.createStorageKey(key), val, STATE_EXPIRATION)
   }
 
-  async del() {
-    const stateKey = getCookie(this.event, this.cookieKey)
-    deleteCookie(this.event, this.cookieKey)
-    if (stateKey) {
-      await this.storage.del(stateKey)
-    }
+  async del(key: string) {
+    await this.cache.delete(this.createStorageKey(key))
   }
 }

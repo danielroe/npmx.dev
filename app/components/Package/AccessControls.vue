@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NewOperation } from '~/composables/useConnector'
-import { buildScopeTeam } from '~/utils/npm'
+import { buildScopeTeam } from '~/utils/npm/common'
 
 const props = defineProps<{
   packageName: string
@@ -157,13 +157,13 @@ watch(
       </h2>
       <button
         type="button"
-        class="p-1 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+        class="p-1 text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
         :aria-label="$t('package.access.refresh')"
         :disabled="isLoadingCollaborators"
         @click="loadCollaborators"
       >
         <span
-          class="i-carbon-renew w-3.5 h-3.5"
+          class="i-lucide:refresh-ccw w-3.5 h-3.5"
           :class="{ 'motion-safe:animate-spin': isLoadingCollaborators }"
           aria-hidden="true"
         />
@@ -173,7 +173,7 @@ watch(
     <!-- Loading state -->
     <div v-if="isLoadingCollaborators && collaboratorList.length === 0" class="py-4 text-center">
       <span
-        class="i-carbon-rotate-180 w-4 h-4 text-fg-muted animate-spin mx-auto"
+        class="i-svg-spinners:ring-resize w-4 h-4 text-fg-muted animate-spin mx-auto"
         aria-hidden="true"
       />
     </div>
@@ -197,12 +197,12 @@ watch(
         <div class="flex items-center gap-2 min-w-0">
           <span
             v-if="collab.isTeam"
-            class="i-carbon-group w-3.5 h-3.5 text-fg-subtle shrink-0"
+            class="i-lucide:users w-3.5 h-3.5 text-fg-subtle shrink-0"
             aria-hidden="true"
           />
           <span
             v-else
-            class="i-carbon-user w-3.5 h-3.5 text-fg-subtle shrink-0"
+            class="i-lucide:user w-3.5 h-3.5 text-fg-subtle shrink-0"
             aria-hidden="true"
           />
           <span class="font-mono text-sm text-fg-muted truncate">
@@ -225,11 +225,11 @@ watch(
         <button
           v-if="collab.isTeam"
           type="button"
-          class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 shrink-0 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+          class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 shrink-0 rounded focus-visible:outline-accent/70"
           :aria-label="$t('package.access.revoke_access', { name: collab.displayName })"
           @click="handleRevokeAccess(collab.name)"
         >
-          <span class="i-carbon-close w-3.5 h-3.5" aria-hidden="true" />
+          <span class="i-lucide:x w-3.5 h-3.5" aria-hidden="true" />
         </button>
         <span v-else class="text-xs text-fg-subtle"> {{ $t('package.access.owner') }} </span>
       </li>
@@ -243,55 +243,53 @@ watch(
     <div v-if="showGrantAccess">
       <form class="space-y-2" @submit.prevent="handleGrantAccess">
         <div class="flex items-center gap-2">
-          <label for="grant-team-select" class="sr-only">{{
-            $t('package.access.select_team_label')
-          }}</label>
-          <select
+          <SelectField
+            :label="$t('package.access.select_team_label')"
+            hidden-label
             id="grant-team-select"
             v-model="selectedTeam"
             name="grant-team"
-            class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            block
+            size="sm"
             :disabled="isLoadingTeams"
-          >
-            <option value="" disabled>
-              {{
-                isLoadingTeams
+            :items="[
+              {
+                label: isLoadingTeams
                   ? $t('package.access.loading_teams')
-                  : $t('package.access.select_team')
-              }}
-            </option>
-            <option v-for="team in teams" :key="team" :value="team">
-              {{ orgName }}:{{ team }}
-            </option>
-          </select>
-        </div>
-        <div class="flex items-center gap-2">
-          <label for="grant-permission-select" class="sr-only">{{
-            $t('package.access.permission_label')
-          }}</label>
-          <select
+                  : $t('package.access.select_team'),
+                value: '',
+                disabled: true,
+              },
+              ...teams.map(team => ({ label: `${orgName}:${team}`, value: team })),
+            ]"
+          />
+          <SelectField
+            :label="$t('package.access.permission_label')"
+            hidden-label
             id="grant-permission-select"
             v-model="permission"
             name="grant-permission"
-            class="flex-1 px-2 py-1.5 font-mono text-sm bg-bg-subtle border border-border rounded text-fg transition-colors duration-200 focus:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
-          >
-            <option value="read-only">{{ $t('package.access.permission.read_only') }}</option>
-            <option value="read-write">{{ $t('package.access.permission.read_write') }}</option>
-          </select>
+            block
+            size="sm"
+            :items="[
+              { label: $t('package.access.permission.read_only'), value: 'read-only' },
+              { label: $t('package.access.permission.read_write'), value: 'read-write' },
+            ]"
+          />
           <button
             type="submit"
             :disabled="!selectedTeam || isGranting"
-            class="px-3 py-1.5 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="px-3 py-2 font-mono text-xs text-bg bg-fg rounded transition-all duration-200 hover:bg-fg/90 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
           >
             {{ isGranting ? '…' : $t('package.access.grant_button') }}
           </button>
           <button
             type="button"
-            class="p-1.5 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+            class="p-1.5 text-fg-subtle hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
             :aria-label="$t('package.access.cancel_grant')"
             @click="showGrantAccess = false"
           >
-            <span class="i-carbon-close w-4 h-4" aria-hidden="true" />
+            <span class="i-lucide:x w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </form>
@@ -299,7 +297,7 @@ watch(
     <button
       v-else
       type="button"
-      class="w-full px-3 py-1.5 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-fg/50"
+      class="w-full px-3 py-1.5 font-mono text-xs text-fg-muted bg-bg-subtle border border-border rounded transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
       @click="showGrantAccess = true"
     >
       {{ $t('package.access.grant_access') }}

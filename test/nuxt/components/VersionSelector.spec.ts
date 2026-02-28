@@ -4,7 +4,7 @@ import VersionSelector from '~/components/VersionSelector.vue'
 
 // Mock the fetchAllPackageVersions function
 const mockFetchAllPackageVersions = vi.fn()
-vi.mock('~/composables/useNpmRegistry', () => ({
+vi.mock('~/utils/npm/api', () => ({
   fetchAllPackageVersions: (...args: unknown[]) => mockFetchAllPackageVersions(...args),
 }))
 
@@ -544,7 +544,7 @@ describe('VersionSelector', () => {
 
       // Should show loading spinner (motion-safe:animate-spin is applied)
       await vi.waitFor(() => {
-        const spinner = component.find('.i-carbon\\:rotate-180')
+        const spinner = component.find('.i-svg-spinners\\:ring-resize')
         expect(spinner.exists()).toBe(true)
       })
 

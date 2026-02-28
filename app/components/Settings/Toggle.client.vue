@@ -1,49 +1,179 @@
 <script setup lang="ts">
-defineProps<{
-  label?: string
-  description?: string
-}>()
+import TooltipApp from '~/components/Tooltip/App.vue'
+
+const props = withDefaults(
+  defineProps<{
+    label: string
+    description?: string
+    justify?: 'between' | 'start'
+    tooltip?: string
+    tooltipPosition?: 'top' | 'bottom' | 'left' | 'right'
+    tooltipTo?: string
+    tooltipOffset?: number
+    reverseOrder?: boolean
+  }>(),
+  {
+    justify: 'between',
+    reverseOrder: false,
+  },
+)
 
 const checked = defineModel<boolean>({
-  default: false,
+  required: true,
 })
+const id = useId()
 </script>
 
 <template>
-  <button
-    type="button"
-    class="w-full flex items-center justify-between gap-4 group"
-    role="switch"
-    :aria-checked="checked"
-    @click="checked = !checked"
+  <label
+    :for="id"
+    class="grid items-center gap-1.5 py-1 -my-1 grid-cols-[auto_1fr_auto]"
+    :class="[justify === 'start' ? 'justify-start' : '']"
+    :style="
+      props.reverseOrder
+        ? 'grid-template-areas: \'toggle . label-text\''
+        : 'grid-template-areas: \'label-text . toggle\''
+    "
   >
-    <span v-if="label" class="text-sm text-fg font-medium text-start">
-      {{ label }}
-    </span>
-    <span
-      class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 transition-colors duration-200 ease-in-out motion-reduce:transition-none cursor-pointer"
-      :class="checked ? 'bg-accent border-transparent shadow-sm' : 'bg-bg border border-border'"
-      aria-hidden="true"
-    >
-      <span
-        class="pointer-events-none inline-block h-5 w-5 rounded-full shadow-sm ring-0 transition-transform duration-200 ease-in-out motion-reduce:transition-none"
-        :class="checked ? 'bg-bg' : 'bg-fg-muted'"
+    <template v-if="props.reverseOrder">
+      <input
+        role="switch"
+        type="checkbox"
+        :id
+        v-model="checked"
+        class="toggle appearance-none h-6 w-11 rounded-full border border-fg relative shrink-0 bg-fg-subtle checked:bg-fg checked:border-fg focus-visible:(outline-2 outline-fg outline-offset-2) before:content-[''] before:absolute before:h-5 before:w-5 before:top-1px before:rounded-full before:bg-bg"
+        style="grid-area: toggle"
       />
-    </span>
-  </button>
-  <p v-if="description" class="text-sm text-fg-muted">
+      <TooltipApp
+        v-if="tooltip && label"
+        :text="tooltip"
+        :position="tooltipPosition ?? 'top'"
+        :to="tooltipTo"
+        :offset="tooltipOffset"
+      >
+        <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">
+          {{ label }}
+        </span>
+      </TooltipApp>
+      <span
+        v-else-if="label"
+        class="text-sm text-fg font-medium text-start"
+        style="grid-area: label-text"
+      >
+        {{ label }}
+      </span>
+    </template>
+    <template v-else>
+      <TooltipApp
+        v-if="tooltip && label"
+        :text="tooltip"
+        :position="tooltipPosition ?? 'top'"
+        :to="tooltipTo"
+        :offset="tooltipOffset"
+      >
+        <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">
+          {{ label }}
+        </span>
+      </TooltipApp>
+      <span
+        v-else-if="label"
+        class="text-sm text-fg font-medium text-start"
+        style="grid-area: label-text"
+      >
+        {{ label }}
+      </span>
+      <input
+        role="switch"
+        type="checkbox"
+        :id
+        v-model="checked"
+        class="toggle appearance-none h-6 w-11 rounded-full border border-fg relative shrink-0 bg-fg-subtle checked:bg-fg checked:border-fg focus-visible:(outline-2 outline-fg outline-offset-2) before:content-[''] before:absolute before:h-5 before:w-5 before:top-1px before:rounded-full before:bg-bg"
+        style="grid-area: toggle; justify-self: end"
+      />
+    </template>
+  </label>
+  <p v-if="description" class="text-sm text-fg-muted mt-2">
     {{ description }}
   </p>
 </template>
 
 <style scoped>
-button[aria-checked='false'] > span:last-of-type > span {
-  translate: 0;
+/* Thumb position: logical property for RTL support */
+.toggle::before {
+  inset-inline-start: 1px;
 }
-button[aria-checked='true'] > span:last-of-type > span {
-  translate: calc(100%);
+
+/* Track transition */
+.toggle {
+  transition:
+    background-color 200ms ease-in-out,
+    border-color 100ms ease-in-out;
 }
-html[dir='rtl'] button[aria-checked='true'] > span:last-of-type > span {
-  translate: calc(-100%);
+
+.toggle::before {
+  transition:
+    background-color 200ms ease-in-out,
+    translate 200ms ease-in-out;
+}
+
+/* Hover states */
+.toggle:hover:not(:checked) {
+  background: var(--fg-muted);
+}
+
+.toggle:checked:hover {
+  background: var(--fg-muted);
+  border-color: var(--fg-muted);
+}
+
+/* RTL-aware checked thumb position */
+:dir(ltr) .toggle:checked::before {
+  translate: 20px;
+}
+
+:dir(rtl) .toggle:checked::before {
+  translate: -20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .toggle::before {
+    transition: none;
+  }
+}
+
+/* Support forced colors */
+@media (forced-colors: active) {
+  label > span {
+    background: Canvas;
+    color: Highlight;
+    forced-color-adjust: none;
+  }
+
+  label:has(.toggle:checked) > span {
+    background: Highlight;
+    color: Canvas;
+  }
+
+  .toggle::before {
+    forced-color-adjust: none;
+    background-color: Highlight;
+  }
+
+  .toggle,
+  .toggle:hover {
+    background: Canvas;
+    border-color: CanvasText;
+  }
+
+  .toggle:checked,
+  .toggle:checked:hover {
+    background: Highlight;
+    border-color: CanvasText;
+  }
+
+  .toggle:checked::before {
+    background: Canvas;
+  }
 }
 </style>

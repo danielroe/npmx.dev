@@ -1,40 +1,32 @@
 import type { NodeSavedSession, NodeSavedSessionStore } from '@atproto/oauth-client-node'
-import type { H3Event } from 'h3'
+import { OAUTH_CACHE_STORAGE_BASE } from '#server/utils/atproto/storage'
 
-/**
- * Storage key prefix for oauth session storage.
- */
-export const OAUTH_SESSION_CACHE_STORAGE_BASE = 'oauth-atproto-session'
+// Refresh tokens from a confidential client should last for 180 days, each new refresh of access token resets
+// the expiration with the new refresh token. Shorting to 179 days to keep it a bit simpler since we rely on redis to clear sessions
+// Note: This expiration only lasts this long in production. Local dev is 2 weeks
+const SESSION_EXPIRATION = CACHE_MAX_AGE_ONE_DAY * 179
 
 export class OAuthSessionStore implements NodeSavedSessionStore {
-  // TODO: not sure if we will support multi accounts, but if we do in the future will need to change this around
-  private readonly cookieKey = 'oauth:atproto:session'
-  private readonly storage = useStorage(OAUTH_SESSION_CACHE_STORAGE_BASE)
+  private readonly cache: CacheAdapter
 
-  constructor(private event: H3Event) {}
+  constructor() {
+    this.cache = getCacheAdapter(OAUTH_CACHE_STORAGE_BASE)
+  }
 
-  async get(): Promise<NodeSavedSession | undefined> {
-    const sessionKey = getCookie(this.event, this.cookieKey)
-    if (!sessionKey) return
-    const result = await this.storage.getItem<NodeSavedSession>(sessionKey)
-    if (!result) return
-    return result
+  private createStorageKey(did: string) {
+    return `sessions:${did}`
+  }
+
+  async get(key: string): Promise<NodeSavedSession | undefined> {
+    let session = await this.cache.get<NodeSavedSession>(this.createStorageKey(key))
+    return session ?? undefined
   }
 
   async set(key: string, val: NodeSavedSession) {
-    setCookie(this.event, this.cookieKey, key, {
-      httpOnly: true,
-      secure: !import.meta.dev,
-      sameSite: 'lax',
-    })
-    await this.storage.setItem<NodeSavedSession>(key, val)
+    await this.cache.set<NodeSavedSession>(this.createStorageKey(key), val, SESSION_EXPIRATION)
   }
 
-  async del() {
-    const sessionKey = getCookie(this.event, this.cookieKey)
-    if (sessionKey) {
-      await this.storage.del(sessionKey)
-    }
-    deleteCookie(this.event, this.cookieKey)
+  async del(key: string) {
+    await this.cache.delete(this.createStorageKey(key))
   }
 }
