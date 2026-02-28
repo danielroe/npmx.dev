@@ -128,7 +128,7 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
 const showFullSearch = shallowRef(false)
 const showMobileMenu = shallowRef(false)
 const { env } = useAppConfig().buildInfo
-const prId = env === 'preview' ? useRuntimeConfig().public.pullRequestID : 123
+const prId = env === 'preview' ? useRuntimeConfig().public.pullRequestID : undefined
 
 // On mobile, clicking logo+search button expands search
 const route = useRoute()
