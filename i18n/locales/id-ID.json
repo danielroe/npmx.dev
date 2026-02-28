@@ -146,6 +146,9 @@
     },
     "scroll_to_top": "Kembali ke atas"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "Paket Tidak Ditemukan",
     "not_found_message": "Paket tidak dapat ditemukan.",
@@ -876,7 +879,6 @@
     },
     "team": {
       "title": "Tim",
-      "governance": "Tata Kelola",
       "role_steward": "pengurus",
       "role_maintainer": "pemelihara",
       "sponsor": "sponsor",

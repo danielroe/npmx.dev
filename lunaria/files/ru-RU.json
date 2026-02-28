@@ -141,6 +141,9 @@
     },
     "scroll_to_top": "Прокрутить наверх"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "Пакет не найден",
     "not_found_message": "Пакет не удалось найти.",
@@ -870,7 +873,6 @@
     },
     "team": {
       "title": "Команда",
-      "governance": "Управление",
       "role_steward": "управляющий",
       "role_maintainer": "мейнтейнер",
       "sponsor": "спонсировать",
