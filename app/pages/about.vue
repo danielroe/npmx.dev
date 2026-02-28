@@ -81,15 +81,19 @@ function getAriaLabel(c: GitHubContributor): string {
   })
 }
 
-// --- Popover Logic (Single Instance in DOM via v-if) ---
-const activeContributor = shallowRef<GitHubContributor | null>(null)
+// --- Popover Logic (Global Single Instance with Event Delegation + Direct DOM Manipulation) ---
+const activeContributor = shallowRef<GitHubContributor>()
 const popoverPos = reactive({ top: 0, left: 0, align: 'center' as 'left' | 'center' | 'right' })
-let closeTimer: ReturnType<typeof setTimeout> | null = null
+const panelRef = ref<HTMLElement>()
+const activeBtnEl = shallowRef<HTMLElement>()
+let activeBtnDom: HTMLElement | null = null // Direct DOM reference for performance
+let closeTimer: ReturnType<typeof setTimeout> | undefined
+let lastOpenTime = 0
 
 function cancelClose() {
   if (closeTimer) {
     clearTimeout(closeTimer)
-    closeTimer = null
+    closeTimer = undefined
   }
 }
 
@@ -98,10 +102,8 @@ function computePos(btn: HTMLElement) {
   const vw = window.innerWidth
   const POP_W = 256
   const GAP = 8
-
   popoverPos.top = r.bottom + GAP
   const center = r.left + r.width / 2
-
   if (center - POP_W / 2 < GAP) {
     popoverPos.align = 'left'
     popoverPos.left = r.left
@@ -114,42 +116,142 @@ function computePos(btn: HTMLElement) {
   }
 }
 
-function open(c: GitHubContributor, btnEl: HTMLElement) {
-  cancelClose()
-  computePos(btnEl)
-  activeContributor.value = c
-}
-
-function scheduleClose(c: GitHubContributor) {
-  cancelClose()
-  closeTimer = setTimeout(() => {
-    if (activeContributor.value?.id === c.id) activeContributor.value = null
-  }, 150)
-}
-
-function toggle(c: GitHubContributor, btnEl: HTMLElement) {
-  if (activeContributor.value?.id === c.id) {
-    activeContributor.value = null
-  } else {
-    open(c, btnEl)
+function setActiveBtnExpanded(btn: HTMLElement | null, value: boolean) {
+  if (activeBtnDom && activeBtnDom !== btn) {
+    activeBtnDom.removeAttribute('aria-expanded')
+  }
+  activeBtnDom = btn
+  if (btn) {
+    if (value) {
+      btn.setAttribute('aria-expanded', 'true')
+    } else {
+      btn.removeAttribute('aria-expanded')
+    }
   }
 }
 
+function openById(id: number, btnEl: HTMLElement, focus = false) {
+  const c = contributors.value.find(x => x.id === id)
+  if (!c || !isExpandable(c)) return
+  cancelClose()
+  computePos(btnEl)
+  activeBtnEl.value = btnEl
+  setActiveBtnExpanded(btnEl, true)
+  activeContributor.value = c
+  lastOpenTime = Date.now()
+
+  if (focus) {
+    nextTick(() => {
+      panelRef.value?.focus()
+    })
+  }
+}
+
+function scheduleCloseActive() {
+  cancelClose()
+  closeTimer = setTimeout(() => {
+    setActiveBtnExpanded(null, false)
+    activeContributor.value = undefined
+  }, 80)
+}
+
+// ── Event delegation: un único listener en el <ul> ──────────────────────────
+const listRef = ref<HTMLElement>()
+
+function getButtonFromEvent(e: Event): HTMLButtonElement | null {
+  return (e.target as Element).closest('button[data-cid]')
+}
+
+function onListMouseEnter(e: MouseEvent) {
+  const btn = getButtonFromEvent(e)
+  if (!btn) return
+  openById(Number(btn.dataset.cid), btn)
+}
+
+function onListMouseLeave(e: MouseEvent) {
+  // Solo cerrar si salimos del <ul> completamente
+  const related = e.relatedTarget as Element | null
+  if (related?.closest('[data-popover-panel]')) return
+  if (!related?.closest('button[data-cid]')) scheduleCloseActive()
+}
+
+function onListClick(e: MouseEvent) {
+  const btn = getButtonFromEvent(e)
+  if (!btn) return
+  const id = Number(btn.dataset.cid)
+  if (activeContributor.value?.id === id && Date.now() - lastOpenTime > 50) {
+    setActiveBtnExpanded(null, false)
+    activeContributor.value = undefined
+    // Return focus to button when closing via click
+    btn.focus()
+  } else {
+    // Open and focus the panel for keyboard accessibility
+    openById(id, btn, true)
+  }
+}
+
+// ── Panel mouse events ───────────────────────────────────────────────────────
+function onPanelMouseLeave(e: MouseEvent) {
+  const related = e.relatedTarget as Element | null
+  if (!related?.closest('button[data-cid]')) scheduleCloseActive()
+}
+
+// ── Tab management dentro del panel (foco manual) ───────────────────────────
+function onPanelKeydown(e: KeyboardEvent) {
+  if (e.key !== 'Tab' || !panelRef.value) return
+  const focusables = [...panelRef.value.querySelectorAll<HTMLElement>('a[href]')]
+  if (!focusables.length) {
+    e.preventDefault()
+    activeBtnEl.value?.focus()
+    return
+  }
+
+  const first = focusables[0]
+  const last = focusables.at(-1)!
+
+  if (e.shiftKey && document.activeElement === panelRef.value) {
+    e.preventDefault()
+    activeBtnEl.value?.focus()
+    return
+  }
+
+  if (e.shiftKey && document.activeElement === first) {
+    e.preventDefault()
+    // Keep open but focus button
+    activeBtnEl.value?.focus()
+  } else if (!e.shiftKey && document.activeElement === last) {
+    e.preventDefault()
+    setActiveBtnExpanded(null, false)
+    activeContributor.value = undefined
+
+    // Find next button
+    const allBtns = [...document.querySelectorAll<HTMLElement>('button[data-cid]')]
+    const idx = allBtns.indexOf(activeBtnEl.value!)
+    const nextBtn = allBtns[idx + 1]
+
+    if (nextBtn) {
+      nextBtn.focus()
+    } else {
+      activeBtnEl.value?.focus()
+    }
+  }
+}
+
+// ── Document listeners ───────────────────────────────────────────────────────
 function onDocumentPointerDown(e: PointerEvent) {
   if (!activeContributor.value) return
-  const t = e.target
-  if (!(t instanceof Element)) return
-  if (
-    !t.closest('[data-popover-panel]') &&
-    !t.closest(`[data-cid="${activeContributor.value.id}"]`)
-  ) {
-    activeContributor.value = null
+  const t = e.target as Element
+  if (!t.closest('[data-popover-panel]') && !t.closest('button[data-cid]')) {
+    setActiveBtnExpanded(null, false)
+    activeContributor.value = undefined
   }
 }
 
 function onDocumentKeydown(e: KeyboardEvent) {
   if (e.key === 'Escape' && activeContributor.value) {
-    activeContributor.value = null
+    setActiveBtnExpanded(null, false)
+    activeContributor.value = undefined
+    activeBtnEl.value?.focus()
   }
 }
 
@@ -157,7 +259,6 @@ onMounted(() => {
   document.addEventListener('pointerdown', onDocumentPointerDown)
   document.addEventListener('keydown', onDocumentKeydown)
 })
-
 onBeforeUnmount(() => {
   cancelClose()
   document.removeEventListener('pointerdown', onDocumentPointerDown)
@@ -324,207 +425,50 @@ onBeforeUnmount(() => {
             </div>
             <ul
               v-else-if="contributors.length"
-              class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0 overflow-visible"
+              ref="listRef"
+              class="flex flex-wrap justify-center gap-2 list-none p-0 overflow-visible"
+              @mouseover="onListMouseEnter"
+              @mouseout="onListMouseLeave"
+              @click="onListClick"
             >
               <li
                 v-for="contributor in contributors"
                 :key="contributor.id"
-                class="relative h-12 w-12 list-none"
+                v-once
+                class="relative h-12 w-12 list-none group"
+                style="contain: layout style"
               >
                 <LinkBase
                   v-if="!isExpandable(contributor)"
                   :to="contributor.html_url"
-                  :aria-label="getAriaLabel(contributor)"
                   no-underline
                   no-new-tab-icon
-                  class="group relative block h-12 w-12 rounded-lg transition-all outline-none p-0 bg-transparent"
+                  :aria-label="getAriaLabel(contributor)"
+                  class="group relative block h-12 w-12 rounded-lg transition-transform duration-200 outline-none p-0 bg-transparent"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
                     :alt="$t('about.contributors.avatar', { name: contributor.login })"
                     width="64"
                     height="64"
-                    class="w-12 h-12 rounded-lg ring-2 ring-transparent transition-all duration-200 hover:ring-accent"
-                    loading="lazy"
+                    class="w-12 h-12 rounded-lg ring-2 ring-transparent transition-shadow duration-200 hover:ring-accent"
                   />
                 </LinkBase>
                 <button
                   v-else
                   type="button"
                   :data-cid="contributor.id"
-                  :aria-expanded="
-                    isMounted && activeContributor?.id === contributor.id ? 'true' : undefined
-                  "
-                  :aria-label="
-                    isExpandable(contributor)
-                      ? getAriaLabel(contributor)
-                      : $t('about.contributors.view_profile', { name: contributor.login })
-                  "
-                  class="group relative block h-12 w-12 rounded-lg transition-all outline-none focus-visible:(ring-2 ring-accent z-20) p-0 border-none cursor-pointer bg-transparent"
-                  :class="[
-                    !isExpandable(contributor)
-                      ? 'hover:scale-125 focus-visible:scale-125'
-                      : 'hover:scale-110 focus-visible:scale-110',
-                  ]"
-                  @mouseenter="open(contributor, $event.currentTarget as HTMLElement)"
-                  @mouseleave="scheduleClose(contributor)"
-                  @click="toggle(contributor, $event.currentTarget as HTMLElement)"
+                  :aria-label="getAriaLabel(contributor)"
+                  class="group relative block h-12 w-12 rounded-lg transition-transform duration-200 outline-none p-0 border-none cursor-pointer bg-transparent"
                 >
                   <img
                     :src="`${contributor.avatar_url}&s=64`"
                     :alt="$t('about.contributors.avatar', { name: contributor.login })"
                     width="64"
                     height="64"
-                    class="w-12 h-12 rounded-lg ring-2 ring-transparent transition-all duration-200 hover:ring-accent"
-                    loading="lazy"
+                    class="w-12 h-12 rounded-lg ring-2 ring-transparent transition-shadow duration-200 hover:ring-accent"
                   />
                 </button>
-
-                <Transition name="pop">
-                  <article
-                    v-if="isExpandable(contributor) && activeContributor?.id === contributor.id"
-                    data-popover-panel
-                    class="contributor-popover"
-                    :style="{
-                      top: `${popoverPos.top}px`,
-                      left: `${popoverPos.left}px`,
-                    }"
-                    :class="`align-${popoverPos.align}`"
-                    @mouseenter="cancelClose()"
-                    @mouseleave="scheduleClose(contributor)"
-                  >
-                    <div
-                      class="flex flex-col gap-y-3 w-64 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-2xl text-start"
-                    >
-                      <div class="flex flex-col gap-2 min-w-0">
-                        <hgroup
-                          class="w-full font-sans font-bold text-fg leading-tight truncate block"
-                        >
-                          <h3>{{ contributor.name || contributor.login }}</h3>
-                        </hgroup>
-                        <div
-                          v-if="roleLabels[contributor.role]"
-                          class="font-mono text-3xs uppercase tracking-wider text-accent font-bold"
-                        >
-                          {{ roleLabels[contributor.role] }}
-                        </div>
-                        <p
-                          v-if="contributor.bio"
-                          class="font-sans text-xs text-fg-subtle line-clamp-3 leading-relaxed"
-                        >
-                          "{{ contributor.bio }}"
-                        </p>
-
-                        <div
-                          v-if="contributor.companyHTML"
-                          class="flex items-center gap-1 font-sans text-2xs text-fg-muted text-start min-w-0"
-                        >
-                          <div
-                            class="i-lucide:building-2 size-3 shrink-0 text-accent/80"
-                            aria-hidden="true"
-                          />
-                          <div
-                            class="company-content leading-relaxed break-words min-w-0 [&_a]:(text-accent no-underline hover:underline transition-all)"
-                            v-html="contributor.companyHTML"
-                          />
-                        </div>
-                        <div
-                          v-else-if="contributor.company"
-                          class="flex items-center font-sans text-2xs text-fg-muted text-start min-w-0"
-                        >
-                          <div
-                            class="i-lucide:building-2 size-3 shrink-0 mt-0.5 text-accent/80"
-                            aria-hidden="true"
-                          />
-                          <div class="company-content leading-relaxed break-words min-w-0">
-                            {{ contributor.company }}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="flex flex-col gap-2 text-3xs text-fg-subtle font-sans">
-                        <div v-if="contributor.location" class="flex items-center gap-1 min-w-0">
-                          <div class="i-lucide:map-pin size-3 shrink-0" aria-hidden="true" />
-                          <span class="w-full truncate">{{ contributor.location }}</span>
-                        </div>
-                        <a
-                          v-if="contributor.websiteUrl"
-                          :href="contributor.websiteUrl"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="flex items-center gap-1 hover:text-accent transition-colors"
-                        >
-                          <div class="i-lucide:link size-3 shrink-0" aria-hidden="true" />
-                          <span class="truncate">{{
-                            contributor.websiteUrl.replace(/^https?:\/\//, '')
-                          }}</span>
-                        </a>
-                        <a
-                          v-if="contributor.twitterUsername"
-                          :href="`https://x.com/${contributor.twitterUsername}`"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="flex items-center gap-1 hover:text-accent transition-colors"
-                        >
-                          <div class="i-simple-icons:x size-2.5 shrink-0" aria-hidden="true" />
-                          <span>@{{ contributor.twitterUsername }}</span>
-                        </a>
-                        <a
-                          v-if="contributor.blueskyHandle"
-                          :href="`https://bsky.app/profile/${contributor.blueskyHandle}`"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="flex items-center gap-1 hover:text-accent transition-colors"
-                        >
-                          <div
-                            class="i-simple-icons:bluesky size-2.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span>@{{ contributor.blueskyHandle }}</span>
-                        </a>
-                        <a
-                          v-if="contributor.mastodonUrl"
-                          :href="contributor.mastodonUrl"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="flex items-center gap-1 hover:text-accent transition-colors"
-                        >
-                          <div
-                            class="i-simple-icons:mastodon size-2.5 shrink-0"
-                            aria-hidden="true"
-                          />
-                          <span class="truncate">{{
-                            contributor.mastodonUrl.replace(/^https?:\/\//, '').replace(/\/@?/, '@')
-                          }}</span>
-                        </a>
-                      </div>
-
-                      <div
-                        class="flex items-center justify-between border-t border-t-gray-400/65 dark:border-t-gray-300 border-border-subtle pt-3"
-                      >
-                        <a
-                          :href="contributor.html_url"
-                          target="_blank"
-                          class="text-3xs text-fg-subtle font-mono hover:text-accent"
-                          rel="noopener noreferrer"
-                        >
-                          @{{ contributor.login }}
-                        </a>
-                        <a
-                          v-if="contributor.sponsors_url"
-                          :href="contributor.sponsors_url"
-                          :aria-label="$t('about.team.sponsor_aria', { name: contributor.login })"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          class="flex items-center gap-1 rounded border border-purple-700/30 bg-purple-700/5 text-purple-700 dark:border-purple-300/30 dark:bg-purple-300/5 dark:text-purple-300 px-2 py-0.5 text-4xs font-bold uppercase tracking-wider transition-colors hover:bg-purple-700/15 dark:hover:bg-purple-300/15"
-                        >
-                          <span class="i-lucide:heart size-3" aria-hidden="true" />
-                          <span>{{ $t('about.team.sponsor') }}</span>
-                        </a>
-                      </div>
-                    </div>
-                  </article>
-                </Transition>
               </li>
             </ul>
           </section>
@@ -532,19 +476,166 @@ onBeforeUnmount(() => {
         <CallToAction />
       </section>
     </article>
+
+    <!-- UN ÚNICO nodo de popover, FUERA del v-for -->
+    <Transition name="pop">
+      <div
+        v-if="activeContributor"
+        ref="panelRef"
+        data-popover-panel
+        role="group"
+        tabindex="-1"
+        :aria-label="activeContributor.name || activeContributor.login"
+        class="contributor-popover"
+        :class="`align-${popoverPos.align}`"
+        :style="{ top: `${popoverPos.top}px`, left: `${popoverPos.left}px` }"
+        @mouseleave="onPanelMouseLeave"
+        @keydown="onPanelKeydown"
+      >
+        <div
+          class="flex flex-col gap-y-3 w-64 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-2xl text-start"
+        >
+          <div class="flex flex-col gap-2 min-w-0">
+            <span class="w-full font-sans font-bold text-fg leading-tight truncate block">
+              {{ activeContributor.name || activeContributor.login }}
+            </span>
+            <div
+              v-if="roleLabels[activeContributor.role]"
+              class="font-mono text-3xs uppercase tracking-wider text-accent font-bold"
+            >
+              {{ roleLabels[activeContributor.role] }}
+            </div>
+            <p
+              v-if="activeContributor.bio"
+              class="font-sans text-xs text-fg-subtle line-clamp-3 leading-relaxed"
+            >
+              "{{ activeContributor.bio }}"
+            </p>
+            <div
+              v-if="activeContributor.companyHTML"
+              class="flex items-center gap-1 font-sans text-2xs text-fg-muted min-w-0"
+            >
+              <div class="i-lucide:building-2 size-3 shrink-0 text-accent/80" aria-hidden="true" />
+              <div
+                class="leading-relaxed break-words min-w-0 [&_a]:(text-accent no-underline hover:underline)"
+                v-html="activeContributor.companyHTML"
+              />
+            </div>
+            <div
+              v-else-if="activeContributor.company"
+              class="flex items-center gap-1 font-sans text-2xs text-fg-muted min-w-0"
+            >
+              <div class="i-lucide:building-2 size-3 shrink-0 text-accent/80" aria-hidden="true" />
+              <span>{{ activeContributor.company }}</span>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 text-3xs text-fg-subtle font-sans">
+            <div v-if="activeContributor.location" class="flex items-center gap-1">
+              <div class="i-lucide:map-pin size-3 shrink-0" aria-hidden="true" />
+              <span class="truncate">{{ activeContributor.location }}</span>
+            </div>
+            <a
+              v-if="activeContributor.websiteUrl"
+              :href="activeContributor.websiteUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 hover:text-accent transition-colors"
+            >
+              <div class="i-lucide:link size-3 shrink-0" aria-hidden="true" />
+              <span class="truncate">{{
+                activeContributor.websiteUrl.replace(/^https?:\/\//, '')
+              }}</span>
+            </a>
+            <a
+              v-if="activeContributor.twitterUsername"
+              :href="`https://x.com/${activeContributor.twitterUsername}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 hover:text-accent transition-colors"
+            >
+              <div class="i-simple-icons:x size-2.5 shrink-0" aria-hidden="true" />
+              <span>@{{ activeContributor.twitterUsername }}</span>
+            </a>
+            <a
+              v-if="activeContributor.blueskyHandle"
+              :href="`https://bsky.app/profile/${activeContributor.blueskyHandle}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 hover:text-accent transition-colors"
+            >
+              <div class="i-simple-icons:bluesky size-2.5 shrink-0" aria-hidden="true" />
+              <span>@{{ activeContributor.blueskyHandle }}</span>
+            </a>
+            <a
+              v-if="activeContributor.mastodonUrl"
+              :href="activeContributor.mastodonUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 hover:text-accent transition-colors"
+            >
+              <div class="i-simple-icons:mastodon size-2.5 shrink-0" aria-hidden="true" />
+              <span class="truncate">{{
+                activeContributor.mastodonUrl.replace(/^https?:\/\//, '').replace(/\/@?/, '@')
+              }}</span>
+            </a>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-border-subtle pt-3">
+            <a
+              :href="activeContributor.html_url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-3xs text-fg-subtle font-mono hover:text-accent"
+            >
+              @{{ activeContributor.login }}
+            </a>
+
+            <a
+              v-if="activeContributor.sponsors_url"
+              :href="activeContributor.sponsors_url"
+              :aria-label="$t('about.team.sponsor_aria', { name: activeContributor.login })"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1 rounded border border-purple-700/30 bg-purple-700/5 text-purple-700 dark:border-purple-300/30 dark:bg-purple-300/5 dark:text-purple-300 px-2 py-0.5 text-4xs font-bold uppercase tracking-wider transition-colors hover:bg-purple-700/15 dark:hover:bg-purple-300/15"
+            >
+              <span class="i-lucide:heart size-3" aria-hidden="true" />
+              <span>{{ $t('about.team.sponsor') }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </Transition>
   </main>
 </template>
 
 <style scoped>
+[data-cid]:focus-visible {
+  @apply ring-2 ring-accent scale-110;
+  outline: none;
+  z-index: 20;
+}
+
+[data-cid][aria-expanded='true'] img {
+  @apply ring-2 ring-accent;
+}
+
+@media (hover: hover) {
+  [data-cid]:hover img {
+    @apply ring-accent;
+    ring-width: 2px;
+  }
+}
+
 .contributor-popover {
   position: fixed;
   z-index: 9999;
-  margin: 0;
-  padding: 0;
-  /* Default: centered on anchor */
   transform: translateX(-50%);
+  /* GPU layer: evita repaints en el main thread */
+  will-change: transform, opacity;
+  contain: layout style;
+  outline: none; /* Remove focus outline from container */
 }
-
 .contributor-popover.align-left {
   transform: translateX(0);
 }
@@ -554,22 +645,14 @@ onBeforeUnmount(() => {
 
 .pop-enter-active {
   transition:
-    opacity 120ms ease-out,
-    transform 150ms ease-out;
+    opacity 100ms ease-out,
+    transform 120ms ease-out;
 }
 .pop-leave-active {
-  transition: opacity 80ms ease-in;
+  transition: opacity 60ms ease-in;
 }
 .pop-enter-from {
   opacity: 0;
-  /* Adjust transform based on alignment logic is tricky in pure CSS transition classes
-     because we are already using transform for alignment.
-     However, since we are using v-if, the element is inserted with the correct class.
-     We can just add a slight Y offset to the existing transform.
-     But since we can't easily compose transforms in CSS classes without knowing the base,
-     we'll stick to opacity fade for simplicity and robustness, or use a wrapper for animation.
-     Let's try a simple opacity fade first to ensure layout stability.
-  */
 }
 .pop-leave-to {
   opacity: 0;
