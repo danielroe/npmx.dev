@@ -7,6 +7,7 @@ const props = defineProps<{
 
 const status = computed(() => props.error.status || 500)
 const statusText = computed(() => {
+  if (props.error.statusText) return props.error.statusText
   switch (status.value) {
     case 401:
       return $t('error.401')
@@ -16,10 +17,9 @@ const statusText = computed(() => {
       return $t('error.500')
     case 503:
       return $t('error.503')
+    default:
+      return $t('error.default')
   }
-
-  if (props.error.statusText) return props.error.statusText
-  return $t('error.default')
 })
 
 function handleError() {
