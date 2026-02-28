@@ -155,9 +155,6 @@ function scheduleCloseActive() {
   }, 80)
 }
 
-// ── Event delegation: un único listener en el <ul> ──────────────────────────
-const listRef = ref<HTMLElement>()
-
 function getButtonFromEvent(e: Event): HTMLButtonElement | null {
   return (e.target as Element).closest('button[data-cid]')
 }
@@ -610,10 +607,10 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-[data-cid]:focus-visible {
-  @apply ring-2 ring-accent scale-110;
-  outline: none;
-  z-index: 20;
+[data-cid] img {
+  transition:
+    box-shadow 100ms ease,
+    transform 200ms ease;
 }
 
 [data-cid][aria-expanded='true'] img {
@@ -621,21 +618,43 @@ onBeforeUnmount(() => {
 }
 
 @media (hover: hover) {
-  [data-cid]:hover img {
-    @apply ring-accent;
-    ring-width: 2px;
+  [data-cid]:hover img,
+  [data-cid][aria-expanded='true'] img {
+    transform: scale(1.1);
+    --un-ring-opacity: 1;
+    --un-ring-color: color-mix(in srgb, var(--accent) var(--un-ring-opacity), transparent);
+    box-shadow: 0 0 0 2px var(--un-ring-color);
   }
+}
+
+[data-cid]:focus-visible img {
+  transform: scale(1.1);
+  --un-ring-opacity: 1;
+  --un-ring-color: color-mix(in srgb, var(--accent) var(--un-ring-opacity), transparent);
+  box-shadow: 0 0 0 2px var(--un-ring-color);
+}
+
+[data-cid]:focus-visible {
+  outline: none;
+  z-index: 20;
 }
 
 .contributor-popover {
   position: fixed;
   z-index: 9999;
   transform: translateX(-50%);
-  /* GPU layer: evita repaints en el main thread */
-  will-change: transform, opacity;
+  /* GPU layer: avoid repaints in the main thread */
+  will-change: opacity;
   contain: layout style;
-  outline: none; /* Remove focus outline from container */
+  /* Remove focus outline from container:
+     don't remove important to fix FF outline
+  */
+  outline: none !important;
+  /* same computePos GAP */
+  padding-top: 8px;
+  margin-top: -8px;
 }
+
 .contributor-popover.align-left {
   transform: translateX(0);
 }
