@@ -5,12 +5,12 @@ const router = useRouter()
 const canGoBack = useCanGoBack()
 
 useSeoMeta({
-  title: 'npmx.social - npmx',
-  ogTitle: 'npmx.social - npmx',
-  twitterTitle: 'npmx.social - npmx',
-  description: 'The official AT Protocol Personal Data Server (PDS) for the npmx community.',
-  ogDescription: 'The official AT Protocol Personal Data Server (PDS) for the npmx community.',
-  twitterDescription: 'The official AT Protocol Personal Data Server (PDS) for the npmx community.',
+  title: () => `${$t('pds.title')} - npmx`,
+  ogTitle: () => `${$t('pds.title')} - npmx`,
+  twitterTitle: () => `${$t('pds.title')} - npmx`,
+  description: () => $t('pds.meta_description'),
+  ogDescription: () => $t('pds.meta_description'),
+  twitterDescription: () => $t('pds.meta_description'),
 })
 
 defineOgImageComponent('Default', {
@@ -42,7 +42,9 @@ const usersWithAvatars = computed(() => {
     <article class="max-w-2xl mx-auto">
       <header class="mb-12">
         <div class="flex items-baseline justify-between gap-4 mb-4">
-          <h1 class="font-mono text-3xl sm:text-4xl font-medium">npmx.social</h1>
+          <h1 class="font-mono text-3xl sm:text-4xl font-medium">
+            {{ $t('pds.title') }}
+          </h1>
           <button
             type="button"
             class="cursor-pointer inline-flex items-center gap-2 p-1.5 -mx-1.5 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
@@ -50,21 +52,21 @@ const usersWithAvatars = computed(() => {
             v-if="canGoBack"
           >
             <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
-            <span class="hidden sm:inline">Back</span>
+            <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
           </button>
         </div>
         <p class="text-fg-muted text-lg">
-          The official AT Protocol Personal Data Server (PDS) for the npmx community.
+          {{ $t('pds.meta_description') }}
         </p>
       </header>
 
       <section class="max-w-none space-y-12">
         <div>
-          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">Join the Community</h2>
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('pds.join.title') }}
+          </h2>
           <p class="text-fg-muted leading-relaxed mb-4">
-            Whether you are creating your first Bluesky account or migrating an existing one, you
-            belong here. You can migrate your current account without losing your handle, your
-            posts, or your followers.
+            {{ $t('pds.join.description') }}
           </p>
           <div class="mt-6">
             <LinkBase
@@ -73,13 +75,15 @@ const usersWithAvatars = computed(() => {
               no-underline
             >
               <span class="i-lucide:arrow-right-left w-4 h-4 text-fg-muted" aria-hidden="true" />
-              Migrate with PDS MOOver
+              {{ $t('pds.join.migrate') }}
             </LinkBase>
           </div>
         </div>
 
         <div>
-          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">Server Details</h2>
+          <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
+            {{ $t('pds.server.title') }}
+          </h2>
           <ul class="space-y-3 text-fg-muted list-none p-0">
             <li class="flex items-start gap-3">
               <span
@@ -87,8 +91,8 @@ const usersWithAvatars = computed(() => {
                 aria-hidden="true"
               />
               <span>
-                <strong class="text-fg">Location:</strong>
-                Nuremberg, Germany
+                <strong class="text-fg">{{ $t('pds.server.location_label') }}</strong>
+                {{ $t('pds.server.location_value') }}
               </span>
             </li>
             <li class="flex items-start gap-3">
@@ -97,8 +101,8 @@ const usersWithAvatars = computed(() => {
                 aria-hidden="true"
               />
               <span>
-                <strong class="text-fg">Infrastructure:</strong>
-                Hosted on Hetzner
+                <strong class="text-fg">{{ $t('pds.server.infrastructure_label') }}</strong>
+                {{ $t('pds.server.infrastructure_value') }}
               </span>
             </li>
             <li class="flex items-start gap-3">
@@ -107,36 +111,39 @@ const usersWithAvatars = computed(() => {
                 aria-hidden="true"
               />
               <span>
-                <strong class="text-fg">Privacy:</strong>
-                Subject to strict EU Data Protection laws
+                <strong class="text-fg">{{ $t('pds.server.privacy_label') }}</strong>
+                {{ $t('pds.server.privacy_value') }}
               </span>
             </li>
           </ul>
         </div>
         <div aria-labelledby="community-heading">
           <h2 id="community-heading" class="text-lg text-fg uppercase tracking-wider mb-4">
-            Who is here
+            {{ $t('pds.community.title') }}
           </h2>
           <p class="text-fg-muted leading-relaxed mb-6">
-            They are already calling npmx.social home.
+            {{ $t('pds.community.description') }}
           </p>
 
           <div v-if="pdsStatus === 'pending'" class="text-fg-subtle text-sm" role="status">
-            Loading PDS community...
+            {{ $t('pds.community.loading') }}
           </div>
           <div v-else-if="pdsStatus === 'error'" class="text-fg-subtle text-sm" role="alert">
-            Failed to load PDS community.
+            {{ $t('pds.community.error') }}
           </div>
           <div v-else-if="!usersWithAvatars.length" class="text-fg-subtle text-sm">
-            No community members to display.
+            {{ $t('pds.community.empty') }}
           </div>
-          <ul v-else class="grid grid-cols-[repeat(auto-fill,48px)] gap-2 list-none p-0">
+          <ul
+            v-else
+            class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0"
+          >
             <li v-for="user in usersWithAvatars" :key="user.handle" class="block group relative">
               <a
                 :href="`https://bsky.app/profile/${user.handle}`"
                 target="_blank"
                 rel="noopener noreferrer"
-                :aria-label="`View ${user.handle}'s profile`"
+                :aria-label="$t('pds.community.view_profile', { handle: user.handle })"
                 class="block rounded-lg"
               >
                 <img
@@ -148,9 +155,8 @@ const usersWithAvatars = computed(() => {
                   class="w-12 h-12 rounded-lg ring-2 ring-transparent group-hover:ring-accent transition-all duration-200 ease-out group-hover:scale-125 will-change-transform"
                   loading="lazy"
                 />
-
                 <span
-                  class="pointer-events-none absolute -top-9 inset-is-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs px-2 py-1 shadow-lg opacity-0 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 z-10"
+                  class="pointer-events-none absolute -top-9 inset-is-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 text-xs px-2 py-1 shadow-lg opacity-0 scale-95 transition-all duration-150 group-hover:opacity-100 group-hover:scale-100"
                   dir="ltr"
                   role="tooltip"
                 >
