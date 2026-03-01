@@ -200,6 +200,21 @@ function getMockForUrl(url: string): MockResult | null {
     return { data: { attestations: [] } }
   }
 
+  // GitHub raw content - return mock endpoint badge JSON
+  if (host === 'raw.githubusercontent.com') {
+    const stageMatch = pathname.match(/stage-(\d+)\.json$/)
+    if (stageMatch) {
+      return {
+        data: {
+          schemaVersion: 1,
+          label: 'STAGE',
+          message: stageMatch[1],
+          color: '#E9DE47',
+        },
+      }
+    }
+  }
+
   // Constellation API - return empty results for link queries
   if (host === 'constellation.microcosm.blue') {
     if (pathname === '/links/distinct-dids') {
