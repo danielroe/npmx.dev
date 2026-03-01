@@ -4,6 +4,7 @@ import { LinkBase } from '#components'
 
 interface Props {
   title: string
+  subtitle?: string
   isLoading?: boolean
   headingLevel?: `h${number}`
   id: string
@@ -81,12 +82,13 @@ useHead({
     <div class="flex items-center justify-between mb-3 px-1">
       <component
         :is="headingLevel"
-        class="group text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-2"
+        class="group text-xs text-fg-subtle uppercase tracking-wider flex gap-2"
+        :class="subtitle ? 'items-start' : 'items-center'"
       >
         <button
           :id="buttonId"
           type="button"
-          class="w-4 h-4 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
+          class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg-muted transition-colors duration-200 shrink-0 focus-visible:outline-accent/70 rounded"
           :aria-expanded="isOpen"
           :aria-controls="contentId"
           :aria-label="ariaLabel"
@@ -101,9 +103,14 @@ useHead({
           />
         </button>
 
-        <LinkBase :to="`#${id}`">
-          {{ title }}
-        </LinkBase>
+        <span>
+          <LinkBase :to="`#${id}`">
+            {{ title }}
+          </LinkBase>
+          <span v-if="subtitle" class="block text-2xs normal-case tracking-normal">{{
+            subtitle
+          }}</span>
+        </span>
       </component>
 
       <!-- Actions slot for buttons or other elements -->

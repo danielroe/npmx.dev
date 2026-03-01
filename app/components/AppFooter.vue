@@ -6,6 +6,7 @@ const isHome = computed(() => route.name === 'index')
 
 const modalRef = useTemplateRef('modalRef')
 const showModal = () => modalRef.value?.showModal?.()
+const closeModal = () => modalRef.value?.close?.()
 </script>
 
 <template>
@@ -81,7 +82,7 @@ const showModal = () => modalRef.value?.showModal?.()
             <p class="mb-2 font-mono text-fg-subtle">
               {{ $t('shortcuts.section.package') }}
             </p>
-            <ul class="mb-6 flex flex-col gap-2">
+            <ul class="mb-8 flex flex-col gap-2">
               <li class="flex gap-2 items-center">
                 <kbd class="kbd">.</kbd>
                 <span>{{ $t('shortcuts.open_code_view') }}</span>
@@ -95,6 +96,19 @@ const showModal = () => modalRef.value?.showModal?.()
                 <span>{{ $t('shortcuts.compare_from_package') }}</span>
               </li>
             </ul>
+            <p class="text-fg-muted leading-relaxed">
+              <i18n-t keypath="shortcuts.disable_shortcuts" tag="span" scope="global">
+                <template #settings>
+                  <NuxtLink
+                    :to="{ name: 'settings' }"
+                    class="hover:text-fg underline decoration-fg-subtle/50 hover:decoration-fg"
+                    @click="closeModal"
+                  >
+                    {{ $t('settings.title') }}
+                  </NuxtLink>
+                </template>
+              </i18n-t>
+            </p>
           </Modal>
           <LinkBase :to="NPMX_DOCS_SITE">
             {{ $t('footer.docs') }}
