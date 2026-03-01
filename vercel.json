@@ -17,7 +17,7 @@
       "has": [
         {
           "type": "host",
-          "value": "help.npmx.dev"
+          "value": "community.npmx.dev"
         }
       ],
       "destination": "https://discord.gg/CjZM5qRbCu"
