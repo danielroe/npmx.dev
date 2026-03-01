@@ -572,6 +572,7 @@ describe('HTML output', () => {
   it('adds id to HTML heading in multi-element token', async () => {
     const md = '<h1 align="center">My Package</h1>\n<p align="center">A description</p>'
     const result = await renderReadmeHtml(md, 'test-pkg')
+    expect(result.toc).toHaveLength(1)
     expect(result.html).toContain('id="user-content-my-package"')
     expect(result.toc[0]).toMatchObject({ text: 'My Package', depth: 1 })
   })
