@@ -2,6 +2,7 @@
 
 import Git from 'simple-git'
 import * as process from 'node:process'
+import { useNuxt } from 'nuxt/kit'
 
 export { version } from '../package.json'
 
@@ -149,6 +150,8 @@ export async function getEnv(isDevelopment: boolean) {
       : branch === 'main'
         ? 'canary'
         : 'release'
+  const nuxt = useNuxt()
+  const devUrl = isDevelopment ? `http://127.0.0.1:${nuxt.options.devServer.port}` : undefined
   const previewUrl = getPreviewUrl()
   const productionUrl = getProductionUrl()
   return {
@@ -156,6 +159,7 @@ export async function getEnv(isDevelopment: boolean) {
     shortCommit,
     branch,
     env,
+    devUrl,
     previewUrl,
     productionUrl,
     prNumber,
