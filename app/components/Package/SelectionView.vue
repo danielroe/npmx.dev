@@ -11,13 +11,8 @@ const { data, pending } = useAsyncData(
     const results = await Promise.all(
       selectedPackages.value.map(name =>
         $fetch(`/api/registry/package-meta/${encodeURIComponent(name)}`)
-          .then(response => {
-            return { package: response }
-          })
-          .catch(err => {
-            console.error(`Failed to fetch package ${name}:`, err)
-            return null
-          }),
+          .then(response => ({ package: response }))
+          .catch(() => []),
       ),
     )
     return results as NpmSearchResult[]

@@ -201,27 +201,13 @@ const allMaintainersText = computed(() => {
       <span v-else class="text-fg-subtle"> - </span>
     </td>
 
-    <td class="pe-2 relative z-1">
-      <div class="flex items-center justify-center h-full">
-        <label>
-          <span class="sr-only">
-            {{ $t('package.card.select') }}
-          </span>
-          <input
-            data-package-card-checkbox
-            class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-            type="checkbox"
-            :checked="isSelected"
-            :disabled="isMaxSelected && !isSelected"
-            :title="
-              isMaxSelected && !isSelected
-                ? $t('package.card.select_maximum', MAX_PACKAGE_SELECTION)
-                : undefined
-            "
-            @change="togglePackageSelection(result.package.name)"
-          />
-        </label>
-      </div>
+    <td class="pe-2">
+      <PackageSelectionCheckbox
+        :package-name="result.package.name"
+        :disabled="isMaxSelected && !isSelected"
+        :checked="isSelected"
+        @change="togglePackageSelection"
+      />
     </td>
   </tr>
 </template>
