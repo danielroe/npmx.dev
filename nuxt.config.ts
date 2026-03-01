@@ -78,7 +78,6 @@ export default defineNuxtConfig({
           href: '/opensearch.xml',
         },
       ],
-      meta: [{ name: 'twitter:card', content: 'summary_large_image' }],
     },
   },
 
@@ -91,7 +90,7 @@ export default defineNuxtConfig({
   site: {
     url: 'https://npmx.dev',
     name: 'npmx',
-    description: 'A fast, modern browser for the npm registry',
+    description: 'a fast, modern browser for the npm registry',
   },
 
   router: {
@@ -110,6 +109,13 @@ export default defineNuxtConfig({
         allowQuery: ['color', 'labelColor', 'label', 'name', 'style'],
       },
     },
+    '/api/registry/image-proxy': {
+      isr: {
+        expiration: 60 * 60 /* one hour */,
+        passQuery: true,
+        allowQuery: ['url', 'sig'],
+      },
+    },
     '/api/registry/downloads/**': {
       isr: {
         expiration: 60 * 60 /* one hour */,
@@ -124,7 +130,7 @@ export default defineNuxtConfig({
     '/api/registry/package-meta/**': { isr: 300 },
     '/:pkg/.well-known/skills/**': { isr: 3600 },
     '/:scope/:pkg/.well-known/skills/**': { isr: 3600 },
-    '/__og-image__/**': getISRConfig(60),
+    '/_og/d/**': getISRConfig(60 * 60 * 24), // 1 day
     '/_avatar/**': { isr: 3600, proxy: 'https://www.gravatar.com/avatar/**' },
     '/opensearch.xml': { isr: true },
     '/oauth-client-metadata.json': { prerender: true },
@@ -262,18 +268,6 @@ export default defineNuxtConfig({
 
   ogImage: {
     enabled: !isStorybook,
-    defaults: {
-      component: 'Default',
-    },
-    fonts: [
-      { name: 'Geist', weight: 400, path: '/fonts/Geist-Regular.ttf' },
-      { name: 'Geist', weight: 500, path: '/fonts/Geist-Medium.ttf' },
-      { name: 'Geist', weight: 600, path: '/fonts/Geist-SemiBold.ttf' },
-      { name: 'Geist', weight: 700, path: '/fonts/Geist-Bold.ttf' },
-      { name: 'Geist Mono', weight: 400, path: '/fonts/GeistMono-Regular.ttf' },
-      { name: 'Geist Mono', weight: 500, path: '/fonts/GeistMono-Medium.ttf' },
-      { name: 'Geist Mono', weight: 700, path: '/fonts/GeistMono-Bold.ttf' },
-    ],
   },
 
   pwa: {
@@ -381,6 +375,8 @@ export default defineNuxtConfig({
         'fast-npm-meta',
         '@floating-ui/vue',
         'algoliasearch/lite',
+        '@vue/devtools-core',
+        '@vue/devtools-kit',
       ],
     },
   },

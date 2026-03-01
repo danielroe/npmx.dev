@@ -15,10 +15,9 @@ useSeoMeta({
   twitterDescription: () => $t('about.meta_description'),
 })
 
-defineOgImageComponent('Default', {
-  primaryColor: '#60a5fa',
-  title: 'about npmx',
-  description: 'a fast, modern browser for the **npm registry**',
+defineOgImage('Page.takumi', {
+  title: () => `${$t('about.title')}`,
+  description: 'a fast, modern browser for the npm registry',
 })
 
 const pmLinks = {

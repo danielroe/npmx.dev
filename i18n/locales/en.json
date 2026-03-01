@@ -142,6 +142,13 @@
     "edit_on_github": "Edit on GitHub",
     "view_guide": "Translation guide"
   },
+  "error": {
+    "401": "Unauthorized",
+    "404": "Page not found",
+    "500": "Internal server error",
+    "503": "Service unavailable",
+    "default": "Something went wrong"
+  },
   "common": {
     "loading": "Loading...",
     "loading_more": "Loading more...",
@@ -419,6 +426,8 @@
       "download_file": "Download {fileType}",
       "toggle_annotator": "Toggle annotator",
       "toggle_stack_mode": "Toggle stack mode",
+      "open_options": "Open options",
+      "close_options": "Close options",
       "legend_estimation": "Estimation",
       "no_data": "No data available",
       "y_axis_label": "{granularity} {facet}",
@@ -1119,13 +1128,14 @@
       }
     },
     "file_changes": "File Changes",
-    "files_count": "{count} files",
-    "lines_hidden": "{count} lines hidden",
+    "files_count": "{count} file | {count} files",
+    "lines_hidden": "{count} line hidden | {count} lines hidden",
     "file_too_large": "File too large to compare",
     "file_size_warning": "{size} exceeds the 250KB limit for comparison",
     "compare_versions": "diff",
+    "compare_versions_title": "Compare with latest version",
     "summary": "Summary",
-    "deps_count": "{count} deps",
+    "deps_count": "{count} dep | {count} deps",
     "dependencies": "Dependencies",
     "dev_dependencies": "Dev Dependencies",
     "peer_dependencies": "Peer Dependencies",

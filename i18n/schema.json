@@ -430,6 +430,27 @@
       },
       "additionalProperties": false
     },
+    "error": {
+      "type": "object",
+      "properties": {
+        "401": {
+          "type": "string"
+        },
+        "404": {
+          "type": "string"
+        },
+        "500": {
+          "type": "string"
+        },
+        "503": {
+          "type": "string"
+        },
+        "default": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
     "common": {
       "type": "object",
       "properties": {
@@ -1259,6 +1280,12 @@
               "type": "string"
             },
             "toggle_stack_mode": {
+              "type": "string"
+            },
+            "open_options": {
+              "type": "string"
+            },
+            "close_options": {
               "type": "string"
             },
             "legend_estimation": {
@@ -3374,6 +3401,9 @@
           "type": "string"
         },
         "compare_versions": {
+          "type": "string"
+        },
+        "compare_versions_title": {
           "type": "string"
         },
         "summary": {
