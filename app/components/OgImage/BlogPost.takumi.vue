@@ -69,8 +69,8 @@ const formattedAuthorNames = computed(() => {
   >
     <!-- npmx logo - top right -->
     <div
-      class="absolute top-12 z-10 flex items-center gap-1 text-5xl font-semibold tracking-tight"
-      style="font-family: 'Geist Sans', sans-serif; right: 6rem"
+      class="absolute top-12 z-10 flex items-center gap-1 text-5xl tracking-tight"
+      style="right: 6rem"
     >
       <span :style="{ color: primaryColor }" class="opacity-80">./</span>
       <span class="text-white">npmx</span>
@@ -78,27 +78,19 @@ const formattedAuthorNames = computed(() => {
 
     <div class="relative z-10 flex flex-col gap-2">
       <!-- Date -->
-      <span
-        v-if="formattedDate"
-        class="text-3xl text-[#a3a3a3] font-light"
-        style="font-family: 'Geist Sans', sans-serif"
-      >
+      <span v-if="formattedDate" class="text-3xl text-[#a3a3a3] font-light">
         {{ formattedDate }}
       </span>
 
       <!-- Blog title -->
-      <h1
-        class="text-6xl font-semibold tracking-tight leading-snug w-9/10"
-        style="font-family: 'Geist Sans', sans-serif; letter-spacing: -0.03em"
-      >
+      <h1 class="text-6xl tracking-tight leading-[1.2] w-9/10" style="letter-spacing: -0.03em">
         {{ title }}
       </h1>
 
       <!-- Authors -->
       <div
         v-if="resolvedAuthors.length"
-        class="flex items-center gap-4 self-start justify-start flex-nowrap"
-        style="font-family: 'Geist Sans', sans-serif"
+        class="flex items-center gap-4 self-start justify-start flex-nowrap mt-4"
       >
         <!-- Stacked avatars -->
         <span>
