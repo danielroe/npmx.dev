@@ -22,6 +22,11 @@ export default defineConfig({
         },
       },
       await defineVitestProject({
+        resolve: {
+          alias: {
+            '#site-config/app/composables': `${rootDir}/test/mocks/site-config.ts`,
+          },
+        },
         test: {
           name: 'nuxt',
           include: ['test/nuxt/**/*.{test,spec}.ts'],
