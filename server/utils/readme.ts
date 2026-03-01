@@ -280,6 +280,16 @@ function toUserContentHash(value: string): string {
   return `#${withUserContentPrefix(value)}`
 }
 
+function normalizePreservedAnchorAttrs(attrs: string): string {
+  const cleanedAttrs = attrs
+    .replace(/\s+href\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\s+rel\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .replace(/\s+target\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .trim()
+
+  return cleanedAttrs ? ` ${cleanedAttrs}` : ''
+}
+
 const isNpmJsUrlThatCanBeRedirected = (url: URL) => {
   if (!npmJsHosts.has(url.host)) {
     return false
@@ -440,7 +450,7 @@ export async function renderReadmeHtml(
   let lastSemanticLevel = 2 // Start after h2 (the "Readme" section heading)
 
   // Shared heading processing for both markdown and HTML headings
-  function processHeading(depth: number, plainText: string) {
+  function processHeading(depth: number, plainText: string, preservedAttrs = '') {
     const semanticLevel = calculateSemanticDepth(depth, lastSemanticLevel)
     lastSemanticLevel = semanticLevel
 
@@ -456,7 +466,7 @@ export async function renderReadmeHtml(
       toc.push({ text: plainText, id, depth })
     }
 
-    return `<h${semanticLevel} id="${id}" data-level="${depth}"><a href="#${id}">${plainText}</a></h${semanticLevel}>\n`
+    return `<h${semanticLevel} id="${id}" data-level="${depth}"${preservedAttrs}><a href="#${id}">${plainText}</a></h${semanticLevel}>\n`
   }
 
   renderer.heading = function ({ tokens, depth }: Tokens.Heading) {
@@ -468,18 +478,21 @@ export async function renderReadmeHtml(
   // Intercept HTML headings so they get id, TOC entry, and correct semantic level.
   // Also intercept raw HTML <a> tags so playground links are collected in the same pass.
   const htmlHeadingRe = /<h([1-6])(\s[^>]*)?>([\s\S]*?)<\/h\1>/gi
-  const htmlAnchorRe = /<a\s[^>]*href="([^"]*)"[^>]*>([\s\S]*?)<\/a>/gi
+  const htmlAnchorRe = /<a(\s[^>]*?)href=(["'])([^"']*)\2([^>]*)>([\s\S]*?)<\/a>/gi
   renderer.html = function ({ text }: Tokens.HTML) {
-    let result = text.replace(htmlHeadingRe, (_, level, _attrs, inner) => {
+    let result = text.replace(htmlHeadingRe, (_, level, attrs, inner) => {
       const depth = parseInt(level)
       const plainText = decodeHtmlEntities(stripHtmlTags(inner).trim())
-      return processHeading(depth, plainText).trimEnd()
+      const align = /\balign=(["'])(.*?)\1/i.exec(attrs)?.[2]
+      const preservedAttrs = align ? ` align="${align}"` : ''
+      return processHeading(depth, plainText, preservedAttrs).trimEnd()
     })
     // Process raw HTML <a> tags for playground link collection and URL resolution
-    result = result.replace(htmlAnchorRe, (_full, href, inner) => {
+    result = result.replace(htmlAnchorRe, (_full, beforeHref, _quote, href, afterHref, inner) => {
       const label = decodeHtmlEntities(stripHtmlTags(inner).trim())
       const { resolvedHref, extraAttrs } = processLink(href, label)
-      return `<a href="${resolvedHref}"${extraAttrs}>${inner}</a>`
+      const preservedAttrs = normalizePreservedAnchorAttrs(`${beforeHref ?? ''}${afterHref ?? ''}`)
+      return `<a${preservedAttrs} href="${resolvedHref}"${extraAttrs}>${inner}</a>`
     })
     return result
   }
