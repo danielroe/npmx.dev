@@ -6,6 +6,91 @@ function createManager() {
   return new MockConnectorStateManager(data)
 }
 
+describe('MockConnectorStateManager: getTeamPackages', () => {
+  let manager: MockConnectorStateManager
+
+  beforeEach(() => {
+    manager = createManager()
+    manager.connect('test-token')
+  })
+
+  it('returns empty object when no packages have team access', () => {
+    manager.setOrgData('@myorg', { teams: ['developers'] })
+
+    const packages = manager.getTeamPackages('@myorg', 'developers')
+
+    expect(packages).toEqual({})
+  })
+
+  it('returns packages with team access', () => {
+    manager.setOrgData('@myorg', { teams: ['developers'] })
+    manager.setPackageData('@myorg/package-a', {
+      collaborators: { '@myorg:developers': 'read-write' },
+    })
+    manager.setPackageData('@myorg/package-b', {
+      collaborators: { '@myorg:developers': 'read-only' },
+    })
+
+    const packages = manager.getTeamPackages('@myorg', 'developers')
+
+    expect(packages).toEqual({
+      '@myorg/package-a': 'read-write',
+      '@myorg/package-b': 'read-only',
+    })
+  })
+
+  it('filters to only packages with the specified team', () => {
+    manager.setOrgData('@myorg', { teams: ['developers', 'designers'] })
+    manager.setPackageData('@myorg/package-a', {
+      collaborators: { '@myorg:developers': 'read-write' },
+    })
+    manager.setPackageData('@myorg/package-b', {
+      collaborators: { '@myorg:designers': 'read-only' },
+    })
+    manager.setPackageData('@myorg/package-c', {
+      collaborators: {
+        '@myorg:developers': 'read-write',
+        '@myorg:designers': 'read-only',
+      },
+    })
+
+    const devPackages = manager.getTeamPackages('@myorg', 'developers')
+
+    expect(devPackages).toEqual({
+      '@myorg/package-a': 'read-write',
+      '@myorg/package-c': 'read-write',
+    })
+  })
+
+  it('handles scope with or without @ prefix', () => {
+    manager.setPackageData('@myorg/package-a', {
+      collaborators: { '@myorg:developers': 'read-write' },
+    })
+
+    // With @
+    const withAt = manager.getTeamPackages('@myorg', 'developers')
+    // Without @
+    const withoutAt = manager.getTeamPackages('myorg', 'developers')
+
+    expect(withAt).toEqual({ '@myorg/package-a': 'read-write' })
+    expect(withoutAt).toEqual({ '@myorg/package-a': 'read-write' })
+  })
+
+  it('does not include user collaborators', () => {
+    manager.setPackageData('@myorg/package-a', {
+      collaborators: {
+        '@myorg:developers': 'read-write',
+        'testuser': 'read-write', // User, not team
+      },
+    })
+
+    const packages = manager.getTeamPackages('@myorg', 'developers')
+
+    expect(packages).toEqual({ '@myorg/package-a': 'read-write' })
+    expect(Object.keys(packages)).not.toContain('testuser')
+  })
+})
+
 describe('MockConnectorStateManager: executeOperations', () => {
   let manager: MockConnectorStateManager
 

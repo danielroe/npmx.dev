@@ -7,10 +7,15 @@ const props = defineProps<{
   columns: ColumnConfig[]
   index?: number
   filters?: StructuredFilters
+  /** Whether selection mode is enabled */
+  selectionMode?: boolean
+  /** Whether this package is selected */
+  isSelected?: boolean
 }>()
 
 const emit = defineEmits<{
   clickKeyword: [keyword: string]
+  toggleSelect: [packageName: string]
 }>()
 
 const pkg = computed(() => props.result.package)
@@ -44,10 +49,29 @@ const allMaintainersText = computed(() => {
 
 <template>
   <tr
-    class="group relative scale-100 [clip-path:inset(0)] border-b border-border hover:bg-bg-muted transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none focus:bg-bg-muted"
+    class="group relative border-b border-border hover:bg-bg-muted transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-fg focus-visible:ring-inset focus-visible:outline-none focus:bg-bg-muted"
+    :class="{ 'bg-accent-fallback/10': isSelected }"
     tabindex="0"
     :data-result-index="index"
   >
+    <!-- Selection checkbox -->
+    <td v-if="selectionMode" class="py-2 px-2 w-8">
+      <label class="flex items-center justify-center cursor-pointer" @click.stop>
+        <input
+          type="checkbox"
+          :checked="isSelected"
+          class="peer sr-only"
+          :aria-label="$t('package.bulk.select_package', { name: pkg.name })"
+          @change="emit('toggleSelect', pkg.name)"
+        />
+        <span
+          class="w-4 h-4 rounded border border-border bg-bg flex items-center justify-center transition-colors duration-200 peer-checked:bg-accent-fallback peer-checked:border-accent-fallback peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-accent-fallback"
+        >
+          <span v-if="isSelected" class="i-lucide:check w-3 h-3 text-bg" aria-hidden="true" />
+        </span>
+      </label>
+    </td>
+
     <!-- Name (always visible) -->
     <td class="py-2 px-3">
       <NuxtLink

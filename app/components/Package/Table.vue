@@ -14,6 +14,10 @@ const props = defineProps<{
   columns: ColumnConfig[]
   filters?: StructuredFilters
   isLoading?: boolean
+  /** Whether selection mode is enabled */
+  selectionMode?: boolean
+  /** Set of selected package names */
+  selectedPackages?: Set<string>
 }>()
 
 const { t } = useI18n()
@@ -22,7 +26,23 @@ const sortOption = defineModel<SortOption>('sortOption')
 
 const emit = defineEmits<{
   clickKeyword: [keyword: string]
+  toggleSelect: [packageName: string]
+  toggleSelectAll: []
 }>()
+
+// Computed helpers for select all checkbox
+const allSelected = computed(() => {
+  if (!props.selectionMode || !props.selectedPackages || props.results.length === 0) return false
+  return props.results.every(r => props.selectedPackages!.has(r.package.name))
+})
+
+const someSelected = computed(() => {
+  if (!props.selectionMode || !props.selectedPackages || props.results.length === 0) return false
+  const selectedCount = props.results.filter(r =>
+    props.selectedPackages!.has(r.package.name),
+  ).length
+  return selectedCount > 0 && selectedCount < props.results.length
+})
 
 function isColumnVisible(id: string): boolean {
   return props.columns.find(c => c.id === id)?.visible ?? false
@@ -114,6 +134,35 @@ function getColumnLabel(id: ColumnId): string {
     <table class="w-full text-start">
       <thead class="border-b border-border">
         <tr>
+          <!-- Select all checkbox -->
+          <th v-if="selectionMode" scope="col" class="py-3 px-2 w-8">
+            <label class="flex items-center justify-center cursor-pointer" @click.stop>
+              <input
+                type="checkbox"
+                :checked="allSelected"
+                :indeterminate="someSelected"
+                class="peer sr-only"
+                :aria-label="$t('package.bulk.select_all')"
+                @change="emit('toggleSelectAll')"
+              />
+              <span
+                class="w-4 h-4 rounded border border-border bg-bg flex items-center justify-center transition-colors duration-200 peer-checked:bg-accent-fallback peer-checked:border-accent-fallback peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-accent-fallback"
+                :class="{ 'bg-accent-fallback/50 border-accent-fallback': someSelected }"
+              >
+                <span
+                  v-if="allSelected"
+                  class="i-lucide:check w-3 h-3 text-bg"
+                  aria-hidden="true"
+                />
+                <span
+                  v-else-if="someSelected"
+                  class="i-lucide:minus w-3 h-3 text-bg"
+                  aria-hidden="true"
+                />
+              </span>
+            </label>
+          </th>
+
           <!-- Name (always visible) -->
           <th
             scope="col"
@@ -305,6 +354,9 @@ function getColumnLabel(id: ColumnId): string {
         <!-- Loading skeleton rows -->
         <template v-if="isLoading && results.length === 0">
           <tr v-for="i in 5" :key="`skeleton-${i}`" class="border-b border-border">
+            <td v-if="selectionMode" class="py-3 px-2 w-8">
+              <div class="h-4 w-4 bg-bg-muted rounded animate-pulse" />
+            </td>
             <td class="py-3 px-3">
               <div class="h-4 w-32 bg-bg-muted rounded animate-pulse" />
             </td>
@@ -338,7 +390,10 @@ function getColumnLabel(id: ColumnId): string {
             :columns="columns"
             :index="index"
             :filters="filters"
+            :selection-mode="selectionMode"
+            :is-selected="selectionMode && selectedPackages?.has(result.package.name)"
             @click-keyword="emit('clickKeyword', $event)"
+            @toggle-select="emit('toggleSelect', $event)"
           />
         </template>
       </tbody>

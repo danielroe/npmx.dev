@@ -46,6 +46,15 @@ const SKIPPED_COMPONENTS: Record<string, string> = {
   'SkeletonBlock.vue': 'Already covered indirectly via other component tests',
   'SkeletonInline.vue': 'Already covered indirectly via other component tests',
   'Button/Group.vue': "Wrapper component, tests wouldn't make much sense here",
+
+  // Bulk operations components - require connector context and complex mock setup
+  'Package/BulkActionsToolbar.vue':
+    'Toolbar component - requires connector context and selection state',
+  'Package/BulkGrantAccessModal.vue':
+    'Complex modal - requires connector context and API calls for teams',
+  'Package/CopyAccessModal.vue':
+    'Complex modal - requires connector context and API calls for collaborators',
+  'Org/TeamPackagesPanel.vue': 'Admin panel - requires connector context and API calls for teams',
 }
 
 /**
