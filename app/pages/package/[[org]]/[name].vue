@@ -324,7 +324,7 @@ const { scrollToTop, isTouchDeviceClient } = useScrollToTop()
 
 const { y: scrollY } = useScroll(window)
 const showScrollToTop = computed(
-  () => isTouchDeviceClient.value && scrollY.value > SCROLL_TO_TOP_THRESHOLD,
+  () => isMobile.value && isTouchDeviceClient.value && scrollY.value > SCROLL_TO_TOP_THRESHOLD,
 )
 
 // Fetch dependency analysis (lazy, client-side)
