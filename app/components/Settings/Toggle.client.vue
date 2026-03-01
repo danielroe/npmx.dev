@@ -108,20 +108,42 @@ const id = useId()
 <style scoped>
 /* Support forced colors */
 @media (forced-colors: active) {
-  /* Track */
+  /* Label text */
+  label > span {
+    color: Highlight !important;
+    forced-color-adjust: none;
+    background: Canvas !important;
+  }
+
+  /* Track (OFF & ON base) */
+  input + span {
+    forced-color-adjust: none;
+    border: 1px solid CanvasText !important;
+    background: Canvas !important;
+  }
+
+  /* Track ON */
   input:checked + span {
-    background: Highlight;
+    background: Highlight !important;
+    border-color: CanvasText !important;
   }
 
-  /* Thumb border/bg */
+  /* Thumb (OFF) - Purple circle */
+  input + span::after {
+    forced-color-adjust: none;
+    background-color: Highlight !important;
+    border: none !important;
+  }
+
+  /* Thumb (ON) - White circle on purple track */
   input:checked + span::after {
-    background: Canvas;
-    border-color: CanvasText;
+    background-color: Canvas !important;
   }
 
-  /* Icon */
+  /* Icon (ON) - Purple check on white thumb */
   .i-lucide\:check {
-    color: Highlight;
+    color: Highlight !important;
+    forced-color-adjust: none;
   }
 }
 
