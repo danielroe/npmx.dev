@@ -162,7 +162,10 @@ export default defineNuxtConfig({
     '/settings': { prerender: true },
     '/recharging': { prerender: true },
     // proxy for insights
-    '/_v/script.js': { proxy: 'https://npmx.dev/_vercel/insights/script.js' },
+    '/blog/**': { prerender: true },
+    '/_v/script.js': {
+      proxy: 'https://npmx.dev/_vercel/insights/script.js',
+    },
     '/_v/view': { proxy: 'https://npmx.dev/_vercel/insights/view' },
     '/_v/event': { proxy: 'https://npmx.dev/_vercel/insights/event' },
     '/_v/session': { proxy: 'https://npmx.dev/_vercel/insights/session' },

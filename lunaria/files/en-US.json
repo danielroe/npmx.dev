@@ -12,6 +12,7 @@
   "trademark_disclaimer": "npm is a registered trademark of npm, Inc. This site is not affiliated with npm, Inc.",
   "footer": {
     "about": "about",
+    "blog": "blog",
     "docs": "docs",
     "source": "source",
     "social": "social",
@@ -75,6 +76,29 @@
     "open_menu": "Open menu",
     "links": "Links",
     "tap_to_search": "Tap to search"
+  },
+  "blog": {
+    "title": "Blog",
+    "heading": "blog",
+    "meta_description": "Insights and updates from the npmx community",
+    "author": {
+      "view_profile": "View {name}'s profile on Bluesky"
+    },
+    "atproto": {
+      "view_on_bluesky": "View on Bluesky",
+      "reply_on_bluesky": "Reply on Bluesky",
+      "likes_on_bluesky": "Likes on Bluesky",
+      "like_or_reply_on_bluesky": "Like this post or add your comment on Bluesky",
+      "no_comments_yet": "No comments yet.",
+      "could_not_load_comments": "Could not load comments.",
+      "comments": "Comments",
+      "loading_comments": "Loading comments...",
+      "updating": "Updating...",
+      "reply_count": "{count} reply | {count} replies",
+      "like_count": "{count} like | {count} likes",
+      "repost_count": "{count} repost | {count} reposts",
+      "more_replies": "{count} more reply... | {count} more replies..."
+    }
   },
   "settings": {
     "title": "settings",
