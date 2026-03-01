@@ -2,13 +2,13 @@
   "$schema": "../schema.json",
   "seo": {
     "home": {
-      "title": "npmx - 更好的 npm 仓库浏览工具",
-      "description": "更好的 npm 仓库浏览工具。通过更现代化的用户界面搜索，浏览，并探索软件包。"
+      "title": "npmx - npm 仓库的包浏览器",
+      "description": "一个快速、现代的 npm 仓库浏览工具。通过现代化界面，轻松搜索、浏览和探索软件包。"
     }
   },
   "built_at": "构建于 {0}",
   "alt_logo": "npmx 标志",
-  "tagline": "更好的 npm 仓库浏览工具",
+  "tagline": "npm 仓库的快速、现代浏览器工具",
   "non_affiliation_disclaimer": "不与 npm, Inc. 有任何隶属关系",
   "trademark_disclaimer": "npm 是 npm, Inc. 的注册商标。本网站不与 npm, Inc. 有任何隶属关系。",
   "footer": {
@@ -33,7 +33,8 @@
     "navigate_results": "导航结果",
     "go_to_result": "跳转到结果",
     "open_code_view": "打开代码视图",
-    "open_docs": "打开文档"
+    "open_docs": "打开文档",
+    "disable_shortcuts": "你可以在{settings}中禁用快捷键。"
   },
   "search": {
     "label": "搜索 npm 包",
@@ -84,7 +85,8 @@
       "appearance": "外观",
       "display": "显示",
       "search": "数据来源",
-      "language": "语言"
+      "language": "语言",
+      "keyboard_shortcuts": "快捷键"
     },
     "data_source": {
       "label": "数据来源",
@@ -108,7 +110,9 @@
     "accent_colors": "强调色",
     "clear_accent": "清除强调色",
     "translation_progress": "翻译进度",
-    "background_themes": "背景色调"
+    "background_themes": "背景色调",
+    "keyboard_shortcuts_enabled": "启用快捷键",
+    "keyboard_shortcuts_enabled_description": "如果某些快捷键与其他浏览器或系统快捷键冲突，可以选择将其禁用。"
   },
   "i18n": {
     "missing_keys": "{count} 项缺少翻译",
@@ -387,6 +391,17 @@
       },
       "play_animation": "播放动画",
       "pause_animation": "暂停动画",
+      "data_correction": "数据校正",
+      "average_window": "平均窗口",
+      "smoothing": "平滑处理",
+      "known_anomalies": "已知异常",
+      "known_anomalies_description": "对已知的由机器人或CI问题导致的下载峰值进行插值处理。",
+      "known_anomalies_ranges": "异常区间",
+      "known_anomalies_range": "{start} 至 {end}",
+      "known_anomalies_range_named": "{packageName}：从 {start} 到 {end}",
+      "known_anomalies_none": "此包没有已知异常。 | 这些包没有已知异常。",
+      "known_anomalies_contribute": "贡献异常数据",
+      "apply_correction": "应用校正",
       "copy_alt": {
         "trend_none": "平稳",
         "trend_strong": "明显",
@@ -700,7 +715,8 @@
       "preview": "预览",
       "code": "代码"
     },
-    "file_path": "文件路径"
+    "file_path": "文件路径",
+    "scroll_to_top": "滚动到顶部"
   },
   "badges": {
     "provenance": {

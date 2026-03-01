@@ -688,8 +688,10 @@ const codeLink = computed((): RouteLocationRaw | null => {
   }
 })
 
+const keyboardShortcuts = useKeyboardShortcuts()
+
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),
   e => {
     if (codeLink.value === null) return
     e.preventDefault()
@@ -700,7 +702,7 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'd') && !isEditableElement(e.target),
   e => {
     if (!docsLink.value) return
     e.preventDefault()
@@ -710,7 +712,7 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'c') && !isEditableElement(e.target),
   e => {
     if (!pkg.value) return
     e.preventDefault()
@@ -921,9 +923,6 @@ const showSkeleton = shallowRef(false)
               <ButtonBase
                 @click="likeAction"
                 size="small"
-                :title="
-                  likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
-                "
                 :aria-label="
                   likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
                 "
@@ -1146,7 +1145,7 @@ const showSkeleton = shallowRef(false)
           <div class="space-y-1 sm:col-span-3">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
               {{ $t('package.stats.install_size') }}
-              <TooltipApp :text="sizeTooltip">
+              <TooltipApp v-if="sizeTooltip" :text="sizeTooltip">
                 <span
                   tabindex="0"
                   class="inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 text-fg-subtle cursor-help focus-visible:outline-2 focus-visible:outline-accent/70 rounded"

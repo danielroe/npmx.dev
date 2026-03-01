@@ -4,6 +4,21 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  storybook:
+    '@storybook-vue/nuxt':
+      specifier: 9.0.1
+      version: 9.0.1
+    '@storybook/addon-a11y':
+      specifier: ^10.2.7
+      version: 10.2.13
+    '@storybook/addon-docs':
+      specifier: ^10.2.7
+      version: 10.2.13
+    '@storybook/addon-themes':
+      specifier: ^10.2.7
+      version: 10.2.13
+
 overrides:
   sharp: 0.34.5
   vite: npm:@voidzero-dev/vite-plus-core@0.0.0-g52709db6.20260226-1136
@@ -214,8 +229,8 @@ importers:
         specifier: 3.5.29
         version: 3.5.29(typescript@5.9.3)
       vue-data-ui:
-        specifier: 3.15.8
-        version: 3.15.8(vue@3.5.29(typescript@5.9.3))
+        specifier: 3.15.9
+        version: 3.15.9(vue@3.5.29(typescript@5.9.3))
     devDependencies:
       '@e18e/eslint-plugin':
         specifier: 0.2.0
@@ -233,14 +248,17 @@ importers:
         specifier: ^3.21.0
         version: 3.23.0(markdown-it-async@2.2.0)
       '@storybook-vue/nuxt':
-        specifier: 9.0.1
+        specifier: catalog:storybook
         version: 9.0.1(943de74da843ff392a0ce19e8d4f1cd5)
       '@storybook/addon-a11y':
-        specifier: ^10.2.7
+        specifier: catalog:storybook
         version: 10.2.13(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@storybook/addon-docs':
-        specifier: ^10.2.7
+        specifier: catalog:storybook
         version: 10.2.13(@types/react@19.2.14)(esbuild@0.27.3)(rollup@4.56.0)(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@8.0.0-beta.10(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))(webpack@5.104.1(esbuild@0.27.3))
+      '@storybook/addon-themes':
+        specifier: catalog:storybook
+        version: 10.2.13(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@types/node':
         specifier: 24.10.13
         version: 24.10.13
@@ -4224,6 +4242,11 @@ packages:
 
   '@storybook/addon-docs@10.2.13':
     resolution: {integrity: sha512-puMxpJbt/CuodLIbKDxWrW1ZgADYomfNHWEKp2d2l2eJjp17rADx0h3PABuNbX+YHbJwYcDdqluSnQwMysFEOA==}
+    peerDependencies:
+      storybook: ^10.2.7
+
+  '@storybook/addon-themes@10.2.13':
+    resolution: {integrity: sha512-ueOGGy7ZXgFp+GFo67HfWSCoNIv1+z+nHiSUmkZP/GHZ/1yiD/w8Sv0bEI1HjD/whCdoOzDKNcVXfiJAFdHoGw==}
     peerDependencies:
       storybook: ^10.2.7
 
@@ -10423,8 +10446,8 @@ packages:
   vue-component-type-helpers@3.2.5:
     resolution: {integrity: sha512-tkvNr+bU8+xD/onAThIe7CHFvOJ/BO6XCOrxMzeytJq40nTfpGDJuVjyCM8ccGZKfAbGk2YfuZyDMXM56qheZQ==}
 
-  vue-data-ui@3.15.8:
-    resolution: {integrity: sha512-9Htys+aB95bC8cWGPv+jGptDORtA8i4xRfVx9QDEO99LmyUisaTOwkkhV753DAcfu4pbs+dAfCIOVaGM3nTaBA==}
+  vue-data-ui@3.15.9:
+    resolution: {integrity: sha512-xNv8u//zPkKQT+WNtPsxWLdRBgyZPpDn5X0z6klB/8CouHXYrC8FO5eul28bTE3cbmm/vZZDC2LRupfeeu7zNA==}
     peerDependencies:
       jspdf: '>=3.0.1'
       vue: '>=3.3.0'
@@ -15030,6 +15053,11 @@ snapshots:
       - rollup
       - vite
       - webpack
+
+  '@storybook/addon-themes@10.2.13(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))':
+    dependencies:
+      storybook: 10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      ts-dedent: 2.2.0
 
   '@storybook/builder-vite@9.1.2(storybook@10.2.13(@testing-library/dom@10.4.1)(prettier@3.8.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(vite@8.0.0-beta.10(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))':
     dependencies:
@@ -23116,7 +23144,7 @@ snapshots:
 
   vue-component-type-helpers@3.2.5: {}
 
-  vue-data-ui@3.15.8(vue@3.5.29(typescript@5.9.3)):
+  vue-data-ui@3.15.9(vue@3.5.29(typescript@5.9.3)):
     dependencies:
       vue: 3.5.29(typescript@5.9.3)
 

@@ -34,7 +34,8 @@
     "navigate_results": "Navigate results",
     "go_to_result": "Go to result",
     "open_code_view": "Open code view",
-    "open_docs": "Open docs"
+    "open_docs": "Open docs",
+    "disable_shortcuts": "You can disable keyboard shortcuts in {settings}."
   },
   "search": {
     "label": "Search npm packages",
@@ -97,7 +98,8 @@
       "appearance": "Appearance",
       "display": "Display",
       "search": "Data source",
-      "language": "Language"
+      "language": "Language",
+      "keyboard_shortcuts": "Keyboard shortcuts"
     },
     "data_source": {
       "label": "Data source",
@@ -121,7 +123,9 @@
     "accent_colors": "Accent colors",
     "clear_accent": "Clear accent color",
     "translation_progress": "Translation progress",
-    "background_themes": "Background shade"
+    "background_themes": "Background shade",
+    "keyboard_shortcuts_enabled": "Enable keyboard shortcuts",
+    "keyboard_shortcuts_enabled_description": "Keyboard shortcuts can be disabled if they conflict with other browser or system shortcuts"
   },
   "i18n": {
     "missing_keys": "{count} missing translation | {count} missing translations",
@@ -153,7 +157,28 @@
       "role": "role",
       "members": "members"
     },
-    "scroll_to_top": "Scroll to top"
+    "scroll_to_top": "Scroll to top",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "error": "Error"
+  },
+  "profile": {
+    "display_name": "Display Name",
+    "description": "Description",
+    "no_description": "No description",
+    "website": "Website",
+    "website_placeholder": "https://example.com",
+    "likes": "Likes",
+    "seo_title": "{handle} - npmx",
+    "seo_description": "npmx profile by {handle}",
+    "not_found": "Profile Not Found",
+    "not_found_message": "The profile for {handle} could not be found.",
+    "invite": {
+      "message": "It doesn't look like they're using npmx yet. Want to tell them about it?",
+      "share_button": "Share on Bluesky",
+      "compose_text": "Hey {'@'}{handle}! Have you checked out npmx.dev yet? It's a browser for the npm registry that's fast, modern, and open-source.\nhttps://npmx.dev"
+    }
   },
   "package": {
     "not_found": "Package Not Found",
@@ -428,7 +453,8 @@
     },
     "downloads": {
       "title": "Weekly Downloads",
-      "community_distribution": "View community adoption distribution"
+      "community_distribution": "View community adoption distribution",
+      "subtitle": "Across all versions"
     },
     "install_scripts": {
       "title": "Install Scripts",
@@ -724,7 +750,8 @@
       "preview": "preview",
       "code": "code"
     },
-    "file_path": "File path"
+    "file_path": "File path",
+    "scroll_to_top": "Scroll to top"
   },
   "badges": {
     "provenance": {
@@ -941,7 +968,8 @@
       "connect_bluesky": "Connect with Bluesky",
       "what_is_atmosphere": "What is an Atmosphere account?",
       "atmosphere_explanation": "{npmx} uses the {atproto} to power many of its social features, allowing users to own their data and use one account for all compatible applications. Once you create an account, you can use other apps like {bluesky} and {tangled} with the same account.",
-      "default_input_error": "Please enter a valid handle, DID, or a full PDS URL"
+      "default_input_error": "Please enter a valid handle, DID, or a full PDS URL",
+      "profile": "Profile"
     }
   },
   "header": {
@@ -1086,6 +1114,8 @@
     "file_changes": "File Changes",
     "files_count": "{count} files",
     "lines_hidden": "{count} lines hidden",
+    "file_too_large": "File too large to compare",
+    "file_size_warning": "{size} exceeds the 250KB limit for comparison",
     "compare_versions": "diff",
     "summary": "Summary",
     "deps_count": "{count} deps",

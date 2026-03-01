@@ -2,12 +2,12 @@
   "seo": {
     "home": {
       "title": "npmx - Explorateur de paquets pour le registre npm",
-      "description": "Un meilleur explorateur du registre npm. Recherchez, parcourez et explorez les paquets avec une interface moderne."
+      "description": "Un explorateur rapide et moderne du registre npm. Recherchez, parcourez et explorez les paquets avec une interface moderne."
     }
   },
   "built_at": "compilé {0}",
   "alt_logo": "Logo npmx",
-  "tagline": "un meilleur explorateur du registre npm",
+  "tagline": "un explorateur rapide et moderne du registre npm",
   "non_affiliation_disclaimer": "non affilié à npm, Inc.",
   "trademark_disclaimer": "npm est une marque déposée de npm, Inc. Ce site n'est pas affilié à npm, Inc.",
   "footer": {
@@ -32,7 +32,8 @@
     "navigate_results": "Parcourir les résultats",
     "go_to_result": "Aller au résultat",
     "open_code_view": "Ouvrir la vue code",
-    "open_docs": "Ouvrir la doc"
+    "open_docs": "Ouvrir la doc",
+    "disable_shortcuts": "Vous pouvez désactiver les raccourcis clavier dans {settings}."
   },
   "search": {
     "label": "Rechercher des paquets npm",
@@ -87,7 +88,8 @@
       "appearance": "Apparence",
       "display": "Affichage",
       "search": "Source de données",
-      "language": "Langue"
+      "language": "Langue",
+      "keyboard_shortcuts": "Raccourcis clavier"
     },
     "data_source": {
       "label": "Source de données",
@@ -111,7 +113,9 @@
     "accent_colors": "Couleurs d'accentuation",
     "clear_accent": "Supprimer la couleur d'accentuation",
     "translation_progress": "Progression de la traduction",
-    "background_themes": "Teinte de fond"
+    "background_themes": "Teinte de fond",
+    "keyboard_shortcuts_enabled": "Activer les raccourcis clavier",
+    "keyboard_shortcuts_enabled_description": "Les raccourcis clavier peuvent être désactivés s'ils entrent en conflit avec d'autres raccourcis du navigateur ou du système"
   },
   "i18n": {
     "missing_keys": "{count} traduction manquante | {count} traductions manquantes",
@@ -143,7 +147,28 @@
       "role": "rôle",
       "members": "membres"
     },
-    "scroll_to_top": "Retour en haut"
+    "scroll_to_top": "Retour en haut",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "error": "Erreur"
+  },
+  "profile": {
+    "display_name": "Nom d'affichage",
+    "description": "Description",
+    "no_description": "Aucune description",
+    "website": "Site web",
+    "website_placeholder": "https://exemple.com",
+    "likes": "Mentions j'aime",
+    "seo_title": "{handle} - npmx",
+    "seo_description": "Profil npmx par {handle}",
+    "not_found": "Profil introuvable",
+    "not_found_message": "Le profil de {handle} est introuvable.",
+    "invite": {
+      "message": "Il semblerait qu'ils n'utilisent pas encore npmx. Vous voulez leur en parler ?",
+      "share_button": "Partager sur Bluesky",
+      "compose_text": "Salut {'@'}{handle} ! As-tu déjà testé npmx.dev ? C'est un navigateur pour le registre npm : rapide, moderne et open source.\nhttps://npmx.dev"
+    }
   },
   "package": {
     "not_found": "Paquet introuvable",
@@ -159,6 +184,13 @@
       "package": "Ce paquet a été déprécié.",
       "version": "Cette version a été dépréciée.",
       "no_reason": "Aucune raison fournie"
+    },
+    "size_increase": {
+      "title_size": "Augmentation significative de la taille depuis la v{version}",
+      "title_deps": "Augmentation significative du nombre de dépendances depuis la v{version}",
+      "title_both": "Augmentation significative de la taille et des dépendances depuis la v{version}",
+      "size": "La taille d'installation a augmenté de {percent} ({size} de plus)",
+      "deps": "{count} dépendances supplémentaires"
     },
     "replacement": {
       "title": "Vous n'avez peut-être pas besoin de cette dépendance.",
@@ -369,6 +401,7 @@
       "date_range_multiline": "{start}\nau {end}",
       "download_file": "Télécharger {fileType}",
       "toggle_annotator": "Afficher/Masquer l'annotateur",
+      "toggle_stack_mode": "Basculer le mode empilé",
       "legend_estimation": "Estimation",
       "no_data": "Données non disponibles",
       "y_axis_label": "{facet} {granularity}",
@@ -382,6 +415,17 @@
       },
       "play_animation": "Lancer l'animation",
       "pause_animation": "Mettre l'animation en pause",
+      "data_correction": "Correction des données",
+      "average_window": "Plage de moyenne",
+      "smoothing": "Lissage",
+      "known_anomalies": "Anomalies connues",
+      "known_anomalies_description": "Interpole les pics de téléchargements connus causés par des bots ou des problèmes de CI.",
+      "known_anomalies_ranges": "Plages d'anomalies",
+      "known_anomalies_range": "Du {start} au {end}",
+      "known_anomalies_range_named": "{packageName} : du {start} au {end}",
+      "known_anomalies_none": "Aucune anomalie connue pour ce paquet. | Aucune anomalie connue pour ces paquets.",
+      "known_anomalies_contribute": "Contribuer des données d'anomalie",
+      "apply_correction": "Appliquer la correction",
       "copy_alt": {
         "trend_none": "globalement stable",
         "trend_strong": "forte",
@@ -399,7 +443,8 @@
     },
     "downloads": {
       "title": "Téléchargements hebdo.",
-      "community_distribution": "Voir la distribution des versions téléchargées par la communauté"
+      "community_distribution": "Voir la distribution des versions téléchargées par la communauté",
+      "subtitle": "Toutes versions confondues"
     },
     "install_scripts": {
       "title": "Scripts d'installation",
@@ -695,7 +740,8 @@
       "preview": "aperçu",
       "code": "code"
     },
-    "file_path": "Chemin du fichier"
+    "file_path": "Chemin du fichier",
+    "scroll_to_top": "Remonter en haut"
   },
   "badges": {
     "provenance": {
@@ -847,6 +893,12 @@
         "managers": "gestionnaires de paquets"
       }
     },
+    "sponsors": {
+      "title": "Commanditaires"
+    },
+    "oss_partners": {
+      "title": "Partenaires open source"
+    },
     "team": {
       "title": "Équipe",
       "governance": "Gouvernance",
@@ -906,7 +958,8 @@
       "connect_bluesky": "Connexion avec Bluesky",
       "what_is_atmosphere": "Qu'est-ce qu'un compte Atmosphere ?",
       "atmosphere_explanation": "{npmx} utilise {atproto} pour alimenter plusieurs de ses fonctionnalités sociales, permettant aux utilisateurs de posséder leurs données et d'utiliser un seul compte pour toutes les applications compatibles. Une fois votre compte créé, vous pouvez utiliser d'autres applications comme {bluesky} ou {tangled} avec le même compte.",
-      "default_input_error": "Veuillez entrer un identifiant, DID ou URL PDS valide"
+      "default_input_error": "Veuillez entrer un identifiant, DID ou URL PDS valide",
+      "profile": "Profil"
     }
   },
   "header": {
@@ -1047,7 +1100,39 @@
       "trends": {
         "title": "Comparer les tendances"
       }
-    }
+    },
+    "file_changes": "Modifications de fichiers",
+    "files_count": "{count} fichiers",
+    "lines_hidden": "{count} lignes masquées",
+    "file_too_large": "Fichier trop volumineux pour être comparé",
+    "file_size_warning": "{size} dépasse la limite de 250 Ko pour la comparaison",
+    "compare_versions": "diff",
+    "summary": "Résumé",
+    "deps_count": "{count} dépendances",
+    "dependencies": "Dépendances",
+    "dev_dependencies": "Dépendances de développement",
+    "peer_dependencies": "Dépendances de type peer",
+    "optional_dependencies": "Dépendances optionnelles",
+    "no_dependency_changes": "Aucun changement de dépendance",
+    "file_filter_option": {
+      "all": "Tous ({count})",
+      "added": "Ajoutés ({count})",
+      "removed": "Supprimés ({count})",
+      "modified": "Modifiés ({count})"
+    },
+    "search_files_placeholder": "Rechercher des fichiers...",
+    "no_files_all": "Aucun fichier",
+    "no_files_search": "Aucun fichier correspondant à « {query} »",
+    "no_files_filtered": "Aucun fichier {filter}",
+    "filter": {
+      "added": "ajouté",
+      "removed": "supprimé",
+      "modified": "modifié"
+    },
+    "files_button": "Fichiers",
+    "select_file_prompt": "Sélectionnez un fichier dans la barre latérale pour voir son diff",
+    "close_files_panel": "Fermer le panneau de fichiers",
+    "filter_files_label": "Filtrer les fichiers par type de modification"
   },
   "privacy_policy": {
     "title": "politique de confidentialité",
