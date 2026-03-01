@@ -1,13 +1,10 @@
 import process from 'node:process'
 import { currentLocales } from './config/i18n'
-import Markdown from 'unplugin-vue-markdown/vite'
 import { isCI, isTest, provider } from 'std-env'
-import type { ViteOptions } from 'nuxt/schema'
 
 const isStorybook = process.env.STORYBOOK === 'true' || process.env.VITEST_STORYBOOK === 'true'
 
 export default defineNuxtConfig({
-  extensions: ['.md'],
   modules: [
     '@unocss/nuxt',
     '@nuxtjs/html-validator',
@@ -351,29 +348,6 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    vue: {
-      include: [/\.vue($|\?)/, /\.(md|markdown)($|\?)/],
-    },
-    plugins: [
-      Markdown({
-        include: [/\.(md|markdown)($|\?)/],
-        wrapperComponent: 'BlogPostWrapper',
-        wrapperClasses: 'text-fg-muted leading-relaxed',
-        async markdownItSetup(md) {
-          const shiki = await import('@shikijs/markdown-it')
-          md.use(
-            await shiki.default({
-              themes: {
-                dark: 'github-dark',
-                light: 'github-light',
-              },
-            }),
-          )
-        },
-        // important for types compatibility
-      }) as Exclude<ViteOptions['plugins'], undefined>[number],
-    ],
-
     optimizeDeps: {
       include: [
         '@vueuse/core',
