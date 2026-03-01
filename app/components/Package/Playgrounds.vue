@@ -69,7 +69,13 @@ function closeDropdown() {
   focusedIndex.value = -1
 }
 
+const keyboardShortcuts = useKeyboardShortcuts()
+
 function handleKeydown(event: KeyboardEvent) {
+  if (!keyboardShortcuts.value) {
+    return
+  }
+
   if (!isOpen.value) {
     if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
       event.preventDefault()
