@@ -46,6 +46,7 @@ const SKIPPED_COMPONENTS: Record<string, string> = {
   'SkeletonBlock.vue': 'Already covered indirectly via other component tests',
   'SkeletonInline.vue': 'Already covered indirectly via other component tests',
   'Button/Group.vue': "Wrapper component, tests wouldn't make much sense here",
+  'EntrypointSelector.vue': 'Simple native <select> wrapper - minimal a11y surface',
 }
 
 /**
