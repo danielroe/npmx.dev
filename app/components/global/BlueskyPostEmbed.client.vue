@@ -48,6 +48,8 @@ async function resolveAtUri(): Promise<string | null> {
   if (!match) return null
   const [, handle, rkey] = match
 
+  if (!handle || !rkey) return null
+
   // If the handle is already a DID, build the AT URI directly
   if (handle.startsWith('did:')) {
     return `at://${handle}/app.bsky.feed.post/${rkey}`

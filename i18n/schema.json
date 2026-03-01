@@ -262,9 +262,6 @@
         "atproto": {
           "type": "object",
           "properties": {
-            "loading_bluesky_post": {
-              "type": "string"
-            },
             "view_on_bluesky": {
               "type": "string"
             },

@@ -85,7 +85,6 @@
       "view_profile": "View {name}'s profile on Bluesky"
     },
     "atproto": {
-      "loading_bluesky_post": "Loading Bluesky post...",
       "view_on_bluesky": "View on Bluesky",
       "reply_on_bluesky": "Reply on Bluesky",
       "likes_on_bluesky": "Likes on Bluesky",

@@ -2,6 +2,7 @@ import process from 'node:process'
 import { currentLocales } from './config/i18n'
 import Markdown from 'unplugin-vue-markdown/vite'
 import { isCI, isTest, provider } from 'std-env'
+import type { ViteOptions } from 'nuxt/schema'
 
 const isStorybook = process.env.STORYBOOK === 'true' || process.env.VITEST_STORYBOOK === 'true'
 
@@ -362,7 +363,8 @@ export default defineNuxtConfig({
             }),
           )
         },
-      }),
+        // important for types compatibility
+      }) as Exclude<ViteOptions['plugins'], undefined>[number],
     ],
 
     optimizeDeps: {
