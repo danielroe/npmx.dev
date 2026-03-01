@@ -151,8 +151,6 @@
   "lint-staged": {
     "i18n/locales/*": [
       "node ./lunaria/lunaria.ts",
-      "pnpm oxfmt lunaria/files/",
-      "git add lunaria/files/",
       "node scripts/generate-i18n-schema.ts",
       "pnpm oxfmt i18n/schema.json",
       "git add i18n/schema.json"
