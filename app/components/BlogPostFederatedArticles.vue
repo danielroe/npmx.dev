@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FederatedArticleInput } from '#shared/types/blog-post'
 import type { Author } from '#shared/schemas/blog'
+import type { AtIdentifierString } from '@atproto/lex'
 
 const props = defineProps<{
   headline: string
@@ -11,7 +12,7 @@ const props = defineProps<{
 const authors = computed<Author[]>(() =>
   props.articles.map(article => ({
     name: article.authorHandle,
-    blueskyHandle: article.authorHandle,
+    blueskyHandle: article.authorHandle as AtIdentifierString,
   })),
 )
 
