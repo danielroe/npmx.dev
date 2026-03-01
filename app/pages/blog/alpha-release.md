@@ -81,7 +81,7 @@ Search and view details about packages, users and organizations available on npm
 - multi-provider repo support
 - version range resolution
 - package likes and other social features
-- performance recommendations powered by [e18n](https://e18e.dev/)
+- performance recommendations powered by [e18e](https://e18e.dev/)
 
 You also get quick access to StackBlitz, CodeSandbox, and other demo environments from package READMEs files. Plus, use
 npmx in 19 languages and additional locales, customize your experience with light or dark mode, and power-up your
