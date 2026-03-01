@@ -43,6 +43,9 @@
         "about": {
           "type": "string"
         },
+        "blog": {
+          "type": "string"
+        },
         "docs": {
           "type": "string"
         },
@@ -104,6 +107,9 @@
           "type": "string"
         },
         "open_docs": {
+          "type": "string"
+        },
+        "disable_shortcuts": {
           "type": "string"
         }
       },
@@ -232,6 +238,75 @@
       },
       "additionalProperties": false
     },
+    "blog": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "heading": {
+          "type": "string"
+        },
+        "meta_description": {
+          "type": "string"
+        },
+        "author": {
+          "type": "object",
+          "properties": {
+            "view_profile": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "atproto": {
+          "type": "object",
+          "properties": {
+            "view_on_bluesky": {
+              "type": "string"
+            },
+            "reply_on_bluesky": {
+              "type": "string"
+            },
+            "likes_on_bluesky": {
+              "type": "string"
+            },
+            "like_or_reply_on_bluesky": {
+              "type": "string"
+            },
+            "no_comments_yet": {
+              "type": "string"
+            },
+            "could_not_load_comments": {
+              "type": "string"
+            },
+            "comments": {
+              "type": "string"
+            },
+            "loading_comments": {
+              "type": "string"
+            },
+            "updating": {
+              "type": "string"
+            },
+            "reply_count": {
+              "type": "string"
+            },
+            "like_count": {
+              "type": "string"
+            },
+            "repost_count": {
+              "type": "string"
+            },
+            "more_replies": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
     "settings": {
       "type": "object",
       "properties": {
@@ -257,6 +332,9 @@
               "type": "string"
             },
             "language": {
+              "type": "string"
+            },
+            "keyboard_shortcuts": {
               "type": "string"
             }
           },
@@ -330,6 +408,12 @@
         },
         "background_themes": {
           "type": "string"
+        },
+        "keyboard_shortcuts_enabled": {
+          "type": "string"
+        },
+        "keyboard_shortcuts_enabled_description": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -353,6 +437,27 @@
           "type": "string"
         },
         "view_guide": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "401": {
+          "type": "string"
+        },
+        "404": {
+          "type": "string"
+        },
+        "500": {
+          "type": "string"
+        },
+        "503": {
+          "type": "string"
+        },
+        "default": {
           "type": "string"
         }
       },
@@ -426,6 +531,69 @@
         },
         "scroll_to_top": {
           "type": "string"
+        },
+        "cancel": {
+          "type": "string"
+        },
+        "save": {
+          "type": "string"
+        },
+        "edit": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "display_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "no_description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string"
+        },
+        "website_placeholder": {
+          "type": "string"
+        },
+        "likes": {
+          "type": "string"
+        },
+        "seo_title": {
+          "type": "string"
+        },
+        "seo_description": {
+          "type": "string"
+        },
+        "not_found": {
+          "type": "string"
+        },
+        "not_found_message": {
+          "type": "string"
+        },
+        "invite": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            },
+            "share_button": {
+              "type": "string"
+            },
+            "compose_text": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -470,6 +638,27 @@
               "type": "string"
             },
             "no_reason": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "size_increase": {
+          "type": "object",
+          "properties": {
+            "title_size": {
+              "type": "string"
+            },
+            "title_deps": {
+              "type": "string"
+            },
+            "title_both": {
+              "type": "string"
+            },
+            "size": {
+              "type": "string"
+            },
+            "deps": {
               "type": "string"
             }
           },
@@ -942,6 +1131,18 @@
             },
             "no_matches": {
               "type": "string"
+            },
+            "copy_alt": {
+              "type": "object",
+              "properties": {
+                "per_version_analysis": {
+                  "type": "string"
+                },
+                "general_description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
@@ -1090,6 +1291,15 @@
             "toggle_annotator": {
               "type": "string"
             },
+            "toggle_stack_mode": {
+              "type": "string"
+            },
+            "open_options": {
+              "type": "string"
+            },
+            "close_options": {
+              "type": "string"
+            },
             "legend_estimation": {
               "type": "string"
             },
@@ -1127,6 +1337,39 @@
               "type": "string"
             },
             "pause_animation": {
+              "type": "string"
+            },
+            "data_correction": {
+              "type": "string"
+            },
+            "average_window": {
+              "type": "string"
+            },
+            "smoothing": {
+              "type": "string"
+            },
+            "known_anomalies": {
+              "type": "string"
+            },
+            "known_anomalies_description": {
+              "type": "string"
+            },
+            "known_anomalies_ranges": {
+              "type": "string"
+            },
+            "known_anomalies_range": {
+              "type": "string"
+            },
+            "known_anomalies_range_named": {
+              "type": "string"
+            },
+            "known_anomalies_none": {
+              "type": "string"
+            },
+            "known_anomalies_contribute": {
+              "type": "string"
+            },
+            "apply_correction": {
               "type": "string"
             },
             "copy_alt": {
@@ -1181,6 +1424,9 @@
               "type": "string"
             },
             "community_distribution": {
+              "type": "string"
+            },
+            "subtitle": {
               "type": "string"
             }
           },
@@ -2070,6 +2316,9 @@
         },
         "file_path": {
           "type": "string"
+        },
+        "scroll_to_top": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -2721,6 +2970,9 @@
             },
             "default_input_error": {
               "type": "string"
+            },
+            "profile": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -3144,6 +3396,105 @@
             }
           },
           "additionalProperties": false
+        },
+        "file_changes": {
+          "type": "string"
+        },
+        "files_count": {
+          "type": "string"
+        },
+        "lines_hidden": {
+          "type": "string"
+        },
+        "file_too_large": {
+          "type": "string"
+        },
+        "file_size_warning": {
+          "type": "string"
+        },
+        "compare_versions": {
+          "type": "string"
+        },
+        "compare_versions_title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "deps_count": {
+          "type": "string"
+        },
+        "dependencies": {
+          "type": "string"
+        },
+        "dev_dependencies": {
+          "type": "string"
+        },
+        "peer_dependencies": {
+          "type": "string"
+        },
+        "optional_dependencies": {
+          "type": "string"
+        },
+        "no_dependency_changes": {
+          "type": "string"
+        },
+        "file_filter_option": {
+          "type": "object",
+          "properties": {
+            "all": {
+              "type": "string"
+            },
+            "added": {
+              "type": "string"
+            },
+            "removed": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "search_files_placeholder": {
+          "type": "string"
+        },
+        "no_files_all": {
+          "type": "string"
+        },
+        "no_files_search": {
+          "type": "string"
+        },
+        "no_files_filtered": {
+          "type": "string"
+        },
+        "filter": {
+          "type": "object",
+          "properties": {
+            "added": {
+              "type": "string"
+            },
+            "removed": {
+              "type": "string"
+            },
+            "modified": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "files_button": {
+          "type": "string"
+        },
+        "select_file_prompt": {
+          "type": "string"
+        },
+        "close_files_panel": {
+          "type": "string"
+        },
+        "filter_files_label": {
+          "type": "string"
         }
       },
       "additionalProperties": false

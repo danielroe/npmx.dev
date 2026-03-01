@@ -2,7 +2,9 @@
 import { VueUiSparkline } from 'vue-data-ui/vue-ui-sparkline'
 import { useCssVariables } from '~/composables/useColors'
 import type { WeeklyDataPoint } from '~/types/chart'
+import { applyDataCorrection } from '~/utils/chart-data-correction'
 import { OKLCH_NEUTRAL_FALLBACK, lightenOklch } from '~/utils/colors'
+import { applyBlocklistCorrection } from '~/utils/download-anomalies'
 import type { RepoRef } from '#shared/utils/git-providers'
 import type { VueUiSparklineConfig, VueUiSparklineDatasetItem } from 'vue-data-ui'
 
@@ -24,6 +26,12 @@ const modalTitle = computed(() => {
   if (facet === 'likes') return $t('package.trends.items.likes')
   if (facet === 'contributors') return $t('package.trends.items.contributors')
   return $t('package.trends.items.downloads')
+})
+
+const modalSubtitle = computed(() => {
+  const facet = route.query.facet as string | undefined
+  if (facet === 'likes' || facet === 'contributors') return undefined
+  return $t('package.downloads.subtitle')
 })
 
 const isChartModalOpen = shallowRef<boolean>(false)
@@ -177,8 +185,22 @@ watch(
   () => loadWeeklyDownloads(),
 )
 
+const correctedDownloads = computed<WeeklyDataPoint[]>(() => {
+  let data = weeklyDownloads.value as WeeklyDataPoint[]
+  if (!data.length) return data
+  if (settings.value.chartFilter.anomaliesFixed) {
+    data = applyBlocklistCorrection({
+      data,
+      packageName: props.packageName,
+      granularity: 'weekly',
+    }) as WeeklyDataPoint[]
+  }
+  data = applyDataCorrection(data, settings.value.chartFilter) as WeeklyDataPoint[]
+  return data
+})
+
 const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
-  weeklyDownloads.value.map(d => ({
+  correctedDownloads.value.map(d => ({
     value: d?.value ?? 0,
     period: $t('package.trends.date_range', {
       start: d.weekStart ?? '-',
@@ -265,7 +287,11 @@ const config = computed<VueUiSparklineConfig>(() => {
 
 <template>
   <div class="space-y-8">
-    <CollapsibleSection id="downloads" :title="$t('package.downloads.title')">
+    <CollapsibleSection
+      id="downloads"
+      :title="$t('package.downloads.title')"
+      :subtitle="$t('package.downloads.subtitle')"
+    >
       <template #actions>
         <ButtonBase
           v-if="hasWeeklyDownloads"
@@ -280,7 +306,7 @@ const config = computed<VueUiSparklineConfig>(() => {
         <span v-else-if="isLoadingWeeklyDownloads" class="min-w-6 min-h-6 -m-1 p-1" />
       </template>
 
-      <div class="w-full overflow-hidden h-[110px] motion-safe:h-[140px]">
+      <div class="w-full overflow-hidden h-[76px] motion-safe:h-[calc(92px+0.75rem)]">
         <template v-if="isLoadingWeeklyDownloads || hasWeeklyDownloads">
           <ClientOnly>
             <VueUiSparkline class="w-full max-w-xs" :dataset :config>
@@ -335,6 +361,7 @@ const config = computed<VueUiSparklineConfig>(() => {
   <PackageChartModal
     v-if="isChartModalOpen && hasWeeklyDownloads"
     :modal-title="modalTitle"
+    :modal-subtitle="modalSubtitle"
     @close="handleModalClose"
     @transitioned="handleModalTransitioned"
   >

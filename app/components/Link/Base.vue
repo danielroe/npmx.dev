@@ -10,10 +10,14 @@ const props = withDefaults(
      * `type` should never be used, because this will always be a link.
      * */
     type?: never
+    /** Visual style of the link */
     variant?: 'button-primary' | 'button-secondary' | 'link'
+    /** Size (only applicable for button variants) */
     size?: 'small' | 'medium'
+    /** Makes the link take full width */
     block?: boolean
 
+    /** Keyboard shortcut hint */
     ariaKeyshortcuts?: string
 
     /**
@@ -26,8 +30,10 @@ const props = withDefaults(
      */
     rel?: never
 
+    /** Icon class to display */
     classicon?: IconClass
 
+    /** Link destination (internal or external URL) */
     to?: NuxtLinkProps['to']
 
     /** always use `to` instead of `href` */
@@ -37,6 +43,7 @@ const props = withDefaults(
     noUnderline?: boolean
 
     /**
+     * Hide external link icon (deprecated)
      * @deprecated @todo remove this property and add separate clean component without this logic
      */
     noNewTabIcon?: boolean
@@ -59,6 +66,7 @@ const isLink = computed(() => props.variant === 'link')
 const isButton = computed(() => !isLink.value)
 const isButtonSmall = computed(() => props.size === 'small' && !isLink.value)
 const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
+const keyboardShortcutsEnabled = useKeyboardShortcuts()
 </script>
 
 <template>
@@ -97,7 +105,7 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
         variant === 'button-primary',
     }"
     :to="to"
-    :aria-keyshortcuts="ariaKeyshortcuts"
+    :aria-keyshortcuts="keyboardShortcutsEnabled ? ariaKeyshortcuts : undefined"
     :target="isLinkExternal ? '_blank' : undefined"
   >
     <span v-if="classicon" class="size-[1em]" :class="classicon" aria-hidden="true" />
@@ -114,7 +122,8 @@ const isButtonMedium = computed(() => props.size === 'medium' && !isLink.value)
       aria-hidden="true"
     />
     <kbd
-      v-if="ariaKeyshortcuts"
+      v-if="keyboardShortcutsEnabled && ariaKeyshortcuts"
+      data-kbd-hint
       class="ms-2 inline-flex items-center justify-center size-4 text-xs text-fg bg-bg-muted border border-border rounded no-underline"
       aria-hidden="true"
     >

@@ -3,8 +3,9 @@ import sanitizeHtml from 'sanitize-html'
 import { hasProtocol } from 'ufo'
 import type { ReadmeResponse, TocItem } from '#shared/types/readme'
 import { convertBlobOrFileToRawUrl, type RepositoryInfo } from '#shared/utils/git-providers'
-import { decodeHtmlEntities } from '#shared/utils/html'
+import { decodeHtmlEntities, stripHtmlTags } from '#shared/utils/html'
 import { convertToEmoji } from '#shared/utils/emoji'
+import { toProxiedImageUrl } from '#server/utils/image-proxy'
 
 import { highlightCodeSync } from './shiki'
 
@@ -194,22 +195,6 @@ const ALLOWED_ATTR: Record<string, string[]> = {
 }
 
 /**
- * Strip all HTML tags from a string, looping until stable to prevent
- * incomplete sanitization from nested/interleaved tags
- * (e.g. `<scr<script>ipt>` → `<script>` after one pass).
- */
-function stripHtmlTags(text: string): string {
-  const tagPattern = /<[^>]*>/g
-  let result = text
-  let previous: string
-  do {
-    previous = result
-    result = result.replace(tagPattern, '')
-  } while (result !== previous)
-  return result
-}
-
-/**
  * Generate a GitHub-style slug from heading text.
  * - Convert to lowercase
  * - Remove HTML tags
@@ -226,6 +211,46 @@ function slugify(text: string): string {
     .replace(/-+/g, '-') // Collapse multiple hyphens
     .replace(/^-|-$/g, '') // Trim leading/trailing hyphens
 }
+
+/**
+ * Lazy ATX heading extension for marked: allows headings without a space after `#`.
+ *
+ * Reimplements the behavior of markdown-it-lazy-headers
+ * (https://npmx.dev/package/markdown-it-lazy-headers), which is used by npm's own markdown renderer
+ * marky-markdown (https://npmx.dev/package/marky-markdown).
+ *
+ * CommonMark requires a space after # for ATX headings, but many READMEs in the npm registry omit
+ * this space. This extension allows marked to parse these headings the same way npm does.
+ */
+marked.use({
+  tokenizer: {
+    heading(src: string) {
+      // Only match headings where `#` is immediately followed by non-whitespace, non-`#` content.
+      // Normal headings (with space) return false to fall through to marked's default tokenizer.
+      const match = /^ {0,3}(#{1,6})([^\s#][^\n]*)(?:\n+|$)/.exec(src)
+      if (!match) return false
+
+      let text = match[2]!.trim()
+
+      // Strip trailing # characters only if preceded by a space (CommonMark behavior).
+      // e.g., "#heading ##" → "heading", but "#heading#" stays as "heading#"
+      if (text.endsWith('#')) {
+        const stripped = text.replace(/#+$/, '')
+        if (!stripped || stripped.endsWith(' ')) {
+          text = stripped.trim()
+        }
+      }
+
+      return {
+        type: 'heading' as const,
+        raw: match[0]!,
+        depth: match[1]!.length as number,
+        text,
+        tokens: this.lexer.inline(text),
+      }
+    },
+  },
+})
 
 /** These path on npmjs.com don't belong to packages or search, so we shouldn't try to replace them with npmx.dev urls */
 const reservedPathsNpmJs = [
@@ -335,12 +360,23 @@ function resolveUrl(url: string, packageName: string, repoInfo?: RepositoryInfo)
 // Convert blob/src URLs to raw URLs for images across all providers
 // e.g. https://github.com/nuxt/nuxt/blob/main/.github/assets/banner.svg
 //   → https://github.com/nuxt/nuxt/raw/main/.github/assets/banner.svg
+//
+// External images are proxied through /api/registry/image-proxy to prevent
+// third-party servers from collecting visitor IP addresses and User-Agent data.
+// Proxy URLs are HMAC-signed to prevent open proxy abuse.
+// See: https://github.com/npmx-dev/npmx.dev/issues/1138
 function resolveImageUrl(url: string, packageName: string, repoInfo?: RepositoryInfo): string {
-  const resolved = resolveUrl(url, packageName, repoInfo)
-  if (repoInfo?.provider) {
-    return convertBlobOrFileToRawUrl(resolved, repoInfo.provider)
+  // Skip already-proxied URLs (from a previous resolveImageUrl call in the
+  // marked renderer — sanitizeHtml transformTags may call this again)
+  if (url.startsWith('/api/registry/image-proxy')) {
+    return url
   }
-  return resolved
+  const resolved = resolveUrl(url, packageName, repoInfo)
+  const rawUrl = repoInfo?.provider
+    ? convertBlobOrFileToRawUrl(resolved, repoInfo.provider)
+    : resolved
+  const { imageProxySecret } = useRuntimeConfig()
+  return toProxiedImageUrl(rawUrl, imageProxySecret)
 }
 
 // Helper to prefix id attributes with 'user-content-'
