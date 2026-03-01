@@ -154,7 +154,7 @@ headline="Read more from the community"
   },
   {
     url: 'https://storybook.js.org/blog/storybook-npmx',
-    title: 'PLACEHOLDER_TITLE',
+    title: 'The npm browsing experience we always wanted',
     authorHandle: 'storybook.js.org',
     description: 'We\'re huge fans of what the npmx community is building. Today\'s alpha is just the starting line, and we\'re proud to be running alongside them.'
   },
