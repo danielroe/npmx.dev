@@ -33,18 +33,24 @@ const router = useRouter()
 
 const header = useTemplateRef('header')
 const isHeaderPinned = shallowRef(false)
+const readmeHeader = useTemplateRef('readmeHeader')
+const isReadmeHeaderPinned = shallowRef(false)
 const navExtraOffset = shallowRef(0)
 const isMobile = useMediaQuery('(max-width: 639.9px)')
 
-function checkHeaderPosition() {
-  const el = header.value
-  if (!el) return
+function isStickyPinned(el: HTMLElement | null): boolean {
+  if (!el) return false
 
   const style = getComputedStyle(el)
   const top = parseFloat(style.top) || 0
   const rect = el.getBoundingClientRect()
 
-  isHeaderPinned.value = Math.abs(rect.top - top) < 1
+  return Math.abs(rect.top - top) < 1
+}
+
+function checkHeaderPosition() {
+  isHeaderPinned.value = isStickyPinned(header.value)
+  isReadmeHeaderPinned.value = isStickyPinned(readmeHeader.value)
 }
 
 useEventListener('scroll', checkHeaderPosition, { passive: true })
@@ -1392,7 +1398,11 @@ const showSkeleton = shallowRef(false)
 
       <!-- README -->
       <section id="readme" class="min-w-0 scroll-mt-20" :class="$style.areaReadme">
-        <div class="flex flex-wrap items-center justify-between mb-3 px-1">
+        <div
+          ref="readmeHeader"
+          class="flex sticky top-34 z-10 flex-wrap items-center justify-between mb-3 py-1 -mx-1 px-2 rounded-md transition-shadow duration-200"
+          :class="{ 'bg-bg shadow-sm': isReadmeHeaderPinned }"
+        >
           <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
             <LinkBase to="#readme">
               {{ $t('package.readme.title') }}
