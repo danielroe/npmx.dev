@@ -157,7 +157,7 @@ export default defineNuxtConfig({
     '/settings': { prerender: true },
     '/recharging': { prerender: true },
     // proxy for insights
-    '/blog/**': { isr: true, prerender: true },
+    '/blog/**': { prerender: true },
     '/_v/script.js': {
       proxy: 'https://npmx.dev/_vercel/insights/script.js',
     },

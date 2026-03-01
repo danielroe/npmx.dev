@@ -13,7 +13,7 @@ extension, everyone who works in the JavaScript ecosystem."
 date: "2026-03-03"
 slug: "alpha-release"
 description: "npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by extension, everyone who works in the JavaScript ecosystem."
-draft: false
+draft: true
 ---
 
 # Announcing npmx: a fast, modern browser for the npm registry
@@ -118,46 +118,55 @@ headline="Read more from the community"
 :articles="[
   {
     url: 'https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/',
+    title: 'How to Make Your First Open Source Contribution',
     authorHandle: 'whitep4nth3r.com',
     description: 'Getting involved in open source doesn\'t have to be scary! Understand how to find a great project and make your first contribution in this guide from Salma.'
   },
   {
     url: 'https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html',
+    title: 'vue-data-ui is on npmx npmx is on vue-data-ui',
     authorHandle: 'graphieros.com',
     description: 'Graphieros explores a minimal npm-based workflow and why it exists.'
   },
   {
     url: 'https://www.alexdln.com/blog/npmx-the-month',
+    title: 'The month. npmx',
     authorHandle: 'alexdln.com',
     description: 'Alex reflects on the project, warm stories, wonderful people, and a look into the future'
   },
   {
     url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
+    title: 'npmx: With a Little Help From My Friends',
     authorHandle: 'johnnyreilly.com',
     description: 'How to contribute to npmx.dev, and thoughts on Johnny\'s experience with the project.'
   },
   {
     url: 'https://blog.trueberryless.org/blog/npmx/',
+    title: 'PLACEHOLDER_TITLE',
     authorHandle: 'trueberryless.org',
     description: 'Telling the story of a newly founded community.'
   },
   {
     url: 'https://www.sybers.fr/blog/3mfhn5xoawz24',
+    title: 'From a Bluesky post to my favorite open source community',
     authorHandle: 'sybers.fr',
     description: 'The best open source projects aren\'t just about great code. They\'re about the people behind them.'
   },
   {
     url: 'https://storybook.js.org/blog/storybook-npmx',
+    title: 'PLACEHOLDER_TITLE',
     authorHandle: 'storybook.js.org',
     description: 'We\'re huge fans of what the npmx community is building. Today\'s alpha is just the starting line, and we\'re proud to be running alongside them.'
   },
   {
     url: 'https://jensroemer.com/writing/open-source-whats-in-it-for-me/',
+    title: 'Open source, what\'s in it for me?',
     authorHandle: 'jensroemer.com',
     description: 'Reflections on learning, community, and change.'
   },
   {
     url: 'https://paulie.codes/blog/3mfs2stugzp2v',
+    title: 'Overcoming Imposter Syndrome: My First Open Source Contribution',
     authorHandle: 'paulie.codes',
     description: 'The most important part of open source is the people, and everyone has something valuable to bring to the table.'
   }
