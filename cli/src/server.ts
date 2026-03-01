@@ -82,7 +82,12 @@ function generateOperationId(): string {
 }
 
 const corsOptions: CorsOptions = {
-  origin: ['https://npmx.dev', /^http:\/\/localhost:\d+$/, /^http:\/\/127.0.0.1:\d+$/],
+  origin: [
+    'https://npmx.dev',
+    /^http:\/\/localhost:\d+$/,
+    /^http:\/\/127.0.0.1:\d+$/,
+    /^https:\/\/(.*)\.vercel\.app$/,
+  ],
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
 }
