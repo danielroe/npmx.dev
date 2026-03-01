@@ -1,0 +1,1288 @@
+{
+  "$schema": "../schema.json",
+  "seo": {
+    "home": {
+      "title": "npmx - Npm Kayıt Defteri için Paket Tarayıcı",
+      "description": "npm kayıt defteri için hızlı, modern bir tarayıcı. Modern bir arayüzle paketleri ara, göz at ve keşfet."
+    }
+  },
+  "built_at": "{0} tarihinde derlendi",
+  "alt_logo": "npmx logosu",
+  "tagline": "npm kayıt defteri için hızlı, modern bir tarayıcı",
+  "non_affiliation_disclaimer": "npm, Inc.'e bağlı değildir.",
+  "trademark_disclaimer": "npm, npm, Inc.'nin tescilli ticari markasıdır. Bu site npm, Inc.'e bağlı değildir.",
+  "footer": {
+    "about": "hakkında",
+    "docs": "dokümanlar",
+    "source": "kaynak",
+    "social": "sosyal",
+    "chat": "sohbet",
+    "keyboard_shortcuts": "klavye kısayolları"
+  },
+  "shortcuts": {
+    "section": {
+      "global": "Genel",
+      "search": "Arama",
+      "package": "Paket"
+    },
+    "focus_search": "Aramaya odaklan",
+    "show_kbd_hints": "Klavye ipuçlarını göster",
+    "settings": "Ayarları aç",
+    "compare": "Karşılaştırmayı aç",
+    "compare_from_package": "Karşılaştırmayı aç (mevcut paket seçili)",
+    "navigate_results": "Sonuçlarda gezin",
+    "go_to_result": "Sonuca git",
+    "open_code_view": "Kod görünümünü aç",
+    "open_docs": "Dokümanları aç",
+    "disable_shortcuts": "Klavye kısayollarını {settings} bölümünden devre dışı bırakabilirsin."
+  },
+  "search": {
+    "label": "Npm paketlerini ara",
+    "placeholder": "paketlerde ara...",
+    "button": "ara",
+    "searching": "Aranıyor...",
+    "found_packages": "Paket bulunamadı | 1 paket bulundu | {count} paket bulundu",
+    "found_packages_sorted": "Sonuç bulunamadı | En iyi {count} sonuç sıralanıyor | En iyi {count} sonuç sıralanıyor",
+    "updating": "(güncelleniyor...)",
+    "no_results": "\"{query}\" için paket bulunamadı",
+    "rate_limited": "Npm hız sınırına ulaşıldı, birazdan tekrar dene",
+    "title": "ara",
+    "title_search": "ara: {search}",
+    "title_packages": "paketlerde ara",
+    "meta_description": "'{search}' için arama sonuçları",
+    "meta_description_packages": "Npm paketlerini ara",
+    "not_taken": "{name} alınmamış",
+    "claim_prompt": "Bu paket adını npm'de sahiplen.",
+    "claim_button": "\"{name}\" paketini sahiplen",
+    "want_to_claim": "Bu paket adını sahiplenmek ister misin?",
+    "start_typing": "Paketleri aramak için yazmaya başla",
+    "algolia_disclaimer": "Algolia altyapısıyla",
+    "exact_match": "birebir eşleşme",
+    "suggestion": {
+      "user": "kullanıcı",
+      "org": "organizasyon",
+      "view_user_packages": "Bu kullanıcının paketlerini görüntüle",
+      "view_org_packages": "Bu organizasyonun paketlerini görüntüle"
+    }
+  },
+  "nav": {
+    "main_navigation": "Ana",
+    "popular_packages": "Popüler paketler",
+    "settings": "ayarlar",
+    "compare": "karşılaştır",
+    "back": "geri",
+    "menu": "Menü",
+    "mobile_menu": "Navigasyon menüsü",
+    "open_menu": "Menüyü aç",
+    "links": "Bağlantılar",
+    "tap_to_search": "Aramak için dokun"
+  },
+  "settings": {
+    "title": "ayarlar",
+    "tagline": "npmx deneyimini özelleştir",
+    "meta_description": "npmx.dev deneyimini tema, dil ve görüntüleme tercihleriyle özelleştir.",
+    "sections": {
+      "appearance": "Görünüm",
+      "display": "Ekran",
+      "search": "Veri kaynağı",
+      "language": "Dil",
+      "keyboard_shortcuts": "Klavye kısayolları"
+    },
+    "data_source": {
+      "label": "Veri kaynağı",
+      "description": "npmx'in arama verilerini nereden alacağını seç. Bireysel paket sayfaları her zaman doğrudan npm kayıt defterini kullanır.",
+      "npm": "npm Kayıt Defteri",
+      "npm_description": "Arama, organizasyon ve kullanıcı listelerini doğrudan resmi npm kayıt defterinden getirir. Kesindir ancak daha yavaş olabilir.",
+      "algolia": "Algolia",
+      "algolia_description": "Daha hızlı arama, organizasyon ve kullanıcı sayfaları için Algolia'yı kullanır."
+    },
+    "relative_dates": "Göreli tarihler",
+    "include_types": "@types'ı dahil et",
+    "include_types_description": "Tür belirtilmemiş paketler için yükleme komutlarına {'@'}types paketini ekle",
+    "hide_platform_packages": "Aramada platforma özel paketleri gizle",
+    "hide_platform_packages_description": "{'@'}esbuild/linux-x64 gibi yerel binary paketleri sonuçlardan gizle",
+    "theme": "Tema",
+    "theme_light": "Açık",
+    "theme_dark": "Koyu",
+    "theme_system": "Sistem",
+    "language": "Dil",
+    "help_translate": "npmx'in çevrilmesine yardım et",
+    "accent_colors": "Vurgu renkleri",
+    "clear_accent": "Vurgu rengini temizle",
+    "translation_progress": "Çeviri durumu",
+    "background_themes": "Arka plan tonu",
+    "keyboard_shortcuts_enabled": "Klavye kısayollarını etkinleştir",
+    "keyboard_shortcuts_enabled_description": "Klavye kısayolları, diğer tarayıcı veya sistem kısayollarıyla çakışması durumunda devre dışı bırakılabilir"
+  },
+  "i18n": {
+    "missing_keys": "{count} eksik çeviri | {count} çeviri eksik",
+    "copy_keys": "Anahtarları kopyala",
+    "show_more_keys": "{count} tane daha göster...",
+    "contribute_hint": "Eksik anahtarları ekleyerek bu çevirinin iyileştirilmesine yardımcı ol.",
+    "edit_on_github": "GitHub'da düzenle",
+    "view_guide": "Çeviri rehberi"
+  },
+  "error": {
+    "401": "Yetkisiz",
+    "404": "Sayfa bulunamadı",
+    "500": "Sunucu Hatası",
+    "503": "Hizmet kullanılamıyor",
+    "default": "Bir şeyler ters gitti"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "loading_more": "Daha fazlası yükleniyor...",
+    "loading_packages": "Paketler yükleniyor...",
+    "end_of_results": "Sonuçların sonu",
+    "try_again": "Tekrar dene",
+    "close": "Kapat",
+    "or": "veya",
+    "retry": "Yeniden dene",
+    "copy": "kopyala",
+    "copied": "kopyalandı!",
+    "skip_link": "Ana içeriğe atla",
+    "warnings": "Uyarılar:",
+    "go_back_home": "Ana sayfaya dön",
+    "view_on_npm": "npm'de görüntüle",
+    "per_week": "/ hafta",
+    "vanity_downloads_hint": "Özel numara: paket görüntülenmiyor | Özel numara: görüntülenen paket için | Özel numara: Görüntülenen {count} paketin toplamı",
+    "sort": {
+      "name": "isim",
+      "role": "rol",
+      "members": "üyeler"
+    },
+    "scroll_to_top": "Yukarı kaydır",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "edit": "Düzenle",
+    "error": "Hata"
+  },
+  "profile": {
+    "display_name": "Görünen ad",
+    "description": "Açıklama",
+    "no_description": "Açıklama yok",
+    "website": "Web sitesi",
+    "website_placeholder": "https://ornek.com",
+    "likes": "Beğeniler",
+    "seo_title": "{handle} - npmx",
+    "seo_description": "npmx profili: {handle}",
+    "not_found": "Profil Bulunamadı",
+    "not_found_message": "{handle} için profil bulunamadı.",
+    "invite": {
+      "message": "Henüz npmx kullanıyor gibi görünmüyorlar. Onlara bahsetmek ister misin?",
+      "share_button": "Bluesky'de paylaş",
+      "compose_text": "Selam {'@'}{handle}! npmx.dev'e göz attın mı? npm kayıt defteri için hızlı, modern ve açık kaynaklı bir tarayıcı.\nhttps://npmx.dev"
+    }
+  },
+  "package": {
+    "not_found": "Paket Bulunamadı",
+    "not_found_message": "Paket bulunamadı.",
+    "no_description": "Açıklama girilmemiş",
+    "not_latest": "(güncel değil)",
+    "verified_provenance": "Doğrulanmış kaynak",
+    "view_permalink": "Bu sürümün kalıcı bağlantısını görüntüle",
+    "navigation": "Paket",
+    "copy_name": "Paket adını kopyala",
+    "copy_version": "Paket sürümünü kopyala",
+    "deprecation": {
+      "package": "Bu paket kullanımdan kaldırıldı.",
+      "version": "Bu sürüm kullanımdan kaldırıldı.",
+      "no_reason": "Herhangi bir neden belirtilmedi"
+    },
+    "size_increase": {
+      "title_size": "v{version} sürümünden itibaren boyutta ciddi artış",
+      "title_deps": "v{version} sürümünden itibaren bağımlılık sayısında ciddi artış",
+      "title_both": "v{version} sürümünden itibaren boyutta ve bağımlılık sayısında ciddi artış",
+      "size": "Kurulum boyutu %{percent} arttı ({size} daha büyük)",
+      "deps": "{count} ek bağımlılık"
+    },
+    "replacement": {
+      "title": "Bu bağımlılığa ihtiyacın olmayabilir.",
+      "native": "Node {nodeVersion} sürümünden itibaren mevcut olan {replacement} ile değiştirilebilir.",
+      "simple": "{community}, bu paketi artık (gereksiz) olarak işaretledi. Önerisi: {replacement}.",
+      "documented": "{community}, bu paketi daha performanslı alternatifleri olduğu şeklinde işaretledi.",
+      "none": "Bu paket artık gerekli değil; sunduğu işlevler muhtemelen tüm motorlarda yerleşik olarak mevcut.",
+      "learn_more": "Daha fazla bilgi al",
+      "learn_more_above": "Yukarıda daha fazla bilgi bulabilirsin.",
+      "mdn": "MDN",
+      "community": "topluluk",
+      "consider_no_dep": "+ Bağımlılık eklemeden çözmek ister misin?"
+    },
+    "stats": {
+      "license": "Lisans",
+      "deps": "Bağımlılıklar",
+      "install_size": "Kurulum Boyutu",
+      "vulns": "Güvenlik Açıkları",
+      "published": "Yayınlandı",
+      "published_tooltip": "{package}{'@'}{version} yayınlanma tarihi",
+      "view_dependency_graph": "Bağımlılık grafiğini görüntüle",
+      "inspect_dependency_tree": "Bağımlılık ağacını incele",
+      "size_tooltip": {
+        "unpacked": "{size} paket boyutu (açılmış hali)",
+        "total": "Toplam açılmış boyut: {size} (linux-x64 için {count} bağımlılık dahil)"
+      }
+    },
+    "skills": {
+      "title": "Asistan Becerileri",
+      "skills_available": "{count} beceri mevcut | {count} beceri mevcut",
+      "compatible_with": "{tool} ile uyumlu",
+      "install": "Yükle",
+      "installation_method": "Yükleme yöntemi",
+      "learn_more": "Daha fazla bilgi al",
+      "available_skills": "Mevcut Beceriler",
+      "click_to_expand": "Genişletmek için tıkla",
+      "no_description": "Açıklama yok",
+      "file_counts": {
+        "scripts": "{count} betik | {count} betik",
+        "refs": "{count} referans | {count} referans",
+        "assets": "{count} varlık | {count} varlık"
+      },
+      "view_source": "Kaynağı görüntüle"
+    },
+    "links": {
+      "repo": "depo",
+      "homepage": "ana sayfa",
+      "issues": "sorunlar",
+      "jsr": "jsr",
+      "code": "kod",
+      "docs": "dokümanlar",
+      "fund": "fonla",
+      "compare": "karşılaştır"
+    },
+    "likes": {
+      "like": "Bu paketi beğen",
+      "unlike": "Bu paketi beğenmekten vazgeç"
+    },
+    "docs": {
+      "not_available": "Doküman mevcut değil",
+      "not_available_detail": "Bu sürüm için doküman oluşturamadık."
+    },
+    "get_started": {
+      "title": "Başla",
+      "pm_label": "Paket yöneticisi",
+      "copy_command": "Yükleme komutunu kopyala",
+      "copy_dev_command": "Geliştirici yükleme komutunu kopyala",
+      "dev_dependency_hint": "Genellikle bir geliştirici bağımlılığı (dev dependency) olarak yüklenir",
+      "view_types": "{package} türlerini görüntüle"
+    },
+    "create": {
+      "title": "Yeni proje oluştur",
+      "copy_command": "Oluşturma komutunu kopyala",
+      "view": "{packageName} aynı geliştiriciye sahip. Daha fazla detay için tıkla."
+    },
+    "run": {
+      "title": "Çalıştır",
+      "locally": "Yerel olarak çalıştır"
+    },
+    "readme": {
+      "title": "Beni Oku",
+      "no_readme": "Beni Oku dosyası mevcut değil.",
+      "view_on_github": "GitHub'da görüntüle",
+      "toc_title": "İçindekiler",
+      "callout": {
+        "note": "Not",
+        "tip": "İpucu",
+        "important": "Önemli",
+        "warning": "Uyarı",
+        "caution": "Dikkat"
+      },
+      "copy_as_markdown": "Markdown olarak kopyala"
+    },
+    "provenance_section": {
+      "title": "Kaynak (Provenance)",
+      "built_and_signed_on": "{provider} üzerinde derlendi ve imzalandı",
+      "view_build_summary": "Derleme özetini görüntüle",
+      "source_commit": "Kaynak Commit",
+      "build_file": "Derleme Dosyası",
+      "public_ledger": "Herkese Açık Kayıt",
+      "transparency_log_entry": "Şeffaflık günlüğü kaydı",
+      "view_more_details": "Daha fazla detay görüntüle",
+      "error_loading": "Kaynak detayları yüklenemedi"
+    },
+    "security_downgrade": {
+      "title": "Güvenilirlik düşüşü",
+      "description_to_none_provenance": "Bu sürüm {provenance} olmadan yayınlandı.",
+      "description_to_none_trustedPublisher": "Bu sürüm {trustedPublishing} olmadan yayınlandı.",
+      "description_to_provenance_trustedPublisher": "Bu sürüm {provenance} kullanıyor ancak {trustedPublishing} kullanmıyor.",
+      "fallback_install_provenance": "Yükleme komutları, kaynağı doğrulanmış son sürüm olan {version} sürümüne sabitlendi.",
+      "fallback_install_trustedPublisher": "Yükleme komutları, güvenilir yayıncılığa sahip son sürüm olan {version} sürümüne sabitlendi.",
+      "provenance_link_text": "kaynak doğrulama (provenance)",
+      "trusted_publishing_link_text": "güvenilir yayıncılık"
+    },
+    "keywords_title": "Anahtar Kelimeler",
+    "compatibility": "Uyumluluk",
+    "card": {
+      "publisher": "Yayıncı",
+      "published": "Yayınlandı",
+      "weekly_downloads": "Haftalık indirme",
+      "keywords": "Anahtar Kelimeler",
+      "license": "Lisans"
+    },
+    "versions": {
+      "title": "Sürümler",
+      "collapse": "{tag} daralt",
+      "expand": "{tag} genişlet",
+      "collapse_other": "Diğer sürümleri daralt",
+      "expand_other": "Diğer sürümleri genişlet",
+      "collapse_major": "Major {major} sürümünü daralt",
+      "expand_major": "Major {major} sürümünü genişlet",
+      "other_versions": "Diğer sürümler",
+      "more_tagged": "{count} etiketli sürüm daha",
+      "all_covered": "Tüm sürümler yukarıdaki etiketler kapsamında",
+      "deprecated_title": "{version} (kullanımdan kaldırıldı)",
+      "view_all": "{count} sürümü görüntüle | Tüm {count} sürümü görüntüle",
+      "distribution_title": "Semver Grubu",
+      "distribution_modal_title": "Sürümler",
+      "distribution_range_date_same_year": "{from} - {to}, {endYear}",
+      "distribution_range_date_multiple_years": "{from}, {startYear} - {to}, {endYear}",
+      "grouping_major": "Major",
+      "grouping_minor": "Minor",
+      "grouping_versions_title": "Sürümler",
+      "grouping_versions_all": "Tümü",
+      "grouping_versions_only_recent": "Sadece son kullanılanlar",
+      "grouping_usage_title": "Kullanım",
+      "grouping_usage_all": "Tümü",
+      "grouping_usage_low": "Düşük",
+      "recent_versions_only_tooltip": "Sadece son bir yıl içinde yayınlanan sürümleri göster.",
+      "show_low_usage_tooltip": "Toplam indirmelerin %1'inden azına sahip sürüm gruplarını dahil et.",
+      "y_axis_label": "İndirmeler",
+      "filter_placeholder": "Semver ile filtrele (örn. ^3.0.0)",
+      "filter_invalid": "Geçersiz semver aralığı",
+      "filter_help": "Semver aralığı filtre yardımı",
+      "filter_tooltip": "{link} kullanarak sürümleri filtrele. Örneğin, ^3.0.0 tüm 3.x sürümlerini gösterir.",
+      "filter_tooltip_link": "semver aralığı",
+      "no_matches": "Bu aralıkla eşleşen sürüm yok",
+      "copy_alt": {
+        "per_version_analysis": "{version} sürümü {downloads} kez indirildi",
+        "general_description": "{package_name} paketinin {versions_count} {semver_grouping_mode} sürümü için {first_version} sürümünden {last_version} sürümüne kadar {date_range_label} tarih aralığındaki sürüm başına indirmeleri gösteren çubuk grafiği. En çok indirilen sürüm {max_version_downloads} indirme ile {max_downloaded_version}. {per_version_analysis}. {watermark}."
+      }
+    },
+    "dependencies": {
+      "title": "Bağımlılık ({count}) | Bağımlılıklar ({count})",
+      "list_label": "Paket bağımlılıkları",
+      "show_all": "{count} bağımlılığı göster | tüm {count} bağımlılığı göster",
+      "optional": "isteğe bağlı",
+      "view_vulnerabilities": "Güvenlik açıklarını görüntüle",
+      "outdated_major": "{count} major sürüm geride (son: {latest}) | {count} major sürüm geride (son: {latest})",
+      "outdated_minor": "{count} minor sürüm geride (son: {latest}) | {count} minor sürüm geride (son: {latest})",
+      "outdated_patch": "Yama (patch) güncellemesi mevcut (son: {latest})",
+      "has_replacement": "Bu bağımlılık için önerilen alternatifler var"
+    },
+    "peer_dependencies": {
+      "title": "Eş Bağımlılık ({count}) | Eş Bağımlılıklar ({count})",
+      "list_label": "Paket eş bağımlılıkları (peer dependencies)",
+      "show_all": "{count} eş bağımlılığı göster | tüm {count} eş bağımlılığı göster"
+    },
+    "optional_dependencies": {
+      "title": "İsteğe Bağlı Bağımlılık ({count}) | İsteğe Bağlı Bağımlılıklar ({count})",
+      "list_label": "Paket isteğe bağlı bağımlılıkları",
+      "show_all": "{count} isteğe bağlı bağımlılığı göster | tüm {count} isteğe bağlı bağımlılığı göster"
+    },
+    "maintainers": {
+      "title": "Geliştiriciler",
+      "list_label": "Paket geliştiricileri",
+      "you": "(sen)",
+      "via": "{teams} aracılığıyla",
+      "remove_owner": "{name} kullanıcısını sahiplikten çıkar",
+      "username_to_add": "Sahip olarak eklenecek kullanıcı adı",
+      "username_placeholder": "kullanıcı adı...",
+      "add_button": "ekle",
+      "cancel_add": "Sahip eklemeyi iptal et",
+      "add_owner": "+ Sahip ekle",
+      "show_more": "({count} tane daha göster)",
+      "show_less": "(daha az göster)"
+    },
+    "trends": {
+      "granularity": "Ayrıntı Düzeyi",
+      "granularity_daily": "Günlük",
+      "granularity_weekly": "Haftalık",
+      "granularity_monthly": "Aylık",
+      "granularity_yearly": "Yıllık",
+      "start_date": "Başlangıç",
+      "end_date": "Bitiş",
+      "loading": "Yükleniyor...",
+      "date_range": "{start} - {end}",
+      "date_range_multiline": "{start}\n- {end}",
+      "download_file": "{fileType} İndir",
+      "toggle_annotator": "Notlayıcıyı aç/kapat",
+      "toggle_stack_mode": "Yığın modunu aç/kapat",
+      "open_options": "Seçenekleri aç",
+      "close_options": "Seçenekleri kapat",
+      "legend_estimation": "Tahmin",
+      "no_data": "Veri yok",
+      "y_axis_label": "{granularity} {facet}",
+      "facet": "Kriter",
+      "title": "Trendler",
+      "contributors_skip": "Katılımcılarda gösterilmiyor (GitHub deposu yok):",
+      "items": {
+        "downloads": "İndirmeler",
+        "likes": "Beğeniler",
+        "contributors": "Katılımcılar"
+      },
+      "play_animation": "Animasyonu oynat",
+      "pause_animation": "Animasyonu durdur",
+      "data_correction": "Veri düzeltme",
+      "average_window": "Ortalama penceresi",
+      "smoothing": "Yumuşatma",
+      "known_anomalies": "Bilinen anormallikler",
+      "known_anomalies_description": "Botlar veya CI sorunları nedeniyle oluşan ani indirme artışlarını enterpole eder (düzeltir).",
+      "known_anomalies_ranges": "Anormallik aralıkları",
+      "known_anomalies_range": "{start} tarihinden {end} tarihine",
+      "known_anomalies_range_named": "{packageName}: {start} - {end} arası",
+      "known_anomalies_none": "Bu paket için bilinen anormallik yok. | Bu paketler için bilinen anormallik yok.",
+      "known_anomalies_contribute": "Anormallik verisi ekle",
+      "apply_correction": "Düzeltmeyi uygula",
+      "copy_alt": {
+        "trend_none": "çoğunlukla yatay",
+        "trend_strong": "güçlü",
+        "trend_weak": "zayıf",
+        "trend_undefined": "tanımsız (yetersiz veri)",
+        "button_label": "Alt metni kopyala",
+        "watermark": "Alt kısımda \"./npmx npm kayıt defteri için hızlı, modern bir tarayıcı\" filigranı bulunur.",
+        "analysis": "{package_name}, {start_value} ile başlayıp {end_value} ile bitiyor, zaman aralığı başına {downloads_slope} indirme eğilimi ile {trend} bir trend gösteriyor.",
+        "estimation": "Son değer, mevcut dönem için kısmi verilere dayanan bir tahmindir.",
+        "estimations": "Son değerler, mevcut dönem için kısmi verilere dayanan tahminlerdir.",
+        "compare": "{packages} için paket indirme karşılaştırma çizgi grafiği.",
+        "single_package": "{package} paketi için indirme çizgi grafiği.",
+        "general_description": "Y ekseni indirme sayısını temsil eder. X ekseni, {granularity} zaman periyoduyla {start_date} tarihinden {end_date} tarihine kadar olan tarih aralığını temsil eder. {estimation_notice} {packages_analysis}. {watermark}."
+      }
+    },
+    "downloads": {
+      "title": "Haftalık İndirmeler",
+      "community_distribution": "Topluluk benimseme dağılımını görüntüle",
+      "subtitle": "Tüm sürümler genelinde"
+    },
+    "install_scripts": {
+      "title": "Yükleme Scriptleri",
+      "script_label": "(script)",
+      "npx_packages": "{count} npx paketi | {count} npx paketi",
+      "currently": "şu anda {version}"
+    },
+    "playgrounds": {
+      "title": "Dene",
+      "choose": "oyun alanı seç"
+    },
+    "metrics": {
+      "esm": "ES Modülleri destekleniyor",
+      "cjs": "CommonJS destekleniyor",
+      "no_esm": "ES Modül desteği yok",
+      "types_label": "Türler",
+      "types_included": "Türler dahil",
+      "types_available": "Türler {package} aracılığıyla mevcut",
+      "no_types": "TypeScript türleri yok"
+    },
+    "license": {
+      "view_spdx": "SPDX üzerinde lisans metnini görüntüle",
+      "none": "Yok"
+    },
+    "vulnerabilities": {
+      "tree_found": "{packages}/{total} pakette {vulns} güvenlik açığı | {packages}/{total} pakette {vulns} güvenlik açığı",
+      "show_all_packages": "{count} etkilenen paketi göster | tüm {count} etkilenen paketi göster",
+      "path": "yol",
+      "more": "+{count} daha",
+      "packages_failed": "{count} paket kontrol edilemedi | {count} paket kontrol edilemedi",
+      "scan_failed": "Güvenlik açıkları taranamadı",
+      "severity": {
+        "critical": "kritik",
+        "high": "yüksek",
+        "moderate": "orta",
+        "low": "düşük"
+      },
+      "fixed_in_title": "{version} sürümünde düzeltildi"
+    },
+    "deprecated": {
+      "label": "Kullanımdan Kaldırıldı",
+      "tree_found": "{count} kullanımdan kaldırılmış bağımlılık | {count} kullanımdan kaldırılmış bağımlılık",
+      "show_all": "{count} kullanımdan kaldırılmış paketi göster | tüm {count} kullanımdan kaldırılmış paketi göster"
+    },
+    "access": {
+      "title": "Ekip Erişimi",
+      "refresh": "Ekip erişimini yenile",
+      "list_label": "Ekip erişim listesi",
+      "owner": "sahip",
+      "rw": "yazma",
+      "ro": "okuma",
+      "revoke_access": "{name} erişimini kaldır",
+      "no_access": "Ekip erişimi yapılandırılmamış",
+      "select_team_label": "Ekip seç",
+      "loading_teams": "Ekipler yükleniyor...",
+      "select_team": "Ekip seç",
+      "permission_label": "İzin seviyesi",
+      "permission": {
+        "read_only": "salt okunur",
+        "read_write": "okuma-yazma"
+      },
+      "grant_button": "ver",
+      "cancel_grant": "Erişim vermeyi iptal et",
+      "grant_access": "+ Ekip erişimi ver"
+    },
+    "list": {
+      "filter_label": "Paketleri filtrele",
+      "filter_placeholder": "Paketleri filtrele...",
+      "sort_label": "Paketleri sırala",
+      "showing_count": "{total} paketten {filtered} tanesi gösteriliyor"
+    },
+    "skeleton": {
+      "loading": "Paket detayları yükleniyor",
+      "maintainers": "Geliştiriciler",
+      "keywords": "Anahtar Kelimeler",
+      "versions": "Sürümler",
+      "dependencies": "Bağımlılıklar"
+    },
+    "sort": {
+      "downloads": "En çok indirilen",
+      "published": "Yeni yayınlanan",
+      "name_asc": "İsim (A-Z)",
+      "name_desc": "İsim (Z-A)"
+    },
+    "size": {
+      "b": "{size} B",
+      "kb": "{size} kB",
+      "mb": "{size} MB"
+    }
+  },
+  "connector": {
+    "modal": {
+      "title": "Yerel Bağlayıcı (Local Connector)",
+      "contributor_badge": "Sadece katkıda bulunanlar",
+      "contributor_notice": "Bağlayıcı henüz npm'de yayınlanmadı. Yerel olarak nasıl çalıştıracağını öğrenmek için {link} sayfasına bak.",
+      "contributor_link": "katkıda bulunma rehberi",
+      "connected": "Bağlandı",
+      "connected_as_user": "~{user} olarak bağlandı",
+      "connected_hint": "Artık web arayüzünden paketleri ve organizasyonları yönetebilirsin.",
+      "disconnect": "Bağlantıyı Kes",
+      "run_hint": "Yönetici özelliklerini etkinleştirmek için makine üzerinde bağlayıcıyı çalıştır.",
+      "copy_command": "Komutu kopyala",
+      "copied": "Kopyalandı",
+      "paste_token": "Ardından bağlanmak için token'ı aşağıya yapıştır:",
+      "token_label": "Token",
+      "token_placeholder": "token'ı buraya yapıştır...",
+      "advanced": "Gelişmiş seçenekler",
+      "port_label": "Port",
+      "warning": "UYARI",
+      "warning_text": "Bu işlem npmx'in npm CLI aracına erişmesine izin verir. Sadece güvendiğin sitelere bağlan.",
+      "connect": "Bağlan",
+      "connecting": "Bağlanıyor...",
+      "auto_open_url": "Yetkilendirme sayfasını otomatik aç"
+    }
+  },
+  "operations": {
+    "queue": {
+      "title": "İşlem Kuyruğu",
+      "clear_all": "tümünü temizle",
+      "refresh": "İşlemleri yenile",
+      "empty": "Sırada işlem yok",
+      "empty_hint": "Paket veya organizasyon sayfalarından işlem ekle",
+      "active_label": "Aktif işlemler",
+      "otp_required": "OTP gerekli",
+      "otp_prompt": "Devam etmek için OTP gir",
+      "otp_placeholder": "OTP kodunu gir...",
+      "otp_label": "Tek kullanımlık şifre",
+      "retry_otp": "OTP ile tekrar dene",
+      "retry_web_auth": "Web yetkilendirmesiyle tekrar dene",
+      "retrying": "Tekrar deneniyor...",
+      "open_web_auth": "Web yetkilendirme bağlantısını aç",
+      "approve_operation": "İşlemi onayla",
+      "remove_operation": "İşlemi kaldır",
+      "approve_all": "Tümünü Onayla",
+      "execute": "Çalıştır",
+      "executing": "Çalıştırılıyor...",
+      "log": "Günlük",
+      "log_label": "Tamamlanan işlemler günlüğü",
+      "remove_from_log": "Günlükten kaldır"
+    }
+  },
+  "org": {
+    "teams": {
+      "title": "Ekipler",
+      "refresh": "Ekipleri yenile",
+      "filter_label": "Ekipleri filtrele",
+      "filter_placeholder": "Ekipleri filtrele...",
+      "sort_by": "Sıralama ölçütü",
+      "loading": "Ekipler yükleniyor...",
+      "no_teams": "Ekip bulunamadı",
+      "list_label": "Organizasyon ekipleri",
+      "delete_team": "{name} ekibini sil",
+      "member_count": "{count} üye | {count} üye",
+      "members_of": "{team} üyeleri",
+      "no_members": "Üye yok",
+      "remove_user": "{user} kullanıcısını ekipten çıkar",
+      "username_to_add": "{team} ekibine eklenecek kullanıcı adı",
+      "username_placeholder": "kullanıcı adı...",
+      "add_button": "ekle",
+      "cancel_add_user": "Kullanıcı eklemeyi iptal et",
+      "add_member": "+ Üye ekle",
+      "team_name_label": "Ekip adı",
+      "team_name_placeholder": "ekip-adi...",
+      "create_button": "oluştur",
+      "no_match": "\"{query}\" ile eşleşen ekip yok",
+      "cancel_create": "Ekip oluşturmayı iptal et",
+      "create_team": "+ Ekip oluştur"
+    },
+    "members": {
+      "title": "Üyeler",
+      "refresh": "Üyeleri yenile",
+      "filter_label": "Üyeleri filtrele",
+      "filter_placeholder": "Üyeleri filtrele...",
+      "filter_by_role": "Role göre filtrele",
+      "filter_by_team": "Ekibe göre filtrele",
+      "all_teams": "tüm ekipler",
+      "sort_by": "Sıralama ölçütü",
+      "loading": "Üyeler yükleniyor...",
+      "no_members": "Üye bulunamadı",
+      "list_label": "Organizasyon üyeleri",
+      "change_role_for": "{name} için rol değiştir",
+      "remove_from_org": "{name} kullanıcısını organizasyondan çıkar",
+      "view_team": "{team} ekibini görüntüle",
+      "no_match": "Filtrelerinle eşleşen üye yok",
+      "username_label": "Kullanıcı adı",
+      "username_placeholder": "kullanıcı adı...",
+      "role_label": "Rol",
+      "role": {
+        "all": "tümü",
+        "developer": "geliştirici",
+        "admin": "yönetici",
+        "owner": "sahip"
+      },
+      "team_label": "Ekip",
+      "no_team": "ekip yok",
+      "add_button": "ekle",
+      "cancel_add": "Üye eklemeyi iptal et",
+      "add_member": "+ Üye ekle"
+    },
+    "public_packages": "{count} halka açık paket | {count} halka açık paket",
+    "page": {
+      "packages_title": "Paketler",
+      "members_tab": "Üyeler",
+      "teams_tab": "Ekipler",
+      "no_packages": "Şunun için halka açık paket bulunamadı:",
+      "no_packages_hint": "Bu organizasyon mevcut olmayabilir veya halka açık paketi yok.",
+      "failed_to_load": "Organizasyon paketleri yüklenemedi",
+      "no_match": "\"{query}\" ile eşleşen paket yok",
+      "not_found": "Organizasyon bulunamadı",
+      "not_found_message": "\"{'@'}{name}\" organizasyonu npm'de mevcut değil"
+    }
+  },
+  "user": {
+    "combobox": {
+      "add_to_org_hint": "(ayrıca organizasyona da eklenecek)",
+      "press_enter_to_add": "{'@'}{username} eklemek için Enter'a bas",
+      "default_placeholder": "kullanıcı adı...",
+      "suggestions_label": "Kullanıcı önerileri"
+    },
+    "page": {
+      "packages_title": "Paketler",
+      "no_packages": "Şunun için halka açık paket bulunamadı:",
+      "no_packages_hint": "Bu kullanıcı mevcut olmayabilir veya halka açık paketi yok.",
+      "failed_to_load": "Kullanıcı paketleri yüklenemedi",
+      "no_match": "\"{query}\" ile eşleşen paket yok",
+      "filter_placeholder": "{count} paketi filtrele... | {count} paketi filtrele..."
+    },
+    "orgs_page": {
+      "title": "Organizasyonlar",
+      "back_to_profile": "Profile dön",
+      "connect_required": "Organizasyonlarını görüntülemek için yerel CLI'ı bağla.",
+      "connect_hint_prefix": "Başlamak için",
+      "connect_hint_suffix": "çalıştır.",
+      "own_orgs_only": "Sadece kendi organizasyonlarını görüntüleyebilirsin.",
+      "view_your_orgs": "Organizasyonlarını görüntüle",
+      "loading": "Organizasyonlar yükleniyor...",
+      "empty": "Organizasyon bulunamadı.",
+      "empty_hint": "Organizasyonlar kapsam (scope) paketlerinden algılanır.",
+      "count": "{count} Organizasyon | {count} Organizasyon",
+      "packages_count": "{count} paket | {count} paket"
+    }
+  },
+  "claim": {
+    "modal": {
+      "title": "Paket Adını Sahiplen",
+      "success": "Paket sahiplenildi!",
+      "success_detail": "{name}{'@'}0.0.0 npm'de yayınlandı.",
+      "success_hint": "Artık 'npm publish' kullanarak bu paketin yeni sürümlerini yayınlayabilirsin.",
+      "view_package": "Paketi Görüntüle",
+      "invalid_name": "Geçersiz paket adı:",
+      "available": "Bu ad müsait!",
+      "taken": "Bu ad zaten alınmış.",
+      "missing_permission": "{'@'}{scope} kapsamına paket ekleme iznin yok.",
+      "similar_warning": "Benzer paketler mevcut - npm bu adı reddedebilir:",
+      "related": "İlgili paketler:",
+      "scope_warning_title": "Bunun yerine kapsamlı (scoped) bir paket kullanmayı düşün",
+      "scope_warning_text": "Kapsamsız paket adları paylaşılan bir kaynaktır. Bir adı yalnızca gerçekten bir paket yayınlayıp bakımını yapacaksan sahiplen. Kişisel veya organizasyonel projeler için {'@'}{username}/{name} gibi kapsamlı bir ad kullan.",
+      "connect_required": "Bu paket adını sahiplenmek için yerel bağlayıcıya bağlan.",
+      "connect_button": "Bağlayıcıya Bağlan",
+      "publish_hint": "Bu işlem minimal bir yer tutucu paket yayınlayacaktır.",
+      "preview_json": "package.json önizlemesi",
+      "claim_button": "Paket Adını Sahiplen",
+      "publishing": "Yayınlanıyor...",
+      "checking": "Müsaitlik durumu kontrol ediliyor...",
+      "failed_to_check": "Ad müsaitliği kontrol edilemedi",
+      "failed_to_claim": "Paket sahiplenilemedi"
+    }
+  },
+  "code": {
+    "files_label": "Dosyalar",
+    "no_files": "Bu dizinde dosya yok",
+    "root": "kök",
+    "lines": "{count} satır | {count} satır",
+    "toggle_tree": "Dosya ağacını aç/kapat",
+    "close_tree": "Dosya ağacını kapat",
+    "copy_link": "Bağlantıyı kopyala",
+    "raw": "Ham",
+    "view_raw": "Ham dosyayı görüntüle",
+    "file_too_large": "Dosya önizleme için çok büyük",
+    "file_size_warning": "{size}, sözdizimi vurgulama için 500KB sınırını aşıyor",
+    "failed_to_load": "Dosya yüklenemedi",
+    "unavailable_hint": "Dosya çok büyük veya erişilemez olabilir",
+    "version_required": "Kodu taramak için sürüm gerekli",
+    "go_to_package": "Pakete git",
+    "loading_tree": "Dosya ağacı yükleniyor...",
+    "failed_to_load_tree": "Bu paket sürümü için dosyalar yüklenemedi",
+    "back_to_package": "Pakete dön",
+    "table": {
+      "name": "İsim",
+      "size": "Boyut"
+    },
+    "markdown_view_mode": {
+      "preview": "önizleme",
+      "code": "kod"
+    },
+    "file_path": "Dosya yolu",
+    "scroll_to_top": "En yukarı kaydır"
+  },
+  "badges": {
+    "provenance": {
+      "verified": "doğrulanmış",
+      "verified_title": "Doğrulanmış kaynak",
+      "verified_via": "Doğrulandı: {provider} aracılığıyla yayınlandı"
+    },
+    "jsr": {
+      "title": "ayrıca JSR'da mevcut"
+    }
+  },
+  "filters": {
+    "title": "Filtreler",
+    "search": "Ara",
+    "search_scope": "Arama kapsamı",
+    "search_placeholder_name": "Paket adına göre filtrele...",
+    "search_placeholder_description": "Açıklamaya göre filtrele...",
+    "search_placeholder_keywords": "Anahtar kelimelere göre filtrele...",
+    "search_placeholder_all": "Hepsinde ara veya name: desc: kw: kullan",
+    "scope_name": "İsim",
+    "scope_name_description": "Sadece paket adlarını ara",
+    "scope_description": "Açıklama",
+    "scope_description_description": "Sadece açıklamaları ara",
+    "scope_keywords": "Anahtar Kelimeler",
+    "scope_keywords_description": "Sadece anahtar kelimeleri ara",
+    "scope_all": "Tümü",
+    "scope_all_description": "Tüm alanları ara, name: desc: kw: operatörlerini destekler",
+    "weekly_downloads": "Haftalık indirme",
+    "updated_within": "Güncellenme zamanı",
+    "security": "Güvenlik",
+    "keywords": "Anahtar Kelimeler",
+    "more_keywords": "+{count} daha",
+    "clear_all": "Tümünü temizle",
+    "remove_filter": "{label} filtresini kaldır",
+    "chips": {
+      "search": "Arama",
+      "downloads": "İndirmeler",
+      "keyword": "Anahtar Kelime",
+      "security": "Güvenlik",
+      "updated": "Güncellendi"
+    },
+    "download_range": {
+      "any": "Herhangi",
+      "lt100": "< 100",
+      "100_1k": "100 - 1B",
+      "1k_10k": "1B - 10B",
+      "10k_100k": "10B - 100B",
+      "gt100k": "> 100B"
+    },
+    "updated": {
+      "any": "Herhangi bir zaman",
+      "week": "Son bir hafta",
+      "month": "Son bir ay",
+      "quarter": "Son 3 ay",
+      "year": "Son bir yıl"
+    },
+    "security_options": {
+      "all": "Tüm paketler",
+      "secure": "Uyarısız",
+      "insecure": "Uyarılı"
+    },
+    "sort": {
+      "label": "Paketleri sırala",
+      "toggle_direction": "Sıralama yönünü değiştir",
+      "ascending": "Artan",
+      "descending": "Azalan",
+      "relevance": "Alaka",
+      "downloads_week": "İndirme/hafta",
+      "downloads_day": "İndirme/gün",
+      "downloads_month": "İndirme/ay",
+      "downloads_year": "İndirme/yıl",
+      "published": "Son Yayınlanma",
+      "name": "İsim",
+      "quality": "Kalite",
+      "popularity": "Popülerlik",
+      "maintenance": "Bakım",
+      "score": "Puan"
+    },
+    "columns": {
+      "title": "Sütunlar",
+      "show": "Sütunları göster",
+      "reset": "Varsayılanlara dön",
+      "coming_soon": "Çok yakında",
+      "name": "İsim",
+      "version": "Sürüm",
+      "description": "Açıklama",
+      "downloads": "İndirme/hafta",
+      "published": "Son Yayınlanma",
+      "maintainers": "Geliştiriciler",
+      "keywords": "Anahtar Kelimeler",
+      "quality_score": "Kalite puanı",
+      "popularity_score": "Popülerlik puanı",
+      "maintenance_score": "Bakım puanı",
+      "combined_score": "Birleşik puan",
+      "security": "Güvenlik"
+    },
+    "view_mode": {
+      "label": "Görünüm modu",
+      "cards": "Kart görünümü",
+      "table": "Tablo görünümü"
+    },
+    "pagination": {
+      "mode_label": "Sayfalama modu",
+      "infinite": "Sonsuz",
+      "paginated": "Sayfalı",
+      "items_per_page": "Sayfa başına öğe",
+      "per_page": "{count} / sayfa",
+      "all_yolo": "Tümü (YOLO)",
+      "showing": "{total} öğeden {start}-{end} arası",
+      "previous": "Önceki sayfa",
+      "next": "Sonraki sayfa",
+      "nav_label": "Sayfalama"
+    },
+    "count": {
+      "showing_filtered": "{count} paketten {filtered} tanesi gösteriliyor",
+      "showing_all": "{count} paket | {count} paket",
+      "showing_paginated": "{count} paketten {pageSize} tanesi gösteriliyor"
+    },
+    "table": {
+      "security_warning": "Güvenlik uyarısı",
+      "secure": "Güvenli",
+      "no_packages": "Paket bulunamadı"
+    }
+  },
+  "about": {
+    "title": "Hakkında",
+    "heading": "hakkında",
+    "meta_description": "npmx, npm kayıt defteri için hızlı, modern bir tarayıcıdır. npm paketlerini keşfetmek için daha iyi bir UX/DX.",
+    "what_we_are": {
+      "title": "Biz kimiz",
+      "better_ux_dx": "daha iyi UX/DX",
+      "admin_ui": "yönetici arayüzü",
+      "description": "npmx, npm paket kayıt defteri ve araçları için {betterUxDx} sunar. Koyu mod, klavye navigasyonu, kod tarama ve {jsr} gibi alternatif kayıt defterlerine bağlantı gibi özelliklerle paketleri keşfetmek için hızlı ve modern bir arayüz sağlarız.",
+      "admin_description": "Ayrıca paketlerini, ekiplerini ve organizasyonlarını — tamamen tarayıcıdan ve yerel npm CLI gücünle — yönetmen için daha iyi bir {adminUi} sunmayı hedefliyoruz."
+    },
+    "what_we_are_not": {
+      "title": "Biz ne değiliz",
+      "not_package_manager": "Paket yöneticisi değiliz.",
+      "not_registry": "Kayıt defteri (registry) değiliz.",
+      "registry_description": "Paketleri barındırmıyoruz. Sadece onlara göz atmanın daha iyi bir yoluyuz.",
+      "package_managers_exist": "{already} {really} {cool} {package} {managers} {building} {people}.",
+      "words": {
+        "already": "Zaten",
+        "people": "insanlar",
+        "building": "yapan",
+        "really": "gerçekten",
+        "cool": "havalı",
+        "package": "paket",
+        "managers": "yöneticileri var"
+      }
+    },
+    "sponsors": {
+      "title": "Sponsorlar"
+    },
+    "oss_partners": {
+      "title": "Açık Kaynak Partnerleri"
+    },
+    "team": {
+      "title": "Ekip",
+      "governance": "Yönetişim",
+      "role_steward": "temsilci",
+      "role_maintainer": "geliştirici",
+      "sponsor": "sponsor ol",
+      "sponsor_aria": "GitHub'da {name} kullanıcısına sponsor ol"
+    },
+    "contributors": {
+      "title": "... ve {count} katkıda bulunan daha",
+      "description": "npmx tamamen açık kaynaktır ve harika bir katkı topluluğu tarafından geliştirilmektedir. Bize katıl ve hep istediğimiz npm tarayıcı deneyimini birlikte inşa edelim.",
+      "loading": "Katılımcılar yükleniyor...",
+      "error": "Katılımcılar yüklenemedi",
+      "view_profile": "{name} kullanıcısının GitHub profilini görüntüle"
+    },
+    "get_involved": {
+      "title": "Dahil ol",
+      "contribute": {
+        "title": "Katkıda bulun",
+        "description": "Daha iyi bir npm deneyimi inşa etmemize yardım et.",
+        "cta": "GitHub'da görüntüle"
+      },
+      "community": {
+        "title": "Topluluğa katıl",
+        "description": "Sohbet et, soru sor ve fikirlerini paylaş.",
+        "cta": "Discord'a katıl"
+      },
+      "follow": {
+        "title": "Güncel kal",
+        "description": "npmx hakkındaki son gelişmeleri öğren.",
+        "cta": "Bluesky'de takip et"
+      }
+    }
+  },
+  "account_menu": {
+    "connect": "bağlan",
+    "account": "Hesap",
+    "npm_cli": "npm CLI",
+    "atmosphere": "Atmosphere",
+    "npm_cli_desc": "Paketleri & orgları yönet",
+    "atmosphere_desc": "Sosyal özellikler & kimlik",
+    "connect_npm_cli": "npm CLI'a bağlan",
+    "connect_atmosphere": "Atmosphere'e bağlan",
+    "connecting": "Bağlanıyor...",
+    "ops": "{count} işlem | {count} işlem"
+  },
+  "auth": {
+    "modal": {
+      "title": "Atmosphere",
+      "connected_as": "{'@'}{handle} olarak bağlandı",
+      "disconnect": "Bağlantıyı Kes",
+      "connect_prompt": "Atmosphere hesabınla bağlan",
+      "handle_label": "Kullanıcı Adı (Handle)",
+      "handle_placeholder": "alice.npmx.social",
+      "connect": "Bağlan",
+      "create_account": "Yeni hesap oluştur",
+      "connect_bluesky": "Bluesky ile bağlan",
+      "what_is_atmosphere": "Atmosphere hesabı nedir?",
+      "atmosphere_explanation": "{npmx}, birçok sosyal özelliğini güçlendirmek için {atproto} kullanır; bu sayede kullanıcılar verilerine sahip olur ve uyumlu tüm uygulamalarda tek bir hesap kullanabilir. Bir hesap oluşturduğunda, {bluesky} ve {tangled} gibi diğer uygulamaları da aynı hesapla kullanabilirsin.",
+      "default_input_error": "Lütfen geçerli bir kullanıcı adı, DID veya tam PDS URL'si gir",
+      "profile": "Profil"
+    }
+  },
+  "header": {
+    "home": "npmx ana sayfa",
+    "packages": "paketler",
+    "packages_dropdown": {
+      "title": "Paketlerin",
+      "loading": "Yükleniyor...",
+      "error": "Paketler yüklenemedi",
+      "empty": "Paket bulunamadı",
+      "view_all": "Tümünü görüntüle"
+    },
+    "orgs": "organizasyonlar",
+    "orgs_dropdown": {
+      "title": "Organizasyonların",
+      "loading": "Yükleniyor...",
+      "error": "Organizasyonlar yüklenemedi",
+      "empty": "Organizasyon bulunamadı",
+      "view_all": "Tümünü görüntüle"
+    }
+  },
+  "compare": {
+    "packages": {
+      "title": "paketleri karşılaştır",
+      "tagline": "doğru olanı seçmene yardımcı olmak için npm paketlerini yan yana karşılaştır.",
+      "meta_title": "{packages} Karşılaştır - npmx",
+      "meta_title_empty": "Paketleri Karşılaştır - npmx",
+      "meta_description": "{packages} yan yana karşılaştırması",
+      "meta_description_empty": "npm paketlerini yan yana karşılaştır",
+      "section_packages": "Paketler",
+      "section_facets": "Kriterler",
+      "section_comparison": "Karşılaştırma",
+      "copy_as_markdown": "Tabloyu kopyala",
+      "loading": "Paket verileri yükleniyor...",
+      "error": "Paket verileri yüklenemedi. Lütfen tekrar dene.",
+      "empty_title": "Karşılaştırmak için paket seç",
+      "empty_description": "Metriklerini yan yana görmek için yukarıdan en az 2 paket ara ve ekle."
+    },
+    "selector": {
+      "search_label": "Paketleri ara",
+      "search_first": "Bir paket ara...",
+      "search_add": "Başka bir paket ekle...",
+      "searching": "Aranıyor...",
+      "remove_package": "{package} paketini kaldır",
+      "packages_selected": "{count}/{max} paket seçildi.",
+      "add_hint": "Karşılaştırmak için en az 2 paket ekle."
+    },
+    "no_dependency": {
+      "label": "(Bağımlılık yok)",
+      "typeahead_title": "James Olsa Ne Yapardı?",
+      "typeahead_description": "Bağımlılık kullanmamaya karşı kıyasla! e18e onaylı.",
+      "tooltip_title": "Bir bağımlılığa ihtiyacın olmayabilir",
+      "tooltip_description": "Bağımlılık kullanmamaya karşı kıyasla! {link}, yerel API'ler veya daha basit alternatiflerle değiştirilebilecek paketlerin bir listesini tutar.",
+      "e18e_community": "e18e topluluğu",
+      "add_column": "Karşılaştırmaya 'bağımlılık yok' sütunu ekle"
+    },
+    "facets": {
+      "group_label": "Karşılaştırma kriterleri",
+      "all": "tümü",
+      "none": "hiçbiri",
+      "coming_soon": "Çok yakında",
+      "select_all": "Tüm kriterleri seç",
+      "deselect_all": "Tüm kriterlerin seçimini kaldır",
+      "select_category": "Tüm {category} kriterlerini seç",
+      "deselect_category": "Tüm {category} kriterlerinin seçimini kaldır",
+      "binary_only_tooltip": "Bu paket binary dosyalar sunar ve export içermez",
+      "categories": {
+        "performance": "Performans",
+        "health": "Sağlık",
+        "compatibility": "Uyumluluk",
+        "security": "Güvenlik & Uyum"
+      },
+      "items": {
+        "packageSize": {
+          "label": "Paket Boyutu",
+          "description": "Paketin kendi boyutu (açılmış)"
+        },
+        "installSize": {
+          "label": "Kurulum Boyutu",
+          "description": "Tüm bağımlılıklar dahil toplam kurulum boyutu"
+        },
+        "dependencies": {
+          "label": "Doğrudan Bağımlılıklar",
+          "description": "Doğrudan bağımlılıkların sayısı"
+        },
+        "totalDependencies": {
+          "label": "Toplam Bağımlılıklar",
+          "description": "Geçişli (transitive) bağımlılıklar dahil toplam sayı"
+        },
+        "downloads": {
+          "label": "İndirme/hafta",
+          "description": "Haftalık indirme sayısı"
+        },
+        "totalLikes": {
+          "label": "Beğeniler",
+          "description": "Beğeni sayısı"
+        },
+        "lastUpdated": {
+          "label": "Yayınlandı",
+          "description": "Bu sürüm ne zaman yayınlandı"
+        },
+        "deprecated": {
+          "label": "Kaldırıldı mı?",
+          "description": "Paketin kullanımdan kaldırılıp kaldırılmadığı"
+        },
+        "engines": {
+          "label": "Motorlar",
+          "description": "Node.js sürüm gereksinimleri"
+        },
+        "types": {
+          "label": "Türler",
+          "description": "TypeScript tür tanımları"
+        },
+        "moduleFormat": {
+          "label": "Modül Formatı",
+          "description": "ESM/CJS desteği"
+        },
+        "license": {
+          "label": "Lisans",
+          "description": "Paket lisansı"
+        },
+        "vulnerabilities": {
+          "label": "Güvenlik Açıkları",
+          "description": "Bilinen güvenlik açıkları"
+        }
+      },
+      "values": {
+        "any": "Herhangi",
+        "none": "Yok",
+        "unknown": "Bilinmiyor",
+        "deprecated": "Kaldırıldı (Deprecated)",
+        "not_deprecated": "Hayır",
+        "types_included": "Dahil",
+        "types_none": "Yok",
+        "vulnerabilities_summary": "{count} ({critical}C/{high}H)",
+        "up_to_you": "Sana kalmış!"
+      },
+      "trends": {
+        "title": "Trendleri Karşılaştır"
+      }
+    },
+    "file_changes": "Dosya Değişiklikleri",
+    "files_count": "{count} dosya | {count} dosya",
+    "lines_hidden": "{count} satır gizlendi | {count} satır gizlendi",
+    "file_too_large": "Dosya karşılaştırmak için çok büyük",
+    "file_size_warning": "{size}, karşılaştırma için 250KB sınırını aşıyor",
+    "compare_versions": "fark (diff)",
+    "compare_versions_title": "Son sürümle karşılaştır",
+    "summary": "Özet",
+    "deps_count": "{count} bağ. | {count} bağ.",
+    "dependencies": "Bağımlılıklar",
+    "dev_dependencies": "Dev Bağımlılıkları",
+    "peer_dependencies": "Eş Bağımlılıklar",
+    "optional_dependencies": "İsteğe Bağlı Bağımlılıklar",
+    "no_dependency_changes": "Bağımlılık değişikliği yok",
+    "file_filter_option": {
+      "all": "Tümü ({count})",
+      "added": "Eklenen ({count})",
+      "removed": "Silinen ({count})",
+      "modified": "Değişen ({count})"
+    },
+    "search_files_placeholder": "Dosyaları ara...",
+    "no_files_all": "Dosya yok",
+    "no_files_search": "\"{query}\" ile eşleşen dosya yok",
+    "no_files_filtered": "{filter} dosya yok",
+    "filter": {
+      "added": "eklenen",
+      "removed": "silinen",
+      "modified": "değişen"
+    },
+    "files_button": "Dosyalar",
+    "select_file_prompt": "Farkları görmek için yan menüden bir dosya seç",
+    "close_files_panel": "Dosya panelini kapat",
+    "filter_files_label": "Dosyaları değişim türüne göre filtrele"
+  },
+  "privacy_policy": {
+    "title": "gizlilik politikası",
+    "last_updated": "Son güncelleme: {date}",
+    "welcome": "{app}'e hoş geldin. Gizliliğini korumaya kararlıyız. Bu politika; hangi verileri topladığımızı, nasıl kullandığımızı ve bilgilerine ilişkin haklarını açıklar.",
+    "cookies": {
+      "what_are": {
+        "title": "Çerezler nedir?",
+        "p1": "Çerezler, bir web sitesini ziyaret ettiğinde cihazında saklanan küçük metin dosyalarıdır. Amaçları, belirli tercihleri ve ayarları hatırlayarak tarama deneyimini geliştirmektir."
+      },
+      "types": {
+        "title": "Hangi çerezleri kullanıyoruz?",
+        "p1": "Sadece sitenin işlevselliği için {bold} kullanıyoruz. Üçüncü taraf veya reklam çerezleri kullanmıyoruz.",
+        "bold": "kesinlikle gerekli teknik çerezleri",
+        "li1": "{li11}{separator} {li12}",
+        "li2": "{li21}{separator} {li22}",
+        "separator": ":",
+        "cookie_vdpl": "__vdpl",
+        "cookie_vdpl_desc": "Bu çerez, barındırma sağlayıcımız (Vercel) tarafından skew protection (sürüm kayması koruması) için kullanılır. Sen gezinirken yeni bir güncelleme yayınlanırsa varlıkları (assets) doğru dağıtım sürümünden çekmeni sağlar. Seni izlemez.",
+        "cookie_h3": "h3",
+        "cookie_h3_desc": "Bu bizim güvenli oturum çerezimizdir. Atmosphere hesabını bağladığında OAuth erişim token'ını saklar. Kimliği doğrulanmış oturumunu sürdürmek için gereklidir."
+      },
+      "local_storage": {
+        "title": "Yerel depolama (Local Storage)",
+        "p1": "Oturum çerezlerine ek olarak, görüntüleme tercihlerini kaydetmek için tarayıcının {bold} özelliğini kullanıyoruz. Bu, seçtiğin temayı (açık/koyu) ve diğer bazı {settings} ayarlarını hatırlamamızı sağlar, böylece her ziyarette yeniden yapılandırman gerekmez.",
+        "bold": "Yerel Depolamasını",
+        "p2": "Bu bilgiler tamamen işlevseldir, yalnızca cihazında saklanır ve {bold2}. Bunu sadece web sitemizdeki deneyimini geliştirmek için kullanırız.",
+        "bold2": "kişisel veri içermez veya seni izlemek için kullanılmaz",
+        "settings": "ayarları"
+      },
+      "management": {
+        "title": "Çerez yönetimi",
+        "p1": "Tarayıcını tercihlerine göre çerezleri kabul edecek, reddedecek veya silecek şekilde yapılandırabilirsin. Ancak unutma ki, {bold}.",
+        "bold": "gerekli çerezleri reddetmek uygulamanın tam erişimini engelleyebilir",
+        "p2": "Aşağıda en sık kullanılan tarayıcılarda çerez yönetimi için talimat linkleri bulunmaktadır:",
+        "chrome": "Google Chrome (yeni pencerede açılır)",
+        "firefox": "Mozilla Firefox (yeni pencerede açılır)",
+        "edge": "Microsoft Edge (yeni pencerede açılır)"
+      }
+    },
+    "analytics": {
+      "title": "Analitik",
+      "p1": "Ziyaretçilerin web sitemizi nasıl kullandığını anlamak için {bold} kullanıyoruz. Bu, kullanıcı deneyimini geliştirmemize ve sorunları tespit etmemize yardımcı olur.",
+      "bold": "Vercel Web Analytics",
+      "p2": "Vercel Analytics gizlilik odaklı tasarlanmıştır:",
+      "li1": "Çerez kullanmaz",
+      "li2": "Kişisel tanımlayıcılar toplamaz",
+      "li3": "Kullanıcıları web siteleri arasında izlemez",
+      "li4": "Tüm veriler toplanır (aggregrated) ve anonimleştirilir",
+      "p3": "Toplanan tek bilgi şunları içerir: sayfa URL'leri, yönlendiren (referrer), ülke/bölge, cihaz türü, tarayıcı ve işletim sistemi. Bu veriler bireysel kullanıcıları tanımlamak için kullanılamaz."
+    },
+    "authenticated": {
+      "title": "Kimliği doğrulanmış kullanıcılar",
+      "p1": "{bold} hesabını npmx'e bağladığında, OAuth erişim token'ını güvenli, HTTP-only bir oturum çerezinde saklarız. Bu token yalnızca senin adına istekleri doğrulamak için kullanılır.",
+      "bold": "Atmosphere",
+      "p2": "Kimlik bilgilerini saklamıyoruz ve kullandığın özellikleri sağlamak için gerekli olanın ötesinde hiçbir veriye erişmiyoruz. Hesabının bağlantısını istediğin zaman {settings} sayfasından kesebilirsin.",
+      "settings": "ayarlar"
+    },
+    "data_retention": {
+      "title": "Veri saklama",
+      "p1": "Oturum çerezleri tarayıcını kapattığında veya belirli bir hareketsizlik süresinden sonra otomatik olarak silinir. Yerel depolama tercihleri, tarayıcı verilerini temizleyene kadar cihazında kalır. Analitik verileri toplu biçimde saklanır ve bireysel kullanıcılarla ilişkilendirilemez."
+    },
+    "your_rights": {
+      "title": "Hakların",
+      "p1": "Şu haklara sahipsin:",
+      "li1": "Hangi verileri topladığımız hakkında bilgiye erişmek",
+      "li2": "İstediğin zaman yerel depolama ve çerezleri temizlemek",
+      "li3": "Kimliği doğrulanmış oturumunun bağlantısını kesmek",
+      "li4": "Veri uygulamalarımız hakkında bilgi talep etmek",
+      "p2": "Kişisel veri toplamadığımız için, genellikle silinecek veya dışa aktarılacak kişisel bilgi bulunmamaktadır."
+    },
+    "contact": {
+      "title": "Bize ulaş",
+      "p1": "Bu gizlilik politikasıyla ilgili herhangi bir soru veya endişen için {link} üzerinde bir issue açarak bizimle iletişime geçebilirsin.",
+      "link": "GitHub depomuz"
+    },
+    "changes": {
+      "title": "Bu politikadaki değişiklikler",
+      "p1": "Bu gizlilik politikasını zaman zaman güncelleyebiliriz. Herhangi bir değişiklik, güncellenmiş revizyon tarihiyle bu sayfada yayınlanacaktır."
+    }
+  },
+  "a11y": {
+    "title": "erişilebilirlik",
+    "footer_title": "a11y",
+    "welcome": "{app}'in mümkün olduğunca çok insan tarafından kullanılabilir olmasını istiyoruz.",
+    "approach": {
+      "title": "Yaklaşımımız",
+      "p1": "Web İçeriği Erişilebilirlik Yönergeleri (WCAG) 2.2'yi takip etmeye çalışıyor ve özellikleri geliştirirken bunları referans alıyoruz. WCAG'nin herhangi bir seviyesine tam uyum iddia etmiyoruz — erişilebilirlik sürekli bir süreçtir ve her zaman yapılacak daha çok iş vardır.",
+      "p2": "Bu site {about} bir projedir. Erişilebilirlik iyileştirmeleri, düzenli geliştirmemizin bir parçası olarak aşamalı şekilde yapılmaktadır.",
+      "about_link": "açık kaynaklı, topluluk odaklı"
+    },
+    "measures": {
+      "title": "Neler yapıyoruz",
+      "p1": "Site genelinde yapmayı hedeflediğimiz bazı şeyler:",
+      "li1": "Uygun yerlerde anlamsal (semantic) HTML ve ARIA öznitelikleri kullanmak.",
+      "li2": "Tarayıcında ayarlayabilmen için göreli metin boyutları kullanmak.",
+      "li3": "Arayüz genelinde klavye navigasyonunu desteklemek.",
+      "li4": "prefers-reduced-motion ve prefers-color-scheme medya sorgularına saygı duymak.",
+      "li5": "Yeterli renk kontrastını dikkate alarak tasarlamak.",
+      "li6": "Bazı interaktif özellikler JavaScript gerektirse de, temel içeriğin JavaScript olmadan da erişilebilir olmasını sağlamak."
+    },
+    "limitations": {
+      "title": "Bilinen sınırlamalar",
+      "p1": "Sitenin bazı bölümleri — özellikle paket README'leri gibi üçüncü taraf içerikler — erişilebilirlik standartlarını karşılamayabilir. Bu alanları zamanla iyileştirmek için çalışıyoruz."
+    },
+    "contact": {
+      "title": "Geri bildirim",
+      "p1": "{app} üzerinde bir erişilebilirlik engeliyle karşılaşırsan, lütfen {link} üzerinde bir issue açarak bize bildir. Bu raporları ciddiye alıyoruz ve ele almak için elimizden geleni yapacağız.",
+      "link": "GitHub depomuz"
+    }
+  },
+  "vacations": {
+    "title": "tatilde",
+    "meta_description": "npmx ekibi şarj oluyordu. Discord bir hafta sonra tekrar açıldı.",
+    "heading": "şarj oluyoruz",
+    "subtitle": "npmx'i {some} uykusuna mal olacak bir hızda geliştiriyorduk. bunun normalleşmesini istemedik! bu yüzden bir hafta izin aldık. hep beraber.",
+    "illustration_alt": "tek sıra rahat ikonlar",
+    "poke_log": "Ateşi körükle",
+    "what": {
+      "title": "ne oldu",
+      "p1": "discord {dates} tarihlerinde kapalıydı.",
+      "dates": "14 - 21 Şubat",
+      "p2": "tüm davet linkleri gitti ve kanallar kilitlendi - takılmaya devam etmek isteyenler için açık kalan {garden} hariç.",
+      "garden": "#bahçe (#garden)"
+    },
+    "meantime": {
+      "title": "bu arada",
+      "p1": "{site} ve {repo} açık kaldı - insanlar yine de kurcaladı, bazı issue'lar açtı, birkaç PR gönderdi ama esasen herkes zamanını rahat bir şöminenin yakınında geçirdi.",
+      "repo_link": "depo"
+    },
+    "return": {
+      "title": "geri döndük!",
+      "p1": "şarj olmuş ve 3 Mart'taki son hamle için hazır bir şekilde geri döndük. Güncellemeler için {social}.",
+      "social_link": "bizi Bluesky'de takip et"
+    },
+    "stats": {
+      "contributors": "Katılımcılar",
+      "commits": "Commit'ler",
+      "pr": "Birleştirilen PR'lar",
+      "subtitle": {
+        "some": "bazılarımızın",
+        "all": "hepimizin"
+      }
+    }
+  }
+}
