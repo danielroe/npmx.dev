@@ -22,6 +22,14 @@ const QUERY_SCHEMA = v.object({
   label: v.optional(SafeStringSchema),
 })
 
+const EndpointResponseSchema = v.object({
+  schemaVersion: v.literal(1),
+  label: v.string(),
+  message: v.string(),
+  color: v.optional(v.string()),
+  labelColor: v.optional(v.string()),
+})
+
 const COLORS = {
   blue: '#3b82f6',
   green: '#22c55e',
@@ -248,6 +256,21 @@ async function fetchInstallSize(packageName: string, version: string): Promise<n
   }
 }
 
+async function fetchEndpointBadge(url: string) {
+  const response = await fetch(url, { headers: { Accept: 'application/json' } })
+  if (!response.ok) {
+    throw createError({ statusCode: 502, message: `Endpoint returned ${response.status}` })
+  }
+  const data = await response.json()
+  const parsed = v.parse(EndpointResponseSchema, data)
+  return {
+    label: parsed.label,
+    value: parsed.message,
+    color: parsed.color,
+    labelColor: parsed.labelColor,
+  }
+}
+
 const badgeStrategies = {
   'version': async (pkgData: globalThis.Packument, requestedVersion?: string) => {
     const version = requestedVersion ?? getLatestVersion(pkgData) ?? 'unknown'
@@ -388,65 +411,85 @@ export default defineCachedEventHandler(
   async event => {
     const query = getQuery(event)
     const typeParam = getRouterParam(event, 'type')
-    const pkgParamSegments = getRouterParam(event, 'pkg')?.split('/') ?? []
 
-    if (pkgParamSegments.length === 0) {
-      // TODO: throwing 404 rather than 400 as it's cacheable
-      throw createError({ statusCode: 404, message: 'Package name is required.' })
+    const queryParams = v.safeParse(QUERY_SCHEMA, query)
+    const userColor = queryParams.success ? queryParams.output.color : undefined
+    const userLabel = queryParams.success ? queryParams.output.label : undefined
+    const labelColor = queryParams.success ? queryParams.output.labelColor : undefined
+    const badgeStyleResult = v.safeParse(BadgeStyleSchema, query.style)
+    const badgeStyle = badgeStyleResult.success ? badgeStyleResult.output : 'default'
+
+    let strategyResult: { label: string; value: string; color?: string; labelColor?: string }
+
+    if (typeParam === 'endpoint') {
+      const endpointUrl = typeof query.url === 'string' ? query.url : undefined
+      if (!endpointUrl || !endpointUrl.startsWith('https://')) {
+        throw createError({ statusCode: 400, message: 'Missing or invalid "url" query parameter.' })
+      }
+
+      try {
+        strategyResult = await fetchEndpointBadge(endpointUrl)
+      } catch (error: unknown) {
+        handleApiError(error, { statusCode: 502, message: 'Failed to fetch endpoint data.' })
+      }
+    } else {
+      const pkgParamSegments = getRouterParam(event, 'pkg')?.split('/') ?? []
+
+      if (pkgParamSegments.length === 0) {
+        // TODO: throwing 404 rather than 400 as it's cacheable
+        throw createError({ statusCode: 404, message: 'Package name is required.' })
+      }
+
+      const { rawPackageName, rawVersion } = parsePackageParams(pkgParamSegments)
+
+      try {
+        const { packageName, version: requestedVersion } = v.parse(PackageRouteParamsSchema, {
+          packageName: rawPackageName,
+          version: rawVersion,
+        })
+
+        const showName = queryParams.success && queryParams.output.name === 'true'
+
+        const badgeTypeResult = v.safeParse(BadgeTypeSchema, typeParam)
+        const strategyKey = badgeTypeResult.success ? badgeTypeResult.output : 'version'
+        const strategy = badgeStrategies[strategyKey as keyof typeof badgeStrategies]
+
+        assertValidPackageName(packageName)
+
+        const pkgData = await fetchNpmPackage(packageName)
+        const result = await strategy(pkgData, requestedVersion)
+        strategyResult = {
+          label: showName ? packageName : result.label,
+          value: result.value,
+          color: result.color,
+        }
+      } catch (error: unknown) {
+        handleApiError(error, {
+          statusCode: 502,
+          message: ERROR_NPM_FETCH_FAILED,
+        })
+      }
     }
 
-    const { rawPackageName, rawVersion } = parsePackageParams(pkgParamSegments)
+    const finalLabel = userLabel ?? strategyResult.label
+    const finalValue = strategyResult.value
+    const rawColor = userColor ?? strategyResult.color ?? COLORS.slate
+    const finalColor = rawColor.startsWith('#') ? rawColor : `#${rawColor}`
+    const defaultLabelColor = badgeStyle === 'shieldsio' ? '#555' : '#0a0a0a'
+    const rawLabelColor = labelColor ?? strategyResult.labelColor ?? defaultLabelColor
+    const finalLabelColor = rawLabelColor.startsWith('#') ? rawLabelColor : `#${rawLabelColor}`
 
-    try {
-      const { packageName, version: requestedVersion } = v.parse(PackageRouteParamsSchema, {
-        packageName: rawPackageName,
-        version: rawVersion,
-      })
+    const renderFn = badgeStyle === 'shieldsio' ? renderShieldsBadgeSvg : renderDefaultBadgeSvg
+    const svg = renderFn({ finalColor, finalLabel, finalLabelColor, finalValue })
 
-      const queryParams = v.safeParse(QUERY_SCHEMA, query)
-      const userColor = queryParams.success ? queryParams.output.color : undefined
-      const labelColor = queryParams.success ? queryParams.output.labelColor : undefined
-      const showName = queryParams.success && queryParams.output.name === 'true'
-      const userLabel = queryParams.success ? queryParams.output.label : undefined
-      const badgeStyleResult = v.safeParse(BadgeStyleSchema, query.style)
-      const badgeStyle = badgeStyleResult.success ? badgeStyleResult.output : 'default'
+    setHeader(event, 'Content-Type', 'image/svg+xml')
+    setHeader(
+      event,
+      'Cache-Control',
+      `public, max-age=${CACHE_MAX_AGE_ONE_HOUR}, s-maxage=${CACHE_MAX_AGE_ONE_HOUR}`,
+    )
 
-      const badgeTypeResult = v.safeParse(BadgeTypeSchema, typeParam)
-      const strategyKey = badgeTypeResult.success ? badgeTypeResult.output : 'version'
-      const strategy = badgeStrategies[strategyKey as keyof typeof badgeStrategies]
-
-      assertValidPackageName(packageName)
-
-      const pkgData = await fetchNpmPackage(packageName)
-      const strategyResult = await strategy(pkgData, requestedVersion)
-
-      const finalLabel = userLabel ? userLabel : showName ? packageName : strategyResult.label
-      const finalValue = strategyResult.value
-
-      const rawColor = userColor ?? strategyResult.color
-      const finalColor = rawColor?.startsWith('#') ? rawColor : `#${rawColor}`
-
-      const defaultLabelColor = badgeStyle === 'shieldsio' ? '#555' : '#0a0a0a'
-      const rawLabelColor = labelColor ?? defaultLabelColor
-      const finalLabelColor = rawLabelColor.startsWith('#') ? rawLabelColor : `#${rawLabelColor}`
-
-      const renderFn = badgeStyle === 'shieldsio' ? renderShieldsBadgeSvg : renderDefaultBadgeSvg
-      const svg = renderFn({ finalColor, finalLabel, finalLabelColor, finalValue })
-
-      setHeader(event, 'Content-Type', 'image/svg+xml')
-      setHeader(
-        event,
-        'Cache-Control',
-        `public, max-age=${CACHE_MAX_AGE_ONE_HOUR}, s-maxage=${CACHE_MAX_AGE_ONE_HOUR}`,
-      )
-
-      return svg
-    } catch (error: unknown) {
-      handleApiError(error, {
-        statusCode: 502,
-        message: ERROR_NPM_FETCH_FAILED,
-      })
-    }
+    return svg
   },
   {
     maxAge: CACHE_MAX_AGE_ONE_HOUR,

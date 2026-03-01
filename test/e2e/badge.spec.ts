@@ -153,4 +153,23 @@ test.describe('badge API', () => {
 
     expect(response.status()).toBe(404)
   })
+
+  test('endpoint badge renders from external JSON', async ({ page, baseURL }) => {
+    const endpointUrl = encodeURIComponent(
+      'https://raw.githubusercontent.com/solidjs-community/solid-primitives/main/assets/badges/stage-2.json',
+    )
+    const url = toLocalUrl(baseURL, `/api/registry/badge/endpoint/_?url=${endpointUrl}`)
+    const { body, response } = await fetchBadge(page, url)
+
+    expect(response.status()).toBe(200)
+    expect(body).toContain('STAGE')
+    expect(body).toContain('>2<')
+  })
+
+  test('endpoint badge without url returns 400', async ({ page, baseURL }) => {
+    const url = toLocalUrl(baseURL, '/api/registry/badge/endpoint/_')
+    const { response } = await fetchBadge(page, url)
+
+    expect(response.status()).toBe(400)
+  })
 })
