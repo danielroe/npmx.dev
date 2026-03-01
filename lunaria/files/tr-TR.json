@@ -76,6 +76,10 @@
     "links": "Bağlantılar",
     "tap_to_search": "Aramak için dokunun"
   },
+  "blog": {
+    "author": {},
+    "atproto": {}
+  },
   "settings": {
     "title": "ayarlar",
     "tagline": "npmx deneyiminizi kişiselleştirin",
@@ -121,6 +125,7 @@
     "edit_on_github": "GitHub'da düzenle",
     "view_guide": "Çeviri rehberi"
   },
+  "error": {},
   "common": {
     "loading": "Yükleniyor...",
     "loading_more": "Daha fazla yükleniyor...",
@@ -135,7 +140,7 @@
     "skip_link": "Ana içeriğe geç",
     "warnings": "Uyarılar:",
     "go_back_home": "Ana sayfaya dön",
-    "view_on_npm": "npm'de görüntüle",
+    "view_on": "{site}'de görüntüle",
     "per_week": "/ hafta",
     "vanity_downloads_hint": "Gösterge: paket gösterilmiyor | Gösterge: gösterilen paket için | Gösterge: {count} gösterilen paketin toplamı",
     "sort": {
@@ -1239,5 +1244,6 @@
       "p1": "Erişilebilirlik sorunları için:",
       "link": "GitHub'da issue açın"
     }
-  }
+  },
+  "changelog": {}
 }

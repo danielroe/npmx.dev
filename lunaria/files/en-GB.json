@@ -166,7 +166,7 @@
     "skip_link": "Skip to main content",
     "warnings": "Warnings:",
     "go_back_home": "Go back home",
-    "view_on_npm": "view on npm",
+    "view_on": "view on {site}",
     "per_week": "/ week",
     "vanity_downloads_hint": "Vanity number: no packages displayed | Vanity number: for the displayed package | Vanity number: Sum of {count} displayed packages",
     "sort": {
@@ -270,7 +270,8 @@
       "code": "code",
       "docs": "docs",
       "fund": "fund",
-      "compare": "compare"
+      "compare": "compare",
+      "changelog": "changelog"
     },
     "likes": {
       "like": "Like this package",
@@ -1273,5 +1274,10 @@
       "p1": "If you encounter an accessibility barrier on {app}, please let us know by opening an issue on our {link}. We take these reports seriously and will do our best to address them.",
       "link": "GitHub repository"
     }
+  },
+  "changelog": {
+    "pre_release": "Pre-release",
+    "draft": "Draft",
+    "no_logs": "Sorry, this package does not publish changelogs, or its changelog format is not supported."
   }
 }

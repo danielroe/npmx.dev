@@ -505,7 +505,7 @@
         "go_back_home": {
           "type": "string"
         },
-        "view_on_npm": {
+        "view_on": {
           "type": "string"
         },
         "per_week": {
@@ -818,6 +818,9 @@
               "type": "string"
             },
             "compare": {
+              "type": "string"
+            },
+            "changelog": {
               "type": "string"
             }
           },
@@ -3927,6 +3930,21 @@
             }
           },
           "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "changelog": {
+      "type": "object",
+      "properties": {
+        "pre_release": {
+          "type": "string"
+        },
+        "draft": {
+          "type": "string"
+        },
+        "no_logs": {
+          "type": "string"
         }
       },
       "additionalProperties": false
