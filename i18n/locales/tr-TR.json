@@ -1250,39 +1250,5 @@
       "p1": "{app} üzerinde bir erişilebilirlik engeliyle karşılaşırsan, lütfen {link} üzerinde bir issue açarak bize bildir. Bu raporları ciddiye alıyoruz ve ele almak için elimizden geleni yapacağız.",
       "link": "GitHub depomuz"
     }
-  },
-  "vacations": {
-    "title": "tatilde",
-    "meta_description": "npmx ekibi şarj oluyordu. Discord bir hafta sonra tekrar açıldı.",
-    "heading": "şarj oluyoruz",
-    "subtitle": "npmx'i {some} uykusuna mal olacak bir hızda geliştiriyorduk. bunun normalleşmesini istemedik! bu yüzden bir hafta izin aldık. hep beraber.",
-    "illustration_alt": "tek sıra rahat ikonlar",
-    "poke_log": "Ateşi körükle",
-    "what": {
-      "title": "ne oldu",
-      "p1": "discord {dates} tarihlerinde kapalıydı.",
-      "dates": "14 - 21 Şubat",
-      "p2": "tüm davet linkleri gitti ve kanallar kilitlendi - takılmaya devam etmek isteyenler için açık kalan {garden} hariç.",
-      "garden": "#bahçe (#garden)"
-    },
-    "meantime": {
-      "title": "bu arada",
-      "p1": "{site} ve {repo} açık kaldı - insanlar yine de kurcaladı, bazı issue'lar açtı, birkaç PR gönderdi ama esasen herkes zamanını rahat bir şöminenin yakınında geçirdi.",
-      "repo_link": "depo"
-    },
-    "return": {
-      "title": "geri döndük!",
-      "p1": "şarj olmuş ve 3 Mart'taki son hamle için hazır bir şekilde geri döndük. Güncellemeler için {social}.",
-      "social_link": "bizi Bluesky'de takip et"
-    },
-    "stats": {
-      "contributors": "Katılımcılar",
-      "commits": "Commit'ler",
-      "pr": "Birleştirilen PR'lar",
-      "subtitle": {
-        "some": "bazılarımızın",
-        "all": "hepimizin"
-      }
-    }
   }
 }
