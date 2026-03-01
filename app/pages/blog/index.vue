@@ -56,99 +56,9 @@ useSeoMeta({
           />
           <hr v-if="idx < posts.length - 1" class="border-border-subtle" />
         </template>
-        <!-- :selected="toSuggestionIndex(unifiedSelectedIndex) === idx" -->
-        <!-- :is-exact-match="
-                  (exactMatchType === 'org' && suggestion.type === 'org') ||
-                  (exactMatchType === 'user' && suggestion.type === 'user')
-                " -->
-        <!-- @focus="handleBlogPostSelect" -->
-        <!-- </div> -->
       </article>
 
       <p v-else class="text-center py-20 text-fg-subtle">No posts found.</p>
     </article>
   </main>
 </template>
-
-<!--
-// TODO: This should be extracted into a reusable form so search and blog post can both use it
-// function scrollToSelectedItem() {
-//   const pkgIndex = toPackageIndex(unifiedSelectedIndex.value)
-//   if (pkgIndex !== null) {
-//     packageListRef.value?.scrollToIndex(pkgIndex)
-//   }
-// }
-
-// function focusSelectedItem() {
-//   const suggIdx = toSuggestionIndex(unifiedSelectedIndex.value)
-//   const pkgIdx = toPackageIndex(unifiedSelectedIndex.value)
-
-//   nextTick(() => {
-//     if (suggIdx !== null) {
-//       const el = document.querySelector<HTMLElement>(`[data-suggestion-index="${suggIdx}"]`)
-//       el?.focus()
-//     } else if (pkgIdx !== null) {
-//       scrollToSelectedItem()
-//       nextTick(() => {
-//         const el = document.querySelector<HTMLElement>(`[data-result-index="${pkgIdx}"]`)
-//         el?.focus()
-//       })
-//     }
-//   })
-// }
-
-// function handleResultsKeydown(e: KeyboardEvent) {
-//   if (totalSelectableCount.value <= 0) return
-
-//   const isFromInput = (e.target as HTMLElement).tagName === 'INPUT'
-
-//   if (e.key === 'ArrowDown') {
-//     e.preventDefault()
-//     userHasNavigated.value = true
-//     unifiedSelectedIndex.value = clampUnifiedIndex(unifiedSelectedIndex.value + 1)
-//     if (isFromInput) {
-//       scrollToSelectedItem()
-//     } else {
-//       focusSelectedItem()
-//     }
-//     return
-//   }
-
-//   if (e.key === 'ArrowUp') {
-//     e.preventDefault()
-//     userHasNavigated.value = true
-//     unifiedSelectedIndex.value = clampUnifiedIndex(unifiedSelectedIndex.value - 1)
-//     if (isFromInput) {
-//       scrollToSelectedItem()
-//     } else {
-//       focusSelectedItem()
-//     }
-//     return
-//   }
-
-//   if (e.key === 'Enter') {
-//     if (!resultsMatchQuery.value) return
-
-//     const suggIdx = toSuggestionIndex(unifiedSelectedIndex.value)
-//     const pkgIdx = toPackageIndex(unifiedSelectedIndex.value)
-
-//     if (suggIdx !== null) {
-//       const el = document.querySelector<HTMLElement>(`[data-suggestion-index="${suggIdx}"]`)
-//       if (el) {
-//         e.preventDefault()
-//         el.click()
-//       }
-//     } else if (pkgIdx !== null) {
-//       const el = document.querySelector<HTMLElement>(`[data-result-index="${pkgIdx}"]`)
-//       if (el) {
-//         e.preventDefault()
-//         el.click()
-//       }
-//     }
-//   }
-// }
-
-// function handleBlogPostSelect(index: number) {
-//   // Convert suggestion index to unified index
-//   unifiedSelectedIndex.value = -(suggestionCount.value - index)
-// } -->
