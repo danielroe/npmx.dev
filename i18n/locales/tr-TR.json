@@ -141,6 +141,7 @@
     "skip_link": "Ana içeriğe geç",
     "warnings": "Uyarılar:",
     "go_back_home": "Ana sayfaya dön",
+    "view_on": "{site}'de görüntüle",
     "per_week": "/ hafta",
     "vanity_downloads_hint": "Gösterge: paket gösterilmiyor | Gösterge: gösterilen paket için | Gösterge: {count} gösterilen paketin toplamı",
     "sort": {
