@@ -70,7 +70,7 @@ const formattedAuthorNames = computed(() => {
     <!-- npmx logo - top right -->
     <div
       class="absolute top-12 z-10 flex items-center gap-1 text-5xl font-bold tracking-tight"
-      style="font-family: 'Geist Sans', sans-serif; right: 4rem"
+      style="font-family: 'Geist Sans', sans-serif; right: 6rem"
     >
       <span :style="{ color: primaryColor }" class="opacity-80">./</span>
       <span class="text-white">npmx</span>
