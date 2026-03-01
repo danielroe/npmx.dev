@@ -1,3 +1,4 @@
+import { type AtIdentifierString } from '@atproto/lex'
 import type * as app from '#shared/types/lexicons/app'
 
 export type CommentEmbed =
@@ -27,6 +28,6 @@ export interface Comment {
 export interface FederatedArticleInput {
   url: string
   title: string
-  authorHandle: string
+  authorHandle: AtIdentifierString
   description: string
 }
