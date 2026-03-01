@@ -7,7 +7,7 @@ import {
   getCurrentCommitHash,
   getNewEnJson,
   getOldEnMetaJson,
-} from './git-utils.ts'
+} from './utils.ts'
 import type { EnJson, EnMetaJson, MetaEntry } from './types.d.ts'
 
 const enJsonPath = resolve('i18n/locales/en.json')
@@ -31,9 +31,9 @@ export function updateEnMetaJson() {
     return
   }
 
-  const finalMeta = createUpdatedEnMetaJson(currentCommitHash, enMetaJson)
+  const updatedEnMetaJson = createUpdatedEnMetaJson(currentCommitHash, enMetaJson)
 
-  writeFileSync(enMetaJsonPath, JSON.stringify(finalMeta, null, 2) + '\n', 'utf-8')
+  writeFileSync(enMetaJsonPath, JSON.stringify(updatedEnMetaJson, null, 2) + '\n', 'utf-8')
   console.log(`✅ Updated en.meta.json – last_updated_commit: ${currentCommitHash}`)
 }
 
