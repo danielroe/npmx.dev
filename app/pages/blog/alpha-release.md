@@ -115,51 +115,51 @@ And thank you: thank you to every single human who has contributed to npmx so fa
 
 <BlogPostFederatedArticles
 headline="Read more from the community"
-:articles="[
+:articles='[
 {
-url: 'https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/',
-authorHandle: 'whitep4nth3r.com',
+url: "https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/",
+authorHandle: "whitep4nth3r.com",
 description: "Getting involved in open source doesn't have to be scary! Understand how to find a great project and make your first contribution in this guide from Salma."
 },
 {
-url: 'https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html',
-authorHandle: 'graphieros.com',
-description: 'Graphieros explores a minimal npm-based workflow and why it exists.'
+url: "https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html",
+authorHandle: "graphieros.com",
+description: "Graphieros explores a minimal npm-based workflow and why it exists."
 },
 {
-url: 'https://www.alexdln.com/blog/npmx-the-month',
-authorHandle: 'alexdln.com',
-description: ' Alex reflects on the project, warm stories, wonderful people, and a look into the future',
+url: "https://www.alexdln.com/blog/npmx-the-month",
+authorHandle: "alexdln.com",
+description: "Alex reflects on the project, warm stories, wonderful people, and a look into the future"
 },
 {
-url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
-authorHandle: 'johnnyreilly.com',
-description: "How to contribute to npmx.dev, and thoughts on Johnny's experience with the project.",
+url: "https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends",
+authorHandle: "johnnyreilly.com",
+description: "How to contribute to npmx.dev, and thoughts on Johnny's experience with the project."
 },
 {
-url: 'https://blog.trueberryless.org/blog/npmx/',
-authorHandle: 'trueberryless.org',
-description: 'Telling the story of a newly founded community.',
+url: "https://blog.trueberryless.org/blog/npmx/",
+authorHandle: "trueberryless.org",
+description: "Telling the story of a newly founded community."
 },
 {
-url: 'https://www.sybers.fr/blog/3mfhn5xoawz24',
-authorHandle: 'sybers.fr',
-description: "The best open source projects aren't just about great code. They're about the people behind them.",
+url: "https://www.sybers.fr/blog/3mfhn5xoawz24",
+authorHandle: "sybers.fr",
+description: "The best open source projects aren't just about great code. They're about the people behind them."
 },
 {
-url: 'https://storybook.js.org/blog/storybook-npmx',
-authorHandle: 'storybook.js.org',
+url: "https://storybook.js.org/blog/storybook-npmx",
+authorHandle: "storybook.js.org",
 description: "We're huge fans of what the npmx community is building. Today's alpha is just the starting line, and we're proud to be running alongside them."
 },
 {
-url: 'https://jensroemer.com/writing/open-source-whats-in-it-for-me/',
-authorHandle: 'jensroemer.com',
-description: 'Reflections on learning, community, and change.'
+url: "https://jensroemer.com/writing/open-source-whats-in-it-for-me/",
+authorHandle: "jensroemer.com",
+description: "Reflections on learning, community, and change."
 },
 {
-url: 'https://paulie.codes/blog/3mfs2stugzp2v',
-authorHandle: 'paulie.codes',
-description: 'The most important part of open source is the people, and everyone has something valuable to bring to the table.'
+url: "https://paulie.codes/blog/3mfs2stugzp2v",
+authorHandle: "paulie.codes",
+description: "The most important part of open source is the people, and everyone has something valuable to bring to the table."
 }
-]"
+]'
 />
