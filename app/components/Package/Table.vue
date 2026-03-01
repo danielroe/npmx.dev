@@ -102,6 +102,7 @@ const columnLabels = computed(() => ({
   maintenanceScore: t('filters.columns.maintenance_score'),
   combinedScore: t('filters.columns.combined_score'),
   security: t('filters.columns.security'),
+  selection: t('filters.columns.selection'),
 }))
 
 function getColumnLabel(id: ColumnId): string {
@@ -299,6 +300,9 @@ function getColumnLabel(id: ColumnId): string {
           >
             {{ getColumnLabel('security') }}
           </th>
+          <th scope="col" class="w-8">
+            <span class="sr-only">{{ getColumnLabel('selection') }}</span>
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -325,6 +329,9 @@ function getColumnLabel(id: ColumnId): string {
             </td>
             <td v-if="isColumnVisible('keywords')" class="py-3 px-3">
               <div class="h-4 w-32 bg-bg-muted rounded animate-pulse ms-auto" />
+            </td>
+            <td class="py-3 px-3 w-8">
+              <div class="h-4 w-4 bg-bg-muted rounded animate-pulse ms-auto" />
             </td>
           </tr>
         </template>

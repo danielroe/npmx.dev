@@ -17,6 +17,10 @@ const pkg = computed(() => props.result.package)
 const score = computed(() => props.result.score)
 
 const updatedDate = computed(() => props.result.package.date)
+const { isPackageSelected, togglePackageSelection, isMaxSelected } = usePackageSelection()
+const isSelected = computed<boolean>(() => {
+  return isPackageSelected(props.result.package.name)
+})
 
 function formatDownloads(count?: number): string {
   if (count === undefined) return '-'
@@ -195,6 +199,15 @@ const allMaintainersText = computed(() => {
         <span class="sr-only">{{ $t('filters.table.secure') }}</span>
       </span>
       <span v-else class="text-fg-subtle"> - </span>
+    </td>
+
+    <td class="pe-2">
+      <PackageSelectionCheckbox
+        :package-name="result.package.name"
+        :disabled="isMaxSelected && !isSelected"
+        :checked="isSelected"
+        @change="togglePackageSelection"
+      />
     </td>
   </tr>
 </template>

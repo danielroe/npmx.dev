@@ -1026,6 +1026,12 @@
             },
             "license": {
               "type": "string"
+            },
+            "select": {
+              "type": "string"
+            },
+            "select_maximum": {
+              "type": "string"
             }
           },
           "additionalProperties": false
@@ -2503,6 +2509,9 @@
           },
           "additionalProperties": false
         },
+        "view_selected": {
+          "type": "string"
+        },
         "sort": {
           "type": "object",
           "properties": {
@@ -2603,6 +2612,9 @@
               "type": "string"
             },
             "security": {
+              "type": "string"
+            },
+            "selection": {
               "type": "string"
             }
           },
@@ -3927,6 +3939,18 @@
             }
           },
           "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "action_bar": {
+      "type": "object",
+      "properties": {
+        "selection": {
+          "type": "string"
+        },
+        "shortcut": {
+          "type": "string"
         }
       },
       "additionalProperties": false
