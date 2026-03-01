@@ -288,6 +288,18 @@
             },
             "updating": {
               "type": "string"
+            },
+            "reply_count": {
+              "type": "string"
+            },
+            "like_count": {
+              "type": "string"
+            },
+            "repost_count": {
+              "type": "string"
+            },
+            "more_replies": {
+              "type": "string"
             }
           },
           "additionalProperties": false

@@ -165,10 +165,10 @@ function getHostname(uri: string): string {
         class="mt-2 flex gap-4 text-sm text-fg-subtle"
       >
         <span v-if="comment.likeCount > 0">
-          {{ comment.likeCount }} {{ comment.likeCount === 1 ? 'like' : 'likes' }}
+          {{ $t('blog.atproto.like_count', { count: comment.likeCount }, comment.likeCount) }}
         </span>
         <span v-if="comment.repostCount > 0">
-          {{ comment.repostCount }} {{ comment.repostCount === 1 ? 'repost' : 'reposts' }}
+          {{ $t('blog.atproto.repost_count', { count: comment.repostCount }, comment.repostCount) }}
         </span>
       </div>
 
@@ -189,8 +189,13 @@ function getHostname(uri: string): string {
           rel="noopener noreferrer"
           class="mt-2 block text-sm link"
         >
-          {{ comment.replies.length }} more
-          {{ comment.replies.length === 1 ? 'reply' : 'replies' }}...
+          {{
+            $t(
+              'blog.atproto.more_replies',
+              { count: comment.replies.length },
+              comment.replies.length,
+            )
+          }}
         </a>
       </template>
     </div>

@@ -94,7 +94,11 @@
       "could_not_load_comments": "Could not load comments.",
       "comments": "Comments",
       "loading_comments": "Loading comments...",
-      "updating": "Updating..."
+      "updating": "Updating...",
+      "reply_count": "{count} reply | {count} replies",
+      "like_count": "{count} like | {count} likes",
+      "repost_count": "{count} repost | {count} reposts",
+      "more_replies": "{count} more reply... | {count} more replies..."
     }
   },
   "settings": {

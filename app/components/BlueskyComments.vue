@@ -92,7 +92,9 @@ const postUrl = computed(() => data.value?.postUrl)
       <!-- Comments Thread -->
       <div v-else class="flex flex-col gap-6">
         <div class="flex items-center justify-between gap-4 text-sm text-fg-muted">
-          <span>{{ thread.replyCount }} {{ thread.replyCount === 1 ? 'reply' : 'replies' }}</span>
+          <span>{{
+            $t('blog.atproto.reply_count', { count: thread.replyCount }, thread.replyCount)
+          }}</span>
           <LinkBase v-if="postUrl" variant="button-primary" :to="postUrl">
             {{ $t('blog.atproto.reply_on_bluesky') }}
           </LinkBase>
