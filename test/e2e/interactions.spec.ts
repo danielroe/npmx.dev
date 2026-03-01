@@ -73,6 +73,49 @@ test.describe('Search Pages', () => {
     await expect(page).toHaveURL(/\/(package|org|user)\/vue/)
   })
 
+  test('/search?q=vue → ArrowDown navigates only between results, not keyword buttons', async ({
+    page,
+    goto,
+  }) => {
+    await goto('/search?q=vue', { waitUntil: 'hydration' })
+
+    await expect(page.locator('text=/found \\d+|showing \\d+/i').first()).toBeVisible({
+      timeout: 15000,
+    })
+
+    const firstResult = page.locator('[data-result-index="0"]').first()
+    const secondResult = page.locator('[data-result-index="1"]').first()
+    await expect(firstResult).toBeVisible()
+    await expect(secondResult).toBeVisible()
+
+    // ArrowDown from input focuses the first result
+    await page.keyboard.press('ArrowDown')
+    await expect(firstResult).toBeFocused()
+
+    // Second ArrowDown focuses the second result (not a keyword button within the first)
+    await page.keyboard.press('ArrowDown')
+    await expect(secondResult).toBeFocused()
+  })
+
+  test('/search?q=vue → ArrowUp from first result returns focus to search input', async ({
+    page,
+    goto,
+  }) => {
+    await goto('/search?q=vue', { waitUntil: 'hydration' })
+
+    await expect(page.locator('text=/found \\d+|showing \\d+/i').first()).toBeVisible({
+      timeout: 15000,
+    })
+
+    // Navigate to first result
+    await page.keyboard.press('ArrowDown')
+    await expect(page.locator('[data-result-index="0"]').first()).toBeFocused()
+
+    // ArrowUp returns to the search input
+    await page.keyboard.press('ArrowUp')
+    await expect(page.locator('input[type="search"]')).toBeFocused()
+  })
+
   test('/search?q=vue → "/" focuses the search input from results', async ({ page, goto }) => {
     await goto('/search?q=vue', { waitUntil: 'hydration' })
 
