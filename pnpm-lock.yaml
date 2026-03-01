@@ -48,6 +48,9 @@ importers:
       '@atproto/lex':
         specifier: 0.0.19
         version: 0.0.19
+      '@atproto/lex-password-session':
+        specifier: 0.0.7
+        version: 0.0.7
       '@atproto/oauth-client-node':
         specifier: ^0.3.15
         version: 0.3.17
@@ -609,6 +612,9 @@ packages:
 
   '@atproto/lex-json@0.0.12':
     resolution: {integrity: sha512-XlEpnWWZdDJ5BIgG25GyH+6iBfyrFL18BI5JSE6rUfMObbFMrQRaCuRLQfryRXNysVz3L3U+Qb9y8KcXbE8AcA==}
+
+  '@atproto/lex-password-session@0.0.7':
+    resolution: {integrity: sha512-vk/lH/PNI2iV2kSkdVCmLUH11D/cd/qNlL/52C31f3LR+7XLBqqXGupqnvAkaX5BvcRkCr+hemRp7TmX9NDHKA==}
 
   '@atproto/lex-resolver@0.0.16':
     resolution: {integrity: sha512-N3Jag6uJ+sq2XIRxwtbzwWdE70oFZBi5s3tscWsU6qLPL6RzdO9/a3wtbCeNQh0uO2UlaajZTNf/UQSdjufBHg==}
@@ -11231,6 +11237,12 @@ snapshots:
   '@atproto/lex-json@0.0.12':
     dependencies:
       '@atproto/lex-data': 0.0.12
+      tslib: 2.8.1
+
+  '@atproto/lex-password-session@0.0.7':
+    dependencies:
+      '@atproto/lex-client': 0.0.14
+      '@atproto/lex-schema': 0.0.13
       tslib: 2.8.1
 
   '@atproto/lex-resolver@0.0.16':

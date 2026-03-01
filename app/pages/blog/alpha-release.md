@@ -5,7 +5,7 @@ authors:
   - name: Salma Alam-Naylor
     blueskyHandle: whitep4nth3r.com
   - name: Matias Capeletto
-    blueskyHandle: patak.dev
+    blueskyHandle: patak.cat
 title: "Announcing npmx: a fast, modern browser for the npm registry"
 tags: ["OpenSource", "Release"]
 excerpt: "npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by
