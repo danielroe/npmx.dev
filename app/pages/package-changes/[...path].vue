@@ -79,11 +79,11 @@ const versionDate = computed(() => {
   }
 })
 
-defineOgImageComponent('Default', {
-  title: () => `${pkg.value?.name ?? 'Package'} - Changelogs`,
-  description: () => pkg.value?.license ?? '',
-  primaryColor: '#60a5fa',
-})
+// defineOgImageComponent('Default', {
+//   title: () => `${pkg.value?.name ?? 'Package'} - Changelogs`,
+//   description: () => pkg.value?.license ?? '',
+//   primaryColor: '#60a5fa',
+// })
 </script>
 <template>
   <main class="flex-1 flex flex-col">
