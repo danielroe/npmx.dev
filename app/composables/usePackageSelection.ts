@@ -1,7 +1,6 @@
 export const MAX_PACKAGE_SELECTION = 4
 
 export function usePackageSelection() {
-  // Use 'push' mode and let router handle scroll behavior naturally
   const selectedPackagesParam = useRouteQuery<string>('selection', '', { mode: 'push' })
   const showSelectionViewParam = useRouteQuery<string>('view', '', { mode: 'push' })
 
@@ -23,10 +22,8 @@ export function usePackageSelection() {
     },
   })
 
-  // Check if max selection is reached
   const isMaxSelected = computed(() => selectedPackages.value.length >= MAX_PACKAGE_SELECTION)
 
-  // Track whether the SelectionView is open/visible
   const showSelectionView = computed<boolean>({
     get() {
       return showSelectionViewParam.value === 'selection'
@@ -36,12 +33,14 @@ export function usePackageSelection() {
     },
   })
 
-  /** Check if a package name is selected */
+  function closeSelectionView() {
+    showSelectionView.value = false
+  }
+
   function isPackageSelected(packageName: string): boolean {
     return selectedPackages.value.includes(String(packageName).trim())
   }
 
-  /** Toggle selection for a package by name */
   function togglePackageSelection(packageName: string) {
     const safeName = String(packageName).trim()
     if (!safeName) return
@@ -56,17 +55,10 @@ export function usePackageSelection() {
     selectedPackages.value = pkgs
   }
 
-  /** Clear all selected packages */
   function clearSelectedPackages() {
     selectedPackages.value = []
   }
 
-  /** Close the selection view */
-  function closeSelectionView() {
-    showSelectionView.value = false
-  }
-
-  /** Open the selection view */
   function openSelectionView() {
     showSelectionView.value = true
   }

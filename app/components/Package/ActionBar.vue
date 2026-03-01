@@ -53,7 +53,6 @@ onKeyStroke(
 
         <LinkBase
           :to="{ name: 'compare', query: { packages: selectedPackagesParam } }"
-          @click="clearSelectedPackages"
           variant="button-secondary"
           classicon="i-lucide:git-compare"
         >
