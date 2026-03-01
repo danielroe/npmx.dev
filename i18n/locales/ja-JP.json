@@ -34,7 +34,7 @@
     "go_to_result": "結果に移動",
     "open_code_view": "コードビューを開く",
     "open_docs": "ドキュメントを開く",
-    "disable_shortcuts": "You can disable keyboard shortcuts in {settings}."
+    "disable_shortcuts": "{settings} でキーボードショートカットを無効化できます。"
   },
   "search": {
     "label": "npmパッケージを検索",
@@ -111,8 +111,8 @@
     "clear_accent": "アクセントカラーをクリア",
     "translation_progress": "翻訳の進捗状況",
     "background_themes": "背景シェード",
-    "keyboard_shortcuts_enabled": "Enable keyboard shortcuts",
-    "keyboard_shortcuts_enabled_description": "Keyboard shortcuts can be disabled if they conflict with other browser or system shortcuts"
+    "keyboard_shortcuts_enabled": "キーボードショートカットを有効化",
+    "keyboard_shortcuts_enabled_description": "ブラウザやシステムのショートカットと競合する場合、キーボードショートカットを無効化できます"
   },
   "i18n": {
     "missing_keys": "{count} 件の未翻訳項目",
@@ -145,26 +145,26 @@
       "members": "メンバー"
     },
     "scroll_to_top": "トップへ戻る",
-    "cancel": "Cancel",
-    "save": "Save",
-    "edit": "Edit",
-    "error": "Error"
+    "cancel": "キャンセル",
+    "save": "保存",
+    "edit": "編集",
+    "error": "エラー"
   },
   "profile": {
-    "display_name": "Display Name",
-    "description": "Description",
-    "no_description": "No description",
+    "display_name": "表示名",
+    "description": "説明",
+    "no_description": "説明なし",
     "website": "Website",
     "website_placeholder": "https://example.com",
     "likes": "Likes",
     "seo_title": "{handle} - npmx",
-    "seo_description": "npmx profile by {handle}",
-    "not_found": "Profile Not Found",
-    "not_found_message": "The profile for {handle} could not be found.",
+    "seo_description": "{handle} のnpmxプロフィール",
+    "not_found": "プロフィールが見つかりません",
+    "not_found_message": "{handle} のプロフィールは見つかりませんでした。",
     "invite": {
-      "message": "It doesn't look like they're using npmx yet. Want to tell them about it?",
-      "share_button": "Share on Bluesky",
-      "compose_text": "Hey {'@'}{handle}! Have you checked out npmx.dev yet? It's a browser for the npm registry that's fast, modern, and open-source.\nhttps://npmx.dev"
+      "message": "まだnpmxを利用していないようです。npmxを紹介しますか？",
+      "share_button": "Blueskyで共有",
+      "compose_text": "{'@'}{handle} さん、npmx.devはもうチェックしましたか？ 高速でモダンなオープンソースのnpmレジストリブラウザです。\nhttps://npmx.dev"
     }
   },
   "package": {
@@ -441,7 +441,7 @@
     "downloads": {
       "title": "週間ダウンロード数",
       "community_distribution": "コミュニティの採用分布を表示",
-      "subtitle": "Across all versions"
+      "subtitle": "全バージョン合計"
     },
     "install_scripts": {
       "title": "インストールスクリプト",
@@ -738,7 +738,7 @@
       "code": "コード"
     },
     "file_path": "ファイルパス",
-    "scroll_to_top": "Scroll to top"
+    "scroll_to_top": "トップへスクロール"
   },
   "badges": {
     "provenance": {
@@ -956,7 +956,7 @@
       "what_is_atmosphere": "Atmosphereアカウントとは？",
       "atmosphere_explanation": "{npmx} は多くのソーシャル機能に {atproto} を利用しています。AT Protocolにより、ユーザーは自分自身のデータを所有し、1つのアカウントでAT Protocolに対応するすべてのアプリケーションを利用できるようになります。アカウントを作成すると、{bluesky} や {tangled} などの他のアプリでも同じアカウントを使用できます。",
       "default_input_error": "有効なハンドル、DID、または完全なPDS URLを入力してください",
-      "profile": "Profile"
+      "profile": "プロフィール"
     }
   },
   "header": {
@@ -1101,8 +1101,8 @@
     "file_changes": "ファイル変更",
     "files_count": "{count} ファイル",
     "lines_hidden": "{count} 行を非表示",
-    "file_too_large": "File too large to compare",
-    "file_size_warning": "{size} exceeds the 250KB limit for comparison",
+    "file_too_large": "ファイルサイズが大きすぎるため比較できません",
+    "file_size_warning": "{size} は比較制限の250KBを超えています",
     "compare_versions": "diff",
     "summary": "要約",
     "deps_count": "依存関係 {count} 件",
