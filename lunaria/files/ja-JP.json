@@ -85,7 +85,7 @@
       "display": "表示",
       "search": "データソース",
       "language": "言語",
-      "keyboard_shortcuts": "Keyboard shortcuts"
+      "keyboard_shortcuts": "キーボードショートカット"
     },
     "data_source": {
       "label": "データソース",
@@ -153,9 +153,9 @@
     "display_name": "表示名",
     "description": "説明",
     "no_description": "説明なし",
-    "website": "Website",
+    "website": "ウェブサイト",
     "website_placeholder": "https://example.com",
-    "likes": "Likes",
+    "likes": "いいね",
     "seo_title": "{handle} - npmx",
     "seo_description": "{handle} のnpmxプロフィール",
     "not_found": "プロフィールが見つかりません",
