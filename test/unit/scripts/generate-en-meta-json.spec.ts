@@ -3,20 +3,20 @@ import { makeEnMetaJson } from '#scripts/i18n-meta/update-en-meta-json'
 
 describe('Create en.meta.json', () => {
   it('should handle an empty en.json file', () => {
-    const newEnJson = {}
     const oldEnMetaJson = {}
+    const newEnJson = {}
 
-    const enMetaJson = makeEnMetaJson(newEnJson, oldEnMetaJson, 'sha-new-12345')
+    const enMetaJson = makeEnMetaJson(oldEnMetaJson, newEnJson, 'sha-new-12345')
     expect(enMetaJson).toEqual({})
   })
 
   it('should generate en.meta.json correctly for an initial en.json', () => {
+    const oldEnMetaJson = {}
     const newEnJson = {
       tagline: 'npmx - a fast, modern browser for the npm registry',
     }
-    const oldEnMetaJson = {}
 
-    const enMetaJson = makeEnMetaJson(newEnJson, oldEnMetaJson, 'sha-new-12345')
+    const enMetaJson = makeEnMetaJson(oldEnMetaJson, newEnJson, 'sha-new-12345')
     expect(enMetaJson).toEqual({
       tagline: {
         text: 'npmx - a fast, modern browser for the npm registry',
@@ -26,11 +26,6 @@ describe('Create en.meta.json', () => {
   })
 
   it('should update existing keys and add new keys with the latest commit hash', () => {
-    const newEnJson = {
-      name: 'npmx',
-      tagline: 'npmx - a fast, modern browser for the npm registry',
-      description: 'Search, browse, and explore packages with a modern interface.',
-    }
     const oldEnMetaJson = {
       name: {
         text: 'npmx',
@@ -41,8 +36,13 @@ describe('Create en.meta.json', () => {
         commit: 'sha-old-12345',
       },
     }
+    const newEnJson = {
+      name: 'npmx',
+      tagline: 'npmx - a fast, modern browser for the npm registry',
+      description: 'Search, browse, and explore packages with a modern interface.',
+    }
 
-    const enMetaJson = makeEnMetaJson(newEnJson, oldEnMetaJson, 'sha-new-12345')
+    const enMetaJson = makeEnMetaJson(oldEnMetaJson, newEnJson, 'sha-new-12345')
     expect(enMetaJson).toEqual({
       name: {
         text: 'npmx',
@@ -60,9 +60,6 @@ describe('Create en.meta.json', () => {
   })
 
   it('should remove keys that are no longer in en.json', () => {
-    const newEnJson = {
-      tagline: 'npmx - a fast, modern browser for the npm registry',
-    }
     const oldEnMetaJson = {
       tagline: {
         text: 'npmx - a fast, modern browser for the npm registry',
@@ -70,8 +67,11 @@ describe('Create en.meta.json', () => {
       },
       toBeRemoved: { text: 'This will be gone', commit: 'sha-old-12345' },
     }
+    const newEnJson = {
+      tagline: 'npmx - a fast, modern browser for the npm registry',
+    }
 
-    const enMetaJson = makeEnMetaJson(newEnJson, oldEnMetaJson, 'sha-new-12345')
+    const enMetaJson = makeEnMetaJson(oldEnMetaJson, newEnJson, 'sha-new-12345')
     expect(enMetaJson).toEqual({
       tagline: {
         text: 'npmx - a fast, modern browser for the npm registry',
@@ -81,14 +81,6 @@ describe('Create en.meta.json', () => {
   })
 
   it('should handle complex nested structures', () => {
-    const newEnJson = {
-      a: {
-        b: 'updated-value',
-      },
-      c: 'value-c',
-      d: 'added-value',
-    }
-
     const oldEnMetaJson = {
       a: {
         b: {
@@ -105,8 +97,15 @@ describe('Create en.meta.json', () => {
         commit: 'sha-new-12345',
       },
     }
+    const newEnJson = {
+      a: {
+        b: 'updated-value',
+      },
+      c: 'value-c',
+      d: 'added-value',
+    }
 
-    const enMetaJson = makeEnMetaJson(newEnJson, oldEnMetaJson, 'sha-new-12345')
+    const enMetaJson = makeEnMetaJson(oldEnMetaJson, newEnJson, 'sha-new-12345')
     expect(enMetaJson).toEqual({
       a: {
         b: { text: 'updated-value', commit: 'sha-new-12345' },

@@ -22,7 +22,7 @@ export function updateEnMetaJson() {
 
   const currentCommitHash = getCurrentCommitHash()
   const enMetaJson = currentCommitHash
-    ? makeEnMetaJson(newEnJson, oldEnMetaJson, currentCommitHash)
+    ? makeEnMetaJson(oldEnMetaJson, newEnJson, currentCommitHash)
     : ({} as EnMetaJson)
 
   const hasChanges = checkTranslationChanges(oldEnMetaJson, enMetaJson)
@@ -38,8 +38,8 @@ export function updateEnMetaJson() {
 }
 
 export function makeEnMetaJson(
-  newEnJson: EnJson,
   oldMetaEnJson: EnMetaJson,
+  newEnJson: EnJson,
   latestCommitHash: string,
 ): EnMetaJson {
   const newFlat = dot.dot(newEnJson) as Record<string, string>
