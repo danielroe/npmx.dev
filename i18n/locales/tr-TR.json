@@ -1188,7 +1188,7 @@
       "li1": "Çerez kullanmaz",
       "li2": "Kişisel tanımlayıcılar toplamaz",
       "li3": "Kullanıcıları web siteleri arasında izlemez",
-      "li4": "Tüm veriler toplanır (aggregrated) ve anonimleştirilir",
+      "li4": "Tüm veriler toplu hale getirilir ve anonimleştirilir.",
       "p3": "Toplanan tek bilgi şunları içerir: sayfa URL'leri, yönlendiren (referrer), ülke/bölge, cihaz türü, tarayıcı ve işletim sistemi. Bu veriler bireysel kullanıcıları tanımlamak için kullanılamaz."
     },
     "authenticated": {
