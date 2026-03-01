@@ -219,6 +219,9 @@ function formatXyDataset(
     color: accent.value,
     temperatureColors,
     useArea: true,
+    dashIndices: dataset
+      .map((item, index) => (item.hasAnomaly ? index : -1))
+      .filter(index => index !== -1),
   }
 
   if (selectedGranularity === 'weekly' && isWeeklyDataset(dataset)) {
@@ -275,19 +278,26 @@ function formatXyDataset(
 function extractSeriesPoints(
   selectedGranularity: ChartTimeGranularity,
   dataset: EvolutionData,
-): Array<{ timestamp: number; value: number }> {
+): Array<{ timestamp: number; value: number; hasAnomaly: boolean }> {
   if (selectedGranularity === 'weekly' && isWeeklyDataset(dataset)) {
-    return dataset.map(d => ({ timestamp: d.timestampEnd, value: d.value }))
+    return dataset.map(d => ({
+      timestamp: d.timestampEnd,
+      value: d.value,
+      hasAnomaly: !!d.hasAnomaly,
+    }))
   }
   if (
     (selectedGranularity === 'daily' && isDailyDataset(dataset)) ||
     (selectedGranularity === 'monthly' && isMonthlyDataset(dataset)) ||
     (selectedGranularity === 'yearly' && isYearlyDataset(dataset))
   ) {
-    return (dataset as Array<{ timestamp: number; value: number }>).map(d => ({
-      timestamp: d.timestamp,
-      value: d.value,
-    }))
+    return (dataset as Array<{ timestamp: number; value: number; hasAnomaly?: boolean }>).map(
+      d => ({
+        timestamp: d.timestamp,
+        value: d.value,
+        hasAnomaly: !!d.hasAnomaly,
+      }),
+    )
   }
   return []
 }
@@ -380,6 +390,11 @@ const isEstimationGranularity = computed(
 const supportsEstimation = computed(
   () => isEstimationGranularity.value && selectedMetric.value !== 'contributors',
 )
+
+const hasDownloadAnomalies = computed(() =>
+  normalisedDataset.value?.some(datapoint => !!datapoint.dashIndices.length),
+)
+
 const shouldRenderEstimationOverlay = computed(() => !pending.value && supportsEstimation.value)
 
 const startDate = usePermalink<string>('start', '', {
@@ -955,11 +970,13 @@ const effectiveDataSingle = computed<EvolutionData>(() => {
         granularity: displayedGranularity.value,
       })
     }
+
     return applyDataCorrection(
       data as Array<{ value: number }>,
       settings.value.chartFilter,
     ) as EvolutionData
   }
+
   return data
 })
 
@@ -991,7 +1008,10 @@ const chartData = computed<{
   const granularity = displayedGranularity.value
 
   const timestampSet = new Set<number>()
-  const pointsByPackage = new Map<string, Array<{ timestamp: number; value: number }>>()
+  const pointsByPackage = new Map<
+    string,
+    Array<{ timestamp: number; value: number; hasAnomaly?: boolean }>
+  >()
 
   for (const pkg of names) {
     let data = state.evolutionsByPackage[pkg] ?? []
@@ -1005,6 +1025,7 @@ const chartData = computed<{
       ) as EvolutionData
     }
     const points = extractSeriesPoints(granularity, data)
+
     pointsByPackage.set(pkg, points)
     for (const p of points) timestampSet.add(p.timestamp)
   }
@@ -1014,15 +1035,23 @@ const chartData = computed<{
 
   const dataset: VueUiXyDatasetItem[] = names.map(pkg => {
     const points = pointsByPackage.get(pkg) ?? []
-    const map = new Map<number, number>()
-    for (const p of points) map.set(p.timestamp, p.value)
+    const valueByTimestamp = new Map<number, number>()
+    const anomalyTimestamps = new Set<number>()
+    for (const p of points) {
+      valueByTimestamp.set(p.timestamp, p.value)
+      if (p.hasAnomaly) anomalyTimestamps.add(p.timestamp)
+    }
 
-    const series = dates.map(t => map.get(t) ?? 0)
+    const series = dates.map(t => valueByTimestamp.get(t) ?? 0)
+    const dashIndices = dates
+      .map((t, index) => (anomalyTimestamps.has(t) ? index : -1))
+      .filter(index => index !== -1)
 
     const item: VueUiXyDatasetItem = {
       name: pkg,
       type: 'line',
       series,
+      dashIndices,
     } as VueUiXyDatasetItem
 
     if (isListedFramework(pkg)) {
@@ -1045,6 +1074,7 @@ const normalisedDataset = computed(() => {
     return {
       ...d,
       series: [...d.series.slice(0, -1), projectedLastValue],
+      dashIndices: d.dashIndices ?? [],
     }
   })
 })
@@ -1408,7 +1438,10 @@ function drawSvgPrintLegend(svg: Record<string, any>) {
   })
 
   // Inject the estimation legend item when necessary
-  if (supportsEstimation.value && !isEndDateOnPeriodEnd.value && !isZoomed.value) {
+  if (
+    (supportsEstimation.value && !isEndDateOnPeriodEnd.value && !isZoomed.value) ||
+    hasDownloadAnomalies.value
+  ) {
     seriesNames.push(`
         <line
           x1="${svg.drawingArea.left + 12}"
@@ -1955,7 +1988,10 @@ watch(selectedMetric, value => {
                 </template>
 
                 <!-- Estimation extra legend item -->
-                <div class="flex gap-1 place-items-center" v-if="supportsEstimation">
+                <div
+                  class="flex gap-1 place-items-center"
+                  v-if="supportsEstimation || hasDownloadAnomalies"
+                >
                   <svg viewBox="0 0 20 2" width="20">
                     <line
                       x1="0"
