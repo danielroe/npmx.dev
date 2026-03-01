@@ -76,9 +76,6 @@
     "links": "Link",
     "tap_to_search": "Tocca per cercare"
   },
-  "action_bar": {
-    "view_selection": "Visualizza selezione"
-  },
   "settings": {
     "title": "impostazioni",
     "tagline": "personalizza la tua esperienza npmx",
@@ -144,6 +141,9 @@
       "members": "membri"
     },
     "scroll_to_top": "Torna su"
+  },
+  "profile": {
+    "invite": {}
   },
   "package": {
     "not_found": "Pacchetto Non Trovato",
@@ -232,9 +232,9 @@
       "title": "Inizia",
       "pm_label": "Gestore di pacchetti",
       "copy_command": "Copia comando di installazione",
-      "view_types": "Vedi {package}",
       "copy_dev_command": "Copia comando di installazione dev",
-      "dev_dependency_hint": "Di solito installato come dev dependency"
+      "dev_dependency_hint": "Di solito installato come dev dependency",
+      "view_types": "Vedi {package}"
     },
     "create": {
       "title": "Crea nuovo progetto",
@@ -301,7 +301,8 @@
       "more_tagged": "{count} altri taggati",
       "all_covered": "Tutte le versioni sono coperte dai tag sopra",
       "deprecated_title": "{version} (deprecato)",
-      "view_all": "Visualizza {count} versione | Visualizza tutte le {count} versioni"
+      "view_all": "Visualizza {count} versione | Visualizza tutte le {count} versioni",
+      "copy_alt": {}
     },
     "dependencies": {
       "title": "Dipendenza ({count}) | Dipendenze ({count})",
@@ -355,7 +356,8 @@
       "y_axis_label": "{granularity} {facet}",
       "items": {
         "downloads": "Download"
-      }
+      },
+      "copy_alt": {}
     },
     "downloads": {
       "title": "Download settimanali",
@@ -802,6 +804,8 @@
         "managers": "gestori di pacchetti"
       }
     },
+    "sponsors": {},
+    "oss_partners": {},
     "team": {},
     "contributors": {
       "title": "{count} Collaboratore | {count} Collaboratori",
@@ -992,7 +996,9 @@
         "up_to_you": "A tua scelta!"
       },
       "trends": {}
-    }
+    },
+    "file_filter_option": {},
+    "filter": {}
   },
   "privacy_policy": {
     "title": "Informativa sulla privacy",
@@ -1079,5 +1085,6 @@
     "measures": {},
     "limitations": {},
     "contact": {}
-  }
+  },
+  "action_bar": {}
 }
