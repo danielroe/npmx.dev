@@ -898,7 +898,6 @@
     },
     "team": {
       "title": "Equipo",
-      "governance": "Gobernanza",
       "role_steward": "Administrador",
       "role_maintainer": "Mantenedor",
       "sponsor": "Patrocinar",
@@ -909,7 +908,12 @@
       "description": "npmx es completamente de código abierto, construido por una increíble comunidad de colaboradores. Únete a nosotros y construyamos juntos la experiencia de navegación de npm que siempre quisimos.",
       "loading": "Cargando colaboradores...",
       "error": "Error al cargar colaboradores",
-      "view_profile": "Ver perfil de GitHub de {name}"
+      "avatar": "avatar de {name}",
+      "view_profile_detailed": "Ver el perfil de GitHub de {name}{role}{works_at}{location}",
+      "separator": " — ",
+      "role": "{separator}{role} en npmx.dev",
+      "works_at": "{separator}trabaja en {company}",
+      "location": "{separator}ubicado en {location}"
     },
     "get_involved": {
       "title": "Involúcrate",

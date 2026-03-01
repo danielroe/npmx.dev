@@ -167,6 +167,9 @@
       "compose_text": "{'@'}{handle} さん、npmx.devはもうチェックしましたか？ 高速でモダンなオープンソースのnpmレジストリブラウザです。\nhttps://npmx.dev"
     }
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "パッケージが見つかりません",
     "not_found_message": "パッケージが見つかりませんでした。",
@@ -898,7 +901,6 @@
     },
     "team": {
       "title": "チーム",
-      "governance": "ガバナンス",
       "role_steward": "スチュワード",
       "role_maintainer": "メンテナ",
       "sponsor": "スポンサー",
@@ -908,8 +910,7 @@
       "title": "コントリビューター",
       "description": "npmxは完全にオープンソースです。素晴らしいコントリビューターのコミュニティにより開発されています。",
       "loading": "コントリビューターを読み込み中...",
-      "error": "コントリビューターの読み込みに失敗しました",
-      "view_profile": "{name} のGitHubプロフィールを表示"
+      "error": "コントリビューターの読み込みに失敗しました"
     },
     "get_involved": {
       "title": "参加するには",

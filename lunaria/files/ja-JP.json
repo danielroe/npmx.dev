@@ -150,21 +150,7 @@
     "error": "エラー"
   },
   "profile": {
-    "display_name": "表示名",
-    "description": "説明",
-    "no_description": "説明なし",
-    "website": "ウェブサイト",
-    "website_placeholder": "https://example.com",
-    "likes": "いいね",
-    "seo_title": "{handle} - npmx",
-    "seo_description": "{handle} のnpmxプロフィール",
-    "not_found": "プロフィールが見つかりません",
-    "not_found_message": "{handle} のプロフィールは見つかりませんでした。",
-    "invite": {
-      "message": "まだnpmxを利用していないようです。npmxを紹介しますか？",
-      "share_button": "Blueskyで共有",
-      "compose_text": "{'@'}{handle} さん、npmx.devはもうチェックしましたか？ 高速でモダンなオープンソースのnpmレジストリブラウザです。\nhttps://npmx.dev"
-    }
+    "invite": {}
   },
   "package": {
     "not_found": "パッケージが見つかりません",
@@ -897,7 +883,6 @@
     },
     "team": {
       "title": "チーム",
-      "governance": "ガバナンス",
       "role_steward": "スチュワード",
       "role_maintainer": "メンテナ",
       "sponsor": "スポンサー",
@@ -907,8 +892,7 @@
       "title": "コントリビューター",
       "description": "npmxは完全にオープンソースです。素晴らしいコントリビューターのコミュニティにより開発されています。",
       "loading": "コントリビューターを読み込み中...",
-      "error": "コントリビューターの読み込みに失敗しました",
-      "view_profile": "{name} のGitHubプロフィールを表示"
+      "error": "コントリビューターの読み込みに失敗しました"
     },
     "get_involved": {
       "title": "参加するには",

@@ -146,6 +146,9 @@
     },
     "scroll_to_top": "Posunout nahoru"
   },
+  "profile": {
+    "invite": {}
+  },
   "package": {
     "not_found": "Balíček nenalezen",
     "not_found_message": "Balíček nebyl nalezen.",
@@ -876,7 +879,6 @@
     },
     "team": {
       "title": "Tým",
-      "governance": "Správa",
       "role_steward": "Vedoucí",
       "role_maintainer": "Správce",
       "sponsor": "Sponzor",
@@ -886,8 +888,7 @@
       "title": "Přispěvatelé | {count} přispěvatelé | {count} přispěvatelů",
       "description": "npmx je plně open source, postavený úžasnou komunitou přispěvatelů. Přidejte se k nám a společně vytvořme npm prohlížeč, jaký jsme vždy chtěli.",
       "loading": "Načítání přispěvatelů...",
-      "error": "Nepodařilo se načíst přispěvatele",
-      "view_profile": "Zobrazit GitHub profil uživatele {name}"
+      "error": "Nepodařilo se načíst přispěvatele"
     },
     "get_involved": {
       "title": "Zapojte se",

@@ -150,21 +150,7 @@
     "error": "Erreur"
   },
   "profile": {
-    "display_name": "Nom d'affichage",
-    "description": "Description",
-    "no_description": "Aucune description",
-    "website": "Site web",
-    "website_placeholder": "https://exemple.com",
-    "likes": "Mentions j'aime",
-    "seo_title": "{handle} - npmx",
-    "seo_description": "Profil npmx par {handle}",
-    "not_found": "Profil introuvable",
-    "not_found_message": "Le profil de {handle} est introuvable.",
-    "invite": {
-      "message": "Il semblerait qu'ils n'utilisent pas encore npmx. Vous voulez leur en parler ?",
-      "share_button": "Partager sur Bluesky",
-      "compose_text": "Salut {'@'}{handle} ! As-tu déjà testé npmx.dev ? C'est un navigateur pour le registre npm : rapide, moderne et open source.\nhttps://npmx.dev"
-    }
+    "invite": {}
   },
   "package": {
     "not_found": "Paquet introuvable",
@@ -897,7 +883,6 @@
     },
     "team": {
       "title": "Équipe",
-      "governance": "Gouvernance",
       "role_steward": "pilote",
       "role_maintainer": "mainteneur",
       "sponsor": "sponsor",
@@ -907,8 +892,7 @@
       "title": "Contributeurs",
       "description": "npmx est entièrement open source, construit par une incroyable communauté de contributeurs. Rejoignez-nous et construisons l'expérience de navigation pour npm dont nous avons toujours rêvés, ensemble.",
       "loading": "Chargement des contributeurs...",
-      "error": "Échec du chargement des contributeurs",
-      "view_profile": "Voir le profil GitHub de {name}"
+      "error": "Échec du chargement des contributeurs"
     },
     "get_involved": {
       "title": "Participer",
