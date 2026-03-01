@@ -34,6 +34,7 @@ const dialogRef = useTemplateRef('dialogRef')
 
 // Load teams when modal opens
 async function loadTeams() {
+  teams.value = []
   if (!isConnected.value) return
 
   isLoadingTeams.value = true
@@ -47,6 +48,8 @@ async function loadTeams() {
     } else {
       loadError.value = connectorError.value || 'Failed to load teams'
     }
+  } catch (err) {
+    loadError.value = err instanceof Error ? err.message : 'Failed to load teams'
   } finally {
     isLoadingTeams.value = false
   }

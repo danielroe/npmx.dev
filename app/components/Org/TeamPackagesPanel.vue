@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AccessPermission } from '#cli/types'
 import { buildScopeTeam } from '~/utils/npm/common'
+import { packageRoute } from '~/utils/router'
 
 const props = defineProps<{
   orgName: string

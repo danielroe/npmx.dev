@@ -60,16 +60,21 @@ const teamCollaborators = computed(() => {
 async function loadCollaborators() {
   if (!isConnected.value || !sourcePackage.value) return
 
+  const requestedSource = sourcePackage.value
   isLoadingCollaborators.value = true
   loadError.value = null
 
   try {
-    const result = await listPackageCollaborators(sourcePackage.value)
+    const result = await listPackageCollaborators(requestedSource)
+    if (sourcePackage.value !== requestedSource) return
+
     if (result) {
       collaborators.value = result
     } else {
       loadError.value = connectorError.value || 'Failed to load collaborators'
     }
+  } catch (err) {
+    loadError.value = err instanceof Error ? err.message : 'Failed to load collaborators'
   } finally {
     isLoadingCollaborators.value = false
   }
