@@ -258,6 +258,9 @@ async function fetchInstallSize(packageName: string, version: string): Promise<n
 
 async function fetchEndpointBadge(url: string) {
   const response = await fetch(url, { headers: { Accept: 'application/json' } })
+  if (!response.ok) {
+    throw createError({ statusCode: 502, message: `Endpoint returned ${response.status}` })
+  }
   const data = await response.json()
   const parsed = v.parse(EndpointResponseSchema, data)
   return {
