@@ -179,10 +179,11 @@ shared/                 # Shared between app and server
 └── types/              # TypeScript type definitions
 
 cli/                    # Local connector CLI (separate workspace)
+
 test/                   # Vitest tests
 ├── unit/               # Unit tests (*.spec.ts)
-└── nuxt/               # Nuxt component tests
-tests/                  # Playwright E2E tests
+├── nuxt/               # Nuxt component tests
+└── e2e/                # Playwright E2E tests
 ```
 
 > [!TIP]
