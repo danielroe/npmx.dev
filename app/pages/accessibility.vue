@@ -8,7 +8,7 @@ useSeoMeta({
   description: () => $t('a11y.welcome', { app: 'npmx' }),
 })
 
-defineOgImage('Page.takumi', {
+defineOgImageComponent('Default', {
   title: () => $t('a11y.title'),
   description: () => $t('a11y.welcome', { app: 'npmx' }),
 })
