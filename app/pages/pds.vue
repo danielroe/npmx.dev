@@ -58,7 +58,7 @@ const usersWithAvatars = computed(() => {
         </p>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-12">
+      <section class="max-w-none space-y-12">
         <div>
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">Join the Community</h2>
           <p class="text-fg-muted leading-relaxed mb-4">
@@ -69,7 +69,8 @@ const usersWithAvatars = computed(() => {
           <div class="mt-6">
             <LinkBase
               to="https://pdsmoover.com/moover/npmx.social"
-              class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md border border-border hover:border-border-hover bg-bg-muted hover:bg-bg transition-colors"
+              class="gap-2 px-4 py-2 text-sm font-medium rounded-md border border-border hover:border-border-hover bg-bg-muted hover:bg-bg"
+              no-underline
             >
               <span class="i-lucide:arrow-right-left w-4 h-4 text-fg-muted" aria-hidden="true" />
               Migrate with PDS MOOver
@@ -126,10 +127,10 @@ const usersWithAvatars = computed(() => {
           <div v-else-if="pdsStatus === 'error'" class="text-fg-subtle text-sm" role="alert">
             Failed to load PDS community.
           </div>
-          <ul
-            v-else-if="usersWithAvatars.length"
-            class="grid grid-cols-[repeat(auto-fill,48px)] gap-2 list-none p-0"
-          >
+          <div v-else-if="!usersWithAvatars.length" class="text-fg-subtle text-sm">
+            No community members to display.
+          </div>
+          <ul v-else class="grid grid-cols-[repeat(auto-fill,48px)] gap-2 list-none p-0">
             <li v-for="user in usersWithAvatars" :key="user.handle" class="block group relative">
               <a
                 :href="`https://bsky.app/profile/${user.handle}`"

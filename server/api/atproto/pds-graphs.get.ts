@@ -1,18 +1,26 @@
-import type { AtprotoProfile } from '~~/server/api/atproto/pds-users.get'
+import type { AtprotoProfile } from '#shared/types/atproto'
+
+import {
+  ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC,
+  BSKY_APP_VIEW_USER_PROFILES_XRPC,
+  ERROR_PDS_FETCH_FAILED,
+} from '#shared/utils/constants'
 
 interface GraphLink {
   source: string
   target: string
 }
 
+const USER_BATCH_AMOUNT = 25
+
 export default defineCachedEventHandler(
   async (): Promise<{ nodes: AtprotoProfile[]; links: GraphLink[] }> => {
-    const response = await fetch('https://npmx.social/xrpc/com.atproto.sync.listRepos?limit=1000')
+    const response = await fetch(ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC)
 
     if (!response.ok) {
       throw createError({
         statusCode: response.status,
-        message: 'Failed to fetch PDS repos',
+        message: ERROR_PDS_FETCH_FAILED,
       })
     }
 
@@ -20,20 +28,19 @@ export default defineCachedEventHandler(
     const dids = listRepos.repos.map(repo => repo.did)
     const localDids = new Set(dids)
 
-    const getProfilesUrl = 'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfiles'
     const nodes: AtprotoProfile[] = []
     const links: GraphLink[] = []
 
-    for (let i = 0; i < dids.length; i += 25) {
-      const batch = dids.slice(i, i + 25)
+    for (let i = 0; i < dids.length; i += USER_BATCH_AMOUNT) {
+      const batch = dids.slice(i, i + USER_BATCH_AMOUNT)
 
-      const params = new URLSearchParams()
+      const url = new URL(BSKY_APP_VIEW_USER_PROFILES_XRPC)
       for (const did of batch) {
-        params.append('actors', did)
+        url.searchParams.append('actors', did)
       }
 
       try {
-        const profilesResponse = await fetch(`${getProfilesUrl}?${params.toString()}`)
+        const profilesResponse = await fetch(url.toString())
 
         if (!profilesResponse.ok) {
           console.warn(`Failed to fetch atproto profiles: ${profilesResponse.status}`)
@@ -56,7 +63,7 @@ export default defineCachedEventHandler(
       )
 
       if (!followResponse.ok) {
-        console.warn(`Failed to fetch atproto profiles: ${followResponse.status}`)
+        console.warn(`Failed to fetch follows: ${followResponse.status}`)
         continue
       }
 
@@ -72,5 +79,10 @@ export default defineCachedEventHandler(
       nodes,
       links,
     }
+  },
+  {
+    maxAge: 3600,
+    name: 'pds-graphs',
+    getKey: () => 'pds-graphs',
   },
 )
