@@ -583,6 +583,56 @@ describe('HTML output', () => {
     expect(result.html).toContain('id="user-content-api"')
     expect(result.html).toContain('id="user-content-api-1"')
   })
+
+  it('preserves supported attributes on raw HTML headings', async () => {
+    const md = '<h1 align="center">My Package</h1>'
+    const result = await renderReadmeHtml(md, 'test-pkg')
+
+    expect(result.html).toContain('id="user-content-my-package"')
+    expect(result.html).toContain('align="center"')
+  })
+
+  it('preserves supported attributes on rewritten raw HTML anchors (renderer.html path)', async () => {
+    const md = [
+      '<div>',
+      '  <a href="https://stackblitz.com/edit/my-demo" title="Open demo">Open in StackBlitz</a>',
+      '</div>',
+    ].join('\n')
+    const result = await renderReadmeHtml(md, 'test-pkg')
+
+    expect(result.html).toContain('href="https://stackblitz.com/edit/my-demo"')
+    expect(result.html).toContain('title="Open demo"')
+    expect(result.html).toContain('rel="nofollow noreferrer noopener"')
+    expect(result.html).toContain('target="_blank"')
+  })
+
+  it('preserves title when it appears before href (renderer.html path)', async () => {
+    const md = [
+      '<div>',
+      '  <a title="Open demo" href="https://stackblitz.com/edit/my-demo">Open in StackBlitz</a>',
+      '</div>',
+    ].join('\n')
+    const result = await renderReadmeHtml(md, 'test-pkg')
+
+    expect(result.html).toContain('title="Open demo"')
+    expect(result.html).toContain('href="https://stackblitz.com/edit/my-demo"')
+    expect(result.html).toContain('rel="nofollow noreferrer noopener"')
+    expect(result.html).toContain('target="_blank"')
+  })
+
+  it('overrides existing rel and target instead of duplicating them (renderer.html path)', async () => {
+    const md = [
+      '<div>',
+      '  <a href="https://stackblitz.com/edit/my-demo" rel="bookmark" target="_self" title="Open demo">Open in StackBlitz</a>',
+      '</div>',
+    ].join('\n')
+    const result = await renderReadmeHtml(md, 'test-pkg')
+
+    expect(result.html).toContain('rel="nofollow noreferrer noopener"')
+    expect(result.html).toContain('target="_blank"')
+    expect(result.html).not.toContain('rel="bookmark"')
+    expect(result.html).not.toContain('target="_self"')
+  })
 })
 
 /**
