@@ -1033,7 +1033,7 @@ Format: `type(scope): description`
 
 **Types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, `revert`
 
-**Scopes (optional):** `docs`, `i18n`, `deps`
+**Scopes (optional):** `a11y`, `blog`, `deps`, `docs`, `cli`, `i18n`, `ui`
 
 **Examples:**
 
