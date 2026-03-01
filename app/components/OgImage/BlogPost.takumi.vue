@@ -69,7 +69,7 @@ const formattedAuthorNames = computed(() => {
   >
     <!-- npmx logo - top right -->
     <div
-      class="absolute top-12 z-10 flex items-center gap-1 text-5xl font-bold tracking-tight"
+      class="absolute top-12 z-10 flex items-center gap-1 text-5xl font-semibold tracking-tight"
       style="font-family: 'Geist Sans', sans-serif; right: 6rem"
     >
       <span :style="{ color: primaryColor }" class="opacity-80">./</span>
@@ -128,7 +128,7 @@ const formattedAuthorNames = computed(() => {
           </span>
         </span>
         <!-- Names -->
-        <span style="font-size: 24px; color: #a3a3a3; font-weight: 300">{{
+        <span style="font-size: 24px; color: #a3a3a3; font-weight: 400">{{
           formattedAuthorNames
         }}</span>
       </div>
