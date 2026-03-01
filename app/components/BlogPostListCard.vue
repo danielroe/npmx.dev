@@ -45,7 +45,7 @@ defineProps<{
       </div>
 
       <span
-        class="i-carbon:arrow-right w-4 h-4 text-fg-subtle group-hover:text-fg relative inset-is-0 group-hover:inset-is-1 transition-all duration-200 shrink-0"
+        class="i-lucide:arrow-right w-4 h-4 text-fg-subtle group-hover:text-fg relative inset-is-0 group-hover:inset-is-1 transition-all duration-200 shrink-0"
         aria-hidden="true"
       />
     </NuxtLink>

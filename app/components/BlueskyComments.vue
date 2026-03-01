@@ -16,7 +16,9 @@ const postUrl = computed(() => data.value?.postUrl)
   <section class="mt-12 pt-8 border-t border-border max-w-prose mx-auto">
     <!-- Likes -->
     <div v-if="likes.length > 0" class="mb-8">
-      <h3 class="text-lg font-semibold text-fg mb-4">Likes on Bluesky ({{ totalLikes }})</h3>
+      <h3 class="text-xl font-semibold text-fg mb-4">
+        {{ $t('blog.atproto.likes_on_bluesky') }} ({{ totalLikes }})
+      </h3>
       <ul class="flex flex-wrap gap-1 list-none p-0 m-0">
         <li v-for="like in likes" :key="like.actor.did" class="m-0 p-0">
           <a
@@ -50,7 +52,7 @@ const postUrl = computed(() => data.value?.postUrl)
             rel="noopener noreferrer"
             class="link ms-auto"
           >
-            +{{ totalLikes - likes.length }} more
+            +{{ totalLikes - likes.length }}
           </a>
         </li>
       </ul>
@@ -58,48 +60,42 @@ const postUrl = computed(() => data.value?.postUrl)
 
     <!-- Comments Section -->
     <div class="mb-8">
-      <h3 class="text-lg font-semibold text-fg mb-4">Comments</h3>
+      <h3 class="text-xl font-semibold text-fg mb-4">{{ $t('blog.atproto.comments') }}</h3>
 
       <!-- Build-time/Initial loading -->
       <div v-if="pending && !thread" class="flex items-center gap-2 text-fg-muted" role="status">
         <span class="i-svg-spinners:90-ring-with-bg h-5 w-5" aria-hidden="true" />
-        <span>Loading comments...</span>
+        <span>{{ $t('blog.atproto.loading_comments') }}</span>
       </div>
 
       <!-- Background refresh indicator -->
       <div v-else-if="pending && thread" class="text-xs text-fg-subtle mb-4 animate-pulse">
-        Updating...
+        {{ $t('blog.atproto.updating') }}
       </div>
 
       <!-- Error State -->
       <div v-else-if="error" class="text-fg-muted">
-        Could not load comments.
-        <a v-if="postUrl" :href="postUrl" target="_blank" rel="noopener noreferrer" class="link">
-          View on Bluesky
-        </a>
+        {{ $t('blog.atproto.could_not_load_comments') }}
+        <LinkBase v-if="postUrl" variant="button-primary" :to="postUrl">
+          {{ $t('blog.atproto.view_on_bluesky') }}
+        </LinkBase>
       </div>
 
       <!-- No comments -->
       <div v-else-if="!thread || thread.replies.length === 0">
-        <p class="text-fg-muted mb-4">No comments yet.</p>
-        <a v-if="postUrl" :href="postUrl" target="_blank" rel="noopener noreferrer" class="link">
-          Reply on Bluesky
-        </a>
+        <p class="text-fg-muted mb-4">{{ $t('blog.atproto.no_comments_yet') }}</p>
+        <LinkBase v-if="postUrl" variant="button-primary" :to="postUrl">
+          {{ $t('blog.atproto.reply_on_bluesky') }}
+        </LinkBase>
       </div>
 
       <!-- Comments Thread -->
       <div v-else class="flex flex-col gap-6">
-        <div class="flex items-center gap-4 text-sm text-fg-muted">
+        <div class="flex items-center justify-between gap-4 text-sm text-fg-muted">
           <span>{{ thread.replyCount }} {{ thread.replyCount === 1 ? 'reply' : 'replies' }}</span>
-          <a
-            v-if="postUrl"
-            :href="postUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="link ms-auto"
-          >
-            Reply on Bluesky
-          </a>
+          <LinkBase v-if="postUrl" variant="button-primary" :to="postUrl">
+            {{ $t('blog.atproto.reply_on_bluesky') }}
+          </LinkBase>
         </div>
 
         <BlueskyComment
@@ -109,16 +105,9 @@ const postUrl = computed(() => data.value?.postUrl)
           :depth="0"
         />
 
-        <a
-          v-if="postUrl"
-          :href="postUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="link inline-flex items-center gap-2"
-        >
-          Like this post or add your comment on Bluesky
-          <span class="i-carbon:arrow-right" aria-hidden="true" />
-        </a>
+        <LinkBase v-if="postUrl" variant="button-primary" :to="postUrl">
+          {{ $t('blog.atproto.like_or_reply_on_bluesky') }}
+        </LinkBase>
       </div>
     </div>
   </section>
