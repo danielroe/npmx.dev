@@ -35,7 +35,7 @@ export function useBlogPostBlueskyLink(slug: MaybeRefOrGetter<string | null | un
           1,
           undefined,
           true,
-          [[TESTING_ROE_DID]],
+          [[NPMX_DID]],
           BLOG_BACKLINK_TTL_IN_SECONDS,
         )
 
