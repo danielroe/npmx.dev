@@ -259,7 +259,13 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
     file: 'cs-CZ.json',
     name: 'Čeština',
     pluralRule: createPluralRule('cs-CZ', { zero: 2, one: 0, two: 1, few: 1, many: 2, other: 2 }),
-  } /*
+  },
+  {
+    code: 'tr-TR',
+    file: 'tr-TR.json',
+    name: 'Türkçe',
+  },
+  /*
     {
       code: 'pl-PL',
       file: 'pl-PL.json',
@@ -278,15 +284,30 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
       name: 'Português',
     },
     {
-      code: 'tr-TR',
-      file: 'tr-TR.json',
-      name: 'Türkçe',
-    },
-    {
       code: 'id-ID',
       file: 'id-ID.json',
       name: 'Indonesia',
     },
+    {
+      code: 'fi',
+      file: 'fi.json',
+      name: 'Suomi',
+    },
+    {
+      code: 'gl-ES',
+      file: 'gl-ES.json',
+      name: 'Galego',
+    },
+    {
+      code: 'ko-KR',
+      file: 'ko-KR.json',
+      name: '한국어',
+    },*/
+  {
+    code: 'id-ID',
+    file: 'id-ID.json',
+    name: 'Indonesia',
+  },
   {
     code: 'it-IT',
     file: 'it-IT.json',
@@ -327,7 +348,7 @@ const locales: (LocaleObjectData | (Omit<LocaleObjectData, 'code'> & { code: str
       code: 'cy',
       file: 'cy.json',
       name: 'Cymraeg',
-    },*/,
+    },*/
   {
     code: 'nb-NO',
     file: 'nb-NO.json',
