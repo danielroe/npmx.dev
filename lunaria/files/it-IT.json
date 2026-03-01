@@ -75,6 +75,9 @@
     "links": "Link",
     "tap_to_search": "Tocca per cercare"
   },
+  "action_bar": {
+    "view_selection": "Visualizza selezione"
+  },
   "settings": {
     "title": "impostazioni",
     "tagline": "personalizza la tua esperienza npmx",

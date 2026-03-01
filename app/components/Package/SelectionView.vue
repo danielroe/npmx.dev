@@ -3,12 +3,43 @@ defineProps<{
   viewMode?: ViewMode
 }>()
 
-const { selectedPackages, clearSelectedPackages, selectedPackagesParam } = usePackageSelection()
+const { selectedPackages, clearSelectedPackages, selectedPackagesParam, closeSelectionView } =
+  usePackageSelection()
+
+const { data, pending } = useAsyncData(
+  async () => {
+    const results = await Promise.all(
+      selectedPackages.value.map(name =>
+        $fetch(`/api/registry/package-meta/${encodeURIComponent(name)}`)
+          .then(response => {
+            return { package: response }
+          })
+          .catch(err => {
+            console.error(`Failed to fetch package ${name}:`, err)
+            return null
+          }),
+      ),
+    )
+    return results as NpmSearchResult[]
+  },
+  {
+    default: () => [],
+  },
+)
 </script>
 
 <template>
   <section>
-    <header class="mb-6 flex items-center justify-end">
+    <header class="mb-6 flex items-center justify-between">
+      <button
+        type="button"
+        class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70"
+        @click="closeSelectionView"
+        :aria-label="$t('nav.back')"
+      >
+        <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
+        <span class="hidden sm:inline">{{ $t('nav.back') }}</span>
+      </button>
       <div class="flex items-center gap-2">
         <ButtonBase variant="secondary" @click="clearSelectedPackages">
           {{ $t('filters.clear_all') }}
@@ -25,17 +56,22 @@ const { selectedPackages, clearSelectedPackages, selectedPackagesParam } = usePa
 
     <p class="text-fg-muted text-sm font-mono">
       {{ $t('action_bar.selection', selectedPackages.length) }}
+      <span class="text-accent">— Compare up to 4 packages</span>
     </p>
 
     <div class="mt-6">
+      <div v-if="pending" class="flex items-center justify-center py-12">
+        <LoadingSpinner :text="$t('common.loading')" />
+      </div>
       <PackageList
-        v-if="selectedPackages.length > 0"
+        v-else-if="data?.length"
         :view-mode="viewMode"
-        :results="selectedPackages"
-        search-context
+        :results="data"
         heading-level="h2"
-        show-publisher
       />
+      <p v-else class="text-fg-muted text-sm">
+        {{ $t('filters.table.no_packages') }}
+      </p>
     </div>
   </section>
 </template>

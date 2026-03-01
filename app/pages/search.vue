@@ -9,21 +9,14 @@ import { normalizeSearchParam } from '#shared/utils/url'
 
 const route = useRoute()
 
-const { selectedPackages } = usePackageSelection()
-const isSelectioView = ref<boolean>(false)
+const { selectedPackages, showSelectionView, openSelectionView, closeSelectionView } =
+  usePackageSelection()
 
 watch(selectedPackages, packages => {
   if (packages.length === 0) {
-    isSelectioView.value = false
+    closeSelectionView()
   }
 })
-
-function showSelectionView() {
-  isSelectioView.value = true
-}
-function hideSelectionView() {
-  isSelectioView.value = false
-}
 
 // Preferences (persisted to localStorage)
 const {
@@ -574,7 +567,7 @@ defineOgImageComponent('Default', {
 </script>
 
 <template>
-  <PackageActionBar v-if="!isSelectioView" />
+  <PackageActionBar v-if="!showSelectionView" />
 
   <main class="flex-1 py-8 search-page" :class="{ 'overflow-x-hidden': viewMode !== 'table' }">
     <div class="container-sm">
@@ -583,10 +576,10 @@ defineOgImageComponent('Default', {
           {{ $t('search.title') }}
         </h1>
         <button
-          v-if="isSelectioView"
+          v-if="showSelectionView"
           type="button"
           class="cursor-pointer inline-flex items-center gap-2 font-mono text-sm text-fg-muted hover:text-fg transition-colors duration-200 rounded focus-visible:outline-accent/70 shrink-0"
-          @click="hideSelectionView"
+          @click="closeSelectionView"
           :aria-label="$t('nav.back')"
         >
           <span class="i-lucide:arrow-left rtl-flip w-4 h-4" aria-hidden="true" />
@@ -596,8 +589,7 @@ defineOgImageComponent('Default', {
       </div>
 
       <PackageSelectionView
-        @back="hideSelectionView"
-        v-if="isSelectioView && selectedPackages.length"
+        v-if="showSelectionView && selectedPackages.length"
         :view-mode="viewMode"
       />
 
@@ -670,7 +662,7 @@ defineOgImageComponent('Default', {
               :disabled-sort-keys="disabledSortKeys"
               search-context
               @toggle-column="toggleColumn"
-              @toggle-selection="showSelectionView"
+              @toggle-selection="openSelectionView"
               @reset-columns="resetColumns"
               @clear-filter="handleClearFilter"
               @clear-all-filters="clearAllFilters"
