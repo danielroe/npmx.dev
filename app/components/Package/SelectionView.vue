@@ -56,7 +56,6 @@ const { data, pending } = useAsyncData(
 
     <p class="text-fg-muted text-sm font-mono">
       {{ $t('action_bar.selection', selectedPackages.length) }}
-      <span class="text-accent">— Compare up to 4 packages</span>
     </p>
 
     <div class="mt-6">

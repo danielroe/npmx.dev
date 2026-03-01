@@ -68,13 +68,18 @@ const numberFormatter = useNumberFormatter()
       <div class="relative z-1">
         <label>
           <span class="sr-only"> {{ $t('package.card.select') }}: {{ result.package.name }} </span>
+
           <input
             data-package-card-checkbox
             class="md:opacity-0 group-focus-within:opacity-100 checked:opacity-100 md:group-hover:opacity-100 size-4 cursor-pointer accent-accent border border-fg-muted/30 hover:border-accent transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
             type="checkbox"
             :checked="isSelected"
             :disabled="isMaxSelected && !isSelected"
-            :title="isMaxSelected && !isSelected ? 'Maximum 4 packages can be selected' : undefined"
+            :title="
+              isMaxSelected && !isSelected
+                ? $t('package.card.select_maximum', MAX_PACKAGE_SELECTION)
+                : undefined
+            "
             @change="togglePackageSelection(result.package.name)"
           />
         </label>

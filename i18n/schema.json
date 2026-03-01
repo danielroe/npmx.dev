@@ -936,6 +936,9 @@
             },
             "select": {
               "type": "string"
+            },
+            "select_maximum": {
+              "type": "string"
             }
           },
           "additionalProperties": false

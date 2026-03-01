@@ -310,7 +310,8 @@
       "weekly_downloads": "Weekly downloads",
       "keywords": "Keywords",
       "license": "License",
-      "select": "Select package"
+      "select": "Select package",
+      "select_maximum": "Maximum {count} packages can be selected"
     },
     "versions": {
       "title": "Versions",

@@ -213,7 +213,11 @@ const allMaintainersText = computed(() => {
             type="checkbox"
             :checked="isSelected"
             :disabled="isMaxSelected && !isSelected"
-            :title="isMaxSelected && !isSelected ? 'Maximum 4 packages can be selected' : undefined"
+            :title="
+              isMaxSelected && !isSelected
+                ? $t('package.card.select_maximum', MAX_PACKAGE_SELECTION)
+                : undefined
+            "
             @change="togglePackageSelection(result.package.name)"
           />
         </label>
