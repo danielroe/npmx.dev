@@ -12,8 +12,9 @@ useSeoMeta({
   twitterDescription: () => $t('vacations.meta_description'),
 })
 
-defineOgImage('Page.takumi', {
+defineOgImageComponent('Default', {
   title: () => $t('vacations.title'),
+  description: () => $t('vacations.meta_description'),
 })
 
 const router = useRouter()
