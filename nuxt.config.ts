@@ -161,6 +161,7 @@ export default defineNuxtConfig({
     '/search': { isr: false, cache: false }, // never cache
     '/settings': { prerender: true },
     '/recharging': { prerender: true },
+    '/pds': { prerender: true },
     // proxy for insights
     '/blog/**': { prerender: true },
     '/_v/script.js': {
