@@ -205,7 +205,7 @@
         "main_navigation": {
           "type": "string"
         },
-        "popular_packages": {
+        "npmx_picks": {
           "type": "string"
         },
         "settings": {
