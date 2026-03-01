@@ -30,23 +30,24 @@ onKeyStroke(
         ref="actionBarRef"
         tabindex="-1"
         aria-keyshortcuts="b"
-        class="pointer-events-auto bg-bg shadow-xl shadow-accent/5 border border-fg-muted/20 p-2.5 min-w-[300px] rounded-xl flex gap-2 items-center justify-between animate-in"
+        class="pointer-events-auto bg-bg shadow-2xl shadow-accent/20 border-2 border-accent/60 p-3 min-w-[300px] rounded-xl flex gap-3 items-center justify-between animate-in ring-1 ring-accent/30"
       >
         <div aria-live="polite" aria-atomic="true" class="sr-only">
           {{ $t('action_bar.selection', selectedPackages.length) }}.
           {{ $t('action_bar.shortcut', { key: shortcutKey }) }}.
         </div>
 
-        <div class="flex items-center gap-1 ms-2">
-          <span class="text-fg text-sm">
+        <div class="flex items-center gap-2">
+          <span class="text-fg font-semibold text-sm flex items-center gap-1.5">
+            <i class="i-ph:check-circle-fill text-accent text-base" aria-hidden="true"></i>
             {{ $t('action_bar.selection', selectedPackages.length) }}
           </span>
           <button
             @click="clearSelectedPackages"
-            class="flex items-center ms-2 hover:text-fg-muted"
+            class="flex items-center ms-1 text-fg-muted hover:(text-fg bg-accent/10) p-1.5 rounded-lg transition-colors"
             aria-label="Close action bar"
           >
-            <span class="i-lucide:x text-xs relative top-px" aria-hidden="true" />
+            <span class="i-lucide:x text-sm" aria-hidden="true" />
           </button>
         </div>
 
