@@ -12,8 +12,9 @@ useSeoMeta({
   twitterDescription: () => $t('vacations.meta_description'),
 })
 
-defineOgImage('Page.takumi', {
+defineOgImageComponent('Default', {
   title: () => $t('vacations.title'),
+  description: () => $t('vacations.meta_description'),
 })
 
 const router = useRouter()
@@ -105,7 +106,7 @@ const icons = [
         />
       </div>
 
-      <section class="prose prose-invert max-w-none space-y-8">
+      <section class="max-w-none space-y-8">
         <!-- What happened -->
         <div>
           <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-4">

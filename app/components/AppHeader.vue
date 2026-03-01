@@ -60,6 +60,14 @@ const mobileLinks = computed<NavigationConfigWithGroups>(() => [
         iconClass: 'i-lucide:info',
       },
       {
+        name: 'Blog',
+        label: $t('footer.blog'),
+        to: { name: 'blog' },
+        type: 'link',
+        external: false,
+        iconClass: 'i-lucide:notebook-pen',
+      },
+      {
         name: 'Privacy Policy',
         label: $t('privacy_policy.title'),
         to: { name: 'privacy' },
