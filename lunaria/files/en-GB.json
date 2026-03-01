@@ -382,7 +382,14 @@
       "cancel_add": "Cancel adding owner",
       "add_owner": "+ Add owner",
       "show_more": "(show {count} more)",
-      "show_less": "(show fewer)"
+      "show_less": "(show fewer)",
+      "remove": {
+        "title": "Remove Owner",
+        "warning": "This action will revoke ownership.",
+        "impact": "{user} will no longer be able to publish updates to {package}. This operation will be queued and executed when you approve the operation in the connector.",
+        "removing": "Removing...",
+        "confirm": "Remove owner"
+      }
     },
     "trends": {
       "granularity": "Granularity",
@@ -504,7 +511,14 @@
       },
       "grant_button": "grant",
       "cancel_grant": "Cancel granting access",
-      "grant_access": "+ Grant team access"
+      "grant_access": "+ Grant team access",
+      "revoke": {
+        "title": "Revoke Team Access",
+        "warning": "This action cannot be undone",
+        "impact": "Team \"{team}\" will lose access to {package}. This operation will be queued and executed when you approve the operation in the connector.",
+        "confirm": "Revoke Access",
+        "revoking": "Revoking..."
+      }
     },
     "list": {
       "filter_label": "Filter packages",

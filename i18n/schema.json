@@ -1155,6 +1155,27 @@
             },
             "show_less": {
               "type": "string"
+            },
+            "remove": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "warning": {
+                  "type": "string"
+                },
+                "impact": {
+                  "type": "string"
+                },
+                "removing": {
+                  "type": "string"
+                },
+                "confirm": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
@@ -1521,6 +1542,27 @@
             },
             "grant_access": {
               "type": "string"
+            },
+            "revoke": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "warning": {
+                  "type": "string"
+                },
+                "impact": {
+                  "type": "string"
+                },
+                "confirm": {
+                  "type": "string"
+                },
+                "revoking": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
