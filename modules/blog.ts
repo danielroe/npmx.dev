@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import Markdown from 'unplugin-vue-markdown/vite'
 import { addTemplate, addVitePlugin, defineNuxtModule, useNuxt, createResolver } from 'nuxt/kit'
 import shiki from '@shikijs/markdown-it'
+import MarkdownItAnchor from 'markdown-it-anchor'
 import { defu } from 'defu'
 import { read } from 'gray-matter'
 import { safeParse } from 'valibot'
@@ -72,6 +73,7 @@ export default defineNuxtModule({
               },
             }),
           )
+          md.use(MarkdownItAnchor)
         },
       }),
     )
