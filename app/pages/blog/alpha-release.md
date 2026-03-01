@@ -142,7 +142,7 @@ headline="Read more from the community"
   },
   {
     url: 'https://blog.trueberryless.org/blog/npmx/',
-    title: 'PLACEHOLDER_TITLE',
+    title: 'Rising community at tomorrow's horizon',
     authorHandle: 'trueberryless.org',
     description: 'Telling the story of a newly founded community.'
   },
