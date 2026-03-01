@@ -13,7 +13,7 @@ useSeoMeta({
   ogType: 'article',
 })
 
-defineOgImage('BlogPost.takumi', {
+defineOgImageComponent('BlogPost', {
   title: props.frontmatter.title,
   authors: props.frontmatter.authors,
   date: props.frontmatter.date,
