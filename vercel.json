@@ -17,6 +17,16 @@
       "has": [
         {
           "type": "host",
+          "value": "help.npmx.dev"
+        }
+      ],
+      "destination": "https://discord.gg/CjZM5qRbCu"
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
           "value": "social.npmx.dev"
         }
       ],
