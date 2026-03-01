@@ -213,9 +213,9 @@ onKeyStroke(
         v-if="!isSearchExpanded && !isOnHomePage"
         to="/"
         :aria-label="$t('header.home')"
-        class="sm:hidden flex-shrink-0 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring"
+        class="sm:hidden flex-shrink-0 font-mono text-lg font-medium text-fg hover:text-fg transition-colors duration-200 focus-ring me-4"
       >
-        <AppLogo class="w-8 h-8 rounded-lg" />
+        <AppMark class="w-6 h-auto" />
       </NuxtLink>
 
       <!-- Desktop: Logo (navigates home) -->
@@ -224,13 +224,12 @@ onKeyStroke(
           :to="{ name: 'index' }"
           :aria-label="$t('header.home')"
           dir="ltr"
-          class="relative inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 rounded"
+          class="relative inline-flex items-center gap-1 header-logo font-mono text-lg font-medium text-fg hover:text-fg/90 transition-colors duration-200 me-4"
         >
-          <AppLogo class="w-7 h-7 rounded-lg" />
-          <span class="pb-0.5">npmx</span>
+          <AppLogo class="w-20 h-auto" />
           <span
             aria-hidden="true"
-            class="scale-35 transform-origin-br font-mono tracking-wide text-accent absolute bottom-0.5 -inset-ie-1"
+            class="scale-35 transform-origin-br font-mono tracking-wide text-accent absolute -bottom-1.5 -inset-ie-1"
           >
             {{ env === 'release' ? 'alpha' : env }}
           </span>
