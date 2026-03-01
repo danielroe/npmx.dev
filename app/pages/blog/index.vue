@@ -1,17 +1,5 @@
 <script setup lang="ts">
-import type { BlogPostFrontmatter } from '#shared/schemas/blog'
-
-const blogModules = import.meta.glob<BlogPostFrontmatter>('./*.md', { eager: true })
-
-const posts: BlogPostFrontmatter[] = []
-
-for (const [_, module] of Object.entries(blogModules)) {
-  if (module.draft) continue
-
-  posts.push({ ...module })
-}
-
-posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+import { posts } from '#blog/posts'
 
 const placeHolder = ['atproto', 'nuxt']
 
