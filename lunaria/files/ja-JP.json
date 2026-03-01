@@ -150,23 +150,6 @@
     "error": "エラー"
   },
   "profile": {
-    "display_name": "表示名",
-    "description": "説明",
-    "no_description": "説明なし",
-    "website": "ウェブサイト",
-    "website_placeholder": "https://example.com",
-    "likes": "いいね",
-    "seo_title": "{handle} - npmx",
-    "seo_description": "{handle} のnpmxプロフィール",
-    "not_found": "プロフィールが見つかりません",
-    "not_found_message": "{handle} のプロフィールは見つかりませんでした。",
-    "invite": {
-      "message": "まだnpmxを利用していないようです。npmxを紹介しますか？",
-      "share_button": "Blueskyで共有",
-      "compose_text": "{'@'}{handle} さん、npmx.devはもうチェックしましたか？ 高速でモダンなオープンソースのnpmレジストリブラウザです。\nhttps://npmx.dev"
-    }
-  },
-  "profile": {
     "invite": {}
   },
   "package": {

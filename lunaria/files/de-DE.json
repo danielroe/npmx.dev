@@ -121,6 +121,7 @@
     "edit_on_github": "Auf GitHub bearbeiten",
     "view_guide": "Übersetzungsleitfaden"
   },
+  "error": {},
   "common": {
     "loading": "Lädt...",
     "loading_more": "Lädt mehr...",
@@ -144,6 +145,9 @@
       "members": "Mitglieder"
     },
     "scroll_to_top": "Nach oben scrollen"
+  },
+  "profile": {
+    "invite": {}
   },
   "package": {
     "not_found": "Paket nicht gefunden",
@@ -875,7 +879,6 @@
     },
     "team": {
       "title": "Team",
-      "governance": "Verwaltung",
       "role_steward": "Verwalter",
       "role_maintainer": "Maintainer",
       "sponsor": "Sponsor",
@@ -885,8 +888,7 @@
       "title": "... und {count} weiterer Mitwirkender | ... und {count} weitere Mitwirkende",
       "description": "npmx ist komplett Open Source und wird von einer großartigen Community von Mitwirkenden entwickelt. Mach mit und lass uns gemeinsam das npm-Browsing-Erlebnis gestalten, das wir uns schon immer gewünscht haben.",
       "loading": "Mitwirkende werden geladen...",
-      "error": "Mitwirkende konnten nicht geladen werden",
-      "view_profile": "GitHub-Profil von {name} anzeigen"
+      "error": "Mitwirkende konnten nicht geladen werden"
     },
     "get_involved": {
       "title": "Mitmachen",

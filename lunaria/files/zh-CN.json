@@ -157,23 +157,6 @@
     "error": "加载出错"
   },
   "profile": {
-    "display_name": "显示名称",
-    "description": "简介",
-    "no_description": "暂无简介",
-    "website": "网站",
-    "website_placeholder": "https://example.com",
-    "likes": "喜欢",
-    "seo_title": "{handle} - npmx",
-    "seo_description": "{handle} 的 npmx 个人资料",
-    "not_found": "未找到个人资料",
-    "not_found_message": "找不到 {handle} 的个人资料。",
-    "invite": {
-      "message": "看起来他们还没有使用 npmx，去邀请一下？",
-      "share_button": "分享到 Bluesky",
-      "compose_text": "嗨 {'@'}{handle}！您用过 npmx.dev 吗？它是一个快速、现代且开源的 npm registry 浏览器。\nhttps://npmx.dev"
-    }
-  },
-  "profile": {
     "invite": {}
   },
   "package": {
