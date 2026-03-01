@@ -141,6 +141,8 @@ function getHostname(uri: string): string {
           v-if="comment.embed.external.thumb"
           :src="comment.embed.external.thumb"
           :alt="comment.embed.external.title"
+          width="20"
+          height="20"
           class="w-20 h-20 rounded object-cover shrink-0"
           loading="lazy"
         />
