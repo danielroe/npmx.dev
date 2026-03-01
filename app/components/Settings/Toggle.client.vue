@@ -67,13 +67,16 @@ const id = useId()
         :to="tooltipTo"
         :offset="tooltipOffset"
       >
-        <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">
+        <span
+          class="toggle-label text-sm text-fg font-medium text-start"
+          style="grid-area: label-text"
+        >
           {{ label }}
         </span>
       </TooltipApp>
       <span
         v-else-if="label"
-        class="text-sm text-fg font-medium text-start"
+        class="toggle-label text-sm text-fg font-medium text-start"
         style="grid-area: label-text"
       >
         {{ label }}
@@ -87,13 +90,16 @@ const id = useId()
         :to="tooltipTo"
         :offset="tooltipOffset"
       >
-        <span class="text-sm text-fg font-medium text-start" style="grid-area: label-text">
+        <span
+          class="toggle-label text-sm text-fg font-medium text-start"
+          style="grid-area: label-text"
+        >
           {{ label }}
         </span>
       </TooltipApp>
       <span
         v-else-if="label"
-        class="text-sm text-fg font-medium text-start"
+        class="toggle-label text-sm text-fg font-medium text-start"
         style="grid-area: label-text"
       >
         {{ label }}
@@ -109,7 +115,7 @@ const id = useId()
 /* Support forced colors */
 @media (forced-colors: active) {
   /* Label text */
-  label > span {
+  .toggle-label {
     color: Highlight !important;
     forced-color-adjust: none;
     background: Canvas !important;
