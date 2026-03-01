@@ -272,6 +272,10 @@ function withUserContentPrefix(value: string): string {
   return value.startsWith(USER_CONTENT_PREFIX) ? value : `${USER_CONTENT_PREFIX}${value}`
 }
 
+function toUserContentId(value: string): string {
+  return `${USER_CONTENT_PREFIX}${value}`
+}
+
 function toUserContentHash(value: string): string {
   return `#${withUserContentPrefix(value)}`
 }
@@ -446,13 +450,13 @@ export async function renderReadmeHtml(
     const count = usedSlugs.get(slug) ?? 0
     usedSlugs.set(slug, count + 1)
     const uniqueSlug = count === 0 ? slug : `${slug}-${count}`
-    const id = withUserContentPrefix(uniqueSlug)
+    const id = toUserContentId(uniqueSlug)
 
     if (plainText) {
       toc.push({ text: plainText, id, depth })
     }
 
-    return `<h${semanticLevel} id="${id}" data-level="${depth}"><a href="#${uniqueSlug}">${plainText}</a></h${semanticLevel}>\n`
+    return `<h${semanticLevel} id="${id}" data-level="${depth}"><a href="#${id}">${plainText}</a></h${semanticLevel}>\n`
   }
 
   renderer.heading = function ({ tokens, depth }: Tokens.Heading) {

@@ -642,6 +642,17 @@ describe('Issue #1323 — single-pass rendering correctness', () => {
       expect(ids).toEqual(['user-content-api', 'user-content-api-1', 'user-content-api-2'])
     })
 
+    it('does not collide when heading text already starts with user-content-', async () => {
+      const md = ['# Title', '', '# user-content-title'].join('\n')
+
+      const result = await renderReadmeHtml(md, 'test-pkg')
+
+      const ids = Array.from(result.html.matchAll(/id="(user-content-[^"]+)"/g), m => m[1])
+      expect(ids).toEqual(['user-content-title', 'user-content-user-content-title'])
+      expect(new Set(ids).size).toBe(ids.length)
+      expect(result.toc.map(t => t.id)).toEqual(ids)
+    })
+
     it('heading semantic levels are sequential even when mixing heading types', async () => {
       // h1 (md) → h3, h3 (html) → should be h4 (max = lastSemantic + 1),
       // not jump to h5 or h6 because it was processed in a later pass.
