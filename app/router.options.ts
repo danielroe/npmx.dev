@@ -7,7 +7,12 @@ export default {
       return savedPosition
     }
 
-    // If only query parameters changed (same path), don't scroll
+    // Scroll to top when main search query changes
+    if (to.path === '/search' && to.query.q !== from.query.q) {
+      return { left: 0, top: 0 }
+    }
+
+    // Don't scroll for other param changes (filters, pagination, etc.)
     if (to.path === from.path) {
       return false
     }
