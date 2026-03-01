@@ -210,6 +210,7 @@ import {
   DiffViewerPanel,
   PackageActionBar,
   PackageSelectionView,
+  PackageSelectionCheckbox,
 } from '#components'
 
 // Server variant components must be imported directly to test the server-side render
@@ -3350,6 +3351,31 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(PackageSelectionView, {
         props: {
           viewMode: 'table',
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('PackageSelectionCheckbox', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(PackageSelectionCheckbox, {
+        props: {
+          packageName: 'nuxt',
+          checked: false,
+        },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations when disabled', async () => {
+      const component = await mountSuspended(PackageSelectionCheckbox, {
+        props: {
+          packageName: 'nuxt',
+          checked: false,
+          disabled: true,
         },
       })
       const results = await runAxe(component)
