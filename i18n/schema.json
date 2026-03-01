@@ -3508,9 +3508,6 @@
         "meta_description": {
           "type": "string"
         },
-        "og_description": {
-          "type": "string"
-        },
         "join": {
           "type": "object",
           "properties": {
