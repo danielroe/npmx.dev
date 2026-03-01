@@ -1240,39 +1240,5 @@
       "p1": "Ha akadálymentességi problémákat tapasztalsz a(z) {app} -on, kérjük, közölj velünk egy kérdés megnyitásával a(z) {link} -ben. Komolyan vesszük ezeket a jelentéseket, és mindent megteszünk a megoldásukért.",
       "link": "GitHub tárhelyen"
     }
-  },
-  "vacations": {
-    "title": "szabadságon",
-    "meta_description": "Az npmx csapata újratöltődött. A Discord egy hét után újra megnyitott.",
-    "heading": "újratöltődés",
-    "subtitle": "az npmx-et olyan tempóban építettük, amely néhányunk alvásából kerül ki. Nem akartuk, hogy ez legyen a norma! így egy hétre szünetet tartottunk. együtt.",
-    "illustration_alt": "egyetlen sor kényelmes ikonok",
-    "poke_log": "Tapogatás a tábortűzhöz",
-    "what": {
-      "title": "mi történt",
-      "p1": "a discord {dates} között zárva volt.",
-      "dates": "február 14-21",
-      "p2": "az összes meghívó link eltűnt és a csatornák zárva voltak - kivéve a(z) {garden}, amely nyitva maradt azok számára, akik szeretett volna tovább csevegni.",
-      "garden": "#garden"
-    },
-    "meantime": {
-      "title": "közben",
-      "p1": "a(z) {site} és {repo} nyitva maradtak - az emberek továbbra is nyomoztak, néhány problémát fájloztak, néhány PR-t nyitottak meg, de főleg mindenki egy kényelmes tábortűz mellett töltött időt.",
-      "repo_link": "a tárhelyet"
-    },
-    "return": {
-      "title": "visszatértünk!",
-      "p1": "újratöltődve és készen az utolsó nyomásra március 3-ra. {social} a frissítésekhez.",
-      "social_link": "kövess minket a Bluesky-on"
-    },
-    "stats": {
-      "contributors": "Közreműködők",
-      "commits": "Commitok",
-      "pr": "PR-ek egyesítve",
-      "subtitle": {
-        "some": "néhány",
-        "all": "összes"
-      }
-    }
   }
 }
