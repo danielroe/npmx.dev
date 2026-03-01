@@ -8,7 +8,7 @@ useSeoMeta({
   description: () => $t('privacy_policy.welcome', { app: 'npmx' }),
 })
 
-defineOgImage('Page.takumi', {
+defineOgImageComponent('Default', {
   title: () => $t('privacy_policy.title'),
   description: () => $t('privacy_policy.welcome', { app: 'npmx' }),
 })
@@ -54,7 +54,7 @@ const { locale } = useI18n()
         </i18n-t>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-8">
+      <section class="max-w-none space-y-8">
         <p class="text-fg-muted leading-relaxed">
           <i18n-t keypath="privacy_policy.welcome" tag="span" scope="global">
             <template #app>

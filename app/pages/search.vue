@@ -555,13 +555,14 @@ useSeoMeta({
       : $t('search.meta_description_packages'),
 })
 
-defineOgImage('Page.takumi', {
+defineOgImageComponent('Default', {
   title: () =>
     `${query.value ? $t('search.title_search', { search: query.value }) : $t('search.title_packages')} - npmx`,
   description: () =>
     query.value
       ? $t('search.meta_description', { search: query.value })
       : $t('search.meta_description_packages'),
+  primaryColor: '#60a5fa',
 })
 </script>
 
