@@ -95,6 +95,7 @@
     "focus-trap": "^8.0.0",
     "gray-matter": "4.0.3",
     "ipaddr.js": "2.3.0",
+    "markdown-it-anchor": "9.2.0",
     "marked": "17.0.3",
     "module-replacements": "2.11.0",
     "nuxt": "4.3.1",
