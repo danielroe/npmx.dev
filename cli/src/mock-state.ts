@@ -153,6 +153,22 @@ export class MockConnectorStateManager {
     return org.teamMembers[team] ?? null
   }
 
+  getTeamPackages(scope: string, team: string): Record<string, AccessPermission> | null {
+    const normalizedScope = scope.startsWith('@') ? scope : `@${scope}`
+    const scopeTeam = `${normalizedScope}:${team}`
+
+    // Find all packages where this team has access
+    const result: Record<string, AccessPermission> = {}
+    for (const [pkg, data] of Object.entries(this.state.packages)) {
+      const permission = data.collaborators[scopeTeam]
+      if (permission) {
+        result[pkg] = permission
+      }
+    }
+
+    return Object.keys(result).length > 0 ? result : {}
+  }
+
   // -- Package data --
 
   setPackageData(pkg: string, data: MockPackageData): void {

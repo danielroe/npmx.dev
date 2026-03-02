@@ -14,6 +14,31 @@ const orgName = computed(() => route.params.org.toLowerCase())
 
 const { isConnected } = useConnector()
 
+// Package selection for bulk operations
+const {
+  selected: selectedPackagesSet,
+  selectedPackages: selectedPackagesList,
+  selectedCount,
+  isSelectionMode,
+  toggle: togglePackageSelection,
+  toggleAll,
+  deselectAll,
+  toggleSelectionMode,
+  exitSelectionMode,
+} = useOrgPackageSelection()
+
+// Convert ReadonlySet to Set for compatibility with child components
+const selectedPackages = computed(() => new Set(selectedPackagesSet.value))
+
+// Modal refs
+const bulkGrantModalRef = useTemplateRef<{ open: () => void; close: () => void }>('bulkGrantModal')
+const copyAccessModalRef = useTemplateRef<{ open: () => void; close: () => void }>(
+  'copyAccessModal',
+)
+
+// Connector modal for viewing queued operations
+const connectorModal = useModal('connector-modal')
+
 // Fetch all packages in this org using the org packages API (lazy to not block navigation)
 const { data: results, status, error } = useOrgPackages(orgName)
 
@@ -116,14 +141,34 @@ watch(orgName, () => {
   clearAllFilters()
   setSort('updated-desc')
   currentPage.value = 1
+  exitSelectionMode()
 })
+
+// Handle package selection events
+function handleToggleSelect(packageName: string) {
+  togglePackageSelection(packageName)
+}
+
+function handleToggleSelectAll() {
+  const packageNames = sortedPackages.value.map(p => p.package.name)
+  toggleAll(packageNames)
+}
+
+// Handle bulk operations completion
+function handleOperationsQueued() {
+  // Open connector modal to show queued operations
+  connectorModal.open()
+}
+
+// Available package names for copy access modal
+const availablePackageNames = computed(() => packages.value.map(p => p.package.name))
 
 // Handle filter chip removal
 function handleClearFilter(chip: FilterChip) {
   clearFilter(chip)
 }
 
-const activeTab = shallowRef<'members' | 'teams'>('members')
+const activeTab = shallowRef<'members' | 'teams' | 'team-access'>('members')
 
 // Canonical URL for this org page
 const canonicalUrl = computed(() => `https://npmx.dev/@${orgName.value}`)
@@ -225,11 +270,24 @@ defineOgImageComponent('Default', {
           >
             {{ $t('org.page.teams_tab') }}
           </button>
+          <button
+            type="button"
+            class="px-4 py-2 font-mono text-sm rounded-t-lg transition-colors duration-200"
+            :class="
+              activeTab === 'team-access'
+                ? 'bg-bg-subtle text-fg border border-border border-b-0'
+                : 'text-fg-muted hover:text-fg'
+            "
+            @click="activeTab = 'team-access'"
+          >
+            {{ $t('org.page.team_access_tab') }}
+          </button>
         </div>
 
         <!-- Tab content -->
         <OrgMembersPanel v-if="activeTab === 'members'" :org-name="orgName" />
-        <OrgTeamsPanel v-else :org-name="orgName" />
+        <OrgTeamsPanel v-else-if="activeTab === 'teams'" :org-name="orgName" />
+        <OrgTeamPackagesPanel v-else :org-name="orgName" />
       </section>
     </ClientOnly>
 
@@ -258,9 +316,47 @@ defineOgImageComponent('Default', {
 
     <!-- Package list -->
     <section v-else-if="packages.length > 0" :aria-label="$t('org.page.packages_title')">
-      <h2 class="text-xs text-fg-subtle uppercase tracking-wider mb-4">
-        {{ $t('org.page.packages_title') }}
-      </h2>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xs text-fg-subtle uppercase tracking-wider">
+          {{ $t('org.page.packages_title') }}
+        </h2>
+
+        <!-- Selection mode toggle (only when connected) -->
+        <ClientOnly>
+          <button
+            v-if="isConnected"
+            type="button"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs rounded transition-colors duration-200"
+            :class="
+              isSelectionMode
+                ? 'bg-accent-fallback text-bg hover:bg-accent-fallback/90'
+                : 'text-fg-muted bg-bg-subtle border border-border hover:text-fg hover:border-border-hover'
+            "
+            @click="toggleSelectionMode"
+          >
+            <span
+              :class="isSelectionMode ? 'i-lucide:x' : 'i-lucide:check-square'"
+              class="w-3.5 h-3.5"
+              aria-hidden="true"
+            />
+            {{
+              isSelectionMode ? $t('package.bulk.exit_select_mode') : $t('package.bulk.select_mode')
+            }}
+          </button>
+        </ClientOnly>
+      </div>
+
+      <!-- Bulk actions toolbar -->
+      <ClientOnly>
+        <PackageBulkActionsToolbar
+          v-if="isSelectionMode"
+          :selected-count="selectedCount"
+          :org-name="orgName"
+          @clear-selection="deselectAll"
+          @grant-access="bulkGrantModalRef?.open()"
+          @copy-access="copyAccessModalRef?.open()"
+        />
+      </ClientOnly>
 
       <!-- Enhanced toolbar with filters -->
       <PackageListToolbar
@@ -302,7 +398,11 @@ defineOgImageComponent('Default', {
           :pagination-mode="paginationMode"
           :page-size="pageSize"
           :current-page="currentPage"
+          :selection-mode="isSelectionMode"
+          :selected-packages="selectedPackages"
           @click-keyword="toggleKeyword"
+          @toggle-select="handleToggleSelect"
+          @toggle-select-all="handleToggleSelectAll"
         />
 
         <!-- Pagination controls -->
@@ -315,5 +415,22 @@ defineOgImageComponent('Default', {
         />
       </template>
     </section>
+
+    <!-- Bulk operations modals -->
+    <ClientOnly>
+      <PackageBulkGrantAccessModal
+        ref="bulkGrantModal"
+        :selected-packages="selectedPackagesList"
+        :org-name="orgName"
+        @operations-queued="handleOperationsQueued"
+      />
+      <PackageCopyAccessModal
+        ref="copyAccessModal"
+        :target-packages="selectedPackagesList"
+        :org-name="orgName"
+        :available-packages="availablePackageNames"
+        @operations-queued="handleOperationsQueued"
+      />
+    </ClientOnly>
   </main>
 </template>

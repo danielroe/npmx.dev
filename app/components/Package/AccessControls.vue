@@ -35,6 +35,12 @@ const selectedTeam = shallowRef('')
 const permission = shallowRef<'read-only' | 'read-write'>('read-only')
 const isGranting = shallowRef(false)
 
+// Revoke confirmation state
+const revokeDialogRef = useTemplateRef('revokeDialogRef')
+const revokeTarget = shallowRef<{ name: string; displayName: string } | null>(null)
+const isRevoking = shallowRef(false)
+const revokeError = shallowRef<string | null>(null)
+
 // Computed collaborator list with type detection
 const collaboratorList = computed(() => {
   return Object.entries(collaborators.value)
@@ -117,23 +123,49 @@ async function handleGrantAccess() {
   }
 }
 
-// Revoke access
-async function handleRevokeAccess(collaboratorName: string) {
-  // For teams, we use the full org:team format
-  // For users... actually npm access revoke only works for teams
-  // Users get access via maintainers/owners which is managed separately
+// Open revoke confirmation dialog
+function openRevokeDialog(collaboratorName: string, displayName: string) {
+  revokeTarget.value = { name: collaboratorName, displayName }
+  revokeError.value = null
+  revokeDialogRef.value?.showModal()
+}
 
-  const operation: NewOperation = {
-    type: 'access:revoke',
-    params: {
-      scopeTeam: collaboratorName,
-      pkg: props.packageName,
-    },
-    description: `Revoke ${collaboratorName} access to ${props.packageName}`,
-    command: `npm access revoke ${collaboratorName} ${props.packageName}`,
+// Close revoke confirmation dialog
+function closeRevokeDialog() {
+  revokeDialogRef.value?.close()
+  revokeTarget.value = null
+  revokeError.value = null
+}
+
+// Revoke access (after confirmation)
+async function handleRevokeAccess() {
+  if (!revokeTarget.value) return
+
+  isRevoking.value = true
+  revokeError.value = null
+
+  try {
+    const operation: NewOperation = {
+      type: 'access:revoke',
+      params: {
+        scopeTeam: revokeTarget.value.name,
+        pkg: props.packageName,
+      },
+      description: `Revoke ${revokeTarget.value.name} access to ${props.packageName}`,
+      command: `npm access revoke ${revokeTarget.value.name} ${props.packageName}`,
+    }
+
+    const result = await addOperation(operation)
+    if (result) {
+      closeRevokeDialog()
+    } else {
+      revokeError.value = connectorError.value || 'Failed to queue revoke operation'
+    }
+  } catch (err) {
+    revokeError.value = err instanceof Error ? err.message : 'Failed to revoke access'
+  } finally {
+    isRevoking.value = false
   }
-
-  await addOperation(operation)
 }
 
 // Reload when package changes
@@ -227,7 +259,7 @@ watch(
           type="button"
           class="p-1 text-fg-subtle hover:text-red-400 transition-colors duration-200 shrink-0 rounded focus-visible:outline-accent/70"
           :aria-label="$t('package.access.revoke_access', { name: collab.displayName })"
-          @click="handleRevokeAccess(collab.name)"
+          @click="openRevokeDialog(collab.name, collab.displayName ?? collab.name)"
         >
           <span class="i-lucide:x w-3.5 h-3.5" aria-hidden="true" />
         </button>
@@ -303,4 +335,70 @@ watch(
       {{ $t('package.access.grant_access') }}
     </button>
   </section>
+
+  <!-- Revoke Confirmation Modal -->
+  <ClientOnly>
+    <Modal
+      ref="revokeDialogRef"
+      :modal-title="$t('package.access.revoke.title')"
+      id="revoke-access-modal"
+      class="max-w-sm"
+    >
+      <div class="space-y-4">
+        <!-- Warning message -->
+        <div
+          class="p-3 text-sm text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-md"
+        >
+          <p class="font-medium mb-1">{{ $t('package.access.revoke.warning') }}</p>
+          <p class="text-xs text-yellow-400/80">
+            {{
+              $t('package.access.revoke.impact', {
+                team: revokeTarget?.displayName,
+                package: packageName,
+              })
+            }}
+          </p>
+        </div>
+
+        <!-- Team being revoked -->
+        <div class="flex items-center gap-2 p-3 bg-bg-subtle border border-border rounded-md">
+          <span class="i-lucide:users w-4 h-4 text-fg-subtle shrink-0" aria-hidden="true" />
+          <span class="font-mono text-sm text-fg">{{ revokeTarget?.name }}</span>
+        </div>
+
+        <!-- Error message -->
+        <div
+          v-if="revokeError"
+          class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md"
+          role="alert"
+        >
+          {{ revokeError }}
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="flex-1 px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
+            :disabled="isRevoking"
+            @click="closeRevokeDialog"
+          >
+            {{ $t('common.close') }}
+          </button>
+          <button
+            type="button"
+            class="flex-1 px-4 py-2 font-mono text-sm text-white bg-red-600 rounded-md transition-colors duration-200 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
+            :disabled="isRevoking"
+            @click="handleRevokeAccess"
+          >
+            <span v-if="isRevoking" class="flex items-center justify-center gap-2">
+              <span class="i-svg-spinners:ring-resize w-4 h-4 animate-spin" aria-hidden="true" />
+              {{ $t('package.access.revoke.revoking') }}
+            </span>
+            <span v-else>{{ $t('package.access.revoke.confirm') }}</span>
+          </button>
+        </div>
+      </div>
+    </Modal>
+  </ClientOnly>
 </template>

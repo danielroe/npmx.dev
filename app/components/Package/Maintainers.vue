@@ -13,12 +13,19 @@ const {
   addOperation,
   listPackageCollaborators,
   listTeamUsers,
+  error: connectorError,
 } = useConnector()
 
 const showAddOwner = shallowRef(false)
 const newOwnerUsername = shallowRef('')
 const isAdding = shallowRef(false)
 const showAllMaintainers = shallowRef(false)
+
+// Remove owner confirmation state
+const removeDialogRef = useTemplateRef('removeDialogRef')
+const removeTarget = shallowRef<{ username: string } | null>(null)
+const isRemoving = shallowRef(false)
+const removeError = shallowRef<string | null>(null)
 
 const DEFAULT_VISIBLE_MAINTAINERS = 5
 
@@ -141,18 +148,49 @@ async function handleAddOwner() {
   }
 }
 
-async function handleRemoveOwner(username: string) {
-  const operation: NewOperation = {
-    type: 'owner:rm',
-    params: {
-      user: username,
-      pkg: props.packageName,
-    },
-    description: `Remove @${username} from ${props.packageName}`,
-    command: `npm owner rm ${username} ${props.packageName}`,
-  }
+// Open remove owner confirmation dialog
+function openRemoveDialog(username: string) {
+  removeTarget.value = { username }
+  removeError.value = null
+  removeDialogRef.value?.showModal()
+}
 
-  await addOperation(operation)
+// Close remove owner confirmation dialog
+function closeRemoveDialog() {
+  removeDialogRef.value?.close()
+  removeTarget.value = null
+  removeError.value = null
+}
+
+// Remove owner (after confirmation)
+async function handleRemoveOwner() {
+  if (!removeTarget.value) return
+
+  isRemoving.value = true
+  removeError.value = null
+
+  try {
+    const operation: NewOperation = {
+      type: 'owner:rm',
+      params: {
+        user: removeTarget.value.username,
+        pkg: props.packageName,
+      },
+      description: `Remove @${removeTarget.value.username} from ${props.packageName}`,
+      command: `npm owner rm ${removeTarget.value.username} ${props.packageName}`,
+    }
+
+    const result = await addOperation(operation)
+    if (result) {
+      closeRemoveDialog()
+    } else {
+      removeError.value = connectorError.value || 'Failed to queue remove operation'
+    }
+  } catch (err) {
+    removeError.value = err instanceof Error ? err.message : 'Failed to remove owner'
+  } finally {
+    isRemoving.value = false
+  }
 }
 
 // Load access info when connected and for scoped packages
@@ -226,7 +264,7 @@ watch(
               name: maintainer.name,
             })
           "
-          @click="handleRemoveOwner(maintainer.name)"
+          @click="openRemoveDialog(maintainer.name)"
         >
           <span class="i-lucide:x w-3.5 h-3.5" aria-hidden="true" />
         </ButtonBase>
@@ -279,4 +317,70 @@ watch(
       </ButtonBase>
     </div>
   </CollapsibleSection>
+
+  <!-- Remove Owner Confirmation Modal -->
+  <ClientOnly>
+    <Modal
+      ref="removeDialogRef"
+      :modal-title="$t('package.maintainers.remove.title')"
+      id="remove-owner-modal"
+      class="max-w-sm"
+    >
+      <div class="space-y-4">
+        <!-- Warning message -->
+        <div
+          class="p-3 text-sm text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-md"
+        >
+          <p class="font-medium mb-1">{{ $t('package.maintainers.remove.warning') }}</p>
+          <p class="text-xs text-yellow-400/80">
+            {{
+              $t('package.maintainers.remove.impact', {
+                user: removeTarget?.username,
+                package: packageName,
+              })
+            }}
+          </p>
+        </div>
+
+        <!-- User being removed -->
+        <div class="flex items-center gap-2 p-3 bg-bg-subtle border border-border rounded-md">
+          <span class="i-lucide:user w-4 h-4 text-fg-subtle shrink-0" aria-hidden="true" />
+          <span class="font-mono text-sm text-fg">@{{ removeTarget?.username }}</span>
+        </div>
+
+        <!-- Error message -->
+        <div
+          v-if="removeError"
+          class="p-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-md"
+          role="alert"
+        >
+          {{ removeError }}
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="flex-1 px-4 py-2 font-mono text-sm text-fg-muted bg-bg-subtle border border-border rounded-md transition-colors duration-200 hover:text-fg hover:border-border-hover focus-visible:outline-accent/70"
+            :disabled="isRemoving"
+            @click="closeRemoveDialog"
+          >
+            {{ $t('common.close') }}
+          </button>
+          <button
+            type="button"
+            class="flex-1 px-4 py-2 font-mono text-sm text-white bg-red-600 rounded-md transition-colors duration-200 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-accent/70"
+            :disabled="isRemoving"
+            @click="handleRemoveOwner"
+          >
+            <span v-if="isRemoving" class="flex items-center justify-center gap-2">
+              <span class="i-svg-spinners:ring-resize w-4 h-4 animate-spin" aria-hidden="true" />
+              {{ $t('package.maintainers.remove.removing') }}
+            </span>
+            <span v-else>{{ $t('package.maintainers.remove.confirm') }}</span>
+          </button>
+        </div>
+      </div>
+    </Modal>
+  </ClientOnly>
 </template>

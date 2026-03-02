@@ -141,6 +141,7 @@ export interface ConnectorEndpoints {
   'GET /org/:org/users': { body: never; data: Record<string, OrgRole> }
   'GET /org/:org/teams': { body: never; data: string[] }
   'GET /team/:scopeTeam/users': { body: never; data: string[] }
+  'GET /team/:scopeTeam/packages': { body: never; data: Record<string, AccessPermission> }
   'GET /package/:pkg/collaborators': { body: never; data: Record<string, AccessPermission> }
   'GET /user/packages': { body: never; data: Record<string, AccessPermission> }
   'GET /user/orgs': { body: never; data: string[] }

@@ -14,10 +14,15 @@ const props = defineProps<{
   filters?: StructuredFilters
   /** Search query for highlighting exact matches */
   searchQuery?: string
+  /** Whether selection mode is enabled */
+  selectionMode?: boolean
+  /** Whether this package is selected */
+  isSelected?: boolean
 }>()
 
 const emit = defineEmits<{
   clickKeyword: [keyword: string]
+  toggleSelect: [packageName: string]
 }>()
 
 /** Check if this package is an exact match for the search query */
@@ -39,8 +44,27 @@ const numberFormatter = useNumberFormatter()
 </script>
 
 <template>
-  <BaseCard :isExactMatch="isExactMatch">
+  <BaseCard :isExactMatch="isExactMatch" :class="{ 'ring-2 ring-accent-fallback': isSelected }">
     <div class="mb-2 flex items-baseline justify-start gap-2">
+      <!-- Selection checkbox -->
+      <label
+        v-if="selectionMode"
+        class="relative z-10 flex items-center cursor-pointer shrink-0"
+        @click.stop
+      >
+        <input
+          type="checkbox"
+          :checked="isSelected"
+          class="peer sr-only"
+          :aria-label="$t('package.bulk.select_package', { name: result.package.name })"
+          @change="emit('toggleSelect', result.package.name)"
+        />
+        <span
+          class="w-4 h-4 rounded border border-border bg-bg flex items-center justify-center transition-colors duration-200 peer-checked:bg-accent-fallback peer-checked:border-accent-fallback peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-accent-fallback"
+        >
+          <span v-if="isSelected" class="i-lucide:check w-3 h-3 text-bg" aria-hidden="true" />
+        </span>
+      </label>
       <component
         :is="headingLevel ?? 'h3'"
         class="font-mono text-sm sm:text-base font-medium text-fg group-hover:text-fg transition-colors duration-200 min-w-0 break-all"

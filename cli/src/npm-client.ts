@@ -549,6 +549,16 @@ export async function listUserPackages(user: string): Promise<NpmExecResult> {
 }
 
 /**
+ * Lists all packages that a team has access to.
+ * Uses `npm access list packages {scopeTeam} --json`
+ * Returns a map of package name to permission level
+ */
+export async function listTeamPackages(scopeTeam: string): Promise<NpmExecResult> {
+  validateScopeTeam(scopeTeam)
+  return execNpm(['access', 'list', 'packages', scopeTeam, '--json'], { silent: true })
+}
+
+/**
  * Initialize and publish a new package to claim the name.
  * Creates a minimal package.json in a temp directory and publishes it.
  * @param name Package name to claim

@@ -348,6 +348,15 @@ export const useConnector = createSharedComposable(function useConnector() {
     return response?.success ? (response.data ?? null) : null
   }
 
+  async function listTeamPackages(
+    scopeTeam: string,
+  ): Promise<Record<string, 'read-only' | 'read-write'> | null> {
+    const response = await connectorFetch<ApiResponse<Record<string, 'read-only' | 'read-write'>>>(
+      `/team/${encodeURIComponent(scopeTeam)}/packages`,
+    )
+    return response?.success ? (response.data ?? null) : null
+  }
+
   async function listPackageCollaborators(
     pkg: string,
   ): Promise<Record<string, 'read-only' | 'read-write'> | null> {
@@ -448,6 +457,7 @@ export const useConnector = createSharedComposable(function useConnector() {
     listOrgUsers,
     listOrgTeams,
     listTeamUsers,
+    listTeamPackages,
     listPackageCollaborators,
     listUserPackages,
     listUserOrgs,
