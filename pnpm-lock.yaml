@@ -248,7 +248,7 @@ importers:
         specifier: 1.58.2
         version: 1.58.2
       '@shikijs/markdown-it':
-        specifier: ^3.21.0
+        specifier: 3.23.0
         version: 3.23.0(markdown-it-async@2.2.0)
       '@storybook-vue/nuxt':
         specifier: catalog:storybook
@@ -326,7 +326,7 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
       unplugin-vue-markdown:
-        specifier: ^29.2.0
+        specifier: 29.2.0
         version: 29.2.0(vite@8.0.0-beta.10(@types/node@24.10.13)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.46.0)(tsx@4.21.0)(yaml@2.8.2))
       vitest:
         specifier: npm:@voidzero-dev/vite-plus-test@0.0.0-g52709db6.20260226-1136
