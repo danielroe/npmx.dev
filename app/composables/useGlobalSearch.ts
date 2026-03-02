@@ -23,21 +23,14 @@ export function useGlobalSearch(place: 'header' | 'content' = 'content') {
     return normalizeSearchParam(route.query.q)
   })
 
-  // Committed searchQuery: last value submitted by user
-  // Syncs instantly when instant search is on VS only on Enter presswhen off
-  const committedSearchQuery = useState<string>('committed-search-query', () => {
-    if (pagesWithLocalFilter.has(route.name as string)) {
-      return ''
-    }
-    return normalizeSearchParam(route.query.q)
-  })
+  // Committed search query: last value submitted by user
+  // Syncs instantly when instantSearch is on, but only on Enter press when off
+  const committedSearchQuery = useState<string>('committed-search-query', () => searchQuery.value)
 
+  // This is basically doing instant search as user types
   watch(searchQuery, val => {
     if (settings.value.instantSearch) {
       committedSearchQuery.value = val
-    } else if (!val) {
-      // Only clear committed query when input is cleared
-      committedSearchQuery.value = ''
     }
   })
 
@@ -96,7 +89,8 @@ export function useGlobalSearch(place: 'header' | 'content' = 'content') {
     set: async (value: string) => {
       searchQuery.value = value
 
-      // When instant search is off, skip debounced URL updates — only flushUpdateUrlQuery commits and navigates
+      // When instant search is off, skip debounced URL updates
+      // Only explicitly called flushUpdateUrlQuery commits and navigates
       if (!settings.value.instantSearch) return
 
       // Leading debounce implementation as it doesn't work properly out of the box (https://github.com/unjs/perfect-debounce/issues/43)
