@@ -1168,7 +1168,7 @@
     "meta_description": "The official AT Protocol Personal Data Server (PDS) for the npmx community.",
     "join": {
       "title": "Join the Community",
-      "description": "Whether you are creating your first Bluesky account or migrating an existing one, you belong here. You can migrate your current account without losing your handle, your posts, or your followers.",
+      "description": "Whether you are creating your first account on the atmosphere or migrating an existing one, you belong here. You can migrate your current account without losing your handle, your posts, or your followers.",
       "migrate": "Migrate with PDS MOOver"
     },
     "server": {
@@ -1183,10 +1183,12 @@
     "community": {
       "title": "Who is here",
       "description": "They are already calling npmx.social home.",
+      "account_count": "Home to {count} accounts",
       "loading": "Loading PDS community...",
       "error": "Failed to load PDS community.",
       "empty": "No community members to display.",
-      "view_profile": "View {handle}'s profile"
+      "view_profile": "View {handle}'s profile",
+      "new_accounts": "+{count} new to the atmosphere"
     }
   },
   "privacy_policy": {

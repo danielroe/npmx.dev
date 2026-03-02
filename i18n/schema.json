@@ -3553,6 +3553,9 @@
             "description": {
               "type": "string"
             },
+            "account_count": {
+              "type": "string"
+            },
             "loading": {
               "type": "string"
             },
@@ -3563,6 +3566,9 @@
               "type": "string"
             },
             "view_profile": {
+              "type": "string"
+            },
+            "new_accounts": {
               "type": "string"
             }
           },
