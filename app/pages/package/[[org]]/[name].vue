@@ -1400,8 +1400,8 @@ const showSkeleton = shallowRef(false)
       <section id="readme" class="min-w-0 scroll-mt-20" :class="$style.areaReadme">
         <div
           ref="readmeHeader"
-          class="flex sticky top-34 z-10 flex-wrap items-center justify-between mb-3 py-1 -mx-1 px-2 rounded-md transition-shadow duration-200"
-          :class="{ 'bg-bg shadow-sm': isReadmeHeaderPinned }"
+          class="flex sticky top-34 z-10 flex-wrap items-center justify-between mb-3 py-2 -mx-1 px-2 transition-shadow duration-200"
+          :class="{ 'bg-bg border-border border-b': isReadmeHeaderPinned }"
         >
           <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
             <LinkBase to="#readme">
