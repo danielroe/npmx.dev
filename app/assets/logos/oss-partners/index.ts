@@ -25,12 +25,7 @@ import LogoNapiRs from './napi-rs.png'
 import LogoValibot from './valibot.svg'
 import LogoFastCheck from './fast-check.svg'
 import LogoLunaria from './lunaria.svg'
-import LogoTypescript from './typescript.svg'
-import LogoNode from './nodejs.svg'
 import LogoJsr from './jsr.svg'
-import LogoDeno from './deno.svg'
-import LogoDenoLight from './deno-light.svg'
-import LogoPlaywright from './playwright.svg'
 import LogoIconify from './iconify.svg'
 import LogoFloatingUi from './floating-ui-vue.svg'
 
@@ -174,32 +169,9 @@ export const OSS_PARTNERS = [
     url: 'https://lunaria.dev/',
   },
   {
-    name: 'TypeScript',
-    logo: LogoTypescript,
-    url: 'https://www.typescriptlang.org/',
-  },
-  {
-    name: 'Node.js',
-    logo: LogoNode,
-    url: 'https://nodejs.org/',
-  },
-  {
     name: 'JSR',
     logo: LogoJsr,
     url: 'https://jsr.io/',
-  },
-  {
-    name: 'Deno',
-    logo: {
-      dark: LogoDeno,
-      light: LogoDenoLight,
-    },
-    url: 'https://deno.com/',
-  },
-  {
-    name: 'Playwright',
-    logo: LogoPlaywright,
-    url: 'https://playwright.dev/',
   },
   {
     name: 'Iconify',
