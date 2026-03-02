@@ -150,6 +150,12 @@ headline="Read more from the community"
     description: 'How VoidZero and npmx.dev share a vision for making JavaScript developers more productive, and how real-world feedback from open-source builders helps improve our tooling.',
   },
   {
+    url: 'https://www.faziz-dev.com/blog/community-open-source-and-npmx',
+    title: 'Community, Open Source, and npmx',
+    authorHandle: 'farisaziz12.bsky.social',
+    description: 'npmx isn’t just an npm browser, it\'s a fast-moving open source train that welcomes you aboard the moment you show up.',
+  },
+  {
     url: 'https://paulie.codes/blog/3mfs2stugzp2v',
     title: 'Overcoming Imposter Syndrome: My First Open Source Contribution',
     authorHandle: 'paulie.codes',
