@@ -249,7 +249,7 @@ const config = computed<VueUiSparklineConfig>(() => {
         color: colors.value.borderHover,
         pulse: {
           show: true, // the pulse will not show if prefers-reduced-motion (enforced by vue-data-ui)
-          loop: false, // runs only once if false
+          loop: false,
           radius: 1.5,
           color: pulseColor.value!,
           easing: 'ease-in-out',
