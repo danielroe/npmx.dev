@@ -105,6 +105,9 @@ importers:
       '@shikijs/langs':
         specifier: 4.0.1
         version: 4.0.1
+      '@shikijs/markdown-exit':
+        specifier: 4.0.1
+        version: 4.0.1
       '@shikijs/themes':
         specifier: 4.0.1
         version: 4.0.1
@@ -162,9 +165,6 @@ importers:
       ipaddr.js:
         specifier: 2.3.0
         version: 2.3.0
-      markdown-it-anchor:
-        specifier: 9.2.0
-        version: 9.2.0(@types/markdown-it@14.1.2)(markdown-it@14.1.1)
       marked:
         specifier: 17.0.3
         version: 17.0.3
@@ -250,9 +250,6 @@ importers:
       '@playwright/test':
         specifier: 1.58.2
         version: 1.58.2
-      '@shikijs/markdown-it':
-        specifier: 4.0.1
-        version: 4.0.1(markdown-it-async@2.2.0)
       '@storybook-vue/nuxt':
         specifier: catalog:storybook
         version: 9.0.1(e0a8bee95c063cc08cafc75875a9661c)
@@ -310,6 +307,9 @@ importers:
       lint-staged:
         specifier: 16.2.7
         version: 16.2.7
+      markdown-it-anchor:
+        specifier: 9.2.0
+        version: 9.2.0(@types/markdown-it@14.1.2)(markdown-it@14.1.1)
       oxfmt:
         specifier: 0.35.0
         version: 0.35.0
@@ -4171,14 +4171,9 @@ packages:
     resolution: {integrity: sha512-v/mluaybWdnGJR4GqAR6zh8qAZohW9k+cGYT28Y7M8+jLbC0l4yG085O1A+WkseHTn+awd+P3UBymb2+MXFc8w==}
     engines: {node: '>=20'}
 
-  '@shikijs/markdown-it@4.0.1':
-    resolution: {integrity: sha512-JxF2AfpQ0Mr9+t4JkPqLocS9+FSTO49mqVR3lqgFQH1fJQ0+mq5Gq7eM71kp8cFm2oOzEf24rrZfMIDjBmVAYw==}
+  '@shikijs/markdown-exit@4.0.1':
+    resolution: {integrity: sha512-I9Xl6YKny1uB8Qy8tsdvXhqzPo00UvXfnGKEAtoZbo3g4NdTq+mo3HwY1BZKA28uEfgHvLa69JU3wmw8D2Lmuw==}
     engines: {node: '>=20'}
-    peerDependencies:
-      markdown-it-async: ^2.2.0
-    peerDependenciesMeta:
-      markdown-it-async:
-        optional: true
 
   '@shikijs/primitive@4.0.1':
     resolution: {integrity: sha512-ns0hHZc5eWZuvuIEJz2pTx3Qecz0aRVYumVQJ8JgWY2tq/dH8WxdcVM49Fc2NsHEILNIT6vfdW9MF26RANWiTA==}
@@ -7843,9 +7838,6 @@ packages:
     peerDependencies:
       '@types/markdown-it': '*'
       markdown-it: '*'
-
-  markdown-it-async@2.2.0:
-    resolution: {integrity: sha512-sITME+kf799vMeO/ww/CjH6q+c05f6TLpn6VOmmWCGNqPJzSh+uFgZoMB9s0plNtW6afy63qglNAC3MhrhP/gg==}
 
   markdown-it@14.1.1:
     resolution: {integrity: sha512-BuU2qnTti9YKgK5N+IeMubp14ZUKUUw7yeJbkjtosvHiP0AZ5c8IAgEMk79D0eC8F23r4Ac/q8cAIFdm2FtyoA==}
@@ -14951,12 +14943,10 @@ snapshots:
     dependencies:
       '@shikijs/types': 4.0.1
 
-  '@shikijs/markdown-it@4.0.1(markdown-it-async@2.2.0)':
+  '@shikijs/markdown-exit@4.0.1':
     dependencies:
-      markdown-it: 14.1.1
+      markdown-exit: 1.0.0-beta.8
       shiki: 4.0.1
-    optionalDependencies:
-      markdown-it-async: 2.2.0
 
   '@shikijs/primitive@4.0.1':
     dependencies:
@@ -19326,12 +19316,6 @@ snapshots:
     dependencies:
       '@types/markdown-it': 14.1.2
       markdown-it: 14.1.1
-
-  markdown-it-async@2.2.0:
-    dependencies:
-      '@types/markdown-it': 14.1.2
-      markdown-it: 14.1.1
-    optional: true
 
   markdown-it@14.1.1:
     dependencies:
