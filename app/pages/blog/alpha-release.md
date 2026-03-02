@@ -70,7 +70,7 @@ We want to build a better package browsing and management experience for everyon
 ## Join us at npmx
 
 We'd love for you to get involved. Even if you've never contributed to open source before &ndash; you are welcome. If you're not sure where to start, Salma Alam-Naylor has written
-[a ten step guide to making your first open-source contribution on GitHub](https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/).
+[a ten-step guide to making your first open-source contribution on GitHub](https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/).
 
 Below this post, you'll also find articles from npmx contributors sharing their own perspectives and experiences.
 
