@@ -8,6 +8,7 @@ import { read } from 'gray-matter'
 import { safeParse } from 'valibot'
 import { BlogPostSchema, type BlogPostFrontmatter } from '../shared/schemas/blog'
 import { globSync } from 'tinyglobby'
+import { isProduction } from '../config/env'
 
 /**
  * Scans the blog directory for .md files and extracts validated frontmatter.
@@ -75,13 +76,13 @@ export default defineNuxtModule({
       }),
     )
 
-    // Expose frontmatter for published (non-draft) posts to avoid bundling the
-    // full content of all posts in the `/blog` listing page.
+    // Expose frontmatter for the `/blog` listing page.
+    const showDrafts = nuxt.options.dev || !isProduction
     addTemplate({
       filename: 'blog/posts.ts',
       write: true,
       getContents: () => {
-        const posts = loadBlogPosts(blogDir).filter(p => !p.draft)
+        const posts = loadBlogPosts(blogDir).filter(p => showDrafts || !p.draft)
         return [
           `import type { BlogPostFrontmatter } from '#shared/schemas/blog'`,
           ``,
