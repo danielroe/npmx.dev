@@ -1,4 +1,4 @@
-import { Client } from '@atproto/lex'
+import { Client, type AtIdentifierString } from '@atproto/lex'
 import * as app from '#shared/types/lexicons/app'
 import type { AtprotoProfile } from '#shared/types/atproto'
 
@@ -64,7 +64,7 @@ export default defineCachedEventHandler(
         const data = await blueskyClient.call(
           app.bsky.actor.getProfiles,
           {
-            actors: batch,
+            actors: batch as AtIdentifierString[],
           },
           { validateResponse: false },
         )

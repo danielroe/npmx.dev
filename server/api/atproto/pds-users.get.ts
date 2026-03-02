@@ -1,4 +1,4 @@
-import { Client } from '@atproto/lex'
+import { Client, type AtIdentifierString } from '@atproto/lex'
 import * as app from '#shared/types/lexicons/app'
 import { BLUESKY_API, ERROR_PDS_FETCH_FAILED } from '#shared/utils/constants'
 import type { AtprotoProfile } from '#shared/types/atproto'
@@ -56,7 +56,11 @@ export default defineCachedEventHandler(
 
       batchPromises.push(
         blueskyClient
-          .call(app.bsky.actor.getProfiles, { actors: batch }, { validateResponse: false })
+          .call(
+            app.bsky.actor.getProfiles,
+            { actors: batch as AtIdentifierString[] },
+            { validateResponse: false },
+          )
           .then(data =>
             data.profiles.map(profile => ({
               did: profile.did,
