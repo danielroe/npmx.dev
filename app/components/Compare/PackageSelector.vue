@@ -116,12 +116,44 @@ function removePackage(name: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  if (!keyboardShortcuts.value) {
+  const items = navigableItems.value
+  const count = items.length
+
+  if (e.key === 'Enter') {
+    const inputValueTrim = inputValue.value.trim()
+    if (!inputValueTrim) return
+
+    e.preventDefault()
+
+    // When instant search is off, first Enter commits the query to trigger search
+    if (!settings.value.instantSearch && committedInput.value !== inputValueTrim) {
+      committedInput.value = inputValueTrim
+      return
+    }
+
+    // If an item is highlighted, select it
+    if (highlightedIndex.value >= 0 && highlightedIndex.value < count) {
+      addPackage(items[highlightedIndex.value]!.name)
+      return
+    }
+
+    // Fallback: exact match or easter egg (preserves existing behavior)
+    if (showNoDependencyOption.value) {
+      addPackage(NO_DEPENDENCY_ID)
+    } else {
+      const hasMatch = filteredResults.value.find(r => r.name === inputValueTrim)
+      if (hasMatch) {
+        addPackage(inputValueTrim)
+      }
+    }
+
     return
   }
 
-  const items = navigableItems.value
-  const count = items.length
+  // If keyboard shortcuts are disabled - do not handle other keys
+  if (!keyboardShortcuts.value) {
+    return
+  }
 
   switch (e.key) {
     case 'ArrowDown':
@@ -159,36 +191,6 @@ function handleKeydown(e: KeyboardEvent) {
       if (count === 0) return
       highlightedIndex.value = Math.max(highlightedIndex.value - PAGE_JUMP, 0)
       break
-
-    case 'Enter': {
-      const inputValueTrim = inputValue.value.trim()
-      if (!inputValueTrim) return
-
-      e.preventDefault()
-
-      // When instant search is off, first Enter commits the query to trigger search
-      if (!settings.value.instantSearch && committedInput.value !== inputValueTrim) {
-        committedInput.value = inputValueTrim
-        return
-      }
-
-      // If an item is highlighted, select it
-      if (highlightedIndex.value >= 0 && highlightedIndex.value < count) {
-        addPackage(items[highlightedIndex.value]!.name)
-        return
-      }
-
-      // Fallback: exact match or easter egg (preserves existing behavior)
-      if (showNoDependencyOption.value) {
-        addPackage(NO_DEPENDENCY_ID)
-      } else {
-        const hasMatch = filteredResults.value.find(r => r.name === inputValueTrim)
-        if (hasMatch) {
-          addPackage(inputValueTrim)
-        }
-      }
-      break
-    }
 
     case 'Escape':
       inputValue.value = ''
