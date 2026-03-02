@@ -64,7 +64,9 @@
       "org": "org",
       "view_user_packages": "View packages by this user",
       "view_org_packages": "View packages by this organization"
-    }
+    },
+    "instant_search": "Instant search",
+    "instant_search_advisory": "{label}: navigate to results as you type. Turn off in {settings} or press {shortcut}."
   },
   "nav": {
     "main_navigation": "Main",
