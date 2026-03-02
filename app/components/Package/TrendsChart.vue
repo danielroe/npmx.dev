@@ -1620,7 +1620,7 @@ const chartConfig = computed<VueUiXyConfig>(() => {
             const index = Number(absoluteIndex)
             if (Number.isInteger(index) && index >= 0 && index < chartData.value.dates.length) {
               const timestamp = chartData.value.dates[index]
-              if (timestamp) {
+              if (typeof timestamp === 'number') {
                 formattedDate = tooltipDateFormatter.value.format(new Date(timestamp))
               }
             }
