@@ -57,9 +57,6 @@ const {
   setSort,
 } = useStructuredFilters({
   packages,
-  initialFilters: {
-    ...parseSearchOperators(normalizeSearchParam(route.query.q)),
-  },
   initialSort: (normalizeSearchParam(route.query.sort) as SortOption) ?? 'updated-desc',
 })
 

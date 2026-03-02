@@ -23,6 +23,8 @@ import {
 } from '#shared/utils/constants'
 import { parseRepoUrl } from '#shared/utils/git-providers'
 import { encodePackageName } from '#shared/utils/npm'
+import { flattenFileTree } from '#server/utils/import-resolver'
+import { getPackageFileTree } from '#server/utils/file-tree'
 import { getLatestVersion, getLatestVersionBatch } from 'fast-npm-meta'
 
 interface AnalysisPackageJson extends ExtendedPackageJson {
@@ -50,18 +52,36 @@ export default defineCachedEventHandler(
         `${NPM_REGISTRY}/${encodedName}${versionSuffix}`,
       )
 
-      // Only check for @types package if the package doesn't ship its own types
       let typesPackage: TypesPackageInfo | undefined
+      let files: Set<string> | undefined
+
+      // Only check for @types and files when the package doesn't ship its own types
       if (!hasBuiltInTypes(pkg)) {
         const typesPkgName = getTypesPackageName(packageName)
-        typesPackage = await fetchTypesPackageInfo(typesPkgName)
+        const resolvedVersion = pkg.version ?? version ?? 'latest'
+
+        // Fetch @types info and file tree in parallel — they are independent
+        const [typesResult, fileTreeResult] = await Promise.allSettled([
+          fetchTypesPackageInfo(typesPkgName),
+          getPackageFileTree(packageName, resolvedVersion),
+        ])
+
+        if (typesResult.status === 'fulfilled') {
+          typesPackage = typesResult.value
+        }
+        if (fileTreeResult.status === 'fulfilled') {
+          files = flattenFileTree(fileTreeResult.value.tree)
+        }
       }
 
       // Check for associated create-* package (e.g., vite -> create-vite, next -> create-next-app)
       // Only show if the packages are actually associated (same maintainers or same org)
       const createPackage = await findAssociatedCreatePackage(packageName, pkg)
-
-      const analysis = analyzePackage(pkg, { typesPackage, createPackage })
+      const analysis = analyzePackage(pkg, {
+        typesPackage,
+        createPackage,
+        files,
+      })
       const devDependencySuggestion = getDevDependencySuggestion(packageName, pkg.readme)
 
       return {

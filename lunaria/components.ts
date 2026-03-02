@@ -221,14 +221,16 @@ export const StatusByFile = (
 		<h2 id="by-file">
 			<a href="#by-file">Translation status by file</a>
 		</h2>
-		<table class="status-by-file">
-			<thead>
-				<tr>
-					${['File', ...locales.map(({ lang }) => lang)].map(col => html`<th>${col}</th>`)}
-				</tr>
-			</thead>
-			${TableBody(status, locales, lunaria)}
-		</table>
+		<div class="status-by-file-wrapper">
+			<table class="status-by-file">
+				<thead>
+					<tr>
+						${['File', ...locales.map(({ lang }) => lang)].map(col => html`<th>${col}</th>`)}
+					</tr>
+				</thead>
+				${TableBody(status, locales, lunaria)}
+			</table>
+		</div>
 		<sup class="capitalize">❌ missing &nbsp; 🔄 outdated &nbsp; ✔ done </sup>
 	`
 }

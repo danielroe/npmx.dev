@@ -41,7 +41,7 @@ function handleCardClick(event: MouseEvent) {
 
 <template>
   <div>
-    <h2 class="text-lg text-fg-subtle uppercase tracking-wider mb-6">
+    <h2 class="text-lg text-fg uppercase tracking-wider mb-6">
       {{ $t('about.get_involved.title') }}
     </h2>
 
