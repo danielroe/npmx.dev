@@ -1,8 +1,9 @@
+import { Client } from '@atproto/lex'
+import * as app from '#shared/types/lexicons/app'
 import type { AtprotoProfile } from '#shared/types/atproto'
 
 import {
-  ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC,
-  BSKY_APP_VIEW_USER_PROFILES_XRPC,
+  BLUESKY_API,
   ERROR_PDS_FETCH_FAILED,
 } from '#shared/utils/constants'
 
@@ -11,11 +12,25 @@ interface GraphLink {
   target: string
 }
 
+const NPMX_PDS_HOST = 'https://npmx.social'
+const LIST_REPOS_LIMIT = 1000
 const USER_BATCH_AMOUNT = 25
 
-export default defineCachedEventHandler(
-  async (): Promise<{ nodes: AtprotoProfile[]; links: GraphLink[] }> => {
-    const response = await fetch(ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC)
+const blueskyClient = new Client({ service: BLUESKY_API })
+
+/**
+ * Paginate through all repos on the npmx PDS via com.atproto.sync.listRepos.
+ */
+async function fetchAllDids(): Promise<string[]> {
+  const dids: string[] = []
+  let cursor: string | undefined
+
+  do {
+    const url = new URL(`${NPMX_PDS_HOST}/xrpc/com.atproto.sync.listRepos`)
+    url.searchParams.set('limit', String(LIST_REPOS_LIMIT))
+    if (cursor) url.searchParams.set('cursor', cursor)
+
+    const response = await fetch(url.toString())
 
     if (!response.ok) {
       throw createError({
@@ -24,61 +39,75 @@ export default defineCachedEventHandler(
       })
     }
 
-    const listRepos = (await response.json()) as { repos: { did: string }[] }
-    const dids = listRepos.repos.map(repo => repo.did)
+    const data = (await response.json()) as {
+      repos: { did: string }[]
+      cursor?: string
+    }
+
+    dids.push(...data.repos.map(repo => repo.did))
+    cursor = data.cursor
+  } while (cursor)
+
+  return dids
+}
+
+export default defineCachedEventHandler(
+  async (): Promise<{ nodes: AtprotoProfile[]; links: GraphLink[] }> => {
+    const dids = await fetchAllDids()
     const localDids = new Set(dids)
 
     const nodes: AtprotoProfile[] = []
     const links: GraphLink[] = []
 
+    // Fetch profiles in batches using the @atproto/lex client
     for (let i = 0; i < dids.length; i += USER_BATCH_AMOUNT) {
       const batch = dids.slice(i, i + USER_BATCH_AMOUNT)
 
-      const url = new URL(BSKY_APP_VIEW_USER_PROFILES_XRPC)
-      for (const did of batch) {
-        url.searchParams.append('actors', did)
-      }
-
       try {
-        const profilesResponse = await fetch(url.toString())
+        const data = await blueskyClient.call(app.bsky.actor.getProfiles, {
+          actors: batch,
+        })
 
-        if (!profilesResponse.ok) {
-          console.warn(`Failed to fetch atproto profiles: ${profilesResponse.status}`)
-          continue
-        }
-
-        const profilesData = (await profilesResponse.json()) as { profiles: AtprotoProfile[] }
-
-        if (profilesData.profiles) {
-          nodes.push(...profilesData.profiles)
-        }
+        nodes.push(
+          ...data.profiles.map(profile => ({
+            did: profile.did,
+            handle: profile.handle,
+            displayName: profile.displayName,
+            avatar: profile.avatar,
+          })),
+        )
       } catch (error) {
         console.warn('Failed to fetch atproto profiles:', error)
       }
     }
 
+    // Fetch follow graphs (no lexicon type for getFollows, using raw fetch)
     for (const did of dids) {
-      const followResponse = await fetch(
-        `https://public.api.bsky.app/xrpc/app.bsky.graph.getFollows?actor=${did}`,
-      )
+      try {
+        const followResponse = await fetch(
+          `https://public.api.bsky.app/xrpc/app.bsky.graph.getFollows?actor=${did}`,
+        )
 
-      if (!followResponse.ok) {
-        console.warn(`Failed to fetch follows: ${followResponse.status}`)
-        continue
-      }
-
-      const followData = await followResponse.json()
-
-      for (const followedUser of followData.follows) {
-        if (localDids.has(followedUser.did)) {
-          links.push({ source: did, target: followedUser.did })
+        if (!followResponse.ok) {
+          console.warn(`Failed to fetch follows: ${followResponse.status}`)
+          continue
         }
+
+        const followData = (await followResponse.json()) as {
+          follows: { did: string }[]
+        }
+
+        for (const followedUser of followData.follows) {
+          if (localDids.has(followedUser.did)) {
+            links.push({ source: did, target: followedUser.did })
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to fetch follows:', error)
       }
     }
-    return {
-      nodes,
-      links,
-    }
+
+    return { nodes, links }
   },
   {
     maxAge: 3600,

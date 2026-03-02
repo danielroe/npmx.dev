@@ -1,16 +1,32 @@
+import { Client } from '@atproto/lex'
+import * as app from '#shared/types/lexicons/app'
 import {
-  ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC,
-  BSKY_APP_VIEW_USER_PROFILES_XRPC,
+  BLUESKY_API,
   ERROR_PDS_FETCH_FAILED,
 } from '#shared/utils/constants'
 import type { AtprotoProfile } from '#shared/types/atproto'
 
+const NPMX_PDS_HOST = 'https://npmx.social'
+const LIST_REPOS_LIMIT = 1000
 const USER_BATCH_AMOUNT = 25
 
-export default defineCachedEventHandler(
-  async (): Promise<AtprotoProfile[]> => {
-    // INFO: Request npmx.social PDS for every hosted user account
-    const response = await fetch(ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC)
+const blueskyClient = new Client({ service: BLUESKY_API })
+
+/**
+ * Paginate through all repos on the npmx PDS via com.atproto.sync.listRepos.
+ * The lexicon type isn't generated in this codebase, so we use raw fetch
+ * with cursor-based pagination to handle >1k accounts.
+ */
+async function fetchAllDids(): Promise<string[]> {
+  const dids: string[] = []
+  let cursor: string | undefined
+
+  do {
+    const url = new URL(`${NPMX_PDS_HOST}/xrpc/com.atproto.sync.listRepos`)
+    url.searchParams.set('limit', String(LIST_REPOS_LIMIT))
+    if (cursor) url.searchParams.set('cursor', cursor)
+
+    const response = await fetch(url.toString())
 
     if (!response.ok) {
       throw createError({
@@ -19,34 +35,46 @@ export default defineCachedEventHandler(
       })
     }
 
-    const listRepos = (await response.json()) as { repos: { did: string }[] }
-    const dids = listRepos.repos.map(repo => repo.did)
+    const data = (await response.json()) as {
+      repos: { did: string }[]
+      cursor?: string
+    }
 
-    // INFO: Request the list of user profiles from the Bluesky AppView
+    dids.push(...data.repos.map(repo => repo.did))
+    cursor = data.cursor
+  } while (cursor)
+
+  return dids
+}
+
+export default defineCachedEventHandler(
+  async (): Promise<AtprotoProfile[]> => {
+    const dids = await fetchAllDids()
+
+    // Fetch profiles in batches of 25 (API limit) using the @atproto/lex client
     const batchPromises: Promise<AtprotoProfile[]>[] = []
 
     for (let i = 0; i < dids.length; i += USER_BATCH_AMOUNT) {
       const batch = dids.slice(i, i + USER_BATCH_AMOUNT)
-      const url = new URL(BSKY_APP_VIEW_USER_PROFILES_XRPC)
-
-      for (const did of batch) url.searchParams.append('actors', did)
 
       batchPromises.push(
-        fetch(url.toString())
-          .then(res => {
-            if (!res.ok) throw new Error(`Status ${res.status}`)
-            return res.json() as Promise<{ profiles: AtprotoProfile[] }>
-          })
-          .then(data => data.profiles || [])
-          .catch(err => {
+        blueskyClient
+          .call(app.bsky.actor.getProfiles, { actors: batch })
+          .then(data =>
+            data.profiles.map(profile => ({
+              did: profile.did,
+              handle: profile.handle,
+              displayName: profile.displayName,
+              avatar: profile.avatar,
+            })),
+          )
+          .catch((err) => {
             console.warn('Failed to fetch batch:', err)
-            // Return empty array on failure so Promise.all doesn't crash
             return []
           }),
       )
     }
 
-    // INFO: Await all batches in parallel and flatten the results
     return (await Promise.all(batchPromises)).flat()
   },
   {

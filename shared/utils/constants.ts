@@ -15,11 +15,6 @@ export const BLUESKY_API = 'https://public.api.bsky.app'
 export const BLUESKY_COMMENTS_REQUEST = '/api/atproto/bluesky-comments'
 export const NPM_REGISTRY = 'https://registry.npmjs.org'
 export const NPM_API = 'https://api.npmjs.org'
-export const ONE_THOUSAND_NPMX_USER_ACCOUNTS_XRPC =
-  'https://npmx.social/xrpc/com.atproto.sync.listRepos?limit=1000'
-export const BSKY_APP_VIEW_USER_PROFILES_XRPC =
-  'https://public.api.bsky.app/xrpc/app.bsky.actor.getProfiles'
-
 // Error Messages
 export const ERROR_PACKAGE_ANALYSIS_FAILED = 'Failed to analyze package.'
 export const ERROR_PACKAGE_VERSION_AND_FILE_FAILED = 'Version and file path are required.'
