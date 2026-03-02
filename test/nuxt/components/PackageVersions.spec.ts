@@ -949,7 +949,7 @@ describe('PackageVersions', () => {
       })
 
       const expandButton = component.find('button[aria-expanded]')
-      expect(expandButton.classes().some(c => c.includes('focus-visible'))).toBe(true)
+      expect(expandButton.classes().some(c => c.includes('focus-ring-accent'))).toBe(true)
     })
 
     it('icons have aria-hidden attribute', async () => {
