@@ -50,6 +50,7 @@ import {
   ownerAdd,
   ownerRemove,
   packageInit,
+  packageDeprecate,
   listUserPackages,
   extractUrls,
   type ExecNpmOptions,
@@ -813,6 +814,15 @@ async function executeOperation(
       // and does not support interactive mode
       result = await packageInit(params.name, params.author, options.otp)
       break
+    case 'package:deprecate': {
+      const dryRun = params.dryRun === 'true'
+      const registry = params.registry?.trim() ?? undefined
+      result = await packageDeprecate(params.pkg, params.message, params.version, options.otp, {
+        dryRun: dryRun || undefined,
+        registry,
+      })
+      break
+    }
     default:
       return {
         stdout: '',
