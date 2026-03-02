@@ -1,26 +1,32 @@
 <script setup lang="ts">
 const { user } = useAtproto()
 
-const isResetting = ref(false)
+// --- Password Reset States ---
+const isResettingEmail = ref(false)
 const resetEmail = ref('')
 const isCodeSent = ref(false)
 const resetToken = ref('')
 const newPassword = ref('')
 const isConfirming = ref(false)
+const passwordError = ref('')
+const passwordSuccess = ref('')
 
-const errorMessage = ref('')
-const successMessage = ref('')
+// --- Handle Update States ---
+const newHandle = ref('')
+const isUpdatingHandle = ref(false)
+const handleError = ref('')
+const handleSuccess = ref('')
 
-async function handlePasswordReset() {
-  errorMessage.value = ''
-  successMessage.value = ''
+async function requestPasswordReset() {
+  passwordError.value = ''
+  passwordSuccess.value = ''
 
   if (!resetEmail.value) {
-    errorMessage.value = 'Please enter your email first.'
+    passwordError.value = 'Please enter your email first.'
     return
   }
 
-  isResetting.value = true
+  isResettingEmail.value = true
   try {
     await $fetch('/api/atproto/password-reset', {
       method: 'POST',
@@ -28,20 +34,20 @@ async function handlePasswordReset() {
     })
 
     isCodeSent.value = true
-    successMessage.value = 'Code sent! Check your email.'
+    passwordSuccess.value = 'Code sent! Check your email.'
   } catch (e: any) {
-    errorMessage.value = e.statusMessage || 'Something went wrong. Please try again.'
+    passwordError.value = e.statusMessage || 'Something went wrong. Please try again.'
   } finally {
-    isResetting.value = false
+    isResettingEmail.value = false
   }
 }
 
-async function handleConfirmReset() {
-  errorMessage.value = ''
-  successMessage.value = ''
+async function confirmPasswordReset() {
+  passwordError.value = ''
+  passwordSuccess.value = ''
 
   if (!resetToken.value || !newPassword.value) {
-    errorMessage.value = 'Please enter both the code and your new password.'
+    passwordError.value = 'Please enter both the code and your new password.'
     return
   }
 
@@ -55,17 +61,40 @@ async function handleConfirmReset() {
       },
     })
 
-    successMessage.value = 'Password updated successfully!'
+    passwordSuccess.value = 'Password updated successfully!'
 
-    // Reset the form
     isCodeSent.value = false
     resetToken.value = ''
     newPassword.value = ''
     resetEmail.value = ''
   } catch (e: any) {
-    errorMessage.value = e.statusMessage || 'Failed to update password. Check your code.'
+    passwordError.value = e.statusMessage || 'Failed to update password. Check your code.'
   } finally {
     isConfirming.value = false
+  }
+}
+
+async function updateHandle() {
+  handleError.value = ''
+  handleSuccess.value = ''
+
+  if (!newHandle.value) {
+    handleError.value = 'Please enter your new handle first'
+    return
+  }
+
+  isUpdatingHandle.value = true
+  try {
+    await $fetch('/api/atproto/handle-update', {
+      method: 'POST',
+      body: { handle: newHandle.value },
+    })
+
+    handleSuccess.value = 'Handle updated!'
+  } catch (e: any) {
+    handleError.value = e.statusMessage || 'Something went wrong. Please try again'
+  } finally {
+    isUpdatingHandle.value = false
   }
 }
 </script>
@@ -97,11 +126,12 @@ async function handleConfirmReset() {
         </p>
         <div class="flex gap-4">
           <input
+            v-model="newHandle"
             type="text"
             class="flex-1 bg-bg border border-border rounded-md px-3 py-2 font-mono text-sm max-w-md"
             :placeholder="user?.handle || 'New handle...'"
           />
-          <ButtonBase variant="primary">Update Handle</ButtonBase>
+          <ButtonBase variant="primary" @click="updateHandle">Update Handle</ButtonBase>
         </div>
       </section>
 
@@ -120,8 +150,8 @@ async function handleConfirmReset() {
       >
         <h3 class="font-mono text-lg text-fg">Reset Password</h3>
 
-        <p v-if="errorMessage" class="text-sm text-red-500 mb-2">{{ errorMessage }}</p>
-        <p v-if="successMessage" class="text-sm text-green-500 mb-2">{{ successMessage }}</p>
+        <p v-if="passwordError" class="text-sm text-red-500 mb-2">{{ passwordError }}</p>
+        <p v-if="passwordSuccess" class="text-sm text-green-500 mb-2">{{ passwordSuccess }}</p>
 
         <div v-if="!isCodeSent">
           <p class="text-sm text-fg-muted mb-2">
@@ -136,10 +166,10 @@ async function handleConfirmReset() {
           <ButtonBase
             variant="secondary"
             class="text-red-500 mt-2"
-            :disabled="isResetting || !resetEmail"
-            @click="handlePasswordReset"
+            :disabled="isResettingEmail || !resetEmail"
+            @click="requestPasswordReset"
           >
-            {{ isResetting ? 'Sending...' : 'Send Reset Code' }}
+            {{ isResettingEmail ? 'Sending...' : 'Send Reset Code' }}
           </ButtonBase>
         </div>
 
@@ -162,7 +192,7 @@ async function handleConfirmReset() {
             variant="secondary"
             class="text-red-500 mt-2"
             :disabled="isConfirming || !resetToken || !newPassword"
-            @click="handleConfirmReset"
+            @click="confirmPasswordReset"
           >
             {{ isConfirming ? 'Saving...' : 'Save New Password' }}
           </ButtonBase>
