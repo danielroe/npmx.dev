@@ -12,7 +12,6 @@ const maxPackages = computed(() => props.max ?? 4)
 
 // Input state
 const inputValue = shallowRef('')
-const committedInput = shallowRef('')
 const isInputFocused = shallowRef(false)
 
 // Keyboard navigation state
@@ -22,20 +21,7 @@ const PAGE_JUMP = 5
 
 // Use the shared search composable (supports both npm and Algolia providers)
 const { searchProvider } = useSearchProvider()
-const { settings } = useSettings()
-
-// When instantSearch is off, only search after Enter is pressed
-watch(inputValue, val => {
-  if (settings.value.instantSearch) {
-    committedInput.value = val
-  }
-
-  if (!val) {
-    committedInput.value = ''
-  }
-})
-
-const { data: searchData, status } = useSearch(committedInput, searchProvider, { size: 15 })
+const { data: searchData, status } = useSearch(inputValue, searchProvider, { size: 15 })
 
 const isSearching = computed(() => status.value === 'pending')
 
@@ -64,9 +50,7 @@ const showNoDependencyOption = computed(() => {
 
 // Filter out already selected packages
 const filteredResults = computed(() => {
-  // Intentionally clear results if input is empty
-  if (!committedInput.value || !searchData.value?.objects) return []
-
+  if (!searchData.value?.objects) return []
   return searchData.value.objects
     .map(o => ({
       name: o.package.name,
@@ -116,44 +100,12 @@ function removePackage(name: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  const items = navigableItems.value
-  const count = items.length
-
-  if (e.key === 'Enter') {
-    const inputValueTrim = inputValue.value.trim()
-    if (!inputValueTrim) return
-
-    e.preventDefault()
-
-    // When instant search is off, first Enter commits the query to trigger search
-    if (!settings.value.instantSearch && committedInput.value !== inputValueTrim) {
-      committedInput.value = inputValueTrim
-      return
-    }
-
-    // If an item is highlighted, select it
-    if (highlightedIndex.value >= 0 && highlightedIndex.value < count) {
-      addPackage(items[highlightedIndex.value]!.name)
-      return
-    }
-
-    // Fallback: exact match or easter egg (preserves existing behavior)
-    if (showNoDependencyOption.value) {
-      addPackage(NO_DEPENDENCY_ID)
-    } else {
-      const hasMatch = filteredResults.value.find(r => r.name === inputValueTrim)
-      if (hasMatch) {
-        addPackage(inputValueTrim)
-      }
-    }
-
-    return
-  }
-
-  // If keyboard shortcuts are disabled - do not handle other keys
   if (!keyboardShortcuts.value) {
     return
   }
+
+  const items = navigableItems.value
+  const count = items.length
 
   switch (e.key) {
     case 'ArrowDown':
@@ -191,6 +143,30 @@ function handleKeydown(e: KeyboardEvent) {
       if (count === 0) return
       highlightedIndex.value = Math.max(highlightedIndex.value - PAGE_JUMP, 0)
       break
+
+    case 'Enter': {
+      const inputValueTrim = inputValue.value.trim()
+      if (!inputValueTrim) return
+
+      e.preventDefault()
+
+      // If an item is highlighted, select it
+      if (highlightedIndex.value >= 0 && highlightedIndex.value < count) {
+        addPackage(items[highlightedIndex.value]!.name)
+        return
+      }
+
+      // Fallback: exact match or easter egg (preserves existing behavior)
+      if (showNoDependencyOption.value) {
+        addPackage(NO_DEPENDENCY_ID)
+      } else {
+        const hasMatch = filteredResults.value.find(r => r.name === inputValueTrim)
+        if (hasMatch) {
+          addPackage(inputValueTrim)
+        }
+      }
+      break
+    }
 
     case 'Escape':
       inputValue.value = ''
