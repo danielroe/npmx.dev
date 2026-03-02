@@ -149,7 +149,7 @@ const totalAccounts = computed(() => pdsUsers.value.length)
           </div>
           <div v-else>
             <ul
-              class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0"
+              class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none px-8 py-2"
             >
               <li
                 v-for="user in usersWithAvatars"
