@@ -2039,10 +2039,14 @@ watch(selectedMetric, value => {
             <template #optionStack="{ isStack }">
               <span
                 v-if="isStack"
-                class="i-lucide:layers-2 text-fg-subtle w-6 h-6"
+                class="i-lucide:layers-2 text-fg-subtle w-6 h-6 pointer-events-none"
                 aria-hidden="true"
               />
-              <span v-else class="i-lucide:chart-line text-fg-subtle w-6 h-6" aria-hidden="true" />
+              <span
+                v-else
+                class="i-lucide:chart-line text-fg-subtle w-6 h-6 pointer-events-none"
+                aria-hidden="true"
+              />
             </template>
 
             <template #annotator-action-close>
