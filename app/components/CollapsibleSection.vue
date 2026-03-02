@@ -71,6 +71,7 @@ useHead({
       innerHTML: `
 :root[data-collapsed~='${props.id}'] section[data-anchor-id='${props.id}'] .collapsible-content {
   grid-template-rows: 0fr;
+  overflow: hidden;
 }`,
     },
   ],
