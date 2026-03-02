@@ -480,7 +480,7 @@ export async function renderReadmeHtml(
   const htmlHeadingRe = /<h([1-6])(\s[^>]*)?>([\s\S]*?)<\/h\1>/gi
   const htmlAnchorRe = /<a(\s[^>]*?)href=(["'])([^"']*)\2([^>]*)>([\s\S]*?)<\/a>/gi
   renderer.html = function ({ text }: Tokens.HTML) {
-    let result = text.replace(htmlHeadingRe, (_, level, attrs, inner) => {
+    let result = text.replace(htmlHeadingRe, (_, level, attrs = '', inner) => {
       const depth = parseInt(level)
       const plainText = decodeHtmlEntities(stripHtmlTags(inner).trim())
       const align = /\balign=(["'])(.*?)\1/i.exec(attrs)?.[2]
