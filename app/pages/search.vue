@@ -756,6 +756,9 @@ onBeforeUnmount(() => {
                   $t('search.found_packages_sorted', { count: $n(effectiveTotal) }, effectiveTotal)
                 }}
               </template>
+              <span aria-hidden="true" v-if="status === 'pending'" class="text-fg-subtle">
+                {{ $t('search.updating') }}
+              </span>
             </p>
             <p
               v-if="viewMode === 'table' || paginationMode === 'paginated'"
