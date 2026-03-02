@@ -66,7 +66,7 @@ export default defineCachedEventHandler(
       try {
         const data = await blueskyClient.call(app.bsky.actor.getProfiles, {
           actors: batch,
-        })
+        }, { validateResponse: false })
 
         nodes.push(
           ...data.profiles.map(profile => ({

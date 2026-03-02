@@ -59,7 +59,7 @@ export default defineCachedEventHandler(
 
       batchPromises.push(
         blueskyClient
-          .call(app.bsky.actor.getProfiles, { actors: batch })
+          .call(app.bsky.actor.getProfiles, { actors: batch }, { validateResponse: false })
           .then(data =>
             data.profiles.map(profile => ({
               did: profile.did,
