@@ -150,10 +150,12 @@ const totalAccounts = computed(() => pdsUsers.value.length)
             {{ $t('pds.community.empty') }}
           </div>
           <div v-else>
-            <ul
-              class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0"
-            >
-              <li v-for="user in usersWithAvatars" :key="user.handle" class="block group relative hover:z-10">
+            <ul class="grid grid-cols-[repeat(auto-fill,48px)] justify-center gap-2 list-none p-0">
+              <li
+                v-for="user in usersWithAvatars"
+                :key="user.handle"
+                class="block group relative hover:z-10"
+              >
                 <a
                   :href="`https://bsky.app/profile/${user.handle}`"
                   target="_blank"
@@ -180,10 +182,7 @@ const totalAccounts = computed(() => pdsUsers.value.length)
                 </a>
               </li>
             </ul>
-            <p
-              v-if="usersWithoutAvatars.length"
-              class="text-center mt-4 text-fg-muted text-sm"
-            >
+            <p v-if="usersWithoutAvatars.length" class="text-center mt-4 text-fg-muted text-sm">
               {{ $t('pds.community.new_accounts', { count: usersWithoutAvatars.length }) }}
             </p>
           </div>

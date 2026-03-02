@@ -1,9 +1,6 @@
 import { Client } from '@atproto/lex'
 import * as app from '#shared/types/lexicons/app'
-import {
-  BLUESKY_API,
-  ERROR_PDS_FETCH_FAILED,
-} from '#shared/utils/constants'
+import { BLUESKY_API, ERROR_PDS_FETCH_FAILED } from '#shared/utils/constants'
 import type { AtprotoProfile } from '#shared/types/atproto'
 
 const NPMX_PDS_HOST = 'https://npmx.social'
@@ -68,7 +65,7 @@ export default defineCachedEventHandler(
               avatar: profile.avatar,
             })),
           )
-          .catch((err) => {
+          .catch(err => {
             console.warn('Failed to fetch batch:', err)
             return []
           }),

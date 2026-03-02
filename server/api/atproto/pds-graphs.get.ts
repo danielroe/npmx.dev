@@ -2,10 +2,7 @@ import { Client } from '@atproto/lex'
 import * as app from '#shared/types/lexicons/app'
 import type { AtprotoProfile } from '#shared/types/atproto'
 
-import {
-  BLUESKY_API,
-  ERROR_PDS_FETCH_FAILED,
-} from '#shared/utils/constants'
+import { BLUESKY_API, ERROR_PDS_FETCH_FAILED } from '#shared/utils/constants'
 
 interface GraphLink {
   source: string
@@ -64,9 +61,13 @@ export default defineCachedEventHandler(
       const batch = dids.slice(i, i + USER_BATCH_AMOUNT)
 
       try {
-        const data = await blueskyClient.call(app.bsky.actor.getProfiles, {
-          actors: batch,
-        }, { validateResponse: false })
+        const data = await blueskyClient.call(
+          app.bsky.actor.getProfiles,
+          {
+            actors: batch,
+          },
+          { validateResponse: false },
+        )
 
         nodes.push(
           ...data.profiles.map(profile => ({
