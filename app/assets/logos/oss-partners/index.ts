@@ -22,10 +22,8 @@ import LogoH3 from './h3.svg'
 import LogoNitro from './nitro.svg'
 import LogoKnip from './knip.svg'
 import LogoNapiRs from './napi-rs.png'
-// import LogoTinyglobby from './tinyglobby.svg'
 import LogoValibot from './valibot.svg'
 import LogoFastCheck from './fast-check.svg'
-// import LogoAtcute from './atcute.svg'
 import LogoLunaria from './lunaria.svg'
 import LogoTypescript from './typescript.svg'
 import LogoNode from './nodejs.svg'
@@ -36,13 +34,6 @@ import LogoPlaywright from './playwright.svg'
 import LogoIconify from './iconify.svg'
 import LogoFloatingUi from './floating-ui-vue.svg'
 
-// i'll ask, but they will surely say yes: knip, napi-rs, tinyglobby, valibot, fast-check,
-// i need to check first: atcute, lunaria, typescript, node, jsr, deno
-
-// shiki, unocss, vite-pwa, vueuse, vue-data-ui, unjs, h3, nitro
-// i'll ask, but they will surely say yes: knip, napi-rs, tinyglobby, valibot, fast-check,
-// i need to check first: atcute, lunaria, typescript, node, jsr, deno
-// others we could add: playwright, iconify, floating-ui/vue
 // The list is used on the about page. To add, simply upload the logos nearby and add an entry here. Prefer SVGs.
 // For logo src, specify a string or object with the light and dark theme variants.
 // Prefer original assets from partner sites to keep their brand identity.
@@ -167,11 +158,6 @@ export const OSS_PARTNERS = [
     logo: LogoNapiRs,
     url: 'https://napi.rs/',
   },
-  // {
-  //   name: 'Tinyglobby',
-  //   logo: LogoTinyglobby,
-  //   url: 'https://tinyglobby.github.io/',
-  // },
   {
     name: 'Valibot',
     logo: LogoValibot,
