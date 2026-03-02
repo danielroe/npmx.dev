@@ -166,6 +166,12 @@ headline="Read more from the community"
     title: 'Overcoming Imposter Syndrome: My First Open Source Contribution',
     authorHandle: 'paulie.codes',
     description: 'The most important part of open source is the people, and everyone has something valuable to bring to the table.'
+  },
+  {
+    url: 'https://philippeserhal.com/articles/oss-made-me-a-better-developer',
+    title: 'OSS made me a better developer',
+    authorHandle: 'philippeserhal.com',
+    description: 'How getting involved in npmx made me a better developer.'
   }
 ]"
 />
