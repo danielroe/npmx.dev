@@ -741,7 +741,7 @@
   "badges": {
     "provenance": {
       "verified": "已驗證",
-      "verified_title": "已驗證的來源",
+      "verified_title": "已驗證來源",
       "verified_via": "已驗證：透過 {provider} 發布"
     },
     "jsr": {
