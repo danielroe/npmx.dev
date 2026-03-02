@@ -51,7 +51,9 @@ function directionSizeRTL(
   prefixMap?: { l: string; r: string },
   checker?: CollectorChecker,
 ): DynamicMatcher {
-  const matcher = directionSize(propertyPrefix)
+  // Cast needed: @unocss/preset-wind4 may resolve a different @unocss/core patch version
+  // than unocss, making DynamicMatcher<Theme> structurally identical but nominally different
+  const matcher = directionSize(propertyPrefix) as unknown as DynamicMatcher
   return ([match, direction, size], context) => {
     if (!size) return undefined
     const defaultMap = { l: 'is', r: 'ie' }
@@ -187,7 +189,10 @@ export function presetRtl(checker?: CollectorChecker): Preset {
 
           reportWarning(fullClass, suggestedClass, checker)
 
-          return directionSize('inset')(['', direction === 'left' ? 'is' : 'ie', size], context)
+          return (directionSize('inset') as unknown as DynamicMatcher)(
+            ['', direction === 'left' ? 'is' : 'ie', size],
+            context,
+          )
         },
         { autocomplete: '(left|right)-<num>' },
       ],
