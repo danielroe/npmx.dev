@@ -117,7 +117,7 @@ headline="Read more from the community"
     url: 'https://www.netlify.com/blog/sponsoring-npmx',
     title: 'Sponsoring npmx',
     authorHandle: 'netlify.com',
-    descriptipn: 'It’s more important than ever that companies come together across competitive boundaries to sponsor and support the open ecosystem that lifts all boats.',
+    description: 'It’s more important than ever that companies come together across competitive boundaries to sponsor and support the open ecosystem that lifts all boats.',
   },
   {
     url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
