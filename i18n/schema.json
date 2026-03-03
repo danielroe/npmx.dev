@@ -58,6 +58,9 @@
         "chat": {
           "type": "string"
         },
+        "builders_chat": {
+          "type": "string"
+        },
         "keyboard_shortcuts": {
           "type": "string"
         }
@@ -2864,6 +2867,21 @@
               "additionalProperties": false
             },
             "community": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "cta": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "builders": {
               "type": "object",
               "properties": {
                 "title": {

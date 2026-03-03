@@ -39,12 +39,21 @@ export const prNumber = process.env.REVIEW_ID || process.env.VERCEL_GIT_PULL_REQ
 export const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_COMMIT_REF
 
 /**
+ * Environment variable `VERCEL_ENV` provided by Vercel.
+ * `production`, `preview`, `development`, or a custom environment name (e.g. `canary`).
+ * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_ENV}
+ *
+ * Whether this is the canary custom Vercel environment (main.npmx.dev).
+ */
+export const isCanary = process.env.VERCEL_ENV === 'canary'
+
+/**
  * Environment variable `CONTEXT` provided by Netlify.
  * `dev`, `production`, `deploy-preview`, `branch-deploy`, `preview-server`, or a branch name
  * @see {@link https://docs.netlify.com/build/configure-builds/environment-variables/#build-metadata}
  *
  * Environment variable `VERCEL_ENV` provided by Vercel.
- * `production`, `preview`, or `development`
+ * `production`, `preview`, `development`, or a custom environment name (e.g. `canary`).
  * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_ENV}
  *
  * Whether this is some sort of preview environment.
@@ -142,13 +151,7 @@ export async function getFileLastUpdated(path: string) {
 
 export async function getEnv(isDevelopment: boolean) {
   const { commit, shortCommit, branch } = await getGitInfo()
-  const env = isDevelopment
-    ? 'dev'
-    : isPreview
-      ? 'preview'
-      : branch === 'main'
-        ? 'canary'
-        : 'release'
+  const env = isDevelopment ? 'dev' : isCanary ? 'canary' : isPreview ? 'preview' : 'release'
   const previewUrl = getPreviewUrl()
   const productionUrl = getProductionUrl()
   return {

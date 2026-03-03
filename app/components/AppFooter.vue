@@ -4,6 +4,7 @@ import { NPMX_DOCS_SITE } from '#shared/utils/constants'
 const route = useRoute()
 const isHome = computed(() => route.name === 'index')
 
+const discord = useDiscordLink()
 const modalRef = useTemplateRef('modalRef')
 const showModal = () => modalRef.value?.showModal?.()
 const closeModal = () => modalRef.value?.close?.()
@@ -124,8 +125,8 @@ const closeModal = () => modalRef.value?.close?.()
             <LinkBase to="https://social.npmx.dev">
               {{ $t('footer.social') }}
             </LinkBase>
-            <LinkBase to="https://chat.npmx.dev">
-              {{ $t('footer.chat') }}
+            <LinkBase :to="discord.url">
+              {{ discord.label }}
             </LinkBase>
           </div>
         </div>
