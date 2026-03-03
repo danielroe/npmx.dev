@@ -46,9 +46,6 @@ importers:
       '@atproto/api':
         specifier: ^0.19.0
         version: 0.19.0
-      '@atproto/common':
-        specifier: 0.5.13
-        version: 0.5.13
       '@atproto/lex':
         specifier: 0.0.19
         version: 0.0.19
