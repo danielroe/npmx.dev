@@ -99,7 +99,7 @@ headline="Read more from the community"
     url: 'https://patak.cat/npmx/converging-communities',
     title: 'npmx: converging communities',
     authorHandle: 'patak.cat',
-    description: 'The story of the many people and communities and converged to build npmx together.'
+    description: 'The story of the many people and communities that converged to build npmx together.'
   },
   {
     url: 'https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html',
