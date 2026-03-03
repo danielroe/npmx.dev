@@ -86,6 +86,8 @@ export default defineNuxtModule({
                 rkey: possiblePublication.tid,
               },
             )
+            // Wait for the firehose and indexers to catch up if we create a publication
+            await new Promise(sleepResolve => setTimeout(sleepResolve, 2_000))
           }
           if (documentsToSync.length > 0) {
             await syncsiteStandardDocuments(authenticatedClient, documentsToSync)
@@ -167,13 +169,13 @@ function createContentHash(data: unknown): string {
 
 function buildATProtoDocument(siteUrl: string, data: BlogPostDocument) {
   return site.standard.document.$build({
-    // site: siteUrl as `${string}:${string}`,
     site: `at://${NPMX_DEV_DID}/site.standard.publication/${npmxPublicationRkey()}`,
     path: data.path,
     title: data.title,
     description: data.description ?? data.excerpt,
     tags: data.tags,
-    publishedAt: new Date(data.date).toISOString(),
+    // Publish on the record with the current date
+    publishedAt: new Date().toISOString(),
   })
 }
 
@@ -279,7 +281,7 @@ const checkPublication = async (identifier: AtIdentifierString, pdsPublicClient:
         tid: publicationTid,
         record: site.standard.publication.$build({
           name: 'npmx.dev',
-          url: 'https://npmx.dev/blog',
+          url: 'https://npmx.dev',
           description: 'a fast, modern browser for the npm registry',
           preferences: {
             showInDiscover: true,

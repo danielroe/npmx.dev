@@ -28,4 +28,4 @@ export const generateBlogTID = (dateString: string, slug: string): string => {
 
 // Using our release date as the tid for the publication
 export const npmxPublicationRkey = () =>
-  TID.create(new Date('2026-03-03 06:00:00').getTime() * MS_TO_MICROSECONDS, TID_CLOCK_ID)
+  TID.create(new Date('2026-03-03').getTime() * MS_TO_MICROSECONDS, TID_CLOCK_ID)
