@@ -1,7 +1,8 @@
 <script setup lang="ts">
-const { info, requestedDate } = defineProps<{
+const { info, requestedDate, requestedVersion } = defineProps<{
   info: ChangelogReleaseInfo
   requestedDate?: string
+  requestedVersion?: string | null | undefined
 }>()
 
 const { data: releases } = useFetch<ReleaseData[]>(
@@ -9,16 +10,43 @@ const { data: releases } = useFetch<ReleaseData[]>(
 )
 
 const route = useRoute()
-const router = useRouter()
+
+const matchingDateReleases = computed(() => {
+  if (!requestedDate || !releases.value) {
+    return
+  }
+
+  return releases.value.filter(release => {
+    if (!release.publishedAt) {
+      return
+    }
+    const date = new Date(release.publishedAt).toISOString().split('T')[0]
+
+    return date == requestedDate
+  })
+})
 
 watch(
-  [() => route.hash, () => requestedDate, releases],
-  ([hash, date, r]) => {
+  [() => route.hash, () => requestedDate, releases, () => requestedVersion],
+  ([hash, date, r, rv]) => {
+    if (hash && r) {
+      // ensures the user is scrolled to the hash
+      navigateTo(hash)
+      return
+    }
     if (hash || !date || !r) {
       return
     }
+    if (rv) {
+      for (const match of matchingDateReleases.value ?? []) {
+        if (match.title.includes(rv)) {
+          navigateTo(`#release-${encodeURI(match.title)}`)
+          return
+        }
+      }
+    }
 
-    router.push(`#date-${date}`)
+    navigateTo(`#date-${date}`)
   },
   {
     immediate: true,

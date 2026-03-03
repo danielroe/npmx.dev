@@ -13,16 +13,19 @@ const formattedDate = computed(() => {
 
 const cardId = computed(() => (release.publishedAt ? `date-${formattedDate.value}` : undefined))
 
-const navId = computed(() => `release-${encodeURI(release.title)}:`)
+const navId = computed(() => `release-${encodeURI(release.title)}`)
 
 function navigateToTitle() {
   navigateTo(`#${navId.value}`)
 }
 </script>
 <template>
-  <section class="border border-border rounded-lg p-4 sm:p-6">
-    <div class="flex gap-2 items-center" :id="cardId">
-      <h2 class="text-1xl sm:text-2xl font-medium min-w-0 break-words py-2" :id="navId">
+  <section class="border border-border rounded-lg p-4 sm:p-6 scroll-mt-18" :id="cardId">
+    <div class="flex gap-2 items-center">
+      <h2
+        class="text-1xl sm:text-2xl font-medium min-w-0 break-words py-2 scroll-mt-20"
+        :id="navId"
+      >
         <a
           class="hover:decoration-accent hover:text-accent focus-visible:decoration-accent focus-visible:text-accent transition-colors duration-200"
           :class="$style.linkTitle"

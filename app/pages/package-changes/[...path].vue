@@ -127,6 +127,7 @@ const versionDate = computed(() => {
         v-if="changelog?.type == 'release'"
         :info="changelog"
         :requestedDate="versionDate"
+        :requested-version="version || latestVersion"
       />
       <LazyChangelogMarkdown
         v-else-if="changelog?.type == 'md'"
