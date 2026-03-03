@@ -327,18 +327,11 @@ describe('getProductionUrl', () => {
 })
 
 describe('getVersion', () => {
-  it('returns package.json version when no git tags are reachable', async () => {
-    const { getVersion, version } = await import('../../../config/env')
-    const result = await getVersion()
-
-    // In test environments without reachable tags, falls back to package.json
-    expect(result).toBe(version)
-  })
-
-  it('strips the leading "v" prefix from the tag', async () => {
+  it('returns a valid semver string without a leading "v"', async () => {
     const { getVersion } = await import('../../../config/env')
     const result = await getVersion()
 
     expect(result).not.toMatch(/^v/)
+    expect(result).toMatch(/^\d+\.\d+\.\d+$/)
   })
 })

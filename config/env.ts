@@ -4,6 +4,7 @@ import Git from 'simple-git'
 import * as process from 'node:process'
 
 import { version as packageVersion } from '../package.json'
+import { getNextVersion } from '../scripts/next-version'
 
 export { packageVersion as version }
 
@@ -159,15 +160,17 @@ export async function getFileLastUpdated(path: string) {
 }
 
 /**
- * Resolves the current version from git tags, falling back to `package.json`.
+ * Resolves the **next** version by analysing conventional commits since the
+ * last reachable `v*` tag.  Delegates to {@link getNextVersion} which is also
+ * used by the `release-tag` and `release-pr` GitHub Actions workflows so the
+ * version shown in the UI matches the tag that will be created *after* deploy.
  *
- * Uses `git describe --tags --abbrev=0 --match 'v*'` to find the most recent
- * reachable release tag (e.g. `v0.1.0` -> `0.1.0`).
+ * Falls back to `package.json` when git is unavailable (e.g. shallow clone).
  */
 export async function getVersion() {
   try {
-    const tag = (await git.raw(['describe', '--tags', '--abbrev=0', '--match', 'v*'])).trim()
-    return tag.replace(/^v/, '')
+    const { next } = await getNextVersion()
+    return next
   } catch {
     return packageVersion
   }
