@@ -18,6 +18,7 @@
     "source": "source",
     "social": "social",
     "chat": "chat",
+    "builders_chat": "builders",
     "keyboard_shortcuts": "keyboard shortcuts"
   },
   "shortcuts": {
@@ -957,6 +958,11 @@
         "title": "Join the community",
         "description": "Chat, ask questions, and share ideas.",
         "cta": "Join Discord"
+      },
+      "builders": {
+        "title": "Help build npmx",
+        "description": "Join the builders shaping the future of npmx.",
+        "cta": "Join Builders Discord"
       },
       "follow": {
         "title": "Stay updated",

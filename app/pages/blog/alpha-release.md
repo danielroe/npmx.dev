@@ -12,7 +12,7 @@ excerpt: "Today we're releasing the alpha of npmx.dev – a fast, modern browser
 date: '2026-03-03'
 slug: 'alpha-release'
 description: "Today we're releasing the alpha of npmx.dev – a fast, modern browser for the npm registry, built in the open by a growing community."
-draft: true
+draft: false
 ---
 
 # Announcing npmx: a fast, modern browser for the npm registry
@@ -104,7 +104,7 @@ headline="Read more from the community"
   {
     url: 'https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html',
     title: 'vue-data-ui is on npmx npmx is on vue-data-ui',
-    authorHandle: 'graphieros.com',
+    authorHandle: 'graphieros.npmx.social',
     description: 'Graphieros explores a minimal npm-based workflow and why it exists.'
   },
   {
@@ -112,6 +112,12 @@ headline="Read more from the community"
     title: 'The month. npmx',
     authorHandle: 'alexdln.com',
     description: 'Alex reflects on the project, warm stories, wonderful people, and a look into the future'
+  },
+  {
+    url: 'https://www.netlify.com/blog/sponsoring-npmx',
+    title: 'Sponsoring npmx',
+    authorHandle: 'netlify.com',
+    description: 'It’s more important than ever that companies come together across competitive boundaries to sponsor and support the open ecosystem that lifts all boats.',
   },
   {
     url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
@@ -180,10 +186,46 @@ headline="Read more from the community"
     description: 'How getting involved in npmx made me a better developer.'
   },
   {
+    url: 'https://news.atmosphereconf.org/3mg5b3zvktc2i',
+    title: 'npmx goes social with atproto',
+    authorHandle: 'atprotocol.dev',
+    description: 'Announcing npmx speakers, and congratulations on launch day!'
+  },
+  {
     url: 'https://www.radosvet.dev/posts/career/from-newsletter-to-open-source',
     title: 'From a Newsletter Link to My First Open Source Contribution',
     authorHandle: 'radosvet.dev',
     description: 'How discovering npmx through a newsletter led to a first meaningful open source contribution and a new perspective on community-driven development.'
+  },
+  {
+    url: 'https://vale.rocks/micros/20260303-1200',
+    title: 'npmx Is Open-Source Done Right',
+    authorHandle: 'vale.rocks',
+    description: 'How the ethos and practices of npmx represent a healthy open-source ecosystem that should be the standard, not an exception.'
+  },
+  {
+    url: 'https://jaydip.me/blog/joy-of-open-source',
+    title: 'Joy of open source',
+    authorHandle: 'jaydip.me',
+    description: 'childish fun of making things together'
+  },
+  {
+    url: 'https://e18e.dev/blog/npmx-collaboration.html',
+    title: 'Collaborating with npmx',
+    authorHandle: '43081j.com',
+    description: 'How the e18e community is collaborating closely with npmx to make best practices more visible and accessible to everyone in the ecosystem.'
+  },
+  {
+    url: 'https://youtu.be/NoC5U6F6p4Y',
+    title: 'The npmjs.com that developers deserve - What is npmx? (video)',
+    authorHandle: 'thealexlichter.com',
+    description: 'An introductory video showcasing Alex\'s favorite features of npmx and the open-source idea behind it.'
+  },
+  {
+    url: 'https://piccalil.li/blog/finding-an-accessibility-first-culture-in-npmx/',
+    title: 'Finding an accessibility-first culture in npmx',
+    authorHandle: 'abbeyperini.dev',
+    description: 'Abbey Perini talks about how accessibility is a deep part of the npmx culture.'
   }
 ]"
 />

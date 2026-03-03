@@ -52,6 +52,10 @@ export const PACKAGE_SUBJECT_REF = (packageName: string) =>
 export const LIKES_SCOPE = `repo:${dev.npmx.feed.like.$nsid}`
 export const PROFILE_SCOPE = `repo:${dev.npmx.actor.profile.$nsid}`
 
+// Discord
+export const DISCORD_COMMUNITY_URL = 'https://chat.npmx.dev'
+export const DISCORD_BUILDERS_URL = 'https://build.npmx.dev'
+
 // Theming
 export const ACCENT_COLORS = {
   light: {
