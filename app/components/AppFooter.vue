@@ -21,7 +21,7 @@ const closeModal = () => modalRef.value?.close?.()
         <p class="hidden lg:flex text-fg-muted uppercase h-5 items-center">{{ $t('nav.links') }}</p>
       </div>
       <div class="flex justify-between flex-col lg:flex-row gap-3">
-        <div class="flex flex-col gap-3 motion-safe:animate-fade-in motion-safe:animate-fill-both">
+        <div class="flex flex-col gap-3">
           <p class="font-mono text-balance hidden sm:block">
             {{ $t('tagline') }}
           </p>
