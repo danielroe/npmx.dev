@@ -206,8 +206,8 @@ const dataset = computed<VueUiSparklineDatasetItem[]>(() =>
 
 const lastDatapoint = computed(() => dataset.value.at(-1)?.period ?? '')
 
-const isLoop = ref(false)
-const showPulse = ref(true)
+const isLoop = shallowRef(false)
+const showPulse = shallowRef(true)
 const keyboardShortcuts = useKeyboardShortcuts()
 
 const cheatCode = [
@@ -221,7 +221,7 @@ const cheatCode = [
 
 type CheatKey = (typeof cheatCode)[number]
 
-const easterEgg = ref<CheatKey[]>([])
+const easterEgg = shallowRef<CheatKey[]>([])
 let resetTimeout: ReturnType<typeof setTimeout> | undefined
 const easterEggResetDelay = 1500
 
@@ -281,16 +281,22 @@ onKeyDown(
 
 onBeforeUnmount(() => {
   resetEasterEgg()
+  clearTimeout(eggPulseTimeout)
+  eggPulseTimeout = undefined
 })
 
 const eggPulse = ref(false)
+
+let eggPulseTimeout: ReturnType<typeof setTimeout> | undefined
 
 function playEggPulse() {
   eggPulse.value = false
   void document.documentElement.offsetHeight
   eggPulse.value = true
 
-  window.setTimeout(() => {
+  clearTimeout(eggPulseTimeout)
+
+  eggPulseTimeout = setTimeout(() => {
     eggPulse.value = false
   }, 900)
 }
