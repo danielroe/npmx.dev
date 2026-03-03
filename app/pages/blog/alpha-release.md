@@ -204,7 +204,7 @@ headline="Read more from the community"
     description: 'How the ethos and practices of npmx represent a healthy open-source ecosystem that should be the standard, not an exception.'
   },
   {
-    url: 'http://jaydip.me/blog/joy-of-open-source',
+    url: 'https://jaydip.me/blog/joy-of-open-source',
     title: 'Joy of open source',
     authorHandle: 'jaydip.me',
     description: 'childish fun of making things together'
