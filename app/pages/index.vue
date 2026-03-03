@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { SHOWCASED_FRAMEWORKS } from '~/utils/frameworks'
 
-const { settings } = useSettings()
-
 const { model: searchQuery, startSearch } = useGlobalSearch()
 const isSearchFocused = shallowRef(false)
 
