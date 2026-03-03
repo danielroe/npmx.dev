@@ -114,6 +114,12 @@ headline="Read more from the community"
     description: 'Alex reflects on the project, warm stories, wonderful people, and a look into the future'
   },
   {
+    url: 'https://www.netlify.com/blog/sponsoring-npmx',
+    title: 'Sponsoring npmx',
+    authorHandle: 'netlify.com',
+    descriptipn: 'It’s more important than ever that companies come together across competitive boundaries to sponsor and support the open ecosystem that lifts all boats.',
+  },
+  {
     url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
     title: 'npmx: With a Little Help From My Friends',
     authorHandle: 'johnnyreilly.com',
