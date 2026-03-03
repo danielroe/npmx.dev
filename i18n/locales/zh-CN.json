@@ -1163,6 +1163,11 @@
     "close_files_panel": "关闭文件面板",
     "filter_files_label": "按更改类型筛选文件"
   },
+  "pds": {
+    "join": {},
+    "server": {},
+    "community": {}
+  },
   "privacy_policy": {
     "title": "隐私政策",
     "last_updated": "上次更新：{date}",
@@ -1271,40 +1276,6 @@
       "title": "反馈",
       "p1": "如果你在 {app} 上遇到无障碍访问问题，请在我们的 {link} 上提交 Issue 反馈给我们。我们会认真对待这些反馈，并尽力解决。",
       "link": "GitHub 仓库"
-    }
-  },
-  "vacations": {
-    "title": "休假中",
-    "meta_description": "npmx 团队在充电。Discord 一周后重新开放。",
-    "heading": "充电中",
-    "subtitle": "我们全力以赴地打磨 npmx，节奏之快，甚至让人无暇安睡。我们不想让这成为常态！所以我们一起休息了一周。",
-    "illustration_alt": "一排温馨的图标",
-    "poke_log": "拨动篝火",
-    "what": {
-      "title": "发生了什么",
-      "p1": "Discord 于 {dates} 期间关闭。",
-      "dates": "2 月 14 日 – 21 日",
-      "p2": "所有邀请链接都被移除，频道也被锁定 – 除了 {garden}，它仍向想继续聊天的人开放。",
-      "garden": "#garden"
-    },
-    "meantime": {
-      "title": "与此同时",
-      "p1": "{site} 和 {repo} 仍然开放 – 有人继续投入、提交了一些 issue、开了几个 PR，但大多数人都在温暖的壁炉旁休息。",
-      "repo_link": "仓库"
-    },
-    "return": {
-      "title": "我们回来了！",
-      "p1": "我们满电回归，准备冲刺到 3 月 3 日。{social} 关注动态。",
-      "social_link": "在 Bluesky 上关注我们"
-    },
-    "stats": {
-      "contributors": "贡献者",
-      "commits": "提交",
-      "pr": "合并的 PR",
-      "subtitle": {
-        "some": "部分",
-        "all": "全部"
-      }
     }
   }
 }
