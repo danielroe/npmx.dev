@@ -12,7 +12,7 @@ excerpt: "Today we're releasing the alpha of npmx.dev – a fast, modern browser
 date: '2026-03-03'
 slug: 'alpha-release'
 description: "Today we're releasing the alpha of npmx.dev – a fast, modern browser for the npm registry, built in the open by a growing community."
-draft: true
+draft: false
 ---
 
 # Announcing npmx: a fast, modern browser for the npm registry
@@ -96,6 +96,12 @@ headline="Read more from the community"
     description: 'There\'s a reason why building npmx has been such a blast so far, and it\'s one of the most powerful patterns in open source software development. It\'s also why \'the 10x developer\' is an incredibly dangerous myth.'
   },
   {
+    url: 'https://patak.cat/npmx/converging-communities',
+    title: 'npmx: converging communities',
+    authorHandle: 'patak.cat',
+    description: 'The story of the many people and communities that converged to build npmx together.'
+  },
+  {
     url: 'https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html',
     title: 'vue-data-ui is on npmx npmx is on vue-data-ui',
     authorHandle: 'graphieros.com',
@@ -106,6 +112,12 @@ headline="Read more from the community"
     title: 'The month. npmx',
     authorHandle: 'alexdln.com',
     description: 'Alex reflects on the project, warm stories, wonderful people, and a look into the future'
+  },
+  {
+    url: 'https://www.netlify.com/blog/sponsoring-npmx',
+    title: 'Sponsoring npmx',
+    authorHandle: 'netlify.com',
+    description: 'It’s more important than ever that companies come together across competitive boundaries to sponsor and support the open ecosystem that lifts all boats.',
   },
   {
     url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
@@ -166,6 +178,36 @@ headline="Read more from the community"
     title: 'Overcoming Imposter Syndrome: My First Open Source Contribution',
     authorHandle: 'paulie.codes',
     description: 'The most important part of open source is the people, and everyone has something valuable to bring to the table.'
+  },
+  {
+    url: 'https://philippeserhal.com/articles/oss-made-me-a-better-developer',
+    title: 'OSS made me a better developer',
+    authorHandle: 'philippeserhal.com',
+    description: 'How getting involved in npmx made me a better developer.'
+  },
+  {
+    url: 'https://news.atmosphereconf.org/3mg5b3zvktc2i',
+    title: 'npmx goes social with atproto',
+    authorHandle: 'atprotocol.dev',
+    description: 'Announcing npmx speakers, and congratulations on launch day!'
+  },
+  {
+    url: 'https://www.radosvet.dev/posts/career/from-newsletter-to-open-source',
+    title: 'From a Newsletter Link to My First Open Source Contribution',
+    authorHandle: 'radosvet.dev',
+    description: 'How discovering npmx through a newsletter led to a first meaningful open source contribution and a new perspective on community-driven development.'
+  },
+  {
+    url: 'https://vale.rocks/micros/20260303-1200',
+    title: 'npmx Is Open-Source Done Right',
+    authorHandle: 'vale.rocks',
+    description: 'How the ethos and practices of npmx represent a healthy open-source ecosystem that should be the standard, not an exception.'
+  },
+  {
+    url: 'https://e18e.dev/blog/npmx-collaboration.html',
+    title: 'Collaborating with npmx',
+    authorHandle: '43081j.com',
+    description: 'How the e18e community is collaborating closely with npmx to make best practices more visible and accessible to everyone in the ecosystem.'
   }
 ]"
 />
