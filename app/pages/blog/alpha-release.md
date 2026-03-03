@@ -196,6 +196,12 @@ headline="Read more from the community"
     title: 'npmx Is Open-Source Done Right',
     authorHandle: 'vale.rocks',
     description: 'How the ethos and practices of npmx represent a healthy open-source ecosystem that should be the standard, not an exception.'
+  },
+  {
+    url: 'https://e18e.dev/blog/npmx-collaboration.html',
+    title: 'Collaborating with npmx',
+    authorHandle: '43081j',
+    description: 'How the e18e community is collaborating closely with npmx to make best practices more visible and accessible to everyone in the ecosystem.'
   }
 ]"
 />
