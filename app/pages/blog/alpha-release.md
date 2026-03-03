@@ -191,6 +191,7 @@ headline="Read more from the community"
     authorHandle: 'atprotocol.dev',
     description: 'Announcing npmx speakers, and congratulations on launch day!'
   },
+  {
     url: 'https://www.radosvet.dev/posts/career/from-newsletter-to-open-source',
     title: 'From a Newsletter Link to My First Open Source Contribution',
     authorHandle: 'radosvet.dev',
