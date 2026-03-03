@@ -174,7 +174,7 @@ headline="Read more from the community"
     description: 'How getting involved in npmx made me a better developer.'
   },
   {
-    url: 'https://news.atmosphereconf.org/',
+    url: 'https://news.atmosphereconf.org/3mg5b3zvktc2i',
     title: 'npmx goes social with atproto',
     authorHandle: 'atprotocol.dev',
     description: 'Announcing npmx speakers, and congratulations on launch day!'
