@@ -1172,7 +1172,7 @@
     "meta_description": "Le serveur de données personnelles (PDS) officiel du protocole AT pour la communauté npmx.",
     "join": {
       "title": "Rejoindre la communauté",
-      "description": "Que vous créiez votre premier compte sur l'atmosphère ou que vous migriez un compte existant, vous êtes ici chez vous. Vous pouvez migrer votre compte actuel sans perdre votre identifiant, vos publications ni vos abonnés.",
+      "description": "Que vous créiez votre premier compte sur l'Atmosphère ou que vous migriez un compte existant, vous êtes ici chez vous. Vous pouvez migrer votre compte actuel sans perdre votre identifiant, vos publications ni vos abonnés.",
       "migrate": "Migrer avec PDS MOOver"
     },
     "server": {
@@ -1192,7 +1192,7 @@
       "error": "Échec du chargement de la communauté PDS.",
       "empty": "Aucun membre de la communauté à afficher.",
       "view_profile": "Voir le profil de {handle}",
-      "new_accounts": "...plus {count} autres qui sont nouveaux sur l'atmosphère"
+      "new_accounts": "...plus {count} autres qui sont nouveaux sur l'Atmosphère"
     }
   },
   "privacy_policy": {
