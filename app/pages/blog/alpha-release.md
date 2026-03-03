@@ -200,7 +200,7 @@ headline="Read more from the community"
   {
     url: 'https://e18e.dev/blog/npmx-collaboration.html',
     title: 'Collaborating with npmx',
-    authorHandle: '43081j',
+    authorHandle: '43081j.com',
     description: 'How the e18e community is collaborating closely with npmx to make best practices more visible and accessible to everyone in the ecosystem.'
   }
 ]"
