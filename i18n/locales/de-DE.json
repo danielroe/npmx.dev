@@ -1058,7 +1058,7 @@
       "tooltip_title": "Du brauchst vielleicht keine Abhängigkeit",
       "tooltip_description": "Vergleiche mit dem Verzicht auf eine Abhängigkeit! Die {link} pflegt eine Liste von Paketen, die durch native APIs oder einfachere Alternativen ersetzt werden können.",
       "e18e_community": "e18e Community",
-      "add_column": "Spalte „Keine Abhängigkeit" zum Vergleich hinzufügen"
+      "add_column": "Spalte „Keine Abhängigkeit“ zum Vergleich hinzufügen"
     },
     "facets": {
       "group_label": "Vergleichsfacetten",
