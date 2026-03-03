@@ -895,6 +895,7 @@ const showSkeleton = shallowRef(false)
               :aria-label="$t('common.scroll_to_top')"
               @click="scrollToTop"
               classicon="i-lucide:arrow-up"
+              class="sm:p-2.75"
             />
           </ButtonGroup>
 
@@ -1123,7 +1124,7 @@ const showSkeleton = shallowRef(false)
                 <LinkBase
                   variant="button-secondary"
                   size="small"
-                  :to="`https://npmgraph.js.org/?q=${pkg.name}`"
+                  :to="`https://npmgraph.js.org/?q=${pkg.name}${resolvedVersion ? `@${resolvedVersion}` : ''}`"
                   :title="$t('package.stats.view_dependency_graph')"
                   classicon="i-lucide:network -rotate-90"
                 >

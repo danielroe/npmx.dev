@@ -119,6 +119,7 @@ import {
   AppFooter,
   AppHeader,
   AppLogo,
+  AppMark,
   AboutLogoImg,
   AboutLogoList,
   AuthorAvatar,
@@ -322,6 +323,22 @@ describe('component accessibility audits', () => {
 
     it('should have no accessibility violations with custom class', async () => {
       const component = await mountSuspended(AppLogo, {
+        props: { class: 'h-6 w-6 text-accent' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('AppMark', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(AppMark)
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations with custom class', async () => {
+      const component = await mountSuspended(AppMark, {
         props: { class: 'h-6 w-6 text-accent' },
       })
       const results = await runAxe(component)
