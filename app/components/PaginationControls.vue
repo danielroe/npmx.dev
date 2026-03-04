@@ -22,7 +22,6 @@ const effectiveMode = computed<PaginationMode>(() =>
   shouldShowControls.value ? 'paginated' : 'infinite',
 )
 
-// When 'all' is selected, there's only 1 page with everything
 const totalPages = computed(() => Math.ceil(props.totalItems / (pageSize.value as number)))
 
 // Whether to show the mode toggle (hidden in table view since table always uses pagination)
