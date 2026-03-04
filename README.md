@@ -27,6 +27,7 @@ What npmx offers:
 ## Shortcuts
 
 - [chat.npmx.dev](https://chat.npmx.dev) - Discord Server
+- [build.npmx.dev](https://build.npmx.dev) - Builders Discord Server
 - [social.npmx.dev](https://social.npmx.dev) - Bluesky Profile
 - [repo.npmx.dev](https://repo.npmx.dev) - GitHub Repository
 - [issues.npmx.dev](https://issues.npmx.dev) - GitHub Issues
