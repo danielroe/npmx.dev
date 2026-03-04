@@ -498,6 +498,8 @@ const config = computed<VueUiSparklineConfig>(() => {
 </style>
 
 <style>
+@import 'vue-data-ui/style.css';
+
 /** Overrides */
 .vue-ui-sparkline-title span {
   padding: 0 !important;

@@ -2181,6 +2181,8 @@ watch(selectedMetric, value => {
 </template>
 
 <style>
+@import 'vue-data-ui/style.css';
+
 .vue-ui-pen-and-paper-actions {
   background: var(--bg-elevated) !important;
 }

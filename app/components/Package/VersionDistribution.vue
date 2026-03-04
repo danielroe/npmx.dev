@@ -672,6 +672,8 @@ const chartConfig = computed<VueUiXyConfig>(() => {
 </style>
 
 <style>
+@import 'vue-data-ui/style.css';
+
 /* Override default placement of the refresh button to have it to the minimap's side */
 @media screen and (min-width: 767px) {
   #version-distribution .vue-data-ui-refresh-button {
