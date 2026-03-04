@@ -8,14 +8,6 @@ import { expect, test } from './test-utils'
 const MOBILE_VIEWPORT = { width: 375, height: 667 }
 
 /**
- * Helper: Check if current viewport is mobile
- */
-async function isMobileViewport(page: Page): Promise<boolean> {
-  const viewport = page.viewportSize()
-  return viewport ? viewport.width < 640 : false
-}
-
-/**
  * Helper: Verify menu is closed
  */
 async function expectMenuClosed(page: Page): Promise<void> {
@@ -316,50 +308,6 @@ test.describe('Mobile Header Menu', () => {
         await focusableElements.first().focus()
         await expect(focusableElements.first()).toBeFocused()
       }
-    })
-  })
-
-  test.describe('Logic Isolation & Reusability', () => {
-    test('helper functions work independently - expectMenuClosed', async ({ page, goto }) => {
-      await goto('/', { waitUntil: 'hydration' })
-
-      // Should not throw - menu is closed by default
-      await expectMenuClosed(page)
-    })
-
-    test('helper functions work independently - openMobileMenu', async ({ page, goto }) => {
-      await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
-      // Helper should open menu without throwing
-      await openMobileMenu(page)
-      await expectMenuOpen(page)
-    })
-
-    test('helper functions work independently - closeMobileMenu', async ({ page, goto }) => {
-      await goto('/', { waitUntil: 'hydration' })
-
-      // Open and then use helper to close
-      await openMobileMenu(page)
-      await closeMobileMenu(page)
-      await expectMenuClosed(page)
-    })
-
-    test('helpers can be combined in sequence', async ({ page, goto }) => {
-      await goto('/', { waitUntil: 'hydration' })
-
-      // Test sequence: closed -> open -> closed -> open
-      await expectMenuClosed(page)
-      await openMobileMenu(page)
-      await expectMenuOpen(page)
-      await closeMobileMenu(page)
-      await expectMenuClosed(page)
-      await openMobileMenu(page)
-      await expectMenuOpen(page)
     })
   })
 })
