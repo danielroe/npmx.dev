@@ -850,6 +850,16 @@ const showSkeleton = shallowRef(false)
           >
             <LinkBase
               variant="button-secondary"
+              v-if="fundingUrl"
+              :to="fundingUrl"
+              aria-keyshortcuts="f"
+              classicon="i-lucide:heart"
+              :title="$t('package.links.fund')"
+            >
+              <span class="max-sm:sr-only">{{ $t('package.links.fund') }}</span>
+            </LinkBase>
+            <LinkBase
+              variant="button-secondary"
               v-if="docsLink"
               :to="docsLink"
               aria-keyshortcuts="d"
@@ -1011,11 +1021,6 @@ const showSkeleton = shallowRef(false)
                 classicon="i-simple-icons:jsr"
               >
                 {{ $t('package.links.jsr') }}
-              </LinkBase>
-            </li>
-            <li v-if="fundingUrl">
-              <LinkBase :to="fundingUrl" classicon="i-lucide:heart">
-                {{ $t('package.links.fund') }}
               </LinkBase>
             </li>
             <!-- Mobile-only: Docs + Code + Compare links -->
