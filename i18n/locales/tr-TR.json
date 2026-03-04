@@ -1186,11 +1186,11 @@
     "server": {
       "title": "Sunucu",
       "location_label": "Konum",
-      "location_value": "Konum değeri",
+      "location_value": "Nürnberg, Almanya",
       "infrastructure_label": "Altyapı",
-      "infrastructure_value": "Altyapı değeri",
+      "infrastructure_value": "Hetzner üzerinde barındırılıyor",
       "privacy_label": "Gizlilik",
-      "privacy_value": "Gizlilik değeri",
+      "privacy_value": "Katı AB Veri Koruma yasalarına tabidir",
       "learn_more": "Daha fazla bilgi"
     },
     "community": {
