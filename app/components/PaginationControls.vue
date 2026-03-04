@@ -100,8 +100,8 @@ const visiblePages = computed(() => {
 function handlePageSizeChange(event: Event) {
   const target = event.target as HTMLSelectElement
   const value = target.value
-  // Handle 'all' as a special string value, otherwise parse as number
-  const newSize = (value === 'all' ? 'all' : Number(value)) as PageSize
+
+  const newSize = Number(value) as PageSize
   pageSize.value = newSize
   // Reset to page 1 when changing page size
   currentPage.value = 1
