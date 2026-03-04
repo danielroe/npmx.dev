@@ -157,6 +157,7 @@ import {
   HeaderAccountMenu,
   HeaderConnectorModal,
   HeaderSearchBox,
+  InstantSearch,
   InputBase,
   LicenseDisplay,
   LoadingSpinner,
@@ -2670,6 +2671,14 @@ describe('component accessibility audits', () => {
       const component = await mountSuspended(SearchSuggestionCard, {
         props: { type: 'user', name: 'exactuser', isExactMatch: true },
       })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('InstantSearch', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(InstantSearch)
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })

@@ -58,6 +58,9 @@
         "chat": {
           "type": "string"
         },
+        "builders_chat": {
+          "type": "string"
+        },
         "keyboard_shortcuts": {
           "type": "string"
         }
@@ -198,6 +201,24 @@
             }
           },
           "additionalProperties": false
+        },
+        "instant_search": {
+          "type": "string"
+        },
+        "instant_search_on": {
+          "type": "string"
+        },
+        "instant_search_off": {
+          "type": "string"
+        },
+        "instant_search_turn_on": {
+          "type": "string"
+        },
+        "instant_search_turn_off": {
+          "type": "string"
+        },
+        "instant_search_advisory": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -1717,15 +1738,6 @@
             "title": {
               "type": "string"
             },
-            "contributor_badge": {
-              "type": "string"
-            },
-            "contributor_notice": {
-              "type": "string"
-            },
-            "contributor_link": {
-              "type": "string"
-            },
             "connected": {
               "type": "string"
             },
@@ -2867,6 +2879,21 @@
               "additionalProperties": false
             },
             "community": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "cta": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "builders": {
               "type": "object",
               "properties": {
                 "title": {
