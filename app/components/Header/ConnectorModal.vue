@@ -116,10 +116,10 @@ function handleDisconnect() {
         dir="ltr"
       >
         <span class="text-fg-subtle">$</span>
-        <span class="text-fg-subtle ms-2">pnpm npmx-connector</span>
+        <span class="text-fg-subtle ms-2">npx npmx-connector</span>
         <ButtonBase
           :aria-label="copied ? $t('connector.modal.copied') : $t('connector.modal.copy_command')"
-          @click="copy('pnpm npmx-connector')"
+          @click="copy('npx npmx-connector')"
           class="ms-auto"
           :classicon="copied ? 'i-lucide:check text-green-500' : 'i-lucide:copy'"
         />

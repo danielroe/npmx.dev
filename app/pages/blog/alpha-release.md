@@ -6,110 +6,77 @@ authors:
     blueskyHandle: whitep4nth3r.com
   - name: Matias Capeletto
     blueskyHandle: patak.cat
-title: "Announcing npmx: a fast, modern browser for the npm registry"
-tags: ["OpenSource", "Release"]
-excerpt: "npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by
-extension, everyone who works in the JavaScript ecosystem."
-date: "2026-03-03"
-slug: "alpha-release"
-description: "npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by extension, everyone who works in the JavaScript ecosystem."
-draft: true
+title: 'Announcing npmx: a fast, modern browser for the npm registry'
+tags: ['OpenSource', 'Release']
+excerpt: "Today we're releasing the alpha of npmx.dev – a fast, modern browser for the npm registry, built in the open by a growing community."
+date: '2026-03-03'
+slug: 'alpha-release'
+description: "Today we're releasing the alpha of npmx.dev – a fast, modern browser for the npm registry, built in the open by a growing community."
+draft: false
 ---
 
 # Announcing npmx: a fast, modern browser for the npm registry
 
-Today we're announcing the alpha release of [npmx.dev](https://npmx.dev), a fast, modern browser for the npm registry.
+Today we're releasing the alpha of [npmx.dev](https://npmx.dev), a fast, modern browser for the npm registry.
 
-npmx is an open-source project built by a rapidly growing community. It's for open-source developers, and by
-extension, everyone who works in the JavaScript ecosystem.
+npmx is about speed and simplicity: making it quicker and easier to find, evaluate, and manage npm packages. It gives you useful data &ndash; like install size, module format, and outdated dependencies &ndash; right where you need it, so you can make better decisions about the packages you use.
 
-npmx is about speed and simplicity: it's a suite of tools to make package management quicker and easier. It also
-surfaces valuable data insights coupled with power-user features to help developers discover packages and make informed
-decisions about the packages they choose to use.
-
-At the heart of npmx is the web development community. To this end, we're also integrating rich social features into npmx
-to make it easier for developers to connect with each other, share their work, collaborate on projects, and
-ultimately, to build a more vibrant and inclusive web development community through the power of the ecosystem and open
-source.
+We're also building social features into npmx because open source is better when it's easier to connect with the people behind the packages.
 
 ## The need for npmx
 
 On January 22nd 2026, Daniel Roe, open-source maintainer and founder, and leader of the [Nuxt](https://nuxt.com/) core
 team, had an idea, and made
 [the first commit to the npmx repository](https://github.com/npmx-dev/npmx.dev/commit/e39e56c08fd1e7bdb556c8565c6b11b3c34c8934).
-The next day, [Daniel posted on Bluesky](https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r) to ask about
-people's frustrations with the npm experience on the web and the CLI. The question resonated deeply with the community
-as they voiced frustrations with the user experience including code browsing, missing data, trust signals, surfacing
-dependencies, and the friction surrounding the publishing experience.
+The next day, [Daniel posted on Bluesky](https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r) asking
+about people's frustrations with the npm experience &ndash; both on the web and in the CLI. The responses came flooding in:
+code browsing, missing data, trust signals, dependency visibility, and the general friction around publishing.
 
 <BlueskyPostEmbed url="https://bsky.app/profile/danielroe.dev/post/3md3cmrg56k2r" />
 
-It was clear there was a huge opportunity to build a fast, modern browser for the npm registry with an improved
-developer experience, and that there were people willing to work with Daniel to build it.
+Clearly, there was an appetite for something better &ndash; and people were willing to help build it.
 
 ## The power of community
 
-Enthusiasm traveled quickly through the network about the idea of npmx, and just a day later, the project began to grow
-_exponentially_. In just 24 hours, a thriving community had mobilized in the form of contributions to the npmx project,
-and opened 49 pull requests in a single day. And this showed no signs of slowing down. Just two weeks later, the
-[community had contributed 1000 issues and PRs](https://github.com/npmx-dev/npmx.dev/issues/1000) to the project. The
-statistics tell a story of _one pull request or issue every 20 minutes_, around the clock, which equated to **over a
-million seconds of project activity in 14 days**. We don't know how the exact statistics compare, but with
-[over 105 contributors](https://github.com/npmx-dev/npmx.dev/graphs/contributors) to npmx to date, and 1500 stars on the project in just 16 days, we hypothesize that this might be the most active early open-source
-project yet.
+Things moved fast. Within 24 hours, 49 pull requests had been opened. Two weeks later, the
+[community had contributed 1000 issues and PRs](https://github.com/npmx-dev/npmx.dev/issues/1000) &ndash; that's roughly
+_one every 20 minutes_, around the clock. With
+[over 105 contributors](https://github.com/npmx-dev/npmx.dev/graphs/contributors) and 1500 stars in just 16 days, npmx became one of the most active early open-source projects we've seen.
 
 [![Star History Chart](https://api.star-history.com/svg?repos=npmx-dev/npmx.dev&type=date&legend=top-left)](https://www.star-history.com/#npmx-dev/npmx.dev&type=date&legend=top-left)
 
-At npmx, we don't believe this happened by chance. npmx was created to meet the needs of a global and diverse developer
-community, prioritizing accessibility, internationalization, and decentralization. As a result, a strong and diverse
-global community came together to realize this vision. And the great thing about people who believe in these areas of
-focus is that they're all committed to collaborating in meaningful ways while building an inclusive and welcoming
-environment in which to do so: together. The npmx project is a testament to how open source is an enabler for
-individuals, and a powerful catalyst to build community when done really, really well.
+We don't think this happened by accident. From the start, npmx prioritized accessibility, internationalization, and working in the open. This attracted people who care about those things &ndash; and who are good at collaborating because of it. The result is a genuinely diverse, global community that's a joy to be part of.
 
-## What's included in the npmx alpha release
+## What you can do with npmx today
 
-We've packed a lot into the alpha release. Here's an overview of what you can expect from npmx today.
-
-Search and view details about packages, users and organizations available on npm, dive deeper into the code, plus get detailed information on:
+Search and view details about packages, users and organizations available on npm, and dive deeper into the code. Plus get detailed information on:
 
 - download statistics
 - outdated dependency warnings
 - module format (ESM/CJS)
-- install size calculation
-- JSR cross-reference
+- install size
+- [JSR](https://jsr.io/) cross-reference
 - multi-provider repo support
 - version range resolution
-- package likes and other social features
+- package likes and social features
 - performance recommendations powered by [e18e](https://e18e.dev/)
 
-You also get quick access to StackBlitz, CodeSandbox, and other demo environments from package READMEs files. Plus, use
-npmx in 19 languages and additional locales, customize your experience with light or dark mode, and power-up your
-workflow across the user interface with intuitive keyboard shortcuts.
+You can also launch [StackBlitz](https://stackblitz.com/), [CodeSandbox](https://codesandbox.io/), and other demo environments directly from package READMEs. Additionally, npmx is available in 19 languages, has light and dark mode, and is designed to be keyboard-friendly throughout.
 
 ## The future of npmx
 
-Our goal at npmx is to build a faster, modern package browsing and management experience _for everyone in the JavaScript
-ecosystem_. We're moving fast, but we know we don't have all the answers. To work toward this goal, today we're building
-together for our peers: open-source developers who work with packages on a daily basis who are keen early adopters
-willing to try out the alpha to help us identify what's working and what's not. Our aim is to build on our progress to
-date, and learn together how to tackle the next stage of releasing npmx in beta for a wider audience.
+We want to build a better package browsing and management experience for everyone in the JavaScript ecosystem. We're moving fast, but we don't have all the answers. Right now we're building for our peers: open-source developers who work with packages daily and are willing to try something early and tell us what's working and what isn't. That feedback is how we'll get to beta.
 
 ## Join us at npmx
 
-Open source is an incredible way to gain professional experience, make new friends, and help make The Web ecosystem
-better for everyone.
+We'd love for you to get involved. Even if you've never contributed to open source before &ndash; you are welcome. If you're not sure where to start, Salma Alam-Naylor has written
+[a ten-step guide to making your first open-source contribution on GitHub](https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/).
 
-We'd love to welcome you to the npmx community to experience how good open source can be. Even if you've never
-contributed to an open source project before, you are welcome to join us and get involved. If you're unsure where to
-start, Salma Alam-Naylor has put together
-[a ten step guide to making your first open-source contribution on GitHub](https://whitep4nth3r.com/blog/how-to-make-your-first-open-source-contribution/)
-to help you get started. Below this post, you'll also find a collection of articles written by contributors to the npmx
-project from a wide variety of perspectives and experiences.
+Below this post, you'll also find articles from npmx contributors sharing their own perspectives and experiences.
 
-The alpha release of npmx is intentionally early. We want real-world feedback from _you_ to guide our roadmap and priorities. Try [npmx](https://npmx.dev) today, let us know what you think and share your use-cases and missing features at [chat.npmx.dev](https://chat.npmx.dev). [Open an issue on GitHub](https://github.com/npmx-dev/npmx.dev/issues) or submit a pull request, and [follow npmx.dev on Bluesky](https://bsky.app/profile/npmx.dev) to keep up to date with what we're working on.
+This npmx alpha is intentionally early. We want real-world feedback from _you_ to guide what we work on next. Try [npmx](https://npmx.dev) today, tell us what you think at [chat.npmx.dev](https://chat.npmx.dev), [open an issue on GitHub](https://github.com/npmx-dev/npmx.dev/issues), or submit a pull request. And [follow npmx.dev on Bluesky](https://bsky.app/profile/npmx.dev) to keep up with what we're building.
 
-And thank you: thank you to every single human who has contributed to npmx so far, whether that's in the form of code, documentation, testing, community activities, and more. You are the people building npmx; you are the people building the future we want.
+Thank you to everyone who has contributed so far &ndash; code, docs, testing, community, and more. You're the ones building this.
 
 ---
 
@@ -123,9 +90,27 @@ headline="Read more from the community"
     description: 'Getting involved in open source doesn\'t have to be scary! Understand how to find a great project and make your first contribution in this guide from Salma.'
   },
   {
+    url: 'https://roe.dev/blog/virtuous-circle',
+    title: 'A Virtuous Circle',
+    authorHandle: 'danielroe.dev',
+    description: 'There\'s a reason why building npmx has been such a blast so far, and it\'s one of the most powerful patterns in open source software development. It\'s also why \'the 10x developer\' is an incredibly dangerous myth.'
+  },
+  {
+    url: 'https://patak.cat/npmx/converging-communities',
+    title: 'npmx: converging communities',
+    authorHandle: 'patak.cat',
+    description: 'The story of the many people and communities that converged to build npmx together.'
+  },
+  {
+    url: 'https://www.freecodecamp.org/news/learning-to-enjoy-code-reviews-with-npmx/',
+    title: 'OSS Pull Request Therapy: Learning to Enjoy Code Reviews with npmx',
+    authorHandle: 'abbeyperini.dev',
+    description: 'For years, I thought Open Source Software (OSS) just wasn\'t for me. Curious about the hype I saw on Bluesky, I recently joined the npmx Discord server on a whim. My journey from lurker to contributor taught me a lot about OSS and gave me new confidence going into code reviews.'
+  },
+  {
     url: 'https://graphieros.github.io/graphieros-blog/blog/2026/npmx.html',
     title: 'vue-data-ui is on npmx npmx is on vue-data-ui',
-    authorHandle: 'graphieros.com',
+    authorHandle: 'graphieros.npmx.social',
     description: 'Graphieros explores a minimal npm-based workflow and why it exists.'
   },
   {
@@ -135,16 +120,40 @@ headline="Read more from the community"
     description: 'Alex reflects on the project, warm stories, wonderful people, and a look into the future'
   },
   {
+    url: 'https://www.netlify.com/blog/sponsoring-npmx',
+    title: 'Sponsoring npmx',
+    authorHandle: 'netlify.com',
+    description: 'It’s more important than ever that companies come together across competitive boundaries to sponsor and support the open ecosystem that lifts all boats.',
+  },
+  {
+    url: 'https://atproto.com/blog/npmx-alpha-launch',
+    title: 'Supporting the npmx Alpha Launch',
+    authorHandle: 'atproto.com',
+    description: 'AT Protocol explores how the npmx alpha launch showcases open-source communities building quickly on top of atproto.'
+  },
+  {
     url: 'https://johnnyreilly.com/npmx-with-a-little-help-from-my-friends',
     title: 'npmx: With a Little Help From My Friends',
     authorHandle: 'johnnyreilly.com',
     description: 'How to contribute to npmx.dev, and thoughts on Johnny\'s experience with the project.'
   },
   {
+    url: 'https://opensourcepledge.com/blog/npmx-a-lesson-in-open-source-collaboration-feedback-loops/',
+    title: 'npmx: A Lesson in Open Source\'s Collaboration Feedback Loops',
+    authorHandle: 'opensourcepledge.com',
+    description: 'npmx\'s success is reminding us why Open Source is such a special social phenomenon.'
+  },
+  {
     url: 'https://blog.trueberryless.org/blog/npmx/',
     title: 'Rising community at tomorrow\'s horizon',
     authorHandle: 'trueberryless.org',
     description: 'Telling the story of a newly founded community.'
+  },
+  {
+    url: 'https://conf.zurichjs.com/blog/open-source-needs-community',
+    title: 'Open source needs community. Community needs open source.',
+    authorHandle: 'zurichjs.com',
+    description: 'Why ZurichJS cares about getting people into open source.',
   },
   {
     url: 'https://www.sybers.fr/blog/3mfhn5xoawz24',
@@ -165,10 +174,76 @@ headline="Read more from the community"
     description: 'Reflections on learning, community, and change.'
   },
   {
+    url: 'https://voidzero.dev/posts/npmx-alpha',
+    title: 'VoidZero and npmx: Building Better Tools Together',
+    authorHandle: 'voidzero.dev',
+    description: 'How VoidZero and npmx.dev share a vision for making JavaScript developers more productive, and how real-world feedback from open-source builders helps improve our tooling.',
+  },
+  {
+    url: 'https://www.faziz-dev.com/blog/community-open-source-and-npmx',
+    title: 'Community, Open Source, and npmx',
+    authorHandle: 'farisaziz12.bsky.social',
+    description: 'npmx isn’t just an npm browser, it\'s a fast-moving open source train that welcomes you aboard the moment you show up.',
+  },
+  {
     url: 'https://paulie.codes/blog/3mfs2stugzp2v',
     title: 'Overcoming Imposter Syndrome: My First Open Source Contribution',
     authorHandle: 'paulie.codes',
     description: 'The most important part of open source is the people, and everyone has something valuable to bring to the table.'
+  },
+  {
+    url: 'https://philippeserhal.com/articles/oss-made-me-a-better-developer',
+    title: 'OSS made me a better developer',
+    authorHandle: 'philippeserhal.com',
+    description: 'How getting involved in npmx made me a better developer.'
+  },
+  {
+    url: 'https://news.atmosphereconf.org/3mg5b3zvktc2i',
+    title: 'npmx goes social with atproto',
+    authorHandle: 'atprotocol.dev',
+    description: 'Announcing npmx speakers, and congratulations on launch day!'
+  },
+  {
+    url: 'https://www.radosvet.dev/posts/career/from-newsletter-to-open-source',
+    title: 'From a Newsletter Link to My First Open Source Contribution',
+    authorHandle: 'radosvet.dev',
+    description: 'How discovering npmx through a newsletter led to a first meaningful open source contribution and a new perspective on community-driven development.'
+  },
+  {
+    url: 'https://vale.rocks/micros/20260303-1200',
+    title: 'npmx Is Open-Source Done Right',
+    authorHandle: 'vale.rocks',
+    description: 'How the ethos and practices of npmx represent a healthy open-source ecosystem that should be the standard, not an exception.'
+  },
+  {
+    url: 'https://jaydip.me/blog/joy-of-open-source',
+    title: 'Joy of open source',
+    authorHandle: 'jaydip.me',
+    description: 'childish fun of making things together'
+  },
+  {
+    url: 'https://e18e.dev/blog/npmx-collaboration.html',
+    title: 'Collaborating with npmx',
+    authorHandle: '43081j.com',
+    description: 'How the e18e community is collaborating closely with npmx to make best practices more visible and accessible to everyone in the ecosystem.'
+  },
+  {
+    url: 'https://youtu.be/NoC5U6F6p4Y',
+    title: 'The npmjs.com that developers deserve - What is npmx? (video)',
+    authorHandle: 'thealexlichter.com',
+    description: 'An introductory video showcasing Alex\'s favorite features of npmx and the open-source idea behind it.'
+  },
+  {
+    url: 'https://piccalil.li/blog/finding-an-accessibility-first-culture-in-npmx/',
+    title: 'Finding an accessibility-first culture in npmx',
+    authorHandle: 'abbeyperini.dev',
+    description: 'Abbey Perini talks about how accessibility is a deep part of the npmx culture.'
+  },
+  {
+    url: 'https://jonathanyeong.com/writing/npmx-and-the-open-source-mindset/',
+    title: 'npmx and the open source mindset',
+    authorHandle: 'jonathanyeong.com',
+    description: 'How npmx taught me to embrace the open source mindset.'
   }
 ]"
 />
