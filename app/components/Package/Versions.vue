@@ -457,6 +457,14 @@ function getExpandedTagVersions(tag: string, primaryVersion: string): VersionDis
   return versions.filter(v => filteredVersionSet.value.has(v.version))
 }
 
+// Check if a tag row's children are expanded (manually or via active filter)
+function isTagExpanded(tag: string, primaryVersion: string): boolean {
+  return (
+    expandedTags.value.has(tag) ||
+    (isFilterActive.value && getExpandedTagVersions(tag, primaryVersion).length > 0)
+  )
+}
+
 function findClaimingTag(version: string): string | null {
   const versionChannel = getPrereleaseChannel(version)
 
@@ -605,7 +613,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
             v-if="getTagVersions(row.tag).length > 1 || !hasLoadedAll"
             type="button"
             class="size-5 -me-1 flex items-center justify-center text-fg-subtle hover:text-fg transition-colors rounded-sm relative z-10"
-            :aria-expanded="expandedTags.has(row.tag)"
+            :aria-expanded="isTagExpanded(row.tag, row.primaryVersion.version)"
             :aria-label="
               expandedTags.has(row.tag)
                 ? $t('package.versions.collapse', { tag: row.tag })
@@ -624,7 +632,9 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
               v-else
               class="size-3 transition-transform duration-200 rtl-flip"
               :class="
-                expandedTags.has(row.tag) ? 'i-lucide:chevron-down' : 'i-lucide:chevron-right'
+                isTagExpanded(row.tag, row.primaryVersion.version)
+                  ? 'i-lucide:chevron-down'
+                  : 'i-lucide:chevron-right'
               "
               aria-hidden="true"
             />
@@ -693,10 +703,7 @@ function majorGroupContainsCurrent(group: (typeof otherMajorGroups.value)[0]): b
 
         <!-- Expanded versions -->
         <div
-          v-if="
-            (expandedTags.has(row.tag) || isFilterActive) &&
-            getExpandedTagVersions(row.tag, row.primaryVersion.version).length
-          "
+          v-if="isTagExpanded(row.tag, row.primaryVersion.version)"
           class="ms-4 ps-2 border-is border-border space-y-0.5 pe-2"
         >
           <div
