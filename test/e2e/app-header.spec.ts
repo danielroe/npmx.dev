@@ -81,11 +81,6 @@ test.describe('Mobile Header Menu', () => {
     test('menu is closed by default on page load', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Menu button should be visible
       const menuButton = page
         .locator(
@@ -101,11 +96,6 @@ test.describe('Mobile Header Menu', () => {
     test('menu button has aria-expanded="false" by default', async ({ page, goto }) => {
       await goto('/compare', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       const menuButton = page
         .locator(
           'button[aria-label*="open_menu"], button[aria-label*="Buka"], button[aria-label*="Apri"], button[aria-label*="Otevřít"], button[aria-label*="Ouvrir"]',
@@ -119,11 +109,6 @@ test.describe('Mobile Header Menu', () => {
     test('menu opens when clicking the menu button', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       await expectMenuClosed(page)
 
       // Click menu button to open
@@ -135,11 +120,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('menu closes when clicking the menu button again', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       // Open menu
       await openMobileMenu(page)
@@ -160,11 +140,6 @@ test.describe('Mobile Header Menu', () => {
     test('menu closes when clicking the close button', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Open menu
       await openMobileMenu(page)
       await expectMenuOpen(page)
@@ -178,11 +153,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('menu closes when clicking the backdrop', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       // Open menu
       await openMobileMenu(page)
@@ -198,11 +168,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('menu button aria-expanded toggles with menu state', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       const menuButton = page
         .locator(
@@ -227,11 +192,6 @@ test.describe('Mobile Header Menu', () => {
     test('Escape key closes the menu', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Open menu
       await openMobileMenu(page)
       await expectMenuOpen(page)
@@ -245,11 +205,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('focus trap is active when menu is open', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       // Open menu
       await openMobileMenu(page)
@@ -278,11 +233,6 @@ test.describe('Mobile Header Menu', () => {
     test('menu closes when navigating to a different route', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Open menu
       await openMobileMenu(page)
       await expectMenuOpen(page)
@@ -300,11 +250,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('menu closes when searching (debounced navigation)', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       // Open menu
       await openMobileMenu(page)
@@ -327,11 +272,6 @@ test.describe('Mobile Header Menu', () => {
     test('menu has correct ARIA attributes', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Open menu
       await openMobileMenu(page)
 
@@ -344,11 +284,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('close button has proper accessibility label', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       // Open menu
       await openMobileMenu(page)
@@ -363,11 +298,6 @@ test.describe('Mobile Header Menu', () => {
 
     test('menu items are keyboard navigable', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
-
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
 
       // Open menu
       await openMobileMenu(page)
@@ -393,11 +323,6 @@ test.describe('Mobile Header Menu', () => {
     test('helper functions work independently - expectMenuClosed', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Should not throw - menu is closed by default
       await expectMenuClosed(page)
     })
@@ -418,11 +343,6 @@ test.describe('Mobile Header Menu', () => {
     test('helper functions work independently - closeMobileMenu', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Open and then use helper to close
       await openMobileMenu(page)
       await closeMobileMenu(page)
@@ -432,11 +352,6 @@ test.describe('Mobile Header Menu', () => {
     test('helpers can be combined in sequence', async ({ page, goto }) => {
       await goto('/', { waitUntil: 'hydration' })
 
-      const isOnMobile = await isMobileViewport(page)
-      if (!isOnMobile) {
-        test.skip()
-      }
-
       // Test sequence: closed -> open -> closed -> open
       await expectMenuClosed(page)
       await openMobileMenu(page)
@@ -445,13 +360,6 @@ test.describe('Mobile Header Menu', () => {
       await expectMenuClosed(page)
       await openMobileMenu(page)
       await expectMenuOpen(page)
-    })
-
-    test('isMobileViewport helper works correctly', async ({ page, goto }) => {
-      await goto('/', { waitUntil: 'hydration' })
-
-      const isMobile = await isMobileViewport(page)
-      expect(isMobile).toBe(true)
     })
   })
 })
