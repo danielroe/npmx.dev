@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RawBlogPostFrontmatter } from '#shared/schemas/blog'
+import { generateBlogTID } from '#shared/utils/atproto'
 import { posts } from '#blog/posts'
 
 const props = defineProps<{
@@ -15,6 +16,15 @@ useSeoMeta({
   ogDescription: props.frontmatter.description || props.frontmatter.excerpt,
   ogType: 'article',
   ...(props.frontmatter.draft ? { robots: 'noindex, nofollow' } : {}),
+})
+
+useHead({
+  link: [
+    {
+      rel: 'site.standard.document',
+      href: `at://${NPMX_DEV_DID}/site.standard.document/${generateBlogTID(props.frontmatter.date, props.frontmatter.slug)}`,
+    },
+  ],
 })
 
 defineOgImageComponent('BlogPost', {

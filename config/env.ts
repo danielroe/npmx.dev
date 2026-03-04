@@ -3,7 +3,10 @@
 import Git from 'simple-git'
 import * as process from 'node:process'
 
-export { version } from '../package.json'
+import { version as packageVersion } from '../package.json'
+import { getNextVersion } from '../scripts/next-version'
+
+export { packageVersion as version }
 
 /**
  * Environment variable `PULL_REQUEST` provided by Netlify.
@@ -41,14 +44,18 @@ export const gitBranch = process.env.BRANCH || process.env.VERCEL_GIT_COMMIT_REF
 /**
  * Whether this is the canary environment (main.npmx.dev).
  *
- * Detected via the custom Vercel environment (`VERCEL_ENV === 'canary'`),
- * or as a fallback, a production deploy from the `main` branch.
+ * Detected as any non-PR Vercel deploy from the `main` branch
+ * (which may receive `VERCEL_ENV === 'production'`, `'preview'`, or a
+ * custom `'canary'` environment depending on the project configuration).
  *
  * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_ENV}
  */
 export const isCanary =
-  process.env.VERCEL_ENV === 'canary' ||
-  (process.env.VERCEL_ENV === 'production' && gitBranch === 'main')
+  (process.env.VERCEL_ENV === 'production' ||
+    process.env.VERCEL_ENV === 'preview' ||
+    process.env.VERCEL_ENV === 'canary') &&
+  gitBranch === 'main' &&
+  !isPR
 
 /**
  * Environment variable `CONTEXT` provided by Netlify.
@@ -56,7 +63,7 @@ export const isCanary =
  * @see {@link https://docs.netlify.com/build/configure-builds/environment-variables/#build-metadata}
  *
  * Environment variable `VERCEL_ENV` provided by Vercel.
- * `production`, `preview`, `development`, or a custom environment name (e.g. `canary`).
+ * `production`, `preview`, or `development`.
  * @see {@link https://vercel.com/docs/environment-variables/system-environment-variables#VERCEL_ENV}
  *
  * Whether this is some sort of preview environment.
@@ -152,12 +159,30 @@ export async function getFileLastUpdated(path: string) {
   }
 }
 
+/**
+ * Resolves the **next** version by analysing conventional commits since the
+ * last reachable `v*` tag.  Delegates to {@link getNextVersion} which is also
+ * used by the `release-tag` and `release-pr` GitHub Actions workflows so the
+ * version shown in the UI matches the tag that will be created *after* deploy.
+ *
+ * Falls back to `package.json` when git is unavailable (e.g. shallow clone).
+ */
+export async function getVersion() {
+  try {
+    const { next } = await getNextVersion()
+    return next
+  } catch {
+    return packageVersion
+  }
+}
+
 export async function getEnv(isDevelopment: boolean) {
-  const { commit, shortCommit, branch } = await getGitInfo()
+  const [{ commit, shortCommit, branch }, version] = await Promise.all([getGitInfo(), getVersion()])
   const env = isDevelopment ? 'dev' : isCanary ? 'canary' : isPreview ? 'preview' : 'release'
   const previewUrl = getPreviewUrl()
   const productionUrl = getProductionUrl()
   return {
+    version,
     commit,
     shortCommit,
     branch,
