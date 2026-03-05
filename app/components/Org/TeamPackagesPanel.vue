@@ -27,6 +27,7 @@ const selectedTeam = shallowRef<string | null>(null)
 const packages = shallowRef<Record<string, AccessPermission>>({})
 const isLoadingPackages = shallowRef(false)
 const packagesError = shallowRef<string | null>(null)
+const packageLoadRequestId = shallowRef(0)
 
 // Search/filter
 const searchQuery = shallowRef('')
@@ -58,6 +59,9 @@ async function loadTeams() {
     } else {
       teamsError.value = connectorError.value || 'Failed to load teams'
     }
+  } catch (error) {
+    teamsError.value =
+      connectorError.value || (error instanceof Error ? error.message : 'Failed to load teams')
   } finally {
     isLoadingTeams.value = false
   }
@@ -66,20 +70,29 @@ async function loadTeams() {
 // Load packages for selected team
 async function loadPackages() {
   if (!isConnected.value || !selectedTeam.value) return
+  const teamAtRequestStart = selectedTeam.value
+  const requestId = ++packageLoadRequestId.value
 
   isLoadingPackages.value = true
   packagesError.value = null
 
   try {
-    const scopeTeam = buildScopeTeam(props.orgName, selectedTeam.value)
+    const scopeTeam = buildScopeTeam(props.orgName, teamAtRequestStart)
     const result = await listTeamPackages(scopeTeam)
+    if (requestId !== packageLoadRequestId.value || teamAtRequestStart !== selectedTeam.value)
+      return
     if (result) {
       packages.value = result
     } else {
       packagesError.value = connectorError.value || 'Failed to load packages'
     }
+  } catch (error) {
+    packagesError.value =
+      connectorError.value || (error instanceof Error ? error.message : 'Failed to load packages')
   } finally {
-    isLoadingPackages.value = false
+    if (requestId === packageLoadRequestId.value) {
+      isLoadingPackages.value = false
+    }
   }
 }
 
