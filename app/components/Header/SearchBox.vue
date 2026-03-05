@@ -66,7 +66,6 @@ defineExpose({ focus })
           <button
             v-if="hasSearchQuery"
             type="button"
-            :aria-label="$t('common.close')"
             class="absolute inset-ie-2 h-6 w-6 items-center justify-center rounded text-fg-muted hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent group-focus-within:flex group-hover:inline-flex hidden"
             @click="clearSearch"
             aria-hidden="true"
