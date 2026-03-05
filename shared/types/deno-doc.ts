@@ -100,7 +100,7 @@ export interface DenoDocNode {
     }>
     methods?: Array<{
       name: string
-      kind?: string
+      kind?: 'method' | 'getter'
       isStatic?: boolean
       functionDef?: {
         params?: FunctionParam[]
