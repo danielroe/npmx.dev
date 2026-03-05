@@ -238,6 +238,12 @@ headline="Read more from the community"
     title: 'Finding an accessibility-first culture in npmx',
     authorHandle: 'abbeyperini.dev',
     description: 'Abbey Perini talks about how accessibility is a deep part of the npmx culture.'
+  },
+  {
+    url: 'https://jonathanyeong.com/writing/npmx-and-the-open-source-mindset/',
+    title: 'npmx and the open source mindset',
+    authorHandle: 'jonathanyeong.com',
+    description: 'How npmx taught me to embrace the open source mindset.'
   }
 ]"
 />
