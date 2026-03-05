@@ -74,18 +74,31 @@ const STORAGE_KEY = 'npmx-settings'
 /**
  * Read settings from localStorage and merge with defaults.
  */
+function normaliseSettings(input: AppSettings): AppSettings {
+  return {
+    ...input,
+    searchProvider: input.searchProvider === 'npm' ? 'npm' : 'algolia',
+    sidebar: {
+      ...input.sidebar,
+      collapsed: Array.isArray(input.sidebar?.collapsed)
+        ? input.sidebar.collapsed.filter((v): v is string => typeof v === 'string')
+        : [],
+    },
+  }
+}
+
 function readFromLocalStorage(): AppSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       const stored = JSON.parse(raw)
-      return {
+      return normaliseSettings({
         ...DEFAULT_SETTINGS,
         ...stored,
         connector: { ...DEFAULT_SETTINGS.connector, ...stored.connector },
         sidebar: { ...DEFAULT_SETTINGS.sidebar, ...stored.sidebar },
         chartFilter: { ...DEFAULT_SETTINGS.chartFilter, ...stored.chartFilter },
-      }
+      })
     }
   } catch {}
   return { ...DEFAULT_SETTINGS }
@@ -111,11 +124,18 @@ export function useSettings() {
     // Read localStorage eagerly but apply after mount to prevent hydration
     // mismatch. During hydration, useState provides server-matching defaults.
     // After mount, we swap in the user's actual preferences from localStorage.
+    // Uses nuxtApp.hook('app:mounted') instead of onMounted so it works even
+    // when useSettings() is first called from a plugin (no component context).
     const stored = readFromLocalStorage()
+    const nuxtApp = useNuxtApp()
 
-    onMounted(() => {
+    if (nuxtApp.isHydrating) {
+      nuxtApp.hook('app:mounted', () => {
+        settings.value = stored
+      })
+    } else {
       settings.value = stored
-    })
+    }
 
     // Persist future changes back to localStorage
     watch(
