@@ -12,11 +12,17 @@ const closeModal = () => modalRef.value?.close?.()
 
 <template>
   <footer class="border-t border-border mt-auto">
-    <div class="container py-3 sm:py-8 flex flex-col gap-2 sm:gap-4 text-fg-subtle text-sm">
-      <div class="flex flex-col lg:flex-row lg:items-baseline justify-between gap-2 sm:gap-4">
-        <div>
-          <p class="font-mono text-balance m-0 hidden sm:block mb-3">
-            {{ $t('tagline') }}
+    <div class="container sm:py-8 flex flex-col sm:gap-4 text-fg-subtle text-sm">
+      <div class="flex justify-between">
+        <p class="font-mono text-balance hidden sm:block">
+          {{ $t('tagline') }}
+        </p>
+      </div>
+      <div class="flex justify-between flex-col lg:flex-row gap-3">
+        <div class="flex flex-col gap-3">
+          <p class="text-xs text-fg-muted text-center sm:text-start m-0">
+            <span class="sm:hidden">{{ $t('non_affiliation_disclaimer') }}</span>
+            <span class="hidden sm:inline">{{ $t('trademark_disclaimer') }}</span>
           </p>
           <BuildEnvironment v-if="!isHome" footer />
         </div>
@@ -131,10 +137,6 @@ const closeModal = () => modalRef.value?.close?.()
           </div>
         </div>
       </div>
-      <p class="text-xs text-fg-muted text-center sm:text-start m-0">
-        <span class="sm:hidden">{{ $t('non_affiliation_disclaimer') }}</span>
-        <span class="hidden sm:inline">{{ $t('trademark_disclaimer') }}</span>
-      </p>
     </div>
   </footer>
 </template>
