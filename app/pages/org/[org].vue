@@ -65,8 +65,7 @@ const currentPage = shallowRef(1)
 
 // Calculate total pages
 const totalPages = computed(() => {
-  const numericSize = pageSize.value ?? 25
-  return Math.ceil(sortedPackages.value.length / numericSize)
+  return Math.ceil(sortedPackages.value.length / pageSize.value)
 })
 
 // Reset to page 1 when filters change

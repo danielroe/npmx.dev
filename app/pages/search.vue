@@ -164,8 +164,7 @@ const EAGER_LOAD_SIZE = { algolia: 500, npm: 500 } as const
 
 // Calculate how many results we need based on current page and preferred page size
 const requestedSize = computed(() => {
-  const numericPrefSize = preferredPageSize.value
-  const base = Math.max(pageSize, currentPage.value * numericPrefSize)
+  const base = Math.max(pageSize, currentPage.value * preferredPageSize.value)
   // When sorting by something other than relevance, fetch a large batch
   // so client-side sorting operates on a meaningful pool of matching results
   if (!isRelevanceSort.value) {
