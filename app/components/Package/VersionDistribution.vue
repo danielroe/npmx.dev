@@ -11,6 +11,8 @@ import {
 import TooltipApp from '~/components/Tooltip/App.vue'
 import { copyAltTextForVersionsBarChart } from '~/utils/charts'
 
+import('vue-data-ui/style.css')
+
 const props = defineProps<{
   packageName: string
   inModal?: boolean
@@ -549,6 +551,29 @@ const chartConfig = computed<VueUiXyConfig>(() => {
 
             <template #annotator-action-color="{ color }">
               <span class="i-lucide:palette w-6 h-6" :style="{ color }" aria-hidden="true" />
+            </template>
+
+            <template #annotator-action-draw="{ mode }">
+              <span
+                v-if="mode === 'arrow'"
+                class="i-lucide:move-up-right text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
+              <span
+                v-if="mode === 'text'"
+                class="i-lucide:type text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
+              <span
+                v-if="mode === 'line'"
+                class="i-lucide:pen-line text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
+              <span
+                v-if="mode === 'draw'"
+                class="i-lucide:line-squiggle text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
             </template>
 
             <template #annotator-action-undo>

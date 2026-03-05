@@ -15,9 +15,10 @@ useSeoMeta({
   twitterDescription: () => $t('about.meta_description'),
 })
 
-defineOgImage('Page.takumi', {
-  title: () => `${$t('about.title')}`,
-  description: 'a fast, modern browser for the npm registry',
+defineOgImageComponent('Default', {
+  primaryColor: '#60a5fa',
+  title: 'about npmx',
+  description: 'a fast, modern browser for the **npm registry**',
 })
 
 const isMounted = shallowRef(false)
@@ -291,7 +292,7 @@ onBeforeUnmount(() => {
         </p>
       </header>
 
-      <section class="prose prose-invert max-w-none space-y-12">
+      <section class="max-w-none space-y-12">
         <div>
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.what_we_are.title') }}
@@ -376,16 +377,18 @@ onBeforeUnmount(() => {
           </ul>
         </div>
 
+        <!-- Sponsors -->
         <div class="sponsors-logos">
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.sponsors.title') }}
           </h2>
           <AboutLogoList
             :list="SPONSORS"
-            class="flex-col gap-6 items-start md:flex-row md:items-center md:gap-4"
+            class="grid grid-cols-2 md:flex md:flex-row md:items-center"
           />
         </div>
 
+        <!-- OSS partners -->
         <div>
           <h2 class="text-lg text-fg uppercase tracking-wider mb-4">
             {{ $t('about.oss_partners.title') }}
