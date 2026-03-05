@@ -18,6 +18,7 @@
     "source": "ソースコード",
     "social": "ソーシャル",
     "chat": "チャット",
+    "builders_chat": "builders",
     "keyboard_shortcuts": "キーボードショートカット"
   },
   "shortcuts": {
@@ -64,7 +65,13 @@
       "org": "organization",
       "view_user_packages": "このユーザーのパッケージを表示",
       "view_org_packages": "このorganizationのパッケージを表示"
-    }
+    },
+    "instant_search": "Instant search",
+    "instant_search_on": "on",
+    "instant_search_off": "off",
+    "instant_search_turn_on": "turn on",
+    "instant_search_turn_off": "turn off",
+    "instant_search_advisory": "{label} {state} — {action}"
   },
   "nav": {
     "main_navigation": "メイン",
@@ -957,6 +964,11 @@
         "title": "コミュニティに参加",
         "description": "チャット、質問、アイデアの共有。",
         "cta": "Discordに参加"
+      },
+      "builders": {
+        "title": "Help build npmx",
+        "description": "Join the builders shaping the future of npmx.",
+        "cta": "Join Builders Discord"
       },
       "follow": {
         "title": "最新情報を入手",
