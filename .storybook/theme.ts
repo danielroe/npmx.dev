@@ -1,6 +1,6 @@
 import { create } from 'storybook/theming/create'
 
-export const npmxDark = create({
+const npmxDark = create({
   base: 'dark',
 
   brandTitle: 'npmx Storybook',
