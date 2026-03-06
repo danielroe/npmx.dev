@@ -27,7 +27,7 @@ const id = useId()
 <template>
   <label
     :for="id"
-    class="grid items-center gap-1.5 py-1 -my-1 grid-cols-[auto_1fr_auto] cursor-pointer group"
+    class="grid items-center gap-1.5 py-1 -my-1 grid-cols-[auto_1fr_auto] cursor-pointer"
     :class="[justify === 'start' ? 'justify-start' : '']"
     :style="
       props.reverseOrder
