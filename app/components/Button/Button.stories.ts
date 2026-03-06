@@ -1,10 +1,8 @@
 import type { Meta, StoryObj } from '@storybook-vue/nuxt'
 import ButtonBase from './Base.vue'
-import ButtonGroup from './Group.vue'
 
 const meta = {
   component: ButtonBase,
-  subcomponents: { ButtonGroup },
   parameters: {
     docs: {
       source: {
@@ -14,6 +12,22 @@ const meta = {
       },
     },
   },
+  tags: ['autodocs'],
+} satisfies Meta<typeof ButtonBase>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
+  args: {
+    default: 'Button Text',
+  },
+}
+
+export const Primary: Story = {
+  args: {
+    variant: 'primary',
+  },
   render: args => ({
     components: { ButtonBase },
     setup() {
@@ -21,36 +35,45 @@ const meta = {
     },
     template: `<ButtonBase v-bind="args">{{ $t("nav.settings") }}</ButtonBase>`,
   }),
-  tags: ['autodocs'],
-} satisfies Meta<typeof ButtonBase>
-
-export default meta
-type Story = StoryObj<typeof meta>
-
-export const Default: Story = {}
-
-export const Primary: Story = {
-  args: {
-    variant: 'primary',
-  },
 }
 
 export const Secondary: Story = {
   args: {
     variant: 'secondary',
   },
+  render: args => ({
+    components: { ButtonBase },
+    setup() {
+      return { args }
+    },
+    template: `<ButtonBase v-bind="args">{{ $t("nav.settings") }}</ButtonBase>`,
+  }),
 }
 
 export const Small: Story = {
   args: {
     size: 'small',
   },
+  render: args => ({
+    components: { ButtonBase },
+    setup() {
+      return { args }
+    },
+    template: `<ButtonBase v-bind="args">{{ $t("nav.settings") }}</ButtonBase>`,
+  }),
 }
 
 export const Disabled: Story = {
   args: {
     disabled: true,
   },
+  render: args => ({
+    components: { ButtonBase },
+    setup() {
+      return { args }
+    },
+    template: `<ButtonBase v-bind="args">{{ $t("nav.settings") }}</ButtonBase>`,
+  }),
 }
 
 export const WithIcon: Story = {
@@ -83,83 +106,11 @@ export const Block: Story = {
   args: {
     block: true,
   },
-}
-
-export const GroupedButtons: Story = {
-  parameters: {
-    docs: {
-      description: {
-        story: 'Use `ButtonGroup` to group multiple buttons together with connected borders.',
-      },
-      source: {
-        code: `<template>
-  <ButtonGroup>
-    <ButtonBase>Back</ButtonBase>
-    <ButtonBase>Settings</ButtonBase>
-    <ButtonBase>Compare</ButtonBase>
-  </ButtonGroup>
-</template>`,
-      },
+  render: args => ({
+    components: { ButtonBase },
+    setup() {
+      return { args }
     },
-  },
-  render: () => ({
-    components: { ButtonBase, ButtonGroup },
-    template: `
-      <ButtonGroup>
-        <ButtonBase>{{ $t('nav.back') }}</ButtonBase>
-        <ButtonBase>{{ $t('nav.settings') }}</ButtonBase>
-        <ButtonBase>{{ $t('nav.compare') }}</ButtonBase>
-      </ButtonGroup>
-    `,
-  }),
-}
-
-export const GroupedWithVariants: Story = {
-  parameters: {
-    docs: {
-      source: {
-        code: `<template>
-  <ButtonGroup>
-    <ButtonBase variant="primary">Back</ButtonBase>
-    <ButtonBase variant="primary">Settings</ButtonBase>
-    <ButtonBase variant="primary">Compare</ButtonBase>
-  </ButtonGroup>
-</template>`,
-      },
-    },
-  },
-  render: () => ({
-    components: { ButtonBase, ButtonGroup },
-    template: `
-      <ButtonGroup>
-        <ButtonBase variant="primary">{{ $t('nav.back') }}</ButtonBase>
-        <ButtonBase variant="primary">{{ $t('nav.settings') }}</ButtonBase>
-        <ButtonBase variant="primary">{{ $t('nav.compare') }}</ButtonBase>
-      </ButtonGroup>
-    `,
-  }),
-}
-
-export const GroupedWithIcons: Story = {
-  parameters: {
-    docs: {
-      source: {
-        code: `<template>
-  <ButtonGroup>
-    <ButtonBase variant="secondary" classicon="i-lucide:search">Search</ButtonBase>
-    <ButtonBase variant="secondary" classicon="i-lucide:x">Back</ButtonBase>
-  </ButtonGroup>
-</template>`,
-      },
-    },
-  },
-  render: () => ({
-    components: { ButtonBase, ButtonGroup },
-    template: `
-      <ButtonGroup>
-        <ButtonBase variant="secondary" classicon="i-lucide:search">{{ $t('search.button') }}</ButtonBase>
-        <ButtonBase variant="secondary" classicon="i-lucide:x">{{ $t('nav.back') }}</ButtonBase>
-      </ButtonGroup>
-    `,
+    template: `<ButtonBase v-bind="args">{{ $t("nav.settings") }}</ButtonBase>`,
   }),
 }
