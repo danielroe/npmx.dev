@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { NO_DEPENDENCY_ID } from '~/composables/usePackageComparison'
+
 const packages = defineModel<string[]>({ required: true })
 
 const props = defineProps<{
@@ -12,10 +14,39 @@ const maxPackages = computed(() => props.max ?? 4)
 const inputValue = shallowRef('')
 const isInputFocused = shallowRef(false)
 
-// Use the shared npm search composable
-const { data: searchData, status } = useNpmSearch(inputValue, { size: 15 })
+// Keyboard navigation state
+const highlightedIndex = shallowRef(-1)
+const listRef = useTemplateRef('listRef')
+const PAGE_JUMP = 5
+
+// Use the shared search composable (supports both npm and Algolia providers)
+const { searchProvider } = useSearchProvider()
+const { data: searchData, status } = useSearch(inputValue, searchProvider, { size: 15 })
 
 const isSearching = computed(() => status.value === 'pending')
+
+// Trigger strings for "What Would James Do?" typeahead Easter egg
+// Intentionally not localized
+const EASTER_EGG_TRIGGERS = new Set([
+  'no dep',
+  'none',
+  'vanilla',
+  'diy',
+  'zero',
+  'nothing',
+  '0',
+  "don't",
+  'native',
+  'use the platform',
+])
+
+// Check if "no dependency" option should show in typeahead
+const showNoDependencyOption = computed(() => {
+  if (packages.value.includes(NO_DEPENDENCY_ID)) return false
+  const input = inputValue.value.toLowerCase().trim()
+  if (!input) return false
+  return EASTER_EGG_TRIGGERS.has(input)
+})
 
 // Filter out already selected packages
 const filteredResults = computed(() => {
@@ -28,12 +59,40 @@ const filteredResults = computed(() => {
     .filter(r => !packages.value.includes(r.name))
 })
 
+// Unified list of navigable items for keyboard navigation
+const navigableItems = computed(() => {
+  const items: { type: 'no-dependency' | 'package'; name: string }[] = []
+  if (showNoDependencyOption.value) {
+    items.push({ type: 'no-dependency', name: NO_DEPENDENCY_ID })
+  }
+  for (const r of filteredResults.value) {
+    items.push({ type: 'package', name: r.name })
+  }
+  return items
+})
+
+const resultIndexOffset = computed(() => (showNoDependencyOption.value ? 1 : 0))
+
+const numberFormatter = useNumberFormatter()
+
+const keyboardShortcuts = useKeyboardShortcuts()
+
 function addPackage(name: string) {
   if (packages.value.length >= maxPackages.value) return
   if (packages.value.includes(name)) return
 
-  packages.value = [...packages.value, name]
+  // Keep NO_DEPENDENCY_ID always last
+  if (name === NO_DEPENDENCY_ID) {
+    packages.value = [...packages.value, name]
+  } else if (packages.value.includes(NO_DEPENDENCY_ID)) {
+    // Insert before the no-dep entry
+    const withoutNoDep = packages.value.filter(p => p !== NO_DEPENDENCY_ID)
+    packages.value = [...withoutNoDep, name, NO_DEPENDENCY_ID]
+  } else {
+    packages.value = [...packages.value, name]
+  }
   inputValue.value = ''
+  highlightedIndex.value = -1
 }
 
 function removePackage(name: string) {
@@ -41,58 +100,143 @@ function removePackage(name: string) {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter' && inputValue.value.trim()) {
-    e.preventDefault()
-    addPackage(inputValue.value.trim())
+  if (!keyboardShortcuts.value) {
+    return
+  }
+
+  const items = navigableItems.value
+  const count = items.length
+
+  switch (e.key) {
+    case 'ArrowDown':
+      e.preventDefault()
+      if (count === 0) return
+      if (highlightedIndex.value < count - 1) {
+        highlightedIndex.value++
+      } else {
+        highlightedIndex.value = 0
+      }
+      break
+
+    case 'ArrowUp':
+      e.preventDefault()
+      if (count === 0) return
+      if (highlightedIndex.value > 0) {
+        highlightedIndex.value--
+      } else {
+        highlightedIndex.value = count - 1
+      }
+      break
+
+    case 'PageDown':
+      e.preventDefault()
+      if (count === 0) return
+      if (highlightedIndex.value === -1) {
+        highlightedIndex.value = Math.min(PAGE_JUMP - 1, count - 1)
+      } else {
+        highlightedIndex.value = Math.min(highlightedIndex.value + PAGE_JUMP, count - 1)
+      }
+      break
+
+    case 'PageUp':
+      e.preventDefault()
+      if (count === 0) return
+      highlightedIndex.value = Math.max(highlightedIndex.value - PAGE_JUMP, 0)
+      break
+
+    case 'Enter': {
+      const inputValueTrim = inputValue.value.trim()
+      if (!inputValueTrim) return
+
+      e.preventDefault()
+
+      // If an item is highlighted, select it
+      if (highlightedIndex.value >= 0 && highlightedIndex.value < count) {
+        addPackage(items[highlightedIndex.value]!.name)
+        return
+      }
+
+      // Fallback: exact match or easter egg (preserves existing behavior)
+      if (showNoDependencyOption.value) {
+        addPackage(NO_DEPENDENCY_ID)
+      } else {
+        const hasMatch = filteredResults.value.find(r => r.name === inputValueTrim)
+        if (hasMatch) {
+          addPackage(inputValueTrim)
+        }
+      }
+      break
+    }
+
+    case 'Escape':
+      inputValue.value = ''
+      highlightedIndex.value = -1
+      break
   }
 }
 
-function handleBlur() {
-  useTimeoutFn(() => {
-    isInputFocused.value = false
-  }, 200)
-}
+// Reset highlight when user types
+watch(inputValue, () => {
+  highlightedIndex.value = -1
+})
+
+// Scroll highlighted item into view
+watch(highlightedIndex, index => {
+  if (index >= 0 && listRef.value) {
+    const items = listRef.value.querySelectorAll('[data-navigable]')
+    const item = items[index] as HTMLElement | undefined
+    item?.scrollIntoView({ block: 'nearest' })
+  }
+})
+
+const containerRef = useTemplateRef('containerRef')
+
+onClickOutside(containerRef, () => {
+  isInputFocused.value = false
+  highlightedIndex.value = -1
+})
 </script>
 
 <template>
   <div class="space-y-3">
     <!-- Selected packages -->
     <div v-if="packages.length > 0" class="flex flex-wrap gap-2">
-      <div
-        v-for="pkg in packages"
-        :key="pkg"
-        class="inline-flex items-center gap-2 px-3 py-1.5 bg-bg-subtle border border-border rounded-md"
-      >
-        <NuxtLink
-          :to="`/package/${pkg}`"
-          class="font-mono text-sm text-fg hover:text-accent transition-colors"
-        >
+      <TagStatic v-for="pkg in packages" :key="pkg">
+        <!-- No dependency display -->
+        <template v-if="pkg === NO_DEPENDENCY_ID">
+          <span class="text-sm text-accent italic flex items-center gap-1.5">
+            <span class="i-lucide:leaf w-3.5 h-3.5" aria-hidden="true" />
+            {{ $t('compare.no_dependency.label') }}
+          </span>
+        </template>
+        <LinkBase v-else :to="packageRoute(pkg)" class="text-sm">
           {{ pkg }}
-        </NuxtLink>
-        <button
-          type="button"
-          class="text-fg-subtle hover:text-fg transition-colors focus-visible:outline-accent/70 rounded"
-          :aria-label="$t('compare.selector.remove_package', { package: pkg })"
+        </LinkBase>
+        <ButtonBase
+          size="small"
+          :aria-label="
+            $t('compare.selector.remove_package', {
+              package: pkg === NO_DEPENDENCY_ID ? $t('compare.no_dependency.label') : pkg,
+            })
+          "
           @click="removePackage(pkg)"
-        >
-          <span class="i-carbon:close flex items-center w-3.5 h-3.5" aria-hidden="true" />
-        </button>
-      </div>
+          classicon="i-lucide:x"
+        />
+      </TagStatic>
     </div>
 
     <!-- Add package input -->
-    <div v-if="packages.length < maxPackages" class="relative">
-      <div class="relative group">
+    <div v-if="packages.length < maxPackages" ref="containerRef" class="relative">
+      <div class="relative group flex items-center">
         <label for="package-search" class="sr-only">
           {{ $t('compare.selector.search_label') }}
         </label>
         <span
-          class="absolute inset-y-0 start-3 flex items-center text-fg-subtle pointer-events-none group-focus-within:text-accent"
-          aria-hidden="true"
+          class="absolute inset-is-3 text-fg-subtle font-mono text-md pointer-events-none transition-colors duration-200 motion-reduce:transition-none [.group:hover:not(:focus-within)_&]:text-fg/80 group-focus-within:text-accent z-1"
         >
-          <span class="i-carbon:search w-4 h-4" />
+          /
         </span>
-        <input
+        <InputBase
           id="package-search"
           v-model="inputValue"
           type="text"
@@ -101,10 +245,12 @@ function handleBlur() {
               ? $t('compare.selector.search_first')
               : $t('compare.selector.search_add')
           "
-          class="w-full bg-bg-subtle border border-border rounded-lg ps-10 pe-4 py-2.5 font-mono text-sm text-fg placeholder:text-fg-subtle motion-reduce:transition-none duration-200 focus:border-accent focus-visible:(outline-2 outline-accent/70)"
+          no-correct
+          size="medium"
+          class="w-full min-w-25 ps-7"
           aria-autocomplete="list"
+          ref="inputRef"
           @focus="isInputFocused = true"
-          @blur="handleBlur"
           @keydown="handleKeydown"
         />
       </div>
@@ -118,31 +264,64 @@ function handleBlur() {
         leave-to-class="opacity-0"
       >
         <div
-          v-if="isInputFocused && (filteredResults.length > 0 || isSearching)"
-          class="absolute top-full inset-x-0 mt-1 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
+          v-if="isInputFocused && (navigableItems.length > 0 || isSearching)"
+          ref="listRef"
+          class="absolute top-full inset-x-0 mt-1 px-0.5 bg-bg-elevated border border-border rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
         >
-          <div v-if="isSearching" class="px-4 py-3 text-sm text-fg-muted">
+          <!-- No dependency option (easter egg with James) -->
+          <ButtonBase
+            v-if="showNoDependencyOption"
+            data-navigable
+            class="block w-full text-start"
+            :class="highlightedIndex === 0 ? '!bg-accent/15' : ''"
+            :aria-label="$t('compare.no_dependency.add_column')"
+            @mouseenter="highlightedIndex = 0"
+            @click="addPackage(NO_DEPENDENCY_ID)"
+          >
+            <span class="text-sm text-accent italic flex items-center gap-2">
+              <span class="i-lucide:leaf w-4 h-4" aria-hidden="true" />
+              {{ $t('compare.no_dependency.typeahead_title') }}
+            </span>
+            <span class="text-xs text-fg-muted truncate mt-0.5">
+              {{ $t('compare.no_dependency.typeahead_description') }}
+            </span>
+          </ButtonBase>
+
+          <div
+            v-if="isSearching && navigableItems.length === 0"
+            class="px-4 py-3 text-sm text-fg-muted"
+          >
             {{ $t('compare.selector.searching') }}
           </div>
-          <button
-            v-for="result in filteredResults"
+          <ButtonBase
+            v-for="(result, index) in filteredResults"
             :key="result.name"
-            type="button"
-            class="w-full text-left px-4 py-2.5 hover:bg-bg-muted transition-colors focus-visible:outline-none focus-visible:bg-bg-muted"
+            data-navigable
+            class="block w-full text-start my-0.5"
+            :class="highlightedIndex === index + resultIndexOffset ? '!bg-accent/15' : ''"
+            @mouseenter="highlightedIndex = index + resultIndexOffset"
             @click="addPackage(result.name)"
           >
-            <div class="font-mono text-sm text-fg">{{ result.name }}</div>
-            <div v-if="result.description" class="text-xs text-fg-muted truncate mt-0.5">
-              {{ result.description }}
-            </div>
-          </button>
+            <span class="font-mono text-sm text-fg block">{{ result.name }}</span>
+            <span
+              v-if="result.description"
+              class="text-xs text-fg-muted truncate mt-0.5 w-full block"
+            >
+              {{ stripHtmlTags(decodeHtmlEntities(result.description)) }}
+            </span>
+          </ButtonBase>
         </div>
       </Transition>
     </div>
 
     <!-- Hint -->
     <p class="text-xs text-fg-subtle">
-      {{ $t('compare.selector.packages_selected', { count: packages.length, max: maxPackages }) }}
+      {{
+        $t('compare.selector.packages_selected', {
+          count: numberFormatter.format(packages.length),
+          max: numberFormatter.format(maxPackages),
+        })
+      }}
       <span v-if="packages.length < 2">{{ $t('compare.selector.add_hint') }}</span>
     </p>
   </div>

@@ -3,7 +3,6 @@ defineProps<{
   html: string
 }>()
 
-const router = useRouter()
 const { copy } = useClipboard()
 
 // Combined click handler for:
@@ -12,6 +11,10 @@ const { copy } = useClipboard()
 function handleClick(event: MouseEvent) {
   const target = event.target as HTMLElement | undefined
   if (!target) return
+
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button) {
+    return
+  }
 
   // Handle copy button clicks
   const copyTarget = target.closest('[data-copy]')
@@ -27,8 +30,8 @@ function handleClick(event: MouseEvent) {
     const icon = copyTarget.querySelector('span')
     if (!icon) return
 
-    const originalIcon = 'i-carbon:copy'
-    const successIcon = 'i-carbon:checkmark'
+    const originalIcon = 'i-lucide:copy'
+    const successIcon = 'i-lucide:check'
 
     icon.classList.remove(originalIcon)
     icon.classList.add(successIcon)
@@ -47,20 +50,19 @@ function handleClick(event: MouseEvent) {
   const href = anchor.getAttribute('href')
   if (!href) return
 
-  const match = href.match(/^(?:https?:\/\/)?(?:www\.)?npmjs\.(?:com|org)(\/.+)$/)
-  if (!match || !match[1]) return
-
-  const route = router.resolve(match[1])
-  if (route) {
+  // Handle relative anchor links
+  if (href.startsWith('#') || href.startsWith('/')) {
     event.preventDefault()
-    router.push(route)
+    navigateTo(href)
+    return
   }
 }
 </script>
 
 <template>
   <article
-    class="readme prose prose-invert max-w-[70ch] lg:max-w-none px-1"
+    class="readme max-w-[70ch] lg:max-w-none px-1"
+    dir="auto"
     v-html="html"
     :style="{
       '--i18n-note': '\'' + $t('package.readme.callout.note') + '\'',
@@ -85,6 +87,8 @@ function handleClick(event: MouseEvent) {
   /* Contain all children */
   overflow: hidden;
   min-width: 0;
+  /* Contain all children z-index values inside this container */
+  isolation: isolate;
 }
 
 /* README headings - styled by visual level (data-level), not semantic level */
@@ -92,8 +96,8 @@ function handleClick(event: MouseEvent) {
 .readme :deep(h4),
 .readme :deep(h5),
 .readme :deep(h6) {
+  @apply font-mono scroll-mt-20;
   color: var(--fg);
-  @apply font-mono;
   font-weight: 500;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -131,15 +135,30 @@ function handleClick(event: MouseEvent) {
 }
 
 .readme :deep(a) {
-  color: var(--fg);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-color: var(--fg-subtle);
-  transition: text-decoration-color 0.2s ease;
+  @apply underline-offset-[0.2rem] underline decoration-1 decoration-fg/30 font-mono text-fg transition-colors duration-200;
+}
+.readme :deep(a:hover) {
+  @apply decoration-accent text-accent;
+}
+.readme :deep(a:focus-visible) {
+  @apply decoration-accent text-accent;
 }
 
-.readme a:hover {
-  text-decoration-color: var(--accent);
+.readme :deep(a[target='_blank']:not(:has(img))::after) {
+  /* I don't know what kind of sorcery this is, but it ensures this icon can't wrap to a new line on its own. */
+  content: '__';
+  @apply inline i-lucide:external-link rtl-flip ms-1 opacity-50;
+}
+
+.readme :deep(:is(h1, h2, h3, h4, h5, h6) a[href^='#']::after) {
+  /* I don't know what kind of sorcery this is, but it ensures this icon can't wrap to a new line on its own. */
+  content: '__';
+  @apply inline i-lucide:link rtl-flip ms-1 opacity-0;
+  font-size: 0.75em;
+}
+
+.readme :deep(:is(h1, h2, h3, h4, h5, h6) a[href^='#']:hover::after) {
+  @apply opacity-100;
 }
 
 .readme :deep(code) {
@@ -165,48 +184,7 @@ function handleClick(event: MouseEvent) {
 }
 
 .readme :deep(.readme-code-block) {
-  display: block;
-  width: 100%;
-  position: relative;
-}
-
-.readme :deep(.readme-copy-button) {
-  position: absolute;
-  top: 0.4rem;
-  inset-inline-end: 0.4rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.25rem;
-  border-radius: 6px;
-  background: color-mix(in srgb, var(--bg-subtle) 80%, transparent);
-  border: 1px solid var(--border);
-  color: var(--fg-subtle);
-  opacity: 0;
-  transition:
-    opacity 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease;
-}
-
-.readme :deep(.readme-code-block:hover .readme-copy-button),
-.readme :deep(.readme-copy-button:focus-visible) {
-  opacity: 1;
-}
-
-.readme :deep(.readme-copy-button:hover) {
-  color: var(--fg);
-  border-color: var(--border-hover);
-}
-
-.readme :deep(.readme-copy-button > span) {
-  width: 1rem;
-  height: 1rem;
-  display: inline-block;
-  pointer-events: none;
-}
-
-.readme :deep(.readme-code-block) {
+  @apply bg-bg-subtle;
   display: block;
   width: 100%;
   position: relative;
@@ -324,6 +302,7 @@ function handleClick(event: MouseEvent) {
   height: 1.25rem;
   position: absolute;
   top: 1rem;
+  left: 1rem;
 }
 
 .readme :deep(blockquote[data-callout] > p:first-child) {
@@ -345,8 +324,8 @@ function handleClick(event: MouseEvent) {
 }
 .readme :deep(blockquote[data-callout='note']::after) {
   background-color: #3b82f6;
-  -webkit-mask: icon('i-lucide-info') no-repeat;
-  mask: icon('i-lucide-info') no-repeat;
+  -webkit-mask: icon('i-lucide:info') no-repeat;
+  mask: icon('i-lucide:info') no-repeat;
 }
 
 /* Tip - green */
@@ -360,8 +339,8 @@ function handleClick(event: MouseEvent) {
 }
 .readme :deep(blockquote[data-callout='tip']::after) {
   background-color: #22c55e;
-  -webkit-mask: icon('i-lucide-lightbulb') no-repeat;
-  mask: icon('i-lucide-lightbulb') no-repeat;
+  -webkit-mask: icon('i-lucide:lightbulb') no-repeat;
+  mask: icon('i-lucide:lightbulb') no-repeat;
 }
 
 /* Important - purple */
@@ -375,8 +354,8 @@ function handleClick(event: MouseEvent) {
 }
 .readme :deep(blockquote[data-callout='important']::after) {
   background-color: var(--syntax-fn);
-  -webkit-mask: icon('i-lucide-pin') no-repeat;
-  mask: icon('i-lucide-pin') no-repeat;
+  -webkit-mask: icon('i-lucide:pin') no-repeat;
+  mask: icon('i-lucide:pin') no-repeat;
 }
 
 /* Warning - yellow/orange */
@@ -390,8 +369,8 @@ function handleClick(event: MouseEvent) {
 }
 .readme :deep(blockquote[data-callout='warning']::after) {
   background-color: #eab308;
-  -webkit-mask: icon('i-lucide-triangle-alert') no-repeat;
-  mask: icon('i-lucide-triangle-alert') no-repeat;
+  -webkit-mask: icon('i-lucide:triangle-alert') no-repeat;
+  mask: icon('i-lucide:triangle-alert') no-repeat;
 }
 
 /* Caution - red */
@@ -405,8 +384,8 @@ function handleClick(event: MouseEvent) {
 }
 .readme :deep(blockquote[data-callout='caution']::after) {
   background-color: #ef4444;
-  -webkit-mask: icon('i-lucide-circle-alert') no-repeat;
-  mask: icon('i-lucide-circle-alert') no-repeat;
+  -webkit-mask: icon('i-lucide:circle-alert') no-repeat;
+  mask: icon('i-lucide:circle-alert') no-repeat;
 }
 
 /* Table wrapper for horizontal scroll on mobile */
@@ -443,6 +422,8 @@ function handleClick(event: MouseEvent) {
   display: revert-layer;
   border-radius: 8px;
   margin: 1rem 0;
+  position: relative;
+  z-index: 1;
 }
 
 .readme :deep(video) {

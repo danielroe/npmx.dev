@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Directions } from '@nuxtjs/i18n'
-import { useEventListener } from '@vueuse/core'
+import { useEventListener, onKeyDown, onKeyUp } from '@vueuse/core'
 import { isEditableElement } from '~/utils/input'
 
 const route = useRoute()
@@ -47,16 +47,21 @@ if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
-// Global keyboard shortcut:
-// "/" focuses search or navigates to search page
-// "?" highlights all keyboard shortcut elements
-function handleGlobalKeydown(e: KeyboardEvent) {
-  if (isEditableElement(e.target)) return
+const keyboardShortcuts = useKeyboardShortcuts()
+const { settings } = useSettings()
 
-  if (isKeyWithoutModifiers(e, '/')) {
+onKeyDown(
+  '/',
+  e => {
+    if (e.ctrlKey) {
+      e.preventDefault()
+      settings.value.instantSearch = !settings.value.instantSearch
+      return
+    }
+
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) return
     e.preventDefault()
 
-    // Try to find and focus search input on current page
     const searchInput = document.querySelector<HTMLInputElement>(
       'input[type="search"], input[name="q"]',
     )
@@ -66,19 +71,30 @@ function handleGlobalKeydown(e: KeyboardEvent) {
       return
     }
 
-    router.push('/search')
-  }
+    router.push({ name: 'search' })
+  },
+  { dedupe: true },
+)
 
-  // For "?" we check the key property directly since it's usually combined with shift
-  if (e.key === '?') {
+onKeyDown(
+  '?',
+  e => {
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) return
     e.preventDefault()
     showKbdHints.value = true
-  }
-}
+  },
+  { dedupe: true },
+)
 
-function handleGlobalKeyup() {
-  showKbdHints.value = false
-}
+onKeyUp(
+  '?',
+  e => {
+    if (!keyboardShortcuts.value || isEditableElement(e.target)) return
+    e.preventDefault()
+    showKbdHints.value = false
+  },
+  { dedupe: true },
+)
 
 // Light dismiss fallback for browsers that don't support closedby="any" (Safari + old Chrome/Firefox)
 // https://codepen.io/paramagicdev/pen/gbYompq
@@ -99,9 +115,6 @@ function handleModalLightDismiss(e: MouseEvent) {
 }
 
 if (import.meta.client) {
-  useEventListener(document, 'keydown', handleGlobalKeydown)
-  useEventListener(document, 'keyup', handleGlobalKeyup)
-
   // Feature check for native light dismiss support via closedby="any"
   // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dialog#closedby
   const supportsClosedBy =
@@ -117,11 +130,17 @@ if (import.meta.client) {
 <template>
   <div class="min-h-screen flex flex-col bg-bg text-fg">
     <NuxtPwaAssets />
-    <a href="#main-content" class="skip-link font-mono">{{ $t('common.skip_link') }}</a>
+    <LinkBase to="#main-content" external variant="button-primary" class="skip-link">{{
+      $t('common.skip_link')
+    }}</LinkBase>
 
     <AppHeader :show-logo="!isHomepage" />
 
-    <div id="main-content" class="flex-1 flex flex-col">
+    <NuxtRouteAnnouncer v-slot="{ message }">
+      {{ route.name === 'search' ? `${$t('search.title_packages')} - npmx` : message }}
+    </NuxtRouteAnnouncer>
+
+    <div id="main-content" class="flex-1 flex flex-col" tabindex="-1">
       <NuxtPage />
     </div>
 
@@ -136,19 +155,9 @@ if (import.meta.client) {
 .skip-link {
   position: fixed;
   top: -100%;
-  inset-inline-start: 0;
-  padding: 0.5rem 1rem;
-  background: var(--fg);
-  color: var(--bg);
-  font-size: 0.875rem;
   z-index: 100;
-  transition: top 0.2s ease;
 }
 
-.skip-link:hover {
-  color: var(--bg);
-  text-decoration: underline;
-}
 .skip-link:focus {
   top: 0;
 }
