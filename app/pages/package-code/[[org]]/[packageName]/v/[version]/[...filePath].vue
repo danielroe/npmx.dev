@@ -532,7 +532,7 @@ defineOgImageComponent('Default', {
           />
         </template>
 
-        <!-- Binary file placeholder -->
+        <!-- Binary file warning -->
         <div
           v-else-if="isViewingFile && isBinaryFile && !showBinaryContent"
           class="py-20 text-center"
