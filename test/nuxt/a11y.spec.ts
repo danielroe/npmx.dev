@@ -116,6 +116,7 @@ vi.mock('vue-data-ui/vue-ui-xy', () => {
 // Import components from #components where possible
 // For server/client variants, we need to import directly to test the specific variant
 import {
+  Alert,
   AppFooter,
   AppHeader,
   AppLogo,
@@ -3505,6 +3506,35 @@ describe('component accessibility audits', () => {
             depThresholdExceeded: true,
           },
         },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('Alert', () => {
+    it('should have no accessibility violations for warning variant', async () => {
+      const component = await mountSuspended(Alert, {
+        props: { variant: 'warning', title: 'Warning title' },
+        slots: { default: 'This is a warning message.' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations for error variant', async () => {
+      const component = await mountSuspended(Alert, {
+        props: { variant: 'error', title: 'Error title' },
+        slots: { default: 'This is an error message.' },
+      })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+
+    it('should have no accessibility violations without title', async () => {
+      const component = await mountSuspended(Alert, {
+        props: { variant: 'warning' },
+        slots: { default: 'This is a warning message.' },
       })
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
