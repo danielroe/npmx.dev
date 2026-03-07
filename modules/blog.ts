@@ -55,7 +55,11 @@ async function fetchBlueskyAvatars(
 
         if (!existsSync(dest)) {
           const res = await fetch(`${profile.avatar}@png`)
-          await writeFile(join(imagesDir, `${hash}.png`), res.body!)
+          if (!res.ok || !res.body) {
+            console.warn(`[blog] Failed to fetch Bluesky avatar: ${profile.avatar}@png`)
+            continue
+          }
+          await writeFile(join(imagesDir, `${hash}.png`), res.body)
         }
 
         avatarMap.set(profile.handle, `/blog/avatar/${hash}.png`)
