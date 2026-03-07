@@ -150,7 +150,7 @@ const { selectedPackages, clearSelectedPackages } = usePackageSelection()
           $t(
             'filters.count.showing_paginated',
             {
-              pageSize: pageSize === 'all' ? $n(filteredCount) : Math.min(pageSize, filteredCount),
+              pageSize: Math.min(pageSize, filteredCount),
               count: $n(filteredCount),
             },
             filteredCount,
