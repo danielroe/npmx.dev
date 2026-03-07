@@ -370,9 +370,13 @@ useSeoMeta({
                 class="my-6"
               >
                 <FacetBarChart
-                  :values="getFacetValues(facet.id)"
+                  :values="
+                    getFacetValues(facet.id).filter((_, i) => packages[i] !== NO_DEPENDENCY_ID)
+                  "
                   :packages="packages.filter(p => p !== NO_DEPENDENCY_ID)"
                   :label="facet.label"
+                  :description="facet.description"
+                  :facet-loading="isFacetLoading(facet.id)"
                   :description="facet.description"
                   :facet-loading="isFacetLoading(facet.id)"
                 />
