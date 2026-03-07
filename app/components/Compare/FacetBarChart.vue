@@ -103,7 +103,6 @@ function buildExportFilename(extension: string): string {
   const facetLabel = sanitise(props.label)
   return `${facetLabel}_${comparisonLabel}_${sanitizedPackages}.${extension}`
 }
-}
 
 const config = computed<VueUiHorizontalBarConfig>(() => {
   return {
