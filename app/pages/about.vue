@@ -120,7 +120,7 @@ function computePos(btn: HTMLElement) {
 function setActiveBtnExpanded(btn: HTMLElement | null, value: boolean) {
   if (activeBtnDom && activeBtnDom !== btn) {
     activeBtnDom.removeAttribute('aria-controls')
-    activeBtnDom.removeAttribute('aria-expanded')
+    activeBtnDom.setAttribute('aria-expanded', 'false')
   }
   activeBtnDom = btn
   if (btn) {
@@ -128,7 +128,7 @@ function setActiveBtnExpanded(btn: HTMLElement | null, value: boolean) {
       btn.setAttribute('aria-expanded', 'true')
       btn.setAttribute('aria-controls', 'contributor-popover')
     } else {
-      btn.removeAttribute('aria-expanded')
+      btn.setAttribute('aria-expanded', 'false')
       btn.removeAttribute('aria-controls')
     }
   }
@@ -494,6 +494,7 @@ onBeforeUnmount(() => {
                 <button
                   v-else
                   type="button"
+                  aria-expanded="false"
                   :data-cid="contributor.id"
                   :aria-label="contributor.login"
                   class="group relative block h-12 w-12 rounded-lg transition-transform duration-200 outline-none p-0 border-none cursor-pointer bg-transparent"
