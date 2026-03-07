@@ -119,7 +119,7 @@ const formattedAuthorNames = computed(() => {
           >
             <img
               v-if="author.avatar"
-              :src="author.avatar"
+              :src="`${useRuntimeConfig().app.baseURL}${author.avatar.replace(/^\//, '')}`"
               :alt="author.name"
               class="w-full h-full object-cover"
             />
