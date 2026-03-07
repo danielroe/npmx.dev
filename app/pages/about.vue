@@ -494,7 +494,6 @@ onBeforeUnmount(() => {
                 <button
                   v-else
                   type="button"
-                  aria-haspopup="true"
                   :data-cid="contributor.id"
                   :aria-label="contributor.login"
                   class="group relative block h-12 w-12 rounded-lg transition-transform duration-200 outline-none p-0 border-none cursor-pointer bg-transparent"
