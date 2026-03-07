@@ -43,7 +43,6 @@ onKeyStroke(
 
         <div class="flex items-center gap-2">
           <span class="text-fg font-semibold text-sm flex items-center gap-1.5">
-            <i class="i-ph:check-circle-fill text-accent text-base" aria-hidden="true"></i>
             {{ $t('action_bar.selection', selectedPackages.length) }}
           </span>
           <button
