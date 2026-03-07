@@ -52,7 +52,18 @@ function isExpandable(c: GitHubContributor) {
   )
 }
 
-const contributors = computed(() => data.value ?? [])
+function* mapContributors(
+  c: GitHubContributor[],
+): Generator<GitHubContributor & { expandable: boolean }> {
+  for (const x of c) {
+    yield {
+      ...x,
+      expandable: isExpandable(x),
+    }
+  }
+}
+
+const contributors = computed(() => [...mapContributors(data.value ?? [])])
 
 const roleLabels = computed(
   () =>
@@ -61,25 +72,6 @@ const roleLabels = computed(
       maintainer: $t('about.team.role_maintainer'),
     }) as Partial<Record<Role, string>>,
 )
-
-function getAriaLabel(c: GitHubContributor): string {
-  const separator = $t('about.contributors.separator')
-  const role = roleLabels.value[c.role]
-    ? $t('about.contributors.role', { separator, role: roleLabels.value[c.role] })
-    : ''
-  const works_at = c.company
-    ? $t('about.contributors.works_at', { separator, company: c.company })
-    : ''
-  const location = c.location
-    ? $t('about.contributors.location', { separator, location: c.location })
-    : ''
-  return $t('about.contributors.view_profile_detailed', {
-    name: c.name || c.login,
-    role,
-    works_at,
-    location,
-  })
-}
 
 // --- Popover Logic (Global Single Instance with Event Delegation) ---
 // We use a single global popover instance for performance (especially in Firefox with many items).
@@ -470,16 +462,15 @@ onBeforeUnmount(() => {
               <li
                 v-for="contributor in contributors"
                 :key="contributor.id"
-                v-once
                 class="relative h-12 w-12 list-none group"
                 style="contain: layout style"
               >
                 <LinkBase
-                  v-if="!isExpandable(contributor)"
+                  v-if="!contributor.expandable"
                   :to="contributor.html_url"
+                  :aria-label="contributor.login"
                   no-underline
                   no-new-tab-icon
-                  :aria-label="getAriaLabel(contributor)"
                   class="group relative block h-12 w-12 rounded-lg transition-transform outline-none p-0 bg-transparent"
                 >
                   <img
@@ -501,7 +492,7 @@ onBeforeUnmount(() => {
                   v-else
                   type="button"
                   :data-cid="contributor.id"
-                  :aria-label="getAriaLabel(contributor)"
+                  :aria-label="contributor.login"
                   class="group relative block h-12 w-12 rounded-lg transition-transform duration-200 outline-none p-0 border-none cursor-pointer bg-transparent"
                 >
                   <img
@@ -520,7 +511,6 @@ onBeforeUnmount(() => {
       </section>
     </article>
 
-    <!-- UN ÚNICO nodo de popover, FUERA del v-for -->
     <Transition name="pop">
       <div
         v-if="activeContributor"

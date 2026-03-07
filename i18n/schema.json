@@ -2844,21 +2844,6 @@
             },
             "avatar": {
               "type": "string"
-            },
-            "view_profile_detailed": {
-              "type": "string"
-            },
-            "separator": {
-              "type": "string"
-            },
-            "role": {
-              "type": "string"
-            },
-            "works_at": {
-              "type": "string"
-            },
-            "location": {
-              "type": "string"
             }
           },
           "additionalProperties": false

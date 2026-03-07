@@ -946,12 +946,7 @@
       "description": "npmx is fully open source, built by an amazing community of contributors. Join us and let's build the npm browsing experience we always wanted, together.",
       "loading": "Loading contributors...",
       "error": "Failed to load contributors",
-      "avatar": "{name}'s avatar",
-      "view_profile_detailed": "View {name}'s GitHub profile{role}{works_at}{location}",
-      "separator": " — ",
-      "role": "{separator}{role} at npmx.dev",
-      "works_at": "{separator}works at {company}",
-      "location": "{separator}based in {location}"
+      "avatar": "{name}'s avatar"
     },
     "get_involved": {
       "title": "Get involved",
