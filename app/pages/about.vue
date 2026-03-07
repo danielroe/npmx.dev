@@ -281,7 +281,7 @@ function onBeforeToggleHoverCard(event) {
     <article
       id="contributor-hovercard"
       popover="hint"
-      :aria-label="activeContributor?.name || activeContributor?.login"
+      aria-labelledby="contributor-hovercard-title"
       class="contributor-hovercard"
       @beforetoggle="onBeforeToggleHoverCard"
     >
@@ -290,9 +290,12 @@ function onBeforeToggleHoverCard(event) {
         class="flex flex-col gap-y-3 w-64 rounded-xl border border-border-subtle bg-bg-elevated p-4 shadow-2xl text-start"
       >
         <div class="flex flex-col gap-2 min-w-0">
-          <span class="w-full font-sans font-bold text-fg leading-tight truncate block">
+          <h4
+            id="contributor-hovercard-title"
+            class="w-full font-sans font-bold text-fg leading-tight truncate block"
+          >
             {{ activeContributor.name || activeContributor.login }}
-          </span>
+          </h4>
           <div
             v-if="roleLabels[activeContributor.role]"
             class="font-mono text-3xs uppercase tracking-wider text-accent font-bold"
