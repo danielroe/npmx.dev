@@ -14,12 +14,17 @@ const BUNDLEPHOBIA_API = 'https://bundlephobia.com/api/size'
 const NPMS_API = 'https://api.npms.io/v2/package'
 
 const SafeStringSchema = v.pipe(v.string(), v.regex(/^[^<>"&]*$/, 'Invalid characters'))
+const SafeColorSchema = v.pipe(
+  v.string(),
+  v.transform(value => (value.startsWith('#') ? value : `#${value}`)),
+  v.hexColor(),
+)
 
 const QUERY_SCHEMA = v.object({
-  color: v.optional(SafeStringSchema),
   name: v.optional(v.string()),
-  labelColor: v.optional(SafeStringSchema),
   label: v.optional(SafeStringSchema),
+  color: v.optional(SafeColorSchema),
+  labelColor: v.optional(SafeColorSchema),
 })
 
 const COLORS = {
@@ -184,26 +189,26 @@ function renderShieldsBadgeSvg(params: {
   const rightTextLengthAttr = rightTextLength * 10
 
   return `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}" role="img" aria-label="${title}">
-      <linearGradient id="s" x2="0" y2="100%">
-        <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
-        <stop offset="1" stop-opacity=".1"/>
-      </linearGradient>
-      <clipPath id="r">
-        <rect width="${totalWidth}" height="${height}" rx="3" fill="#fff"/>
-      </clipPath>
-      <g clip-path="url(#r)">
-        <rect width="${leftWidth}" height="${height}" fill="${finalLabelColor}"/>
-        <rect x="${leftWidth}" width="${rightWidth}" height="${height}" fill="${finalColor}"/>
-        <rect width="${totalWidth}" height="${height}" fill="url(#s)"/>
-      </g>
-      <g text-anchor="middle" font-family="Verdana, Geneva, DejaVu Sans, sans-serif" text-rendering="geometricPrecision" font-size="110">
-        <text aria-hidden="true" x="${leftCenter}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${leftTextLengthAttr}">${escapedLabel}</text>
-        <text x="${leftCenter}" y="140" transform="scale(.1)" fill="${labelTextColor}" textLength="${leftTextLengthAttr}">${escapedLabel}</text>
-        <text aria-hidden="true" x="${rightCenter}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${rightTextLengthAttr}">${escapedValue}</text>
-        <text x="${rightCenter}" y="140" transform="scale(.1)" fill="${valueTextColor}" textLength="${rightTextLengthAttr}">${escapedValue}</text>
-      </g>
-    </svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="${totalWidth}" height="${height}" role="img" aria-label="${title}">
+  <linearGradient id="s" x2="0" y2="100%">
+    <stop offset="0" stop-color="#bbb" stop-opacity=".1"/>
+    <stop offset="1" stop-opacity=".1"/>
+  </linearGradient>
+  <clipPath id="r">
+    <rect width="${totalWidth}" height="${height}" rx="3" fill="#fff"/>
+  </clipPath>
+  <g clip-path="url(#r)">
+    <rect width="${leftWidth}" height="${height}" fill="${finalLabelColor}"/>
+    <rect x="${leftWidth}" width="${rightWidth}" height="${height}" fill="${finalColor}"/>
+    <rect width="${totalWidth}" height="${height}" fill="url(#s)"/>
+  </g>
+  <g text-anchor="middle" font-family="Verdana, Geneva, DejaVu Sans, sans-serif" text-rendering="geometricPrecision" font-size="110">
+    <text aria-hidden="true" x="${leftCenter}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${leftTextLengthAttr}">${escapedLabel}</text>
+    <text x="${leftCenter}" y="140" transform="scale(.1)" fill="${labelTextColor}" textLength="${leftTextLengthAttr}">${escapedLabel}</text>
+    <text aria-hidden="true" x="${rightCenter}" y="150" fill="#010101" fill-opacity=".3" transform="scale(.1)" textLength="${rightTextLengthAttr}">${escapedValue}</text>
+    <text x="${rightCenter}" y="140" transform="scale(.1)" fill="${valueTextColor}" textLength="${rightTextLengthAttr}">${escapedValue}</text>
+  </g>
+</svg>
   `.trim()
 }
 
