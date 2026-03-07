@@ -90,7 +90,7 @@ export async function loadJWKs(): Promise<Keyset | undefined> {
   // under a new variable and update here
   const jwkOne = useRuntimeConfig().oauthJwkOne
   if (!jwkOne) {
-    if (import.meta.test) {
+    if (!import.meta.test) {
       // eslint-disable-next-line no-console
       console.error('Failed to load JWKs (not set).')
     }
@@ -100,14 +100,8 @@ export async function loadJWKs(): Promise<Keyset | undefined> {
   // For multiple keys if we need to rotate
   // const keys = await Promise.all([JoseKey.fromImportable(jwkOne)])
 
-  try {
-    const keys = await JoseKey.fromImportable(jwkOne)
-    return new Keyset([keys])
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Failed to load JWKs.', e)
-    return undefined
-  }
+  const keys = await JoseKey.fromImportable(jwkOne)
+  return new Keyset([keys])
 }
 
 async function getOAuthSession(event: H3Event): Promise<{
@@ -123,7 +117,7 @@ async function getOAuthSession(event: H3Event): Promise<{
       return { oauthSession: undefined, serverSession }
     }
 
-    const oauthSession = await event.context.oauthClient.restore(currentSession.public.did)
+    const oauthSession = await event.context.oauthClient?.restore(currentSession.public.did)
     return { oauthSession, serverSession }
   } catch (error) {
     // Log error safely without using util.inspect on potentially problematic objects
