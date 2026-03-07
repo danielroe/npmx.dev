@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { ResolvedAuthor } from '#shared/schemas/blog'
 
+console.log('blog post 1')
+
 const props = withDefaults(
   defineProps<{
     title: string
@@ -14,8 +16,10 @@ const props = withDefaults(
     primaryColor: '#60a5fa',
   },
 )
+console.log('blog post 2', props)
 
 const formattedDate = computed(() => {
+  console.log('blog post 3', props.date)
   if (!props.date) return ''
   try {
     return new Date(props.date).toLocaleDateString('en-US', {
@@ -24,6 +28,7 @@ const formattedDate = computed(() => {
       day: 'numeric',
     })
   } catch {
+    console.log('blog post 4', props.date)
     return props.date
   }
 })
@@ -39,16 +44,19 @@ const getInitials = (name: string) =>
     .slice(0, 2)
 
 const visibleAuthors = computed(() => {
+  console.log('blog post 5', props.authors)
   if (props.authors.length <= 3) return props.authors
   return props.authors.slice(0, MAX_VISIBLE_AUTHORS)
 })
 
 const extraCount = computed(() => {
+  console.log('blog post 6', props.authors)
   if (props.authors.length <= 3) return 0
   return props.authors.length - MAX_VISIBLE_AUTHORS
 })
 
 const formattedAuthorNames = computed(() => {
+  console.log('blog post 7', props.authors)
   const allNames = props.authors.map(a => a.name)
   if (allNames.length === 0) return ''
   if (allNames.length === 1) return allNames[0]

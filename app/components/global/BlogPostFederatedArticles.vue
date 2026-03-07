@@ -22,7 +22,9 @@ const { resolvedAuthors } = useBlueskyAuthorProfiles(authors.value)
 // Merge the input data with the fetched avatars
 const federatedArticles = computed(() => {
   return props.articles.map((article, index) => {
+    console.log('blog post federated articles 1')
     const profile = resolvedAuthors.value[index]
+    console.log('blog post federated articles 2', profile)
 
     return {
       url: article.url,
