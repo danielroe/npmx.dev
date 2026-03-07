@@ -89,13 +89,25 @@ export async function loadJWKs(): Promise<Keyset | undefined> {
   // If we ever need to add multiple JWKs to rotate keys we will need to add a new one
   // under a new variable and update here
   const jwkOne = useRuntimeConfig().oauthJwkOne
-  if (!jwkOne) return undefined
+  if (!jwkOne) {
+    if (import.meta.test) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to load JWKs (not set).')
+    }
+    return undefined
+  }
 
   // For multiple keys if we need to rotate
   // const keys = await Promise.all([JoseKey.fromImportable(jwkOne)])
 
-  const keys = await JoseKey.fromImportable(jwkOne)
-  return new Keyset([keys])
+  try {
+    const keys = await JoseKey.fromImportable(jwkOne)
+    return new Keyset([keys])
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Failed to load JWKs.', e)
+    return undefined
+  }
 }
 
 async function getOAuthSession(event: H3Event): Promise<{
