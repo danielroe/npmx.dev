@@ -2261,7 +2261,7 @@ describe('component accessibility audits', () => {
             cid: 'bafyreigincphooxt7zox3blbocf6hnczzv36fkuj2zi5iuzpjgq6gk6pju',
             author: {
               did: 'did:plc:2gkh62xvzokhlf6li4ol3b3d',
-              handle: 'patak.dev',
+              handle: 'patak.cat',
               displayName: 'patak',
               avatar:
                 'https://cdn.bsky.app/img/avatar/plain/did:plc:2gkh62xvzokhlf6li4ol3b3d/bafkreifgzl4e5jqlakd77ajvnilsb5tufsv24h2sxfwmitkzxrh3sk6mhq@jpeg',
