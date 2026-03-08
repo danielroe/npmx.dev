@@ -283,6 +283,7 @@ useSeoMeta({
         <div v-else-if="packagesData && packagesData.some(p => p !== null)">
           <!-- View tabs -->
           <div
+            v-if="selectedFacets.some(facet => facet.chartable)"
             class="inline-flex items-center gap-1 rounded-md border border-border-subtle bg-bg-subtle p-0.5 mt-4"
             role="tablist"
             :aria-label="$t('compare.packages.section_comparison')"
