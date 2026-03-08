@@ -293,7 +293,7 @@ useSeoMeta({
               role="tab"
               :aria-selected="comparisonView === 'table' ? 'true' : 'false'"
               aria-controls="comparison-panel-table"
-              :tabindex="comparisonView === 'table' ? 0 : -1"
+              :tabindex="comparisonView === 'table' ? -1 : 0"
               class="flex items-center justify-center gap-x-2 rounded px-3 py-2 font-mono text-sm border border-solid transition-colors duration-150 focus-visible:outline-accent/70"
               :class="
                 comparisonView === 'table'
