@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { VueUiHorizontalBar } from 'vue-data-ui/vue-ui-horizontal-bar'
-import type { VueUiHorizontalBarConfig, VueUiHorizontalBarDatasetItem } from 'vue-data-ui'
+import type {
+  VueUiHorizontalBarConfig,
+  VueUiHorizontalBarDatapoint,
+  VueUiHorizontalBarDatasetItem,
+} from 'vue-data-ui'
 import { getFrameworkColor, isListedFramework } from '~/utils/frameworks'
 import { drawSmallNpmxLogoAndTaglineWatermark } from '~/composables/useChartWatermark'
 import {
@@ -190,7 +194,7 @@ const config = computed<VueUiHorizontalBarConfig>(() => {
             },
             underlayerColor: colors.value.bg,
           },
-          highlighter: { opacity: 0 },
+          highlighter: { opacity: 5 },
         },
         legend: {
           show: false,
@@ -206,7 +210,25 @@ const config = computed<VueUiHorizontalBarConfig>(() => {
             color: colors.value.fgSubtle,
           },
         },
-        tooltip: { show: false },
+        tooltip: {
+          borderColor: 'transparent',
+          backdropFilter: false,
+          backgroundColor: 'transparent',
+          customFormat: ({ datapoint }) => {
+            return `
+            <div class="font-mono p-3 border border-border rounded-md bg-[var(--bg)]/10 backdrop-blur-md">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3">
+                  <svg viewBox="0 0 2 2" class="w-full h-full">
+                    <rect x="0" y="0" width="2" height="2" rx="0.3" fill="${datapoint?.color}" />
+                  </svg>
+                </div>
+                <span>${datapoint?.name}: ${(datapoint as VueUiHorizontalBarDatapoint).formattedValue}</span>
+              </div>
+            </div>
+            `
+          },
+        },
       },
     },
   }
