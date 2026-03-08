@@ -47,7 +47,7 @@ export function drawSvgPrintLegend(svg: Record<string, any>, colors: WatermarkCo
   return seriesNames.join('')
 }
 
-function injectWatermarkLogo({
+function generateWatermarkLogo({
   x,
   y,
   width,
