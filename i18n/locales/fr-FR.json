@@ -1262,7 +1262,7 @@
     },
     "data_retention": {
       "title": "Conservation des données",
-      "p1": "Les cookies de session sont automatiquement supprimés lorsque vous fermez votre navigateur ou après une période d'inactivité. Les préférences enregistrées dans le localStorage restent sur votre appareil jusqu'à ce que vous effaciez les données de votre navigateur. Les données analytiques sont conservées sous forme agrégée et ne permettent pas d’identifier des utilisateurs individuels."
+      "p1": "Les cookies de session sont automatiquement supprimés lorsque vous fermez votre navigateur ou après une période d'inactivité. Les préférences enregistrées dans le stockage local restent sur votre appareil jusqu'à ce que vous effaciez les données de votre navigateur. Les données analytiques sont conservées sous forme agrégée et ne permettent pas d’identifier des utilisateurs individuels."
     },
     "your_rights": {
       "title": "Vos droits",
