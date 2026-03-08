@@ -18,7 +18,7 @@
     "source": "исходный код",
     "social": "соцсети",
     "chat": "чат",
-    "builders_chat": "мастера сборки",
+    "builders_chat": "разработчики",
     "keyboard_shortcuts": "горячие клавиши"
   },
   "shortcuts": {
@@ -1195,12 +1195,12 @@
     },
     "community": {
       "title": "Кто здесь",
-      "description": "Некоторые из {count} аккаунтов, которые уже выбрали npmx.social своим домом:",
+      "description": "{count} участник, который уже считает npmx.social своим домом: | Некоторые из {count} участников, которые уже считают npmx.social своим домом: | Некоторые из {count} участников, которые уже считают npmx.social своим домом:",
       "loading": "Загрузка сообщества PDS…",
       "error": "Не удалось загрузить сообщество PDS.",
       "empty": "Участников сообщества пока нет.",
       "view_profile": "Посмотреть профиль {handle}",
-      "new_accounts": "…плюс ещё {count} новых участников в atmosphere"
+      "new_accounts": "…плюс ещё {count} новых участников в Atmosphere"
     }
   },
   "privacy_policy": {
