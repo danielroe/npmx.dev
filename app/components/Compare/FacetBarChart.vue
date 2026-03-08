@@ -171,7 +171,7 @@ const config = computed<VueUiHorizontalBarConfig>(() => {
     style: {
       chart: {
         backgroundColor: colors.value.bg,
-        height: 56 * props.packages.length,
+        height: 60 * props.packages.length,
         layout: {
           bars: {
             rowColor: isDarkMode.value ? colors.value.borderSubtle : colors.value.bgSubtle,
@@ -190,7 +190,7 @@ const config = computed<VueUiHorizontalBarConfig>(() => {
               },
             },
             nameLabels: {
-              fontSize: isMobile.value ? 12 : 16,
+              fontSize: isMobile.value ? 12 : 18,
               color: colors.value.fgSubtle,
             },
             underlayerColor: colors.value.bg,
