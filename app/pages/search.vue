@@ -252,6 +252,19 @@ const effectiveTotal = computed(() => {
   return displayResults.value.length
 })
 
+const resultsLimitAppliedText = computed<string>(() => {
+  console.log(effectiveTotal.value, visibleResults.value?.totalUnlimited)
+  if (isRelevanceSort.value && effectiveTotal.value < visibleResults.value?.totalUnlimited) {
+    const total = { total: $n(visibleResults.value?.totalUnlimited) }
+
+    return searchProvider.value === 'npm'
+      ? $t('search.more_results_available_npm', total)
+      : $t('search.more_results_available_algolia', total)
+  }
+  // do not show hint if results limit is not reached
+  return ''
+})
+
 // Handle filter chip removal
 function handleClearFilter(chip: FilterChip) {
   clearFilter(chip)
@@ -784,12 +797,19 @@ onBeforeUnmount(() => {
                   effectiveTotal,
                 )
               }}
+              <TooltipApp
+                v-if="resultsLimitAppliedText"
+                position="top"
+                :text="resultsLimitAppliedText"
+              >
+                <span class="i-lucide:info w-3 h-3 text-fg-subtle cursor-help" aria-hidden="true" />
+              </TooltipApp>
             </p>
           </div>
 
           <div v-else-if="status === 'success' || status === 'error'" class="py-12">
             <p class="text-fg-muted font-mono mb-6 text-center">
-              {{ $t('search.no_results', { query }) }}
+              {{ $t('search.no_results', { query: committedQuery }) }}
             </p>
 
             <div v-if="validatedSuggestions.length > 0" class="max-w-md mx-auto mb-6 space-y-3">

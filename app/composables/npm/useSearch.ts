@@ -1,8 +1,12 @@
-import type { NpmSearchResponse, NpmSearchResult } from '#shared/types'
-import type { SearchProvider } from '~/composables/useSettings'
+import type { NpmSearchResponse, NpmSearchResult, SearchProvider } from '#shared/types'
 import type { AlgoliaMultiSearchChecks } from './useAlgoliaSearch'
 import { type SearchSuggestion, emptySearchResponse, parseSuggestionIntent } from './search-utils'
 import { isValidNewPackageName, checkPackageExists } from '~/utils/package-name'
+
+export const SEARCH_ENGINE_HITS_LIMIT: Record<SearchProvider, number> = {
+  algolia: 1000,
+  npm: 5000,
+} as const
 
 function emptySearchPayload() {
   return {
@@ -25,6 +29,14 @@ export interface UseSearchConfig {
   suggestions?: boolean
 }
 
+interface SearchResponseCache {
+  query: string
+  provider: SearchProvider
+  objects: NpmSearchResult[]
+  totalUnlimited: number
+  total: number
+}
+
 export function useSearch(
   query: MaybeRefOrGetter<string>,
   searchProvider: MaybeRefOrGetter<SearchProvider>,
@@ -38,12 +50,7 @@ export function useSearch(
     checkUserExists: checkUserNpm,
   } = useNpmSearch()
 
-  const cache = shallowRef<{
-    query: string
-    provider: SearchProvider
-    objects: NpmSearchResult[]
-    total: number
-  } | null>(null)
+  const cache = shallowRef<SearchResponseCache | null>(null)
 
   const isLoadingMore = shallowRef(false)
   const isRateLimited = shallowRef(false)
@@ -53,6 +60,23 @@ export function useSearch(
   const packageAvailability = shallowRef<{ name: string; available: boolean } | null>(null)
   const existenceCache = shallowRef<Record<string, boolean>>({})
   const suggestionRequestId = shallowRef(0)
+
+  function setCache(objects: NpmSearchResult[] | null, total: number = 0): void {
+    if (objects === null) {
+      cache.value = null
+      return
+    }
+
+    const provider = toValue(searchProvider)
+
+    cache.value = {
+      query: toValue(query),
+      provider,
+      objects,
+      totalUnlimited: total,
+      total: Math.min(total, SEARCH_ENGINE_HITS_LIMIT[provider]),
+    }
+  }
 
   /**
    * Determine which extra checks to include in the Algolia multi-search.
@@ -154,7 +178,7 @@ export function useSearch(
       }
 
       const opts = toValue(options)
-      cache.value = null
+      setCache(null)
 
       if (provider === 'algolia') {
         const checks = config.suggestions ? buildAlgoliaChecks(q) : undefined
@@ -197,12 +221,7 @@ export function useSearch(
           return emptySearchPayload()
         }
 
-        cache.value = {
-          query: q,
-          provider,
-          objects: response.objects,
-          total: response.total,
-        }
+        setCache(response.objects, response.total)
 
         isRateLimited.value = false
         return {
@@ -230,12 +249,12 @@ export function useSearch(
     const provider = toValue(searchProvider)
 
     if (!q) {
-      cache.value = null
+      setCache(null)
       return
     }
 
     if (cache.value && (cache.value.query !== q || cache.value.provider !== provider)) {
-      cache.value = null
+      setCache(null)
       await asyncData.refresh()
       return
     }
@@ -243,12 +262,7 @@ export function useSearch(
     // Seed cache from asyncData for Algolia (which skips cache on initial fetch)
     if (!cache.value && asyncData.data.value) {
       const { searchResponse } = asyncData.data.value
-      cache.value = {
-        query: q,
-        provider,
-        objects: [...searchResponse.objects],
-        total: searchResponse.total,
-      }
+      setCache([...searchResponse.objects], searchResponse.total)
     }
 
     const currentCount = cache.value?.objects.length ?? 0
@@ -270,25 +284,17 @@ export function useSearch(
       if (cache.value && cache.value.query === q && cache.value.provider === provider) {
         const existingNames = new Set(cache.value.objects.map(obj => obj.package.name))
         const newObjects = response.objects.filter(obj => !existingNames.has(obj.package.name))
-        cache.value = {
-          query: q,
-          provider,
-          objects: [...cache.value.objects, ...newObjects],
-          total: response.total,
-        }
+
+        setCache([...cache.value.objects, ...newObjects], response.total)
       } else {
-        cache.value = {
-          query: q,
-          provider,
-          objects: response.objects,
-          total: response.total,
-        }
+        setCache(response.objects, response.total)
       }
 
       if (
         cache.value &&
         cache.value.objects.length < targetSize &&
-        cache.value.objects.length < cache.value.total
+        cache.value.objects.length < cache.value.total &&
+        cache.value.objects.length < SEARCH_ENGINE_HITS_LIMIT[provider] // additional protection from infinite loop
       ) {
         await fetchMore(targetSize)
       }
@@ -310,7 +316,7 @@ export function useSearch(
   watch(
     () => toValue(searchProvider),
     async () => {
-      cache.value = null
+      setCache(null)
       existenceCache.value = {}
       await asyncData.refresh()
       const targetSize = toValue(options).size
@@ -326,6 +332,7 @@ export function useSearch(
         isStale: false,
         objects: cache.value.objects,
         total: cache.value.total,
+        totalUnlimited: cache.value.totalUnlimited,
         time: new Date().toISOString(),
       }
     }

@@ -24,6 +24,7 @@ export function emptySearchResponse(): NpmSearchResponse {
   return {
     objects: [],
     total: 0,
+    totalUnlimited: 0,
     isStale: false,
     time: new Date().toISOString(),
   }

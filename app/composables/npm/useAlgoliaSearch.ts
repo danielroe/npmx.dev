@@ -165,7 +165,8 @@ export function useAlgoliaSearch() {
     return {
       isStale: false,
       objects: response.hits.map(hitToSearchResult),
-      total: response.nbHits ?? 0,
+      totalUnlimited: response.nbHits ?? 0,
+      total: Math.min(SEARCH_ENGINE_HITS_LIMIT.algolia, response.nbHits ?? 0),
       time: new Date().toISOString(),
     }
   }
@@ -326,7 +327,8 @@ export function useAlgoliaSearch() {
     const searchResult: NpmSearchResponse = {
       isStale: false,
       objects: mainResponse.hits.map(hitToSearchResult),
-      total: mainResponse.nbHits ?? 0,
+      total: Math.min(SEARCH_ENGINE_HITS_LIMIT.algolia, mainResponse.nbHits ?? 0),
+      totalUnlimited: mainResponse.nbHits ?? 0,
       time: new Date().toISOString(),
     }
 
