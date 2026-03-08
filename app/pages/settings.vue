@@ -262,7 +262,7 @@ const setLocale: typeof setNuxti18nLocale = locale => {
             <SettingsToggle
               :label="$t('settings.instant_search')"
               :description="$t('settings.instant_search_description')"
-              v-model="settings.instantSearch"
+              v-model="preferences.instantSearch"
             />
           </div>
         </section>

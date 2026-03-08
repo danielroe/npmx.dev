@@ -5,7 +5,7 @@ import { debounce } from 'perfect-debounce'
 const pagesWithLocalFilter = new Set(['~username', 'org'])
 
 export function useGlobalSearch(place: 'header' | 'content' = 'content') {
-  const { settings } = useSettings()
+  const instantSearch = useInstantSearch()
   const { searchProvider } = useSearchProvider()
   const searchProviderValue = computed(() => {
     const p = normalizeSearchParam(route.query.p)
@@ -29,7 +29,7 @@ export function useGlobalSearch(place: 'header' | 'content' = 'content') {
 
   // This is basically doing instant search as user types
   watch(searchQuery, val => {
-    if (settings.value.instantSearch) {
+    if (instantSearch.value) {
       committedSearchQuery.value = val
     }
   })
@@ -77,7 +77,7 @@ export function useGlobalSearch(place: 'header' | 'content' = 'content') {
     // Commit the current query when explicitly submitted (Enter pressed)
     committedSearchQuery.value = searchQuery.value
     // When instant search is off the debounce queue is empty, so call directly
-    if (!settings.value.instantSearch) {
+    if (!instantSearch.value) {
       updateUrlQueryImpl(searchQuery.value, searchProvider.value)
     } else {
       updateUrlQuery.flush()
@@ -91,7 +91,7 @@ export function useGlobalSearch(place: 'header' | 'content' = 'content') {
 
       // When instant search is off, skip debounced URL updates
       // Only explicitly called flushUpdateUrlQuery commits and navigates
-      if (!settings.value.instantSearch) return
+      if (!instantSearch.value) return
 
       // Leading debounce implementation as it doesn't work properly out of the box (https://github.com/unjs/perfect-debounce/issues/43)
       if (!updateUrlQuery.isPending()) {

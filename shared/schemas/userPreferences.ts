@@ -28,6 +28,8 @@ export const UserPreferencesSchema = object({
   searchProvider: optional(SearchProviderSchema),
   /** Whether keyboard shortcuts are enabled globally */
   keyboardShortcuts: optional(boolean()),
+  /** Whether search runs as user types (vs requiring explicit submit) */
+  instantSearch: optional(boolean()),
   /** Timestamp of last update (ISO 8601) - managed by server */
   updatedAt: optional(string()),
 })
@@ -53,6 +55,7 @@ export const DEFAULT_USER_PREFERENCES: Required<Omit<UserPreferences, 'updatedAt
   colorModePreference: null,
   searchProvider: import.meta.test ? 'npm' : 'algolia',
   keyboardShortcuts: true,
+  instantSearch: true,
 }
 
 export const USER_PREFERENCES_STORAGE_BASE = 'npmx-kv-user-preferences'
