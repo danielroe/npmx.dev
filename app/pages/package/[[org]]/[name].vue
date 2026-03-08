@@ -729,6 +729,16 @@ onKeyStroke(
   },
 )
 
+onKeyStroke(
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'f') && !isEditableElement(e.target),
+  e => {
+    if (!fundingUrl.value) return
+    e.preventDefault()
+    navigateTo(fundingUrl.value, { external: true, open: { target: '_blank' } })
+  },
+  { dedupe: true },
+)
+
 const showSkeleton = shallowRef(false)
 </script>
 
