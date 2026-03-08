@@ -98,13 +98,11 @@ const dataset = computed<VueUiHorizontalBarDatasetItem[]>(() => {
 })
 
 const skeletonDataset = computed(() =>
-  props.packages.map((_pkg, i) => {
-    return {
-      name: '_',
-      value: i + 1,
-      color: colors.value.border,
-    }
-  }),
+  props.packages.map((_pkg, i) => ({
+    name: '_',
+    value: i + 1,
+    color: colors.value.border,
+  })),
 )
 
 function buildExportFilename(extension: string): string {
