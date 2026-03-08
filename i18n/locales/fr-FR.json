@@ -1225,9 +1225,9 @@
         "cookie_h3_desc": "C'est notre cookie de session sécurisé. Il stocke le jeton d'accès OAuth lorsque vous connectez votre compte Atmosphere. Il est essentiel au maintien de votre session authentifiée."
       },
       "local_storage": {
-        "title": "LocalStorage",
+        "title": "Stockage local",
         "p1": "En plus des cookies de session, nous utilisons le {bold} de votre navigateur pour sauvegarder vos préférences d'affichage. Cela nous permet de mémoriser le thème (clair/sombre) et d'autres {settings} que vous avez sélectionnés, pour ne pas avoir à les reconfigurer à chaque visite.",
-        "bold": "localStorage",
+        "bold": "stockage local",
         "p2": "Ces informations sont purement fonctionnelles, stockées uniquement sur votre appareil, et {bold2}. Nous les utilisons exclusivement pour améliorer votre expérience sur notre site.",
         "bold2": "ne contiennent aucune donnée personnelle et ne servent pas à vous pister",
         "settings": "paramètres"
