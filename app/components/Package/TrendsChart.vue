@@ -20,7 +20,7 @@ import type {
 import { DATE_INPUT_MAX } from '~/utils/input'
 import { applyDataCorrection } from '~/utils/chart-data-correction'
 import { applyBlocklistCorrection, getAnomaliesForPackages } from '~/utils/download-anomalies'
-import { copyAltTextForTrendLineChart, sanitise, loadFile } from '~/utils/charts'
+import { copyAltTextForTrendLineChart, sanitise, loadFile, applyEllipsis } from '~/utils/charts'
 
 import('vue-data-ui/style.css')
 

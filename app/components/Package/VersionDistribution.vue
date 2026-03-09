@@ -9,7 +9,7 @@ import {
   drawNpmxLogoAndTaglineWatermark,
 } from '~/composables/useChartWatermark'
 import TooltipApp from '~/components/Tooltip/App.vue'
-import { copyAltTextForVersionsBarChart, sanitise, loadFile } from '~/utils/charts'
+import { copyAltTextForVersionsBarChart, sanitise, loadFile, applyEllipsis } from '~/utils/charts'
 
 import('vue-data-ui/style.css')
 
