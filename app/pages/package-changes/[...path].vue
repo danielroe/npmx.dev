@@ -79,6 +79,8 @@ const versionDate = computed(() => {
   }
 })
 
+const viewOnGit = useViewOnGitProvider(() => changelog.value?.provider)
+
 // defineOgImageComponent('Default', {
 //   title: () => `${pkg.value?.name ?? 'Package'} - Changelogs`,
 //   description: () => pkg.value?.license ?? '',
@@ -111,7 +113,7 @@ const versionDate = computed(() => {
             v-if="changelog?.link"
             :to="changelog?.link"
             :classicon="repoProviderIcon"
-            :title="$t('common.view_on', { site: changelog.provider })"
+            :title="viewOnGit"
           >
             {{ changelog.provider }}
           </LinkBase>
