@@ -249,6 +249,7 @@ function copyPermalinkUrl() {
   copyPermalink(url.toString())
 }
 
+const { isTouchDeviceClient } = useScrollToTop()
 // Scroll to top of file content
 const contentContainer = useTemplateRef('contentContainer')
 function scrollToTop() {
@@ -469,7 +470,7 @@ defineOgImageComponent('Default', {
                 @click="scrollToTop"
               >
                 <span class="i-lucide:arrow-up w-3 h-3" />
-                {{ $t('code.scroll_to_top') }}
+                {{ isTouchDeviceClient ? '' : $t('code.scroll_to_top') }}
               </button>
               <button
                 v-if="selectedLines"
