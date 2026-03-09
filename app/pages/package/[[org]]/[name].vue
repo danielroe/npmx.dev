@@ -21,7 +21,9 @@ import { useAtproto } from '~/composables/atproto/useAtproto'
 import { useProviderIcon } from '~/composables/useProviderIcon'
 import { togglePackageLike } from '~/utils/atproto/likes'
 import { useInstallSizeDiff } from '~/composables/useInstallSizeDiff'
+import { useViewOnGitProvider } from '~/composables/useViewOnGitProvider'
 import type { RouteLocationRaw } from 'vue-router'
+import { usePackageChangelog } from '~/composables/usePackageChangelog'
 
 defineOgImageComponent('Package', {
   name: () => packageName.value,
@@ -106,6 +108,11 @@ const navExtraOffsetStyle = computed(() => ({
 
 const { packageName, requestedVersion, orgName } = usePackageRoute()
 
+const { data: resolvedVersion, status: resolvedStatus } = await useResolvedVersion(
+  packageName,
+  requestedVersion,
+)
+
 if (import.meta.server) {
   assertValidPackageName(packageName.value)
 }
@@ -114,7 +121,7 @@ if (import.meta.server) {
 const { data: readmeData } = useLazyFetch<ReadmeResponse>(
   () => {
     const base = `/api/registry/readme/${packageName.value}`
-    const version = requestedVersion.value
+    const version = resolvedVersion.value
     return version ? `${base}/v/${version}` : base
   },
   {
@@ -150,7 +157,7 @@ const {
 } = useLazyFetch<ReadmeMarkdownResponse>(
   () => {
     const base = `/api/registry/readme/markdown/${packageName.value}`
-    const version = requestedVersion.value
+    const version = resolvedVersion.value
     return version ? `${base}/v/${version}` : base
   },
   {
@@ -200,7 +207,7 @@ const {
 } = useLazyFetch<InstallSizeResult | null>(
   () => {
     const base = `/api/registry/install-size/${packageName.value}`
-    const version = requestedVersion.value
+    const version = resolvedVersion.value
     return version ? `${base}/v/${version}` : base
   },
   {
@@ -213,7 +220,7 @@ onMounted(() => fetchInstallSize())
 const { data: skillsData } = useLazyFetch<SkillsListResponse>(
   () => {
     const base = `/skills/${packageName.value}`
-    const version = requestedVersion.value
+    const version = resolvedVersion.value
     return version ? `${base}/v/${version}` : base
   },
   { default: () => ({ package: '', version: '', skills: [] }) },
@@ -222,11 +229,6 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
 const { data: changelog } = usePackageChangelog(packageName, requestedVersion)
-
-const { data: resolvedVersion, status: resolvedStatus } = await useResolvedVersion(
-  packageName,
-  requestedVersion,
-)
 
 if (
   import.meta.server &&
@@ -486,6 +488,8 @@ const repositoryUrl = computed(() => {
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 
 const repoProviderIcon = useProviderIcon(() => repoRef.value?.provider)
+
+const viewOnGitProvider = useViewOnGitProvider(() => repoRef.value?.provider)
 
 const homepageUrl = computed(() => {
   const homepage = displayVersion.value?.homepage
@@ -847,7 +851,6 @@ const showSkeleton = shallowRef(false)
               :to="docsLink"
               aria-keyshortcuts="d"
               classicon="i-lucide:file-text"
-              :title="$t('package.links.docs')"
             >
               <span class="max-sm:sr-only">{{ $t('package.links.docs') }}</span>
             </LinkBase>
@@ -857,7 +860,6 @@ const showSkeleton = shallowRef(false)
               :to="codeLink"
               aria-keyshortcuts="."
               classicon="i-lucide:code"
-              :title="$t('package.links.code')"
             >
               <span class="max-sm:sr-only">{{ $t('package.links.code') }}</span>
             </LinkBase>
@@ -866,7 +868,6 @@ const showSkeleton = shallowRef(false)
               :to="{ name: 'compare', query: { packages: pkg.name } }"
               aria-keyshortcuts="c"
               classicon="i-lucide:git-compare"
-              :title="$t('package.links.compare')"
             >
               <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
             </LinkBase>
@@ -884,7 +885,6 @@ const showSkeleton = shallowRef(false)
             <ButtonBase
               v-if="showScrollToTop"
               variant="secondary"
-              :title="$t('common.scroll_to_top')"
               :aria-label="$t('common.scroll_to_top')"
               @click="scrollToTop"
               classicon="i-lucide:arrow-up"
@@ -999,7 +999,7 @@ const showSkeleton = shallowRef(false)
             <li>
               <LinkBase
                 :to="`https://www.npmjs.com/package/${pkg.name}`"
-                :title="$t('common.view_on', { site: 'npm' })"
+                :title="$t('common.view_on.npm')"
                 classicon="i-simple-icons:npm"
               >
                 npm
@@ -1148,7 +1148,7 @@ const showSkeleton = shallowRef(false)
           <div class="space-y-1 sm:col-span-3">
             <dt class="text-xs text-fg-subtle uppercase tracking-wider flex items-center gap-1">
               {{ $t('package.stats.install_size') }}
-              <TooltipApp v-if="sizeTooltip" :text="sizeTooltip">
+              <TooltipApp v-if="sizeTooltip" :text="sizeTooltip" interactive>
                 <span
                   tabindex="0"
                   class="inline-flex items-center justify-center min-w-6 min-h-6 -m-1 p-1 text-fg-subtle cursor-help focus-visible:outline-2 focus-visible:outline-accent/70 rounded"
@@ -1361,7 +1361,7 @@ const showSkeleton = shallowRef(false)
           </div>
           <TerminalInstall
             :package-name="pkg.name"
-            :requested-version="requestedVersion"
+            :requested-version="resolvedVersion"
             :install-version-override="installVersionOverride"
             :jsr-info="jsrInfo"
             :dev-dependency-suggestion="packageAnalysis?.devDependencySuggestion"
@@ -1444,7 +1444,8 @@ const showSkeleton = shallowRef(false)
             target="_blank"
             rel="noopener noreferrer"
             class="link text-fg underline underline-offset-4 decoration-fg-subtle hover:(decoration-fg text-fg) transition-colors duration-200"
-            >{{ $t('package.readme.view_on_github') }}</a
+          >
+            {{ viewOnGitProvider }}</a
           >
         </p>
 

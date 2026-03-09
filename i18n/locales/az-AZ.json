@@ -177,7 +177,6 @@
     "skip_link": "Əsas məzmuna keç",
     "warnings": "Xəbərdarlıqlar:",
     "go_back_home": "Ana səhifəyə qayıt",
-    "view_on": "{site}-də bax",
     "per_week": "/ həftə",
     "vanity_downloads_hint": "Göstərici: paket göstərilmir | Göstərici: göstərilən paket üçün | Göstərici: {count} göstərilən paketin cəmi",
     "sort": {
@@ -185,7 +184,11 @@
       "role": "rol",
       "members": "üzvlər"
     },
-    "scroll_to_top": "Yuxarı qayıt"
+    "scroll_to_top": "Yuxarı qayıt",
+    "view_on": {
+      "npm": "npm-də bax",
+      "github": "GitHub-da bax"
+    }
   },
   "package": {
     "not_found": "Paket Tapılmadı",
@@ -290,7 +293,6 @@
     "readme": {
       "title": "Readme",
       "no_readme": "README mövcud deyil.",
-      "view_on_github": "GitHub-da bax",
       "toc_title": "Məzmun",
       "callout": {
         "note": "Qeyd",
@@ -850,7 +852,6 @@
       "paginated": "Səhifələnmiş",
       "items_per_page": "Səhifə başına element",
       "per_page": "{count} / səhifə",
-      "all_yolo": "Hamısı (YOLO)",
       "showing": "{start}-{end} / {total}",
       "previous": "Əvvəlki səhifə",
       "next": "Növbəti səhifə",

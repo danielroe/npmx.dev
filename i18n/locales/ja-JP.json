@@ -18,6 +18,7 @@
     "source": "ソースコード",
     "social": "ソーシャル",
     "chat": "チャット",
+    "builders_chat": "ビルダー",
     "keyboard_shortcuts": "キーボードショートカット"
   },
   "shortcuts": {
@@ -64,7 +65,13 @@
       "org": "organization",
       "view_user_packages": "このユーザーのパッケージを表示",
       "view_org_packages": "このorganizationのパッケージを表示"
-    }
+    },
+    "instant_search": "インスタント検索",
+    "instant_search_on": "オン",
+    "instant_search_off": "オフ",
+    "instant_search_turn_on": "オンにする",
+    "instant_search_turn_off": "オフにする",
+    "instant_search_advisory": "{label} {state} — {action}"
   },
   "nav": {
     "main_navigation": "メイン",
@@ -171,7 +178,6 @@
     "skip_link": "メインコンテンツにスキップ",
     "warnings": "警告:",
     "go_back_home": "ホームへ戻る",
-    "view_on": "{site}で表示",
     "per_week": "/ 週",
     "vanity_downloads_hint": "バニティ番号: パッケージが表示されていません|バニティ番号: 表示されているパッケージの数値|バニティ番号: 表示されている {count} 個のパッケージの合計",
     "sort": {
@@ -183,7 +189,11 @@
     "cancel": "キャンセル",
     "save": "保存",
     "edit": "編集",
-    "error": "エラー"
+    "error": "エラー",
+    "view_on": {
+      "npm": "npmで表示",
+      "github": "GitHubで表示"
+    }
   },
   "profile": {
     "display_name": "表示名",
@@ -305,7 +315,6 @@
     "readme": {
       "title": "Readme",
       "no_readme": "READMEはありません。",
-      "view_on_github": "GitHubで表示",
       "toc_title": "目次",
       "callout": {
         "note": "メモ",
@@ -878,7 +887,6 @@
       "paginated": "ページ分割",
       "items_per_page": "1ページあたりの項目数",
       "per_page": "{count} / ページ",
-      "all_yolo": "すべて表示 (YOLO)",
       "showing": "{total} 件中 {start}-{end}",
       "previous": "前のページ",
       "next": "次のページ",
@@ -947,13 +955,18 @@
       "title": "参加するには",
       "contribute": {
         "title": "貢献する",
-        "description": "より良いnpm体験の開発に協力してください。",
+        "description": "より良いnpm体験の開発に協力しましょう。",
         "cta": "GitHubで表示"
       },
       "community": {
         "title": "コミュニティに参加",
         "description": "チャット、質問、アイデアの共有。",
         "cta": "Discordに参加"
+      },
+      "builders": {
+        "title": "npmxの開発に参加",
+        "description": "npmxの未来を形作るビルダーたちに参加しましょう。",
+        "cta": "Builders Discordに参加"
       },
       "follow": {
         "title": "最新情報を入手",

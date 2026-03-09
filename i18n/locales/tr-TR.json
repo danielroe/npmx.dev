@@ -182,7 +182,6 @@
     "skip_link": "Ana içeriğe geç",
     "warnings": "Uyarılar:",
     "go_back_home": "Ana sayfaya dön",
-    "view_on": "{site}'de görüntüle",
     "per_week": "/ hafta",
     "vanity_downloads_hint": "Gösterge: paket gösterilmiyor | Gösterge: gösterilen paket için | Gösterge: {count} gösterilen paketin toplamı",
     "sort": {
@@ -194,7 +193,11 @@
     "cancel": "İptal",
     "save": "Kaydet",
     "edit": "Düzenle",
-    "error": "Hata"
+    "error": "Hata",
+    "view_on": {
+      "npm": "npm'de görüntüle",
+      "github": "GitHub'da görüntüle"
+    }
   },
   "profile": {
     "display_name": "Görünen ad",
@@ -316,7 +319,6 @@
     "readme": {
       "title": "Readme",
       "no_readme": "README mevcut değil.",
-      "view_on_github": "GitHub'da görüntüle",
       "toc_title": "İçindekiler",
       "callout": {
         "note": "Not",
@@ -889,7 +891,6 @@
       "paginated": "Sayfalı",
       "items_per_page": "Sayfa başına öğe",
       "per_page": "/ sayfa",
-      "all_yolo": "Tümü (YOLO)",
       "showing": "Gösteriliyor",
       "previous": "Önceki",
       "next": "Sonraki",

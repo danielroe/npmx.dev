@@ -538,9 +538,6 @@
         "go_back_home": {
           "type": "string"
         },
-        "view_on": {
-          "type": "string"
-        },
         "per_week": {
           "type": "string"
         },
@@ -576,6 +573,48 @@
         },
         "error": {
           "type": "string"
+        },
+        "view_on": {
+          "type": "object",
+          "properties": {
+            "npm": {
+              "type": "string"
+            },
+            "github": {
+              "type": "string"
+            },
+            "gitlab": {
+              "type": "string"
+            },
+            "bitbucket": {
+              "type": "string"
+            },
+            "codeberg": {
+              "type": "string"
+            },
+            "git_repo": {
+              "type": "string"
+            },
+            "forgejo": {
+              "type": "string"
+            },
+            "gitea": {
+              "type": "string"
+            },
+            "gitee": {
+              "type": "string"
+            },
+            "radicle": {
+              "type": "string"
+            },
+            "sourcehut": {
+              "type": "string"
+            },
+            "tangled": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -941,9 +980,6 @@
               "type": "string"
             },
             "no_readme": {
-              "type": "string"
-            },
-            "view_on_github": {
               "type": "string"
             },
             "toc_title": {
@@ -1439,6 +1475,12 @@
                   "type": "string"
                 },
                 "general_description": {
+                  "type": "string"
+                },
+                "facet_bar_general_description": {
+                  "type": "string"
+                },
+                "facet_bar_analysis": {
                   "type": "string"
                 }
               },
@@ -2662,9 +2704,6 @@
             "per_page": {
               "type": "string"
             },
-            "all_yolo": {
-              "type": "string"
-            },
             "showing": {
               "type": "string"
             },
@@ -3119,6 +3158,12 @@
               "type": "string"
             },
             "empty_description": {
+              "type": "string"
+            },
+            "table_view": {
+              "type": "string"
+            },
+            "charts_view": {
               "type": "string"
             }
           },
