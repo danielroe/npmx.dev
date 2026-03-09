@@ -9,7 +9,9 @@ import {
   drawNpmxLogoAndTaglineWatermark,
 } from '~/composables/useChartWatermark'
 import TooltipApp from '~/components/Tooltip/App.vue'
-import { copyAltTextForVersionsBarChart } from '~/utils/charts'
+import { copyAltTextForVersionsBarChart, sanitise, loadFile } from '~/utils/charts'
+
+import('vue-data-ui/style.css')
 
 const props = defineProps<{
   packageName: string
@@ -86,20 +88,6 @@ const compactNumberFormatter = useCompactNumberFormatter()
 
 // Show loading indicator immediately to maintain stable layout
 const showLoadingIndicator = computed(() => pending.value)
-
-const loadFile = (link: string, filename: string) => {
-  const a = document.createElement('a')
-  a.href = link
-  a.download = filename
-  a.click()
-  a.remove()
-}
-
-const sanitise = (value: string) =>
-  value
-    .replace(/^@/, '')
-    .replace(/[\\/:"*?<>|]/g, '-')
-    .replace(/\//g, '-')
 
 const { locale } = useI18n()
 function formatDate(date: Date) {
@@ -201,6 +189,8 @@ const chartConfig = computed<VueUiXyConfig>(() => {
           svg: $t('package.trends.download_file', { fileType: 'SVG' }),
           annotator: $t('package.trends.toggle_annotator'),
           altCopy: $t('package.trends.copy_alt.button_label'), // Do not make this text dependant on the `copied` variable, since this would re-render the component, which is undesirable if the minimap was used to select a time frame.
+          open: $t('package.trends.open_options'),
+          close: $t('package.trends.close_options'),
         },
         callbacks: {
           img: args => {
@@ -465,7 +455,14 @@ const chartConfig = computed<VueUiXyConfig>(() => {
               <!-- Inject npmx logo & tagline during SVG and PNG print -->
               <g
                 v-if="svg.isPrintingSvg || svg.isPrintingImg"
-                v-html="drawNpmxLogoAndTaglineWatermark(svg, watermarkColors, $t, 'bottom')"
+                v-html="
+                  drawNpmxLogoAndTaglineWatermark({
+                    svg,
+                    colors: watermarkColors,
+                    translateFn: $t,
+                    positioning: 'bottom',
+                  })
+                "
               />
 
               <!-- Overlay covering the chart area to hide line resizing when switching granularities recalculates VueUiXy scaleMax when estimation lines are necessary -->
@@ -547,6 +544,29 @@ const chartConfig = computed<VueUiXyConfig>(() => {
 
             <template #annotator-action-color="{ color }">
               <span class="i-lucide:palette w-6 h-6" :style="{ color }" aria-hidden="true" />
+            </template>
+
+            <template #annotator-action-draw="{ mode }">
+              <span
+                v-if="mode === 'arrow'"
+                class="i-lucide:move-up-right text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
+              <span
+                v-if="mode === 'text'"
+                class="i-lucide:type text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
+              <span
+                v-if="mode === 'line'"
+                class="i-lucide:pen-line text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
+              <span
+                v-if="mode === 'draw'"
+                class="i-lucide:line-squiggle text-fg-subtle w-6 h-6"
+                aria-hidden="true"
+              />
             </template>
 
             <template #annotator-action-undo>
