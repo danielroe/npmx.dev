@@ -456,6 +456,15 @@ const hasDependencies = computed(() => {
   )
 })
 
+const hasZeroDirectDependencies = computed(
+  () =>
+    displayVersion.value &&
+    (!displayVersion.value.dependencies ||
+      Object.keys(displayVersion.value.dependencies).length === 0) &&
+    (!displayVersion.value.optionalDependencies ||
+      Object.keys(displayVersion.value.optionalDependencies).length === 0),
+)
+
 // Vulnerability count for the stats banner
 const vulnCount = computed(() => vulnTree.value?.totalCounts.total ?? 0)
 const hasVulnerabilities = computed(() => vulnCount.value > 0)
@@ -1384,6 +1393,8 @@ const showSkeleton = shallowRef(false)
         <PackageReplacement v-if="moduleReplacement" :replacement="moduleReplacement" />
         <!-- Size / dependency increase notice -->
         <PackageSizeIncrease v-if="sizeDiff" :diff="sizeDiff" />
+        <!-- Positive signal: no direct runtime dependencies -->
+        <PackageZeroDependencies v-if="hasZeroDirectDependencies" />
         <!-- Vulnerability scan -->
         <ClientOnly>
           <PackageVulnerabilityTree

@@ -1245,6 +1245,18 @@
             },
             "has_replacement": {
               "type": "string"
+            },
+            "zero_dependencies": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false
