@@ -1174,7 +1174,7 @@
             "grouping_usage_all": {
               "type": "string"
             },
-            "grouping_usage_low": {
+            "grouping_usage_most_used": {
               "type": "string"
             },
             "recent_versions_only_tooltip": {
@@ -1412,6 +1412,9 @@
               "type": "string"
             },
             "smoothing": {
+              "type": "string"
+            },
+            "prediction": {
               "type": "string"
             },
             "known_anomalies": {
