@@ -106,6 +106,8 @@ export interface ResolvedPackage {
   path?: string[]
   /** Deprecation message if the version is deprecated */
   deprecated?: string
+  /** Original URL if this was a git: or https: dependency */
+  url?: string
 }
 
 /**

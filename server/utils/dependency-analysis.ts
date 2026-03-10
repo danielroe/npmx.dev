@@ -8,6 +8,7 @@ import type {
   PackageVulnerabilityInfo,
   VulnerabilityTreeResult,
   DeprecatedPackageInfo,
+  UrlDependencyInfo,
   OsvAffected,
   OsvRange,
 } from '#shared/types/dependency-analysis'
@@ -256,6 +257,52 @@ function getSeverityLevel(vuln: OsvVulnerability): OsvSeverityLevel {
 }
 
 /**
+ * Check if a dependency URL is a git: or https: URL that should be flagged.
+ */
+function isUrlDependency(url: string): boolean {
+  return url.startsWith('git:') || url.startsWith('https:') || url.startsWith('git+https:')
+}
+
+/**
+ * Scan a package's dependencies for git: and https: URLs.
+ * Returns a map of package names to their URL dependencies.
+ */
+async function scanUrlDependencies(
+  name: string,
+  version: string,
+  depth: DependencyDepth,
+  path: string[],
+): Promise<UrlDependencyInfo[]> {
+  try {
+    const packument = await fetchNpmPackage(name)
+    const versionData = packument.versions[version]
+    if (!versionData) return []
+
+    const urlDeps: UrlDependencyInfo[] = []
+    const allDeps = {
+      ...versionData.dependencies,
+      ...versionData.optionalDependencies,
+      ...versionData.devDependencies,
+    }
+
+    for (const [depName, depUrl] of Object.entries(allDeps || {})) {
+      if (isUrlDependency(depUrl)) {
+        urlDeps.push({
+          name: depName,
+          url: depUrl,
+          depth,
+          path: [...path, `${depName}@${depUrl}`],
+        })
+      }
+    }
+
+    return urlDeps
+  } catch {
+    return []
+  }
+}
+
+/**
  * Analyze entire dependency tree for vulnerabilities and deprecated packages.
  * Uses OSV batch API for efficient vulnerability discovery, then fetches
  * full details only for packages with known vulnerabilities.
@@ -288,6 +335,9 @@ export const analyzeDependencyTree = defineCachedFunction(
         const depthOrder: Record<DependencyDepth, number> = { root: 0, direct: 1, transitive: 2 }
         return depthOrder[a.depth] - depthOrder[b.depth]
       })
+
+    // Scan for git: and https: URL dependencies in the root package
+    const urlDependencies = await scanUrlDependencies(name, version, 'root', [])
 
     // Step 1: Use batch API to find which packages have vulnerabilities
     // This is much faster than individual queries - one request for all packages
@@ -347,6 +397,7 @@ export const analyzeDependencyTree = defineCachedFunction(
       version,
       vulnerablePackages,
       deprecatedPackages,
+      urlDependencies,
       totalPackages: packages.length,
       failedQueries,
       totalCounts,
@@ -356,6 +407,6 @@ export const analyzeDependencyTree = defineCachedFunction(
     maxAge: 60 * 60,
     swr: true,
     name: 'dependency-analysis',
-    getKey: (name: string, version: string) => `v2:${name}@${version}`,
+    getKey: (name: string, version: string) => `v3:${name}@${version}`,
   },
 )
