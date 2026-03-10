@@ -7,6 +7,21 @@ export const DEFAULT_PREDICTION_POINTS = 4
 // Bucket boundaries (UTC)
 // ---------------------------------------------------------------------------
 
+const DAY_MS = 86_400_000
+
+function getUtcDayStart(ts: number): number {
+  const d = new Date(ts)
+  return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+}
+
+// Monday-based week start in UTC
+function getWeeklyBucketStartUtc(ts: number): number {
+  const dayStart = getUtcDayStart(ts)
+  const day = new Date(dayStart).getUTCDay()
+  const diffFromMonday = (day + 6) % 7
+  return dayStart - diffFromMonday * DAY_MS
+}
+
 function clampRatio(value: number): number {
   if (value < 0) return 0
   if (value > 1) return 1
@@ -26,6 +41,7 @@ export function getBucketStartUtc(ts: number, g: ChartTimeGranularity): number {
   const d = new Date(ts)
   if (g === 'yearly') return Date.UTC(d.getUTCFullYear(), 0, 1)
   if (g === 'monthly') return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1)
+  if (g === 'weekly') return getWeeklyBucketStartUtc(ts)
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
 }
 
@@ -34,7 +50,7 @@ export function getBucketEndUtc(ts: number, g: ChartTimeGranularity): number {
   const d = new Date(ts)
   if (g === 'yearly') return Date.UTC(d.getUTCFullYear() + 1, 0, 1)
   if (g === 'monthly') return Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 1)
-  if (g === 'weekly') return getBucketStartUtc(ts, 'daily') + 7 * 86_400_000
+  if (g === 'weekly') return getWeeklyBucketStartUtc(ts) + 7 * DAY_MS
   return Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate() + 1)
 }
 
@@ -93,8 +109,7 @@ export function extrapolateLastValue(params: {
   const { series, granularity, lastDateMs, referenceMs, predictionPoints } = params
   const last = series.at(-1) ?? 0
 
-  // Weekly dates are stored as timestampEnd; bucket start is 6 days earlier
-  const bucketTs = granularity === 'weekly' ? lastDateMs - 6 * 86_400_000 : lastDateMs
+  const bucketTs = lastDateMs
   const ratio = getCompletionRatio(bucketTs, granularity, referenceMs)
 
   if (!(ratio > 0 && ratio < 1) || predictionPoints <= 0) return last
