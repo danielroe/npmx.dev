@@ -123,12 +123,11 @@ describe('linearProject', () => {
 
 describe('extrapolateLastValue', () => {
   it('returns raw last value when ratio >= 1 (complete bucket)', () => {
-    const lastDateMs = Date.UTC(2025, 1, 1)
     const result = extrapolateLastValue({
       series: [100, 200, 150],
       granularity: 'monthly',
-      lastDateMs,
-      referenceMs: Date.UTC(2025, 2, 1), // bucket fully elapsed
+      lastDateMs: Date.UTC(2025, 1, 1),
+      referenceMs: Date.UTC(2025, 2, 1),
       predictionPoints: 4,
     })
     expect(result).toBe(150)
@@ -145,36 +144,53 @@ describe('extrapolateLastValue', () => {
     expect(result).toBe(50)
   })
 
-  it('uses linear projection when enough lookback points', () => {
+  it('uses linear projection when lookback >= predictionPoints', () => {
+    // 4 lookback points, predictionPoints = 4 → linear projection
     const result = extrapolateLastValue({
-      series: [100, 200, 300, 50],
+      series: [100, 200, 300, 400, 50],
       granularity: 'monthly',
-      lastDateMs: Date.UTC(2025, 2, 1),
-      referenceMs: Date.UTC(2025, 2, 15),
+      lastDateMs: Date.UTC(2025, 3, 1),
+      referenceMs: Date.UTC(2025, 3, 15),
       predictionPoints: 4,
     })
-    expect(result).toBeCloseTo(400)
+    expect(result).toBeCloseTo(500)
   })
 
-  it('copies single lookback point when only one available', () => {
+  it('falls back to scale-up when lookback < predictionPoints', () => {
+    // 2 lookback points but predictionPoints = 4 → scale-up
     const result = extrapolateLastValue({
-      series: [100, 10],
+      series: [100, 200, 50],
       granularity: 'monthly',
       lastDateMs: Date.UTC(2025, 2, 1),
-      referenceMs: Date.UTC(2025, 2, 15),
+      referenceMs: Date.UTC(2025, 2, 16),
       predictionPoints: 4,
     })
-    expect(result).toBe(100)
+    // ratio ≈ 15/31, scaled ≈ 50 / (15/31) ≈ 103.3
+    expect(result).toBeGreaterThan(50)
+    expect(result).toBeLessThan(200)
   })
 
-  it('falls back to proportional scale-up with no lookback', () => {
+  it('falls back to scale-up with no lookback', () => {
     const result = extrapolateLastValue({
       series: [50],
       granularity: 'daily',
       lastDateMs: Date.UTC(2025, 2, 12),
-      referenceMs: Date.UTC(2025, 2, 12, 12, 0), // half day
+      referenceMs: Date.UTC(2025, 2, 12, 12, 0),
       predictionPoints: 4,
     })
     expect(result).toBeCloseTo(100)
+  })
+
+  it('yearly with few points uses scale-up', () => {
+    // 2 complete years + partial 2025, predictionPoints = 4 → scale-up
+    const result = extrapolateLastValue({
+      series: [1000, 2000, 500],
+      granularity: 'yearly',
+      lastDateMs: Date.UTC(2025, 0, 1),
+      referenceMs: Date.UTC(2025, 2, 10),
+      predictionPoints: 4,
+    })
+    // ~69 days into the year, ratio ≈ 0.19 → scaled ≈ 500 / 0.19 ≈ 2632
+    expect(result).toBeGreaterThan(2000)
   })
 })

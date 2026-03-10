@@ -96,7 +96,8 @@ export function linearProject(pts: number[]): number | null {
 /**
  * Estimate the full-period value for a partially-complete last bucket.
  *
- * Fallback chain: linear projection → single-point copy → proportional scale-up.
+ * Uses linear projection when enough complete lookback points are available
+ * (`>= predictionPoints`), otherwise falls back to proportional scale-up.
  * Returns the raw last value when the period is already complete or prediction is disabled.
  */
 export function extrapolateLastValue(params: {
@@ -115,9 +116,11 @@ export function extrapolateLastValue(params: {
   if (!(ratio > 0 && ratio < 1) || predictionPoints <= 0) return last
 
   const lookback = series.slice(0, -1).slice(-predictionPoints)
-  const projected = linearProject(lookback)
-  if (projected !== null) return projected
-  if (lookback.length === 1) return lookback[0]!
+
+  if (lookback.length >= predictionPoints) {
+    const projected = linearProject(lookback)
+    if (projected !== null) return projected
+  }
 
   const scaled = last / ratio
   return Number.isFinite(scaled) ? scaled : last
