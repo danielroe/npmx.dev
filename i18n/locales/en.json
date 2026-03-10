@@ -792,7 +792,8 @@
       "code": "code"
     },
     "file_path": "File path",
-    "scroll_to_top": "Scroll to top"
+    "scroll_to_top": "Scroll to top",
+    "word_wrap": "Word wrap"
   },
   "badges": {
     "provenance": {

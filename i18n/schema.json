@@ -2382,6 +2382,9 @@
         },
         "scroll_to_top": {
           "type": "string"
+        },
+        "word_wrap": {
+          "type": "string"
         }
       },
       "additionalProperties": false
