@@ -1,7 +1,6 @@
 <template>
   <section aria-labelledby="zero-direct-deps-heading" class="relative">
     <div
-      role="status"
       class="border border-emerald-600/40 bg-emerald-500/10 rounded-lg px-3 py-2 text-base text-emerald-800 dark:text-emerald-400"
     >
       <h2 id="zero-direct-deps-heading" class="font-medium mb-1 flex items-center gap-2">

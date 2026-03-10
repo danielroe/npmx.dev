@@ -458,8 +458,9 @@ const hasDependencies = computed(() => {
 
 const hasZeroDirectDependencies = computed(
   () =>
-    !displayVersion.value?.dependencies ||
-    Object.keys(displayVersion.value.dependencies).length === 0,
+    displayVersion.value &&
+    (!displayVersion.value.dependencies ||
+      Object.keys(displayVersion.value.dependencies).length === 0),
 )
 
 // Vulnerability count for the stats banner
