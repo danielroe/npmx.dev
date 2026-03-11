@@ -47,8 +47,8 @@ if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
-const keyboardShortcuts = useKeyboardShortcuts()
-const instantSearch = useInstantSearch()
+const keyboardShortcuts = useKeyboardShortcutsPreference()
+const instantSearch = useInstantSearchPreference()
 
 onKeyDown(
   '/',

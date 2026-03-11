@@ -75,7 +75,7 @@ const resultIndexOffset = computed(() => (showNoDependencyOption.value ? 1 : 0))
 
 const numberFormatter = useNumberFormatter()
 
-const keyboardShortcuts = useKeyboardShortcuts()
+const keyboardShortcuts = useKeyboardShortcutsPreference()
 
 function addPackage(name: string) {
   if (packages.value.length >= maxPackages.value) return

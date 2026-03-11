@@ -24,6 +24,8 @@ let pendingSavePromise: Promise<boolean> | null = null
 let hasPendingChanges = false
 let debounceTimeoutId: ReturnType<typeof setTimeout> | null = null
 let syncedResetTimeoutId: ReturnType<typeof setTimeout> | null = null
+let beforeUnloadRegistered = false
+let routeGuardRegistered = false
 
 function getSyncState(): PreferencesSyncState {
   if (!syncStateInstance) {
@@ -142,7 +144,8 @@ export function useUserPreferencesSync() {
     }
 
     // Network error — fall back to defaults, don't flag as new user
-    state.status.value = 'idle'
+    state.status.value = 'error'
+    state.error.value = 'Failed to load preferences from server'
     return { preferences: { ...DEFAULT_USER_PREFERENCES }, isNewUser: false }
   }
 
@@ -159,6 +162,9 @@ export function useUserPreferencesSync() {
   }
 
   function setupRouteGuard(getPreferences: () => UserPreferences): void {
+    if (routeGuardRegistered) return
+    routeGuardRegistered = true
+
     router.beforeEach(async (_to, _from, next) => {
       if (hasPendingChanges && isAuthenticated.value) {
         void flushPendingSync(getPreferences())
@@ -168,7 +174,8 @@ export function useUserPreferencesSync() {
   }
 
   function setupBeforeUnload(getPreferences: () => UserPreferences): void {
-    if (import.meta.server) return
+    if (import.meta.server || beforeUnloadRegistered) return
+    beforeUnloadRegistered = true
 
     window.addEventListener('beforeunload', () => {
       if (hasPendingChanges && isAuthenticated.value) {

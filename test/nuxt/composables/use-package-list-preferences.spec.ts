@@ -1,22 +1,25 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { defineComponent, onMounted } from 'vue'
+import { defineComponent, nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
 import { usePackageListPreferences } from '../../../app/composables/usePackageListPreferences'
 import { DEFAULT_PREFERENCES } from '../../../shared/types/preferences'
 
 const STORAGE_KEY = 'npmx-list-prefs'
 
-function mountWithSetup(run: () => void) {
-  return mount(
+async function mountWithSetup<T>(setupFn: () => T) {
+  let result: T
+  const wrapper = mount(
     defineComponent({
       name: 'TestHarness',
       setup() {
-        run()
+        result = setupFn()
         return () => null
       },
     }),
     { attachTo: document.body },
   )
+  await nextTick()
+  return { wrapper, result: result! }
 }
 
 function setLocalStorage(stored: Record<string, unknown>) {
@@ -28,37 +31,28 @@ describe('usePackageListPreferences', () => {
     localStorage.clear()
   })
 
-  it('initializes with default values when storage is empty', () => {
-    mountWithSetup(() => {
-      const { preferences } = usePackageListPreferences()
-      onMounted(() => {
-        expect(preferences.value).toEqual(DEFAULT_PREFERENCES)
-      })
-    })
+  it('initializes with default values when storage is empty', async () => {
+    const { result, wrapper } = await mountWithSetup(() => usePackageListPreferences())
+    expect(result.preferences.value).toEqual(DEFAULT_PREFERENCES)
+    wrapper.unmount()
   })
 
-  it('loads and merges values from localStorage', () => {
-    mountWithSetup(() => {
-      const stored = { viewMode: 'table' }
-      setLocalStorage(stored)
-      const { preferences } = usePackageListPreferences()
-      onMounted(() => {
-        expect(preferences.value.viewMode).toBe('table')
-        expect(preferences.value.paginationMode).toBe(DEFAULT_PREFERENCES.paginationMode)
-        expect(preferences.value.pageSize).toBe(DEFAULT_PREFERENCES.pageSize)
-        expect(preferences.value.columns).toEqual(DEFAULT_PREFERENCES.columns)
-      })
-    })
+  it('loads and merges values from localStorage', async () => {
+    const stored = { viewMode: 'table' }
+    setLocalStorage(stored)
+    const { result, wrapper } = await mountWithSetup(() => usePackageListPreferences())
+    expect(result.preferences.value.viewMode).toBe('table')
+    expect(result.preferences.value.paginationMode).toBe(DEFAULT_PREFERENCES.paginationMode)
+    expect(result.preferences.value.pageSize).toBe(DEFAULT_PREFERENCES.pageSize)
+    expect(result.preferences.value.columns).toEqual(DEFAULT_PREFERENCES.columns)
+    wrapper.unmount()
   })
 
-  it('handles array merging by replacement', () => {
-    mountWithSetup(() => {
-      const stored = { columns: [] }
-      setLocalStorage(stored)
-      const { preferences } = usePackageListPreferences()
-      onMounted(() => {
-        expect(preferences.value.columns).toEqual([])
-      })
-    })
+  it('handles array merging by replacement', async () => {
+    const stored = { columns: [] }
+    setLocalStorage(stored)
+    const { result, wrapper } = await mountWithSetup(() => usePackageListPreferences())
+    expect(result.preferences.value.columns).toEqual([])
+    wrapper.unmount()
   })
 })

@@ -210,7 +210,7 @@ const lastDatapoint = computed(() => dataset.value.at(-1)?.period ?? '')
 
 const isLoop = shallowRef(false)
 const showPulse = shallowRef(true)
-const keyboardShortcuts = useKeyboardShortcuts()
+const keyboardShortcuts = useKeyboardShortcutsPreference()
 
 const cheatCode = [
   'arrowup',

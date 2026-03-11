@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { nextTick } from 'vue'
 import { DEFAULT_USER_PREFERENCES } from '#shared/schemas/userPreferences'
 
-describe('useKeyboardShortcuts', () => {
+describe('useKeyboardShortcutsPreference', () => {
   beforeEach(() => {
     localStorage.clear()
     // Reset preferences to defaults
@@ -15,7 +15,7 @@ describe('useKeyboardShortcuts', () => {
   })
 
   it('should return true by default', () => {
-    const enabled = useKeyboardShortcuts()
+    const enabled = useKeyboardShortcutsPreference()
     expect(enabled.value).toBe(true)
   })
 
@@ -23,12 +23,12 @@ describe('useKeyboardShortcuts', () => {
     const { preferences } = useUserPreferencesState()
     preferences.value = { ...preferences.value, keyboardShortcuts: false }
 
-    const enabled = useKeyboardShortcuts()
+    const enabled = useKeyboardShortcutsPreference()
     expect(enabled.value).toBe(false)
   })
 
   it('should reactively update when preferences change', () => {
-    const enabled = useKeyboardShortcuts()
+    const enabled = useKeyboardShortcutsPreference()
     const { preferences } = useUserPreferencesState()
 
     expect(enabled.value).toBe(true)
@@ -43,7 +43,7 @@ describe('useKeyboardShortcuts', () => {
   it('should set data-kbd-shortcuts attribute when disabled', async () => {
     const { preferences } = useUserPreferencesState()
 
-    useKeyboardShortcuts()
+    useKeyboardShortcutsPreference()
 
     preferences.value = { ...preferences.value, keyboardShortcuts: false }
     await nextTick()

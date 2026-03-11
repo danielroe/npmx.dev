@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { JsrPackageInfo } from '#shared/types/jsr'
+import { __resetPreferencesForTest } from '../../../app/composables/useUserPreferencesProvider'
 
 describe('useInstallCommand', () => {
   beforeEach(() => {
@@ -12,6 +13,7 @@ describe('useInstallCommand', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    __resetPreferencesForTest()
   })
 
   describe('basic install commands', () => {

@@ -14,13 +14,13 @@ export const UserPreferencesSchema = object({
   relativeDates: optional(boolean()),
   /** Include @types/* package in install command for packages without built-in types */
   includeTypesInInstall: optional(boolean()),
-  /** Accent color theme ID (e.g., "rose", "amber", "emerald") */
+  /** Accent color theme ID */
   accentColorId: optional(nullable(AccentColorIdSchema)),
   /** Preferred background shade */
   preferredBackgroundTheme: optional(nullable(BackgroundThemeIdSchema)),
   /** Hide platform-specific packages (e.g., @scope/pkg-linux-x64) from search results */
   hidePlatformPackages: optional(boolean()),
-  /** User-selected locale code (e.g., "en", "de", "ja") */
+  /** User-selected locale code */
   selectedLocale: optional(nullable(string())),
   /** Color mode preference: 'light', 'dark', or 'system' */
   colorModePreference: optional(nullable(ColorModePreferenceSchema)),

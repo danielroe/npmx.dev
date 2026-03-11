@@ -31,7 +31,7 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 
-const relativeDates = useRelativeDates()
+const relativeDates = useRelativeDatesPreference()
 
 const dateFormatter = new Intl.DateTimeFormat(locale.value, {
   month: 'short',

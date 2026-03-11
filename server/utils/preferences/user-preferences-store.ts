@@ -12,26 +12,20 @@ export class UserPreferencesStore {
     return result ?? null
   }
 
-  async set(did: string, preferences: UserPreferences): Promise<void> {
+  async set(did: string, preferences: UserPreferences): Promise<UserPreferences> {
     const withTimestamp: UserPreferences = {
       ...preferences,
       updatedAt: new Date().toISOString(),
     }
     await this.storage.setItem(did, withTimestamp)
+    return withTimestamp
   }
 
   async merge(did: string, partial: Partial<UserPreferences>): Promise<UserPreferences> {
     const existing = await this.get(did)
     const base = existing ?? { ...DEFAULT_USER_PREFERENCES }
 
-    const merged: UserPreferences = {
-      ...base,
-      ...partial,
-      updatedAt: new Date().toISOString(),
-    }
-
-    await this.set(did, merged)
-    return merged
+    return this.set(did, { ...base, ...partial })
   }
 
   async delete(did: string): Promise<void> {

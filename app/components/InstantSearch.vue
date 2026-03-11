@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const instantSearch = useInstantSearch()
+const instantSearch = useInstantSearchPreference()
 
 onPrehydrate(el => {
   let userPreferences: Record<string, unknown> = {}

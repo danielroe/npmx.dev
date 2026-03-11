@@ -54,6 +54,20 @@ export function useUserPreferencesProvider(
   const isSynced = computed(() => status.value === 'synced')
   const hasError = computed(() => status.value === 'error')
 
+  async function syncWithServer(): Promise<void> {
+    const serverResult = await loadFromServer()
+
+    // If the server load failed, keep current local preferences untouched
+    if (hasError.value) return
+
+    const { merged, shouldPushToServer } = mergePreferences(preferences.value, serverResult)
+    if (shouldPushToServer) {
+      scheduleSync(preferences.value)
+    } else if (!arePreferencesEqual(preferences.value, merged)) {
+      preferences.value = merged
+    }
+  }
+
   async function initSync(): Promise<void> {
     if (syncInitialized || import.meta.server) return
     syncInitialized = true
@@ -62,13 +76,7 @@ export function useUserPreferencesProvider(
     setupBeforeUnload(() => preferences.value)
 
     if (isAuthenticated.value) {
-      const serverResult = await loadFromServer()
-      const { merged, shouldPushToServer } = mergePreferences(preferences.value, serverResult)
-      if (shouldPushToServer) {
-        scheduleSync(preferences.value)
-      } else if (!arePreferencesEqual(preferences.value, merged)) {
-        preferences.value = merged
-      }
+      await syncWithServer()
     }
 
     watch(
@@ -83,13 +91,7 @@ export function useUserPreferencesProvider(
 
     watch(isAuthenticated, async newIsAuth => {
       if (newIsAuth) {
-        const serverResult = await loadFromServer()
-        const { merged, shouldPushToServer } = mergePreferences(preferences.value, serverResult)
-        if (shouldPushToServer) {
-          scheduleSync(preferences.value)
-        } else if (!arePreferencesEqual(preferences.value, merged)) {
-          preferences.value = merged
-        }
+        await syncWithServer()
       }
     })
   }
@@ -103,5 +105,15 @@ export function useUserPreferencesProvider(
     syncError: error,
     lastSyncedAt,
     initSync,
+  }
+}
+
+/**
+ * Reset module-level singleton state. Test-only — do not use in production code.
+ */
+export function __resetPreferencesForTest(): void {
+  if (import.meta.test) {
+    dataRef = null
+    syncInitialized = false
   }
 }

@@ -17,6 +17,10 @@ export function useAccentColor() {
   })
 
   function setAccentColor(id: AccentColorId | null) {
+    if (import.meta.server) {
+      preferences.value.accentColorId = id
+      return
+    }
     if (id) {
       document.documentElement.style.setProperty('--accent-color', `var(--swatch-${id})`)
     } else {

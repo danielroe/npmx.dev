@@ -6,7 +6,7 @@ const { isAuthenticated, isSyncing, isSynced, hasError } = useUserPreferencesSyn
 const { colorModePreference, setColorMode } = useColorModePreference()
 const { locale, locales, setLocale: setNuxti18nLocale } = useI18n()
 const { currentLocaleStatus, isSourceLocale } = useI18nStatus()
-const keyboardShortcutsEnabled = useKeyboardShortcuts()
+const keyboardShortcutsEnabled = useKeyboardShortcutsPreference()
 
 // Escape to go back (but not when focused on form elements or modal is open)
 onKeyStroke(

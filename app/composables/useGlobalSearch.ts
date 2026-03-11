@@ -5,7 +5,7 @@ import { debounce } from 'perfect-debounce'
 const pagesWithLocalFilter = new Set(['~username', 'org'])
 
 export function useGlobalSearch(place: 'header' | 'content' = 'content') {
-  const instantSearch = useInstantSearch()
+  const instantSearch = useInstantSearchPreference()
   const { searchProvider } = useSearchProvider()
   const searchProviderValue = computed(() => {
     const p = normalizeSearchParam(route.query.p)

@@ -26,7 +26,7 @@ const props = withDefaults(
 
 const el = useTemplateRef('el')
 
-const keyboardShortcutsEnabled = useKeyboardShortcuts()
+const keyboardShortcutsEnabled = useKeyboardShortcutsPreference()
 
 defineExpose({
   focus: () => el.value?.focus(),

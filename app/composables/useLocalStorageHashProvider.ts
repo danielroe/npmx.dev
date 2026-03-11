@@ -10,12 +10,12 @@ const defu = createDefu((object, key, value) => {
 
 export function useLocalStorageHashProvider<T extends object>(key: string, defaultValue: T) {
   const provider = createLocalStorageProvider<T>(key)
-  const data = ref<T>(defaultValue)
+  const data = ref<T>(structuredClone(defaultValue))
 
   onMounted(() => {
     const stored = provider.get()
     if (stored) {
-      data.value = defu(stored, defaultValue)
+      data.value = defu(stored, structuredClone(defaultValue))
     }
   })
 
@@ -24,7 +24,7 @@ export function useLocalStorageHashProvider<T extends object>(key: string, defau
   }
 
   function reset() {
-    data.value = { ...defaultValue }
+    data.value = structuredClone(defaultValue)
     provider.remove()
   }
 

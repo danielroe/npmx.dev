@@ -11,6 +11,10 @@ export function useBackgroundTheme() {
   const { preferences } = useUserPreferencesState()
 
   function setBackgroundTheme(id: BackgroundThemeId | null) {
+    if (import.meta.server) {
+      preferences.value.preferredBackgroundTheme = id
+      return
+    }
     if (id) {
       document.documentElement.dataset.bgTheme = id
     } else {
