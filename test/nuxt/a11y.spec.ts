@@ -748,7 +748,7 @@ describe('component accessibility audits', () => {
           provenanceStatus: 'idle',
           docsLink: null,
           codeLink: null,
-          isBinaryOnly: false,
+          page: 'docs',
         },
       })
       const results = await runAxe(component)
