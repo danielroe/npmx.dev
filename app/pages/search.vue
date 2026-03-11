@@ -73,7 +73,7 @@ const { settings } = useSettings()
 
 /**
  * Reorder results to put exact package name match at the top,
- * and optionally filter out platform-specific packages.
+ * and optionally filter out platform-specific packages or security holding packages.
  */
 const visibleResults = computed(() => {
   const raw = rawVisibleResults.value
