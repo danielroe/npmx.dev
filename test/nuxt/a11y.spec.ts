@@ -730,7 +730,11 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(PackageHeader, {
         props: {
-          pkg: { name: 'vue' },
+          pkg: {
+            'name': 'vue',
+            'dist-tags': {},
+            'versions': {},
+          },
           resolvedVersion: '3.5.0',
           displayVersion: {
             _id: '1234567890',
@@ -749,6 +753,7 @@ describe('component accessibility audits', () => {
           docsLink: null,
           codeLink: null,
           page: 'docs',
+          versionUrlPattern: '/package/vue/v/{version}',
         },
       })
       const results = await runAxe(component)

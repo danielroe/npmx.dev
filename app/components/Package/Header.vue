@@ -7,7 +7,7 @@ import { useAtproto } from '~/composables/atproto/useAtproto'
 import { togglePackageLike } from '~/utils/atproto/likes'
 
 const props = defineProps<{
-  pkg: SlimPackument | null
+  pkg: Pick<SlimPackument, 'name' | 'versions' | 'dist-tags'> | null
   resolvedVersion?: string | null
   displayVersion: PackumentVersion | null
   latestVersion: SlimVersion | null
