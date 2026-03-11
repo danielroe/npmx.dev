@@ -15,7 +15,7 @@ const props = defineProps<{
   provenanceStatus: string
   docsLink: RouteLocationRaw | null
   codeLink: RouteLocationRaw | null
-  isBinaryOnly: boolean
+  page: 'docs' | 'code' | 'diff'
 }>()
 
 const { requestedVersion, orgName } = usePackageRoute()
@@ -151,13 +151,9 @@ const likeAction = async () => {
 
 <template>
   <!-- Package header -->
-  <header
-    class="sticky top-14 z-1 bg-bg py-2 border-border"
-    ref="header"
-    :class="[$style.packageHeader, { 'border-b': isHeaderPinned }]"
-  >
+  <header class="bg-bg pt-2">
     <!-- Package name and version -->
-    <div class="flex items-baseline gap-x-2 gap-y-1 sm:gap-x-3 flex-wrap min-w-0">
+    <div class="flex items-baseline justify-between gap-x-2 gap-y-1 flex-wrap min-w-0">
       <CopyToClipboardButton
         :copied="copiedPkgName"
         :copy-text="$t('package.copy_name')"
@@ -165,7 +161,7 @@ const likeAction = async () => {
         @click="copyPkgName()"
       >
         <h1
-          class="font-mono text-2xl sm:text-3xl font-medium min-w-0 break-words"
+          class="font-mono text-lg sm:text-3xl font-medium min-w-0 break-words"
           :title="pkg?.name"
           dir="ltr"
         >
@@ -178,84 +174,8 @@ const likeAction = async () => {
           </span>
         </h1>
       </CopyToClipboardButton>
-
-      <CopyToClipboardButton
-        v-if="resolvedVersion"
-        :copied="copiedVersion"
-        :copy-text="$t('package.copy_version')"
-        class="inline-flex items-baseline gap-1.5 font-mono text-base sm:text-lg text-fg-muted shrink-0"
-        @click="copyVersion()"
-      >
-        <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
-        <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
-          <span class="font-mono text-fg-muted text-sm" dir="ltr">{{ requestedVersion }}</span>
-          <span class="i-lucide:arrow-right rtl-flip w-3 h-3" aria-hidden="true" />
-        </template>
-
-        <LinkBase
-          v-if="requestedVersion && resolvedVersion !== requestedVersion"
-          :to="packageRoute(packageName, resolvedVersion)"
-          :title="$t('package.view_permalink')"
-          dir="ltr"
-          >{{ resolvedVersion }}</LinkBase
-        >
-        <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
-
-        <template v-if="hasProvenance(displayVersion)">
-          <TooltipApp
-            :text="
-              provenanceData && provenanceStatus !== 'pending'
-                ? $t('package.provenance_section.built_and_signed_on', {
-                    provider: provenanceData.providerLabel,
-                  })
-                : $t('package.verified_provenance')
-            "
-            position="bottom"
-            strategy="fixed"
-          >
-            <LinkBase
-              variant="button-secondary"
-              size="small"
-              to="#provenance"
-              :aria-label="$t('package.provenance_section.view_more_details')"
-              classicon="i-lucide:shield-check"
-            />
-          </TooltipApp>
-        </template>
-        <span
-          v-if="requestedVersion && latestVersion && resolvedVersion !== latestVersion.version"
-          class="text-fg-subtle text-sm shrink-0"
-          >{{ $t('package.not_latest') }}</span
-        >
-      </CopyToClipboardButton>
-
-      <!-- Docs + Code + Compare — inline on desktop, floating bottom bar on mobile -->
-      <ButtonGroup
-        v-if="resolvedVersion"
-        as="nav"
-        :aria-label="$t('package.navigation')"
-        class="hidden sm:flex max-sm:flex max-sm:fixed max-sm:z-40 max-sm:inset-is-1/2 max-sm:-translate-x-1/2 max-sm:rtl:translate-x-1/2 max-sm:bg-[--bg]/90 max-sm:backdrop-blur-md max-sm:border max-sm:border-border max-sm:rounded-md max-sm:shadow-md ms-auto"
-        :style="navExtraOffsetStyle"
-        :class="$style.packageNav"
-      >
-        <LinkBase
-          variant="button-secondary"
-          v-if="docsLink"
-          :to="docsLink"
-          aria-keyshortcuts="d"
-          classicon="i-lucide:file-text"
-        >
-          <span class="max-sm:sr-only">{{ $t('package.links.docs') }}</span>
-        </LinkBase>
-        <LinkBase
-          v-if="codeLink"
-          variant="button-secondary"
-          :to="codeLink"
-          aria-keyshortcuts="."
-          classicon="i-lucide:code"
-        >
-          <span class="max-sm:sr-only">{{ $t('package.links.code') }}</span>
-        </LinkBase>
+      <!-- Package metrics -->
+      <div class="flex gap-2 flex-wrap items-stretch">
         <LinkBase
           variant="button-secondary"
           :to="{ name: 'compare', query: { packages: packageName } }"
@@ -264,35 +184,6 @@ const likeAction = async () => {
         >
           <span class="max-sm:sr-only">{{ $t('package.links.compare') }}</span>
         </LinkBase>
-        <LinkBase
-          v-if="displayVersion && latestVersion && displayVersion.version !== latestVersion.version"
-          variant="button-secondary"
-          :to="diffRoute(packageName, displayVersion.version, latestVersion.version)"
-          classicon="i-lucide:diff"
-          :title="$t('compare.compare_versions_title')"
-        >
-          <span class="max-sm:sr-only">{{ $t('compare.compare_versions') }}</span>
-        </LinkBase>
-        <ButtonBase
-          v-if="showScrollToTop"
-          variant="secondary"
-          :aria-label="$t('common.scroll_to_top')"
-          @click="scrollToTop"
-          classicon="i-lucide:arrow-up"
-          class="sm:p-2.75"
-        />
-      </ButtonGroup>
-
-      <!-- Package metrics -->
-      <div class="basis-full flex gap-2 sm:gap-3 flex-wrap items-stretch">
-        <PackageMetricsBadges
-          v-if="resolvedVersion"
-          :package-name="packageName"
-          :version="resolvedVersion"
-          :is-binary="isBinaryOnly"
-          class="self-baseline"
-        />
-
         <!-- Package likes -->
         <TooltipApp
           :text="
@@ -308,7 +199,7 @@ const likeAction = async () => {
         >
           <ButtonBase
             @click="likeAction"
-            size="small"
+            size="medium"
             :aria-label="
               likesData?.userHasLiked ? $t('package.likes.unlike') : $t('package.likes.like')
             "
@@ -330,6 +221,117 @@ const likeAction = async () => {
       </div>
     </div>
   </header>
+  <div
+    ref="header"
+    class="bg-bg sticky top-14 z-1 border-b border-border flex flex-col md:flex-row-reverse items-baseline justify-between gap-x-2 gap-y-1 flex-wrap min-w-0 pt-2"
+    :class="[$style.packageHeader]"
+  >
+    <div
+      class="flex items-center max-md:justify-between max-md:w-full max-md:flex-row-reverse gap-2"
+    >
+      <ButtonBase
+        variant="secondary"
+        :aria-label="$t('common.scroll_to_top')"
+        @click="scrollToTop"
+        classicon="i-lucide:arrow-up"
+        :class="showScrollToTop ? '' : 'opacity-0 pointer-events-none select-none'"
+        class="py-1.5 px-2.5 sm:me-2"
+        :tabindex="showScrollToTop ? 0 : -1"
+      />
+      <div class="break-all font-mono text-fg-muted">
+        <template v-if="hasProvenance(displayVersion)">
+          <TooltipApp
+            :text="
+              provenanceData && provenanceStatus !== 'pending'
+                ? $t('package.provenance_section.built_and_signed_on', {
+                    provider: provenanceData.providerLabel,
+                  })
+                : $t('package.verified_provenance')
+            "
+            position="bottom"
+            strategy="fixed"
+          >
+            <LinkBase
+              variant="button-secondary"
+              to="#provenance"
+              :aria-label="$t('package.provenance_section.view_more_details')"
+              classicon="i-lucide:shield-check"
+              class="py-1.5 px-2.5 me-2"
+            />
+          </TooltipApp>
+        </template>
+        <!-- Version resolution indicator (e.g., "latest → 4.2.0") -->
+        <template v-if="requestedVersion && resolvedVersion !== requestedVersion">
+          <TooltipApp
+            :text="requestedVersion"
+            position="bottom"
+            strategy="fixed"
+            class="vertical-middle"
+          >
+            <span class="i-lucide:cable rtl-flip min-w-3 w-3 h-3 mx-1" aria-hidden="true" />
+          </TooltipApp>
+        </template>
+        <CopyToClipboardButton
+          v-if="resolvedVersion"
+          :copied="copiedVersion"
+          :copy-text="$t('package.copy_version')"
+          @click="copyVersion()"
+          class="inline"
+        >
+          <LinkBase
+            v-if="requestedVersion && resolvedVersion !== requestedVersion"
+            :to="packageRoute(packageName, resolvedVersion)"
+            :title="$t('package.view_permalink')"
+            dir="ltr"
+            class="inline!"
+            >{{ resolvedVersion }}</LinkBase
+          >
+          <span dir="ltr" v-else>v{{ resolvedVersion }}</span>
+        </CopyToClipboardButton>
+        <span
+          v-if="requestedVersion && latestVersion && resolvedVersion !== latestVersion.version"
+          class="text-fg-subtle text-sm text-nowrap ms-1"
+          >{{ $t('package.not_latest') }}</span
+        >
+      </div>
+    </div>
+    <!-- Docs + Code — inline on desktop, floating bottom bar on mobile -->
+    <nav
+      v-if="resolvedVersion"
+      :aria-label="$t('package.navigation')"
+      class="flex gap-4 me-auto -mb-px"
+      :style="navExtraOffsetStyle"
+      :class="$style.packageNav"
+    >
+      <LinkBase
+        v-if="docsLink"
+        :to="docsLink"
+        aria-keyshortcuts="d"
+        class="decoration-none border-b-2 p-1 hover:border-accent/50"
+        :class="page === 'docs' ? 'border-accent text-accent!' : 'border-transparent'"
+      >
+        {{ $t('package.links.docs') }}
+      </LinkBase>
+      <LinkBase
+        v-if="codeLink"
+        :to="codeLink"
+        aria-keyshortcuts="."
+        class="decoration-none border-b-2 p-1 hover:border-accent/50"
+        :class="page === 'code' ? 'border-accent text-accent!' : 'border-transparent'"
+      >
+        {{ $t('package.links.code') }}
+      </LinkBase>
+      <LinkBase
+        v-if="displayVersion && latestVersion && displayVersion.version !== latestVersion.version"
+        :to="diffRoute(packageName, displayVersion.version, latestVersion.version)"
+        :title="$t('compare.compare_versions_title')"
+        class="decoration-none border-b-2 p-1 hover:border-accent/50"
+        :class="page === 'diff' ? 'border-accent text-accent!' : 'border-transparent'"
+      >
+        {{ $t('compare.compare_versions') }}
+      </LinkBase>
+    </nav>
+  </div>
 </template>
 
 <style module>
