@@ -133,7 +133,7 @@ function getWarningTooltip(skill: SkillListItem): string | undefined {
           </code>
           <button
             type="button"
-            class="absolute top-0 inset-ie-0 px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70"
+            class="absolute top-0 inset-ie-0 px-2 py-0.5 font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:not-focus:sr-only"
             :aria-label="$t('package.get_started.copy_command')"
             @click.stop="copyCommand"
           >

@@ -70,7 +70,7 @@ const copyExecuteCommand = () => copyExecute(getFullExecuteCommand())
           >
           <button
             type="button"
-            class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70"
+            class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:not-focus:sr-only"
             :aria-label="$t('package.get_started.copy_command')"
             @click.stop="copyExecuteCommand"
           >
