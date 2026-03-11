@@ -11,7 +11,7 @@ test.describe('Package Page', () => {
 
     // Open dropdown
     await packageManagerButton.click()
-    const packageManagerDropdown = page.locator('article [role="listbox"]')
+    const packageManagerDropdown = page.locator('[data-testid="package-manager-dropdown"]')
     await expect(packageManagerDropdown).toBeVisible({ timeout: 5000 })
 
     // Arrow keys navigate the listbox

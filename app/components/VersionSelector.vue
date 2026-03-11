@@ -475,6 +475,7 @@ watch(
       class="break-all text-start text-fg-subtle font-mono text-sm hover:text-fg transition-[color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-bg rounded"
       @click="isOpen = !isOpen"
       @keydown="handleButtonKeydown"
+      data-testid="version-selector-button"
     >
       <span dir="ltr" class="me-1.5">{{ currentVersion }}</span>
       <span

@@ -9,7 +9,9 @@ test.describe('npmjs.com URL Compatibility', () => {
       await expect(page.locator('h1')).toContainText('vue')
       // Should have version badge
       await expect(
-        page.locator('[data-testid="package-subheader"]').locator('text=/v\\d+\\.\\d+/'),
+        page
+          .locator('[data-testid="version-selector-button"]')
+          .locator('text=/\\d+\\.\\d+\\.\\d+/'),
       ).toBeVisible()
     })
 
@@ -26,7 +28,9 @@ test.describe('npmjs.com URL Compatibility', () => {
       // Should show package name
       await expect(page.locator('h1')).toContainText('vue')
       // Should show the specific version
-      await expect(page.locator('text=3.5.27')).toBeVisible()
+      await expect(
+        page.locator('[data-testid="version-selector-button"]').locator('text=3.5.27'),
+      ).toBeVisible()
     })
 
     test('/package/@nuxt/kit/v/3.20.0 → scoped package specific version', async ({
