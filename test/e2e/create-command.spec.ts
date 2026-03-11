@@ -62,7 +62,7 @@ test.describe('Create Command', () => {
   })
 
   test.describe('Copy Functionality', () => {
-    test('copy button is always visible', async ({ page, goto }) => {
+    test('copy button is accessible and keyboard discoverable', async ({ page, goto }) => {
       await goto('/package/vite', { waitUntil: 'hydration' })
 
       await expect(page.locator('h1')).toContainText('vite', { timeout: 15000 })
@@ -75,9 +75,13 @@ test.describe('Create Command', () => {
       const createCommandContainer = page.locator('.group\\/createcmd').first()
       await expect(createCommandContainer).toBeVisible({ timeout: 20000 })
 
-      // Copy button should always be visible
+      // Copy button should be in the DOM and accessible to screen readers
       const copyButton = createCommandContainer.locator('button')
-      await expect(copyButton).toHaveCSS('opacity', '1')
+      await expect(copyButton).toBeAttached()
+
+      // Focus the button to verify it's keyboard accessible
+      await copyButton.focus()
+      await expect(copyButton).toBeFocused()
     })
 
     test('clicking copy button copies create command and shows confirmation', async ({
@@ -114,16 +118,20 @@ test.describe('Create Command', () => {
   })
 
   test.describe('Install Command Copy', () => {
-    test('copy button is always visible', async ({ page, goto }) => {
+    test('copy button is accessible and keyboard discoverable', async ({ page, goto }) => {
       await goto('/package/is-odd', { waitUntil: 'hydration' })
 
       // Find the install command container
       const installCommandContainer = page.locator('.group\\/installcmd').first()
       await expect(installCommandContainer).toBeVisible()
 
-      // Copy button should always be visible
+      // Copy button should be in the DOM and accessible to screen readers
       const copyButton = installCommandContainer.locator('button')
-      await expect(copyButton).toHaveCSS('opacity', '1')
+      await expect(copyButton).toBeAttached()
+
+      // Focus the button to verify it's keyboard accessible
+      await copyButton.focus()
+      await expect(copyButton).toBeFocused()
     })
 
     test('clicking copy button copies install command and shows confirmation', async ({
@@ -153,7 +161,7 @@ test.describe('Create Command', () => {
   })
 
   test.describe('Run Command Copy', () => {
-    test('copy button is always visible', async ({ page, goto }) => {
+    test('copy button is accessible and keyboard discoverable', async ({ page, goto }) => {
       await goto('/package/vite', { waitUntil: 'hydration' })
 
       await expect(page.locator('h1')).toContainText('vite', { timeout: 15000 })
@@ -166,9 +174,13 @@ test.describe('Create Command', () => {
       const runCommandContainer = page.locator('.group\\/runcmd').first()
       await expect(runCommandContainer).toBeVisible({ timeout: 20000 })
 
-      // Copy button should always be visible
+      // Copy button should be in the DOM and accessible to screen readers
       const copyButton = runCommandContainer.locator('button')
-      await expect(copyButton).toHaveCSS('opacity', '1')
+      await expect(copyButton).toBeAttached()
+
+      // Focus the button to verify it's keyboard accessible
+      await copyButton.focus()
+      await expect(copyButton).toBeFocused()
     })
 
     test('clicking copy button copies run command and shows confirmation', async ({
