@@ -37,7 +37,7 @@
     "open_code_view": "Open code view",
     "open_docs": "Open docs",
     "disable_shortcuts": "You can disable keyboard shortcuts in {settings}.",
-    "open_readme": "Open readme",
+    "open_main": "Open main information",
     "open_diff": "Open version differences"
   },
   "search": {
@@ -287,6 +287,7 @@
       "view_source": "View source"
     },
     "links": {
+      "main": "main",
       "repo": "repo",
       "homepage": "homepage",
       "issues": "issues",

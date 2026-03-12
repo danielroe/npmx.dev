@@ -14,7 +14,7 @@ const props = defineProps<{
   latestVersion: SlimVersion | null
   provenanceData: ProvenanceDetails | null
   provenanceStatus: string
-  page: 'readme' | 'docs' | 'code' | 'diff'
+  page: 'main' | 'docs' | 'code' | 'diff'
 }>()
 
 const { requestedVersion, orgName } = usePackageRoute()
@@ -107,7 +107,7 @@ const codeLink = computed((): RouteLocationRaw | null => {
   }
 })
 
-const readmeLink = computed((): RouteLocationRaw | null => {
+const mainLink = computed((): RouteLocationRaw | null => {
   if (props.pkg == null || props.resolvedVersion == null) {
     return null
   }
@@ -145,12 +145,12 @@ onKeyStroke(
 )
 
 onKeyStroke(
-  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'r') && !isEditableElement(e.target),
+  e => keyboardShortcuts.value && isKeyWithoutModifiers(e, 'm') && !isEditableElement(e.target),
   e => {
-    if (readmeLink.value === null) return
+    if (mainLink.value === null) return
     e.preventDefault()
 
-    navigateTo(readmeLink.value)
+    navigateTo(mainLink.value)
   },
   { dedupe: true },
 )
@@ -355,7 +355,7 @@ const likeAction = async () => {
           >
             <LinkBase
               variant="button-secondary"
-              to="#provenance"
+              :to="packageRoute(packageName, resolvedVersion, '#provenance')"
               :aria-label="$t('package.provenance_section.view_more_details')"
               classicon="i-lucide:shield-check"
               class="py-1.5 px-2.5 me-2"
@@ -393,13 +393,13 @@ const likeAction = async () => {
       :class="$style.packageNav"
     >
       <LinkBase
-        v-if="readmeLink"
-        :to="readmeLink"
-        aria-keyshortcuts="r"
+        v-if="mainLink"
+        :to="mainLink"
+        aria-keyshortcuts="m"
         class="decoration-none border-b-2 p-1 hover:border-accent/50 lowercase"
-        :class="page === 'readme' ? 'border-accent text-accent!' : 'border-transparent'"
+        :class="page === 'main' ? 'border-accent text-accent!' : 'border-transparent'"
       >
-        {{ $t('package.readme.title') }}
+        {{ $t('package.links.main') }}
       </LinkBase>
       <LinkBase
         v-if="docsLink"

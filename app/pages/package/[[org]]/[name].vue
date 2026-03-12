@@ -584,7 +584,7 @@ const showSkeleton = shallowRef(false)
         :provenance-data="provenanceData"
         :provenance-status="provenanceStatus"
         :class="$style.areaHeader"
-        page="readme"
+        page="main"
       />
       <article id="package-article" :class="$style.packagePage">
         <!-- Package details -->
@@ -1012,7 +1012,7 @@ const showSkeleton = shallowRef(false)
             :class="{ 'bg-bg border-border border-b': isReadmeHeaderPinned }"
             :style="{ top: readmeStickyTop }"
           >
-            <h2 id="readme-heading" class="group text-xs text-fg-subtle uppercase tracking-wider">
+            <h2 id="readme-heading" class="group text-fg-subtle uppercase font-medium">
               <LinkBase to="#readme">
                 {{ $t('package.readme.title') }}
               </LinkBase>
