@@ -471,7 +471,7 @@ defineOgImageComponent('Default', {
             :selected-lines="selectedLines"
             @line-click="handleLineClick"
           />
-          <div class="sticky bottom-0 left-0 right-0 bg-bg border-t border-border px-4 py-1">
+          <div class="sticky bottom-0 bg-bg border-t border-border px-4 py-1">
             <div class="flex items-center gap-3 text-sm justify-end">
               <span class="text-fg-muted" dir="auto">{{
                 $t('code.lines', { count: fileContent.lines })

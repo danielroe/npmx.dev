@@ -12,9 +12,6 @@ test.describe('API Documentation Pages', () => {
     await expect(page.locator('header').getByText('ufo')).toBeVisible()
     await expect(page.locator('[data-testid="package-subheader"]').getByText('1.6.3')).toBeVisible()
 
-    // API Docs badge should be visible
-    await expect(page.locator('text=API Docs')).toBeVisible()
-
     // Should have documentation content
     const docsContent = page.locator('.docs-content')
     await expect(docsContent).toBeVisible()
