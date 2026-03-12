@@ -568,7 +568,7 @@ const codeLink = computed((): RouteLocationRaw | null => {
   }
 })
 
-const keyboardShortcuts = useKeyboardShortcuts()
+const keyboardShortcuts = useKeyboardShortcutsPreference()
 
 onKeyStroke(
   e => keyboardShortcuts.value && isKeyWithoutModifiers(e, '.') && !isEditableElement(e.target),

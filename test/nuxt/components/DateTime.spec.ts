@@ -2,14 +2,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import DateTime from '~/components/DateTime.vue'
 
-// Mock the useRelativeDates composable
+// Mock the useRelativeDatesPreference composable
 const mockRelativeDates = shallowRef(false)
-vi.mock('~/composables/useSettings', () => ({
-  useRelativeDates: () => mockRelativeDates,
-  useSettings: () => ({
-    settings: ref({ relativeDates: mockRelativeDates.value }),
-  }),
-  useAccentColor: () => ({}),
+vi.mock('~/composables/userPreferences/useRelativeDatesPreference', () => ({
+  useRelativeDatesPreference: () => mockRelativeDates,
 }))
 
 describe('DateTime', () => {

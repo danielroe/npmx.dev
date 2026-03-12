@@ -2,14 +2,9 @@ import { describe, expect, it, vi } from 'vitest'
 import { mountSuspended } from '@nuxt/test-utils/runtime'
 import FacetRow from '~/components/Compare/FacetRow.vue'
 
-// Mock useRelativeDates for DateTime component
-vi.mock('~/composables/useSettings', () => ({
-  useRelativeDates: () => ref(false),
-  useSettings: () => ({
-    settings: ref({ relativeDates: false }),
-  }),
-  useAccentColor: () => ({}),
-  initAccentOnPrehydrate: () => {},
+// Mock useRelativeDatesPreference for DateTime component
+vi.mock('~/composables/userPreferences/useRelativeDatesPreference', () => ({
+  useRelativeDatesPreference: () => ref(false),
 }))
 
 describe('FacetRow', () => {

@@ -59,7 +59,7 @@ const props = withDefaults(
 
 const { locale } = useI18n()
 const { accentColors, selectedAccentColor } = useAccentColor()
-const { settings } = useSettings()
+const { localSettings } = useUserLocalSettings()
 const { copy, copied } = useClipboard()
 
 const colorMode = useColorMode()
@@ -977,7 +977,7 @@ const effectiveDataSingle = computed<EvolutionData>(() => {
 
   if (isDownloadsMetric.value && data.length) {
     const pkg = effectivePackageNames.value[0] ?? props.packageName ?? ''
-    if (settings.value.chartFilter.anomaliesFixed) {
+    if (localSettings.value.chartFilter.anomaliesFixed) {
       data = applyBlocklistCorrection({
         data,
         packageName: pkg,
@@ -1025,7 +1025,7 @@ const chartData = computed<{
   for (const pkg of names) {
     let data = state.evolutionsByPackage[pkg] ?? []
     if (isDownloadsMetric.value && data.length) {
-      if (settings.value.chartFilter.anomaliesFixed) {
+      if (localSettings.value.chartFilter.anomaliesFixed) {
         data = applyBlocklistCorrection({ data, packageName: pkg, granularity })
       }
     }
@@ -1079,9 +1079,10 @@ const normalisedDataset = computed(() => {
     const series = applyDataPipeline(
       d.series.map(v => v ?? 0),
       {
-        averageWindow: settings.value.chartFilter.averageWindow,
-        smoothingTau: settings.value.chartFilter.smoothingTau,
-        predictionPoints: settings.value.chartFilter.predictionPoints ?? DEFAULT_PREDICTION_POINTS,
+        averageWindow: localSettings.value.chartFilter.averageWindow,
+        smoothingTau: localSettings.value.chartFilter.smoothingTau,
+        predictionPoints:
+          localSettings.value.chartFilter.predictionPoints ?? DEFAULT_PREDICTION_POINTS,
       },
       { granularity, lastDateMs, referenceMs, isAbsoluteMetric },
     )
@@ -1670,10 +1671,10 @@ watch(selectedMetric, value => {
           <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
               {{ $t('package.trends.average_window') }}
-              <span class="text-fg-muted">({{ settings.chartFilter.averageWindow }})</span>
+              <span class="text-fg-muted">({{ localSettings.chartFilter.averageWindow }})</span>
             </span>
             <input
-              v-model.number="settings.chartFilter.averageWindow"
+              v-model.number="localSettings.chartFilter.averageWindow"
               type="range"
               min="0"
               max="20"
@@ -1684,10 +1685,10 @@ watch(selectedMetric, value => {
           <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
               {{ $t('package.trends.smoothing') }}
-              <span class="text-fg-muted">({{ settings.chartFilter.smoothingTau }})</span>
+              <span class="text-fg-muted">({{ localSettings.chartFilter.smoothingTau }})</span>
             </span>
             <input
-              v-model.number="settings.chartFilter.smoothingTau"
+              v-model.number="localSettings.chartFilter.smoothingTau"
               type="range"
               min="0"
               max="20"
@@ -1698,10 +1699,10 @@ watch(selectedMetric, value => {
           <label class="flex flex-col gap-1 flex-1">
             <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
               {{ $t('package.trends.prediction') }}
-              <span class="text-fg-muted">({{ settings.chartFilter.predictionPoints }})</span>
+              <span class="text-fg-muted">({{ localSettings.chartFilter.predictionPoints }})</span>
             </span>
             <input
-              v-model.number="settings.chartFilter.predictionPoints"
+              v-model.number="localSettings.chartFilter.predictionPoints"
               type="range"
               min="0"
               max="30"
@@ -1766,9 +1767,11 @@ watch(selectedMetric, value => {
               :class="{ 'opacity-50 pointer-events-none': !hasAnomalies }"
             >
               <input
-                :checked="settings.chartFilter.anomaliesFixed && hasAnomalies"
+                :checked="localSettings.chartFilter.anomaliesFixed && hasAnomalies"
                 @change="
-                  settings.chartFilter.anomaliesFixed = ($event.target as HTMLInputElement).checked
+                  localSettings.chartFilter.anomaliesFixed = (
+                    $event.target as HTMLInputElement
+                  ).checked
                 "
                 type="checkbox"
                 :disabled="!hasAnomalies"

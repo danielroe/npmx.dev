@@ -166,6 +166,7 @@ The `.cache/` directory is a separate storage mount used for fetch-cache and atp
 app/                    # Nuxt 4 app directory
 ├── components/         # Vue components (PascalCase.vue)
 ├── composables/        # Vue composables (useFeature.ts)
+│   └── userPreferences/  # User preference composables (synced to server)
 ├── pages/              # File-based routing
 ├── plugins/            # Nuxt plugins
 ├── app.vue             # Root component
@@ -188,6 +189,9 @@ test/                   # Vitest tests
 
 > [!TIP]
 > For more about the meaning of these directories, check out the docs on the [Nuxt directory structure](https://nuxt.com/docs/4.x/directory-structure).
+
+> [!TIP]
+> For guidance on working with user preferences and local settings, see the [User Preferences README](./app/composables/userPreferences/README.md).
 
 ### Local connector CLI
 

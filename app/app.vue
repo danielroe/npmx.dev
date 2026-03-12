@@ -47,15 +47,15 @@ if (import.meta.server) {
   setJsonLd(createWebSiteSchema())
 }
 
-const keyboardShortcuts = useKeyboardShortcuts()
-const { settings } = useSettings()
+const keyboardShortcuts = useKeyboardShortcutsPreference()
+const instantSearch = useInstantSearchPreference()
 
 onKeyDown(
   '/',
   e => {
     if (e.ctrlKey) {
       e.preventDefault()
-      settings.value.instantSearch = !settings.value.instantSearch
+      instantSearch.value = !instantSearch.value
       return
     }
 

@@ -11,18 +11,18 @@ import type {
 } from '#shared/types/preferences'
 import { DEFAULT_COLUMNS, DEFAULT_PREFERENCES } from '#shared/types/preferences'
 
+const STORAGE_KEY = 'npmx-list-prefs'
+
 /**
  * Composable for managing package list display preferences
  * Persists to localStorage and provides reactive state
- *
  */
 export function usePackageListPreferences() {
   const {
     data: preferences,
-    isHydrated,
     save,
     reset,
-  } = usePreferencesProvider<PackageListPreferences>(DEFAULT_PREFERENCES)
+  } = useLocalStorageHashProvider<PackageListPreferences>(STORAGE_KEY, DEFAULT_PREFERENCES)
 
   // Computed accessors for common properties
   const viewMode = computed({
@@ -40,22 +40,6 @@ export function usePackageListPreferences() {
       save()
     },
   })
-
-  // One-time migration: replace legacy 'all' with the current maximum page size
-  watch(
-    isHydrated,
-    hydrated => {
-      if (!hydrated) {
-        return
-      }
-
-      if ((preferences.value.pageSize as unknown) === 'all') {
-        preferences.value.pageSize = Math.max(...PAGE_SIZE_OPTIONS) as PageSize
-        save()
-      }
-    },
-    { immediate: true },
-  )
 
   const pageSize = computed({
     get: () => preferences.value.pageSize,
@@ -106,7 +90,6 @@ export function usePackageListPreferences() {
   return {
     // Raw preferences
     preferences,
-    isHydrated,
 
     // Individual properties with setters
     viewMode,

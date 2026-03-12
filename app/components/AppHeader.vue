@@ -4,7 +4,7 @@ import type { NavigationConfig, NavigationConfigWithGroups } from '~/types'
 import { isEditableElement } from '~/utils/input'
 import { NPMX_DOCS_SITE } from '#shared/utils/constants'
 
-const keyboardShortcuts = useKeyboardShortcuts()
+const keyboardShortcuts = useKeyboardShortcutsPreference()
 const discord = useDiscordLink()
 
 withDefaults(

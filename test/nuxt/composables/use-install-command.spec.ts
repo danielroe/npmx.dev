@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { JsrPackageInfo } from '#shared/types/jsr'
+import { __resetPreferencesForTest } from '../../../app/composables/useUserPreferencesProvider'
 
 describe('useInstallCommand', () => {
   beforeEach(() => {
@@ -12,6 +13,7 @@ describe('useInstallCommand', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals()
+    __resetPreferencesForTest()
   })
 
   describe('basic install commands', () => {
@@ -217,9 +219,9 @@ describe('useInstallCommand', () => {
     })
 
     it('should only include main command when @types disabled via settings', () => {
-      // Get settings and disable includeTypesInInstall directly
-      const { settings } = useSettings()
-      settings.value.includeTypesInInstall = false
+      // Get preferences and disable includeTypesInInstall directly
+      const { preferences } = useUserPreferencesState()
+      preferences.value.includeTypesInInstall = false
 
       const { fullInstallCommand, showTypesInInstall } = useInstallCommand(
         'express',

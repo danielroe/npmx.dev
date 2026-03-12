@@ -49,7 +49,7 @@ test.describe('Hydration', () => {
     for (const page of PAGES) {
       test(`${page}`, async ({ page: pw, goto, hydrationErrors }) => {
         await injectLocalStorage(pw, {
-          'npmx-settings': JSON.stringify({ accentColorId: 'violet' }),
+          'npmx-user-preferences': JSON.stringify({ accentColorId: 'violet' }),
         })
         await goto(page, { waitUntil: 'hydration' })
 
@@ -63,7 +63,7 @@ test.describe('Hydration', () => {
     for (const page of PAGES) {
       test(`${page}`, async ({ page: pw, goto, hydrationErrors }) => {
         await injectLocalStorage(pw, {
-          'npmx-settings': JSON.stringify({ preferredBackgroundTheme: 'slate' }),
+          'npmx-user-preferences': JSON.stringify({ preferredBackgroundTheme: 'slate' }),
         })
         await goto(page, { waitUntil: 'hydration' })
 
@@ -91,7 +91,7 @@ test.describe('Hydration', () => {
     for (const page of PAGES) {
       test(`${page}`, async ({ page: pw, goto, hydrationErrors }) => {
         await injectLocalStorage(pw, {
-          'npmx-settings': JSON.stringify({ selectedLocale: 'ar-EG' }),
+          'npmx-user-preferences': JSON.stringify({ selectedLocale: 'ar-EG' }),
         })
         await goto(page, { waitUntil: 'hydration' })
 
@@ -105,7 +105,7 @@ test.describe('Hydration', () => {
     for (const page of PAGES) {
       test(`${page}`, async ({ page: pw, goto, hydrationErrors }) => {
         await injectLocalStorage(pw, {
-          'npmx-settings': JSON.stringify({ relativeDates: true }),
+          'npmx-user-preferences': JSON.stringify({ relativeDates: true }),
         })
         await goto(page, { waitUntil: 'hydration' })
 
