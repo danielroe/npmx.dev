@@ -7,29 +7,22 @@ import type {
 } from '~/types/chart'
 import { DAY_MS, parseIsoDate, toIsoDate, addDays, daysInMonth, daysInYear } from '~/utils/date'
 
-// ---------------------------------------------------------------------------
-// Fill partial bucket
-// ---------------------------------------------------------------------------
-
 /** Proportionally scale a partial bucket to estimate the full-period value. */
 export function fillPartialBucket(value: number, actualDays: number, totalDays: number): number {
   if (actualDays <= 0 || actualDays >= totalDays) return value
   return Math.round((value * totalDays) / actualDays)
 }
 
-// ---------------------------------------------------------------------------
-// Builders
-// ---------------------------------------------------------------------------
+function sortedDaily(daily: DailyRawPoint[]): DailyRawPoint[] {
+  return daily.slice().sort((a, b) => a.day.localeCompare(b.day))
+}
 
 export function buildDailyEvolution(daily: DailyRawPoint[]): DailyDataPoint[] {
-  return daily
-    .slice()
-    .sort((a, b) => a.day.localeCompare(b.day))
-    .map(item => ({
-      day: item.day,
-      value: item.value,
-      timestamp: parseIsoDate(item.day).getTime(),
-    }))
+  return sortedDaily(daily).map(item => ({
+    day: item.day,
+    value: item.value,
+    timestamp: parseIsoDate(item.day).getTime(),
+  }))
 }
 
 export function buildWeeklyEvolution(
@@ -37,7 +30,7 @@ export function buildWeeklyEvolution(
   rangeStartIso: string,
   rangeEndIso: string,
 ): WeeklyDataPoint[] {
-  const sorted = daily.slice().sort((a, b) => a.day.localeCompare(b.day))
+  const sorted = sortedDaily(daily)
   if (sorted.length === 0) return []
 
   const rangeStartDate = parseIsoDate(rangeStartIso)
@@ -89,7 +82,7 @@ export function buildMonthlyEvolution(
   rangeStartIso?: string,
   rangeEndIso?: string,
 ): MonthlyDataPoint[] {
-  const sorted = daily.slice().sort((a, b) => a.day.localeCompare(b.day))
+  const sorted = sortedDaily(daily)
   const byMonth = new Map<string, number>()
   for (const item of sorted) {
     const m = item.day.slice(0, 7)
@@ -119,7 +112,7 @@ export function buildYearlyEvolution(
   rangeStartIso?: string,
   rangeEndIso?: string,
 ): YearlyDataPoint[] {
-  const sorted = daily.slice().sort((a, b) => a.day.localeCompare(b.day))
+  const sorted = sortedDaily(daily)
   const byYear = new Map<string, number>()
   for (const item of sorted) {
     const y = item.day.slice(0, 4)
