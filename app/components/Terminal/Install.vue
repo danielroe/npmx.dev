@@ -153,12 +153,12 @@ const copyDevInstallCommand = () =>
           >
           <button
             type="button"
-            class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:not-focus:sr-only"
+            class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:opacity-0 media-mouse:group-hover:opacity-100 media-mouse:focus-within:opacity-100"
             :aria-label="$t('package.get_started.copy_command')"
             @click.stop="copyInstallCommand"
           >
             <span
-              :class="copied ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+              :class="copied ? 'i-lucide:check' : 'i-lucide:copy'"
               class="size-4 inline-block"
               aria-hidden="true"
             />
@@ -187,17 +187,18 @@ const copyDevInstallCommand = () =>
                 >{{ i > 0 ? ' ' : '' }}{{ part }}</span
               ></code
             >
-            <ButtonBase
+            <button
               type="button"
-              size="small"
-              class="text-fg-muted bg-bg-subtle/80 border-border media-mouse:not-focus:sr-only active:scale-95 focus-visible:opacity-100 select-none"
+              class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:opacity-0 media-mouse:group-hover:opacity-100 media-mouse:focus-within:opacity-100"
               :aria-label="$t('package.get_started.copy_dev_command')"
               @click.stop="copyDevInstallCommand"
             >
-              <span aria-live="polite">{{
-                devInstallCopied ? $t('common.copied') : $t('common.copy')
-              }}</span>
-            </ButtonBase>
+              <span
+                :class="devInstallCopied ? 'i-lucide:check' : 'i-lucide:copy'"
+                class="size-4 inline-block"
+                aria-hidden="true"
+              />
+            </button>
           </div>
         </template>
 
@@ -255,12 +256,12 @@ const copyDevInstallCommand = () =>
             >
             <button
               type="button"
-              class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:not-focus:sr-only"
+              class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:opacity-0 media-mouse:group-hover:opacity-100 media-mouse:focus-within:opacity-100"
               :aria-label="$t('package.run.copy_command')"
               @click.stop="copyRunCommand(executableInfo?.primaryCommand)"
             >
               <span
-                :class="runCopied ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+                :class="runCopied ? 'i-lucide:check' : 'i-lucide:copy'"
                 class="size-4 inline-block"
                 aria-hidden="true"
               />
@@ -305,12 +306,12 @@ const copyDevInstallCommand = () =>
             >
             <button
               type="button"
-              class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:not-focus:sr-only"
+              class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:opacity-0 media-mouse:group-hover:opacity-100 media-mouse:focus-within:opacity-100"
               :aria-label="$t('package.create.copy_command')"
               @click.stop="copyCreateCommand"
             >
               <span
-                :class="createCopied ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+                :class="createCopied ? 'i-lucide:check' : 'i-lucide:copy'"
                 class="size-4 inline-block"
                 aria-hidden="true"
               />

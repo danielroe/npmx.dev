@@ -70,12 +70,12 @@ const copyExecuteCommand = () => copyExecute(getFullExecuteCommand())
           >
           <button
             type="button"
-            class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:not-focus:sr-only"
+            class="p-1 ms-1 flex items-center font-mono text-xs text-fg-muted bg-bg-subtle/80 border border-border border-solid rounded transition-colors duration-200 hover:(text-fg border-border-hover) active:scale-95 focus-visible:outline-accent/70 media-mouse:opacity-0 media-mouse:group-hover:opacity-100 media-mouse:focus-within:opacity-100"
             :aria-label="$t('package.get_started.copy_command')"
             @click.stop="copyExecuteCommand"
           >
             <span
-              :class="executeCopied ? 'i-carbon:checkmark' : 'i-carbon:copy'"
+              :class="executeCopied ? 'i-lucide:check' : 'i-lucide:copy'"
               class="size-4 inline-block"
               aria-hidden="true"
             />
