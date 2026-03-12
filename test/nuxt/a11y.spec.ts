@@ -751,10 +751,7 @@ describe('component accessibility audits', () => {
           latestVersion: { version: '3.5.0', tags: [] },
           provenanceData: null,
           provenanceStatus: 'idle',
-          docsLink: null,
-          codeLink: null,
           page: 'docs',
-          versionUrlPattern: '/package/vue/v/{version}',
         },
       })
       const results = await runAxe(component)
