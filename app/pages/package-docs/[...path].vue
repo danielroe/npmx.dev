@@ -130,10 +130,17 @@ const showLoading = computed(
   () => docsStatus.value === 'pending' || (docsStatus.value === 'idle' && docsUrl.value !== null),
 )
 const showEmptyState = computed(() => docsData.value?.status !== 'ok')
+
+const packageHeaderHeight = usePackageHeaderHeight()
+const stickyStyle = computed(() => {
+  return {
+    '--combined-header-height': `${56 + (packageHeaderHeight.value || 44)}px`,
+  }
+})
 </script>
 
 <template>
-  <div class="docs-page flex-1 flex flex-col">
+  <div class="docs-page flex-1 flex flex-col" :style="stickyStyle">
     <PackageHeader
       :pkg="pkg"
       :resolved-version="resolvedVersion"
@@ -193,13 +200,6 @@ const showEmptyState = computed(() => docsData.value?.status !== 'ok')
 </template>
 
 <style>
-/* Layout constants - must match AppHeader height */
-.docs-page {
-  --app-header-height: 56px;
-  --docs-header-height: 44px;
-  --combined-header-height: calc(var(--app-header-height) + var(--docs-header-height));
-}
-
 .docs-header {
   top: var(--app-header-height);
 }

@@ -28,7 +28,7 @@ defineOgImageComponent('Package', {
 const readmeHeader = useTemplateRef('readmeHeader')
 const isReadmeHeaderPinned = shallowRef(false)
 const packageHeaderHeight = usePackageHeaderHeight()
-const readmeStickyTop = computed(() => `${56 + packageHeaderHeight.value}px`)
+const readmeStickyTop = computed(() => `${56 + (packageHeaderHeight.value || 44)}px`)
 
 function isStickyPinned(el: HTMLElement | null): boolean {
   if (!el) return false
