@@ -558,17 +558,6 @@ const showSkeleton = shallowRef(false)
     </ButtonBase>
   </DevOnly>
   <main class="flex-1 pb-8">
-    <PackageHeader
-      :pkg="pkg"
-      :resolved-version="resolvedVersion"
-      :display-version="displayVersion"
-      :latest-version="latestVersion"
-      :provenance-data="provenanceData"
-      :provenance-status="provenanceStatus"
-      :class="$style.areaHeader"
-      page="main"
-      :version-url-pattern="versionUrlPattern"
-    />
     <!-- Scenario 1: SPA fallback — show skeleton (no real content to preserve) -->
     <!-- Scenario 2: SSR with missing payload — preserve server DOM, skip skeleton -->
     <PackageSkeleton
@@ -593,6 +582,17 @@ const showSkeleton = shallowRef(false)
     />
 
     <template v-else-if="pkg">
+      <PackageHeader
+        :pkg="pkg"
+        :resolved-version="resolvedVersion"
+        :display-version="displayVersion"
+        :latest-version="latestVersion"
+        :provenance-data="provenanceData"
+        :provenance-status="provenanceStatus"
+        :class="$style.areaHeader"
+        page="main"
+        :version-url-pattern="versionUrlPattern"
+      />
       <article id="package-article" :class="$style.packagePage" class="container w-full">
         <!-- Package details -->
         <section :class="$style.areaDetails">

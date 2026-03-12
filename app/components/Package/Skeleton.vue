@@ -2,7 +2,7 @@
 
 <template>
   <!-- Package header — matches area-header in [...name].vue -->
-  <header class="bg-[--bg] pt-2">
+  <header class="bg-[--bg] pt-5 pb-1 w-full container">
     <div class="min-w-0">
       <!-- Package name -->
       <div class="min-w-0 flex items-center gap-2 justify-between">
@@ -19,24 +19,24 @@
     </div>
   </header>
 
-  <div
-    class="sticky top-14 z-1 pt-2 bg-bg border-b border-border flex flex-col md:flex-row-reverse flex-wrap gap-2 justify-between"
-  >
-    <!-- Version -->
-    <span class="inline-flex items-baseline font-mono text-base sm:text-lg shrink-0">
-      <SkeletonInline class="h-6 w-20" />
-    </span>
-    <!-- Docs + Code + Compare nav placeholder (hidden on mobile) -->
-    <div class="flex items-center gap-0.5 p-0.5">
-      <SkeletonInline class="h-7 w-22 rounded" />
-      <SkeletonInline class="h-7 w-20 rounded" />
-      <SkeletonInline class="h-7 w-26 rounded" />
+  <div class="sticky top-14 z-1 pt-3 bg-bg border-b border-border w-full">
+    <div class="w-full container flex flex-col md:flex-row-reverse flex-wrap gap-2 justify-between">
+      <!-- Version -->
+      <span class="inline-flex items-baseline font-mono text-base sm:text-lg shrink-0">
+        <SkeletonInline class="h-6 w-20" />
+      </span>
+      <!-- Docs + Code + Compare nav placeholder (hidden on mobile) -->
+      <div class="flex items-center gap-0.5 p-0.5">
+        <SkeletonInline class="h-7 w-22 rounded" />
+        <SkeletonInline class="h-7 w-20 rounded" />
+        <SkeletonInline class="h-7 w-26 rounded" />
+      </div>
     </div>
   </div>
   <article
     aria-busy="true"
     :aria-label="$t('package.skeleton.loading')"
-    class="package-page motion-safe:animate-fade-in"
+    class="package-page motion-safe:animate-fade-in container w-full"
   >
     <!-- Package details — matches area-details in [...name].vue -->
     <section class="area-details pt-4">
@@ -203,7 +203,7 @@
     <!-- Sidebar — matches area-sidebar in [...name].vue -->
     <div class="area-sidebar">
       <div
-        class="sticky top-30 xl:top-14 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(pt-2 max-h-[calc(100dvh-6rem)])"
+        class="sticky top-30 xl:top-14 space-y-6 sm:space-y-8 min-w-0 overflow-y-auto pe-2.5 lg:(max-h-[calc(100dvh-8.5rem)] overscroll-contain) xl:(max-h-[calc(100dvh-6rem)])"
       >
         <div class="flex flex-col gap-4 sm:gap-6 xl:pt-4">
           <!-- Download stats — matches CollapsibleSection + sparkline skeleton -->
