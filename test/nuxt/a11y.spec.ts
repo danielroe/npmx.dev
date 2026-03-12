@@ -124,6 +124,7 @@ import {
   AboutLogoList,
   AuthorAvatar,
   AuthorList,
+  BackButton,
   BlogPostFederatedArticles,
   BlogPostListCard,
   BlogPostWrapper,
@@ -444,6 +445,14 @@ describe('component accessibility audits', () => {
         props: { isExactMatch: true },
         slots: { default: '<p>Exact match content</p>' },
       })
+      const results = await runAxe(component)
+      expect(results.violations).toEqual([])
+    })
+  })
+
+  describe('BackButton', () => {
+    it('should have no accessibility violations', async () => {
+      const component = await mountSuspended(BackButton)
       const results = await runAxe(component)
       expect(results.violations).toEqual([])
     })
