@@ -246,7 +246,6 @@ const hasActiveFilters = computed(() => !!filterSummary.value)
             :placeholder="searchPlaceholder"
             autocomplete="off"
             class="w-full min-w-25"
-            size="medium"
             no-correct
           />
         </div>
