@@ -402,7 +402,9 @@ const isEndDateOnPeriodEnd = computed(() => {
 })
 
 const supportsEstimation = computed(
-  () => displayedGranularity.value !== 'daily' && selectedMetric.value !== 'contributors',
+  () =>
+    !['daily', 'weekly'].includes(displayedGranularity.value) &&
+    selectedMetric.value !== 'contributors',
 )
 
 const hasDownloadAnomalies = computed(() =>
@@ -1081,7 +1083,10 @@ const normalisedDataset = computed(() => {
       {
         averageWindow: settings.value.chartFilter.averageWindow,
         smoothingTau: settings.value.chartFilter.smoothingTau,
-        predictionPoints: settings.value.chartFilter.predictionPoints ?? DEFAULT_PREDICTION_POINTS,
+        predictionPoints:
+          granularity === 'weekly'
+            ? 0 // weekly buckets are end-aligned → always complete, no prediction needed
+            : (settings.value.chartFilter.predictionPoints ?? DEFAULT_PREDICTION_POINTS),
       },
       { granularity, lastDateMs, referenceMs, isAbsoluteMetric },
     )
@@ -1707,7 +1712,6 @@ watch(selectedMetric, value => {
           />
           {{ $t('package.trends.data_correction') }}
         </button>
-
         <div
           class="overflow-hidden transition-[opacity] duration-200 ease-out"
           :class="
@@ -1732,7 +1736,6 @@ watch(selectedMetric, value => {
                   class="accent-[var(--accent-color,var(--fg-subtle))]"
                 />
               </label>
-
               <label class="flex flex-col gap-1 flex-1">
                 <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
                   {{ $t('package.trends.smoothing') }}
@@ -1747,7 +1750,6 @@ watch(selectedMetric, value => {
                   class="accent-[var(--accent-color,var(--fg-subtle))]"
                 />
               </label>
-
               <label class="flex flex-col gap-1 flex-1">
                 <span class="text-2xs font-mono text-fg-subtle tracking-wide uppercase">
                   {{ $t('package.trends.prediction') }}
@@ -1762,7 +1764,6 @@ watch(selectedMetric, value => {
                   class="accent-[var(--accent-color,var(--fg-subtle))]"
                 />
               </label>
-
               <div class="flex flex-col gap-1 shrink-0">
                 <span
                   class="text-2xs font-mono text-fg-subtle tracking-wide uppercase flex items-center justify-between"
@@ -1779,7 +1780,6 @@ watch(selectedMetric, value => {
                         <p class="text-xs text-fg-muted">
                           {{ $t('package.trends.known_anomalies_description') }}
                         </p>
-
                         <div v-if="hasAnomalies">
                           <p class="text-xs text-fg-subtle font-medium">
                             {{ $t('package.trends.known_anomalies_ranges') }}
@@ -1801,13 +1801,11 @@ watch(selectedMetric, value => {
                             </li>
                           </ul>
                         </div>
-
                         <p v-else class="text-xs text-fg-muted">
                           {{
                             $t('package.trends.known_anomalies_none', effectivePackageNames.length)
                           }}
                         </p>
-
                         <div class="flex justify-end">
                           <LinkBase
                             to="https://github.com/npmx-dev/npmx.dev/edit/main/app/utils/download-anomalies.data.ts"
@@ -1820,20 +1818,18 @@ watch(selectedMetric, value => {
                     </template>
                   </TooltipApp>
                 </span>
-
                 <label
                   class="flex items-center gap-1.5 text-2xs font-mono text-fg-subtle cursor-pointer h-4"
-                  :class="{ 'opacity-50 pointer-events-none': !hasAnomalies }"
+                  :class="{ 'opacity-50': !hasAnomalies }"
                 >
                   <input
-                    :checked="settings.chartFilter.anomaliesFixed && hasAnomalies"
+                    :checked="settings.chartFilter.anomaliesFixed"
                     @change="
                       settings.chartFilter.anomaliesFixed = (
                         $event.target as HTMLInputElement
                       ).checked
                     "
                     type="checkbox"
-                    :disabled="!hasAnomalies"
                     class="accent-[var(--accent-color,var(--fg-subtle))]"
                   />
                   {{ $t('package.trends.apply_correction') }}
