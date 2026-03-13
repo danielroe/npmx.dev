@@ -69,7 +69,7 @@ watch(
 )
 
 // getting info
-const { data: changelog, pending, error } = usePackageChangelog(packageName, version)
+const { data: changelog, pending } = usePackageChangelog(packageName, version)
 
 const repoProviderIcon = useProviderIcon(() => changelog.value?.provider)
 const tptoc = useTemplateRef('tptoc')
