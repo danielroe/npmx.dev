@@ -114,7 +114,7 @@ describe('useReplacementDependencies', () => {
 
     expect(simple?.type).toBe('simple')
     expect(native?.type).toBe('native')
-    expect(native?.url?.type).toBe('mdn')
+    expect(native?.url).toHaveProperty('type', 'mdn')
     expect(replacements.value['picoquery']).toBeUndefined()
   })
 
