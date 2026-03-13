@@ -732,7 +732,11 @@ describe('component accessibility audits', () => {
     it('should have no accessibility violations', async () => {
       const component = await mountSuspended(PackageHeader, {
         props: {
-          pkg: { name: 'vue' },
+          pkg: {
+            'name': 'vue',
+            'dist-tags': {},
+            'versions': {},
+          },
           resolvedVersion: '3.5.0',
           displayVersion: {
             _id: '1234567890',
@@ -748,9 +752,8 @@ describe('component accessibility audits', () => {
           latestVersion: { version: '3.5.0', tags: [] },
           provenanceData: null,
           provenanceStatus: 'idle',
-          docsLink: null,
-          codeLink: null,
-          isBinaryOnly: false,
+          page: 'docs',
+          versionUrlPattern: '/package/vue/v/{version}',
         },
       })
       const results = await runAxe(component)
@@ -3434,6 +3437,9 @@ describe('component accessibility audits', () => {
           groupedDeps: new Map(),
           allChanges: mockAllChanges,
           open: false,
+          packageName: 'nuxt',
+          toVersion: '3.0.0',
+          toVersionUrlPattern: 'https://npmx.dev/package/nuxt/v/3.0.0',
         },
       })
       const results = await runAxe(component)
@@ -3447,6 +3453,9 @@ describe('component accessibility audits', () => {
           groupedDeps: new Map(),
           allChanges: mockAllChanges,
           open: true,
+          packageName: 'nuxt',
+          toVersion: '3.0.0',
+          toVersionUrlPattern: 'https://npmx.dev/package/nuxt/v/3.0.0',
         },
       })
       const results = await runAxe(component)
