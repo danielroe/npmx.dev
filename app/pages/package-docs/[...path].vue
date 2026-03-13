@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { setResponseHeader } from 'h3'
+
 definePageMeta({
   name: 'docs',
   path: '/package-docs/:path+',
