@@ -1,18 +1,30 @@
 <script setup lang="ts">
-import type { ModuleReplacement } from 'module-replacements'
+import type { ModuleReplacement, KnownUrl } from 'module-replacements'
 
 const props = defineProps<{
   replacement: ModuleReplacement
 }>()
 
-const mdnUrl = computed(() => {
-  if (props.replacement.type !== 'native' || !props.replacement.mdnPath) return null
-  return `https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/${props.replacement.mdnPath}`
-})
+const resolveUrl = (url?: KnownUrl) => {
+  if (!url) return null
+  if (typeof url === 'string') return url
 
-const docPath = computed(() => {
-  if (props.replacement.type !== 'documented' || !props.replacement.docPath) return null
-  return `https://e18e.dev/docs/replacements/${props.replacement.docPath}.html`
+  switch (url.type) {
+    case 'mdn':
+    case 'node':
+      return `https://nodejs.org/${url.id}`
+    case 'e18e':
+      return `https://e18e.dev/docs/replacements/${url.id}`
+    default:
+      return null
+  }
+}
+
+const externalUrl = computed(() => resolveUrl(props.replacement.url))
+
+const nodeVersion = computed(() => {
+  const nodeEngine = props.replacement.engines?.find(e => e.engine === 'node')
+  return nodeEngine?.minVersion || null
 })
 </script>
 
@@ -31,10 +43,11 @@ const docPath = computed(() => {
         scope="global"
       >
         <template #replacement>
-          {{ replacement.replacement }}
+          <code v-if="replacement.nodeFeatureId">{{ replacement.nodeFeatureId.moduleName }}</code>
+          <span v-else>{{ replacement.id }}</span>
         </template>
         <template #nodeVersion>
-          {{ replacement.nodeVersion }}
+          {{ nodeVersion || 'unknown' }}
         </template>
       </i18n-t>
       <i18n-t
@@ -54,7 +67,7 @@ const docPath = computed(() => {
           </a>
         </template>
         <template #replacement>
-          {{ replacement.replacement }}
+          {{ replacement.id }}
         </template>
       </i18n-t>
       <i18n-t
@@ -62,6 +75,9 @@ const docPath = computed(() => {
         keypath="package.replacement.documented"
         scope="global"
       >
+        <template #replacement>
+          {{ replacement.replacementModule }}
+        </template>
         <template #community>
           <a
             href="https://e18e.dev/docs/replacements/"
@@ -74,22 +90,15 @@ const docPath = computed(() => {
           </a>
         </template>
       </i18n-t>
+      <template v-else-if="replacement.type === 'removal'">
+        {{ replacement.description }}
+      </template>
       <template v-else>
         {{ $t('package.replacement.none') }}
       </template>
       <a
-        v-if="mdnUrl"
-        :href="mdnUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-1 ms-1 underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg transition-colors"
-      >
-        {{ $t('package.replacement.mdn') }}
-        <span class="i-lucide:external-link w-3 h-3" aria-hidden="true" />
-      </a>
-      <a
-        v-if="docPath"
-        :href="docPath"
+        v-if="externalUrl"
+        :href="externalUrl"
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-1 ms-1 underline underline-offset-4 decoration-amber-600/60 dark:decoration-amber-400/50 hover:decoration-fg transition-colors"
