@@ -97,9 +97,7 @@ describe('useCompareReplacements', () => {
         }),
       )
 
-      const { noDepSuggestions, infoSuggestions } = await useCompareReplacementsInComponent([
-        'is-even',
-      ])
+      const { noDepSuggestions } = await useCompareReplacementsInComponent(['is-even'])
 
       await vi.waitFor(() => {
         expect(noDepSuggestions.value).toHaveLength(1)
