@@ -599,6 +599,6 @@ defineOgImageComponent('Default', {
   width: var(--sidebar-space);
 }
 .file-viewer {
-  width: calc(100vw - var(--sidebar-space));
+  width: calc(100% - var(--sidebar-space));
 }
 </style>
