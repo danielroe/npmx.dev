@@ -24,7 +24,7 @@ const resolveUrl = (url?: KnownUrl) => {
 const externalUrl = computed(() => resolveUrl(props.replacement.url))
 
 const nodeVersion = computed(() => {
-  const nodeEngine = props.replacement.engines?.find(e => e.engine === 'node')
+  const nodeEngine = props.replacement.engines?.find(e => e.engine === 'nodejs')
   return nodeEngine?.minVersion || null
 })
 </script>
@@ -44,19 +44,26 @@ const nodeVersion = computed(() => {
         scope="global"
       >
         <template #replacement>
-          <code v-if="replacement.nodeFeatureId">{{ replacement.nodeFeatureId.moduleName }}</code>
+          <code v-if="replacement.nodeFeatureId?.moduleName">
+            {{ replacement.nodeFeatureId.moduleName }}
+          </code>
+          <code v-else-if="replacement.description">
+            {{ replacement.description }}
+          </code>
           <span v-else>{{ replacement.id }}</span>
         </template>
         <template #nodeVersion>
           {{ nodeVersion || 'unknown' }}
         </template>
       </i18n-t>
-      <i18n-t
-        v-else-if="replacement.type === 'simple'"
-        keypath="package.replacement.simple"
-        scope="global"
-      >
-        <template #community>
+      <span v-else-if="replacement.type === 'simple'">
+        {{ replacement.description }}
+        <template v-if="replacement.example">
+          <strong>Example:</strong><br>
+          <pre class="bg-amber-800/10 dark:bg-amber-950/30 p-2 rounded mt-1 overflow-x-auto text-xs font-mono"><code>{{ replacement.example }}</code></pre>
+        </template>
+        <span v-if="!replacement.url">
+          <br><br>
           <a
             href="https://e18e.dev/docs/replacements/"
             target="_blank"
@@ -66,18 +73,15 @@ const nodeVersion = computed(() => {
             {{ $t('package.replacement.community') }}
             <span class="i-lucide:external-link w-3 h-3" aria-hidden="true" />
           </a>
-        </template>
-        <template #replacement>
-          {{ replacement.id }}
-        </template>
-      </i18n-t>
+        </span>
+      </span>
       <i18n-t
         v-else-if="replacement.type === 'documented'"
         keypath="package.replacement.documented"
         scope="global"
       >
         <template #replacement>
-          {{ replacement.replacementModule }}
+          <code>{{ replacement.replacementModule }}</code>
         </template>
         <template #community>
           <a
