@@ -30,8 +30,8 @@ const docPath = computed(() => {
         keypath="package.replacement.native"
         scope="global"
       >
-        <template #replacements>
-          {{ replacement.replacements }}
+        <template #replacement>
+          {{ replacement.replacement }}
         </template>
         <template #nodeVersion>
           {{ replacement.nodeVersion }}
@@ -53,8 +53,8 @@ const docPath = computed(() => {
             <span class="i-lucide:external-link w-3 h-3" aria-hidden="true" />
           </a>
         </template>
-        <template #replacements>
-          {{ replacement.replacements }}
+        <template #replacement>
+          {{ replacement.replacement }}
         </template>
       </i18n-t>
       <i18n-t

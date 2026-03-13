@@ -161,7 +161,7 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 )
 
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
-const { data: moduleReplacements } = useModuleReplacements(packageName)
+const { data: moduleReplacement } = useModuleReplacement(packageName)
 
 if (
   import.meta.server &&
