@@ -88,20 +88,20 @@ function parseMarkdown({ text, packageName, plain }: UseMarkdownOptions): string
   html = html.replace(/~~(.+?)~~/g, '<del>$1</del>')
 
   // Links: [text](url) - only allow https, mailto
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, text, url) => {
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, matchedText, url) => {
     // In plain mode, just render the link text without the anchor
     if (plain) {
-      return text
+      return matchedText
     }
     const decodedUrl = url.replace(/&amp;/g, '&')
     try {
       const { protocol, href } = new URL(decodedUrl)
       if (['https:', 'mailto:'].includes(protocol)) {
         const safeUrl = href.replace(/"/g, '&quot;')
-        return `<a href="${safeUrl}" rel="nofollow noreferrer noopener" target="_blank">${text}</a>`
+        return `<a href="${safeUrl}" rel="nofollow noreferrer noopener" target="_blank">${matchedText}</a>`
       }
     } catch {}
-    return `${text} (${url})`
+    return `${matchedText} (${url})`
   })
 
   return html
