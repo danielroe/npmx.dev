@@ -208,7 +208,6 @@ export default defineCachedEventHandler(
   {
     // File content for a specific version never changes - cache permanently
     maxAge: CACHE_MAX_AGE_ONE_YEAR, // 1 year
-    shouldBypassCache: () => import.meta.dev,
     getKey: event => {
       const pkg = getRouterParam(event, 'pkg') ?? ''
       return `file:v${CACHE_VERSION}:${pkg.replace(/\/+$/, '').trim()}`
