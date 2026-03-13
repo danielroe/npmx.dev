@@ -86,11 +86,10 @@ watch(
 </script>
 
 <template>
-  <div class="code-viewer flex min-h-full max-w-full">
+  <div class="code-viewer flex min-h-full max-w-full" :style="{ '--line-digits': lineDigits }">
     <!-- Line numbers column -->
     <div
       class="line-numbers shrink-0 bg-bg-subtle border-ie border-solid border-border text-end select-none relative"
-      :style="{ '--line-digits': lineDigits }"
       aria-hidden="true"
     >
       <!-- This needs to be a native <a> element, because `LinkBase` (or specifically `NuxtLink`) does not seem to work when trying to prevent default behavior (jumping to the anchor) -->
@@ -113,9 +112,9 @@ watch(
     </div>
 
     <!-- Code content -->
-    <div class="code-content flex-1 overflow-x-auto min-w-0">
+    <div class="code-content">
       <!-- eslint-disable vue/no-v-html -- HTML is generated server-side by Shiki -->
-      <div ref="codeRef" class="code-lines min-w-full w-fit" v-html="html" />
+      <div ref="codeRef" class="code-lines" v-html="html" />
       <!-- eslint-enable vue/no-v-html -->
     </div>
   </div>
@@ -124,59 +123,69 @@ watch(
 <style scoped>
 .code-viewer {
   font-size: 14px;
+  /* 1ch per digit + 1.5rem (px-3 * 2) padding */
+  --line-numbers-width: calc(var(--line-digits) * 1ch + 1.5rem);
 }
 
 .line-numbers {
-  /* 1ch per digit + 1.5rem (px-3 * 2) padding */
-  min-width: calc(var(--line-digits) * 1ch + 1.5rem);
+  min-width: var(--line-numbers-width);
 }
 
-.code-content :deep(pre) {
-  margin: 0;
-  padding: 0;
-  background: transparent !important;
-  overflow: visible;
-}
+.code-content {
+  flex: 1;
+  min-width: 0;
+  max-width: calc(100% - var(--line-numbers-width));
 
-.code-content :deep(code) {
-  display: block;
-  padding: 0 1rem;
-  background: transparent !important;
-}
+  &:deep(pre) {
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    overflow: visible;
+    max-width: 100%;
+  }
 
-.code-content :deep(.line) {
-  display: block;
-  /* Ensure consistent height matching line numbers */
-  line-height: 24px;
-  min-height: 24px;
-  max-height: 24px;
-  white-space: pre;
-  overflow: hidden;
-  transition: background-color 0.1s;
-}
+  &:deep(code) {
+    display: block;
+    padding: 0 1rem;
+    background: transparent !important;
+    max-width: 100%;
+  }
 
-/* Highlighted lines in code content - extend full width with negative margin */
-.code-content :deep(.line.highlighted) {
-  @apply bg-yellow-500/20;
-  margin: 0 -1rem;
-  padding: 0 1rem;
-}
+  &:deep(.line) {
+    display: flex;
+    flex-wrap: wrap;
+    /* Ensure consistent height matching line numbers */
+    line-height: 24px;
+    min-height: 24px;
+    white-space: pre-wrap;
+    overflow: hidden;
+    transition: background-color 0.1s;
+    max-width: 100%;
+  }
 
-/* Clickable import links */
-.code-content :deep(.import-link) {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-decoration-color: rgba(158, 203, 255, 0.5); /* syntax.str with transparency */
-  text-underline-offset: 2px;
-  transition:
-    text-decoration-color 0.15s,
-    text-decoration-style 0.15s;
-  cursor: pointer;
-}
+  /* Highlighted lines in code content - extend full width with negative margin */
+  &:deep(.line.highlighted) {
+    @apply bg-yellow-500/20;
+    margin: 0 -1rem;
+    padding: 0 1rem;
+  }
 
-.code-content :deep(.import-link:hover) {
-  text-decoration-style: solid;
-  text-decoration-color: #9ecbff; /* syntax.str - light blue */
+  /* Clickable import links */
+  &:deep(.import-link) {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: rgba(158, 203, 255, 0.5); /* syntax.str with transparency */
+    text-underline-offset: 2px;
+    transition:
+      text-decoration-color 0.15s,
+      text-decoration-style 0.15s;
+    cursor: pointer;
+  }
+
+  &:deep(.import-link:hover) {
+    text-decoration-style: solid;
+    text-decoration-color: #9ecbff; /* syntax.str - light blue */
+  }
 }
 </style>
