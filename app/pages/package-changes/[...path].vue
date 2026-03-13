@@ -5,7 +5,7 @@ definePageMeta({
   name: 'changes',
   path: '/package-changes/:path+',
   alias: ['/package/changes/:path+', '/changes/:path+'],
-  scrollMargin: 150,
+  scrollMargin: 200,
 })
 
 /// routing
@@ -50,7 +50,12 @@ const versionUrlPattern = computed(() => {
   return filePath.value ? `${base}/${filePath.value}` : base
 })
 
-const latestVersion = computed(() => pkg.value?.['dist-tags']?.latest ?? null)
+const latestVersion = computed(() => {
+  if (!pkg.value) return null
+  const latestTag = pkg.value['dist-tags']?.latest
+  if (!latestTag) return null
+  return pkg.value.versions[latestTag] ?? null
+})
 
 watch(
   [version, latestVersion, packageName],
@@ -81,63 +86,68 @@ const versionDate = computed(() => {
 
 const viewOnGit = useViewOnGitProvider(() => changelog.value?.provider)
 
-// defineOgImageComponent('Default', {
-//   title: () => `${pkg.value?.name ?? 'Package'} - Changelogs`,
-//   description: () => pkg.value?.license ?? '',
-//   primaryColor: '#60a5fa',
-// })
+const packageHeaderHeight = usePackageHeaderHeight()
+const stickyStyle = computed(() => {
+  return {
+    '--combined-header-height': `${50 + (packageHeaderHeight.value || 44)}px`,
+  }
+})
+
+defineOgImageComponent('Default', {
+  title: () => `${pkg.value?.name ?? 'Package'} - Changelogs`,
+  description: () => pkg.value?.license ?? '',
+  primaryColor: '#60a5fa',
+})
 </script>
 <template>
-  <main class="flex-1 flex flex-col">
-    <header class="border-b border-border bg-bg sticky top-14 z-20">
-      <div class="container pt-4 pb-3">
-        <div class="flex items-center gap-3 mb-3 flex-wrap min-w-0">
-          <h1
-            class="font-mono text-lg sm:text-xl font-semibold text-fg hover:text-fg-muted transition-colors truncate"
-          >
-            <NuxtLink v-if="packageName" :to="packageRoute(packageName, version)">
-              {{ packageName }}
-            </NuxtLink>
-          </h1>
-
-          <VersionSelector
-            v-if="(version || latestVersion) && pkg?.versions && pkg?.['dist-tags']"
-            :package-name="packageName"
-            :current-version="version ?? latestVersion!"
-            :versions="pkg.versions"
-            :dist-tags="pkg['dist-tags']"
-            :url-pattern="versionUrlPattern"
-          />
-          <div class="flex-1"></div>
-          <LinkBase
-            v-if="changelog?.link"
-            :to="changelog?.link"
-            :classicon="repoProviderIcon"
-            :title="viewOnGit"
-          >
-            {{ changelog.provider }}
-          </LinkBase>
-
-          <div v-if="changelog?.type == 'md'" ref="tptoc" class="w-14 h-8 ms-auto">
-            <!-- prevents layout shift while loading -->
-          </div>
+  <main class="flex-1 flex flex-col" :style="stickyStyle">
+    <PackageHeader
+      page="changes"
+      :versionUrlPattern
+      :pkg
+      :latestVersion
+      :resolved-version="version"
+      :display-version="pkg?.requestedVersion"
+    />
+    <section class="container w-full pt-3" v-if="!pending">
+      <div
+        class="sticky top-[--combined-header-height] pa-3 z-2 flex justify-between gap-4"
+        :class="$style.gitTocHeader"
+      >
+        <LinkBase
+          v-if="changelog?.link"
+          :to="changelog?.link"
+          :classicon="repoProviderIcon"
+          :title="viewOnGit"
+        >
+          {{ changelog.provider }}
+        </LinkBase>
+        <div v-if="changelog?.type == 'md'" ref="tptoc" class="w-14 h-8">
+          <!- prevents layout shift while loading ->
         </div>
       </div>
-    </header>
-    <section class="container w-full" v-if="!pending">
+
       <LazyChangelogReleases
         v-if="changelog?.type == 'release'"
         :info="changelog"
         :requestedDate="versionDate"
-        :requested-version="version || latestVersion"
+        :requested-version="version || latestVersion?.version"
       />
       <LazyChangelogMarkdown
         v-else-if="changelog?.type == 'md'"
         :info="changelog"
         :tpTarget="tptoc"
-        :requested-version="version || latestVersion"
+        :requested-version="version || latestVersion?.version"
       />
       <p class="mt-5" v-else>{{ $t('changelog.no_logs') }}</p>
     </section>
   </main>
 </template>
+
+<style module>
+.gitTocHeader {
+  border-bottom-width: 1px;
+  border-color: color-mix(in srgb, var(--border) var(--un-border-opacity), transparent);
+  background-color: color-mix(in srgb, var(--bg) var(--un-bg-opacity), transparent);
+}
+</style>

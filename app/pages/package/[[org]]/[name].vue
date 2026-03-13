@@ -17,7 +17,6 @@ import { getDependencyCount } from '~/utils/npm/dependency-count'
 import { detectPublishSecurityDowngradeForVersion } from '~/utils/publish-security'
 import { useInstallSizeDiff } from '~/composables/useInstallSizeDiff'
 import { useViewOnGitProvider } from '~/composables/useViewOnGitProvider'
-import { usePackageChangelog } from '~/composables/usePackageChangelog'
 
 defineOgImageComponent('Package', {
   name: () => packageName.value,
@@ -173,7 +172,6 @@ const { data: skillsData } = useLazyFetch<SkillsListResponse>(
 
 const { data: packageAnalysis } = usePackageAnalysis(packageName, requestedVersion)
 const { data: moduleReplacement } = useModuleReplacement(packageName)
-const { data: changelog } = usePackageChangelog(packageName, requestedVersion)
 
 if (
   import.meta.server &&

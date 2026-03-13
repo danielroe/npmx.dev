@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const { info, requestedVersion, tpTarget } = defineProps<{
   info: ChangelogMarkdownInfo
-  requestedVersion: string | null
+  requestedVersion: string | null | undefined
   tpTarget?: HTMLElement | null
 }>()
 
