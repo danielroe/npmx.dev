@@ -588,16 +588,17 @@ defineOgImageComponent('Default', {
 <style scoped>
 .main-content {
   --sidebar-space: calc(var(--spacing) * 64);
-  @screen lg {
+}
+@screen lg {
+  .main-content {
     --sidebar-space: calc(var(--spacing) * 72);
   }
+}
 
-  .file-tree {
-    width: var(--sidebar-space);
-  }
-
-  .file-viewer {
-    width: calc(100vw - var(--sidebar-space));
-  }
+.file-tree {
+  width: var(--sidebar-space);
+}
+.file-viewer {
+  width: calc(100vw - var(--sidebar-space));
 }
 </style>
