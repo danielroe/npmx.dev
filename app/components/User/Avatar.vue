@@ -1,15 +1,13 @@
 <script setup lang="ts">
 const props = defineProps<{
   username: string
-  size: 'sm' | 'md' | 'lg'
+  size: 'xs' | 'lg'
 }>()
 
 const sizePixels = computed(() => {
   switch (props.size) {
-    case 'sm':
+    case 'xs':
       return 24
-    case 'md':
-      return 40
     case 'lg':
       return 64
   }
@@ -17,10 +15,8 @@ const sizePixels = computed(() => {
 
 const sizeClass = computed(() => {
   switch (props.size) {
-    case 'sm':
+    case 'xs':
       return 'size-6'
-    case 'md':
-      return 'size-10'
     case 'lg':
       return 'size-16'
   }
@@ -28,10 +24,8 @@ const sizeClass = computed(() => {
 
 const textClass = computed(() => {
   switch (props.size) {
-    case 'sm':
+    case 'xs':
       return 'text-xs'
-    case 'md':
-      return 'text-base'
     case 'lg':
       return 'text-2xl'
   }
