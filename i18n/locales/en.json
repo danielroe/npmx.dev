@@ -794,7 +794,7 @@
     "file_path": "File path",
     "scroll_to_top": "Scroll to top",
     "binary_file": "Binary file",
-    "binary_rendering_warning": "File type not supported for preview."
+    "binary_rendering_warning": "File type \"{contentType}\" is not supported for preview."
   },
   "badges": {
     "provenance": {
