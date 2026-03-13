@@ -10,30 +10,16 @@ const SIMPLE_REPLACEMENT: ModuleReplacement = {
 }
 
 const NATIVE_REPLACEMENT: ModuleReplacement = {
-  "type": "native",
-  "url": {
-	"type": "mdn",
-	"id": "Web/JavaScript/Reference/Global_Objects/Array/includes"
+  id: 'Array.prototype.includes',
+  type: 'native',
+  url: {
+    type: 'mdn',
+    id: 'Web/JavaScript/Reference/Global_Objects/Array/includes', // corrected path
   },
-  "webFeatureId": {
-	"featureId": "array-includes",
-	"compatKey": "javascript.builtins.Array.includes"
+  webFeatureId: {
+    featureId: 'array-includes',
+    compatKey: 'javascript.builtins.Array.includes',
   },
-  "engines": [
-	{ "engine": "chrome", "minVersion": "47" },
-	{ "engine": "chrome_android", "minVersion": "47" },
-	{ "engine": "edge", "minVersion": "14" },
-	{ "engine": "firefox", "minVersion": "43" },
-	{ "engine": "firefox_android", "minVersion": "43" },
-	{ "engine": "safari", "minVersion": "9" },
-	{ "engine": "safari_ios", "minVersion": "9" },
-	{ "engine": "bun", "minVersion": "1.0.0" },
-	{ "engine": "deno", "minVersion": "1.0" },
-	{ "engine": "nodejs", "minVersion": "6.0.0" },
-	{ "engine": "oculus", "minVersion": "5.0" },
-	{ "engine": "opera", "minVersion": "34" },
-	{ "engine": "opera_android", "minVersion": "34" },
-	{ "engine": "samsunginternet_android", "minVersion": "5.0" },
   engines: [
     { engine: 'chrome', minVersion: '47' },
     { engine: 'chrome_android', minVersion: '47' },
