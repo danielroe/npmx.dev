@@ -402,7 +402,9 @@ const isEndDateOnPeriodEnd = computed(() => {
 })
 
 const supportsEstimation = computed(
-  () => displayedGranularity.value !== 'daily' && selectedMetric.value !== 'contributors',
+  () =>
+    !['daily', 'weekly'].includes(displayedGranularity.value) &&
+    selectedMetric.value !== 'contributors',
 )
 
 const hasDownloadAnomalies = computed(() =>
@@ -1081,7 +1083,10 @@ const normalisedDataset = computed(() => {
       {
         averageWindow: settings.value.chartFilter.averageWindow,
         smoothingTau: settings.value.chartFilter.smoothingTau,
-        predictionPoints: settings.value.chartFilter.predictionPoints ?? DEFAULT_PREDICTION_POINTS,
+        predictionPoints:
+          granularity === 'weekly'
+            ? 0 // weekly buckets are end-aligned → always complete, no prediction needed
+            : (settings.value.chartFilter.predictionPoints ?? DEFAULT_PREDICTION_POINTS),
       },
       { granularity, lastDateMs, referenceMs, isAbsoluteMetric },
     )
@@ -1613,16 +1618,12 @@ watch(selectedMetric, value => {
               {{ $t('package.trends.start_date') }}
             </label>
             <div class="relative flex items-center">
-              <span
-                class="absolute inset-is-2 i-lucide:calendar w-4 h-4 text-fg-subtle shrink-0 pointer-events-none"
-                aria-hidden="true"
-              />
               <InputBase
                 id="startDate"
                 v-model="startDate"
                 type="date"
                 :max="DATE_INPUT_MAX"
-                class="w-full min-w-0 bg-transparent ps-7"
+                class="w-full min-w-0 bg-transparent"
                 size="medium"
               />
             </div>
@@ -1633,16 +1634,12 @@ watch(selectedMetric, value => {
               {{ $t('package.trends.end_date') }}
             </label>
             <div class="relative flex items-center">
-              <span
-                class="absolute inset-is-2 i-lucide:calendar w-4 h-4 text-fg-subtle shrink-0 pointer-events-none"
-                aria-hidden="true"
-              />
               <InputBase
                 id="endDate"
                 v-model="endDate"
                 type="date"
                 :max="DATE_INPUT_MAX"
-                class="w-full min-w-0 bg-transparent ps-7"
+                class="w-full min-w-0 bg-transparent"
                 size="medium"
               />
             </div>
@@ -1771,15 +1768,14 @@ watch(selectedMetric, value => {
             </span>
             <label
               class="flex items-center gap-1.5 text-2xs font-mono text-fg-subtle cursor-pointer h-4"
-              :class="{ 'opacity-50 pointer-events-none': !hasAnomalies }"
+              :class="{ 'opacity-50': !hasAnomalies }"
             >
               <input
-                :checked="settings.chartFilter.anomaliesFixed && hasAnomalies"
+                :checked="settings.chartFilter.anomaliesFixed"
                 @change="
                   settings.chartFilter.anomaliesFixed = ($event.target as HTMLInputElement).checked
                 "
                 type="checkbox"
-                :disabled="!hasAnomalies"
                 class="accent-[var(--accent-color,var(--fg-subtle))]"
               />
               {{ $t('package.trends.apply_correction') }}
@@ -2104,5 +2100,9 @@ watch(selectedMetric, value => {
 
 [data-minimap-visible='false'] .vue-data-ui-watermark {
   top: calc(100% - 2rem) !important;
+}
+
+input::-webkit-date-and-time-value {
+  margin-inline: 4px;
 }
 </style>
