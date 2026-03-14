@@ -3,6 +3,7 @@
 
 definePageMeta({
   name: 'changes-version',
+  alias: ['/changes/:org?/:name/v/:version'],
 })
 </script>
 <template>

@@ -3,24 +3,17 @@ import { useProviderIcon } from '~/composables/useProviderIcon'
 
 definePageMeta({
   name: 'changes',
-  // path: '/package-changes/:path+',
-  // alias: ['/package/changes/:path+', '/changes/:path+'],
+  alias: ['/changes/:org?/:name'],
   scrollMargin: 190,
 })
-
 /// routing
 
 const route = useRoute('changes')
-// Parse package name, version, and file path from URL
+// Parse package name & version
 // Patterns:
-//   /changes/nuxt/v/4.2.0 → packageName: "nuxt", version: "4.2.0", filePath: null (show tree)
-//   /changes/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
-//   /changes/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
-
-//   const packageName = computed(() => {
-//   const { org, name } = route.params
-//   return org ? `${org}/${name}` : name
-// })
+//   /changes/nuxt/v/4.2.0 → packageName: "nuxt", version: "4.2.0"
+//   /changes/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0"
+//   /changes/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0"
 const parsedRoute = computed(() => {
   const { org, name } = route.params
 
@@ -32,9 +25,16 @@ const parsedRoute = computed(() => {
 })
 
 const packageName = computed(() => parsedRoute.value.packageName)
-const version = computed(() => parsedRoute.value.version)
+const requestedVersion = computed(() => parsedRoute.value.version)
 
-const { data: pkg } = usePackage(packageName, version)
+if (import.meta.server) {
+  assertValidPackageName(packageName.value)
+}
+
+// status: resolvedStatus
+const { data: version } = await useResolvedVersion(packageName, requestedVersion)
+
+const { data: pkg } = usePackage(packageName, () => version.value ?? requestedVersion.value ?? null)
 
 const versionUrlPattern = computed(() => {
   return `/package-changes/${packageName.value}/v/{version}`
