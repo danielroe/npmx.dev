@@ -23,10 +23,8 @@ const nodeVersion = computed(() => {
       {{ $t('package.replacement.title') }}
     </h2>
     <i18n-t
-      v-if="replacement.type === 'native'"
-      :keypath="
-        nodeVersion ? 'package.replacement.native' : 'package.replacement.native_no_version'
-      "
+      v-if="nodeVersion && replacement.type === 'native'"
+      keypath="package.replacement.native"
       scope="global"
     >
       <template #replacement>
@@ -35,8 +33,20 @@ const nodeVersion = computed(() => {
         </code>
         <span v-else>{{ replacement.id }}</span>
       </template>
-      <template v-if="nodeVersion" #nodeVersion>
+      <template #nodeVersion>
         {{ nodeVersion }}
+      </template>
+    </i18n-t>
+    <i18n-t
+      v-else-if="replacement.type === 'native'"
+      keypath="package.replacement.native_no_version"
+      scope="global"
+    >
+      <template #replacement>
+        <code v-if="replacement.description">
+          {{ replacement.description }}
+        </code>
+        <span v-else>{{ replacement.id }}</span>
       </template>
     </i18n-t>
     <div v-else-if="replacement.type === 'simple'" class="block">
