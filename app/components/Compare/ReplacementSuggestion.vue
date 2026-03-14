@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ModuleReplacement, KnownUrl } from 'module-replacements'
+import { resolveReplacementUrl } from '~/utils/resolve-replacement-url'
 
 const props = defineProps<{
   packageName: string
@@ -14,23 +15,7 @@ const emit = defineEmits<{
   addNoDep: []
 }>()
 
-const resolveUrl = (url?: KnownUrl) => {
-  if (!url) return null
-  if (typeof url === 'string') return url
-
-  switch (url.type) {
-    case 'mdn':
-      return `https://developer.mozilla.org/en-US/docs/${url.id}`
-    case 'node':
-      return `https://nodejs.org/${url.id}`
-    case 'e18e':
-      return `https://e18e.dev/docs/replacements/${url.id}`
-    default:
-      return null
-  }
-}
-
-const docUrl = computed(() => resolveUrl(props.replacement.url))
+const docUrl = computed(() => resolveReplacementUrl(props.replacement.url))
 
 const nodeVersion = computed(() => {
   const nodeEngine = props.replacement.engines?.find(e => e.engine === 'nodejs')

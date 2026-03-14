@@ -1,27 +1,12 @@
 <script setup lang="ts">
 import type { ModuleReplacement, KnownUrl } from 'module-replacements'
+import { resolveReplacementUrl } from '~/utils/resolve-replacement-url'
 
 const props = defineProps<{
   replacement: ModuleReplacement
 }>()
 
-const resolveUrl = (url?: KnownUrl) => {
-  if (!url) return null
-  if (typeof url === 'string') return url
-
-  switch (url.type) {
-    case 'mdn':
-      return `https://developer.mozilla.org/en-US/docs/${url.id}`
-    case 'node':
-      return `https://nodejs.org/${url.id}`
-    case 'e18e':
-      return `https://e18e.dev/docs/replacements/${url.id}`
-    default:
-      return null
-  }
-}
-
-const externalUrl = computed(() => resolveUrl(props.replacement.url))
+const externalUrl = computed(() => resolveReplacementUrl(props.replacement.url))
 
 const nodeVersion = computed(() => {
   const nodeEngine = props.replacement.engines?.find(e => e.engine === 'nodejs')
@@ -43,10 +28,7 @@ const nodeVersion = computed(() => {
       scope="global"
     >
       <template #replacement>
-        <code v-if="replacement.nodeFeatureId?.moduleName">
-          {{ replacement.nodeFeatureId.moduleName }}
-        </code>
-        <code v-else-if="replacement.description">
+        <code v-if="replacement.description">
           {{ replacement.description }}
         </code>
         <span v-else>{{ replacement.id }}</span>
