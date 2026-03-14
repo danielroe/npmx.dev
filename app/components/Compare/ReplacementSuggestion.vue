@@ -10,8 +10,14 @@ const props = defineProps<{
   showAction?: boolean
 }>()
 
-const emit = defineEmits<{ addNoDep: [] }>()
-const { externalUrl, nodeVersion, replacementName } = useReplacements(props.replacement)
+const emit = defineEmits<{
+  addNoDep: []
+}>()
+
+const docUrl = computed(() => {
+  if (props.replacement.type !== 'documented' || !props.replacement.docPath) return null
+  return `https://e18e.dev/docs/replacements/${props.replacement.docPath}.html`
+})
 </script>
 
 <template>
@@ -29,40 +35,45 @@ const { externalUrl, nodeVersion, replacementName } = useReplacements(props.repl
     />
     <div class="min-w-0 flex-1">
       <p class="font-medium">{{ packageName }}: {{ $t('package.replacement.title') }}</p>
-      <div class="text-xs mt-0.5 opacity-80">
+      <p class="text-xs mt-0.5 opacity-80">
         <template v-if="replacement.type === 'native'">
           {{
             $t('package.replacement.native', {
-              replacement: replacementName,
-              nodeVersion: nodeVersion || 'unknown',
+              replacement: replacement.replacement,
+              nodeVersion: replacement.nodeVersion,
             })
           }}
         </template>
         <template v-else-if="replacement.type === 'simple'">
           {{
             $t('package.replacement.simple', {
-              replacement: replacementName,
+              replacement: replacement.replacement,
               community: $t('package.replacement.community'),
             })
           }}
         </template>
         <template v-else-if="replacement.type === 'documented'">
           {{
-            $t('package.replacement.documented', { community: $t('package.replacement.community') })
+            $t('package.replacement.documented', {
+              community: $t('package.replacement.community'),
+            })
           }}
         </template>
-      </div>
+      </p>
     </div>
 
+    <!-- No dependency action button -->
     <ButtonBase
       v-if="variant === 'nodep' && showAction !== false"
       size="small"
+      :aria-label="$t('compare.no_dependency.add_column')"
       @click="emit('addNoDep')"
     >
       {{ $t('package.replacement.consider_no_dep') }}
     </ButtonBase>
 
-    <LinkBase v-else-if="externalUrl" :to="externalUrl" variant="button-secondary" size="small">
+    <!-- Info link -->
+    <LinkBase v-else-if="docUrl" :to="docUrl" variant="button-secondary" size="small">
       {{ $t('package.replacement.learn_more') }}
     </LinkBase>
   </div>

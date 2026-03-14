@@ -1,11 +1,32 @@
 <script setup lang="ts">
-import type { ModuleReplacement } from 'module-replacements'
+import type { ModuleReplacement, KnownUrl } from 'module-replacements'
 
 const props = defineProps<{
   replacement: ModuleReplacement
 }>()
 
-const { externalUrl, nodeVersion, replacementName } = useReplacements(props.replacement)
+const resolveUrl = (url?: KnownUrl) => {
+  if (!url) return null
+  if (typeof url === 'string') return url
+
+  switch (url.type) {
+    case 'mdn':
+      return `https://developer.mozilla.org/en-US/docs/${url.id}`
+    case 'node':
+      return `https://nodejs.org/${url.id}`
+    case 'e18e':
+      return `https://e18e.dev/docs/replacements/${url.id}`
+    default:
+      return null
+  }
+}
+
+const externalUrl = computed(() => resolveUrl(props.replacement.url))
+
+const nodeVersion = computed(() => {
+  const nodeEngine = props.replacement.engines?.find(e => e.engine === 'nodejs')
+  return nodeEngine?.minVersion || null
+})
 </script>
 
 <template>
@@ -16,20 +37,24 @@ const { externalUrl, nodeVersion, replacementName } = useReplacements(props.repl
       <span class="i-lucide:lightbulb w-4 h-4" aria-hidden="true" />
       {{ $t('package.replacement.title') }}
     </h2>
-
     <i18n-t
       v-if="replacement.type === 'native'"
       keypath="package.replacement.native"
       scope="global"
     >
       <template #replacement>
-        <code>{{ replacementName }}</code>
+        <code v-if="replacement.nodeFeatureId?.moduleName">
+          {{ replacement.nodeFeatureId.moduleName }}
+        </code>
+        <code v-else-if="replacement.description">
+          {{ replacement.description }}
+        </code>
+        <span v-else>{{ replacement.id }}</span>
       </template>
       <template #nodeVersion>
         {{ nodeVersion || 'unknown' }}
       </template>
     </i18n-t>
-
     <div v-else-if="replacement.type === 'simple'" class="block">
       <div class="mb-2">{{ replacement.description }}</div>
       <div v-if="replacement.example">
@@ -39,7 +64,6 @@ const { externalUrl, nodeVersion, replacementName } = useReplacements(props.repl
         ><code>{{ replacement.example }}</code></pre>
       </div>
     </div>
-
     <i18n-t
       v-else-if="replacement.type === 'documented'"
       keypath="package.replacement.documented"
@@ -60,11 +84,12 @@ const { externalUrl, nodeVersion, replacementName } = useReplacements(props.repl
         </a>
       </template>
     </i18n-t>
-
     <template v-else-if="replacement.type === 'removal'">
       {{ replacement.description }}
     </template>
-
+    <template v-else>
+      {{ $t('package.replacement.none') }}
+    </template>
     <a
       v-if="externalUrl"
       :href="externalUrl"
