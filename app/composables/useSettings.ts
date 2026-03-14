@@ -71,7 +71,7 @@ const DEFAULT_SETTINGS: AppSettings = {
     averageWindow: 0,
     smoothingTau: 1,
     anomaliesFixed: true,
-    hampelWindow: 3,
+    hampelWindow: 4,
     hampelThreshold: 3,
     predictionPoints: 4,
   },

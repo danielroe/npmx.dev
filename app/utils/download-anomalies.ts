@@ -11,7 +11,7 @@ import type { EvolutionData } from '~/types/chart'
  * package equally, with no manual curation.
  */
 
-const DEFAULT_HALF_WINDOW = 3
+const DEFAULT_HALF_WINDOW = 4
 const DEFAULT_THRESHOLD = 3
 
 function median(values: number[]): number {
