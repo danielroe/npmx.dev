@@ -94,13 +94,7 @@ const nodeVersion = computed(() => {
       {{ $t('package.replacement.consider_no_dep') }}
     </ButtonBase>
 
-    <LinkBase
-      v-else-if="docUrl"
-      :to="docUrl"
-      variant="button-secondary"
-      size="small"
-      target="_blank"
-    >
+    <LinkBase v-else-if="docUrl" :to="docUrl" variant="button-secondary" size="small">
       {{ $t('package.replacement.learn_more') }}
     </LinkBase>
   </div>
