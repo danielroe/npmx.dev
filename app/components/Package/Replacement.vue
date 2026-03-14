@@ -24,7 +24,9 @@ const nodeVersion = computed(() => {
     </h2>
     <i18n-t
       v-if="replacement.type === 'native'"
-      keypath="package.replacement.native"
+      :keypath="
+        nodeVersion ? 'package.replacement.native' : 'package.replacement.native_no_version'
+      "
       scope="global"
     >
       <template #replacement>
@@ -33,8 +35,8 @@ const nodeVersion = computed(() => {
         </code>
         <span v-else>{{ replacement.id }}</span>
       </template>
-      <template #nodeVersion>
-        {{ nodeVersion || 'unknown' }}
+      <template v-if="nodeVersion" `#nodeVersion`>
+        {{ nodeVersion }}
       </template>
     </i18n-t>
     <div v-else-if="replacement.type === 'simple'" class="block">

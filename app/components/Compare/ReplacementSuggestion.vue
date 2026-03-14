@@ -41,11 +41,14 @@ const nodeVersion = computed(() => {
       <p class="text-xs mt-0.5 opacity-80">
         <template v-if="replacement.type === 'native'">
           {{
-            $t('package.replacement.native', {
-              replacement:
-                replacement.nodeFeatureId?.moduleName || replacement.description || replacement.id,
-              nodeVersion: nodeVersion || 'unknown',
-            })
+            nodeVersion
+              ? $t('package.replacement.native', {
+                  replacement: replacement.description || replacement.id,
+                  nodeVersion,
+                })
+              : $t('package.replacement.native_no_version', {
+                  replacement: replacement.description || replacement.id,
+                })
           }}
         </template>
         <template v-else-if="replacement.type === 'simple'">
