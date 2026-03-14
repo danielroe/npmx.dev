@@ -133,7 +133,7 @@ const changelogLink = computed((): RouteLocationRaw | null => {
   if (!changelog.value || props.pkg == null || props.resolvedVersion == null) {
     return null
   }
-  return { name: 'changes', params: { path: [props.pkg.name, 'v', props.resolvedVersion] } }
+  return changelogRoute(props.pkg.name, props.resolvedVersion)
 })
 
 const keyboardShortcuts = useKeyboardShortcuts()

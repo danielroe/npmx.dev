@@ -3,51 +3,41 @@ import { useProviderIcon } from '~/composables/useProviderIcon'
 
 definePageMeta({
   name: 'changes',
-  path: '/package-changes/:path+',
-  alias: ['/package/changes/:path+', '/changes/:path+'],
+  // path: '/package-changes/:path+',
+  // alias: ['/package/changes/:path+', '/changes/:path+'],
   scrollMargin: 190,
 })
 
 /// routing
 
 const route = useRoute('changes')
-const router = useRouter()
 // Parse package name, version, and file path from URL
 // Patterns:
-//   /code/nuxt/v/4.2.0 → packageName: "nuxt", version: "4.2.0", filePath: null (show tree)
-//   /code/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
-//   /code/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
+//   /changes/nuxt/v/4.2.0 → packageName: "nuxt", version: "4.2.0", filePath: null (show tree)
+//   /changes/nuxt/v/4.2.0/src/index.ts → packageName: "nuxt", version: "4.2.0", filePath: "src/index.ts"
+//   /changes/@nuxt/kit/v/1.0.0 → packageName: "@nuxt/kit", version: "1.0.0", filePath: null
+
+//   const packageName = computed(() => {
+//   const { org, name } = route.params
+//   return org ? `${org}/${name}` : name
+// })
 const parsedRoute = computed(() => {
-  const segments = route.params.path
+  const { org, name } = route.params
 
-  // Find the /v/ separator for version
-  const vIndex = segments.indexOf('v')
-  if (vIndex === -1 || vIndex >= segments.length - 1) {
-    // No version specified - redirect or error
-    return {
-      packageName: segments.join('/'),
-      version: null as string | null,
-      filePath: null as string | null,
-    }
-  }
+  const packageName = org ? `${org}/${name}` : name
 
-  const packageName = segments.slice(0, vIndex).join('/')
-  const afterVersion = segments.slice(vIndex + 1)
-  const version = afterVersion[0] ?? null
-  const filePath = afterVersion.length > 1 ? afterVersion.slice(1).join('/') : null
+  const version = 'version' in route.params ? route.params.version : null
 
-  return { packageName, version, filePath }
+  return { packageName, version }
 })
 
 const packageName = computed(() => parsedRoute.value.packageName)
 const version = computed(() => parsedRoute.value.version)
-const filePath = computed(() => parsedRoute.value.filePath?.replace(/\/$/, ''))
 
 const { data: pkg } = usePackage(packageName, version)
 
 const versionUrlPattern = computed(() => {
-  const base = `/package-changes/${packageName.value}/v/{version}`
-  return filePath.value ? `${base}/${filePath.value}` : base
+  return `/package-changes/${packageName.value}/v/{version}`
 })
 
 const latestVersion = computed(() => {
@@ -57,16 +47,16 @@ const latestVersion = computed(() => {
   return pkg.value.versions[latestTag] ?? null
 })
 
-watch(
-  [version, () => latestVersion.value?.version, packageName],
-  ([v, latest, name]) => {
-    if (!v && latest && name) {
-      const pathSegments = [...name.split('/'), 'v', latest]
-      router.replace({ name: 'changes', params: { path: pathSegments as [string, ...string[]] } })
-    }
-  },
-  { immediate: true },
-)
+// watch(
+//   [version, () => latestVersion.value?.version, packageName],
+//   ([v, latest, name]) => {
+//     if (!v && latest && name) {
+//       const pathSegments = [...name.split('/'), 'v', latest]
+//       navigateTo({ name: 'changes', params: { path: pathSegments as [string, ...string[]] } })
+//     }
+//   },
+//   { immediate: true },
+// )
 
 // getting info
 const { data: changelog, pending } = usePackageChangelog(packageName, version)
