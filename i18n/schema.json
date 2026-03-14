@@ -261,6 +261,9 @@
         },
         "tap_to_search": {
           "type": "string"
+        },
+        "close_search": {
+          "type": "string"
         }
       },
       "additionalProperties": false
