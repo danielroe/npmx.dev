@@ -7,7 +7,7 @@ const props = defineProps<{
 }>()
 
 const displayVersion = computed(() => props.pkg?.requestedVersion ?? null)
-const { repositoryUrl } = useRepositoryUrl(displayVersion.value)
+const { repositoryUrl } = useRepositoryUrl(displayVersion)
 const { meta: repoMeta, repoRef, stars, starsLink, forks, forksLink } = useRepoMeta(repositoryUrl)
 const compactNumberFormatter = useCompactNumberFormatter()
 
