@@ -2,8 +2,9 @@
 import type { ReleaseData } from '~~/shared/types/changelog'
 import { slugify } from '~~/shared/utils/html'
 
-const { release } = defineProps<{
+const { release, tocHeaderClass } = defineProps<{
   release: ReleaseData
+  tocHeaderClass: string
 }>()
 const formattedDate = computed(() => {
   if (!release.publishedAt) {
@@ -21,8 +22,11 @@ function navigateToTitle() {
 }
 </script>
 <template>
-  <section class="border border-border rounded-lg p-4 sm:p-6 scroll-mt-18" :id="cardId">
-    <div class="flex gap-2 items-center">
+  <section
+    class="border border-border rounded-lg p-4 pt-2 sm:p-6 sm:pt-4 scroll-mt-18"
+    :id="cardId"
+  >
+    <div class="flex gap-2 items-center sticky z-3 text-2xl p-2" :class="tocHeaderClass">
       <h2
         class="text-1xl sm:text-2xl font-medium min-w-0 break-words py-2 scroll-mt-20"
         :id="navId"

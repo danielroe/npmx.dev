@@ -102,12 +102,11 @@ defineOgImageComponent('Default', {
       :resolved-version="version"
       :display-version="pkg?.requestedVersion"
     />
-    {{ requestedVersion }} {{ version }}
     <section class="container w-full pt-3">
       <div
-        class="pa-3 z-2 flex justify-between gap-4 h-14"
+        class="pa-3 z-2 flex justify-between gap-4 h-14 b-b-1"
         :class="{
-          [$style.gitTocHeader]: true,
+          [$style.tocHeader]: true,
           sticky: changelog?.type == 'md',
         }"
       >
@@ -142,6 +141,7 @@ defineOgImageComponent('Default', {
             :info="changelog"
             :requestedDate="versionDate"
             :requested-version="version"
+            :tocHeaderClass="$style.tocHeader"
             #error
           >
             <LazyChangelogErrorMsg
@@ -184,10 +184,10 @@ defineOgImageComponent('Default', {
 </template>
 
 <style module>
-.gitTocHeader {
-  border-bottom-width: 1px;
+.tocHeader {
+  /* border-bottom-width: 1px; */
   border-color: color-mix(in srgb, var(--border) var(--un-border-opacity), transparent);
   background-color: color-mix(in srgb, var(--bg) var(--un-bg-opacity), transparent);
-  top: var(--combined-header-height);
+  top: var(--combined-header-height); /* top is only used when sticky is used */
 }
 </style>
