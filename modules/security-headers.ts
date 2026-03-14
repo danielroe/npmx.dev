@@ -3,11 +3,14 @@ import { ALL_KNOWN_GIT_API_ORIGINS } from '#shared/utils/git-providers'
 import { TRUSTED_IMAGE_DOMAINS } from '#server/utils/image-proxy'
 
 /**
- * Adds Content-Security-Policy and security headers to all HTML responses
- * via Nitro route rules. This covers both SSR/ISR pages and prerendered
- * pages (which are served as static files on Vercel and don't hit the server).
+ * Adds Content-Security-Policy and other security headers to all pages.
  *
- * API routes opt out via `false` to disable the inherited headers.
+ * CSP is delivered via a <meta http-equiv> tag in <head>, so it naturally
+ * only applies to HTML pages (not API routes). The remaining security
+ * headers are set via a catch-all route rule.
+ *
+ * Note: frame-ancestors is not supported in meta-tag CSP, but
+ * X-Frame-Options: DENY (set via route rule) provides equivalent protection.
  *
  * Current policy uses 'unsafe-inline' for scripts and styles because:
  * - Nuxt injects inline scripts for hydration and payload transfer
@@ -41,7 +44,6 @@ export default defineNuxtModule({
       `font-src 'self'`,
       `connect-src ${connectSrc}`,
       `frame-src ${frameSrc}`,
-      `frame-ancestors 'none'`,
       `base-uri 'self'`,
       `form-action 'self'`,
       `object-src 'none'`,
@@ -49,22 +51,24 @@ export default defineNuxtModule({
       'upgrade-insecure-requests',
     ].join('; ')
 
-    const headers = {
-      'Content-Security-Policy': csp,
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
-      'Referrer-Policy': 'strict-origin-when-cross-origin',
-    }
+    // CSP via <meta> tag — only present in HTML pages, not API responses.
+    nuxt.options.app.head ??= {}
+    const head = nuxt.options.app.head as { meta?: Array<Record<string, string>> }
+    head.meta ??= []
+    head.meta.push({
+      'http-equiv': 'Content-Security-Policy',
+      'content': csp,
+    })
 
+    // Other security headers via route rules (fine on all responses).
     nuxt.options.routeRules ??= {}
     nuxt.options.routeRules['/**'] = {
       ...nuxt.options.routeRules['/**'],
-      headers,
-    }
-    // Disable page-specific headers on API routes — CSP doesn't apply to JSON.
-    nuxt.options.routeRules['/api/**'] = {
-      ...nuxt.options.routeRules['/api/**'],
-      headers: false,
+      headers: {
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+      },
     }
   },
 })

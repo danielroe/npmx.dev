@@ -1,12 +1,17 @@
 import { expect, test } from './test-utils'
 
 test.describe('security headers', () => {
-  test('HTML pages include CSP and security headers', async ({ page, baseURL }) => {
+  test('HTML pages include CSP meta tag and security headers', async ({ page, baseURL }) => {
     const response = await page.goto(baseURL!)
     const headers = response!.headers()
 
-    expect(headers['content-security-policy']).toBeDefined()
-    expect(headers['content-security-policy']).toContain("script-src 'self'")
+    // CSP is delivered via <meta http-equiv> in <head>
+    const cspContent = await page
+      .locator('meta[http-equiv="Content-Security-Policy"]')
+      .getAttribute('content')
+    expect(cspContent).toContain("script-src 'self'")
+
+    // Other security headers via route rules
     expect(headers['x-content-type-options']).toBe('nosniff')
     expect(headers['x-frame-options']).toBe('DENY')
     expect(headers['referrer-policy']).toBe('strict-origin-when-cross-origin')
