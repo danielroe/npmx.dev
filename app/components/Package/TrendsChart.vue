@@ -1751,7 +1751,6 @@ watch(selectedMetric, value => {
             </span>
             <label
               class="flex items-center gap-1.5 text-2xs font-mono text-fg-subtle cursor-pointer h-4"
-              :class="{ 'opacity-50': !hasAnomalies }"
             >
               <input
                 :checked="settings.chartFilter.anomaliesFixed"
