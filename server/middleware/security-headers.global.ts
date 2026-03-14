@@ -1,3 +1,4 @@
+import { ALL_KNOWN_GIT_API_ORIGINS } from '#shared/utils/git-providers'
 import { TRUSTED_IMAGE_DOMAINS } from '../utils/image-proxy'
 
 /**
@@ -23,7 +24,15 @@ const imgSrc = [
 
 const connectSrc = [
   "'self'",
-  'https://*.algolia.net', // Algolia npm-search client
+  // Algolia npm-search client
+  'https://*.algolia.net',
+  // npm registry & API (client-side fetches via $npmRegistry, $npmApi, useCachedFetch)
+  'https://registry.npmjs.org',
+  'https://api.npmjs.org',
+  // fast-npm-meta (version resolution)
+  'https://npm.antfu.dev',
+  // Git hosting APIs (repo metadata on client-side navigation)
+  ...ALL_KNOWN_GIT_API_ORIGINS,
 ].join(' ')
 
 const frameSrc = [
