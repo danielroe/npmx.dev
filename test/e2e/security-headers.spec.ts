@@ -18,4 +18,15 @@ test.describe('security headers', () => {
 
     expect(headers['content-security-policy']).toBeFalsy()
   })
+
+  // Navigate key pages and assert no CSP violations are logged.
+  // This catches new external resources that weren't added to the CSP.
+  const PAGES = ['/', '/package/nuxt', '/search?q=vue', '/compare'] as const
+
+  for (const path of PAGES) {
+    test(`no CSP violations on ${path}`, async ({ goto, cspViolations }) => {
+      await goto(path, { waitUntil: 'hydration' })
+      expect(cspViolations).toEqual([])
+    })
+  }
 })
