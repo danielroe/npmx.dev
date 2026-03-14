@@ -251,7 +251,6 @@
       "none": "This package has been flagged as no longer needed, and its functionality is likely available natively in all engines.",
       "learn_more": "Learn more",
       "learn_more_above": "Learn more above.",
-      "mdn": "MDN",
       "community": "community",
       "consider_no_dep": "+ Consider no dep?"
     },
