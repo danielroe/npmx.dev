@@ -35,14 +35,14 @@ const nodeVersion = computed(() => {
         </code>
         <span v-else>{{ replacement.id }}</span>
       </template>
-      <template v-if="nodeVersion" `#nodeVersion`>
+      <template v-if="nodeVersion" #nodeVersion>
         {{ nodeVersion }}
       </template>
     </i18n-t>
     <div v-else-if="replacement.type === 'simple'" class="block">
       <div class="mb-2">{{ replacement.description }}</div>
       <div v-if="replacement.example">
-        <strong class="block mb-1.5">Example:</strong>
+        <strong class="block mb-1.5">{{ $t('package.replacement.example') }}</strong>
         <pre
           class="bg-amber-800/10 dark:bg-amber-950/30 p-2 rounded border border-amber-700/20 overflow-x-auto text-xs font-mono leading-relaxed"
         ><code>{{ replacement.example }}</code></pre>

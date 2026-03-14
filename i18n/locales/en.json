@@ -245,6 +245,7 @@
     },
     "replacement": {
       "title": "You might not need this dependency.",
+      "example": "Example:",
       "native": "This can be replaced with {replacement}, available since Node {nodeVersion}.",
       "native_no_version": "This can be replaced with {replacement}.",
       "simple": "The {community} has flagged this package as redundant, with the advice: {replacement}.",
