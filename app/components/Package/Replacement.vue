@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ModuleReplacement, KnownUrl } from 'module-replacements'
+import type { ModuleReplacement } from 'module-replacements'
 import { resolveReplacementUrl } from '~/utils/resolve-replacement-url'
 
 const props = defineProps<{
