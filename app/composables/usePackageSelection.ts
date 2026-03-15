@@ -1,7 +1,7 @@
 export const MAX_PACKAGE_SELECTION = 4
 
 export function usePackageSelection() {
-  const selectedPackagesParam = useRouteQuery<string>('selection', '', { mode: 'push' })
+  const selectedPackagesParam = useRouteQuery<string>('selection', '', { mode: 'replace' })
   const showSelectionViewParam = useRouteQuery<string>('view', '', { mode: 'push' })
 
   // Parse URL param into array of package names
