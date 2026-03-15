@@ -13,13 +13,14 @@ const codeRef = useTemplateRef('codeRef')
 
 // Using this so we can track the height of each line, and therefore compute digit sidebar
 const lineMultipliers = ref<number[]>([])
+const LINE_HEIGHT_PX = 24 // also used in css
 
 function updateLineMultipliers() {
   if (!codeRef.value) return
   const lines = Array.from(codeRef.value.querySelectorAll('code > .line'))
-  lineMultipliers.value = lines
-    .map(line => Math.round(parseFloat(getComputedStyle(line).height) / 24)) // since each line "row" is 24px high
-    .filter(m => m > 0)
+  lineMultipliers.value = lines.map(line =>
+    Math.max(1, Math.round(parseFloat(getComputedStyle(line).height) / LINE_HEIGHT_PX)),
+  )
 }
 
 watch(
@@ -179,8 +180,8 @@ watch(
   display: flex;
   flex-wrap: wrap;
   /* Ensure consistent height matching line numbers */
-  line-height: 24px;
-  min-height: 24px;
+  line-height: calc(v-bind(LINE_HEIGHT_PX) * 1px);
+  min-height: calc(v-bind(LINE_HEIGHT_PX) * 1px);
   white-space: pre-wrap;
   overflow: hidden;
   transition: background-color 0.1s;
