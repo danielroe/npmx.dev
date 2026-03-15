@@ -184,13 +184,15 @@ onKeyStroke(
 // TODO: Maybe set this where it's not loaded here every load?
 const { user } = useAtproto()
 
+const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+
 const likeAnimKey = shallowRef(0)
 const showLikeFloat = shallowRef(false)
 const likeFloatKey = shallowRef(0)
 let likeFloatTimer: ReturnType<typeof setTimeout> | null = null
 
 const heartAnimStyle = computed(() => {
-  if (likeAnimKey.value === 0) return {}
+  if (likeAnimKey.value === 0 || prefersReducedMotion.value) return {}
   return {
     animation: likesData.value?.userHasLiked
       ? 'heart-spring 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards'
@@ -227,7 +229,7 @@ const likeAction = async () => {
 
   likeAnimKey.value++
 
-  if (!currentlyLiked) {
+  if (!currentlyLiked && !prefersReducedMotion.value) {
     if (likeFloatTimer !== null) {
       clearTimeout(likeFloatTimer)
       likeFloatTimer = null
@@ -522,6 +524,12 @@ const likeAction = async () => {
   animation: float-up 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .likeFloat {
+    display: none;
+  }
+}
+
 @keyframes float-up {
   0% {
     opacity: 0;
@@ -576,6 +584,21 @@ const likeAction = async () => {
   }
   100% {
     transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes heart-spring {
+    from,
+    to {
+      transform: scale(1);
+    }
+  }
+  @keyframes heart-unlike {
+    from,
+    to {
+      transform: scale(1);
+    }
   }
 }
 </style>
