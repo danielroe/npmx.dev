@@ -17,6 +17,7 @@ const props = defineProps<{
 
 /** Total column count including the optional no-dep column */
 const totalColumns = computed(() => props.columns.length + (props.showNoDependency ? 1 : 0))
+const visibleColumns = computed(() => Math.min(totalColumns.value, 4))
 
 /** Compute plain-text tooltip for a replacement column */
 function getReplacementTooltip(col: ComparisonGridColumn): string {
@@ -28,10 +29,16 @@ function getReplacementTooltip(col: ComparisonGridColumn): string {
 
 <template>
   <div class="overflow-x-auto">
-    <div class="comparison-grid" :style="{ '--package-count': totalColumns }">
+    <div
+      class="comparison-grid"
+      :style="{
+        '--package-count': totalColumns,
+        '--visible-columns': visibleColumns,
+      }"
+    >
       <!-- Header row -->
       <div class="comparison-header">
-        <div class="comparison-label" />
+        <div class="comparison-label relative bg-bg" />
 
         <!-- Package columns -->
         <div
@@ -105,11 +112,13 @@ function getReplacementTooltip(col: ComparisonGridColumn): string {
 
 <style scoped>
 .comparison-grid {
+  --label-column-width: 140px;
+  --package-column-width: calc((100% - var(--label-column-width)) / var(--visible-columns));
   display: grid;
   gap: 0;
   grid-template-columns:
-    minmax(110px, 150px)
-    repeat(var(--package-count), minmax(0, 1fr));
+    var(--label-column-width)
+    repeat(var(--package-count), minmax(var(--package-column-width), var(--package-column-width)));
 }
 
 .comparison-header {
@@ -117,8 +126,16 @@ function getReplacementTooltip(col: ComparisonGridColumn): string {
 }
 
 .comparison-header > .comparison-label {
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--color-border);
+  z-index: 3;
+}
+
+.comparison-label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  inline-size: var(--label-column-width);
+  min-inline-size: var(--label-column-width);
+  isolation: isolate;
 }
 
 .comparison-header > .comparison-cell-header {
