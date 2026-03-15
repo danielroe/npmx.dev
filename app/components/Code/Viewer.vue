@@ -11,15 +11,36 @@ const emit = defineEmits<{
 
 const codeRef = useTemplateRef('codeRef')
 
-// Generate line numbers array
-const lineNumbers = computed(() => {
-  return Array.from({ length: props.lines }, (_, i) => i + 1)
+// Using this so we can track the height of each line, and therefore compute digit sidebar
+const lineMultipliers = ref<number[]>([])
+
+function updateLineMultipliers() {
+  if (!codeRef.value) return
+  const lines = Array.from(codeRef.value.querySelectorAll('code > .line'))
+  lineMultipliers.value = lines
+    .map(line => Math.round(parseFloat(getComputedStyle(line).height) / 24)) // since each line "row" is 24px high
+    .filter(m => m > 0)
+}
+
+watch(
+  () => props.html,
+  () => nextTick(updateLineMultipliers),
+  { immediate: true },
+)
+useResizeObserver(codeRef, updateLineMultipliers)
+
+// Line numbers ++ blank rows for the wrapped lines
+const displayLines = computed(() => {
+  const result: (number | null)[] = []
+  for (let i = 0; i < props.lines; i++) {
+    result.push(i + 1)
+    const extra = (lineMultipliers.value[i] ?? 1) - 1
+    for (let j = 0; j < extra; j++) result.push(null)
+  }
+  return result
 })
 
-// Used for CSS calculation of line number column width
-const lineDigits = computed(() => {
-  return String(props.lines).length
-})
+const lineDigits = computed(() => String(props.lines).length)
 
 // Check if a line is selected
 function isLineSelected(lineNum: number): boolean {
@@ -93,22 +114,24 @@ watch(
       aria-hidden="true"
     >
       <!-- This needs to be a native <a> element, because `LinkBase` (or specifically `NuxtLink`) does not seem to work when trying to prevent default behavior (jumping to the anchor) -->
-      <a
-        v-for="lineNum in lineNumbers"
-        :id="`L${lineNum}`"
-        :key="lineNum"
-        :href="`#L${lineNum}`"
-        tabindex="-1"
-        class="line-number block px-3 py-0 font-mono text-sm leading-6 cursor-pointer transition-colors no-underline"
-        :class="[
-          isLineSelected(lineNum)
-            ? 'bg-yellow-500/20 text-fg'
-            : 'text-fg-subtle hover:text-fg-muted',
-        ]"
-        @click.prevent="onLineClick(lineNum, $event)"
-      >
-        {{ lineNum }}
-      </a>
+      <template v-for="(lineNum, idx) in displayLines" :key="idx">
+        <a
+          v-if="lineNum !== null"
+          :id="`L${lineNum}`"
+          :href="`#L${lineNum}`"
+          tabindex="-1"
+          class="line-number block px-3 py-0 font-mono text-sm leading-6 cursor-pointer transition-colors no-underline"
+          :class="[
+            isLineSelected(lineNum)
+              ? 'bg-yellow-500/20 text-fg'
+              : 'text-fg-subtle hover:text-fg-muted',
+          ]"
+          @click.prevent="onLineClick(lineNum, $event)"
+        >
+          {{ lineNum }}
+        </a>
+        <span v-else class="block px-3 leading-6">&nbsp;</span>
+      </template>
     </div>
 
     <!-- Code content -->
