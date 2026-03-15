@@ -453,7 +453,10 @@ const numberFormatter = useNumberFormatter()
 const bytesFormatter = useBytesFormatter()
 
 useHead({
-  link: [{ rel: 'canonical', href: canonicalUrl }],
+  link: [
+    { rel: 'canonical', href: canonicalUrl },
+    { rel: 'alternate', type: 'text/markdown', href: `/raw/${packageName.value}.md` },
+  ],
 })
 
 useSeoMeta({
