@@ -1,5 +1,52 @@
 import { describe, expect, it } from 'vitest'
-import { docsRoute } from '~/utils/router'
+import { docsRoute, packageRoute } from '~/utils/router'
+
+describe('packageRoute', () => {
+  it.each([
+    ['vue', '3.5.0', '', 'vue', '3.5.0'],
+    ['@nuxt/kit', ' >= 3.0.0 < 4.0.0 ', '@nuxt', 'kit', '>=3.0.0<4.0.0'],
+    ['vue', 'next', '', 'vue', 'next'],
+  ] as const)('routes %s at %s', (packageName, version, org, name, expectedVersion) => {
+    expect(packageRoute(packageName, version, '#dependencies')).toEqual({
+      name: 'package-version',
+      params: { org, name, version: expectedVersion },
+      hash: '#dependencies',
+    })
+  })
+
+  it.each([
+    ['vite', 'npm:@voidzero-dev/vite-plus-core@0.3.1', '@voidzero-dev', 'vite-plus-core', '0.3.1'],
+    ['string-width', 'npm:string-width@^4.2.0', '', 'string-width', '^4.2.0'],
+    ['@scope/alias', 'npm:vue@next', '', 'vue', 'next'],
+    ['alias', 'npm:@scope/pkg@>= 1.0.0 < 2.0.0', '@scope', 'pkg', '>=1.0.0<2.0.0'],
+  ] as const)(
+    'routes %s to its alias target %s',
+    (packageName, version, org, name, expectedVersion) => {
+      expect(packageRoute(packageName, version, '#dependencies')).toEqual({
+        name: 'package-version',
+        params: { org, name, version: expectedVersion },
+        hash: '#dependencies',
+      })
+    },
+  )
+
+  it.each([
+    ['npm:vue', '', 'vue'],
+    ['npm:@scope/pkg', '@scope', 'pkg'],
+  ] as const)('routes an alias without a version to %s', (version, org, name) => {
+    expect(packageRoute('alias', version)).toEqual({
+      name: 'package',
+      params: { org, name },
+    })
+  })
+
+  it.each([undefined, null, ''])('omits the version route for %s', version => {
+    expect(packageRoute('@nuxt/kit', version)).toEqual({
+      name: 'package',
+      params: { org: '@nuxt', name: 'kit' },
+    })
+  })
+})
 
 describe('docsRoute', () => {
   it('emits a scoped name as two path segments (literal slash, not %2F)', () => {

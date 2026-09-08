@@ -1,4 +1,5 @@
 import type { RouteLocationRaw } from 'vue-router'
+import { parsePackageSpec } from '#shared/utils/parse-package-param'
 import { splitPackageName } from '~/utils/package-name'
 
 export function packageRoute(
@@ -6,6 +7,12 @@ export function packageRoute(
   version?: string | null,
   hash?: string,
 ): RouteLocationRaw {
+  if (version?.startsWith('npm:')) {
+    const alias = parsePackageSpec(version.slice(4))
+    packageName = alias.name
+    version = alias.version
+  }
+
   const { org, name } = splitPackageName(packageName)
 
   if (version) {
