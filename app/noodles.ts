@@ -178,7 +178,7 @@ const entries: Noodle[] = [
     timezone: 'auto',
     tagline: false,
     occasion: 'IO.js and Node.js merge',
-    prUrl: 'https://github.com/npmx-dev/npmx.dev/pull/3040',
+    prUrl: 'https://github.com/npmx-dev/npmx.dev/pull/3238',
     authors: [ALEX],
     references: [
       {
