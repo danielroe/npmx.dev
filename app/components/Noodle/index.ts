@@ -41,7 +41,7 @@ export const ACTIVE_NOODLES: Noodle[] = [
   {
     key: 'iojs-nodejs-merge',
     logo: NoodleIojsNodejsLogo,
-    date: '2026-09-09',
+    date: '2026-09-14',
     timezone: 'auto',
   },
 ]
